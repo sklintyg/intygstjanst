@@ -1,0 +1,3 @@
+|Skicka Intyg Till Fk|
+|personnummer|intyg|resultat?|
+|19121212-1212|test-19121212-1212-intyg-M|OK|
