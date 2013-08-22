@@ -1,5 +1,7 @@
 package se.inera.certificate.integration.rest;
 
+import se.inera.certificate.model.Utlatande;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -8,12 +10,20 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import se.inera.certificate.model.Utlatande;
-
 /**
  * @author andreaskaltenbach
  */
 public interface ModuleRestApi {
+
+    /**
+      * @param utlatande
+      * @return
+      */
+     @POST
+     @Path( "/unmarshall" )
+     @Consumes( MediaType.APPLICATION_XML )
+     @Produces( MediaType.APPLICATION_JSON )
+     Response unmarshall(se.inera.certificate.common.v1.Utlatande utlatande);
 
     /**
      * @param utlatande
