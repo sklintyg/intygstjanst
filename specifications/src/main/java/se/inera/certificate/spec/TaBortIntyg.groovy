@@ -25,14 +25,26 @@ public class TaBortIntyg extends RestClientFixture {
 			template = idTemplate
 		}
         def restClient = new RESTClient(baseUrl)
+        Exception pendingException
+        String failedIds = ""
         for (i in from..to) {
             if (template) {
                 id = String.format(template, i)
             }
+            try {
             restClient.delete(
                     path: 'certificate/' + id,
                     requestContentType: JSON
             )
+            } catch(e) {
+                failedIds += template + ","
+                if (!pendingException) {
+                    pendingException = e
+                }
+            }
+        }
+        if (pendingException) {
+            throw new Exception("Kunde inte ta bort " + failedIds, pendingException)
         }
     }
 
