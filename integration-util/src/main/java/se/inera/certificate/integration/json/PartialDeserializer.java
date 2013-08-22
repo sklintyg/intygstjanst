@@ -1,15 +1,15 @@
 package se.inera.certificate.integration.json;
 
-import java.io.IOException;
-
-import static com.fasterxml.jackson.core.JsonToken.VALUE_STRING;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import org.joda.time.Partial;
 import se.inera.certificate.schema.adapter.PartialAdapter;
+
+import java.io.IOException;
+
+import static com.fasterxml.jackson.core.JsonToken.VALUE_STRING;
 
 /**
  * @author andreaskaltenbach

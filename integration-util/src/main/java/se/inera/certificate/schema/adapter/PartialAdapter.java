@@ -1,15 +1,15 @@
 package se.inera.certificate.schema.adapter;
 
+import org.joda.time.DateTimeFieldType;
+import org.joda.time.LocalDate;
+import org.joda.time.Partial;
+import org.joda.time.format.ISODateTimeFormat;
+
 import static org.joda.time.DateTimeFieldType.dayOfMonth;
 import static org.joda.time.DateTimeFieldType.monthOfYear;
 import static org.joda.time.DateTimeFieldType.year;
 import static org.joda.time.format.ISODateTimeFormat.yearMonth;
 import static org.joda.time.format.ISODateTimeFormat.yearMonthDay;
-
-import org.joda.time.DateTimeFieldType;
-import org.joda.time.LocalDate;
-import org.joda.time.Partial;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * @author andreaskaltenbach
