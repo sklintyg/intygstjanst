@@ -124,8 +124,6 @@ public class CertificateServiceImplTest {
     @Test
     public void testStoreCertificateExtractsCorrectInfo() throws IOException {
 
-        when(objectMapper.writeValueAsString(any(Utlatande.class))).thenReturn("Some JSON");
-
         Certificate certificate = certificateService.storeCertificate(lakarutlatande(), "Some JSON");
 
         assertEquals("1", certificate.getId());
@@ -140,7 +138,6 @@ public class CertificateServiceImplTest {
 
         assertEquals("Some JSON", certificate.getDocument());
 
-        verify(objectMapper).writeValueAsString(any(Utlatande.class));
         verify(certificateDao).store(certificate);
     }
 
