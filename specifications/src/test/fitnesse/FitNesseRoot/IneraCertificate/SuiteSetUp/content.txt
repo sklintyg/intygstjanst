@@ -1,3 +1,4 @@
+!****> Global Setup... 
 |Import|
 |se.inera.certificate.spec|
 |se.inera.certificate.spec.util|
@@ -5,3 +6,13 @@
 !|Config|
 |property|value|
 |certificate.baseUrl|${certificate.baseUrl}|
+|services.listCertificatesUrl|${services.listCertificatesUrl}|
+|services.getCertificateUrl|${services.getCertificateUrl}|
+|services.setCertificateStatusUrl|${services.setCertificateStatusUrl}|
+|services.revokeCertificateUrl|${services.revokeCertificateUrl}|
+|services.setConsentUrl|${services.setConsentUrl}|
+|services.registerMedicalCertificateUrl|${services.registerMedicalCertificateUrl}|
+|services.sendCertificateUrl|${services.sendCertificateUrl}|
+|services.sendMedicalCertificateQuestionUrl|${services.sendMedicalCertificateQuestionUrl}|
+|services.sendMedicalCertificateAnswerUrl|${services.sendMedicalCertificateAnswerUrl}|
+*****! 

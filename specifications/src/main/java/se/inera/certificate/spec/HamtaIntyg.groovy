@@ -18,11 +18,13 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
  */
 public class HamtaIntyg extends WsClientFixture {
 
-    private GetCertificateResponderService getCertificateService = new GetCertificateResponderService();
-    private GetCertificateResponderInterface getCertificateResponder = getCertificateService.getCertificateResponderPort
+    private GetCertificateResponderInterface getCertificateResponder
 
+	static String serviceUrl = System.getProperty("service.getCertificateUrl")
+	
     public HamtaIntyg() {
-        setEndpoint(getCertificateResponder, "get-certificate/v1.0")
+		String url = serviceUrl ? serviceUrl : baseUrl + "get-certificate/v1.0"
+		getCertificateResponder = createClient(GetCertificateResponderInterface.class, url)
     }
 
     String personnummer

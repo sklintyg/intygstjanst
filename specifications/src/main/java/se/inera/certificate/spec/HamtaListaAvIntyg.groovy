@@ -1,14 +1,12 @@
 package se.inera.certificate.spec
+import org.apache.cxf.frontend.ClientProxyFactoryBean
+import org.apache.cxf.jaxws.JaxWsClientFactoryBean
 import org.joda.time.LocalDate
+import org.w3.wsaddressing10.AttributedURIType
 
 import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.certificate.v1.CertificateMetaType
-import se.inera.ifv.insuranceprocess.healthreporting.getconsent.v1.rivtabp20.GetConsentResponderInterface
-import se.inera.ifv.insuranceprocess.healthreporting.getconsent.v1.rivtabp20.GetConsentResponderService
-import se.inera.ifv.insuranceprocess.healthreporting.getconsentresponder.v1.GetConsentRequestType
-import se.inera.ifv.insuranceprocess.healthreporting.getconsentresponder.v1.GetConsentResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.v1.rivtabp20.ListCertificatesResponderInterface
-import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.v1.rivtabp20.ListCertificatesResponderService
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesRequestType
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
@@ -16,14 +14,13 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultOfCall
 
 public class HamtaListaAvIntyg extends WsClientFixture {
 
-	private ListCertificatesResponderService listCertificatesService = new ListCertificatesResponderService();
-	private ListCertificatesResponderInterface listCertificatesResponder = listCertificatesService.listCertificatesResponderPort
-	//private GetConsentResponderService getConsentService = new GetConsentResponderService();
-	//private GetConsentResponderInterface getConsentResponder = getConsentService.getConsentResponderPort
+	private ListCertificatesResponderInterface listCertificatesResponder
+
+    static String serviceUrl = System.getProperty("service.listCertificatesUrl")
 
 	public HamtaListaAvIntyg() {
-		setEndpoint(listCertificatesResponder, "list-certificates/v1.0")
-		//setEndpoint(getConsentResponder, "get-consent/v1.0")
+		String url = serviceUrl ? serviceUrl : baseUrl + "list-certificates/v1.0"
+		listCertificatesResponder = createClient(ListCertificatesResponderInterface.class, url)
 	}
 	
 	String personnr

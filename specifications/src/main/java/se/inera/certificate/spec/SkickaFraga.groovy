@@ -31,8 +31,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType
 
 class SkickaFraga extends WsClientFixture {
 
-    private SendMedicalCertificateQuestionResponderService sendService = new SendMedicalCertificateQuestionResponderService();
-    private SendMedicalCertificateQuestionResponderInterface sendResponder = sendService.sendMedicalCertificateQuestionResponderPort
+    private SendMedicalCertificateQuestionResponderInterface sendResponder
 
     String vårdReferens
     String ämne
@@ -43,10 +42,11 @@ class SkickaFraga extends WsClientFixture {
 	String personnr
 	String namn
 
+	static String serviceUrl = System.getProperty("service.sendMedicalCertificateQuestionUrl")
+	
     public SkickaFraga() {
-		String certificateQuestionUrl = System.getProperty("fk.certificateQuestionUrl", "http://localhost:8080/inera-certificate/send-certificate-question-stub")
-        Client client = ClientProxy.getClient(sendResponder)
-        client.getRequestContext().put(Message.ENDPOINT_ADDRESS, certificateQuestionUrl)
+		String url = serviceUrl ? serviceUrl : baseUrl + "send-certificate-question-stub"
+		sendResponder = createClient(SendMedicalCertificateQuestionResponderInterface.class, url)
     }
 
     public String resultat() {

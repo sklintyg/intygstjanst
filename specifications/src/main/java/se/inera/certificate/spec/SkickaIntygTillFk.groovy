@@ -23,16 +23,18 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType
  */
 class SkickaIntygTillFk extends WsClientFixture {
 
-    private SendMedicalCertificateResponderService sendService = new SendMedicalCertificateResponderService();
-    private SendMedicalCertificateResponderInterface sendResponder = sendService.sendMedicalCertificateResponderPort
+    private SendMedicalCertificateResponderInterface sendResponder
 
     String personnummer
     String intyg
 
     SendMedicalCertificateResponseType response
 
+	static String serviceUrl = System.getProperty("service.sendCertificateUrl")
+	
     public SkickaIntygTillFk() {
-        setEndpoint(sendResponder, "send-certificate/v1.0")
+        String url = serviceUrl ? serviceUrl : baseUrl + "send-certificate/v1.0"
+		sendResponder = createClient(SendMedicalCertificateResponderInterface.class, url)
     }
 
     public void execute() {

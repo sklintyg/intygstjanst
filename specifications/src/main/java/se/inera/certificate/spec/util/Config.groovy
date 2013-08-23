@@ -6,6 +6,6 @@ class Config {
 	String value
 	
 	void execute() {
-		System.setProperty(property, value)
+		if (value && !value.startsWith("undefined variable:")) System.setProperty(property, value)
 	}
 }

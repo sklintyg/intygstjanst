@@ -12,16 +12,18 @@ import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusrespond
  */
 class MarkeraIntygSomHamtat extends WsClientFixture {
 
-    private SetCertificateStatusResponderService setCertificateStatusService = new SetCertificateStatusResponderService();
-    private SetCertificateStatusResponderInterface setCertificateStatusResponder = setCertificateStatusService.setCertificateStatusResponderPort
+    private SetCertificateStatusResponderInterface setCertificateStatusResponder
 
     String personnr
     String intyg
 
     String kommentar
 
-    public MarkeraIntygSomHamtat() {
-        setEndpoint(setCertificateStatusResponder, "set-certificate-status/v1.0")
+    static String serviceUrl = System.getProperty("service.setCertificateStatusUrl")
+
+	public MarkeraIntygSomHamtat() {
+		String url = serviceUrl ? serviceUrl : baseUrl + "set-certificate-status/v1.0"
+		setCertificateStatusResponder = createClient(SetCertificateStatusResponderInterface.class, url)
     }
 
     public String resultat() {

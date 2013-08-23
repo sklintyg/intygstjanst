@@ -1,0 +1,12 @@
+!define ntjp.qa {https://qa.esb.ntjp.se/vp/} 
+!define services.listCertificatesUrl {${ntjp.qa}ListCertificates/1/rivtabp20}
+!define services.getCertificateUrl {${ntjp.qa}GetCertificate/1/rivtabp20}
+!define services.setCertificateStatusUrl {${ntjp.qa}SetCertificateStatus/1/rivtabp20}
+!define services.revokeCertificateUrl {${ntjp.qa}RevokeCertificate/1/rivtabp20}
+!define services.setConsentUrl {${ntjp.qa}SetConsent/1/rivtabp20}
+!define services.registerMedicalCertificateUrl {${ntjp.qa}RegisterMedicalCertificate/3/rivtabp20}
+!define services.sendCertificateUrl {${ntjp.qa}SendCertificate/1/rivtabp20}
+!define services.sendMedicalCertificateQuestionUrl {${ntjp.qa}SendMedicalCertificateQuestion/1/rivtabp20}
+!define services.sendMedicalCertificateAnswerUrl {${ntjp.qa}SendMedicalCertificateAnswer/1/rivtabp20}
+
+!contents -R2 -g -p -f -h
