@@ -14,7 +14,6 @@
   <properties>
     <groovy.version>2.0.7</groovy.version>
     <groovy.httpBuilder.version>0.6</groovy.httpBuilder.version>
-    <!-- These next 3 are the default values anyway -->
     <fitnesse.port>9123</fitnesse.port>
     <fitnesse.working>${project.basedir}/src/test/fitnesse</fitnesse.working>
     <fitnesse.root>FitNesseRoot</fitnesse.root>

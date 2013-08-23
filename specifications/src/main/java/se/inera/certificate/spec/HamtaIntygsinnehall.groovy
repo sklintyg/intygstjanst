@@ -2,6 +2,7 @@ package se.inera.certificate.spec
 import org.skyscreamer.jsonassert.JSONAssert
 
 import se.inera.certificate.spec.util.WsClientFixture
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20.GetCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentRequest
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponderService
@@ -15,11 +16,13 @@ import fitnesse.slim.SlimError
  */
 public class HamtaIntygsinnehall extends WsClientFixture {
 
-    private GetCertificateContentResponderService getCertificateService = new GetCertificateContentResponderService();
-    private GetCertificateContentResponderInterface getCertificateResponder = getCertificateService.getCertificateContentResponderPort
+    private GetCertificateResponderInterface getCertificateResponder
 
-    public HamtaIntygsinnehall() {
-        setEndpoint(getCertificateResponder, "get-certificate-content/v1.0")
+	static String serviceUrl = System.getProperty("service.getCertificateUrl")
+	
+    public HamtaIntyg() {
+		String url = serviceUrl ? serviceUrl : baseUrl + "get-certificate/v1.0"
+		getCertificateResponder = createClient(GetCertificateResponderInterface.class, url)
     }
 
     String personnummer

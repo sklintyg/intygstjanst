@@ -24,8 +24,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequest
 
 class SkickaSvar extends WsClientFixture {
 
-    private SendMedicalCertificateAnswerResponderService sendService = new SendMedicalCertificateAnswerResponderService();
-    private SendMedicalCertificateAnswerResponderInterface sendResponder = sendService.sendMedicalCertificateAnswerResponderPort
+    private SendMedicalCertificateAnswerResponderInterface sendResponder
 
     String vårdReferens
     String fkReferens
@@ -39,10 +38,11 @@ class SkickaSvar extends WsClientFixture {
 	String personnr
 	String namn
 
+	static String serviceUrl = System.getProperty("service.sendMedicalCertificateAnswerUrl")
+	
     public SkickaSvar() {
-		String certificateAnswerUrl = System.getProperty("fk.certificateAnswerUrl", "http://localhost:8080/inera-certificate/send-certificate-answer-stub")
-        Client client = ClientProxy.getClient(sendResponder)
-        client.getRequestContext().put(Message.ENDPOINT_ADDRESS, certificateAnswerUrl)
+		String url = serviceUrl ? serviceUrl : baseUrl + "send-certificate-answer-stub"
+		sendResponder = createClient(SendMedicalCertificateAnswerResponderInterface.class, url)
     }
 
     public String resultat() {

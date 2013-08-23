@@ -17,11 +17,13 @@ import javax.xml.transform.stream.StreamSource
  */
 public class RegistreraFk7263Intyg extends WsClientFixture {
 
-    private RegisterMedicalCertificateResponderService registerMedicalCertificateService = new RegisterMedicalCertificateResponderService()
-    private RegisterMedicalCertificateResponderInterface registerMedicalCertificateResponder = registerMedicalCertificateService.registerMedicalCertificateResponderPort
+    private RegisterMedicalCertificateResponderInterface registerMedicalCertificateResponder
+
+    static String serviceUrl = System.getProperty("service.registerCertificateUrl")
 
     public RegistreraFk7263Intyg() {
-        setEndpoint(registerMedicalCertificateResponder, "register-certificate/v3.0")
+        String url = serviceUrl ? serviceUrl : baseUrl + "register-certificate/v3.0"
+		registerMedicalCertificateResponder = createClient(RegisterMedicalCertificateResponderInterface.class, url)
     }
 
     String personnummer

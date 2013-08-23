@@ -8,11 +8,13 @@ import se.inera.ifv.insuranceprocess.healthreporting.setconsentresponder.v1.SetC
 
 public class Samtycke extends WsClientFixture {
 
-	private SetConsentResponderService setConsentService = new SetConsentResponderService();
-	private SetConsentResponderInterface setConsentResponder = setConsentService.setConsentResponderPort
+	private SetConsentResponderInterface setConsentResponder
+
+	static String serviceUrl = System.getProperty("service.setConsentUrl")
 
 	public Samtycke() {
-		setEndpoint(setConsentResponder, "set-consent/v1.0")
+		String url = serviceUrl ? serviceUrl : baseUrl + "set-consent/v1.0"
+		setConsentResponder = createClient(SetConsentResponderInterface.class, url)
 	}
 
 	String personnr
