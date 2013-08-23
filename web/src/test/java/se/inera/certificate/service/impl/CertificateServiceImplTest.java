@@ -126,7 +126,7 @@ public class CertificateServiceImplTest {
 
         when(objectMapper.writeValueAsString(any(Utlatande.class))).thenReturn("Some JSON");
 
-        Certificate certificate = certificateService.storeCertificate(lakarutlatande());
+        Certificate certificate = certificateService.storeCertificate(lakarutlatande(), "Some JSON");
 
         assertEquals("1", certificate.getId());
         assertEquals("fk7263", certificate.getType());
@@ -147,7 +147,7 @@ public class CertificateServiceImplTest {
     @Test
     public void newCertificateGetsStatusReceived() throws IOException {
 
-        Certificate certificate = certificateService.storeCertificate(lakarutlatande());
+        Certificate certificate = certificateService.storeCertificate(lakarutlatande(), "Some JSON");
 
         assertEquals(1, certificate.getStates().size());
         assertEquals(CertificateState.RECEIVED, certificate.getStates().get(0).getState());

@@ -18,7 +18,6 @@
  */
 package se.inera.certificate.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -107,10 +106,10 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     @Transactional
-    public Certificate storeCertificate(Utlatande utlatande) {
+    public Certificate storeCertificate(Utlatande utlatande, String externalJson) {
 
         // turn a lakarutlatande into a certificate entity
-        Certificate certificate = createCertificate(utlatande);
+        Certificate certificate = createCertificate(utlatande, externalJson);
 
         // add initial RECEIVED state using current time as receiving timestamp
         CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(MI, CertificateState.RECEIVED, new LocalDateTime());
@@ -165,16 +164,8 @@ public class CertificateServiceImpl implements CertificateService {
         setCertificateState(civicRegistrationNumber, certificateId, target, CertificateState.SENT, null);
     }
 
-    private String toJson(Utlatande utlatande) {
-        try {
-            return objectMapper.writeValueAsString(utlatande);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to serialize lakarutlatande.", e);
-        }
-    }
-
-    private Certificate createCertificate(Utlatande utlatande) {
-        Certificate certificate = new Certificate(utlatande.getId().getExtension(), toJson(utlatande));
+    private Certificate createCertificate(Utlatande utlatande, String externalJson) {
+        Certificate certificate = new Certificate(utlatande.getId().getExtension(), externalJson);
 
         certificate.setType(utlatande.getTyp().getCode());
         certificate.setSigningDoctorName(utlatande.getSkapadAv().getNamn());

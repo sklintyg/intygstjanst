@@ -55,7 +55,7 @@ public interface CertificateService {
      */
     Certificate getCertificate(String civicRegistrationNumber, String certificateId);
 
-    Certificate storeCertificate(Utlatande utlatande);
+    Certificate storeCertificate(Utlatande utlatande, String externalJson);
 
     /**
      * Stores the original certificate as a serialization of the JAXB object.
