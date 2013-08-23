@@ -28,6 +28,20 @@ public class PersonnummerValidatorTest {
 	}
 
 	/**
+	 * Test that only personnummer on the form <code>yyyyMMdd-nnnn</code> are accepted.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testPersonnummerParser() throws Exception {
+		assertListSize(0, validator.validateExtension("19800131-0005"));
+
+		assertListSize(1, validator.validateExtension("800131-0005"));
+		assertListSize(1, validator.validateExtension("198001310005"));
+		assertListSize(1, validator.validateExtension("19800131-000x"));
+	}
+
+	/**
 	 * Test that only valid dates are accepted by the validator.
 	 * 
 	 * @throws Exception

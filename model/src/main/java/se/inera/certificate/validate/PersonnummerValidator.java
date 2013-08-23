@@ -55,7 +55,7 @@ public class PersonnummerValidator implements RootValidator {
 		// Parse the personnummer
 		Matcher m = PERSONNUMMER_PATTERN.matcher(pnr);
 		if (!m.matches()) {
-			result.add(String.format("Kunde inte tolka personummer '%s' på formatet 'yyyyMMdd-nnnn'", pnr));
+			result.add(String.format("Could not parse the SSN '%s' (format should be 'yyyyMMdd-nnnn')", pnr));
 			return result;
 		}
 		String dateString = m.group(1);
@@ -95,7 +95,7 @@ public class PersonnummerValidator implements RootValidator {
 			localDate = getBirthDay(dateString);
 
 		} catch (IllegalArgumentException e) {
-			result.add(String.format("Datumet '%s' i personnummer '%s' är ogiltligt", dateString, pnr));
+			result.add(String.format("The date '%s' in SSN '%s' is invalid", dateString, pnr));
 		}
 
 		return localDate;
@@ -114,11 +114,11 @@ public class PersonnummerValidator implements RootValidator {
 	 */
 	private void checkDateRange(String pnr, LocalDate birthday, List<String> result) {
 		if (birthday.isAfter(referenceDate())) {
-			result.add("Personnummer '%s' är ogiltligt - datumet ligger i framtiden");
+			result.add("The SSN '%s' is invalid - date is in the future");
 		}
 
 		if (birthday.isBefore(FIRST_PERSONNUMMER_DATE)) {
-			result.add("Personnummer '%s' är ogiltligt - datumet är äldre än tillåtet");
+			result.add("The SSN '%s' is invalid - date is too far in the past");
 		}
 	}
 
@@ -141,11 +141,11 @@ public class PersonnummerValidator implements RootValidator {
 			boolean dashSeparator = separator.equals("-");
 			if (ageMoreThan100 && dashSeparator) {
 				result.add(String.format(
-						"Personnummer '%s' är ogiltligt - personen är över 100 år men använder separator '-'", pnr));
+						"The SSN '%s' is invalid - citizen is over 100 years old but the separator '-' is used", pnr));
 			}
 			if (!ageMoreThan100 && !dashSeparator) {
 				result.add(String.format(
-						"Personnummer '%s' är ogiltligt - personen är under 100 år men använder separator '+'", pnr));
+						"The SSN '%s' is invalid - citizen is under 100 years old but the separator '+' is used", pnr));
 			}
 		}
 	}
@@ -166,7 +166,7 @@ public class PersonnummerValidator implements RootValidator {
 	 */
 	private void checkChecksum(String pnr, String dateString, String nnn, int mod10, List<String> result) {
 		if (ValidatorUtils.calculateMod10(dateString.substring(2) + nnn) != mod10) {
-			result.add(String.format("Kontrollsiffran i personnummer '%s' är felaktig", pnr));
+			result.add(String.format("The checksum digit in SSN '%s' is invalid", pnr));
 		}
 	}
 
