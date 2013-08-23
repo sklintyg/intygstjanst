@@ -3,6 +3,7 @@ package se.inera.certificate.integration.rest;
 import se.inera.certificate.model.Utlatande;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -16,14 +17,21 @@ import javax.ws.rs.core.Response;
 public interface ModuleRestApi {
 
     /**
-      * @param utlatande
-      * @return
-      */
-     @POST
-     @Path( "/unmarshall" )
-     @Consumes( MediaType.APPLICATION_XML )
-     @Produces( MediaType.APPLICATION_JSON )
-     Response unmarshall(se.inera.certificate.common.v1.Utlatande utlatande);
+     * @param utlatande
+     * @return
+     */
+    @POST
+    @Path("/unmarshall")
+    @Consumes(MediaType.APPLICATION_XML)
+    @Produces(MediaType.APPLICATION_JSON)
+    Response unmarshall(se.inera.certificate.common.v1.Utlatande utlatande);
+
+
+    @POST
+    @Path("/marshall")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_XML)
+    Response marshall(@HeaderParam("X-Schema-Version") String version, String moduleExternalJson);
 
     /**
      * @param utlatande

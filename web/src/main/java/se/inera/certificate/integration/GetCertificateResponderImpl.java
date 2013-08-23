@@ -18,26 +18,20 @@
  */
 package se.inera.certificate.integration;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.List;
-
-import static se.inera.certificate.integration.util.ResultOfCallUtil.applicationErrorResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
-
+import com.google.common.base.Throwables;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.integration.certificates.CertificateSupport;
 import se.inera.certificate.integration.converter.ModelConverter;
-import se.inera.certificate.integration.converter.UtlatandeToRegisterMedicalCertificate;
+import se.inera.certificate.integration.rest.ModuleRestApi;
+import se.inera.certificate.integration.rest.ModuleRestApiFactory;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
@@ -46,6 +40,19 @@ import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
+
+import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBElement;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import static se.inera.certificate.integration.util.ResultOfCallUtil.applicationErrorResult;
+import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
+import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
+import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 
 /**
  * @author andreaskaltenbach
@@ -61,6 +68,9 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
 
     @Autowired
     private List<CertificateSupport> supportedCertificates = new ArrayList<>();
+
+    @Autowired
+    private ModuleRestApiFactory moduleRestApiFactory;
 
     @Override
     public GetCertificateResponseType getCertificate(AttributedURIType logicalAddress, GetCertificateRequestType parameters) {
@@ -106,12 +116,28 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
         } else {
             Utlatande utlatande = certificateService.getLakarutlatande(certificate);
 
+            Document document = marshall(certificate, utlatande);
+
             // TODO - this is FK7263-specific and has to be done by the FK7263 module
-            RegisterMedicalCertificateType registerMedicalCertificateType = UtlatandeToRegisterMedicalCertificate.getJaxbObject(utlatande);
-            certificateType.getAny().add(wrapJaxb(registerMedicalCertificateType));
+            //RegisterMedicalCertificateType registerMedicalCertificateType = UtlatandeToRegisterMedicalCertificate.getJaxbObject(utlatande);
+            certificateType.getAny().add(document.getDocumentElement());
 
             response.setCertificate(certificateType);
             response.setResult(okResult());
+        }
+    }
+
+    private Document marshall(Certificate certificate, Utlatande utlatande) {
+        ModuleRestApi restApi = moduleRestApiFactory.getModuleRestService(utlatande.getTyp().getCode());
+        Response response = restApi.marshall("1.0", certificate.getDocument());
+
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            Document document = factory.newDocumentBuilder().parse(new InputSource((InputStream)response.getEntity()));
+            response.close();
+            return document;
+        } catch (Exception e) {
+           throw Throwables.propagate(e);
         }
     }
 
