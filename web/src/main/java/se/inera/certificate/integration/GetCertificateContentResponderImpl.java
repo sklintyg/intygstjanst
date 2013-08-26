@@ -9,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.integration.converter.CertificateStateHistoryEntryConverter;
-import se.inera.certificate.integration.converter.UtlatandeToUtlatandeJaxbConverter;
-import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.certificate.v1.CertificateStatusType;
@@ -18,7 +16,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentrespon
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponse;
 
-import java.io.IOException;
 import java.util.List;
 
 import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
@@ -76,21 +73,10 @@ public class GetCertificateContentResponderImpl implements GetCertificateContent
     }
 
     private void attachCertificateDocument(Certificate certificate, GetCertificateContentResponse response) {
-        Utlatande utlatande;
-        try {
-            utlatande = objectMapper.readValue(certificate.getDocument(), Utlatande.class);
-        } catch (IOException e) {
-            LOG.error("Failed to read certificate document for certificate #" + certificate.getId());
-            throw new RuntimeException("Failed to read certificate document for certificate #" + certificate.getId(), e);
-        }
-
-        // convert utlatande to JAXB
-        se.inera.certificate.common.v1.Utlatande utlatandeType = new UtlatandeToUtlatandeJaxbConverter(utlatande).convert();
-
         // extract certificate states from certificate meta data
         List<CertificateStatusType> states = CertificateStateHistoryEntryConverter.toCertificateStatusType(certificate.getStates());
-        utlatandeType.getStatuses().addAll(states);
 
-        response.setCertificate(utlatandeType);
+        response.setCertificate(certificate.getDocument());
+        response.getStatuses().addAll(states);
     }
 }
