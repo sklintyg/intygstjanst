@@ -20,7 +20,7 @@
     </layout>
   </appender>
 
-  <logger name="org.springframework" level="error" />
+  <logger name="org.springframework" level="trace" />
 
   <logger name="org.hibernate" level="error" />
 
@@ -29,7 +29,7 @@
   <logger name="se.inera.certificate" level="error" />
 
   <root>
-    <level value="error" />
+    <level value="trace" />
     <appender-ref ref="STDOUT" />
     <appender-ref ref="FILE" />
   </root>
