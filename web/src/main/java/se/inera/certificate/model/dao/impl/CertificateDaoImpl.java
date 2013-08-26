@@ -28,6 +28,7 @@ import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
+import se.inera.certificate.model.dao.OriginalCertificate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -109,6 +110,11 @@ public class CertificateDaoImpl implements CertificateDao {
     @Override
     public void store(Certificate certificate) {
         entityManager.persist(certificate);
+    }
+
+    @Override
+    public void storeOriginalCertificate(OriginalCertificate originalCertificate) {
+        entityManager.persist(originalCertificate);
     }
 
     @Override

@@ -65,6 +65,13 @@ public interface CertificateDao {
     void store(Certificate certificate);
 
     /**
+     * Stores the original JAXB serialization of a received certificate {@link OriginalCertificate}.
+     *
+     * @param originalCertificate
+     */
+    void storeOriginalCertificate(OriginalCertificate originalCertificate);
+
+    /**
      * Updates the certificate's status.
      * @param certificateId the certificate's ID
      * @param civicRegistrationNumber the civic registration number of the patient associated to the certificate

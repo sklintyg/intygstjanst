@@ -26,6 +26,7 @@ import org.joda.time.LocalDateTime;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 
 /**
  * @author andreaskaltenbach
@@ -56,6 +57,13 @@ public interface CertificateService {
 
     Certificate storeCertificate(Utlatande utlatande);
 
+    /**
+     * Stores the original certificate as a serialization of the JAXB object.
+     *
+     * @param certificateType the received certificate
+     */
+    void storeOriginalCertificate(RegisterMedicalCertificateType certificateType);
+
     void setCertificateState(String civicRegistrationNumber, String certificateId, String target, CertificateState state, LocalDateTime timestamp);
 
     /**
@@ -74,4 +82,5 @@ public interface CertificateService {
      * @throws CertificateRevokedException if the certificate has been revoked
      */
     Certificate revokeCertificate(String civicRegistrationNumber, String certificateId);
+
 }

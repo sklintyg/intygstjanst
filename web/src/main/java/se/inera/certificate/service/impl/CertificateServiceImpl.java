@@ -22,8 +22,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
@@ -33,12 +37,19 @@ import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
+import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.schema.adapter.PartialAdapter;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.ObjectFactory;
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -49,6 +60,8 @@ import java.util.List;
  */
 @Service
 public class CertificateServiceImpl implements CertificateService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CertificateServiceImpl.class);
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -71,6 +84,10 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Autowired
     private CertificateSenderService senderService;
+
+    @Autowired
+    @Value("${store.original.certificate}")
+    private Boolean shouldStoreOriginalCertificate = false;
 
     @Override
     public List<Certificate> listCertificates(String civicRegistrationNumber, List<String> certificateTypes, LocalDate fromDate, LocalDate toDate) {
@@ -102,6 +119,34 @@ public class CertificateServiceImpl implements CertificateService {
         certificateDao.store(certificate);
 
         return certificate;
+    }
+
+    /**
+     * Method has propagation REQUIRES_NEW because it should run independently of any outer transactions.
+     * If it fails, nothing else should fail.
+     *
+     * @param certificateType the received certificate
+     */
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void storeOriginalCertificate(RegisterMedicalCertificateType certificateType) {
+        if (shouldStoreOriginalCertificate) {
+            try {
+                OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), serializeUtlatande(certificateType));
+                certificateDao.storeOriginalCertificate(original);
+            } catch (Exception e) {
+                LOGGER.error("Could not write original document to database. Does not interrupt certificate registration", e);
+            }
+        }
+    }
+
+    protected String serializeUtlatande(RegisterMedicalCertificateType certificateType) throws JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
+        Marshaller marshaller = jaxbContext.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+        StringWriter sw = new StringWriter();
+        marshaller.marshal(new ObjectFactory().createRegisterMedicalCertificate(certificateType), sw);
+        return sw.toString();
     }
 
     @Override
