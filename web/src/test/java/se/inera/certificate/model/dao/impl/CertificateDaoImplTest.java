@@ -54,6 +54,7 @@ import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
+import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.support.CertificateFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -253,4 +254,18 @@ public class CertificateDaoImplTest {
         assertEquals(lastWeek, certificate.getStates().get(1).getTimestamp());
         assertEquals(lastMonth, certificate.getStates().get(2).getTimestamp());
     }
+
+    @Test
+    public void testStoreOriginalCertificate() {
+
+        assertNull(entityManager.find(OriginalCertificate.class, 1L));
+
+        certificateDao.storeOriginalCertificate(new OriginalCertificate(LocalDateTime.now(),"Some text"));
+
+        OriginalCertificate original = entityManager.find(OriginalCertificate.class, 1L);
+        assertNotNull(original);
+        assertEquals("Some text", original.getDocument());
+    }
+
+
 }

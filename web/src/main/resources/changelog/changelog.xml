@@ -69,4 +69,19 @@
       <column name="CIVIC_REGISTRATION_NUMBER" />
     </createIndex>
   </changeSet>
+
+  <changeSet id="4" author="me">
+    <createTable tableName="ORIGINAL_CERTIFICATE">
+      <column name="ID" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="RECEIVED" type="datetime">
+        <constraints nullable="false"/>
+      </column>
+      <column name="DOCUMENT" type="blob">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
 </databaseChangeLog>

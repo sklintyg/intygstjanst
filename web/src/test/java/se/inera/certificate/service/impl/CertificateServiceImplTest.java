@@ -1,5 +1,6 @@
 package se.inera.certificate.service.impl;
 
+import ch.qos.logback.core.Appender;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
@@ -17,22 +18,27 @@ import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
+import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
+import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.LakarutlatandeType;
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.ObjectFactory;
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.LogManager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+
+import javax.xml.bind.JAXBException;
 
 /**
  * @author andreaskaltenbach
@@ -44,19 +50,22 @@ public class CertificateServiceImplTest {
     private static final String CERTIFICATE_ID = "<certificate-id>";
 
     @Mock
-    private CertificateDao certificateDao = mock(CertificateDao.class);
+    private CertificateDao certificateDao;
 
     @Mock
-    private ConsentService consentService = mock(ConsentService.class);
+    private Appender mockAppender;
 
     @Mock
-    private ObjectMapper objectMapper = mock(ObjectMapper.class);
+    private ConsentService consentService;
 
     @Mock
-    private CertificateSenderService certificateSender = mock(CertificateSenderService.class);
+    private ObjectMapper objectMapper;
+
+    @Mock
+    private CertificateSenderService certificateSender;
 
     @InjectMocks
-    private CertificateService certificateService = new CertificateServiceImpl();
+    private CertificateServiceImpl certificateService = new CertificateServiceImpl();
 
     @Test
     public void certificateWithDeletedStatusHasMetaDeleted() {
@@ -184,5 +193,27 @@ public class CertificateServiceImplTest {
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(revokedCertificate);
 
         certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fk");
+    }
+
+    @Test
+    public void testSerializeUtlatande() throws JAXBException {
+        RegisterMedicalCertificateType type = new ObjectFactory().createRegisterMedicalCertificateType();
+        LakarutlatandeType lakarutlatandeType = new LakarutlatandeType();
+        lakarutlatandeType.setKommentar("En kommentar");
+        type.setLakarutlatande(lakarutlatandeType);
+
+        String result = certificateService.serializeUtlatande(type);
+
+        assertNotNull(result);
+        int index = result.indexOf("<kommentar>") + 11;
+        assertEquals("En kommentar", result.substring(index, index + 12));
+    }
+
+    @Test
+    public void testStoreOriginalCertificate() {
+        RegisterMedicalCertificateType type = new ObjectFactory().createRegisterMedicalCertificateType();
+        doNothing().when(certificateDao).storeOriginalCertificate((OriginalCertificate)anyObject());
+        certificateService.storeOriginalCertificate(type);
+        verify(certificateDao).storeOriginalCertificate((OriginalCertificate)anyObject());
     }
 }

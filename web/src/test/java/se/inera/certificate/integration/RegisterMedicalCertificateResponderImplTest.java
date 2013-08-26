@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import se.inera.certificate.common.v1.Utlatande;
+import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
@@ -34,6 +35,9 @@ public class RegisterMedicalCertificateResponderImplTest {
 
     @Mock
     private RegistreraIntygResponderInterface registreraIntygResponder = mock(RegistreraIntygResponderInterface.class);
+
+    @Mock
+    private CertificateService certificateService;
 
     @InjectMocks
     private RegisterMedicalCertificateResponderInterface responder = new RegisterMedicalCertificateResponderImpl();

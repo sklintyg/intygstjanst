@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.certificate.common.v1.Utlatande;
 import se.inera.certificate.integration.converter.LakarutlatandeTypeToUtlatandeConverter;
+import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
@@ -23,11 +24,16 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
     @Autowired
     private RegistreraIntygResponderInterface registreraIntygResponder;
 
+    @Autowired
+    private CertificateService certificateService;
+
     @Override
     public RegisterMedicalCertificateResponseType registerMedicalCertificate(AttributedURIType logicalAddress, RegisterMedicalCertificateType request) {
 
         Utlatande utlatande = LakarutlatandeTypeToUtlatandeConverter.convert(request.getLakarutlatande());
         registreraIntygResponder.registreraIntyg(new Holder<>(utlatande));
+
+        certificateService.storeOriginalCertificate(request);
 
         RegisterMedicalCertificateResponseType response = new RegisterMedicalCertificateResponseType();
         response.setResult(okResult());
