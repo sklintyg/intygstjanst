@@ -87,7 +87,7 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Autowired
     @Value("${store.original.certificate}")
-    private Boolean shouldStoreOriginalCertificate = false;
+    private Boolean shouldStoreOriginalCertificate = true;
 
     @Override
     public List<Certificate> listCertificates(String civicRegistrationNumber, List<String> certificateTypes, LocalDate fromDate, LocalDate toDate) {
