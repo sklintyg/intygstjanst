@@ -18,6 +18,31 @@
  */
 package se.inera.certificate.integration;
 
+import org.apache.commons.io.FileUtils;
+import org.h2.util.IOUtils;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.core.io.ClassPathResource;
+import se.inera.certificate.exception.MissingConsentException;
+import se.inera.certificate.integration.certificates.CertificateSupport;
+import se.inera.certificate.integration.certificates.fk7263.Fk7263Support;
+import se.inera.certificate.integration.json.CustomObjectMapper;
+import se.inera.certificate.integration.rest.ModuleRestApi;
+import se.inera.certificate.integration.rest.ModuleRestApiFactory;
+import se.inera.certificate.model.CertificateState;
+import se.inera.certificate.model.Utlatande;
+import se.inera.certificate.model.builder.CertificateBuilder;
+import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.service.CertificateService;
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType;
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.ErrorIdEnum;
+
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -29,29 +54,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.*;
-
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.core.io.ClassPathResource;
-
-import se.inera.certificate.exception.MissingConsentException;
-import se.inera.certificate.integration.certificates.CertificateSupport;
-import se.inera.certificate.integration.certificates.fk7263.Fk7263Support;
-import se.inera.certificate.integration.json.CustomObjectMapper;
-import se.inera.certificate.model.CertificateState;
-import se.inera.certificate.model.Utlatande;
-import se.inera.certificate.model.builder.CertificateBuilder;
-import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.service.CertificateService;
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType;
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType;
-import se.inera.ifv.insuranceprocess.healthreporting.v2.ErrorIdEnum;
+import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ERROR;
+import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
+import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
 /**
  * @author andreaskaltenbach
@@ -71,6 +76,15 @@ public class GetCertificateResponderImplTest {
     @InjectMocks
     private GetCertificateResponderImpl responder = new GetCertificateResponderImpl();
 
+    @Mock
+    private ModuleRestApiFactory moduleRestApiFactory = mock(ModuleRestApiFactory.class);
+
+    @Mock
+    private ModuleRestApi moduleRestApi = mock(ModuleRestApi.class);
+
+    @Mock
+    private Response restResponse = mock(Response.class);
+
     @Before
     public void before() {
         when(supported.iterator()).thenReturn(Collections.<CertificateSupport>singletonList(new Fk7263Support()).iterator());
@@ -85,6 +99,10 @@ public class GetCertificateResponderImplTest {
                 new CertificateBuilder("123456", document).certificateType("fk7263").build());
 
         when(certificateService.getLakarutlatande(any(Certificate.class))).thenReturn(utlatande);
+
+        when(moduleRestApiFactory.getModuleRestService("fk7263")).thenReturn(moduleRestApi);
+        when(restResponse.getEntity()).thenReturn(IOUtils.getInputStreamFromString("<someXml></someXml>"));
+        when(moduleRestApi.marshall("1.0", document)).thenReturn(restResponse);
 
         GetCertificateRequestType parameters = createGetCertificateRequest(civicRegistrationNumber, certificateId);
 
@@ -110,23 +128,6 @@ public class GetCertificateResponderImplTest {
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Unknown certificate ID: 123456", response.getResult().getErrorText());
-    }
-
-    @Test
-    public void getCertificateWithUnsupportedCertificateType() {
-
-        when(certificateService.getCertificate(civicRegistrationNumber, certificateId)).thenReturn(
-                new CertificateBuilder("123456").certificateType("unsupportedCertificateType").build());
-
-        GetCertificateRequestType parameters = createGetCertificateRequest(civicRegistrationNumber, certificateId);
-
-        GetCertificateResponseType response = responder.getCertificate(null, parameters);
-
-        assertNotNull(response.getMeta());
-        assertNull(response.getCertificate());
-        assertEquals(ERROR, response.getResult().getResultCode());
-        assertEquals(ErrorIdEnum.APPLICATION_ERROR, response.getResult().getErrorId());
-        assertEquals("Unsupported certificate type: unsupportedCertificateType", response.getResult().getErrorText());
     }
 
     @Test

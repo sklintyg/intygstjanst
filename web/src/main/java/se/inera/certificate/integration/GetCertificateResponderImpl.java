@@ -39,17 +39,13 @@ import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.CertificateType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType;
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 
 import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static se.inera.certificate.integration.util.ResultOfCallUtil.applicationErrorResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
@@ -107,24 +103,16 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
     }
 
     private void attachCertificateDocument(Certificate certificate, GetCertificateResponseType response) {
+
+        Utlatande utlatande = certificateService.getLakarutlatande(certificate);
+
+        Document document = marshall(certificate, utlatande);
+
         CertificateType certificateType = new CertificateType();
+        certificateType.getAny().add(document.getDocumentElement());
 
-        CertificateSupport certificateSupport = retrieveCertificateSupportForCertificateType(certificate.getType());
-        if (certificateSupport == null) {
-            // given certificate type is not supported
-            response.setResult(applicationErrorResult(String.format("Unsupported certificate type: %s", certificate.getType())));
-        } else {
-            Utlatande utlatande = certificateService.getLakarutlatande(certificate);
-
-            Document document = marshall(certificate, utlatande);
-
-            // TODO - this is FK7263-specific and has to be done by the FK7263 module
-            //RegisterMedicalCertificateType registerMedicalCertificateType = UtlatandeToRegisterMedicalCertificate.getJaxbObject(utlatande);
-            certificateType.getAny().add(document.getDocumentElement());
-
-            response.setCertificate(certificateType);
-            response.setResult(okResult());
-        }
+        response.setCertificate(certificateType);
+        response.setResult(okResult());
     }
 
     private Document marshall(Certificate certificate, Utlatande utlatande) {
@@ -139,13 +127,6 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
         } catch (Exception e) {
            throw Throwables.propagate(e);
         }
-    }
-
-    private JAXBElement<?> wrapJaxb(RegisterMedicalCertificateType ws) {
-        JAXBElement<?> jaxbElement = new JAXBElement<RegisterMedicalCertificateType>(
-                new QName("urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3", "RegisterMedicalCertificate"),
-                RegisterMedicalCertificateType.class, ws);
-        return jaxbElement;
     }
 
     private CertificateSupport retrieveCertificateSupportForCertificateType(String certificateType) {
