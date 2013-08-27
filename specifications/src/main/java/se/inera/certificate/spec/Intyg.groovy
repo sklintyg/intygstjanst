@@ -23,9 +23,27 @@ public class Intyg extends RestClientFixture {
 	String mall = "M"
     int from
     int to
+	private boolean skickat
+	private boolean rättat
 	
 	private String template
 	
+	public void setSkickat(String value) {
+		if (value != null && value.equalsIgnoreCase("ja")) {
+			skickat = true
+		} else {
+			skickat = false
+		}
+	}
+
+	public void setRättat(String value) {
+		if (value != null && value.equalsIgnoreCase("ja")) {
+			rättat = true
+		} else {
+			rättat = false
+		}
+	}
+
 	public void reset() {
 		mall = "M"
 		utfärdare = "EnUtfärdare"
@@ -33,6 +51,8 @@ public class Intyg extends RestClientFixture {
 		giltigtFrån = null
 		giltigtTill = null
 		template = null
+		skickat = false
+		rättat = false
 	}
 	
     public void execute() {
@@ -58,6 +78,11 @@ public class Intyg extends RestClientFixture {
     }
 
     private certificateJson() {
+		def stateList = [[state:"RECEIVED", target:"MI", timestamp:"2013-08-05T14:30:03.227"]]
+		if (skickat)
+			stateList << [state:"SENT", target:"MI", timestamp:"2013-08-05T14:31:03.227"]
+		if (rättat)
+			stateList << [state:"CANCELLED", target:"MI", timestamp:"2013-08-05T14:32:03.227"]
         [id:String.format(id, utfärdat),
             type:typ,
             civicRegistrationNumber:personnr,
@@ -66,13 +91,7 @@ public class Intyg extends RestClientFixture {
             validFromDate:giltigtFrån,
             validToDate:giltigtTill,
             careUnitName: enhet,
-			states:
-			  [
-				 [state:"RECEIVED",
-				  target:"MI",
-				  timestamp:"2013-08-05T14:30:03.227"
-				 ]
-			  ],
+			states: stateList,
             document: document()
         ]
     }
