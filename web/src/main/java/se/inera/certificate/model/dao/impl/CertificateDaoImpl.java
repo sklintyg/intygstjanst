@@ -152,6 +152,6 @@ public class CertificateDaoImpl implements CertificateDao {
                 found.add(certificate.getId());
             }
         }
-        return null;
+        return filtered;
     }
 }
