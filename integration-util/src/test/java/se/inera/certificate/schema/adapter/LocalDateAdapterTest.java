@@ -30,6 +30,7 @@ import org.junit.Test;
 public final class LocalDateAdapterTest {
 
     private static final String DATE_TIME_STRING_WITH_TIME_ZONE = "2012-11-13T13:55:50.844+01:00";
+    private static final String DATE_TIME_STRING_WITH_TIME_ZONE_AND_MILLIS = "2012-11-13T13:55:50.12+01:00";
     private static final String DATE_TIME_STRING = "2012-11-13T13:55:50.844";
     private static final String DATE_STRING = "2012-11-13";
 
@@ -37,6 +38,7 @@ public final class LocalDateAdapterTest {
     private static final LocalDateTime ISO_DATE_TIME = new LocalDateTime(2012, 11, 13, 13, 55, 50);
     private static final LocalDateTime DATE_TIME = new LocalDateTime(2012, 11, 13, 13, 55, 50, 844);
     private static final LocalDateTime DATE_TIME_START_OF_DAY_STRING = new LocalDateTime(2012, 11, 13, 0, 0, 0);
+    private static final LocalDateTime DATE_TIME_STRING_WITH_MILLIS = new LocalDateTime(2012, 11, 13, 13, 55, 50, 120);
 
     private static final String ISO_DATE_TIME_STRING = "2012-11-13T13:55:50";
     private static final String ISO_DATE_STRING = "2012-11-13";
@@ -75,6 +77,12 @@ public final class LocalDateAdapterTest {
     public void testParseDateTimeWithDateTime() {
         LocalDateTime date = LocalDateAdapter.parseDateTime(DATE_TIME_STRING);
         assertEquals(DATE_TIME, date);
+    }
+
+    @Test
+    public void testParseDateTimeWithMillisAndTimezone() {
+        LocalDateTime date = LocalDateAdapter.parseDateTime(DATE_TIME_STRING_WITH_TIME_ZONE_AND_MILLIS);
+        assertEquals(DATE_TIME_STRING_WITH_MILLIS, date);
     }
 
     @Test
