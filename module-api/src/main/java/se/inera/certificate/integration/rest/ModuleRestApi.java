@@ -17,14 +17,14 @@ import javax.ws.rs.core.Response;
 public interface ModuleRestApi {
 
     /**
-     * @param utlatande
+     * @param transportXml
      * @return
      */
     @POST
     @Path("/unmarshall")
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_JSON)
-    Response unmarshall(se.inera.certificate.common.v1.Utlatande utlatande);
+    Response unmarshall(String transportXml);
 
 
     @POST
@@ -38,9 +38,9 @@ public interface ModuleRestApi {
      * @return
      */
     @POST
-    @Path( "/valid" )
-    @Consumes( MediaType.APPLICATION_JSON )
-    @Produces( MediaType.TEXT_PLAIN )
+    @Path("/valid")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     Response validate(Utlatande utlatande);
 
 
@@ -49,9 +49,9 @@ public interface ModuleRestApi {
      * @return
      */
     @POST
-    @Path( "/pdf" )
-    @Consumes( MediaType.APPLICATION_JSON )
-    @Produces( "application/pdf" )
+    @Path("/pdf")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/pdf")
     Response pdf(Utlatande utlatande);
 
     /**
@@ -61,8 +61,8 @@ public interface ModuleRestApi {
      * @return
      */
     @PUT
-    @Path( "/internal" )
-    @Consumes( MediaType.APPLICATION_JSON )
+    @Path("/internal")
+    @Consumes(MediaType.APPLICATION_JSON)
     Response convertExternalToInternal(Utlatande utlatande);
 
     /**
@@ -72,7 +72,7 @@ public interface ModuleRestApi {
      * @return
      */
     @PUT
-    @Path( "/external" )
-    @Consumes( MediaType.APPLICATION_JSON )
+    @Path("/external")
+    @Consumes(MediaType.APPLICATION_JSON)
     Response convertInternalToExternal(Object utlatande);
 }
