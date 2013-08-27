@@ -32,7 +32,7 @@ public final class LocalDateAdapter {
     private static final String ISO_DATE_TIME_PATTERN = "YYYY-MM-dd'T'HH:mm:ss";
 
     private static final int DATE_END_INDEX = 10;
-    private static final int TIME_END_INDEX = 23;
+    private static final String TIMEZONE_PATTERN = "\\+.*";
 
     private LocalDateAdapter() {
     }
@@ -52,11 +52,9 @@ public final class LocalDateAdapter {
      * Converts an xs:datetime to a Joda Time LocalDateTime.
      */
     public static LocalDateTime parseDateTime(String dateString) {
-        if (dateString.length() > TIME_END_INDEX) {
-            return new LocalDateTime(dateString.substring(0, TIME_END_INDEX));
-        } else {
-            return new LocalDateTime(dateString);
-        }
+
+        // crop timezone information ('+...')
+        return new LocalDateTime(dateString.replaceAll(TIMEZONE_PATTERN, ""));
     }
 
     /**
