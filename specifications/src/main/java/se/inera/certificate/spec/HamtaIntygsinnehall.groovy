@@ -1,6 +1,5 @@
 package se.inera.certificate.spec
 import org.skyscreamer.jsonassert.JSONAssert
-
 import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20.GetCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentRequest
@@ -8,8 +7,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentrespon
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponderService
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponse
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
-import fitnesse.slim.SlimError
-
 /**
  *
  * @author andreaskaltenbach
@@ -42,7 +39,7 @@ public class HamtaIntygsinnehall extends WsClientFixture {
         response = getCertificateResponder.getCertificateContent(logicalAddress, request)
 		switch (response.result.resultCode) {
 			case ResultCodeEnum.OK:
-				faktisktSvar = asJson(response.certificate)
+				faktisktSvar = response.certificate
 				resultat = "OK"
 				break
 			case ResultCodeEnum.INFO:
