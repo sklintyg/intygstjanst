@@ -1,7 +1,5 @@
 package se.inera.certificate.integration.rest;
 
-import se.inera.certificate.model.Utlatande;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -10,6 +8,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import se.inera.certificate.model.Utlatande;
 
 /**
  * @author andreaskaltenbach
@@ -52,7 +52,7 @@ public interface ModuleRestApi {
     @Path("/pdf")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/pdf")
-    Response pdf(Utlatande utlatande);
+    Response pdf(Object certificateContentHolder);
 
     /**
      * Convert from module-external format to module-internal format.
@@ -63,7 +63,7 @@ public interface ModuleRestApi {
     @PUT
     @Path("/internal")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response convertExternalToInternal(Utlatande utlatande);
+    Response convertExternalToInternal(Object certificateContentHolder);
 
     /**
      * Convert from module-internal format to module-external format.
