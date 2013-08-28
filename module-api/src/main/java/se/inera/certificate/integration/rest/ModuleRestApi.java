@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import se.inera.certificate.integration.rest.dto.CertificateContentHolder;
 import se.inera.certificate.model.Utlatande;
 
 /**
@@ -52,7 +53,7 @@ public interface ModuleRestApi {
     @Path("/pdf")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/pdf")
-    Response pdf(Object certificateContentHolder);
+    Response pdf(CertificateContentHolder certificateContentHolder);
 
     /**
      * Convert from module-external format to module-internal format.
@@ -63,7 +64,7 @@ public interface ModuleRestApi {
     @PUT
     @Path("/internal")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response convertExternalToInternal(Object certificateContentHolder);
+    Response convertExternalToInternal(CertificateContentHolder certificateContentHolder);
 
     /**
      * Convert from module-internal format to module-external format.
