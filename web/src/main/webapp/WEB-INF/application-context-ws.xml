@@ -66,6 +66,18 @@
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
 
+  <jaxws:endpoint address="/register-certificate-wiretap/v3.0"
+                    implementor="se.inera.certificate.integration.RegisterMedicalCertificateResponderWiretapImpl">
+      <jaxws:inInterceptors>
+        <bean class="se.inera.certificate.integration.interceptor.LakarutlatandeValidatingInterceptor"/>
+      </jaxws:inInterceptors>
+      <jaxws:outFaultInterceptors>
+        <bean class="se.inera.certificate.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+          <constructor-arg value="transform/register-medical-certificate-transform.xslt"/>
+        </bean>
+      </jaxws:outFaultInterceptors>
+    </jaxws:endpoint>
+
   <jaxws:endpoint address="/set-certificate-status/v1.0"
                   implementor="se.inera.certificate.integration.SetCertificateStatusResponderImpl">
     <jaxws:outFaultInterceptors>
