@@ -17,6 +17,7 @@ public class Patient {
 
     private List<Sysselsattning> sysselsattnings;
     private List<Arbetsuppgift> arbetsuppgifts;
+    private List<PatientRelation> patientrelations;
 
     public Id getId() {
         return id;
@@ -81,4 +82,12 @@ public class Patient {
     public void setArbetsuppgifts(List<Arbetsuppgift> arbetsuppgifts) {
         this.arbetsuppgifts = arbetsuppgifts;
     }
+
+	public List<PatientRelation> getPatientrelations() {
+		return patientrelations;
+	}
+
+	public void setPatientrelations(List<PatientRelation> patientrelations) {
+		this.patientrelations = patientrelations;
+	}
 }
