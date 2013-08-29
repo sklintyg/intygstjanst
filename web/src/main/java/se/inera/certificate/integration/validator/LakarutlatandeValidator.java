@@ -1,13 +1,16 @@
 package se.inera.certificate.integration.validator;
 
-import static com.google.common.collect.Iterables.find;
-import static java.util.Arrays.asList;
-import iso.v21090.dt.v1.II;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.google.common.collect.Iterables.find;
+import static java.util.Arrays.asList;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
+import iso.v21090.dt.v1.II;
+import se.inera.certificate.validate.ValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.AktivitetType;
 import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.Aktivitetskod;
 import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.ArbetsformagaNedsattningType;
@@ -28,9 +31,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.EnhetType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.HosPersonalType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Predicate;
 
 /**
  * @author andreaskaltenbach
@@ -80,7 +80,7 @@ public class LakarutlatandeValidator {
         validateSignering();
 
         if (!validationErrors.isEmpty()) {
-            throw new ValidationException(validationErrors);
+            throw new ValidationException(Joiner.on("\n").join(validationErrors));
         }
     }
 

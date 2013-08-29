@@ -1,5 +1,13 @@
 package se.inera.certificate.integration;
 
+import javax.ws.rs.core.Response;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 import org.slf4j.Logger;
@@ -11,17 +19,9 @@ import se.inera.certificate.integration.rest.ModuleRestApi;
 import se.inera.certificate.integration.rest.ModuleRestApiFactory;
 import se.inera.certificate.integration.util.RestUtils;
 import se.inera.certificate.integration.util.XmlUtils;
-import se.inera.certificate.integration.validator.ValidationException;
+import se.inera.certificate.validate.ValidationException;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.service.CertificateService;
-
-import javax.ws.rs.core.Response;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.transform.TransformerException;
-import java.io.IOException;
 
 /**
  *

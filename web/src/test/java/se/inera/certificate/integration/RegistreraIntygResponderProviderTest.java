@@ -1,20 +1,5 @@
 package se.inera.certificate.integration;
 
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.core.io.ClassPathResource;
-import org.w3c.dom.Document;
-import se.inera.certificate.integration.rest.ModuleRestApi;
-import se.inera.certificate.integration.rest.ModuleRestApiFactory;
-import se.inera.certificate.integration.validator.ValidationException;
-import se.inera.certificate.model.Utlatande;
-import se.inera.certificate.service.CertificateService;
-
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,6 +13,21 @@ import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.core.io.ClassPathResource;
+import org.w3c.dom.Document;
+import se.inera.certificate.integration.rest.ModuleRestApi;
+import se.inera.certificate.integration.rest.ModuleRestApiFactory;
+import se.inera.certificate.model.Utlatande;
+import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.validate.ValidationException;
 
 /**
  *
