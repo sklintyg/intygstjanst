@@ -3,6 +3,7 @@ package se.inera.certificate.integration.validator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+import se.inera.certificate.validate.ValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.LakarutlatandeType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 
