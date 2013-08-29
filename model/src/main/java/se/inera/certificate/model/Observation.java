@@ -1,6 +1,5 @@
 package se.inera.certificate.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.LocalDateTime;
@@ -20,7 +19,7 @@ public class Observation {
 	private List<PhysicalQuantity> varde;
 	private Boolean forekomst;
 	private Boolean patientInstammer;
-	private List<Utforarroll> utforsAv;
+	private Utforarroll utforsAv;
 	private List<Observationssamband> observationssamband;
 
 	public Id getObservationsId() {
@@ -103,18 +102,20 @@ public class Observation {
 		this.patientInstammer = patientInstammer;
 	}
 
-	public List<Utforarroll> getUtforsAv() {
-		if (utforsAv == null) {
-			utforsAv = new ArrayList<Utforarroll>();
-		}
-		return this.utforsAv;
-	}
-
 	public List<Observationssamband> getObservationssamband() {
 		return observationssamband;
 	}
 
-	public void setObservationssamband(List<Observationssamband> observationssamband) {
+	public void setObservationssamband(
+			List<Observationssamband> observationssamband) {
 		this.observationssamband = observationssamband;
+	}
+
+	public Utforarroll getUtforsAv() {
+		return utforsAv;
+	}
+
+	public void setUtforsAv(Utforarroll utforsAv) {
+		this.utforsAv = utforsAv;
 	}
 }
