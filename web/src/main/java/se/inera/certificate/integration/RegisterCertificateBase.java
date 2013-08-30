@@ -58,6 +58,9 @@ abstract class RegisterCertificateBase {
             String type = getType(soapBody);
             String utlatandeXml = XmlUtils.getDocumentAsString(soapBody);
 
+            // Save original xml to database
+            certificateService.storeOriginalCertificate(utlatandeXml);
+
             // Unmarshall xml to module external JSON model
             String externalJson = unmarshall(type, utlatandeXml);
 
