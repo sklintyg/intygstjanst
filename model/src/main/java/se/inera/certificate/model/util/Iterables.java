@@ -24,4 +24,15 @@ public final class Iterables {
             targetCollection.addAll(toAdd);
         }
     }
+    
+    /**
+     * Adds a value to a collection if the collection if both collection and value is non-null
+     * @param targetCollection
+     * @param toAdd
+     */
+    public static <T> void addExisting(Collection<T> targetCollection, T toAdd) {
+        if (targetCollection != null && toAdd != null) {
+            targetCollection.add(toAdd);
+        }
+    }
 }
