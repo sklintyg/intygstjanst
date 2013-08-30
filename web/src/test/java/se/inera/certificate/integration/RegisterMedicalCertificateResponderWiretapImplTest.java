@@ -12,7 +12,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import org.joda.time.LocalDateTime;
@@ -87,7 +86,5 @@ public class RegisterMedicalCertificateResponderWiretapImplTest {
 
         verify(certificateService).setCertificateState(eq("19121212-1212"), eq("6ea04fd0-5fef-4809-823b-efeddf8a4d55"), eq("FK"),
                 eq(CertificateState.SENT), any(LocalDateTime.class));
-
-        verifyNoMoreInteractions(certificateService);
     }
 }
