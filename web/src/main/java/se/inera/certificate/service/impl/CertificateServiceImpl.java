@@ -124,28 +124,19 @@ public class CertificateServiceImpl implements CertificateService {
      * Method has propagation REQUIRES_NEW because it should run independently of any outer transactions.
      * If it fails, nothing else should fail.
      *
-     * @param certificateType the received certificate
+     * @param utlatandeXml the received certificate utlatande xml
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void storeOriginalCertificate(RegisterMedicalCertificateType certificateType) {
+    public void storeOriginalCertificate(String utlatandeXml) {
         if (shouldStoreOriginalCertificate) {
             try {
-                OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), serializeUtlatande(certificateType));
+                OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), utlatandeXml);
                 certificateDao.storeOriginalCertificate(original);
             } catch (Exception e) {
                 LOGGER.error("Could not write original document to database. Does not interrupt certificate registration", e);
             }
         }
-    }
-
-    protected String serializeUtlatande(RegisterMedicalCertificateType certificateType) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
-        Marshaller marshaller = jaxbContext.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-        StringWriter sw = new StringWriter();
-        marshaller.marshal(new ObjectFactory().createRegisterMedicalCertificate(certificateType), sw);
-        return sw.toString();
     }
 
     @Override

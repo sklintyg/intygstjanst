@@ -193,24 +193,9 @@ public class CertificateServiceImplTest {
     }
 
     @Test
-    public void testSerializeUtlatande() throws JAXBException {
-        RegisterMedicalCertificateType type = new ObjectFactory().createRegisterMedicalCertificateType();
-        LakarutlatandeType lakarutlatandeType = new LakarutlatandeType();
-        lakarutlatandeType.setKommentar("En kommentar");
-        type.setLakarutlatande(lakarutlatandeType);
-
-        String result = certificateService.serializeUtlatande(type);
-
-        assertNotNull(result);
-        int index = result.indexOf("<kommentar>") + 11;
-        assertEquals("En kommentar", result.substring(index, index + 12));
-    }
-
-    @Test
     public void testStoreOriginalCertificate() {
-        RegisterMedicalCertificateType type = new ObjectFactory().createRegisterMedicalCertificateType();
         doNothing().when(certificateDao).storeOriginalCertificate((OriginalCertificate)anyObject());
-        certificateService.storeOriginalCertificate(type);
+        certificateService.storeOriginalCertificate("Some text");
         verify(certificateDao).storeOriginalCertificate((OriginalCertificate)anyObject());
     }
 }
