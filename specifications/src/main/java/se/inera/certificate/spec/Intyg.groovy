@@ -96,7 +96,7 @@ public class Intyg extends RestClientFixture {
         ]
     }
 
-    private document() {
+    protected document() {
         if ((typ == 'fk7263')||(typ == 'FK7263')) {
             "\"" + document("fk7263") + "\""
         }
@@ -105,7 +105,7 @@ public class Intyg extends RestClientFixture {
         }
     }
 
-    private document(typ) {
+    protected document(typ) {
         // slurping the FK7263 template
         def certificate = new JsonSlurper().parse(new InputStreamReader(new ClassPathResource("${typ}_${mall}_template.json").getInputStream()))
 
