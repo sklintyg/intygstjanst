@@ -1,0 +1,17 @@
+!3 Journalsystem registrerar ett nytt intyg direkt hos Försäkringskassan
+
+|Registrera fk7263 intyg hos FK|
+|personnummer|intyg|resultat?|
+|19121212-1212|intyg-1|OK|
+
+!3 och intyget blir markerat som SENT med en gång.
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|status?|
+|19121212-1212|intyg-1|OK|[SENT, RECEIVED]|
+
+!3 Rensa bort test-intyg
+
+|ta bort Intyg|
+|id|
+|intyg-1|
