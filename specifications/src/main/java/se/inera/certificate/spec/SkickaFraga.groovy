@@ -1,33 +1,20 @@
 package se.inera.certificate.spec
 
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK
-import iso.v21090.dt.v1.II
 
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
 import javax.xml.transform.stream.StreamSource
 
-import org.apache.cxf.endpoint.Client
-import org.apache.cxf.frontend.ClientProxy
-import org.apache.cxf.message.Message
 import org.joda.time.LocalDateTime
 import org.springframework.core.io.ClassPathResource
 
 import riv.insuranceprocess.healthreporting.medcertqa._1.Amnetyp
-import riv.insuranceprocess.healthreporting.medcertqa._1.InnehallType
-import riv.insuranceprocess.healthreporting.medcertqa._1.LakarutlatandeEnkelType
-import riv.insuranceprocess.healthreporting.medcertqa._1.VardAdresseringsType
 import se.inera.certificate.spec.util.WsClientFixture
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.v1.rivtabp20.SendMedicalCertificateQuestionResponderInterface
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.v1.rivtabp20.SendMedicalCertificateQuestionResponderService
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.QuestionToFkType
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType
-import se.inera.ifv.insuranceprocess.healthreporting.v2.EnhetType
-import se.inera.ifv.insuranceprocess.healthreporting.v2.HosPersonalType
-import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType
-import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType
 
 class SkickaFraga extends WsClientFixture {
 
@@ -53,7 +40,7 @@ class SkickaFraga extends WsClientFixture {
         // read request template from file
         JAXBContext jaxbContext = JAXBContext.newInstance(SendMedicalCertificateQuestionType.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        QuestionToFkType question = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("SendMedicalCertificateQuestion_template.xml").getInputStream()), RegisterMedicalCertificateType.class).getValue()
+        QuestionToFkType question = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("SendMedicalCertificateQuestion_template.xml").getInputStream()), SendMedicalCertificateQuestionType.class).getValue().getQuestion()
         question.setAvsantTidpunkt(LocalDateTime.now());
 		if (ämne) question.setAmne(Amnetyp.fromValue(ämne))
         if (vårdReferens) question.setVardReferensId(vårdReferens);

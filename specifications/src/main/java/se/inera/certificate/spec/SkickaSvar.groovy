@@ -6,16 +6,12 @@ import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
 import javax.xml.transform.stream.StreamSource
 
-import org.apache.cxf.endpoint.Client
-import org.apache.cxf.frontend.ClientProxy
-import org.apache.cxf.message.Message
 import org.joda.time.LocalDateTime
 import org.springframework.core.io.ClassPathResource
 
 import riv.insuranceprocess.healthreporting.medcertqa._1.Amnetyp
 import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswer.v1.rivtabp20.SendMedicalCertificateAnswerResponderInterface
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswer.v1.rivtabp20.SendMedicalCertificateAnswerResponderService
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.AnswerToFkType
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.SendMedicalCertificateAnswerResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.SendMedicalCertificateAnswerType
@@ -47,15 +43,15 @@ class SkickaSvar extends WsClientFixture {
 
     public String resultat() {
         // read request template from file
-        JAXBContext jaxbContext = JAXBContext.newInstance(SendMedicalCertificateQuestionType.class);
+        JAXBContext jaxbContext = JAXBContext.newInstance(SendMedicalCertificateAnswerType.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        AnswerToFkType answer = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("SendMedicalCertificateAnswer_template.xml").getInputStream()), AnswerToFkType.class).getValue()
+        AnswerToFkType answer = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("SendMedicalCertificateAnswer_template.xml").getInputStream()), SendMedicalCertificateAnswerType.class).getValue().getAnswer()
         answer.setAvsantTidpunkt(LocalDateTime.now());
 		if (ämne) answer.setAmne(Amnetyp.fromValue(ämne))
         if (vårdReferens) answer.setVardReferensId(vårdReferens);
         if (fkReferens) answer.setFkReferensId(fkReferens);
-		if (fråga) answer.getFraga().setMeddelandeText(fråga);
-		if (frågeTidpunkt) answer.getFraga().setSigneringsTidpunkt(LocalDateTime.parse(frågeTidpunkt));
+		// if (fråga) answer.getFraga().setMeddelandeText(fråga);
+		// if (frågeTidpunkt) answer.getFraga().setSigneringsTidpunkt(LocalDateTime.parse(frågeTidpunkt));
 		if (svar) answer.getSvar().setMeddelandeText(svar)
 		if (svarsTidpunkt) answer.getSvar().setSigneringsTidpunkt(LocalDateTime.parse(svarsTidpunkt))
 		if (lakarutlatandeId) answer.getLakarutlatande().setLakarutlatandeId(lakarutlatandeId)

@@ -55,7 +55,7 @@ public class SendMedicalCertificateQuestionResponderStub implements SendMedicalC
             String id = request.getQuestion().getLakarutlatande().getLakarutlatandeId();
 
             marshalCertificate(request);
-            logger.info("STUB Received request");
+            logger.info("STUB Received question concerning certificate with id: " + id);
             if  (request.getQuestion().getAmne().equals(Amnetyp.MAKULERING_AV_LAKARINTYG)) {
                 fkMedicalCertificatesStore.makulera(id);            	
             }
