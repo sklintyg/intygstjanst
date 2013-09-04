@@ -8,10 +8,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import se.inera.certificate.model.Utlatande;
 
 /**
- *  Factory which creates {@link ModuleRestApi} instances to communicate with the Rest API of the certificate modules.
- *
+ * Factory which creates {@link ModuleRestApi} instances to communicate with the Rest API of the certificate modules.
+ * 
  * @author andreaskaltenbach
  */
 @Component
@@ -34,5 +35,12 @@ public class ModuleRestApiFactory {
     public ModuleRestApi getModuleRestService(String type) {
         String uri = host + "/" + type.toLowerCase() + "/api";
         return JAXRSClientFactory.create(uri, ModuleRestApi.class, Collections.singletonList(jacksonJsonProvider));
+    }
+
+    /**
+     * Creates a {@link ModuleRestApi} for the given certificate type.
+     */
+    public ModuleRestApi getModuleRestService(Utlatande utlatande) {
+        return getModuleRestService(utlatande.getTyp().getCode());
     }
 }

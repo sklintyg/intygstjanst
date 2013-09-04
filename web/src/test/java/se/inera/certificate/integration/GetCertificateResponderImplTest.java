@@ -18,34 +18,8 @@
  */
 package se.inera.certificate.integration;
 
-import org.apache.commons.io.FileUtils;
-import org.h2.util.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.core.io.ClassPathResource;
-import se.inera.certificate.exception.MissingConsentException;
-import se.inera.certificate.integration.certificates.CertificateSupport;
-import se.inera.certificate.integration.certificates.fk7263.Fk7263Support;
-import se.inera.certificate.integration.json.CustomObjectMapper;
-import se.inera.certificate.integration.rest.ModuleRestApi;
-import se.inera.certificate.integration.rest.ModuleRestApiFactory;
-import se.inera.certificate.model.CertificateState;
-import se.inera.certificate.model.Utlatande;
-import se.inera.certificate.model.builder.CertificateBuilder;
-import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.service.CertificateService;
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType;
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType;
-import se.inera.ifv.insuranceprocess.healthreporting.v2.ErrorIdEnum;
-
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
@@ -57,6 +31,27 @@ import static org.mockito.Mockito.when;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ERROR;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
+
+import org.apache.commons.io.FileUtils;
+import org.h2.util.IOUtils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.core.io.ClassPathResource;
+import se.inera.certificate.exception.MissingConsentException;
+import se.inera.certificate.integration.json.CustomObjectMapper;
+import se.inera.certificate.integration.rest.ModuleRestApi;
+import se.inera.certificate.integration.rest.ModuleRestApiFactory;
+import se.inera.certificate.model.CertificateState;
+import se.inera.certificate.model.Utlatande;
+import se.inera.certificate.model.builder.CertificateBuilder;
+import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.service.CertificateService;
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType;
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.ErrorIdEnum;
 
 /**
  * @author andreaskaltenbach
@@ -70,9 +65,6 @@ public class GetCertificateResponderImplTest {
     @Mock
     private CertificateService certificateService = mock(CertificateService.class);
 
-    @Mock
-    private List<CertificateSupport> supported;
-
     @InjectMocks
     private GetCertificateResponderImpl responder = new GetCertificateResponderImpl();
 
@@ -84,11 +76,6 @@ public class GetCertificateResponderImplTest {
 
     @Mock
     private Response restResponse = mock(Response.class);
-
-    @Before
-    public void before() {
-        when(supported.iterator()).thenReturn(Collections.<CertificateSupport>singletonList(new Fk7263Support()).iterator());
-    }
 
     @Test
     public void getCertificate() throws IOException {

@@ -1,17 +1,17 @@
 package se.inera.certificate.integration;
 
-import com.google.common.base.Throwables;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
+
+import com.google.common.base.Throwables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 /**
  *
@@ -30,7 +30,7 @@ public class RegistreraIntygResponderProvider extends RegisterCertificateBase im
         SOAPMessage response = null;
         try {
             convertAndPersist(request);
-            response = getReturnCode(request);
+            response = request;
         } catch (Exception e) {
             LOGGER.warn("Error in Webservice: ", e);
             Throwables.propagate(e);
@@ -51,13 +51,5 @@ public class RegistreraIntygResponderProvider extends RegisterCertificateBase im
     @Override
     QName getBodyElementQName() {
         return BODY_NAME;
-    }
-
-    SOAPMessage getReturnCode(SOAPMessage soapMessage) {
-        try {
-            return soapMessage;
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
-        }
     }
 }

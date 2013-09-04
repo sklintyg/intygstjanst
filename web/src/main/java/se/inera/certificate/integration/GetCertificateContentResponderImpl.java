@@ -1,6 +1,11 @@
 package se.inera.certificate.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+
+import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
+import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
+import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +21,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentrespon
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponse;
 
-import java.util.List;
-
-import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
-
 /**
  * @author andreaskaltenbach
  */
@@ -30,9 +29,6 @@ import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 public class GetCertificateContentResponderImpl implements GetCertificateContentResponderInterface {
 
     private static final Logger LOG = LoggerFactory.getLogger(GetCertificateResponderImpl.class);
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private CertificateService certificateService;

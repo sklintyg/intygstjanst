@@ -1,0 +1,10 @@
+<RegisterMedicalCertificate xmlns="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3"
+                            xmlns:ns3="urn:riv:insuranceprocess:healthreporting:2"
+                            xmlns:ns5="urn:riv:insuranceprocess:healthreporting:mu7263:3">
+  <lakarutlatande>
+    <ns5:lakarutlatande-id>id-1234567890</ns5:lakarutlatande-id>
+    <ns5:patient>
+      <ns3:person-id root="1.2.752.129.2.1.3.1" extension="19121212-1212"/>
+    </ns5:patient>
+  </lakarutlatande>
+</RegisterMedicalCertificate>

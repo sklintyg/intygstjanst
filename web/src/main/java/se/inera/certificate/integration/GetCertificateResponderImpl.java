@@ -18,6 +18,14 @@
  */
 package se.inera.certificate.integration;
 
+import javax.ws.rs.core.Response;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.InputStream;
+
+import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
+import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
+import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
+
 import com.google.common.base.Throwables;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
@@ -28,7 +36,6 @@ import org.w3.wsaddressing10.AttributedURIType;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import se.inera.certificate.exception.MissingConsentException;
-import se.inera.certificate.integration.certificates.CertificateSupport;
 import se.inera.certificate.integration.converter.ModelConverter;
 import se.inera.certificate.integration.rest.ModuleRestApi;
 import se.inera.certificate.integration.rest.ModuleRestApiFactory;
@@ -39,16 +46,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.CertificateType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType;
-
-import javax.ws.rs.core.Response;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 
 /**
  * @author andreaskaltenbach
@@ -61,9 +58,6 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
 
     @Autowired
     private CertificateService certificateService;
-
-    @Autowired
-    private List<CertificateSupport> supportedCertificates = new ArrayList<>();
 
     @Autowired
     private ModuleRestApiFactory moduleRestApiFactory;
@@ -127,14 +121,5 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
         } catch (Exception e) {
            throw Throwables.propagate(e);
         }
-    }
-
-    private CertificateSupport retrieveCertificateSupportForCertificateType(String certificateType) {
-        for (CertificateSupport certificateSupport : supportedCertificates) {
-            if (certificateSupport.certificateType().equalsIgnoreCase(certificateType)) {
-                return certificateSupport;
-            }
-        }
-        return null;
     }
 }

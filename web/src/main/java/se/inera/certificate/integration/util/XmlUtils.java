@@ -1,8 +1,5 @@
 package se.inera.certificate.integration.util;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -14,6 +11,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -29,10 +29,21 @@ public class XmlUtils {
         tf = TransformerFactory.newInstance();
     }
 
-    public static Document documentFromSoapBody(SOAPMessage soapMessage, QName bodyName) throws ParserConfigurationException, SOAPException {
-        SOAPBodyElement e = (SOAPBodyElement)soapMessage.getSOAPBody().getChildElements(bodyName).next();
+    public static Document documentFromSoapBody(SOAPMessage soapMessage, QName bodyName)
+            throws ParserConfigurationException, SOAPException {
+        SOAPBodyElement e = (SOAPBodyElement) soapMessage.getSOAPBody().getChildElements(bodyName).next();
+        return documentFromSoapBody(e);
+    }
+
+    public static Document documentFromSoapBody(SOAPMessage soapMessage) throws ParserConfigurationException,
+            SOAPException {
+        SOAPBodyElement e = (SOAPBodyElement) soapMessage.getSOAPBody().getChildNodes().item(0);
+        return documentFromSoapBody(e);
+    }
+
+    private static Document documentFromSoapBody(SOAPBodyElement element) throws ParserConfigurationException {
         Document document = dbf.newDocumentBuilder().newDocument();
-        Node node = document.importNode(e, true);
+        Node node = document.importNode(element, true);
         document.appendChild(node);
         return document;
     }

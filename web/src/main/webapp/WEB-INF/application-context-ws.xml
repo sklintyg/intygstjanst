@@ -31,10 +31,6 @@
 
   <jaxws:endpoint address="/get-certificate/v1.0"
                   implementor="se.inera.certificate.integration.GetCertificateResponderImpl">
-    <jaxws:properties>
-      <entry key="jaxb.additionalContextClasses"
-             value="#{certificatesContextClassCollector.certificateContextClasses}"/>
-    </jaxws:properties>
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.certificate.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/get-certificate-transform.xslt"/>
@@ -55,9 +51,6 @@
 
   <jaxws:endpoint address="/register-certificate-wiretap/v3.0"
                     implementor="se.inera.certificate.integration.RegisterMedicalCertificateResponderWiretapImpl">
-      <jaxws:inInterceptors>
-        <bean class="se.inera.certificate.integration.interceptor.LakarutlatandeValidatingInterceptor"/>
-      </jaxws:inInterceptors>
       <jaxws:outFaultInterceptors>
         <bean class="se.inera.certificate.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
           <constructor-arg value="transform/register-medical-certificate-transform.xslt"/>
@@ -119,11 +112,6 @@
   </jaxws:endpoint>
 
   <!-- ws clients -->
-  <jaxws:client id="registerMedicalCertificatesClient"
-                serviceClass="se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface"
-                address="${registermedicalcertificatev3.endpoint.url}">
-  </jaxws:client>
-
   <jaxws:client id="sendMedicalCertificateQuestionClient"
                 serviceClass="se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.v1.rivtabp20.SendMedicalCertificateQuestionResponderInterface"
                 address="${sendmedicalcertificatequestionv1.endpoint.url}">

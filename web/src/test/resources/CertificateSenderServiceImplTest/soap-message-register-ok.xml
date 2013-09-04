@@ -1,0 +1,13 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+  <SOAP-ENV:Header>
+    <To xmlns="http://www.w3.org/2005/08/addressing">someLogicalAddress</To>
+  </SOAP-ENV:Header>
+  <SOAP-ENV:Body>
+    <Register>
+      <result xmlns="urn:riv:insuranceprocess:healthreporting:2">
+        <resultCode>OK</resultCode>
+      </result>
+    </Register>
+    <Certificate>Some medical information</Certificate>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
