@@ -1,13 +1,12 @@
 package se.inera.certificate.service.impl;
 
 import javax.ws.rs.core.Response;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.WebServiceException;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -30,7 +29,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
-import org.w3c.dom.Document;
 import se.inera.certificate.integration.exception.ExternalWebServiceCallFailedException;
 import se.inera.certificate.integration.json.CustomObjectMapper;
 import se.inera.certificate.integration.rest.ModuleRestApi;
@@ -126,7 +124,6 @@ public class CertificateSenderServiceImplTest {
         senderService.sendCertificate(certificate, "fk");
 
         compareSoapMessageWithReferenceFile(soapMessage.getValue(), "CertificateSenderServiceImplTest/soap-message.xml");
-
     }
 
     private void okResponse() throws Exception {
@@ -154,14 +151,11 @@ public class CertificateSenderServiceImplTest {
     }
 
     private static SOAPMessage soapMessageFromFile(String file) throws Exception {
-        String soapMessageXml = FileUtils.readFileToString(new ClassPathResource(file).getFile());
-        SOAPMessage soapMessage = MessageFactory.newInstance().createMessage();
-        DocumentBuilderFactory df = DocumentBuilderFactory.newInstance();
-        df.setNamespaceAware(true);
-        DocumentBuilder db = df.newDocumentBuilder();
-        Document doc = db.parse(new ByteArrayInputStream(soapMessageXml.getBytes("UTF-8")));
-        soapMessage.getSOAPBody().addDocument(doc);
-        return soapMessage;
+        SOAPMessage message = MessageFactory.newInstance().createMessage();
+        SOAPPart soapPart = message.getSOAPPart();
+        soapPart.setContent(new StreamSource(new ClassPathResource(file).getInputStream()));
+        message.saveChanges();
+        return message;
     }
 
     @Test(expected = WebServiceException.class)

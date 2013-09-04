@@ -1,14 +1,12 @@
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-  <SOAP-ENV:Header>
-    <To xmlns="http://www.w3.org/2005/08/addressing">someLogicalAddress</To>
-  </SOAP-ENV:Header>
-  <SOAP-ENV:Body>
-    <Register>
-      <result xmlns="urn:riv:insuranceprocess:healthreporting:2">
-        <resultCode>ERROR</resultCode>
-        <errorText>Error!</errorText>
-      </result>
-    </Register>
-    <Certificate>Some medical information</Certificate>
-  </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <SOAP-ENV:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"/>
+  <soap:Body><ns3:RegisterMedicalCertificateResponse
+                                            xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2"
+                                            xmlns:ns3="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3">
+      <ns3:result>
+        <ns2:resultCode>ERROR</ns2:resultCode>
+        <ns2:errorText>Error!</ns2:errorText>
+      </ns3:result>
+    </ns3:RegisterMedicalCertificateResponse>
+  </soap:Body>
+</soap:Envelope>
