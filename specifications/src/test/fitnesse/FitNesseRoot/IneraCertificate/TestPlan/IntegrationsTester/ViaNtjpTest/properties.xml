@@ -6,7 +6,10 @@
 	<RecentChanges/>
 	<Refactor/>
 	<Search/>
-	<Test/>
+	<Suite/>
+	<SymbolicLinks>
+		<ForsakringsKassan>.IneraCertificate.TestFall.ForsakringsKassan</ForsakringsKassan>
+	</SymbolicLinks>
 	<Versions/>
 	<WhereUsed/>
 </properties>
