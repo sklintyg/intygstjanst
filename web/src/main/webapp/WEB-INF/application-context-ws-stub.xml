@@ -15,5 +15,6 @@
 
   <jaxws:endpoint address="/register-certificate-stub" implementor="se.inera.certificate.integration.stub.RegisterMedicalCertificateResponderStub" />
   <jaxws:endpoint address="/send-certificate-question-stub" implementor="se.inera.certificate.integration.stub.SendMedicalCertificateQuestionResponderStub" />
+  <jaxws:endpoint address="/send-certificate-answer-stub" implementor="se.inera.certificate.integration.stub.SendMedicalCertificateAnswerResponderStub" />
 
 </beans>

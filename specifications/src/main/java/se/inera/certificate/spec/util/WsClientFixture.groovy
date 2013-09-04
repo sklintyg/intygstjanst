@@ -82,7 +82,7 @@ class WsClientFixture {
 		KeyStore trustStore = KeyStore.getInstance("JKS");
 		String trustpass = "password";//provide trust pass
 
-		trustStore.load(WsClientFixture.class.getResourceAsStream("/truststore-service.jks"), trustpass.toCharArray());
+		trustStore.load(WsClientFixture.class.getResourceAsStream("/truststore-ntjp.jks"), trustpass.toCharArray());
 		TrustManagerFactory trustFactory =
 				TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 		trustFactory.init(trustStore);

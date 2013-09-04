@@ -23,6 +23,7 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
 import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
@@ -37,9 +38,12 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Implementation of {@link CertificateDao}.
@@ -81,12 +85,12 @@ public class CertificateDaoImpl implements CertificateDao {
         // order by signed date
         query.orderBy(criteriaBuilder.asc(root.get("signedDate")));
 
-        List<Certificate> result = entityManager.createQuery(query).getResultList();
+        List<Certificate> tmpResult = entityManager.createQuery(query).getResultList();
+        List<Certificate> result = filterDuplicates(tmpResult);
 
         // expect a small number, so lets filter in memory
         return new DateFilter(result).filter(fromDate, toDate);
     }
-
 
     @Override
     public Certificate getCertificate(String civicRegistrationNumber, String certificateId) {
@@ -137,5 +141,17 @@ public class CertificateDaoImpl implements CertificateDao {
             result.add(item.toLowerCase());
         }
         return result;
+    }
+    
+    private List<Certificate> filterDuplicates(List<Certificate> all) {
+        Set<String> found = new HashSet<>();
+        List<Certificate> filtered = new ArrayList<>(all.size());
+        for (Certificate certificate: all) {
+            if (!found.contains(certificate.getId())) {
+                filtered.add(certificate);
+                found.add(certificate.getId());
+            }
+        }
+        return filtered;
     }
 }
