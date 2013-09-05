@@ -4,7 +4,11 @@
 |personnummer|intyg|resultat?|
 |19121212-1212|intyg-1|OK|
 
-!3 och intyget blir markerat som SENT med en gång.
+!3 Givet att samtycke finns för 19121212-1212 så ska intyget blir markerat som SENT med en gång.
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|ja|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
