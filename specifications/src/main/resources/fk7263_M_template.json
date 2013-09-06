@@ -32,6 +32,7 @@
       "extension" : "Personal HSA-ID"
     },
     "namn" : "",
+    "forskrivarkod" : "1234567",
     "vardenhet" : {
       "id" : {
         "root" : "1.2.752.129.2.1.4.1",
@@ -192,5 +193,5 @@
     ],
   "validFromDate" : "2011-01-24",
   "validToDate" : "2011-03-31",
-  "forskrivarkodOchArbetsplatskod" : "123456789011"
+  "forskrivarkodOchArbetsplatskod" : "1234567 - 123456789011"
 }

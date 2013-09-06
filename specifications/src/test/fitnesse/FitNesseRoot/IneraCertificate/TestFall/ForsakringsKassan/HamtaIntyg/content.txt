@@ -2,11 +2,17 @@
 
 !2 Hämtning av intyg
 
-!3 Testfall Get-Certificate-1: Hämta specifikt intyg
+!3 Testfall Get-Certificate-1.1: Hämta specifikt intyg
 
 |Hamta intyg|
 |personnummer|intyg|förväntat svar|resultat?|
 |19010101-0101|intyg-1|{"lakarutlatande":{"lakarutlatandeId":"intyg-1","signeringsdatum":"2013-04-01T00:00:00.000","patient":{"personId":{"extension":"19010101-0101"}}}}|OK|
+
+!3 Testfall Get-Certificate-1.2: Verifiera !-HoS-!-informationen hos intyget
+
+|Hamta intyg|
+|personnummer|intyg|förväntat svar|resultat?|
+|19010101-0101|intyg-1|{"lakarutlatande":{"lakarutlatandeId":"intyg-1","skapadAvHosPersonal":{"personalId":{"extension":"Personal HSA-ID"},"fullstandigtNamn":"läkare1"}}}|OK|
 
 !2 Hantering av samtycke
 

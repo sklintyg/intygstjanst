@@ -37,6 +37,11 @@ class SkickaSvar extends WsClientFixture {
 	static String serviceUrl = System.getProperty("service.sendMedicalCertificateAnswerUrl")
 	
     public SkickaSvar() {
+		this(WsClientFixture.LOGICAL_ADDRESS)
+	}
+	
+    public SkickaSvar(String logiskAddress) {
+		super(logiskAddress)
 		String url = serviceUrl ? serviceUrl : baseUrl + "send-certificate-answer-stub"
 		sendResponder = createClient(SendMedicalCertificateAnswerResponderInterface.class, url)
     }

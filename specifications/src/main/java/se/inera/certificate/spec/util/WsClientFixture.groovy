@@ -24,7 +24,19 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
 
 class WsClientFixture {
 
+	final static String LOGICAL_ADDRESS = "5565594230"
+
 	private CustomObjectMapper jsonMapper = new CustomObjectMapper();
+	protected AttributedURIType logicalAddress = new AttributedURIType()
+	
+	public WsClientFixture() {
+		this(LOGICAL_ADDRESS)
+	}
+	
+	public WsClientFixture(String address) {
+		logicalAddress.setValue(address)
+	}
+	
 	def asJson(def object) {
 		StringWriter sw = new StringWriter()
 		jsonMapper.writeValue(sw, object)
@@ -36,11 +48,6 @@ class WsClientFixture {
 	}
 	
     static String baseUrl = System.getProperty("certificate.baseUrl", "http://localhost:8080/inera-certificate/")
-
-    static AttributedURIType logicalAddress = new AttributedURIType()
-	static {
-		logicalAddress.setValue("5565594230");
-	}
 
 	def setEndpoint(def responder, String serviceName, String url = baseUrl + serviceName) {
 		if (!url) url = baseUrl + serviceName
