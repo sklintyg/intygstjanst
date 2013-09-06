@@ -31,7 +31,12 @@ class SkickaFraga extends WsClientFixture {
 
 	static String serviceUrl = System.getProperty("service.sendMedicalCertificateQuestionUrl")
 	
-    public SkickaFraga() {
+	public SkickaFraga() {
+		this(WsClientFixture.LOGICAL_ADDRESS)
+	}
+	
+    public SkickaFraga(String logiskAddress) {
+		super(logiskAddress)
 		String url = serviceUrl ? serviceUrl : baseUrl + "send-certificate-question-stub"
 		sendResponder = createClient(SendMedicalCertificateQuestionResponderInterface.class, url)
     }

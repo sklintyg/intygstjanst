@@ -123,10 +123,12 @@ public class Intyg extends RestClientFixture {
         certificate.signeringsDatum = utfärdat
         certificate.skickatDatum = utfärdat
 
+		/*
         certificate.vardkontakter.each {
 			it.vardkontaktstid.start = utfärdat
 			it.vardkontaktstid.end = utfärdat
 		}
+		*/
 
         certificate.referenser.each { it.datum = utfärdat }
 

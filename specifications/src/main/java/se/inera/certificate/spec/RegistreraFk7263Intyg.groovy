@@ -1,13 +1,15 @@
 package se.inera.certificate.spec
+import javax.xml.bind.JAXBContext
+import javax.xml.bind.Unmarshaller
+import javax.xml.transform.stream.StreamSource
+
+import org.joda.time.LocalDateTime
 import org.springframework.core.io.ClassPathResource
+
 import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType
-
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.Unmarshaller
-import javax.xml.transform.stream.StreamSource
 /**
  *
  * @author andreaskaltenbach
@@ -16,26 +18,45 @@ public class RegistreraFk7263Intyg extends WsClientFixture {
 
     RegisterMedicalCertificateResponderInterface registerMedicalCertificateResponder
 
-    static String serviceUrl = System.getProperty("service.registerCertificateUrl")
+    static String serviceUrl = System.getProperty("service.registerMedicalCertificateUrl")
 
     public RegistreraFk7263Intyg() {
-        String url = serviceUrl ? serviceUrl : baseUrl + "register-certificate/v3.0"
+		this(WsClientFixture.LOGICAL_ADDRESS)
+	}
+	
+    public RegistreraFk7263Intyg(String logiskAddress) {
+        super(logiskAddress)
+		String url = serviceUrl ? serviceUrl : baseUrl + "register-certificate/v3.0"
 		registerMedicalCertificateResponder = createClient(RegisterMedicalCertificateResponderInterface.class, url)
     }
 
     String personnummer
-    String intyg
-
+    String utfärdat
+	String utfärdare
+	String enhet
+    String id
+	String mall = "M"
+	
     RegisterMedicalCertificateResponseType response
 
-    public void execute() {
+	public void reset() {
+		mall = "M"
+		utfärdare = "EnUtfärdare"
+		enhet = "EnVårdEnhet"
+	}
+
+	public void execute() {
         // read request template from file
         JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        RegisterMedicalCertificateType request = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("fk7263_template.xml").getInputStream()), RegisterMedicalCertificateType.class).getValue()
+        RegisterMedicalCertificateType request = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("fk7263_${mall}_template.xml").getInputStream()), RegisterMedicalCertificateType.class).getValue()
 
-        request.getLakarutlatande().getPatient().getPersonId().setExtension(personnummer)
-        request.getLakarutlatande().setLakarutlatandeId(intyg)
+        request.lakarutlatande.patient.personId.extension = personnummer
+        request.lakarutlatande.lakarutlatandeId = id
+		request.lakarutlatande.signeringsdatum = LocalDateTime.parse(utfärdat)
+		request.lakarutlatande.skickatDatum = LocalDateTime.now()
+		request.lakarutlatande.skapadAvHosPersonal.fullstandigtNamn = utfärdare
+		request.lakarutlatande.skapadAvHosPersonal.enhet.enhetsId.extension = enhet
 
         response = registerMedicalCertificateResponder.registerMedicalCertificate(null, request);
     }
