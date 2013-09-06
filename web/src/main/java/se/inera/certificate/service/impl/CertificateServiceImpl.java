@@ -174,6 +174,7 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
+    @Transactional
     public void setCertificateState(String civicRegistrationNumber, String certificateId, String target, CertificateState state, LocalDateTime timestamp) {
         certificateDao.updateStatus(certificateId, civicRegistrationNumber, state, target, timestamp);
     }
