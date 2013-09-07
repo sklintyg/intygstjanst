@@ -39,6 +39,7 @@
          <beskrivning>Patienten arbetar i kök, sjukdomen omöjliggör kontakt med matvaror.</beskrivning>
          <typAvFunktionstillstand>Aktivitet</typAvFunktionstillstand>
          <arbetsformaga>
+            <prognosangivelse>Aterstallas_helt</prognosangivelse>
             <arbetsformagaNedsattning>
                <varaktighetFrom>2011-05-05</varaktighetFrom>
                <varaktighetTom>2011-06-16</varaktighetTom>

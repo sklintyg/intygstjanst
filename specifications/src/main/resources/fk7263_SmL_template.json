@@ -82,6 +82,13 @@
       "from" : "2011-06-17",
       "tom" : "2011-06-30"
     },
+    "prognos" : {
+      "prognosKod" : {
+        "codeSystem" : "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
+        "codeSystemName" : "kv_prognos_intyg",
+        "code" : "PRO1"
+      }
+    },
     "varde" : [ {
       "quantity" : 50,
       "unit" : "percent"
@@ -95,6 +102,13 @@
     "observationsPeriod" : {
       "from" : "2011-05-05",
       "tom" : "2011-05-16"
+    },
+    "prognos" : {
+      "prognosKod" : {
+        "codeSystem" : "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
+        "codeSystemName" : "kv_prognos_intyg",
+        "code" : "PRO1"
+      }
     },
     "varde" : [ {
       "quantity" : 0,

@@ -14,6 +14,12 @@
 |personnummer|intyg|förväntat svar|resultat?|
 |19010101-0101|intyg-1|{"lakarutlatande":{"lakarutlatandeId":"intyg-1","skapadAvHosPersonal":{"personalId":{"extension":"Personal HSA-ID"},"fullstandigtNamn":"läkare1"}}}|OK|
 
+!3 Testfall Get-Certificate-1.3: Hämta intyg enligt !-SmL-!
+
+|Hamta intyg|
+|personnummer|intyg|förväntat svar|resultat?|
+|19010101-0101|intyg-SmL|{"lakarutlatande":{"lakarutlatandeId":"intyg-SmL"}}|OK|
+
 !2 Hantering av samtycke
 
 !3 Testfall Get-Certificate-2: Försök hämta specifikt intyg för person som saknar samtycke
