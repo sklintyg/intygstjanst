@@ -14,7 +14,6 @@ public class Aktivitet {
     private Kod aktivitetsstatus;
     private String motivering;
     private String syfte;
-    private Omfattning omfattning;
     private List<Utforarroll> utforsAv;
     private List<Utforarroll> beskrivsAv;
     private Vardenhet utforsVid;
@@ -88,14 +87,6 @@ public class Aktivitet {
 
 	public void setSyfte(String syfte) {
 		this.syfte = syfte;
-	}
-
-	public Omfattning getOmfattning() {
-		return omfattning;
-	}
-
-	public void setOmfattning(Omfattning omfattning) {
-		this.omfattning = omfattning;
 	}
 
 	public Vardenhet getUtforsVid() {

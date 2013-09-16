@@ -20,7 +20,6 @@ public class Observation {
 	private Boolean forekomst;
 	private Boolean patientInstammer;
 	private Utforarroll utforsAv;
-	private List<Observationssamband> observationssamband;
 
 	public Id getObservationsId() {
 		return observationsId;
@@ -100,15 +99,6 @@ public class Observation {
 
 	public void setPatientInstammer(Boolean patientInstammer) {
 		this.patientInstammer = patientInstammer;
-	}
-
-	public List<Observationssamband> getObservationssamband() {
-		return observationssamband;
-	}
-
-	public void setObservationssamband(
-			List<Observationssamband> observationssamband) {
-		this.observationssamband = observationssamband;
 	}
 
 	public Utforarroll getUtforsAv() {
