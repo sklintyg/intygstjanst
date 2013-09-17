@@ -7,7 +7,6 @@ import java.util.List;
  */
 public class Observation {
 
-    private Id observationid;
     private Kod observationsKategori;
     private Kod observationsKod;
     private PartialInterval observationsPeriod;
@@ -61,13 +60,5 @@ public class Observation {
 
     public void setVarde(List<PhysicalQuantity> varde) {
         this.varde = varde;
-    }
-
-    public Id getObservationid() {
-        return observationid;
-    }
-
-    public void setObservationid(Id observationid) {
-        this.observationid = observationid;
     }
 }
