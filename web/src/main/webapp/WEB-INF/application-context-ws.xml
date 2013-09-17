@@ -23,7 +23,7 @@
   <jaxws:endpoint address="/list-certificates/v1.0"
                   implementor="se.inera.certificate.integration.ListCertificatesResponderImpl">
     <jaxws:outFaultInterceptors>
-      <bean class="se.inera.certificate.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+      <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/list-certificates-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
@@ -32,7 +32,7 @@
   <jaxws:endpoint address="/get-certificate/v1.0"
                   implementor="se.inera.certificate.integration.GetCertificateResponderImpl">
     <jaxws:outFaultInterceptors>
-      <bean class="se.inera.certificate.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+      <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/get-certificate-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
@@ -42,7 +42,7 @@
   <jaxws:endpoint address="/get-certificate-content/v1.0"
                     implementor="se.inera.certificate.integration.GetCertificateContentResponderImpl">
       <jaxws:outFaultInterceptors>
-        <bean class="se.inera.certificate.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+        <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
           <constructor-arg value="transform/get-certificate-content-transform.xslt"/>
         </bean>
       </jaxws:outFaultInterceptors>
@@ -52,7 +52,7 @@
   <jaxws:endpoint address="/register-certificate-wiretap/v3.0"
                     implementor="se.inera.certificate.integration.RegisterMedicalCertificateResponderWiretapImpl">
       <jaxws:outFaultInterceptors>
-        <bean class="se.inera.certificate.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+        <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
           <constructor-arg value="transform/register-medical-certificate-transform.xslt"/>
         </bean>
       </jaxws:outFaultInterceptors>
@@ -61,7 +61,7 @@
   <jaxws:endpoint address="/set-certificate-status/v1.0"
                   implementor="se.inera.certificate.integration.SetCertificateStatusResponderImpl">
     <jaxws:outFaultInterceptors>
-      <bean class="se.inera.certificate.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+      <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/set-certificate-status-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
@@ -69,7 +69,7 @@
 
   <jaxws:endpoint address="/get-consent/v1.0" implementor="se.inera.certificate.integration.GetConsentResponderImpl">
     <jaxws:outFaultInterceptors>
-      <bean class="se.inera.certificate.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+      <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/get-consent-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
@@ -77,7 +77,7 @@
 
   <jaxws:endpoint address="/set-consent/v1.0" implementor="se.inera.certificate.integration.SetConsentResponderImpl">
     <jaxws:outFaultInterceptors>
-      <bean class="se.inera.certificate.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+      <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/set-consent-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
@@ -86,7 +86,7 @@
   <jaxws:endpoint address="/send-certificate/v1.0"
                   implementor="se.inera.certificate.integration.SendMedicalCertificateResponderImpl">
     <jaxws:outFaultInterceptors>
-      <bean class="se.inera.certificate.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+      <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/send-medical-certificate-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
@@ -95,7 +95,7 @@
   <jaxws:endpoint address="/revoke-certificate/v1.0"
                   implementor="se.inera.certificate.integration.RevokeMedicalCertificateResponderImpl">
     <jaxws:outFaultInterceptors>
-      <bean class="se.inera.certificate.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+      <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/revoke-medical-certificate-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
@@ -105,7 +105,7 @@
 
   <jaxws:endpoint address="/register-certificate/v3.0" implementor="se.inera.certificate.integration.RegisterMedicalCertificateResponderProvider">
     <jaxws:outFaultInterceptors>
-      <bean class="se.inera.certificate.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+      <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/register-medical-certificate-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>

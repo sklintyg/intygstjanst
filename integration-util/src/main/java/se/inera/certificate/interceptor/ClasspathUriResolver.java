@@ -1,12 +1,12 @@
-package se.inera.certificate.integration.xslt;
-
-import org.springframework.core.io.ClassPathResource;
+package se.inera.certificate.interceptor;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
+
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * @author andreaskaltenbach

@@ -1,16 +1,13 @@
-package se.inera.certificate.integration.interceptor;
-
-import java.lang.reflect.Field;
+package se.inera.certificate.interceptor;
 
 import javax.xml.transform.TransformerFactory;
+import java.lang.reflect.Field;
 
 import org.apache.cxf.feature.transform.AbstractXSLTInterceptor;
 import org.apache.cxf.feature.transform.XSLTOutInterceptor;
 import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import se.inera.certificate.integration.xslt.ClasspathUriResolver;
 
 /**
  * CXF interceptor which turns SOAP faults into valid SOAP responses.
