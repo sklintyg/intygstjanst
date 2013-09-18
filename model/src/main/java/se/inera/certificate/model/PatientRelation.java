@@ -26,9 +26,9 @@ public class PatientRelation {
     private Kod relationskategori;
     private List<Kod> relationTyps;
     private Id personId;
-    private List<String> fornamns;
+    private List<String> fornamn;
     private String efternamn;
-    private List<String> mellannamns;
+    private List<String> mellannamn;
     private String postadress;
     private String postnummer;
     private String postort;
@@ -56,11 +56,11 @@ public class PatientRelation {
         this.personId = personId;
     }
 
-    public List<String> getFornamns() {
-        if (fornamns == null) {
-            fornamns = new ArrayList<String>();
+    public List<String> getFornamn() {
+        if (fornamn == null) {
+            fornamn = new ArrayList<String>();
         }
-        return this.fornamns;
+        return this.fornamn;
     }
 
     public String getEfternamn() {
@@ -71,11 +71,11 @@ public class PatientRelation {
         this.efternamn = efternamn;
     }
 
-    public List<String> getMellannamns() {
-        if (mellannamns == null) {
-            mellannamns = new ArrayList<String>();
+    public List<String> getMellannamn() {
+        if (mellannamn == null) {
+            mellannamn = new ArrayList<String>();
         }
-        return this.mellannamns;
+        return this.mellannamn;
     }
 
     public String getPostadress() {
