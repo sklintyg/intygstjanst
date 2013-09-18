@@ -1,5 +1,6 @@
 package se.inera.certificate.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ public class Observation {
     private Kod observationsKod;
     private PartialInterval observationsPeriod;
     private String beskrivning;
-    private List<Prognos> prognoser;
+    private List<Prognos> prognoser = new ArrayList<>();
     private List<PhysicalQuantity> varde;
     private Utforarroll utforsAv;
 
