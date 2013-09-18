@@ -13,8 +13,8 @@
       "root" : "1.2.752.129.2.1.3.1",
       "extension" : "19121212-1212"
     },
-    "fornamns" : [ "Test" ],
-    "efternamns" : [ "Testorsson" ],
+    "fornamn" : [ "Test" ],
+    "efternamn" : "Testorsson",
     "sysselsattnings" : [ {
       "sysselsattningsTyp" : {
         "code" : "224375002",
@@ -125,14 +125,14 @@
       "from" : "2011-02-21",
       "tom" : "2011-03-31"
     },
-    "prognos" : {
+    "prognoser" : [{
       "prognosKod" : {
         "codeSystem" : "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
         "codeSystemName" : "kv_prognos_intyg",
         "code" : "PRO1"
       },
       "beskrivning" : "Patienten kan inte utöva sitt yrke förrän en förbättring sker med avseende på yrseln. Det är förenat med livsfara att utföra trapetskonster och samtidigt lida av yrsel. Patientens besvär kommer dock att först minska för att därefter helt upphöra efter genomförd behandling."
-    },
+    }],
     "varde" : [ {
       "quantity" : 50,
       "unit" : "percent"
@@ -147,14 +147,14 @@
       "from" : "2011-01-24",
       "tom" : "2011-02-20"
     },
-    "prognos" : {
+    "prognoser" : [{
       "prognosKod" : {
         "codeSystem" : "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
         "codeSystemName" : "kv_prognos_intyg",
         "code" : "PRO1"
       },
       "beskrivning" : "Patienten kan inte utöva sitt yrke förrän en förbättring sker med avseende på yrseln. Det är förenat med livsfara att utföra trapetskonster och samtidigt lida av yrsel. Patientens besvär kommer dock att först minska för att därefter helt upphöra efter genomförd behandling."
-    },
+    }],
     "varde" : [ {
       "quantity" : 0,
       "unit" : "percent"

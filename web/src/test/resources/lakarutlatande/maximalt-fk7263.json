@@ -18,9 +18,9 @@
         "fornamns" : [
             ""
         ],
-        "efternamns" : [
+        "efternamn" :
             "Test Testorsson"
-        ],
+        ,
         "sysselsattnings" : [
             {
                 "sysselsattningsTyp" : {
@@ -190,13 +190,13 @@
                 "tom" : "2011-05-31"
             },
             "beskrivning" : "Arbetsförmåga: Skadan har förvärrats vid varje tillfälle patienten använt armen. Måste hållas i total stillhet tills läkningsprocessen kommit en bit på väg. Eventuellt kan utredning visa att operation är nödvändig för att läka skadan.",
-            "prognos" : {
+            "prognoser" : [{
                 "prognosKod" : {
                     "codeSystem" : "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
                     "codeSystemName" : "kv_prognos_intyg",
                     "code" : "PRO4"
                 }
-            },
+            }],
             "varde" : [
                 {
                     "quantity" : 75.0,
@@ -215,13 +215,13 @@
                 "tom" : "2011-03-31"
             },
             "beskrivning" : "Arbetsförmåga: Skadan har förvärrats vid varje tillfälle patienten använt armen. Måste hållas i total stillhet tills läkningsprocessen kommit en bit på väg. Eventuellt kan utredning visa att operation är nödvändig för att läka skadan.",
-            "prognos" : {
+            "prognoser" : [{
                 "prognosKod" : {
                     "codeSystem" : "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
                     "codeSystemName" : "kv_prognos_intyg",
                     "code" : "PRO4"
                 }
-            },
+            }],
             "varde" : [
                 {
                     "quantity" : 50.0,
@@ -240,13 +240,13 @@
                 "tom" : "2011-03-06"
             },
             "beskrivning" : "Arbetsförmåga: Skadan har förvärrats vid varje tillfälle patienten använt armen. Måste hållas i total stillhet tills läkningsprocessen kommit en bit på väg. Eventuellt kan utredning visa att operation är nödvändig för att läka skadan.",
-            "prognos" : {
+            "prognoser" : [{
                 "prognosKod" : {
                     "codeSystem" : "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
                     "codeSystemName" : "kv_prognos_intyg",
                     "code" : "PRO4"
                 }
-            },
+            }],
             "varde" : [
                 {
                     "quantity" : 25.0,
@@ -265,13 +265,13 @@
                 "tom" : "2011-02-13"
             },
             "beskrivning" : "Arbetsförmåga: Skadan har förvärrats vid varje tillfälle patienten använt armen. Måste hållas i total stillhet tills läkningsprocessen kommit en bit på väg. Eventuellt kan utredning visa att operation är nödvändig för att läka skadan.",
-            "prognos" : {
+            "prognoser" : [{
                 "prognosKod" : {
                     "codeSystem" : "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
                     "codeSystemName" : "kv_prognos_intyg",
                     "code" : "PRO4"
                 }
-            },
+            }],
             "varde" : [
                 {
                     "quantity" : 0.0,
