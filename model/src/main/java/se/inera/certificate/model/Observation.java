@@ -13,6 +13,7 @@ public class Observation {
     private String beskrivning;
     private List<Prognos> prognoser;
     private List<PhysicalQuantity> varde;
+    private Utforarroll utforsAv;
 
     public Kod getObservationsKategori() {
         return observationsKategori;
@@ -60,5 +61,13 @@ public class Observation {
 
     public void setVarde(List<PhysicalQuantity> varde) {
         this.varde = varde;
+    }
+
+    public Utforarroll getUtforsAv() {
+        return utforsAv;
+    }
+
+    public void setUtforsAv(Utforarroll utforsAv) {
+        this.utforsAv = utforsAv;
     }
 }
