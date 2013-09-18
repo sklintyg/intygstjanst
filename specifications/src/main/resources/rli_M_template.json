@@ -183,9 +183,5 @@
   } ],
   "referenser" : [ ],
   "validFromDate" : "2011-01-24",
-  "validToDate" : "2011-03-31",
-  "forskrivarkodOchArbetsplatskod" : "123456789011",
-  "ovrigt" : {
-    "data" : "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><ovrigt xmlns=\"urn:intyg:common-model:1\"><arrangmang xmlns=\"urn:intyg:rli:model:1\"><bokningsreferens>ABC-123</bokningsreferens></arrangmang></ovrigt>"
-  }
+  "validToDate" : "2011-03-31"
 }
