@@ -10,7 +10,7 @@
   <xs:import namespace="urn:riv:insuranceprocess:healthreporting:2"
              schemaLocation="../../core_components/insuranceprocess_healthreporting_2.0.xsd"/>
   <xs:import namespace="urn:riv:insuranceprocess:certificate:1"
-               schemaLocation="../../core_components/insuranceprocess_certificate_1.0.xsd"/>
+             schemaLocation="../../core_components/insuranceprocess_certificate_1.0.xsd"/>
 
   <xs:element name="utlatande" type="utlatandeType"/>
 
@@ -21,31 +21,20 @@
       <xs:element name="kommentar" type="xs:string" minOccurs="0"
                   maxOccurs="unbounded"/>
       <xs:element name="signeringsdatum" type="dateTime"/>
-      <xs:element name="skickatdatum" type="dateTime"/>
+      <xs:element name="skickatdatum" type="dateTime" minOccurs="0"/>
 
       <xs:element name="patient" type="patientType"/>
       <xs:element name="skapadAv" type="hr:hosPersonalType"/>
-      <xs:element name="harDeltagandeHosPersonal" type="hr:hosPersonalType"
+      <xs:element name="vardkontakter" type="vardkontaktType"
                   minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="vardkontakt" type="vardkontaktType"
-                  minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="referens" type="referensType" minOccurs="0"
+      <xs:element name="referenser" type="referensType" minOccurs="0"
                   maxOccurs="unbounded"/>
-      <xs:element name="aktivitet" type="aktivitetType"
+      <xs:element name="aktiviteter" type="aktivitetType"
                   minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="bestallare" type="bestallareType"
-                  minOccurs="0"/>
-      <xs:element name="substansintag" type="substansintagType"
+      <xs:element name="rekommendationer" type="rekommendationType"
                   minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="betalningsmottagare" type="betalningsmottagareType"
-                  minOccurs="0"/>
-      <xs:element name="rekommendation" type="rekommendationType"
+      <xs:element name="observationer" type="observationType"
                   minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="observation" type="observationType"
-                  minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="ovrigt" type="ovrigtType"
-                        minOccurs="0" maxOccurs="1"/>
-      <xs:element name="status" type="cert:CertificateStatusType" maxOccurs="unbounded" minOccurs="0" />
 
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
@@ -56,10 +45,11 @@
     <xs:sequence>
       <xs:element name="person-id" type="iso:II"/>
       <xs:element name="fornamn" type="xs:string" maxOccurs="unbounded"/>
-      <xs:element name="efternamn" type="xs:string" maxOccurs="unbounded"/>
-      <xs:element name="mellannamn" type="xs:string" minOccurs="0"
-                  maxOccurs="unbounded"/>
-      <xs:element name="adress" type="xs:string" minOccurs="0"/>
+      <xs:element name="efternamn" type="xs:string"/>
+      <xs:element name="mellannamn" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="postadress" type="xs:string" minOccurs="0"/>
+      <xs:element name="postnummer" type="xs:string" minOccurs="0"/>
+      <xs:element name="postort" type="xs:string" minOccurs="0"/>
 
       <xs:element name="patientRelation" type="patientRelationType"
                   minOccurs="0" maxOccurs="unbounded"/>
@@ -79,11 +69,12 @@
       <xs:element name="relationTyp" type="iso:CD" maxOccurs="unbounded"/>
       <xs:element name="person-id" type="iso:II" minOccurs="0"/>
       <xs:element name="fornamn" type="xs:string" maxOccurs="unbounded"/>
-      <xs:element name="efternamn" type="xs:string" maxOccurs="unbounded"/>
+      <xs:element name="efternamn" type="xs:string"/>
       <xs:element name="mellannamn" type="xs:string" minOccurs="0"
                   maxOccurs="unbounded"/>
-      <xs:element name="adress" type="xs:string" minOccurs="0"
-                  maxOccurs="unbounded"/>
+      <xs:element name="postadress" type="xs:string" minOccurs="0"/>
+      <xs:element name="postnummer" type="xs:string" minOccurs="0"/>
+      <xs:element name="postort" type="xs:string" minOccurs="0"/>
 
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
@@ -102,7 +93,6 @@
   <xs:complexType name="sysselsattningType">
     <xs:sequence>
       <xs:element name="typAvSysselsattning" type="iso:CD"/>
-      <xs:element name="datum" type="date" minOccurs="0"/>
 
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
@@ -123,7 +113,6 @@
     <xs:sequence>
       <xs:element name="referenstyp" type="iso:CD"/>
       <xs:element name="referensdatum" type="date" minOccurs="0"/>
-      <xs:element name="beskrivning" type="xs:string" minOccurs="0"/>
 
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
@@ -136,17 +125,9 @@
       <xs:element name="aktivitetstid" type="partialDateInterval"
                   minOccurs="0"/>
       <xs:element name="beskrivning" type="xs:string" minOccurs="0"/>
-      <xs:element name="aktivitetsstatus" type="iso:CD"
-                  minOccurs="0"/>
-      <xs:element name="motivering" type="xs:string" minOccurs="0"/>
-      <xs:element name="syfte" type="xs:string" minOccurs="0"/>
 
       <xs:element name="utforsVidEnhet" type="hr:enhetType"
                   minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="utforsAv" type="utforarrollType"
-                  minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="omfattning" type="omfattningType"
-                  minOccurs="0"/>
 
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
@@ -157,61 +138,7 @@
     <xs:sequence>
       <xs:element name="utforartyp" type="iso:CD"/>
 
-      <xs:element name="antasAv" type="hr:hosPersonalType"/>
-
-      <xs:any namespace="##other" processContents="lax" minOccurs="0"
-              maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="bestallareType">
-    <xs:sequence>
-      <xs:element name="typAvBestallare" type="iso:CD"/>
-
-      <xs:any namespace="##other" processContents="lax" minOccurs="0"
-              maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="omfattningType">
-    <xs:sequence>
-      <xs:element name="antalBehandlingstillfallen" type="xs:integer"
-                  minOccurs="0"/>
-      <xs:element name="antalGangerPerVecka" type="xs:integer"
-                  minOccurs="0"/>
-      <xs:element name="antalGangerPerDag" type="xs:integer"
-                  minOccurs="0"/>
-
-      <xs:any namespace="##other" processContents="lax" minOccurs="0"
-              maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="substansintagType">
-    <xs:sequence>
-      <xs:element name="typAvSubstans" type="iso:CD"/>
-      <xs:element name="beskrivning" type="xs:string" minOccurs="0"/>
-
-      <xs:any namespace="##other" processContents="lax" minOccurs="0"
-              maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="betalningsmottagareType">
-    <xs:sequence>
-      <xs:element name="namn" type="xs:string"/>
-      <xs:element name="postadress" type="xs:string" minOccurs="0"/>
-      <xs:element name="postnummer" type="xs:string" minOccurs="0"/>
-      <xs:element name="postort" type="xs:string" minOccurs="0"/>
-      <xs:element name="organisationsnummer" type="iso:II"
-                  minOccurs="0"/>
-      <xs:element name="plusgiroEllerBankgiro" type="xs:string"
-                  minOccurs="0"/>
-      <xs:element name="begarArvode" type="xs:boolean"
-                  minOccurs="0"/>
-      <xs:element name="arvodeBegart" type="xs:string"
-                  minOccurs="0"/>
-      <xs:element name="skattesedel" type="iso:CD" minOccurs="0"/>
+      <xs:element name="antasAv" type="hr:hosPersonalType" minOccurs="0"/>
 
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
@@ -239,31 +166,18 @@
       <xs:element name="beskrivning" type="xs:string" minOccurs="0"/>
       <xs:element name="observationsperiod" type="partialDateInterval" minOccurs="0"/>
       <xs:element name="varde" type="iso:PQ" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="forekomst" type="xs:boolean" minOccurs="0"/>
-      <xs:element name="patientenInstammer" type="xs:boolean"
-                  minOccurs="0"/>
-
       <xs:element name="utforsAv" type="utforarrollType"
                   minOccurs="0"/>
-      <xs:element name="prognos" type="prognosType" minOccurs="0"/>
-
+      <xs:element name="prognos" type="prognosType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="ovrigtType">
-      <xs:sequence>
-        <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
-      </xs:sequence>
-    </xs:complexType>
-
   <xs:complexType name="prognosType">
     <xs:sequence>
       <xs:element name="prognoskod" type="iso:CD" minOccurs="0"/>
       <xs:element name="beskrivning" type="xs:string" minOccurs="0"/>
-      <xs:element name="period" type="partialDateInterval" minOccurs="0"/>
-
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
     </xs:sequence>
