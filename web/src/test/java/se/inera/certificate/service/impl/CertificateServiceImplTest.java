@@ -1,7 +1,18 @@
 package se.inera.certificate.service.impl;
 
-import ch.qos.logback.core.Appender;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
+
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.integration.json.CustomObjectMapper;
@@ -20,25 +32,10 @@ import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.service.CertificateSenderService;
-import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
-import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.LakarutlatandeType;
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.ObjectFactory;
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
+import ch.qos.logback.core.Appender;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.LogManager;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
-
-import javax.xml.bind.JAXBException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author andreaskaltenbach
@@ -117,7 +114,7 @@ public class CertificateServiceImplTest {
 
     private Utlatande lakarutlatande() throws IOException {
         ObjectMapper customObjectMapper = new CustomObjectMapper();
-        InputStream inputStream = new ClassPathResource("lakarutlatande/lakarutlatande.json").getInputStream();
+        InputStream inputStream = new ClassPathResource("lakarutlatande/lakarutlatande_external_format.json").getInputStream();
         return customObjectMapper.readValue(inputStream, Utlatande.class);
     }
 

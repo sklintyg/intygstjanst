@@ -1,16 +1,14 @@
 package se.inera.certificate.model;
 
-import org.joda.time.LocalDateTime;
-import org.joda.time.Partial;
-import se.inera.certificate.model.codes.ObservationsKoder;
-import se.inera.certificate.model.util.Predicate;
+import static se.inera.certificate.model.util.Iterables.find;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static se.inera.certificate.model.util.Iterables.find;
-import static se.inera.certificate.model.util.Strings.emptyToNull;
-import static se.inera.certificate.model.util.Strings.join;
+import org.joda.time.LocalDateTime;
+import org.joda.time.Partial;
+
+import se.inera.certificate.model.util.Predicate;
 
 /**
  * @author andreaskaltenbach
@@ -41,7 +39,19 @@ public class Utlatande {
 
     private Ovrigt ovrigt;
 
-    private List<Status> status;
+    /**
+     * To which point in time is this certificate considered valid.
+     * Modules implementing this model should use their own getters calculating the date suitable for the certificate
+     * type and rules.
+     */
+    private Partial validToDate;
+
+    /**
+     * From which point in time is this certificate considered valid.
+     * Modules implementing this model should use their own getters calculating the date suitable for the certificate
+     * type and rules.
+     */
+    private Partial validFromDate;
 
     public Id getId() {
         return id;
@@ -152,7 +162,8 @@ public class Utlatande {
     public List<Observation> getObservationsByKategori(Kod observationsKategori) {
         List<Observation> observations = new ArrayList<>();
         for (Observation observation : this.observations) {
-            if (observation.getObservationsKategori() != null && observation.getObservationsKategori().equals(observationsKategori)) {
+            if (observation.getObservationsKategori() != null
+                    && observation.getObservationsKategori().equals(observationsKategori)) {
                 observations.add(observation);
             }
         }
@@ -163,7 +174,8 @@ public class Utlatande {
         return find(observations, new Predicate<Observation>() {
             @Override
             public boolean apply(Observation observation) {
-                return observation.getObservationsKategori() != null && observation.getObservationsKategori().equals(observationsKategori);
+                return observation.getObservationsKategori() != null
+                        && observation.getObservationsKategori().equals(observationsKategori);
             }
         }, null);
     }
@@ -172,35 +184,26 @@ public class Utlatande {
         return find(observations, new Predicate<Observation>() {
             @Override
             public boolean apply(Observation observation) {
-                return observation.getObservationsKod() != null && observation.getObservationsKod().equals(observationsKod);
+                return observation.getObservationsKod() != null
+                        && observation.getObservationsKod().equals(observationsKod);
             }
         }, null);
     }
 
     public Partial getValidFromDate() {
-        List<Observation> nedsattningar = getObservationsByKod(ObservationsKoder.ARBETSFORMAGA);
-        Partial fromDate = null;
+        return validFromDate;
+    }
 
-        for (Observation nedsattning : nedsattningar) {
-            Partial aktivitetsbegransningFromDate = nedsattning.getObservationsPeriod().getFrom();
-            if (fromDate == null || fromDate.isAfter(aktivitetsbegransningFromDate)) {
-                fromDate = aktivitetsbegransningFromDate;
-            }
-        }
-        return fromDate;
+    public void setValidFromDate(Partial date) {
+        validFromDate = date;
     }
 
     public Partial getValidToDate() {
-        List<Observation> nedsattningar = getObservationsByKod(ObservationsKoder.ARBETSFORMAGA);
-        Partial toDate = null;
+        return validToDate;
+    }
 
-        for (Observation nedsattning : nedsattningar) {
-            Partial aktivitetsbegransningToDate = nedsattning.getObservationsPeriod().getTom();
-            if (toDate == null || toDate.isBefore(aktivitetsbegransningToDate)) {
-                toDate = aktivitetsbegransningToDate;
-            }
-        }
-        return toDate;
+    public void setValidToDate(Partial date) {
+        validToDate = date;
     }
 
     public Aktivitet getAktivitet(final Kod aktivitetsKod) {
@@ -215,7 +218,6 @@ public class Utlatande {
             }
         }, null);
     }
-
 
     public Vardkontakt getVardkontakt(final Kod vardkontaktTyp) {
         return find(vardkontakter, new Predicate<Vardkontakt>() {
@@ -235,23 +237,6 @@ public class Utlatande {
         }, null);
     }
 
-    public String getForskrivarkodOchArbetsplatskod() {
-        List<String> parts = new ArrayList<>();
-        if (skapadAv != null) {
-            parts.add(skapadAv.getForskrivarkod());
+  
 
-            if (skapadAv.getVardenhet() != null) {
-                parts.add(skapadAv.getVardenhet().getArbetsplatskod().getExtension());
-            }
-        }
-        return emptyToNull(join(" - ", parts));
-    }
-
-    public List<Status> getStatus() {
-        return status;
-    }
-
-    public void setStatus(List<Status> status) {
-        this.status = status;
-    }
 }
