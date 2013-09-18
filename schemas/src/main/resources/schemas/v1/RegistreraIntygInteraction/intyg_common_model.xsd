@@ -25,15 +25,15 @@
 
       <xs:element name="patient" type="patientType"/>
       <xs:element name="skapadAv" type="hr:hosPersonalType"/>
-      <xs:element name="vardkontakter" type="vardkontaktType"
+      <xs:element name="vardkontakt" type="vardkontaktType"
                   minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="referenser" type="referensType" minOccurs="0"
+      <xs:element name="referens" type="referensType" minOccurs="0"
                   maxOccurs="unbounded"/>
-      <xs:element name="aktiviteter" type="aktivitetType"
+      <xs:element name="aktivitet" type="aktivitetType"
                   minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="rekommendationer" type="rekommendationType"
+      <xs:element name="rekommendation" type="rekommendationType"
                   minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="observationer" type="observationType"
+      <xs:element name="observation" type="observationType"
                   minOccurs="0" maxOccurs="unbounded"/>
 
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
