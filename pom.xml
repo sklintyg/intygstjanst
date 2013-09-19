@@ -244,6 +244,15 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/version.properties</include>
+        </includes>
+      </resource>
+    </resources>
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>

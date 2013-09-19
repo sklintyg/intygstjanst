@@ -128,6 +128,8 @@
   </jaxws:endpoint>
   <bean id="registreraIntygResponder" class="se.inera.certificate.integration.RegistreraIntygResponder"/>
 
+  <jaxws:endpoint address="/ping-for-configuration/v1.0" implementor="se.inera.certificate.integration.PingForConfigurationResponderImpl"/>
+
   <!-- ws clients -->
   <jaxws:client id="registerMedicalCertificatesClient"
                 serviceClass="se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface"
