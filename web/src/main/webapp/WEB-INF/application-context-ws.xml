@@ -111,6 +111,8 @@
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
 
+  <jaxws:endpoint address="/ping-for-configuration/v1.0" implementor="se.inera.certificate.integration.PingForConfigurationResponderImpl"/>
+
   <!-- ws clients -->
   <jaxws:client id="sendMedicalCertificateQuestionClient"
                 serviceClass="se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.v1.rivtabp20.SendMedicalCertificateQuestionResponderInterface"
