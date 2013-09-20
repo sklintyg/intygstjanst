@@ -32,6 +32,7 @@ public class HamtaIntyg extends WsClientFixture {
 	String förväntatSvar
 	private String faktisktSvar
 	private String resultat
+    private def status
 	
     private GetCertificateResponseType response
 
@@ -40,6 +41,7 @@ public class HamtaIntyg extends WsClientFixture {
 		resultat = null
 		förväntatSvar = null
 		faktisktSvar = null
+        status = null
 	}
 	
     public void execute() {
@@ -54,6 +56,7 @@ public class HamtaIntyg extends WsClientFixture {
 				JAXBContext payloadContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
 				org.w3c.dom.Node node = (org.w3c.dom.Node) certificate.any[0]
 				faktisktSvar = asJson(payloadContext.createUnmarshaller().unmarshal(node).value)
+                status = response.meta.status.collect{it.type.toString()}
 				resultat = "OK"
 				break
             case ResultCodeEnum.INFO:
@@ -82,7 +85,7 @@ public class HamtaIntyg extends WsClientFixture {
 	}
 
     public String status() {
-        response.meta.status.collect{it.type.toString()}
+        status
     }
 
 }
