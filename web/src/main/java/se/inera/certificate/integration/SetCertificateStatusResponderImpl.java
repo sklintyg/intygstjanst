@@ -17,7 +17,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusrespond
 /**
  * @author andreaskaltenbach
  */
-@Transactional(rollbackFor = { InvalidCertificateIdentifierException.class })
+@Transactional
 @SchemaValidation
 public class SetCertificateStatusResponderImpl implements SetCertificateStatusResponderInterface {
 

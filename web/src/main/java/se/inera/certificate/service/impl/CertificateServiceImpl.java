@@ -19,6 +19,7 @@
 package se.inera.certificate.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -28,8 +29,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
+import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
@@ -47,6 +50,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificater
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -174,7 +178,7 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    @Transactional
+    @Transactional(noRollbackFor = { InvalidCertificateIdentifierException.class })
     public void setCertificateState(String civicRegistrationNumber, String certificateId, String target, CertificateState state, LocalDateTime timestamp) {
         certificateDao.updateStatus(certificateId, civicRegistrationNumber, state, target, timestamp);
     }
