@@ -11,8 +11,8 @@
 !3 Efter journalsystemet har registrerat ett nytt intyg så ska det vara tillgängligt
 
 |Registrera fk7263 intyg|
-|personnummer|intyg|resultat?|
-|19121212-1212|intyg-1|OK|
+|personnummer|id|utfärdat|resultat?|
+|19121212-1212|intyg-1|2013-08-01|OK|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
@@ -50,8 +50,8 @@
 !3 Och intyg registreras
 
 |Registrera fk7263 intyg|
-|personnummer|intyg|resultat?|
-|19121212-1212|intyg-2|OK|
+|personnummer|id|utfärdat|resultat?|
+|19121212-1212|intyg-2|2013-08-02|OK|
 
 !3 Kan journalsystem rätta intyg
 

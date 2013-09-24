@@ -5,8 +5,8 @@
 |19121212-1212|ja|
 
 |Registrera fk7263 intyg|
-|personnummer|intyg|resultat?|
-|19121212-1212|intyg-1|OK|
+|personnummer|id|utfärdat|resultat?|
+|19121212-1212|intyg-1|2013-08-01|OK|
 
 !3 Så ska intyget vara tillgänglig i intygstjänsten
 
