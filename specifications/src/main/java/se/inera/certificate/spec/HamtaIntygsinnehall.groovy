@@ -13,13 +13,13 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
  */
 public class HamtaIntygsinnehall extends WsClientFixture {
 
-    private GetCertificateResponderInterface getCertificateResponder
+    private GetCertificateContentResponderInterface getCertificateContentResponder
 
-	static String serviceUrl = System.getProperty("service.getCertificateUrl")
+	static String serviceUrl = System.getProperty("service.getCertificateContentUrl")
 	
-    public HamtaIntyg() {
-		String url = serviceUrl ? serviceUrl : baseUrl + "get-certificate/v1.0"
-		getCertificateResponder = createClient(GetCertificateResponderInterface.class, url)
+    public HamtaIntygsinnehall() {
+		String url = serviceUrl ? serviceUrl : baseUrl + "get-certificate-content/v1.0"
+		getCertificateContentResponder = createClient(GetCertificateContentResponderInterface.class, url)
     }
 
     String personnummer
@@ -36,7 +36,7 @@ public class HamtaIntygsinnehall extends WsClientFixture {
         request.setNationalIdentityNumber(personnummer)
         request.setCertificateId(intyg)
 
-        response = getCertificateResponder.getCertificateContent(logicalAddress, request)
+        response = getCertificateContentResponder.getCertificateContent(logicalAddress, request)
 		switch (response.result.resultCode) {
 			case ResultCodeEnum.OK:
 				faktisktSvar = response.certificate
