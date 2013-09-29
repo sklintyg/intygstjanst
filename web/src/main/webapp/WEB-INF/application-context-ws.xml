@@ -111,6 +111,15 @@
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
 
+  <jaxws:endpoint address="/revoke-certificate-wiretap/v1.0"
+                  implementor="se.inera.certificate.integration.RevokeMedicalCertificateResponderWiretapImpl">
+    <jaxws:outFaultInterceptors>
+      <bean class="se.inera.certificate.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+        <constructor-arg value="transform/revoke-medical-certificate-transform.xslt"/>
+      </bean>
+    </jaxws:outFaultInterceptors>
+  </jaxws:endpoint>
+
   <jaxws:endpoint address="/registrera-intyg/v1.0" implementor="se.inera.certificate.integration.RegistreraIntygResponderProvider"/>
 
   <jaxws:endpoint address="/register-certificate/v3.0" implementor="se.inera.certificate.integration.RegisterMedicalCertificateResponderProvider">
