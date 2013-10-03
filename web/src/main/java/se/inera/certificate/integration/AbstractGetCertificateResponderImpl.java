@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
@@ -58,10 +57,9 @@ public abstract class AbstractGetCertificateResponderImpl {
 
     protected abstract String getMarshallVersion();
 
-    protected Element getCertificateDocument(Certificate certificate) {
+    protected Document getCertificateDocument(Certificate certificate) {
         Utlatande utlatande = certificateService.getLakarutlatande(certificate);
-        Document document = marshall(certificate, utlatande);
-        return document.getDocumentElement();
+        return marshall(certificate, utlatande);
     }
 
     private Document marshall(Certificate certificate, Utlatande utlatande) {

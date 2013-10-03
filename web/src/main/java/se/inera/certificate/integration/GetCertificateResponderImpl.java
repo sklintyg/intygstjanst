@@ -21,9 +21,8 @@ package se.inera.certificate.integration;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 
 import org.apache.cxf.annotations.SchemaValidation;
-import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
-import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 import se.inera.certificate.integration.converter.ModelConverter;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20.GetCertificateResponderInterface;
@@ -57,9 +56,9 @@ public class GetCertificateResponderImpl extends AbstractGetCertificateResponder
     }
 
     protected void attachCertificateDocument(Certificate certificate, GetCertificateResponseType response) {
-        Element documentElement = getCertificateDocument(certificate);
+        Document document = getCertificateDocument(certificate);
         CertificateType certificateType = new CertificateType();
-        certificateType.getAny().add(documentElement);
+        certificateType.getAny().add(document.getDocumentElement());
 
         response.setCertificate(certificateType);
         response.setResult(okResult());

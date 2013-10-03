@@ -19,11 +19,15 @@
 package se.inera.certificate.integration;
 
 import javax.ws.rs.core.Response;
-import java.io.IOException;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import java.io.ByteArrayOutputStream;
 
 import static junit.framework.Assert.assertNull;
+import static org.custommonkey.xmlunit.DifferenceConstants.NAMESPACE_PREFIX_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -33,18 +37,22 @@ import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.IN
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
 import org.apache.commons.io.FileUtils;
-import org.h2.util.IOUtils;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.Difference;
+import org.custommonkey.xmlunit.DifferenceListener;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
+import org.w3c.dom.Node;
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
-import se.inera.certificate.integration.json.CustomObjectMapper;
 import se.inera.certificate.integration.rest.ModuleRestApi;
 import se.inera.certificate.integration.rest.ModuleRestApiFactory;
+import se.inera.certificate.model.Kod;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
@@ -52,6 +60,7 @@ import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ErrorIdEnum;
 import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificateresponder.v1.GetCertificateForCareRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificateresponder.v1.GetCertificateForCareResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificateresponder.v1.ObjectFactory;
 
 /**
  * @author andreaskaltenbach
@@ -59,7 +68,9 @@ import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificateresponder
 @RunWith(MockitoJUnitRunner.class)
 public class GetCertificateForCareResponderImplTest {
 
-    private static final String certificateId = "123456";
+    private static final String CERTIFICATE_ID = "123456";
+    private static final String CERTIFICATE_TYPE = "fk7263";
+    private static final String CERTIFICATE_DATA = "<intyg>";
 
     @Mock
     private CertificateService certificateService = mock(CertificateService.class);
@@ -77,35 +88,72 @@ public class GetCertificateForCareResponderImplTest {
     private Response restResponse = mock(Response.class);
 
     @Test
-    public void getCertificateForCare() throws IOException {
-        String document = FileUtils.readFileToString(new ClassPathResource("lakarutlatande/maximalt-fk7263.json").getFile());
-        Utlatande utlatande = new CustomObjectMapper().readValue(document, Utlatande.class);
+    public void getCertificateForCare() throws Exception {
+        Utlatande utlatande = new Utlatande();
+        utlatande.setTyp(new Kod(CERTIFICATE_TYPE));
 
-        when(certificateService.getCertificate(null, certificateId)).thenReturn(
-                new CertificateBuilder("123456", document).certificateType("fk7263").build());
+        when(certificateService.getCertificate(null, CERTIFICATE_ID)).thenReturn(
+                new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DATA).certificateType(CERTIFICATE_TYPE).build());
 
         when(certificateService.getLakarutlatande(any(Certificate.class))).thenReturn(utlatande);
 
         when(moduleRestApiFactory.getModuleRestService("fk7263")).thenReturn(moduleRestApi);
-        when(restResponse.getEntity()).thenReturn(IOUtils.getInputStreamFromString("<someXml></someXml>"));
-        when(moduleRestApi.marshall("2.0", document)).thenReturn(restResponse);
+        when(restResponse.getEntity()).thenReturn(
+                new ClassPathResource("GetCertificateForCareResponderImplTest/utlatande.xml").getInputStream());
+        when(moduleRestApi.marshall("2.0", CERTIFICATE_DATA)).thenReturn(restResponse);
 
-        GetCertificateForCareRequestType parameters = createGetCertificateForCareRequest(certificateId);
+        GetCertificateForCareRequestType request = createGetCertificateForCareRequest(CERTIFICATE_ID);
+        GetCertificateForCareResponseType response = responder.getCertificateForCare(null, request);
 
-        GetCertificateForCareResponseType response = responder.getCertificateForCare(null, parameters);
-
-        verify(certificateService).getCertificate(null, certificateId);
+        verify(certificateService).getCertificate(null, CERTIFICATE_ID);
 
         assertNotNull(response.getMeta());
         assertEquals(OK, response.getResult().getResultCode());
+
+        // compare response XML with reference response XML
+        compareResponseWithReferenceFile(response, "GetCertificateForCareResponderImplTest/response.xml");
+    }
+
+    private void compareResponseWithReferenceFile(GetCertificateForCareResponseType response, String fileName)
+            throws Exception {
+        ByteArrayOutputStream byteArr = new ByteArrayOutputStream();
+        JAXBElement<GetCertificateForCareResponseType> jaxbElement = new ObjectFactory()
+                .createGetCertificateForCareResponse(response);
+        JAXBContext context = JAXBContext.newInstance(GetCertificateForCareResponseType.class);
+        context.createMarshaller().marshal(jaxbElement, byteArr);
+
+        String referenceXml = FileUtils.readFileToString(new ClassPathResource(fileName).getFile());
+
+        XMLUnit.setIgnoreWhitespace(true);
+        XMLUnit.setNormalizeWhitespace(true);
+        Diff diff = new Diff(referenceXml, new String(byteArr.toByteArray()));
+        diff.overrideDifferenceListener(new NamespacePrefixNameIgnoringListener());
+
+        assertTrue(diff.toString(), diff.identical());
+    }
+
+    private class NamespacePrefixNameIgnoringListener implements DifferenceListener {
+        public int differenceFound(Difference difference) {
+            if (NAMESPACE_PREFIX_ID == difference.getId()) {
+                // differences in namespace prefix IDs are ok (eg. 'ns1' vs 'ns2'), as long as the namespace URI is the
+                // same
+                return RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL;
+            } else {
+                return RETURN_ACCEPT_DIFFERENCE;
+            }
+        }
+
+        public void skippedComparison(Node control, Node test) {
+        }
     }
 
     @Test
     public void getCertificateForCareWithUnknownCertificateId() {
 
-        when(certificateService.getCertificate(null, certificateId)).thenThrow(new InvalidCertificateException("123456", null));
+        when(certificateService.getCertificate(null, CERTIFICATE_ID)).thenThrow(
+                new InvalidCertificateException("123456", null));
 
-        GetCertificateForCareRequestType parameters = createGetCertificateForCareRequest(certificateId);
+        GetCertificateForCareRequestType parameters = createGetCertificateForCareRequest(CERTIFICATE_ID);
 
         GetCertificateForCareResponseType response = responder.getCertificateForCare(null, parameters);
 
@@ -119,9 +167,10 @@ public class GetCertificateForCareResponderImplTest {
     @Test
     public void getRevokedCertificate() {
 
-        when(certificateService.getCertificate(null, certificateId)).thenThrow(new CertificateRevokedException("123456"));
+        when(certificateService.getCertificate(null, CERTIFICATE_ID)).thenThrow(
+                new CertificateRevokedException("123456"));
 
-        GetCertificateForCareRequestType parameters = createGetCertificateForCareRequest(certificateId);
+        GetCertificateForCareRequestType parameters = createGetCertificateForCareRequest(CERTIFICATE_ID);
 
         GetCertificateForCareResponseType response = responder.getCertificateForCare(null, parameters);
 

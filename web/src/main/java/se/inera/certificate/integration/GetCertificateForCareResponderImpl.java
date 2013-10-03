@@ -18,17 +18,24 @@
  */
 package se.inera.certificate.integration;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.dom.DOMSource;
+
 import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 
+import com.google.common.base.Throwables;
 import org.apache.cxf.annotations.SchemaValidation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
-import org.w3c.dom.Element;
-
+import org.w3c.dom.Document;
+import se.inera.certificate.common.v1.UtlatandeType;
 import se.inera.certificate.integration.converter.ModelConverter;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificate.v1.rivtabp20.GetCertificateForCareResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificateresponder.v1.CertificateType;
 import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificateresponder.v1.GetCertificateForCareRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificateresponder.v1.GetCertificateForCareResponseType;
 
@@ -39,6 +46,19 @@ import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificateresponder
 @SchemaValidation
 public class GetCertificateForCareResponderImpl extends AbstractGetCertificateResponderImpl implements
         GetCertificateForCareResponderInterface {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GetCertificateForCareResponderImpl.class);
+
+    private static Unmarshaller unmarshaller;
+
+    static {
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(UtlatandeType.class);
+            unmarshaller = jaxbContext.createUnmarshaller();
+        } catch (JAXBException e) {
+            throw new RuntimeException("Failed to initialize JAXB context required for unmarshaller");
+        }
+    }
 
     @Override
     public GetCertificateForCareResponseType getCertificateForCare(AttributedURIType logicalAddress,
@@ -64,11 +84,18 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
     }
 
     protected void attachCertificateDocument(Certificate certificate, GetCertificateForCareResponseType response) {
-        Element documentElement = getCertificateDocument(certificate);
-        CertificateType certificateType = new CertificateType();
-        certificateType.getAny().add(documentElement);
 
-        response.setCertificate(certificateType);
+        Document document = getCertificateDocument(certificate);
+
+        UtlatandeType utlatande = null;
+        try {
+            utlatande = unmarshaller.unmarshal(new DOMSource(document), UtlatandeType.class).getValue();
+        } catch (JAXBException e) {
+            LOG.error("Failed to unmarshall intyg coming from module " + certificate.getType());
+            Throwables.propagate(e);
+        }
+
+        response.setCertificate(utlatande);
         response.setResult(okResult());
     }
 }
