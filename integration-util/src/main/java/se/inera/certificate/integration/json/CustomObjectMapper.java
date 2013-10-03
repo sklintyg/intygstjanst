@@ -33,8 +33,6 @@ public class CustomObjectMapper extends ObjectMapper {
     private static final class Module extends SimpleModule {
 
         private Module() {
-            //addSerializer(Ovrigt.class, new OvrigtSerializer());
-
             addSerializer(String.class, new TrimmingStringSerializer());
 
             addSerializer(Partial.class, new PartialSerializer());

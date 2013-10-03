@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -120,7 +121,15 @@
                   </extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
-                    urn:riv:insuranceprocess:healthreporting:GetCertificateResponder:1=se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1
+                  urn:riv:insuranceprocess:healthreporting:GetCertificateResponder:1=se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1
+                  </extraarg>
+                  <extraarg>-p</extraarg>
+                  <extraarg>
+                    urn:riv:insuranceprocess:healthreporting:GetCertificateForCare:1:rivtabp20=se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificate.v1.rivtabp20
+                  </extraarg>
+                  <extraarg>-p</extraarg>
+                  <extraarg>
+                    urn:riv:insuranceprocess:healthreporting:GetCertificateForCareResponder:1=se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificateresponder.v1
                   </extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
@@ -280,6 +289,23 @@
 
                 <wsdlOption>
                   <wsdl>
+                    ${schema.path}/v1/GetCertificateForCareInteraction/GetCertificateForCareInteraction_1.0_rivtabp20.wsdl
+                  </wsdl>
+                  <bindingFiles>
+                    <bindingFile>
+                      ${basedir}/bindings/general-binding.xjb
+                    </bindingFile>
+                  </bindingFiles>
+                  <extraargs>
+                    <extraarg>-wsdlLocation</extraarg>
+                    <extraarg>
+                      classpath:schemas/v1/GetCertificateForCareInteraction/GetCertificateForCareInteraction_1.0_rivtabp20.wsdl
+                    </extraarg>
+                  </extraargs>
+                </wsdlOption>
+
+                <wsdlOption>
+                  <wsdl>
                     ${schema.path}/v3/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_3.0_rivtabp20.wsdl
                   </wsdl>
                   <bindingFiles>
@@ -413,7 +439,9 @@
                   </extraargs>
                 </wsdlOption>
                 <wsdlOption>
-                  <wsdl>${schema.path}/interactions/PingForConfigurationInteraction/PingForConfigurationInteraction_1.0_RIVTABP21.wsdl</wsdl>
+                  <wsdl>
+                    ${schema.path}/interactions/PingForConfigurationInteraction/PingForConfigurationInteraction_1.0_RIVTABP21.wsdl
+                  </wsdl>
                 </wsdlOption>
               </wsdlOptions>
             </configuration>

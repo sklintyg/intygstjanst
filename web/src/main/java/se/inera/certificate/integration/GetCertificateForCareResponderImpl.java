@@ -24,27 +24,28 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 import org.w3c.dom.Element;
+
 import se.inera.certificate.integration.converter.ModelConverter;
 import se.inera.certificate.model.dao.Certificate;
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20.GetCertificateResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.CertificateType;
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType;
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificate.v1.rivtabp20.GetCertificateForCareResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificateresponder.v1.CertificateType;
+import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificateresponder.v1.GetCertificateForCareRequestType;
+import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificateresponder.v1.GetCertificateForCareResponseType;
 
 /**
  * @author andreaskaltenbach
  */
 @Transactional
 @SchemaValidation
-public class GetCertificateResponderImpl extends AbstractGetCertificateResponderImpl implements
-        GetCertificateResponderInterface {
+public class GetCertificateForCareResponderImpl extends AbstractGetCertificateResponderImpl implements
+        GetCertificateForCareResponderInterface {
 
     @Override
-    public GetCertificateResponseType getCertificate(AttributedURIType logicalAddress, GetCertificateRequestType request) {
-        GetCertificateResponseType response = new GetCertificateResponseType();
+    public GetCertificateForCareResponseType getCertificateForCare(AttributedURIType logicalAddress,
+            GetCertificateForCareRequestType request) {
+        GetCertificateForCareResponseType response = new GetCertificateForCareResponseType();
 
-        CertificateOrResultOfCall certificateOrResultOfCall = getCertificate(request.getCertificateId(),
-                request.getNationalIdentityNumber());
+        CertificateOrResultOfCall certificateOrResultOfCall = getCertificate(request.getCertificateId(), null);
 
         if (certificateOrResultOfCall.hasError()) {
             response.setResult(certificateOrResultOfCall.getResultOfCall());
@@ -57,17 +58,17 @@ public class GetCertificateResponderImpl extends AbstractGetCertificateResponder
         return response;
     }
 
-    protected void attachCertificateDocument(Certificate certificate, GetCertificateResponseType response) {
+    @Override
+    protected String getMarshallVersion() {
+        return "2.0";
+    }
+
+    protected void attachCertificateDocument(Certificate certificate, GetCertificateForCareResponseType response) {
         Element documentElement = getCertificateDocument(certificate);
         CertificateType certificateType = new CertificateType();
         certificateType.getAny().add(documentElement);
 
         response.setCertificate(certificateType);
         response.setResult(okResult());
-    }
-
-    @Override
-    protected String getMarshallVersion() {
-        return "1.0";
     }
 }

@@ -18,7 +18,13 @@
  */
 package se.inera.certificate.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -44,19 +50,8 @@ import se.inera.certificate.schema.adapter.PartialAdapter;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.ObjectFactory;
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author andreaskaltenbach
@@ -93,15 +88,32 @@ public class CertificateServiceImpl implements CertificateService {
     private Boolean shouldStoreOriginalCertificate = true;
 
     @Override
-    public List<Certificate> listCertificates(String civicRegistrationNumber, List<String> certificateTypes, LocalDate fromDate, LocalDate toDate) {
+    public List<Certificate> listCertificates(String civicRegistrationNumber, List<String> certificateTypes,
+            LocalDate fromDate, LocalDate toDate) {
         assertConsent(civicRegistrationNumber);
-        return fixDeletedStatus(certificateDao.findCertificate(civicRegistrationNumber, certificateTypes, fromDate, toDate));
+        return fixDeletedStatus(certificateDao.findCertificate(civicRegistrationNumber, certificateTypes, fromDate,
+                toDate));
     }
 
     @Override
     public Certificate getCertificate(String civicRegistrationNumber, String id) {
-        assertConsent(civicRegistrationNumber);
-        return getCertificateInternal(civicRegistrationNumber, id);
+
+        // if personnummer is provided, we check for given consent
+        if (civicRegistrationNumber != null) {
+            assertConsent(civicRegistrationNumber);
+        }
+
+        Certificate certificate = getCertificateInternal(civicRegistrationNumber, id);
+
+        if (certificate == null) {
+            throw new InvalidCertificateException(id, civicRegistrationNumber);
+        }
+
+        if (certificate.isRevoked()) {
+            throw new CertificateRevokedException(id);
+        }
+
+        return certificate;
     }
 
     private Certificate getCertificateInternal(String civicRegistrationNumber, String id) {
@@ -116,7 +128,8 @@ public class CertificateServiceImpl implements CertificateService {
         Certificate certificate = createCertificate(utlatande, externalJson);
 
         // add initial RECEIVED state using current time as receiving timestamp
-        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(MI, CertificateState.RECEIVED, new LocalDateTime());
+        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(MI, CertificateState.RECEIVED,
+                new LocalDateTime());
         certificate.addState(state);
 
         certificateDao.store(certificate);
@@ -125,10 +138,11 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     /**
-     * Method has propagation REQUIRES_NEW because it should run independently of any outer transactions.
-     * If it fails, nothing else should fail.
-     *
-     * @param utlatandeXml the received certificate utlatande xml
+     * Method has propagation REQUIRES_NEW because it should run independently of any outer transactions. If it fails,
+     * nothing else should fail.
+     * 
+     * @param utlatandeXml
+     *            the received certificate utlatande xml
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -138,7 +152,8 @@ public class CertificateServiceImpl implements CertificateService {
                 OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), utlatandeXml);
                 certificateDao.storeOriginalCertificate(original);
             } catch (Exception e) {
-                LOGGER.error("Could not write original document to database. Does not interrupt certificate registration", e);
+                LOGGER.error(
+                        "Could not write original document to database. Does not interrupt certificate registration", e);
             }
         }
     }
@@ -179,7 +194,8 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     @Transactional(noRollbackFor = { InvalidCertificateIdentifierException.class })
-    public void setCertificateState(String civicRegistrationNumber, String certificateId, String target, CertificateState state, LocalDateTime timestamp) {
+    public void setCertificateState(String civicRegistrationNumber, String certificateId, String target,
+            CertificateState state, LocalDateTime timestamp) {
         certificateDao.updateStatus(certificateId, civicRegistrationNumber, state, target, timestamp);
     }
 
@@ -232,11 +248,11 @@ public class CertificateServiceImpl implements CertificateService {
     private Boolean isDeleted(List<CertificateStateHistoryEntry> entries) {
         for (CertificateStateHistoryEntry entry : entries) {
             switch (entry.getState()) {
-                case DELETED:
-                    return true;
-                case RESTORED:
-                    return false;
-                default:
+            case DELETED:
+                return true;
+            case RESTORED:
+                return false;
+            default:
             }
         }
         return false;
