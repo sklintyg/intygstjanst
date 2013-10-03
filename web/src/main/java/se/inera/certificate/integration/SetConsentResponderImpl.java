@@ -2,7 +2,6 @@ package se.inera.certificate.integration;
 
 import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.integration.util.ResultOfCallUtil;
@@ -11,7 +10,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.setconsent.v1.rivtabp20.Set
 import se.inera.ifv.insuranceprocess.healthreporting.setconsentresponder.v1.SetConsentRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.setconsentresponder.v1.SetConsentResponseType;
 
-@Transactional
 @SchemaValidation
 public class SetConsentResponderImpl implements SetConsentResponderInterface {
 

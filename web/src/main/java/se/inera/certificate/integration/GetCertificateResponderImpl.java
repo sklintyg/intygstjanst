@@ -31,7 +31,6 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -50,7 +49,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.
 /**
  * @author andreaskaltenbach
  */
-@Transactional
 @SchemaValidation
 public class GetCertificateResponderImpl implements GetCertificateResponderInterface {
 

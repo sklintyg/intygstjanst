@@ -19,6 +19,11 @@
 package se.inera.certificate.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -44,19 +49,7 @@ import se.inera.certificate.schema.adapter.PartialAdapter;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.ObjectFactory;
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * @author andreaskaltenbach
@@ -193,6 +186,8 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.MANDATORY,
+                   noRollbackFor = { InvalidCertificateIdentifierException.class, CertificateRevokedException.class })
     public Certificate revokeCertificate(String civicRegistrationNumber, String certificateId) {
         Certificate certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
 
