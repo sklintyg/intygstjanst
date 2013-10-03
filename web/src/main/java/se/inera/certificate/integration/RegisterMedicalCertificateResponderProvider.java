@@ -1,10 +1,5 @@
 package se.inera.certificate.integration;
 
-import com.google.common.base.Throwables;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPBody;
@@ -15,6 +10,13 @@ import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.w3c.dom.Document;
+
+import com.google.common.base.Throwables;
 
 /**
  *
@@ -33,7 +35,9 @@ public class RegisterMedicalCertificateResponderProvider extends RegisterCertifi
 
         try {
             convertAndPersist(request);
-            response = getReturnCode();
+            response = getOKReturnMessage();
+        } catch (DataIntegrityViolationException e) {
+            response = getInfoReturnMessage("Certificate already exists");
         } catch (Exception e) {
             LOGGER.warn("Error in Webservice: ", e);
             Throwables.propagate(e);
@@ -51,7 +55,15 @@ public class RegisterMedicalCertificateResponderProvider extends RegisterCertifi
         return BODY_NAME;
     }
 
-    SOAPMessage getReturnCode() {
+    SOAPMessage getOKReturnMessage() {
+        return getReturnMessage("OK", null, null);
+    }
+    
+    SOAPMessage getInfoReturnMessage(String message) {
+        return getReturnMessage("INFO", "infoText", message);
+    }
+    
+    SOAPMessage getReturnMessage(String code, String messageType, String messageText) {
         try {
             MessageFactory factory = MessageFactory.newInstance();
             SOAPMessage message = factory.createMessage();
@@ -60,7 +72,11 @@ public class RegisterMedicalCertificateResponderProvider extends RegisterCertifi
             SOAPBodyElement bodyElement = body.addBodyElement(new QName("urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3","RegisterMedicalCertificateResponse"));
             SOAPElement result = bodyElement.addChildElement(new QName("urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3", "result"));
             SOAPElement resultCode = result.addChildElement(new QName("urn:riv:insuranceprocess:healthreporting:2", "resultCode"));
-            resultCode.setTextContent("OK");
+            resultCode.setTextContent(code);
+            if (messageType != null && messageText != null) {
+                SOAPElement messageElement = result.addChildElement(new QName("urn:riv:insuranceprocess:healthreporting:2", messageType));
+                messageElement.setTextContent(messageText);
+            }
 
             return message;
         } catch (Exception e) {

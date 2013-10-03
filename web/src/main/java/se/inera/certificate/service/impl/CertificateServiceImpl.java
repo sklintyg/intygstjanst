@@ -209,6 +209,8 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.MANDATORY,
+                   noRollbackFor = { InvalidCertificateIdentifierException.class, CertificateRevokedException.class })
     public Certificate revokeCertificate(String civicRegistrationNumber, String certificateId) {
         Certificate certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
 

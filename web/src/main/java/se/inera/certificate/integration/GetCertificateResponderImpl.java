@@ -34,7 +34,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.
 /**
  * @author andreaskaltenbach
  */
-@Transactional
 @SchemaValidation
 public class GetCertificateResponderImpl extends AbstractGetCertificateResponderImpl implements
         GetCertificateResponderInterface {
