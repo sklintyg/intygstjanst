@@ -1,6 +1,8 @@
 package se.inera.certificate.model.dao.impl;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import se.inera.certificate.model.dao.Consent;
 import se.inera.certificate.model.dao.ConsentDao;
@@ -12,6 +14,7 @@ import javax.persistence.PersistenceContext;
  * @author andreaskaltenbach
  */
 @Repository
+@Transactional(propagation = Propagation.MANDATORY)
 public class ConsentDaoImpl implements ConsentDao {
 
     @PersistenceContext
@@ -33,6 +36,7 @@ public class ConsentDaoImpl implements ConsentDao {
     }
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public boolean hasConsent(String civicRegistrationNumber) {
         return findConsent(civicRegistrationNumber) != null;
     }

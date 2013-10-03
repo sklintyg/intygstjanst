@@ -32,7 +32,6 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.integration.certificates.CertificateSupport;
@@ -50,7 +49,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificater
 /**
  * @author andreaskaltenbach
  */
-@Transactional
 @SchemaValidation
 public class GetCertificateResponderImpl implements GetCertificateResponderInterface {
 

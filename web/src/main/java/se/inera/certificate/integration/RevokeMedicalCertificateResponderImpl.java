@@ -33,7 +33,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequest
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultOfCall;
 
-@Transactional
 public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCertificateResponderInterface {
 
     private static final Logger LOG = LoggerFactory.getLogger(RevokeMedicalCertificateResponderImpl.class);
@@ -49,8 +48,8 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
     private String sendLogicalAddressText;
 
     @Override
-    public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress,
-            RevokeMedicalCertificateRequestType request) {
+    @Transactional
+    public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress, RevokeMedicalCertificateRequestType request) {
 
         RevokeMedicalCertificateResponseType response = new RevokeMedicalCertificateResponseType();
 

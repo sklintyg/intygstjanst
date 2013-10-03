@@ -24,7 +24,6 @@ import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.exception.MissingConsentException;
@@ -38,7 +37,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v
 /**
  * @author andreaskaltenbach
  */
-@Transactional
 public class ListCertificatesResponderImpl implements ListCertificatesResponderInterface {
 
     @Autowired

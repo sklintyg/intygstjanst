@@ -23,6 +23,8 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.model.CertificateState;
@@ -49,6 +51,7 @@ import java.util.Set;
  * Implementation of {@link CertificateDao}.
  */
 @Repository
+@Transactional(propagation = Propagation.MANDATORY)
 public class CertificateDaoImpl implements CertificateDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(CertificateDaoImpl.class);
@@ -58,6 +61,7 @@ public class CertificateDaoImpl implements CertificateDao {
     private EntityManager entityManager;
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Certificate> findCertificate(String civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate) {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -93,6 +97,7 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, noRollbackFor = { InvalidCertificateIdentifierException.class })
     public Certificate getCertificate(String civicRegistrationNumber, String certificateId) {
         Certificate certificate = entityManager.find(Certificate.class, certificateId);
 
@@ -122,6 +127,7 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
+    @Transactional(noRollbackFor = { InvalidCertificateIdentifierException.class })
     public void updateStatus(String id, String civicRegistrationNumber, CertificateState state, String target, LocalDateTime timestamp) {
 
         Certificate certificate = entityManager.find(Certificate.class, id);

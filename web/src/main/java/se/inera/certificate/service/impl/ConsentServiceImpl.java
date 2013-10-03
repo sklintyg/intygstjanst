@@ -20,6 +20,7 @@ package se.inera.certificate.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import se.inera.certificate.model.dao.ConsentDao;
 import se.inera.certificate.service.ConsentService;
@@ -42,6 +43,7 @@ public class ConsentServiceImpl implements ConsentService {
         }
     }
 
+    @Transactional
     @Override
     public void setConsent(String civicRegistrationNumber, boolean consentGiven) {
         if (consentGiven) {
