@@ -13,8 +13,11 @@ public class ModuleCallFailedException extends RuntimeException {
 
     public ModuleCallFailedException(String message, Response response) {
         this.message = message;
-        statusCode = response.getStatusInfo().getStatusCode();
-        reasonPhrase = response.getStatusInfo().getReasonPhrase();
+
+        if (response.getStatusInfo() != null) {
+            statusCode = response.getStatusInfo().getStatusCode();
+            reasonPhrase = response.getStatusInfo().getReasonPhrase();
+        }
     }
 
     @Override
