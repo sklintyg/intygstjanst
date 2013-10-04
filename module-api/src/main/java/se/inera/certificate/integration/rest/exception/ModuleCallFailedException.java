@@ -22,6 +22,6 @@ public class ModuleCallFailedException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return message + " (module returned status code " + statusCode + " and reason " + reasonPhrase;
+        return message + " (module returned status code " + statusCode + " and reason " + reasonPhrase + ")";
     }
 }
