@@ -12,6 +12,9 @@ public class CertificateStatus implements Serializable {
 
     private LocalDateTime timestamp;
 
+    public CertificateStatus() {
+    }
+
     public CertificateStatus(String type, String target, LocalDateTime timestamp) {
         this.type = type;
         this.target = target;
