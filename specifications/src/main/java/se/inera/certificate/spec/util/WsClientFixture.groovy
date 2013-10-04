@@ -98,8 +98,9 @@ class WsClientFixture {
 		tlsParams.setTrustManagers(tm);
 
 		KeyStore certStore = KeyStore.getInstance("PKCS12");
-		String certPass = "psgccsSeBZ"
-		certStore.load(WsClientFixture.class.getResourceAsStream("/hsaws-user.ifv.sjunet.org_auth.p12"), certPass.toCharArray());
+        String certFile = System.getProperty("ws.certificate.file");
+        String certPass = System.getProperty("ws.certificate.password");
+		certStore.load(WsClientFixture.class.getResourceAsStream(certFile), certPass.toCharArray());
 		KeyManagerFactory keyFactory =
 				KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
 		keyFactory.init(certStore, certPass.toCharArray());
@@ -110,6 +111,7 @@ class WsClientFixture {
 		filter.getInclude().add(".*_EXPORT_.*");
 		filter.getInclude().add(".*_EXPORT1024_.*");
 		filter.getInclude().add(".*_WITH_DES_.*");
+        filter.getInclude().add(".*_WITH_AES_.*");
 		filter.getInclude().add(".*_WITH_NULL_.*");
 		filter.getInclude().add(".*_DH_anon_.*");
 		tlsParams.setCipherSuitesFilter(filter);//set all the needed include filters.

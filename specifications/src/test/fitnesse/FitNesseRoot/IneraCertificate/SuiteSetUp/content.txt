@@ -15,4 +15,6 @@
 |service.sendCertificateUrl|${services.sendCertificateUrl}|
 |service.sendMedicalCertificateQuestionUrl|${services.sendMedicalCertificateQuestionUrl}|
 |service.sendMedicalCertificateAnswerUrl|${services.sendMedicalCertificateAnswerUrl}|
+|ws.certificate.file|${ws.certificate.file}|
+|ws.certificate.password|${ws.certificate.password}|
 *****! 
