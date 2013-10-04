@@ -31,7 +31,7 @@ class MarkeraIntygSomHamtat extends WsClientFixture {
         parameters.nationalIdentityNumber = personnr
         parameters.certificateId = intyg
 
-        parameters.target = "fk"
+        parameters.target = "FK"
         parameters.timestamp = LocalDateTime.now()
         parameters.status = StatusType.SENT
 

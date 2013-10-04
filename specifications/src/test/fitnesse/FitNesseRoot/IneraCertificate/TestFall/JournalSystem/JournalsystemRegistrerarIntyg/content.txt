@@ -22,7 +22,7 @@
 
 |Registrera fk7263 intyg|
 |personnummer|id|utfärdat|resultat?|
-|19121212-1212|intyg-1|2013-08-01|[INFO]|
+|19121212-1212|intyg-1|2013-08-01|[INFO] - Certificate already exists|
 
 !3 Ta bort samtycke
 

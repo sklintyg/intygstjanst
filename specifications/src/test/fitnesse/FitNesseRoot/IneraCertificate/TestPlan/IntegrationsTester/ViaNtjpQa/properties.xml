@@ -9,6 +9,7 @@
 	<Suite/>
 	<SymbolicLinks>
 		<ManuellaTester>.IneraCertificate.ManuellaTester</ManuellaTester>
+		<JournalSystem>.IneraCertificate.TestFall.JournalSystem</JournalSystem>
 		<ForsakringsKassan>.IneraCertificate.TestFall.ForsakringsKassan</ForsakringsKassan>
 	</SymbolicLinks>
 	<Versions/>
