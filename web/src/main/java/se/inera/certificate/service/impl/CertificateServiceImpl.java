@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
+import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
@@ -192,6 +193,7 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
+    @Transactional(noRollbackFor = {InvalidCertificateIdentifierException.class})
     public void setCertificateState(String civicRegistrationNumber, String certificateId, String target, CertificateState state, LocalDateTime timestamp) {
         certificateDao.updateStatus(certificateId, civicRegistrationNumber, state, target, timestamp);
     }

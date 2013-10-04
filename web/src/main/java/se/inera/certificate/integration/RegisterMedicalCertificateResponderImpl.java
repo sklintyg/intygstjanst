@@ -1,13 +1,15 @@
 package se.inera.certificate.integration;
 
+import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
+import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
+import intyg.registreraintyg._1.RegistreraIntygResponderInterface;
+
 import javax.xml.ws.Holder;
 
-import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
-
-import intyg.registreraintyg._1.RegistreraIntygResponderInterface;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.w3.wsaddressing10.AttributedURIType;
+
 import se.inera.certificate.common.v1.Utlatande;
 import se.inera.certificate.integration.converter.LakarutlatandeTypeToUtlatandeConverter;
 import se.inera.certificate.service.CertificateService;
@@ -18,7 +20,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificater
 /**
  * @author andreaskaltenbach
  */
-@Transactional
 public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalCertificateResponderInterface {
 
     @Autowired
@@ -30,13 +31,16 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
     @Override
     public RegisterMedicalCertificateResponseType registerMedicalCertificate(AttributedURIType logicalAddress, RegisterMedicalCertificateType request) {
 
-        Utlatande utlatande = LakarutlatandeTypeToUtlatandeConverter.convert(request.getLakarutlatande());
-        registreraIntygResponder.registreraIntyg(new Holder<>(utlatande));
-
-        certificateService.storeOriginalCertificate(request);
-
         RegisterMedicalCertificateResponseType response = new RegisterMedicalCertificateResponseType();
-        response.setResult(okResult());
+        Utlatande utlatande = LakarutlatandeTypeToUtlatandeConverter.convert(request.getLakarutlatande());
+
+        try {
+            registreraIntygResponder.registreraIntyg(new Holder<>(utlatande));
+            certificateService.storeOriginalCertificate(request);
+            response.setResult(okResult());
+        } catch (DataIntegrityViolationException e) {
+            response.setResult(infoResult("Certificate already exists"));
+        }
         return response;
     }
 }
