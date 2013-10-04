@@ -6,7 +6,7 @@
   <meta>
     <c:certificateId>123456</c:certificateId>
     <c:certificateType>fk7263</c:certificateType>
-    <c:validFrom>2013-10-03</c:validFrom>
+    <c:validFrom>2013-10-01</c:validFrom>
     <c:validTo>2013-10-03</c:validTo>
     <c:signDate>2013-10-03</c:signDate>
     <c:available>true</c:available>

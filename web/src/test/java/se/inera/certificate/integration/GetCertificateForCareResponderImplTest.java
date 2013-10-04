@@ -41,6 +41,7 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceListener;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -93,7 +94,10 @@ public class GetCertificateForCareResponderImplTest {
         utlatande.setTyp(new Kod(CERTIFICATE_TYPE));
 
         when(certificateService.getCertificate(null, CERTIFICATE_ID)).thenReturn(
-                new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DATA).certificateType(CERTIFICATE_TYPE).build());
+                new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DATA)
+                        .certificateType(CERTIFICATE_TYPE)
+                        .validity("2013-10-01", "2013-10-03")
+                        .signedDate(new LocalDateTime("2013-10-03")).build());
 
         when(certificateService.getLakarutlatande(any(Certificate.class))).thenReturn(utlatande);
 
