@@ -1,0 +1,81 @@
+!3 Givet samtycke finns för 19121212-1212 och två intyg varav ett redan är skickat till FK
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|ja|
+
+|Intyg|
+|personnr|utfärdat|giltigtFrån|giltigtTill|utfärdare|enhet|typ|id|mall|
+|19121212-1212|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intyg-1|M|
+|19121212-1212|2013-04-02|2013-04-02|2013-04-12|läkare1|enhet1|FK7263|intyg-2|M|
+
+|Markera intyg som hamtat|
+|personnr|intyg|resultat?|
+|19121212-1212|intyg-1|OK|
+
+!3 Ännu ej rättade intyg är tillgängliga
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|status?|
+|19121212-1212|intyg-1|OK|[SENT, RECEIVED]|
+|19121212-1212|intyg-2|OK|[RECEIVED]|
+
+
+!3 Journalsystem rättar intygen
+
+|Ratta intyg|
+|personnummer|intyg|resultat?|
+|19121212-1212|intyg-1|OK|
+|19121212-1212|intyg-2|OK|
+
+!3 Intygstjänsten tillåter ej att rätta intyget en gång till
+
+|Ratta intyg|
+|personnummer|intyg|resultat?|
+|19121212-1212|intyg-1|[INFO] - Certificate 'intyg-1' is already revoked.|
+|19121212-1212|intyg-2|[INFO] - Certificate 'intyg-2' is already revoked.|
+
+!3 Intygstjänsten tillåter ej att skicka ett rättat intyget
+
+|Skicka intyg till Fk|
+|personnummer|intyg|resultat?|
+|19121212-1212|intyg-1|[ERROR] - Certificate 'intyg-1' has been revoked.|
+|19121212-1212|intyg-2|[ERROR] - Certificate 'intyg-2' has been revoked.|
+
+!3 Intygstjänsten tillåter ej att hämta ett rättat intyg
+|Hamta intyg|
+|personnummer|intyg|resultat?|
+|19121212-1212|intyg-1|[INFO] - Certificate 'intyg-1' has been revoked|
+|19121212-1212|intyg-2|[INFO] - Certificate 'intyg-2' has been revoked|
+
+!3 Givet samtycke saknas för 19121212-1212 och två intyg varav ett redan är skickat till FK
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|nej|
+
+|Intyg|
+|personnr|utfärdat|giltigtFrån|giltigtTill|utfärdare|enhet|typ|id|mall|
+|19121212-1212|2013-04-03|2013-04-03|2013-04-13|läkare1|enhet1|FK7263|intyg-3|M|
+|19121212-1212|2013-04-04|2013-04-04|2013-04-14|läkare1|enhet1|FK7263|intyg-4|M|
+
+|Markera intyg som hamtat|
+|personnr|intyg|resultat?|
+|19121212-1212|intyg-3|OK|
+
+!3 Journalsystem kan rätta intygen, oavsett samtycke
+
+|Ratta intyg|
+|personnummer|intyg|resultat?|
+|19121212-1212|intyg-3|OK|
+|19121212-1212|intyg-4|OK|
+
+
+!3 Rensa bort test-intyg
+
+|ta bort Intyg|
+|id|
+|intyg-1|
+|intyg-2|
+|intyg-3|
+|intyg-4|
