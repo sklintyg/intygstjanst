@@ -58,10 +58,10 @@ import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificateforcareresponder.v1.GetCertificateForCareRequestType;
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificateforcareresponder.v1.GetCertificateForCareResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificateforcareresponder.v1.ObjectFactory;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ErrorIdEnum;
-import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificateresponder.v1.GetCertificateForCareRequestType;
-import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificateresponder.v1.GetCertificateForCareResponseType;
-import se.inera.ifv.insuranceprocess.healthreporting.vardgetcertificateresponder.v1.ObjectFactory;
 
 /**
  * @author andreaskaltenbach
@@ -94,10 +94,8 @@ public class GetCertificateForCareResponderImplTest {
         utlatande.setTyp(new Kod(CERTIFICATE_TYPE));
 
         when(certificateService.getCertificate(null, CERTIFICATE_ID)).thenReturn(
-                new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DATA)
-                        .certificateType(CERTIFICATE_TYPE)
-                        .validity("2013-10-01", "2013-10-03")
-                        .signedDate(new LocalDateTime("2013-10-03")).build());
+                new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DATA).certificateType(CERTIFICATE_TYPE)
+                        .validity("2013-10-01", "2013-10-03").signedDate(new LocalDateTime("2013-10-03")).build());
 
         when(certificateService.getLakarutlatande(any(Certificate.class))).thenReturn(utlatande);
 
