@@ -58,7 +58,7 @@ public class RegistreraFk7263Intyg extends WsClientFixture {
 		request.lakarutlatande.skapadAvHosPersonal.fullstandigtNamn = utfärdare
 		request.lakarutlatande.skapadAvHosPersonal.enhet.enhetsId.extension = enhet
 
-        response = registerMedicalCertificateResponder.registerMedicalCertificate(null, request);
+        response = registerMedicalCertificateResponder.registerMedicalCertificate(logicalAddress, request);
     }
 
     public String resultat() {

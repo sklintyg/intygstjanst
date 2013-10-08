@@ -1,14 +1,15 @@
+!*> '''Variables Defined'''
 !define ntjp.test {https://test1.esb.ntjp.se/vp/} 
-!define ws.certificate.file {/test.minaintyg.sjunet.org_cert_auth.p12}
-!define ws.certificate.password {Hz2r6VALKF}
 !define services.listCertificatesUrl {${ntjp.test}ListCertificates/1/rivtabp20}
 !define services.getCertificateUrl {${ntjp.test}GetCertificate/1/rivtabp20}
 !define services.setCertificateStatusUrl {${ntjp.test}SetCertificateStatus/1/rivtabp20}
 !define services.revokeCertificateUrl {${ntjp.test}RevokeCertificate/1/rivtabp20}
-# !define services.setConsentUrl {${ntjp.test}SetConsent/1/rivtabp20}
 !define services.registerMedicalCertificateUrl {${ntjp.test}RegisterMedicalCertificate/3/rivtabp20}
 !define services.sendCertificateUrl {${ntjp.test}SendCertificate/1/rivtabp20}
 !define services.sendMedicalCertificateQuestionUrl {${ntjp.test}SendMedicalCertificateQuestion/1/rivtabp20}
 !define services.sendMedicalCertificateAnswerUrl {${ntjp.test}SendMedicalCertificateAnswer/1/rivtabp20}
+# Ännu ej driftsatta tjänster
+# !define services.setConsentUrl {${ntjp.test}SetConsent/1/rivtabp20}
+*!
 
 !contents -R2 -g -p -f -h
