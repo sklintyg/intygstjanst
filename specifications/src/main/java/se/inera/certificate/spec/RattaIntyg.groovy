@@ -31,6 +31,11 @@ class RattaIntyg extends WsClientFixture {
     String intyg
 
     public RattaIntyg() {
+        this(WsClientFixture.LOGICAL_ADDRESS)
+    }
+    
+    public RattaIntyg(String logiskAddress) {
+        super(logiskAddress)
 		String url = serviceUrl ? serviceUrl : baseUrl + "revoke-certificate/v1.0"
 		revokeResponder = createClient(RevokeMedicalCertificateResponderInterface.class, url)
     }
@@ -63,7 +68,7 @@ class RattaIntyg extends WsClientFixture {
         revokeType.lakarutlatande.patient.personId.extension = personnummer
 
         
-        RevokeMedicalCertificateResponseType response = revokeResponder.revokeMedicalCertificate(null, revokeRequestType)
+        RevokeMedicalCertificateResponseType response = revokeResponder.revokeMedicalCertificate(logicalAddress, revokeRequestType)
 
         resultAsString(response)
     }
