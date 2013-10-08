@@ -115,14 +115,22 @@
         <configuration>
           <filesets>
             <fileset>
-              <directory>src/test/fitnesse</directory>
-              <includes>
-                <include>FitNesseRoot/files</include>
-                <include>FitNesseRoot/FitNesse</include>
-                <include>FitNesseRoot/PageHeader</include>
-                <include>FitNesseRoot/RecentChanges</include>
-                <include>Resources</include>
-              </includes>
+              <directory>src/test/fitnesse/Resources</directory>
+            </fileset>
+            <fileset>
+              <directory>src/test/fitnesse/FitNesseRoot/ErrorLogs</directory>
+            </fileset>
+            <fileset>
+              <directory>src/test/fitnesse/FitNesseRoot/FitNesse</directory>
+            </fileset>
+            <fileset>
+              <directory>src/test/fitnesse/FitNesseRoot/PageHeader</directory>
+            </fileset>
+            <fileset>
+              <directory>src/test/fitnesse/FitNesseRoot/RecentChanges</directory>
+            </fileset>
+            <fileset>
+              <directory>src/test/fitnesse/FitNesseRoot/files</directory>
             </fileset>
           </filesets>
         </configuration>
@@ -130,7 +138,7 @@
       <plugin>
         <groupId>uk.co.javahelp.fitnesse</groupId>
         <artifactId>fitnesse-launcher-maven-plugin</artifactId>
-        <version>1.4.0-20130924</version>
+        <version>1.4.0-20131008</version>
         <configuration>
           <port>${fitnesse.port}</port>
           <workingDir>${fitnesse.working}</workingDir>
