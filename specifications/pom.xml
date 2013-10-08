@@ -119,8 +119,6 @@
               <includes>
                 <include>FitNesseRoot/files</include>
                 <include>FitNesseRoot/FitNesse</include>
-                <include>FitNesseRoot/FrontPage</include>
-                <include>FitNesseRoot/PageFooter</include>
                 <include>FitNesseRoot/PageHeader</include>
                 <include>FitNesseRoot/RecentChanges</include>
                 <include>Resources</include>
