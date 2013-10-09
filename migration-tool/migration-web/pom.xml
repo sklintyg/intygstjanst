@@ -14,12 +14,6 @@
 	<packaging>war</packaging>
 	<name>Inera Certificate Data Migration Tool</name>
 	<properties>
-		<spring.framework.version>3.0.5.RELEASE</spring.framework.version>
-		<spring.batch.version>2.1.7.RELEASE</spring.batch.version>
-		<spring.batch.admin.version>1.2.2.RELEASE</spring.batch.admin.version>
-		<junit.version>4.10</junit.version>
-        <compiler.target.version>1.7</compiler.target.version>
-        <compiler.source.version>1.7</compiler.source.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
@@ -114,10 +108,16 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>maven-jetty-plugin</artifactId>
-				<configuration>
-					<contextPath>/migrationtool</contextPath>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>		
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+		        <artifactId>jetty-maven-plugin</artifactId>
+		        <configuration>
+					<webAppConfig>
+		            	<contextPath>/migrationtool</contextPath>
+          			</webAppConfig>
 				</configuration>
 			</plugin>
 			<plugin>
