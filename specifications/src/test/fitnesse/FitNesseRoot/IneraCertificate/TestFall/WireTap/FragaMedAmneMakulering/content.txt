@@ -1,0 +1,58 @@
+!3 Givet följande samtycken:
+
+|Samtycke|
+|personnr|samtycke|
+|19010101-0101|ja|
+
+!3 och följande 2 intyg, varav 1 är markerat som hämtat av FK:
+
+|Intyg|
+|personnr|utfärdat|giltigtFrån|giltigtTill|utfärdare|enhet|typ|id|mall|skickat|
+|19010101-0101|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intyg-1|L|ja|
+|19010101-0101|2013-04-02|2013-04-02|2013-04-12|läkare1|enhet1|FK7263|intyg-2|M|nej|
+
+!3 Ännu ej rättade intyg är tillgängliga
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|status?|
+|19010101-0101|intyg-1|OK|[SENT, RECEIVED]|
+|19010101-0101|intyg-2|OK|[RECEIVED]|
+
+!3 Journalsystem rättar intygen, genom en fråga med ämne Makulering
+
+|Skicka Fraga|${fk.logiskAddress}|
+|vårdReferens|ämne|fråga|frågeTidpunkt|lakarutlatandeId|signeringsTidpunkt|personnr|namn|resultat?|
+|123456789012344|Makulering_av_lakarintyg|Makulera detta intyg|2013-08-05T14:30:00|intyg-1|2013-08-03T00:00:00|19010101-0101|Test Testorsson|OK|
+|123456789012344|Makulering_av_lakarintyg|Makulera detta intyg|2013-08-05T14:30:00|intyg-2|2013-08-03T00:00:00|19010101-0101|Test Testorsson|OK|
+
+!4 Vänta tills wiretap-implementationen har hunnit skicka meddelanden vidare till intygstjänsten (vilket sker asynkront)
+
+|script|Vänta|2|sekunder|
+
+!3 Intygstjänsten tillåter ej att hämta ett rättat intyg
+|Hamta intyg|
+|personnummer|intyg|resultat?|
+|19010101-0101|intyg-1|[INFO] - Certificate 'intyg-1' has been revoked|
+|19010101-0101|intyg-2|[INFO] - Certificate 'intyg-2' has been revoked|
+
+!3 Ytterligare rättningar av samma intyg nonchaleras av intygstjänsten
+
+|Skicka Fraga|${fk.logiskAddress}|
+|vårdReferens|ämne|fråga|frågeTidpunkt|lakarutlatandeId|signeringsTidpunkt|personnr|namn|resultat?|
+|123456789012344|Makulering_av_lakarintyg|Makulera detta intyg|2013-08-05T14:30:00|intyg-1|2013-08-03T00:00:00|19010101-0101|Test Testorsson|OK|
+|123456789012344|Makulering_av_lakarintyg|Makulera detta intyg|2013-08-05T14:30:00|intyg-2|2013-08-03T00:00:00|19010101-0101|Test Testorsson|OK|
+
+|script|Vänta|2|sekunder|
+
+!3 Rensa bort test-intyg
+
+|ta bort Intyg|
+|id|
+|intyg-1|
+|intyg-2|
+
+!3 Återta samtycken:
+
+|Samtycke|
+|personnr|samtycke|
+|19010101-0101|nej|

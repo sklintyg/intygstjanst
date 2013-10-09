@@ -2,7 +2,6 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:intyg:common-model:1"
            xmlns:iso="urn:iso:21090:dt:1" targetNamespace="urn:intyg:common-model:1"
            xmlns:hr="urn:riv:insuranceprocess:healthreporting:2"
-           xmlns:cert="urn:riv:insuranceprocess:certificate:1"
            elementFormDefault="qualified" attributeFormDefault="unqualified"
            version="0.1">
 

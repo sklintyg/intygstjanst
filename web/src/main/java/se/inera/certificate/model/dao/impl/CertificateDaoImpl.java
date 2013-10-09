@@ -18,19 +18,6 @@
  */
 package se.inera.certificate.model.dao.impl;
 
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
-
-import se.inera.certificate.exception.InvalidCertificateIdentifierException;
-import se.inera.certificate.model.CertificateState;
-import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.model.dao.CertificateDao;
-import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
-import se.inera.certificate.model.dao.OriginalCertificate;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -38,17 +25,31 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import se.inera.certificate.exception.InvalidCertificateIdentifierException;
+import se.inera.certificate.model.CertificateState;
+import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.model.dao.CertificateDao;
+import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
+import se.inera.certificate.model.dao.OriginalCertificate;
+
 /**
  * Implementation of {@link CertificateDao}.
  */
 @Repository
+@Transactional(propagation = Propagation.MANDATORY)
 public class CertificateDaoImpl implements CertificateDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(CertificateDaoImpl.class);
@@ -58,6 +59,7 @@ public class CertificateDaoImpl implements CertificateDao {
     private EntityManager entityManager;
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Certificate> findCertificate(String civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate) {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -93,6 +95,7 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, noRollbackFor = { InvalidCertificateIdentifierException.class })
     public Certificate getCertificate(String civicRegistrationNumber, String certificateId) {
         Certificate certificate = entityManager.find(Certificate.class, certificateId);
 
@@ -100,8 +103,8 @@ public class CertificateDaoImpl implements CertificateDao {
             return null;
         }
 
-        // provided civic registration number has to match the certificate's civic registration number
-        if (!certificate.getCivicRegistrationNumber().equals(civicRegistrationNumber)) {
+        // if provided, the civic registration number has to match the certificate's civic registration number
+        if (civicRegistrationNumber != null && !certificate.getCivicRegistrationNumber().equals(civicRegistrationNumber)) {
 
             LOG.warn(String.format("Trying to access certificate '%s' for user '%s' but certificate's user is '%s'.",
                     certificateId, civicRegistrationNumber, certificate.getCivicRegistrationNumber()));
@@ -122,6 +125,7 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
+    @Transactional(noRollbackFor = { InvalidCertificateIdentifierException.class })
     public void updateStatus(String id, String civicRegistrationNumber, CertificateState state, String target, LocalDateTime timestamp) {
 
         Certificate certificate = entityManager.find(Certificate.class, id);

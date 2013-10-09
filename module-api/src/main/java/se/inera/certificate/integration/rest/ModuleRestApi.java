@@ -46,8 +46,7 @@ public interface ModuleRestApi {
 
 
     /**
-     * @param utlatande
-     * @return
+     * Converts the external model into a PDF.
      */
     @POST
     @Path("/pdf")
@@ -57,13 +56,11 @@ public interface ModuleRestApi {
 
     /**
      * Convert from module-external format to module-internal format.
-     *
-     * @param utlatande
-     * @return
      */
     @PUT
     @Path("/internal")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     Response convertExternalToInternal(CertificateContentHolder certificateContentHolder);
 
     /**
@@ -75,5 +72,6 @@ public interface ModuleRestApi {
     @PUT
     @Path("/external")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     Response convertInternalToExternal(Object utlatande);
 }

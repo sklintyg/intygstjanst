@@ -32,7 +32,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequest
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultOfCall;
 
-@Transactional
 @SchemaValidation
 public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCertificateResponderInterface {
 
@@ -49,6 +48,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
     private String sendLogicalAddressText;
 
     @Override
+    @Transactional
     public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress, RevokeMedicalCertificateRequestType request) {
 
         RevokeMedicalCertificateResponseType response = new RevokeMedicalCertificateResponseType();

@@ -1,8 +1,8 @@
 package se.inera.certificate.integration.rest.dto;
 
-import org.joda.time.LocalDateTime;
-
 import java.io.Serializable;
+
+import org.joda.time.LocalDateTime;
 
 public class CertificateStatus implements Serializable {
 
@@ -11,6 +11,15 @@ public class CertificateStatus implements Serializable {
     private String target;
 
     private LocalDateTime timestamp;
+
+    public CertificateStatus() {
+    }
+
+    public CertificateStatus(String type, String target, LocalDateTime timestamp) {
+        this.type = type;
+        this.target = target;
+        this.timestamp = timestamp;
+    }
 
     public String getType() {
         return type;

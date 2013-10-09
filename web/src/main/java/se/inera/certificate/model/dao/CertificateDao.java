@@ -46,7 +46,7 @@ public interface CertificateDao {
 
     /**
      * Gets one {@link Certificate}.
-     * @param civicRegistrationNumber the user's civic registration number
+     * @param civicRegistrationNumber the user's civic registration number or null, if no check for civic registration number is desired
      * @param certificateId Id of the Certificate
      *
      * @return the matching certificate or {@code null} if there is no certificate for the given certificate ID and

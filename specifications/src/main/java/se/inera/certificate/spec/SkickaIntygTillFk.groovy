@@ -33,6 +33,11 @@ class SkickaIntygTillFk extends WsClientFixture {
     static String serviceUrl = System.getProperty("service.sendCertificateUrl")
     
     public SkickaIntygTillFk() {
+        this(WsClientFixture.LOGICAL_ADDRESS)
+    }
+    
+    public SkickaIntygTillFk(String logiskAddress) {
+        super(logiskAddress)
         String url = serviceUrl ? serviceUrl : baseUrl + "send-certificate/v1.0"
         sendResponder = createClient(SendMedicalCertificateResponderInterface.class, url)
     }
@@ -63,7 +68,7 @@ class SkickaIntygTillFk extends WsClientFixture {
         sendType.lakarutlatande.patient.personId = new II()
         sendType.lakarutlatande.patient.personId.extension = personnummer
         
-        response = sendResponder.sendMedicalCertificate(null, sendRequestType)
+        response = sendResponder.sendMedicalCertificate(logicalAddress, sendRequestType)
     }
 
     public String resultat() {

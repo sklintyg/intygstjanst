@@ -1,1 +1,3 @@
+!define ws.certificate.file {/hsaws-user.ifv.sjunet.org_auth.p12}
+
 !contents -R2 -g -p -f -h

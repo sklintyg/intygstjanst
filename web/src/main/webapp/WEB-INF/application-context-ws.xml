@@ -39,6 +39,16 @@
 
   </jaxws:endpoint>
 
+  <jaxws:endpoint address="/get-certificate-for-care/v1.0"
+                    implementor="se.inera.certificate.integration.GetCertificateForCareResponderImpl">
+      <jaxws:outFaultInterceptors>
+        <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+          <constructor-arg value="transform/get-certificate-for-care-transform.xslt"/>
+        </bean>
+      </jaxws:outFaultInterceptors>
+
+    </jaxws:endpoint>
+
   <jaxws:endpoint address="/get-certificate-content/v1.0"
                     implementor="se.inera.certificate.integration.GetCertificateContentResponderImpl">
       <jaxws:outFaultInterceptors>

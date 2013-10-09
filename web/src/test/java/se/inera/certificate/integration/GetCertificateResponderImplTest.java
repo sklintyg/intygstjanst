@@ -40,11 +40,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
+import se.inera.certificate.exception.CertificateRevokedException;
+import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.integration.json.CustomObjectMapper;
 import se.inera.certificate.integration.rest.ModuleRestApi;
 import se.inera.certificate.integration.rest.ModuleRestApiFactory;
-import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
@@ -104,7 +105,7 @@ public class GetCertificateResponderImplTest {
     @Test
     public void getCertificateWithUnknownCertificateId() {
 
-        when(certificateService.getCertificate(civicRegistrationNumber, certificateId)).thenReturn(null);
+        when(certificateService.getCertificate(civicRegistrationNumber, certificateId)).thenThrow(new InvalidCertificateException("123456", null));
 
         GetCertificateRequestType parameters = createGetCertificateRequest(civicRegistrationNumber, certificateId);
 
@@ -136,8 +137,7 @@ public class GetCertificateResponderImplTest {
     @Test
     public void getRevokedCertificate() {
 
-        Certificate certificate = new CertificateBuilder(certificateId).state(CertificateState.CANCELLED, "fk").build();
-        when(certificateService.getCertificate(civicRegistrationNumber, certificateId)).thenReturn(certificate);
+        when(certificateService.getCertificate(civicRegistrationNumber, certificateId)).thenThrow(new CertificateRevokedException("123456"));
 
         GetCertificateRequestType parameters = createGetCertificateRequest(civicRegistrationNumber, certificateId);
 

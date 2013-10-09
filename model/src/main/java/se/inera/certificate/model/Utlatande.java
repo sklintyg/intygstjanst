@@ -1,13 +1,12 @@
 package se.inera.certificate.model;
 
-import static se.inera.certificate.model.util.Iterables.find;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import static se.inera.certificate.model.util.Iterables.find;
+
 import org.joda.time.LocalDateTime;
 import org.joda.time.Partial;
-
 import se.inera.certificate.model.util.Predicate;
 
 /**
@@ -36,8 +35,6 @@ public class Utlatande {
     private List<Vardkontakt> vardkontakter;
 
     private List<Referens> referenser;
-
-    private Ovrigt ovrigt;
 
     /**
      * To which point in time is this certificate considered valid.
@@ -99,14 +96,6 @@ public class Utlatande {
 
     public void setSkapadAv(HosPersonal skapadAv) {
         this.skapadAv = skapadAv;
-    }
-
-    public Ovrigt getOvrigt() {
-        return ovrigt;
-    }
-
-    public void setOvrigt(Ovrigt ovrigt) {
-        this.ovrigt = ovrigt;
     }
 
     public List<Aktivitet> getAktiviteter() {

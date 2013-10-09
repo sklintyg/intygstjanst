@@ -40,17 +40,19 @@ public interface CertificateService {
      * @param fromDate optional from date filter
      * @param toDate optional to date filter
      * @return list of matching certificates or empty list if no such certificates can be found
-     * @throws MissingConsentException if the patient has not given consent for accessing her certificates
+     * @throws se.inera.certificate.exception.MissingConsentException if the patient has not given consent for accessing her certificates
      */
     List<Certificate> listCertificates(String civicRegistrationNumber, List<String> certificateTypes, LocalDate fromDate, LocalDate toDate);
 
     /**
      * Returns the certificate for the given patient and certificate ID.
      *
-     * @param civicRegistrationNumber the patient's civic registration number
+     * @param civicRegistrationNumber the patient's civic registration number. If left empty, no consent check will be performed.
      * @param certificateId the certificate ID
      * @return the certificate information or null if the requested certificate does not exist
-     * @throws MissingConsentException if the patient has not given consent for accessing her certificates
+     * @throws se.inera.certificate.exception.MissingConsentException if the patient has not given consent for accessing her certificates
+     * @throws se.inera.certificate.exception.InvalidCertificateException if the certificate does not exist
+     * @throws se.inera.certificate.exception.CertificateRevokedException if the certificate has been revoked
      */
     Certificate getCertificate(String civicRegistrationNumber, String certificateId);
 
@@ -67,8 +69,8 @@ public interface CertificateService {
 
     /**
      * Sends the certificate to the destined target.
-     * @throws InvalidCertificateException if the certificate does not exist
-     * @throws CertificateRevokedException if the certificate has been revoked
+     * @throws se.inera.certificate.exception.InvalidCertificateException if the certificate does not exist
+     * @throws se.inera.certificate.exception.CertificateRevokedException if the certificate has been revoked
      */
     void sendCertificate(String civicRegistrationNumber, String certificateId, String target);
 
@@ -77,9 +79,8 @@ public interface CertificateService {
     /**
      * Revokes the certificate.
      * @return the revoked certificate.
-     * @throws InvalidCertificateException if the certificate does not exist
-     * @throws CertificateRevokedException if the certificate has been revoked
+     * @throws se.inera.certificate.exception.InvalidCertificateException if the certificate does not exist
+     * @throws se.inera.certificate.exception.CertificateRevokedException if the certificate has been revoked
      */
     Certificate revokeCertificate(String civicRegistrationNumber, String certificateId);
-
 }

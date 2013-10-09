@@ -18,30 +18,13 @@
  */
 package se.inera.certificate.integration;
 
-import javax.ws.rs.core.Response;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.InputStream;
-
-import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 
-import com.google.common.base.Throwables;
 import org.apache.cxf.annotations.SchemaValidation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.integration.converter.ModelConverter;
-import se.inera.certificate.integration.rest.ModuleRestApi;
-import se.inera.certificate.integration.rest.ModuleRestApiFactory;
-import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20.GetCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.CertificateType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType;
@@ -50,58 +33,30 @@ import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.
 /**
  * @author andreaskaltenbach
  */
-@Transactional
 @SchemaValidation
-public class GetCertificateResponderImpl implements GetCertificateResponderInterface {
-
-    private static final Logger LOG = LoggerFactory.getLogger(GetCertificateResponderImpl.class);
-
-    @Autowired
-    private CertificateService certificateService;
-
-    @Autowired
-    private ModuleRestApiFactory moduleRestApiFactory;
+public class GetCertificateResponderImpl extends AbstractGetCertificateResponderImpl implements
+        GetCertificateResponderInterface {
 
     @Override
-    public GetCertificateResponseType getCertificate(AttributedURIType logicalAddress, GetCertificateRequestType parameters) {
+    public GetCertificateResponseType getCertificate(AttributedURIType logicalAddress, GetCertificateRequestType request) {
         GetCertificateResponseType response = new GetCertificateResponseType();
 
-        Certificate certificate;
-        try {
-            certificate = certificateService.getCertificate(parameters.getNationalIdentityNumber(), parameters.getCertificateId());
-        } catch (MissingConsentException ex) {
-            // return ERROR if user has not given consent
-            LOG.info("Tried to get certificate '" + parameters.getCertificateId() + "' but user '" + parameters.getNationalIdentityNumber() + "' has not given consent.");
-            response.setResult(failResult(String.format("Missing consent for patient %s", parameters.getNationalIdentityNumber())));
+        CertificateOrResultOfCall certificateOrResultOfCall = getCertificate(request.getCertificateId(),
+                request.getNationalIdentityNumber());
+
+        if (certificateOrResultOfCall.hasError()) {
+            response.setResult(certificateOrResultOfCall.getResultOfCall());
             return response;
         }
 
-
-        if (certificate == null) {
-            // return ERROR if no such certificate does exist
-            LOG.info("Tried to get certificate '" + parameters.getCertificateId() + "' but no such certificate does exist for user '" + parameters.getNationalIdentityNumber() + "'.");
-            response.setResult(failResult(String.format("Unknown certificate ID: %s", parameters.getCertificateId())));
-            return response;
-        }
-
-        if (certificate.isRevoked()) {
-            // return INFO if certificate is revoked
-            LOG.info("Tried to get certificate '" + parameters.getCertificateId() + "' but certificate has been revoked'.");
-            response.setResult(infoResult("Certificate '" + parameters.getCertificateId() + "' has been revoked"));
-            return response;
-        }
-
+        Certificate certificate = certificateOrResultOfCall.getCertificate();
         response.setMeta(ModelConverter.toCertificateMetaType(certificate));
         attachCertificateDocument(certificate, response);
         return response;
     }
 
-    private void attachCertificateDocument(Certificate certificate, GetCertificateResponseType response) {
-
-        Utlatande utlatande = certificateService.getLakarutlatande(certificate);
-
-        Document document = marshall(certificate, utlatande);
-
+    protected void attachCertificateDocument(Certificate certificate, GetCertificateResponseType response) {
+        Document document = getCertificateDocument(certificate);
         CertificateType certificateType = new CertificateType();
         certificateType.getAny().add(document.getDocumentElement());
 
@@ -109,17 +64,8 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
         response.setResult(okResult());
     }
 
-    private Document marshall(Certificate certificate, Utlatande utlatande) {
-        ModuleRestApi restApi = moduleRestApiFactory.getModuleRestService(utlatande.getTyp().getCode());
-        Response response = restApi.marshall("1.0", certificate.getDocument());
-
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            Document document = factory.newDocumentBuilder().parse(new InputSource((InputStream)response.getEntity()));
-            response.close();
-            return document;
-        } catch (Exception e) {
-           throw Throwables.propagate(e);
-        }
+    @Override
+    protected String getMarshallVersion() {
+        return "1.0";
     }
 }

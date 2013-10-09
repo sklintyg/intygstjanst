@@ -1,5 +1,8 @@
 package se.inera.certificate.service.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -10,9 +13,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.io.InputStream;
-
+import ch.qos.logback.core.Appender;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,9 +22,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
-
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
+import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.integration.json.CustomObjectMapper;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
@@ -33,14 +35,11 @@ import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.ConsentService;
-import ch.qos.logback.core.Appender;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author andreaskaltenbach
  */
-@RunWith( MockitoJUnitRunner.class )
+@RunWith(MockitoJUnitRunner.class)
 public class CertificateServiceImplTest {
 
     private static final String PERSONNUMMER = "<civicRegistrationNumber>";
@@ -114,7 +113,8 @@ public class CertificateServiceImplTest {
 
     private Utlatande lakarutlatande() throws IOException {
         ObjectMapper customObjectMapper = new CustomObjectMapper();
-        InputStream inputStream = new ClassPathResource("lakarutlatande/lakarutlatande_external_format.json").getInputStream();
+        InputStream inputStream = new ClassPathResource("lakarutlatande/lakarutlatande_external_format.json")
+                .getInputStream();
         return customObjectMapper.readValue(inputStream, Utlatande.class);
     }
 
@@ -158,9 +158,7 @@ public class CertificateServiceImplTest {
     @Test
     public void sendCertificateCallsSenderAndSetsStatus() throws IOException {
 
-        Certificate certificate = new CertificateBuilder(CERTIFICATE_ID)
-                .civicRegistrationNumber(PERSONNUMMER)
-                .build();
+        Certificate certificate = new CertificateBuilder(CERTIFICATE_ID).civicRegistrationNumber(PERSONNUMMER).build();
 
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
 
@@ -171,17 +169,16 @@ public class CertificateServiceImplTest {
         verify(certificateSender).sendCertificate(certificate, "fk");
     }
 
-    @Test( expected = InvalidCertificateException.class )
+    @Test(expected = InvalidCertificateException.class)
     public void testSendCertificateWitUnknownCertificate() {
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(null);
 
         certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fk");
     }
 
-    @Test ( expected = CertificateRevokedException.class )
+    @Test(expected = CertificateRevokedException.class)
     public void testSendRevokedCertificate() {
-        Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID)
-                .state(CertificateState.CANCELLED, null)
+        Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID).state(CertificateState.CANCELLED, null)
                 .build();
 
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(revokedCertificate);
@@ -189,10 +186,25 @@ public class CertificateServiceImplTest {
         certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fk");
     }
 
+    @Test(expected = MissingConsentException.class)
+    public void testGetCertificateWithoutConsent() {
+        when(consentService.isConsent(PERSONNUMMER)).thenReturn(false);
+        certificateService.getCertificate(PERSONNUMMER, CERTIFICATE_ID);
+    }
+
+    @Test
+    public void testGetCertificateWithoutConsentCheckForEmptyPersonnummer() {
+        Certificate certificate = createCertificate();
+        when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(certificate);
+
+        certificateService.getCertificate(null, CERTIFICATE_ID);
+    }
+
     @Test
     public void testStoreOriginalCertificate() {
-        doNothing().when(certificateDao).storeOriginalCertificate((OriginalCertificate)anyObject());
+        doNothing().when(certificateDao).storeOriginalCertificate((OriginalCertificate) anyObject());
         certificateService.storeOriginalCertificate("Some text");
-        verify(certificateDao).storeOriginalCertificate((OriginalCertificate)anyObject());
+        verify(certificateDao).storeOriginalCertificate((OriginalCertificate) anyObject());
     }
+
 }

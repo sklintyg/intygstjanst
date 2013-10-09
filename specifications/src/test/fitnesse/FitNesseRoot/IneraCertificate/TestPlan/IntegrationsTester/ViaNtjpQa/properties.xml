@@ -8,7 +8,10 @@
 	<Search/>
 	<Suite/>
 	<SymbolicLinks>
+		<WireTap>.IneraCertificate.TestFall.WireTap</WireTap>
+		<KontrolleraVersion>.IneraCertificate.TestFall.KontrolleraVersion</KontrolleraVersion>
 		<ManuellaTester>.IneraCertificate.ManuellaTester</ManuellaTester>
+		<JournalSystem>.IneraCertificate.TestFall.JournalSystem</JournalSystem>
 		<ForsakringsKassan>.IneraCertificate.TestFall.ForsakringsKassan</ForsakringsKassan>
 	</SymbolicLinks>
 	<Versions/>
