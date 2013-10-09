@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans
+        xmlns:beans="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:batch="http://www.springframework.org/schema/batch"
+        xsi:schemaLocation="
+          http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<beans:description>Master application context</beans:description>
+    	
+	<beans:import resource="classpath*:/org/springframework/batch/admin/web/resources/webapp-config.xml"/>
+	<beans:import resource="classpath:/META-INF/spring/batch/data-source-context.xml"/>
+	<beans:import resource="classpath:/META-INF/spring/batch/batch-context.xml"/>
+	    
+</beans:beans>

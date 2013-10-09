@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+          http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<beans:description>Context for the data migration jobs</beans:description>
+
+	<beans:bean id="intygItemReader"
+		class="org.springframework.batch.item.database.JdbcPagingItemReader"
+		scope="step">
+		<beans:property name="dataSource" ref="intygDataSource" />
+		<beans:property name="queryProvider">
+			<beans:bean
+				class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
+				<beans:property name="dataSource" ref="intygDataSource" />
+				<beans:property name="selectClause" value="${intyg.select.sql.select}" />
+				<beans:property name="fromClause" value="${intyg.select.sql.from}" />
+				<beans:property name="sortKey" value="${intyg.select.sortkey}" />
+			</beans:bean>
+		</beans:property>
+		<beans:property name="pageSize" value="10" />
+		<beans:property name="rowMapper">
+			<beans:ref bean="certificateRowMapper" />
+		</beans:property>
+	</beans:bean>
+
+	<beans:bean id="certificateRowMapper"
+		class="se.inera.certificate.migration.model.OriginalCertificateRowMapper" />
+
+	<beans:bean id="intygItemWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+		<beans:property name="dataSource" ref="intygDataSource"/>
+		<beans:property name="sql" value="${intyg.update.sql}"/>
+		<beans:property name="itemSqlParameterSourceProvider">
+			<beans:bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider" />
+		</beans:property>
+	</beans:bean>
+
+	<beans:bean id="compositeItemProcessor"
+		class="org.springframework.batch.item.support.CompositeItemProcessor">
+		<beans:property name="delegates">
+			<beans:list>
+				<beans:ref bean="extractCertificateIdProcessor" />
+				<beans:ref bean="convertCertificateXMLToJSONProcessor" />
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+
+	<beans:bean id="extractCertificateIdProcessor"
+		class="se.inera.certificate.migration.processors.ExtractCertificateIdProcessor"
+		init-method="init" />
+
+	<beans:bean id="convertCertificateXMLToJSONProcessor"
+		class="se.inera.certificate.migration.processors.ConvertCertificateXMLToJSONProcessor" />
+
+</beans:beans>
