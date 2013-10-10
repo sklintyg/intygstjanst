@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<certificate id="80832895-5a9c-450a-bd74-08af43750788"
+		certificate_type="fk7263" civic_registration_number="19121212-1212"
+		care_unit_name="Vardenheten" signing_doctor_name="Dr Börje Dengroth"
+		signed_date="2013-10-01 12:34:45" valid_from_date="2013-10-01"
+		valid_to_date="2013-10-30" document="VGhlIGpzb24gZ29lcyBoZXJlIQ==" />
+</dataset>

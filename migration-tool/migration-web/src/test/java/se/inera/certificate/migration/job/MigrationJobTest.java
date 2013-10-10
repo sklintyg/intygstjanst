@@ -20,9 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DbUnitConfiguration;
+
 @ContextConfiguration(locations = { "/test-application-context.xml", "/META-INF/spring/batch/jobs/jobs-context.xml"})
-@RunWith(SpringJUnit4ClassRunner.class)
-public class MigrationJobTest {
+@DatabaseSetup("/data/certificate-dataset.xml")
+public class MigrationJobTest extends AbstractDataLoadingSpringTest {
     
     @Autowired
     private JobLauncher jobLauncher;

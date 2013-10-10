@@ -10,8 +10,7 @@ public class ConvertCertificateXMLToJSONProcessor implements ItemProcessor<Origi
     public Certificate process(OriginalCertificate orgCert) throws Exception {
         
         Certificate cert = new Certificate(orgCert.getCertificateId());
-        
-        //TODO call converter REST service here
+        cert.setCertificateJson("Blahonga");
         
         return cert;
     }

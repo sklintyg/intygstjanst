@@ -34,8 +34,8 @@
 	<beans:bean id="intygItemWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
 		<beans:property name="dataSource" ref="intygDataSource"/>
 		<beans:property name="sql" value="${intyg.update.sql}"/>
-		<beans:property name="itemSqlParameterSourceProvider">
-			<beans:bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider" />
+		<beans:property name="itemPreparedStatementSetter">
+			<beans:bean class="se.inera.certificate.migration.model.CertificateItemPreparedStatementSetter" />
 		</beans:property>
 	</beans:bean>
 
