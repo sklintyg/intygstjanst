@@ -5,7 +5,7 @@
     "typ" : {
         "code" : "fk7263"
     },
-    "signeringsDatum" : "2013-05-31T09:51:38.570",
+    "signeringsdatum" : "2013-05-31T09:51:38.570",
     "patient" : {
         "id" : {
             "extension" : "19001122-3344"
@@ -23,14 +23,14 @@
             }
         }
     },
-    "observations" : [
+    "observationer" : [
         {
-            "observationsKod" : {
+            "observationskod" : {
                 "codeSystem" : "1.2.752.116.2.1.1.1",
                 "codeSystemName" : "SNOMED-CT",
                 "code" : "302119000"
             },
-            "observationsPeriod" : {
+            "observationsperiod" : {
                 "from" : "2013-06-05",
                 "tom" : "2013-06-12"
             },
@@ -42,12 +42,12 @@
             ]
         },
         {
-            "observationsKod" : {
+            "observationskod" : {
                 "codeSystem" : "1.2.752.116.2.1.1.1",
                 "codeSystemName" : "SNOMED-CT",
                 "code" : "302119000"
              },
-            "observationsPeriod" : {
+            "observationsperiod" : {
                 "from" : "2013-06-01",
                 "tom" : "2013-06-04"
             },
