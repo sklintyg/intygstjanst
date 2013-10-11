@@ -7,6 +7,7 @@ public class HosPersonal {
     private Id id;
     private String namn;
     private String forskrivarkod;
+    private String befattning;
     private Vardenhet vardenhet;
 
     public Id getId() {
@@ -31,6 +32,14 @@ public class HosPersonal {
 
     public void setForskrivarkod(String forskrivarkod) {
         this.forskrivarkod = forskrivarkod;
+    }
+
+    public String getBefattning() {
+        return befattning;
+    }
+
+    public void setBefattning(String befattning) {
+        this.befattning = befattning;
     }
 
     public Vardenhet getVardenhet() {

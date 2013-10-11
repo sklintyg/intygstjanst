@@ -10,7 +10,8 @@ public class Kod {
     private String codeSystemVersion;
     private String code;
 
-    public Kod() {}
+    public Kod() {
+    }
 
     public Kod(String codeSystem, String codeSystemName, String codeSystemVersion, String code) {
         this.codeSystem = codeSystem;
@@ -57,16 +58,21 @@ public class Kod {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         Kod kod = (Kod) o;
 
-        if (code != null ? !code.equals(kod.code) : kod.code != null) return false;
-        if (codeSystem != null ? !codeSystem.equals(kod.codeSystem) : kod.codeSystem != null) return false;
+        if (code != null ? !code.equals(kod.code) : kod.code != null)
+            return false;
+        if (codeSystem != null ? !codeSystem.equals(kod.codeSystem) : kod.codeSystem != null)
+            return false;
         if (codeSystemName != null ? !codeSystemName.equals(kod.codeSystemName) : kod.codeSystemName != null)
             return false;
-        if (codeSystemVersion != null ? !codeSystemVersion.equals(kod.codeSystemVersion) : kod.codeSystemVersion != null)
+        if (codeSystemVersion != null ? !codeSystemVersion.equals(kod.codeSystemVersion)
+                : kod.codeSystemVersion != null)
             return false;
 
         return true;

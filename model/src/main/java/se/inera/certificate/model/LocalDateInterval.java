@@ -10,7 +10,8 @@ public class LocalDateInterval {
     private LocalDate start;
     private LocalDate end;
 
-    public LocalDateInterval() {}
+    public LocalDateInterval() {
+    }
 
     public LocalDateInterval(LocalDate start, LocalDate end) {
         this.start = start;

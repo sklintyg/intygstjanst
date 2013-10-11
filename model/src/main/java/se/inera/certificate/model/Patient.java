@@ -19,9 +19,9 @@ public class Patient {
     private String postnummer;
     private String postort;
 
-    private List<Sysselsattning> sysselsattnings;
-    private List<Arbetsuppgift> arbetsuppgifts;
-    private List<PatientRelation> patientrelations;
+    private List<Sysselsattning> sysselsattningar;
+    private List<Arbetsuppgift> arbetsuppgifter;
+    private List<PatientRelation> patientrelationer;
 
     public Id getId() {
         return id;
@@ -32,19 +32,17 @@ public class Patient {
     }
 
     public List<String> getFornamn() {
+        if (fornamn == null) {
+            fornamn = new ArrayList<>();
+        }
         return fornamn;
     }
 
-    public void setFornamn(List<String> fornamn) {
-        this.fornamn = fornamn;
-    }
-
     public List<String> getMellannamn() {
+        if (mellannamn == null) {
+            mellannamn = new ArrayList<>();
+        }
         return mellannamn;
-    }
-
-    public void setMellannamn(List<String> mellannamn) {
-        this.mellannamn = mellannamn;
     }
 
     public String getEfternamn() {
@@ -58,62 +56,55 @@ public class Patient {
     public String getFullstandigtNamn() {
         List<String> names = new ArrayList<>();
 
-        if (fornamn != null) {
-            names.addAll(fornamn);
-        }
-        if (mellannamn != null) {
-            names.addAll(mellannamn);
-        }
+        names.addAll(fornamn);
+        names.addAll(mellannamn);
         names.add(efternamn);
 
         return Strings.join(" ", names);
     }
 
     public String getPostadress() {
-		return postadress;
-	}
-
-	public void setPostadress(String postadress) {
-		this.postadress = postadress;
-	}
-
-	public String getPostnummer() {
-		return postnummer;
-	}
-
-	public void setPostnummer(String postnummer) {
-		this.postnummer = postnummer;
-	}
-
-	public String getPostort() {
-		return postort;
-	}
-
-	public void setPostort(String postort) {
-		this.postort = postort;
-	}
-
-    public List<Sysselsattning> getSysselsattnings() {
-        return sysselsattnings;
+        return postadress;
     }
 
-    public void setSysselsattnings(List<Sysselsattning> sysselsattnings) {
-        this.sysselsattnings = sysselsattnings;
+    public void setPostadress(String postadress) {
+        this.postadress = postadress;
     }
 
-    public List<Arbetsuppgift> getArbetsuppgifts() {
-        return arbetsuppgifts;
+    public String getPostnummer() {
+        return postnummer;
     }
 
-    public void setArbetsuppgifts(List<Arbetsuppgift> arbetsuppgifts) {
-        this.arbetsuppgifts = arbetsuppgifts;
+    public void setPostnummer(String postnummer) {
+        this.postnummer = postnummer;
     }
 
-	public List<PatientRelation> getPatientrelations() {
-		return patientrelations;
-	}
+    public String getPostort() {
+        return postort;
+    }
 
-	public void setPatientrelations(List<PatientRelation> patientrelations) {
-		this.patientrelations = patientrelations;
-	}
+    public void setPostort(String postort) {
+        this.postort = postort;
+    }
+
+    public List<Sysselsattning> getSysselsattningar() {
+        if (sysselsattningar == null) {
+            sysselsattningar = new ArrayList<>();
+        }
+        return sysselsattningar;
+    }
+
+    public List<Arbetsuppgift> getArbetsuppgifter() {
+        if (arbetsuppgifter == null) {
+            arbetsuppgifter = new ArrayList<>();
+        }
+        return arbetsuppgifter;
+    }
+
+    public List<PatientRelation> getPatientrelationer() {
+        if (patientrelationer == null) {
+            patientrelationer = new ArrayList<>();
+        }
+        return patientrelationer;
+    }
 }

@@ -18,11 +18,11 @@ public class Utlatande {
 
     private Kod typ;
 
-    private List<String> kommentars;
+    private List<String> kommentarer;
 
-    private LocalDateTime signeringsDatum;
+    private LocalDateTime signeringsdatum;
 
-    private LocalDateTime skickatDatum;
+    private LocalDateTime skickatdatum;
 
     private Patient patient;
 
@@ -30,23 +30,23 @@ public class Utlatande {
 
     private List<Aktivitet> aktiviteter;
 
-    private List<Observation> observations;
+    private List<Observation> observationer;
 
     private List<Vardkontakt> vardkontakter;
+
+    private List<Rekommendation> rekommendationer;
 
     private List<Referens> referenser;
 
     /**
-     * To which point in time is this certificate considered valid.
-     * Modules implementing this model should use their own getters calculating the date suitable for the certificate
-     * type and rules.
+     * To which point in time is this certificate considered valid. Modules implementing this model should use their own
+     * getters calculating the date suitable for the certificate type and rules.
      */
     private Partial validToDate;
 
     /**
-     * From which point in time is this certificate considered valid.
-     * Modules implementing this model should use their own getters calculating the date suitable for the certificate
-     * type and rules.
+     * From which point in time is this certificate considered valid. Modules implementing this model should use their
+     * own getters calculating the date suitable for the certificate type and rules.
      */
     private Partial validFromDate;
 
@@ -66,20 +66,19 @@ public class Utlatande {
         this.typ = typ;
     }
 
-    public List<String> getKommentars() {
-        return kommentars;
+    public List<String> getKommentarer() {
+        if (kommentarer == null) {
+            kommentarer = new ArrayList<>();
+        }
+        return kommentarer;
     }
 
-    public void setKommentars(List<String> kommentar) {
-        this.kommentars = kommentar;
+    public LocalDateTime getSigneringsdatum() {
+        return signeringsdatum;
     }
 
-    public LocalDateTime getSigneringsDatum() {
-        return signeringsDatum;
-    }
-
-    public void setSigneringsDatum(LocalDateTime signeringsDatum) {
-        this.signeringsDatum = signeringsDatum;
+    public void setSigneringsdatum(LocalDateTime signeringsdatum) {
+        this.signeringsdatum = signeringsdatum;
     }
 
     public Patient getPatient() {
@@ -99,49 +98,52 @@ public class Utlatande {
     }
 
     public List<Aktivitet> getAktiviteter() {
+        if (aktiviteter == null) {
+            aktiviteter = new ArrayList<>();
+        }
         return aktiviteter;
     }
 
-    public void setAktiviteter(List<Aktivitet> aktiviteter) {
-        this.aktiviteter = aktiviteter;
-    }
-
-    public List<Observation> getObservations() {
-        return observations;
-    }
-
-    public void setObservations(List<Observation> observations) {
-        this.observations = observations;
+    public List<Observation> getObservationer() {
+        if (observationer == null) {
+            observationer = new ArrayList<>();
+        }
+        return observationer;
     }
 
     public List<Vardkontakt> getVardkontakter() {
+        if (vardkontakter == null) {
+            vardkontakter = new ArrayList<>();
+        }
         return vardkontakter;
     }
 
-    public void setVardkontakter(List<Vardkontakt> vardkontakter) {
-        this.vardkontakter = vardkontakter;
+    public List<Rekommendation> getRekommendationer() {
+        if (rekommendationer == null) {
+            rekommendationer = new ArrayList<>();
+        }
+        return rekommendationer;
     }
 
     public List<Referens> getReferenser() {
+        if (referenser == null) {
+            referenser = new ArrayList<>();
+        }
         return referenser;
     }
 
-    public void setReferenser(List<Referens> referenser) {
-        this.referenser = referenser;
+    public LocalDateTime getSkickatdatum() {
+        return skickatdatum;
     }
 
-    public LocalDateTime getSkickatDatum() {
-        return skickatDatum;
-    }
-
-    public void setSkickatDatum(LocalDateTime skickatDatum) {
-        this.skickatDatum = skickatDatum;
+    public void setSkickatdatum(LocalDateTime skickatdatum) {
+        this.skickatdatum = skickatdatum;
     }
 
     public List<Observation> getObservationsByKod(Kod observationsKod) {
         List<Observation> observations = new ArrayList<>();
-        for (Observation observation : this.observations) {
-            if (observation.getObservationsKod() != null && observation.getObservationsKod().equals(observationsKod)) {
+        for (Observation observation : this.observationer) {
+            if (observation.getObservationskod() != null && observation.getObservationskod().equals(observationsKod)) {
                 observations.add(observation);
             }
         }
@@ -150,9 +152,9 @@ public class Utlatande {
 
     public List<Observation> getObservationsByKategori(Kod observationsKategori) {
         List<Observation> observations = new ArrayList<>();
-        for (Observation observation : this.observations) {
-            if (observation.getObservationsKategori() != null
-                    && observation.getObservationsKategori().equals(observationsKategori)) {
+        for (Observation observation : this.observationer) {
+            if (observation.getObservationskategori() != null
+                    && observation.getObservationskategori().equals(observationsKategori)) {
                 observations.add(observation);
             }
         }
@@ -160,21 +162,21 @@ public class Utlatande {
     }
 
     public Observation findObservationByKategori(final Kod observationsKategori) {
-        return find(observations, new Predicate<Observation>() {
+        return find(observationer, new Predicate<Observation>() {
             @Override
             public boolean apply(Observation observation) {
-                return observation.getObservationsKategori() != null
-                        && observation.getObservationsKategori().equals(observationsKategori);
+                return observation.getObservationskategori() != null
+                        && observation.getObservationskategori().equals(observationsKategori);
             }
         }, null);
     }
 
     public Observation findObservationByKod(final Kod observationsKod) {
-        return find(observations, new Predicate<Observation>() {
+        return find(observationer, new Predicate<Observation>() {
             @Override
             public boolean apply(Observation observation) {
-                return observation.getObservationsKod() != null
-                        && observation.getObservationsKod().equals(observationsKod);
+                return observation.getObservationskod() != null
+                        && observation.getObservationskod().equals(observationsKod);
             }
         }, null);
     }
@@ -225,7 +227,5 @@ public class Utlatande {
             }
         }, null);
     }
-
-  
 
 }

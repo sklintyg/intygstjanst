@@ -5,13 +5,13 @@ package se.inera.certificate.model;
  */
 public class Sysselsattning {
 
-    private Kod sysselsattningsTyp;
+    private Kod sysselsattningstyp;
 
-    public Kod getSysselsattningsTyp() {
-        return sysselsattningsTyp;
+    public Kod getSysselsattningstyp() {
+        return sysselsattningstyp;
     }
 
-    public void setSysselsattningsTyp(Kod sysselsattningsTyp) {
-        this.sysselsattningsTyp = sysselsattningsTyp;
+    public void setSysselsattningstyp(Kod sysselsattningstyp) {
+        this.sysselsattningstyp = sysselsattningstyp;
     }
 }

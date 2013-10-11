@@ -5,15 +5,15 @@ package se.inera.certificate.model;
  */
 public class Prognos {
 
-    private Kod prognosKod;
+    private Kod prognoskod;
     private String beskrivning;
 
-    public Kod getPrognosKod() {
-        return prognosKod;
+    public Kod getPrognoskod() {
+        return prognoskod;
     }
 
-    public void setPrognosKod(Kod prognosKod) {
-        this.prognosKod = prognosKod;
+    public void setPrognoskod(Kod prognoskod) {
+        this.prognoskod = prognoskod;
     }
 
     public String getBeskrivning() {

@@ -23,8 +23,10 @@ public class Id {
     private String root;
     private String extension;
 
-    public Id() {}
+    public Id() {
+    }
 
+    // TODO: Remove this. Needs a lot of fixing JSON with 'id' as a String (which is wrong).
     public Id(String extension) {
         this.extension = extension;
     }

@@ -8,36 +8,36 @@ import java.util.List;
  */
 public class Observation {
 
-    private Kod observationsKategori;
-    private Kod observationsKod;
-    private PartialInterval observationsPeriod;
+    private Kod observationskategori;
+    private Kod observationskod;
+    private PartialInterval observationsperiod;
     private String beskrivning;
-    private List<Prognos> prognoser = new ArrayList<>();
+    private List<Prognos> prognoser;
     private List<PhysicalQuantity> varde;
     private Utforarroll utforsAv;
 
-    public Kod getObservationsKategori() {
-        return observationsKategori;
+    public Kod getObservationskategori() {
+        return observationskategori;
     }
 
-    public void setObservationsKategori(Kod observationsKategori) {
-        this.observationsKategori = observationsKategori;
+    public void setObservationskategori(Kod observationskategori) {
+        this.observationskategori = observationskategori;
     }
 
-    public Kod getObservationsKod() {
-        return observationsKod;
+    public Kod getObservationskod() {
+        return observationskod;
     }
 
-    public void setObservationsKod(Kod observationsKod) {
-        this.observationsKod = observationsKod;
+    public void setObservationskod(Kod observationskod) {
+        this.observationskod = observationskod;
     }
 
-    public PartialInterval getObservationsPeriod() {
-        return observationsPeriod;
+    public PartialInterval getObservationsperiod() {
+        return observationsperiod;
     }
 
-    public void setObservationsPeriod(PartialInterval observationsPeriod) {
-        this.observationsPeriod = observationsPeriod;
+    public void setObservationsperiod(PartialInterval observationsperiod) {
+        this.observationsperiod = observationsperiod;
     }
 
     public String getBeskrivning() {
@@ -49,19 +49,17 @@ public class Observation {
     }
 
     public List<Prognos> getPrognoser() {
+        if (prognoser == null) {
+            prognoser = new ArrayList<>();
+        }
         return prognoser;
     }
 
-    public void setPrognoser(List<Prognos> prognoser) {
-        this.prognoser = prognoser;
-    }
-
     public List<PhysicalQuantity> getVarde() {
+        if (varde == null) {
+            varde = new ArrayList<>();
+        }
         return varde;
-    }
-
-    public void setVarde(List<PhysicalQuantity> varde) {
-        this.varde = varde;
     }
 
     public Utforarroll getUtforsAv() {

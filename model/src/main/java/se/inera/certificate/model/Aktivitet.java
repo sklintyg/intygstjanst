@@ -44,10 +44,6 @@ public class Aktivitet {
         return this.beskrivsAv;
     }
 
-    public void setBeskrivsAv(List<Utforarroll> beskrivsAv) {
-        this.beskrivsAv = beskrivsAv;
-    }
-
     public Vardenhet getUtforsVid() {
         return utforsVid;
     }

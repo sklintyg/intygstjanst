@@ -24,7 +24,7 @@ import java.util.List;
 public class PatientRelation {
 
     private Kod relationskategori;
-    private List<Kod> relationTyps;
+    private List<Kod> relationtyper;
     private Id personId;
     private List<String> fornamn;
     private String efternamn;
@@ -41,11 +41,11 @@ public class PatientRelation {
         this.relationskategori = relationskategori;
     }
 
-    public List<Kod> getRelationTyps() {
-        if (relationTyps == null) {
-            relationTyps = new ArrayList<Kod>();
+    public List<Kod> getRelationtyper() {
+        if (relationtyper == null) {
+            relationtyper = new ArrayList<Kod>();
         }
-        return this.relationTyps;
+        return this.relationtyper;
     }
 
     public Id getPersonId() {
