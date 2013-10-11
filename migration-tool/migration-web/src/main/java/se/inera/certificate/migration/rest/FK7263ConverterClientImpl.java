@@ -39,29 +39,30 @@ public class FK7263ConverterClientImpl implements FK7263ConverterClient {
 		post.setHeader("Content-Type", "application/xml");
 
 		StringEntity xmlPayload = new StringEntity(
-				orgCert.getOrignalCertificateAsString());
+				orgCert.getOrignalCertificateAsString(), "UTF-8");
 		xmlPayload.setContentType("application/xml");
+		xmlPayload.setContentEncoding("utf-8");
 
 		post.setEntity(xmlPayload);
-		
+
 		String content = null;
-		
+
 		try {
 			HttpResponse response = client.execute(post);
-			
+
 			if (response.getStatusLine().getStatusCode() == 200) {
-				
 				content = EntityUtils.toString(response.getEntity(), "UTF-8");
 			} else {
-				LOG.error("Got http error code: " + response.getStatusLine().getStatusCode());
+				LOG.error("Got http error code: "
+						+ response.getStatusLine().getStatusCode());
 			}
-				
+
 		} finally {
 			client.close();
 		}
-		
+
 		return content;
-		
+
 	}
 
 	public String getRestUrl() {
