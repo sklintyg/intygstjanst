@@ -54,6 +54,7 @@
 		init-method="init" />
 
 	<beans:bean id="convertCertificateXMLToJSONProcessor"
-		class="se.inera.certificate.migration.processors.ConvertCertificateXMLToJSONProcessor" />
+		class="se.inera.certificate.migration.processors.ConvertCertificateXMLToJSONProcessor">
+	</beans:bean>
 
 </beans:beans>
