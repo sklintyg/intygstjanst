@@ -33,6 +33,8 @@
 		<spring.framework.version>3.0.5.RELEASE</spring.framework.version>
 		<spring.integration.version>2.0.3.RELEASE</spring.integration.version>
 		<junit.version>4.10</junit.version>
+		<mysql.connector.version>5.1.24</mysql.connector.version>
+		<hsqldb.connector.version>1.8.0.7</hsqldb.connector.version>
 	</properties>
 
 	<dependencyManagement>
@@ -116,13 +118,13 @@
 			<dependency>
 				<groupId>hsqldb</groupId>
 				<artifactId>hsqldb</artifactId>
-				<version>1.8.0.7</version>
+				<version>${hsqldb.connector.version}</version>
 				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
-				<version>5.1.6</version>
+				<version>${mysql.connector.version}</version>
 				<scope>runtime</scope>
 			</dependency>
 			<dependency>

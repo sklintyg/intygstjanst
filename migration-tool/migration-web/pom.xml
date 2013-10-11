@@ -105,15 +105,9 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-        	<groupId>com.github.springtestdbunit</groupId>
-        	<artifactId>spring-test-dbunit</artifactId>
-        	<version>1.0.1</version>
-        	<scope>test</scope>
-        </dependency>
-        <dependency>
-        	<groupId>org.dbunit</groupId>
-        	<artifactId>dbunit</artifactId>
-        	<version>2.4.9</version>
+        	<groupId>joda-time</groupId>
+        	<artifactId>joda-time</artifactId>
+        	<version>2.3</version>
         	<scope>test</scope>
         </dependency>
 	</dependencies>
@@ -131,6 +125,18 @@
 		            	<contextPath>/migrationtool</contextPath>
           			</webAppConfig>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>hsqldb</groupId>
+						<artifactId>hsqldb</artifactId>
+						<version>${hsqldb.connector.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>mysql</groupId>
+		            	<artifactId>mysql-connector-java</artifactId>
+		            	<version>${mysql.connector.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

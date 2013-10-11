@@ -28,13 +28,17 @@ public class ExtractCertificateIdProcessor implements ItemProcessor<OriginalCert
     
     public OriginalCertificate process(OriginalCertificate cert) throws Exception {
         
-        log.debug("Processing cert");
+        log.debug("Extracting id from certificate");
         
         InputSource is = new InputSource(new StringReader(cert.getOrignalCertificateAsString())); 
         
         Document document = docBuilder.parse(is);
         
         String res = (String) xPathExpression.evaluate(document, XPathConstants.STRING);
+        
+        if(res == null) {
+            log.error("Extraction of id failed original certificate with id {}", cert.getOriginalCertificateId());
+        }
         
         cert.setCertificateId(res);
         

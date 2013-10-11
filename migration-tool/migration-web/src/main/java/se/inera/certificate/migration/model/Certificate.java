@@ -5,8 +5,15 @@ import java.io.UnsupportedEncodingException;
 public class Certificate {
 
     private String certificateId;
-
+    
     private String certificateJson;
+    
+    public Certificate() {
+    }
+    
+    public Certificate(String certificateId) {
+        this.certificateId = certificateId;
+    }
 
     public byte[] getCertificateJsonAsBytes() {
 
@@ -26,10 +33,6 @@ public class Certificate {
         return (this.certificateJson != null) ? this.certificateJson.length() : 0;
     }
     
-    public Certificate(String certificateId) {
-        this.certificateId = certificateId;
-    }
-
     public String getCertificateId() {
         return certificateId;
     }

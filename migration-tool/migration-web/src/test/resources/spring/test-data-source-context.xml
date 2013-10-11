@@ -12,7 +12,7 @@
 
 	<beans:description>Test data source for the simulated Intyg database</beans:description>
 	
-	<jdbc:initialize-database data-source="intygDataSource">
+	<jdbc:initialize-database data-source="intygDataSource" enabled="${intyg.generate.testdata}">
         <jdbc:script location="${intyg.schema.script}"/>
     </jdbc:initialize-database>
 	
@@ -25,8 +25,11 @@
 	<beans:bean id="intygTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
 		p:dataSource-ref="intygDataSource"/>
 		
-	<beans:bean class="se.inera.certificate.migration.testutils.CertificateDataInitialiser"
-		p:dataSource-ref="intygDataSource" />
+	<beans:bean id="certificateDataInitialiser" class="se.inera.certificate.migration.testutils.CertificateDataInitialiser"
+		init-method="init" p:generateTestData="${intyg.generate.testdata}"/>
+				
+	<beans:bean id="certTestDao" class="se.inera.certificate.migration.testutils.dao.CertTestDao"
+		p:dataSource-ref="intygDataSource" />	
 	
 	<jdbc:initialize-database data-source="dataSource">
 		<jdbc:script location="${batch.drop.script}" />
