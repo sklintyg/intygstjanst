@@ -125,11 +125,11 @@
                   </extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
-                    urn:riv:insuranceprocess:healthreporting:GetCertificateForCare:1:rivtabp20=se.inera.ifv.insuranceprocess.healthreporting.getcertificateforcare.v1.rivtabp20
+                    urn:riv:clinicalprocess:healtcond:certificate:GetCertificateForCare:1:rivtabp20=se.inera.ifv.clinicalprocess.healtcond.certificate.getcertificateforcare.v1.rivtabp20
                   </extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
-                    urn:riv:insuranceprocess:healthreporting:GetCertificateForCareResponder:1=se.inera.ifv.insuranceprocess.healthreporting.getcertificateforcareresponder.v1
+                    urn:riv:clinicalprocess:healtcond:certificate:GetCertificateForCareResponder:1=se.inera.ifv.clinicalprocess.healtcond.certificate.getcertificateforcareresponder.v1
                   </extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
