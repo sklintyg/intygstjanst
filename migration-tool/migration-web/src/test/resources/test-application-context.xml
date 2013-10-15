@@ -12,6 +12,7 @@
           http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd">
 
 	<beans:import resource="classpath:spring/test-env-context.xml" />
+	<beans:import resource="classpath:spring/test-batch-data-source-context.xml" />
 	<beans:import resource="classpath:spring/test-data-source-context.xml" />
 	<beans:import resource="classpath:spring/test-rest-context.xml" />
 	<beans:import resource="classpath:META-INF/spring/batch/batch-context.xml" />

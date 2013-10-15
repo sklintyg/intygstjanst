@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,19 +19,33 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.math.RandomUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.format.datetime.DateFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import se.inera.certificate.migration.testutils.dao.Cert;
 import se.inera.certificate.migration.testutils.dao.CertTestDao;
 
+/**
+ * Utility for generating test data and inserting it into
+ * a database.
+ *  
+ * @author nikpet
+ *
+ */
 public class CertificateDataInitialiser {
 
+    private static final String[] CERT_TEMPLATES = {"data/maximalt-fk7263.xml"};
+    
     private static Logger LOG = LoggerFactory.getLogger(CertificateDataInitialiser.class);
     
     private DocumentBuilder docBuilder;
@@ -38,47 +54,89 @@ public class CertificateDataInitialiser {
     
     private XPathExpression civicRegNbrXPath;
     
+    private long timeFrom;
+    
+    private long timeRange;
+    
     private boolean generateTestData = false;
     
     @Autowired
     private CertTestDao certTestDao;
-    
-    public void loadCerts(List<Cert> certs, String originalCertificateFilePath) throws Exception {
+        
+    /**
+     * Generate test certificates and insert into database.
+     * 
+     * @param nbrOfCerts Number of certificates to generate.
+     * @throws Exception
+     */
+    public void generateAndLoadCerts(int nbrOfCerts) throws Exception {
         
         if (!generateTestData) {
-            LOG.info("Generation of test data WILL NOT be done!");
+            LOG.info("The generateTestData flag is set to false, generation of test data will not be done!");
             return;
         }
         
-        LOG.info("Starting generation of test data, {} certificates will be inserted!", certs.size());
+        LOG.info("Generating and loading {} certificates!", nbrOfCerts);
         
-        byte[] orgCertXML = readOriginalCertificateFromFile(originalCertificateFilePath);
-        
-        for (Cert cert : certs) {
-            loadCert(cert, orgCertXML);
+        for (int certs = 0; certs < nbrOfCerts; certs++) {
+            Cert cert = generateCert();
+            loadCert(cert);
         }
         
     }
+    
+    /**
+     * Generates a Cert with a random Personnummer, a random certificate template and
+     * a random signing date.
+     * 
+     * @return
+     */
+    private Cert generateCert() {
+        String certId = UUID.randomUUID().toString();
+        String civicRegNbr = PersonnummerGenerator.generateRandomPersonnummer();
+        String template = getRandomCertificateTemplate();
+        Cert cert = new Cert(certId, civicRegNbr, template);
+        cert.setSignedDate(getRandomSignedDate());
         
-    public void loadCert(Cert cert, byte[] orgCertXML) throws Exception {
+        return cert;
+    }
         
-        LOG.debug("Loading Cert with id {}", cert.getCertId());
+    private String getRandomCertificateTemplate() {
+                
+        Random rnd = new Random();
         
-        if (orgCertXML == null) {
-            LOG.error("Can not complete insert operation for certificate with id {}", cert.getCertId());
-            return;
+        if (CERT_TEMPLATES.length == 1) {
+            return CERT_TEMPLATES[0];
         }
         
-        byte[] updatedCertXML = updateCertificateXML(cert, orgCertXML);
+        int rndPos = rnd.nextInt(CERT_TEMPLATES.length - 1);
+        
+        return CERT_TEMPLATES[rndPos];
+    }
+
+    private DateTime getRandomSignedDate() {
+        
+        Random rnd = new Random(DateTime.now().getMillis());
+        
+        long randomDateTime = timeFrom + (long) (rnd.nextDouble() * timeRange);
+                
+        return new DateTime(randomDateTime);
+    }
+
+    public void loadCert(Cert cert) throws Exception {
+        
+        LOG.debug("Loading Cert: {}", cert.toString());
+        
+        byte[] certXML = readAndUpdateCertificateXML(cert);
         
         certTestDao.insertCert(cert);
         
-        certTestDao.insertOriginalCertificate(cert.getCertId(), updatedCertXML);
+        certTestDao.insertOriginalCertificate(cert.getCertId(), certXML);
     }
-    
-    public byte[] updateCertificateXML(Cert cert, byte[] certXML) throws Exception {
         
-        LOG.debug("Updating cert XML with id {} and civic reg nbr {}", cert.getCertId(), cert.getCivicRegNbr());
+    public byte[] readAndUpdateCertificateXML(Cert cert) throws Exception {
+        
+        byte[] certXML = readCertificateTemplateFromFile(cert.getCertTemplate());
         
         ByteArrayInputStream is = new ByteArrayInputStream(certXML);
         
@@ -102,7 +160,7 @@ public class CertificateDataInitialiser {
         return bos.toByteArray();
     }
     
-    private byte[] readOriginalCertificateFromFile(String filePath) {
+    private byte[] readCertificateTemplateFromFile(String filePath) {
         LOG.debug("Reading certificate from file '{}'", filePath);
         Resource fileRes = new ClassPathResource(filePath);
         
@@ -117,6 +175,8 @@ public class CertificateDataInitialiser {
     
     public void init() throws Exception {
         
+        calcYearOffsets();
+        
         LOG.debug("Setting up DOM document builder");
         
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -130,6 +190,15 @@ public class CertificateDataInitialiser {
         this.utlatandeIdXPath = xPath.compile("//utlatande/utlatande-id/@extension");
         
         this.civicRegNbrXPath = xPath.compile("//utlatande/patient/person-id/@extension");
+    }
+
+    private void calcYearOffsets() {
+        
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+        
+        this.timeFrom = dateTimeFormatter.parseDateTime("2013-01-01").getMillis();
+        
+        this.timeRange = dateTimeFormatter.parseDateTime("2013-12-31").getMillis() - this.timeFrom;
     }
 
     public boolean isGenerateTestData() {

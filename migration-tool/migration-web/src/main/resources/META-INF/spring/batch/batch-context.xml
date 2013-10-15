@@ -22,7 +22,7 @@
 				<beans:property name="sortKey" value="${intyg.select.sortkey}" />
 			</beans:bean>
 		</beans:property>
-		<beans:property name="pageSize" value="10" />
+		<beans:property name="pageSize" value="200" />
 		<beans:property name="rowMapper">
 			<beans:ref bean="certificateRowMapper" />
 		</beans:property>

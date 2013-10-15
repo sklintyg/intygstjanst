@@ -13,7 +13,7 @@
 		<batch:step id="step1">
 			<batch:tasklet>
 				<batch:chunk reader="intygItemReader" processor="compositeItemProcessor"
-					writer="intygItemWriter" commit-interval="10" />
+					writer="intygItemWriter" commit-interval="100" />
 			</batch:tasklet>
 			<batch:fail on="FAILED" />
 			<batch:end on="*" />
