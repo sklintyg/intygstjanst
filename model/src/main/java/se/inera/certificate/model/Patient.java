@@ -56,8 +56,8 @@ public class Patient {
     public String getFullstandigtNamn() {
         List<String> names = new ArrayList<>();
 
-        names.addAll(fornamn);
-        names.addAll(mellannamn);
+        names.addAll(getFornamn());
+        names.addAll(getMellannamn());
         names.add(efternamn);
 
         return Strings.join(" ", names);
