@@ -7,7 +7,8 @@
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<beans:description>Context for the data migration jobs</beans:description>
+	<beans:description>Context for the data migration jobs
+	</beans:description>
 
 	<beans:bean id="intygItemReader"
 		class="org.springframework.batch.item.database.JdbcPagingItemReader"
@@ -19,28 +20,37 @@
 				<beans:property name="dataSource" ref="intygDataSource" />
 				<beans:property name="selectClause" value="${intyg.select.sql.select}" />
 				<beans:property name="fromClause" value="${intyg.select.sql.from}" />
+				<beans:property name="whereClause" value="${intyg.select.sql.where}" />
 				<beans:property name="sortKey" value="${intyg.select.sortkey}" />
 			</beans:bean>
 		</beans:property>
-		<beans:property name="pageSize" value="200" />
-		<beans:property name="rowMapper">
-			<beans:ref bean="certificateRowMapper" />
+		<beans:property name="parameterValues">
+			<beans:map>
+				<beans:entry key="minId" value="#{stepExecutionContext[minValue]}" />
+				<beans:entry key="maxId" value="#{stepExecutionContext[maxValue]}" />
+			</beans:map>
 		</beans:property>
+		<beans:property name="pageSize" value="200" />
+		<beans:property name="rowMapper" ref="certificateRowMapper" />
 	</beans:bean>
 
 	<beans:bean id="certificateRowMapper"
 		class="se.inera.certificate.migration.model.OriginalCertificateRowMapper" />
 
-	<beans:bean id="intygItemWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
-		<beans:property name="dataSource" ref="intygDataSource"/>
-		<beans:property name="sql" value="${intyg.update.sql}"/>
+	<beans:bean id="intygItemWriter"
+		class="org.springframework.batch.item.database.JdbcBatchItemWriter"
+		scope="step">
+		<beans:property name="dataSource" ref="intygDataSource" />
+		<beans:property name="sql" value="${intyg.update.sql}" />
 		<beans:property name="itemPreparedStatementSetter">
-			<beans:bean class="se.inera.certificate.migration.model.CertificateItemPreparedStatementSetter" />
+			<beans:bean
+				class="se.inera.certificate.migration.model.CertificateItemPreparedStatementSetter" />
 		</beans:property>
 	</beans:bean>
 
 	<beans:bean id="compositeItemProcessor"
-		class="org.springframework.batch.item.support.CompositeItemProcessor">
+		class="org.springframework.batch.item.support.CompositeItemProcessor"
+		scope="step">
 		<beans:property name="delegates">
 			<beans:list>
 				<beans:ref bean="extractCertificateIdProcessor" />
@@ -51,10 +61,11 @@
 
 	<beans:bean id="extractCertificateIdProcessor"
 		class="se.inera.certificate.migration.processors.ExtractCertificateIdProcessor"
-		init-method="init" />
+		init-method="init" scope="step" />
 
 	<beans:bean id="convertCertificateXMLToJSONProcessor"
-		class="se.inera.certificate.migration.processors.ConvertCertificateXMLToJSONProcessor">
+		class="se.inera.certificate.migration.processors.ConvertCertificateXMLToJSONProcessor"
+		scope="step">
 	</beans:bean>
 
 </beans:beans>
