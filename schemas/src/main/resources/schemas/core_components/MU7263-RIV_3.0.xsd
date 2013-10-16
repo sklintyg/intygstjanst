@@ -154,7 +154,7 @@
 					<xs:documentation>Attributet efterfrågas inte i blanketten utan är något som genereras av källsystemet och hämtas därifrån</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="typAvUtlatande" type="xs:string" fixed="Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om allmän försäkring"/>
+			<xs:element name="typAvUtlatande" type="xs:string"/>
 			<xs:element name="kommentar" type="xs:string" minOccurs="0"/>
 			<xs:element name="signeringsdatum" type="xs:dateTime">
 				<xs:annotation>
