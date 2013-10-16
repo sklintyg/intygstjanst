@@ -1,5 +1,11 @@
 package se.inera.certificate.integration.converter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static se.inera.certificate.integration.converter.util.IsoTypeConverter.toCD;
+import static se.inera.certificate.model.codes.ObservationsKoder.DIAGNOS;
+
 import iso.v21090.dt.v1.CD;
 import iso.v21090.dt.v1.II;
 import iso.v21090.dt.v1.PQ;
@@ -29,12 +35,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.Funktionstillstan
 import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.LakarutlatandeType;
 import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.MedicinsktTillstandType;
 import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.Prognosangivelse;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static se.inera.certificate.integration.converter.util.IsoTypeConverter.toCD;
-import static se.inera.certificate.model.codes.ObservationsKoder.DIAGNOS;
 
 /**
  * @author andreaskaltenbach
@@ -95,7 +95,10 @@ public final class LakarutlatandeTypeToUtlatandeConverter {
         }
 
         for (se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.AktivitetType aktivitetType : source.getAktivitet()) {
-            utlatande.getAktivitets().add(convert(aktivitetType));
+            AktivitetType aktivitet = convert(aktivitetType);
+            if (aktivitet != null) {
+                utlatande.getAktivitets().add(aktivitet);
+            }
         }
 
         for (se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.ReferensType referensType : source.getReferens()) {
@@ -212,6 +215,10 @@ public final class LakarutlatandeTypeToUtlatandeConverter {
         AktivitetType aktivitet = new AktivitetType();
 
         CD aktivitetsCode = null;
+
+        if (source.getAktivitetskod() == null) {
+            return null;
+        }
 
         switch (source.getAktivitetskod()) {
             case PLANERAD_ELLER_PAGAENDE_BEHANDLING_ELLER_ATGARD_INOM_SJUKVARDEN:
