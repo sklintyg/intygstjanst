@@ -2,14 +2,30 @@ package se.inera.certificate.migration.model;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Representation of an original medical certificate.
+ * 
+ * 
+ * @author nikpet
+ *
+ */
 public class OriginalCertificate {
     
     private static final String UTF_8 = "UTF-8";
 
+    /**
+     * The database id of the original certificate
+     */
     private Integer originalCertificateId;
     
+    /**
+     * The id of the original certificate.
+     */
     private String certificateId;
 
+    /**
+     * The original certificate XML.
+     */
     private byte[] originalCertificate;
     
     public OriginalCertificate() {

@@ -2,17 +2,30 @@ package se.inera.certificate.migration.model;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Representation of a medical certificate.
+ * 
+ * @author nikpet
+ *
+ */
 public class Certificate {
 
+    /**
+     * Id of the certificate.
+     */
     private String certificateId;
     
+    /**
+     * The certificate as JSON.
+     */
     private String certificateJson;
     
     public Certificate() {
     }
     
-    public Certificate(String certificateId) {
+    public Certificate(String certificateId, String certificateJson) {
         this.certificateId = certificateId;
+        this.certificateJson = certificateJson;
     }
 
     public byte[] getCertificateJsonAsBytes() {

@@ -20,25 +20,14 @@ import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import se.inera.certificate.migration.model.OriginalCertificate;
-import se.inera.certificate.migration.rest.FK7263ConverterClientImpl;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/spring/test-processor-context.xml",
-		"/spring/test-rest-context.xml" })
 public class ConvertCertificateXMLToJSONProcessorTest {
 
-	@Autowired
-	private ConvertCertificateXMLToJSONProcessor cn;
-
-	private FK7263ConverterClientImpl client;
+	private ConvertCertificateXMLToJSONProcessor processor;
 
 	private LocalTestServer server = null;
 
@@ -48,6 +37,7 @@ public class ConvertCertificateXMLToJSONProcessorTest {
 
 	@Before
 	public void setUp() throws Exception {
+	    
 		// handle incoming posts to LocalTestServer
 		postHandler = new HttpRequestHandler() {
 			@Override
@@ -98,6 +88,7 @@ public class ConvertCertificateXMLToJSONProcessorTest {
 
 		serverUrl = "http:/" + server.getServiceAddress().getAddress() + ":"
 				+ server.getServiceAddress().getPort();
+		
 	}
 
 	@Test
@@ -128,18 +119,29 @@ public class ConvertCertificateXMLToJSONProcessorTest {
 	}
 
 	@Test
-	public void testValidMaximumCertFK7263Client() throws Exception {
+	public void testProcessorWithCert() throws Exception {
+	    
+	    processor = new ConvertCertificateXMLToJSONProcessor();
+        processor.setConverterRestServiceUrl(serverUrl + "/unmarshall");
+	    
+		OriginalCertificate orgCert = createOriginalCert();
 
-		client = new FK7263ConverterClientImpl();
-		client.setRestUrl(serverUrl + "/unmarshall");
-		OriginalCertificate oC = createOriginalCert();
-		oC.setCertificateId("testid");
-
-		String got = client.convertOriginalCertificate(oC);
+		String got = processor.convertOriginalCertificate(orgCert);
 
 		assertNotNull(got);
-
+		
 	}
+	
+	@Test(expected = CertificateProcessingException.class)
+    public void testProcessorWith404() throws Exception {
+        
+        processor = new ConvertCertificateXMLToJSONProcessor();
+        processor.setConverterRestServiceUrl(serverUrl + "/gimmeAnError");
+        
+        OriginalCertificate orgCert = createOriginalCert();
+
+        processor.convertOriginalCertificate(orgCert);        
+    }
 
 	@After
 	public void tearDown() throws Exception {
@@ -150,6 +152,8 @@ public class ConvertCertificateXMLToJSONProcessorTest {
 	private OriginalCertificate createOriginalCert() throws IOException {
 
 		OriginalCertificate orgCert = new OriginalCertificate();
+		orgCert.setCertificateId("abc123");
+		orgCert.setOriginalCertificateId(123);
 
 		Resource fileRes = new ClassPathResource("data/maximalt-fk7263.xml");
 		orgCert.setOriginalCertificate(FileUtils.readFileToByteArray(fileRes
