@@ -21,12 +21,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import se.inera.certificate.migration.testutils.CertificateDataInitialiser;
 import se.inera.certificate.migration.testutils.dao.Cert;
 
+/**
+ * Unit test for the data model migration job.
+ * 
+ * @author nikpet
+ *
+ */
 @ContextConfiguration(locations = { "/test-application-context.xml", "/META-INF/spring/batch/jobs/jobs-context.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 public class MigrationJobTest {
 
-    private static final String ORIGINAL_CERTIFICATE_FILEPATH = "/data/maximalt-fk7263.xml";
+    private static final int NBR_OF_CERTS_TO_LOAD = 50;
 
     @Autowired
     private JobLauncher jobLauncher;
@@ -39,14 +45,8 @@ public class MigrationJobTest {
 
     @Before
     public void initTestData() throws Exception {
-        
-        Cert c1 = new Cert("aaa00000001", "19121212-0001"); 
-        Cert c2 = new Cert("aaa00000002", "19121212-0002");
-        Cert c3 = new Cert("aaa00000003", "19121212-0003");
-        
-        List<Cert> certs = Arrays.asList(c1, c2, c3);
-        
-        dataInitialiser.loadCerts(certs, ORIGINAL_CERTIFICATE_FILEPATH);
+                
+        dataInitialiser.generateAndLoadCerts(NBR_OF_CERTS_TO_LOAD);
     }
     
     @Test

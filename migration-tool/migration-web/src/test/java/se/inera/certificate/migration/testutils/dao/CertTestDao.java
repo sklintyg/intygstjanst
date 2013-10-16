@@ -22,6 +22,12 @@ import org.springframework.jdbc.support.lob.LobHandler;
 import se.inera.certificate.migration.model.Certificate;
 import se.inera.certificate.migration.testutils.CertificateDataInitialiser;
 
+/**
+ * DAO for inserting test data into the Intyg database.
+ * 
+ * @author nikpet
+ *
+ */
 public class CertTestDao extends JdbcDaoSupport {
 
     private static final String INSERT_ORG_CERT = "INSERT INTO original_certificate (RECEIVED, DOCUMENT) " +
@@ -30,18 +36,11 @@ public class CertTestDao extends JdbcDaoSupport {
     private static final String INSERT_CERT = "INSERT INTO certificate (ID, CERTIFICATE_TYPE, CIVIC_REGISTRATION_NUMBER, " +
     		"CARE_UNIT_NAME, SIGNING_DOCTOR_NAME, SIGNED_DATE, VALID_FROM_DATE, VALID_TO_DATE, DOCUMENT " +
     		") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    
-    private static final String SELECT_ALL_CERTS = "SELECT ID, CERTIFICATE_TYPE, CIVIC_REGISTRATION_NUMBER " +
-    		"FROM certificate";
-    
+        
     private static Logger LOG = LoggerFactory.getLogger(CertificateDataInitialiser.class);
     
     private LobHandler lobHandler = new DefaultLobHandler();
-    
-    public List<Certificate> getAllCertificates() {
-        return getJdbcTemplate().query(SELECT_ALL_CERTS, new CertRowMapper());
-    }
-    
+        
     public void insertCert(Cert cert) {
         LOG.debug("Inserting certificate with id {}", cert.getCertId());        
         getJdbcTemplate().update(INSERT_CERT, new CertPreparedStatementSetter(cert));
@@ -88,11 +87,11 @@ public class CertTestDao extends JdbcDaoSupport {
             ps.setString(4, cert.getCareUnitName());
             ps.setString(5, cert.getSigningDoctorName());
             
-            DateTime certSignedDate = DateTime.parse(cert.getSignedDate(), dateTimeFormatter);
+            DateTime certSignedDate = cert.getSignedDate();
             
             ps.setDate(6, new Date(certSignedDate.getMillis()));
-            ps.setString(7, dateTimeFormatter.print(certSignedDate.getMillis()));
-            ps.setString(8, dateTimeFormatter.print(certSignedDate.plusDays(30).getMillis()));
+            ps.setString(7, dateTimeFormatter.print(certSignedDate));
+            ps.setString(8, dateTimeFormatter.print(certSignedDate.plusDays(30)));
             ps.setBytes(9, cert.getDocumentAsBytes());
         }
         

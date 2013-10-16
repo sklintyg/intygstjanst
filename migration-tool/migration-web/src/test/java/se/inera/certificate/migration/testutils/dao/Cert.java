@@ -2,6 +2,14 @@ package se.inera.certificate.migration.testutils.dao;
 
 import java.io.UnsupportedEncodingException;
 
+import org.joda.time.DateTime;
+
+/**
+ * Domain object that represents a medical certificate.
+ * 
+ * @author nikpet
+ *
+ */
 public class Cert {
     
     private String certId;
@@ -14,14 +22,17 @@ public class Cert {
     
     private String signingDoctorName = "Dr Dengroth";
     
-    private String signedDate = "2013-01-01";
+    private DateTime signedDate = DateTime.now();
     
     private String document = "VGhlIGpzb24gZ29lcyBoZXJlIQ==";
     
-    public Cert(String certId, String civicRegNbr) {
+    private String certTemplate;
+    
+    public Cert(String certId, String civicRegNbr, String certTemplate) {
         super();
         this.certId = certId;
         this.civicRegNbr = civicRegNbr;
+        this.certTemplate = certTemplate;
     }
 
     public String getCertId() {
@@ -64,11 +75,11 @@ public class Cert {
         this.signingDoctorName = signingDoctorName;
     }
 
-    public String getSignedDate() {
+    public DateTime getSignedDate() {
         return signedDate;
     }
 
-    public void setSignedDate(String signedDate) {
+    public void setSignedDate(DateTime signedDate) {
         this.signedDate = signedDate;
     }
 
@@ -80,6 +91,14 @@ public class Cert {
         this.document = document;
     }
    
+    public String getCertTemplate() {
+        return certTemplate;
+    }
+
+    public void setCertTemplate(String certTemplate) {
+        this.certTemplate = certTemplate;
+    }
+
     public byte[] getDocumentAsBytes() {
         
         if (this.document == null) {
@@ -92,5 +111,11 @@ public class Cert {
             throw new RuntimeException("Failed to convert document String to bytes!", e);
         }
         
+    }
+
+    @Override
+    public String toString() {
+        return "Cert [certId=" + certId + ", certType=" + certType + ", civicRegNbr=" + civicRegNbr + ", certTemplate="
+                + certTemplate + "]";
     }
 }

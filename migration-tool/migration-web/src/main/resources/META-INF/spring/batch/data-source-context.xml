@@ -14,5 +14,8 @@
 		p:url="${intyg.jdbc.url}"
 		p:username="${intyg.jdbc.user}"
 		p:password="${intyg.jdbc.password}" />
+		
+	<beans:bean id="intygTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		p:dataSource-ref="intygDataSource"/>
 
 </beans:beans>

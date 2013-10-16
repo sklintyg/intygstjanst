@@ -10,17 +10,36 @@
 	<beans:description>Data migration jobs</beans:description>
 
 	<batch:job id="infoModelMigrationJob" incrementer="jobIncrementer">
-		<batch:step id="step1">
-			<batch:tasklet>
-				<batch:chunk reader="intygItemReader" processor="compositeItemProcessor"
-					writer="intygItemWriter" commit-interval="10" />
-			</batch:tasklet>
-			<batch:fail on="FAILED" />
-			<batch:end on="*" />
+		<batch:step id="step1.master">
+			<batch:partition step="step1" partitioner="intygColumnRangePartitioner" 
+				handler="intygPartitioningHandler" />
 		</batch:step>
 	</batch:job>
 
 	<beans:bean id="jobIncrementer"
 		class="org.springframework.batch.core.launch.support.RunIdIncrementer" />
+
+	<batch:step id="step1">
+		<batch:tasklet transaction-manager="intygTransactionManager">
+			<batch:chunk reader="intygItemReader" processor="compositeItemProcessor"
+				writer="intygItemWriter" commit-interval="10" />
+		</batch:tasklet>
+		<batch:fail on="FAILED" />
+		<batch:end on="*" />
+	</batch:step>
+
+	<beans:bean id="intygPartitioningHandler" class="org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler">
+		<beans:property name="taskExecutor" ref="intygTaskExecutor" />
+		<beans:property name="step" ref="step1" />
+		<beans:property name="gridSize" value="5" />
+	</beans:bean>
+	
+	<beans:bean id="intygColumnRangePartitioner" class="se.inera.certificate.migration.partition.ColumnRangePartitioner">
+		<beans:property name="table" value="original_certificate" />
+		<beans:property name="column" value="id" />
+		<beans:property name="dataSource" ref="intygDataSource" />
+	</beans:bean>
+	
+	<beans:bean id="intygTaskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor"/>
 
 </beans:beans>
