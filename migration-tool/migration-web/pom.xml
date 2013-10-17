@@ -147,6 +147,7 @@
 		        <configuration>
 					<webAppConfig>
 		            	<contextPath>/migrationtool</contextPath>
+		            	<jettyEnvXml>${basedir}/src/test/resources/jetty-env.xml</jettyEnvXml>
           			</webAppConfig>
 				</configuration>
 				<dependencies>

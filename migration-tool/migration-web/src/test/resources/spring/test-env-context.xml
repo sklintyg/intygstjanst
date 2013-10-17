@@ -6,6 +6,7 @@
 	<bean id="placeholderProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
+				<value>classpath:batch-default.properties</value>
 				<value>classpath:config/batch-test.properties</value>
 				<value>classpath:batch-hsql.properties</value>
 			</list>

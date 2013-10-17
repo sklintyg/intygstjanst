@@ -11,8 +11,6 @@
     	
 	<beans:import resource="classpath*:/org/springframework/batch/admin/web/resources/webapp-config.xml"/>
 	<beans:import resource="classpath:/META-INF/spring/batch/data-source-context.xml"/>
-	<beans:import resource="classpath:/META-INF/spring/batch/rest-context.xml"/>
 	<beans:import resource="classpath:/META-INF/spring/batch/batch-context.xml"/>
-	
-	    
+		    
 </beans:beans>

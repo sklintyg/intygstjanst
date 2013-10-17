@@ -7,13 +7,11 @@
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<beans:description>Data source for the Intyg database</beans:description>
-
-	<beans:bean id="intygDataSource" class="org.apache.commons.dbcp.BasicDataSource"
-		p:driverClassName="${intyg.jdbc.driver}"
-		p:url="${intyg.jdbc.url}"
-		p:username="${intyg.jdbc.user}"
-		p:password="${intyg.jdbc.password}" />
+	<beans:description>Data source for the Intyg database, retrieved by JNDI from container</beans:description>
+	
+	<beans:bean id="intygDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+       <beans:property name="jndiName" value="java:comp/env/jdbc/intyg" />
+  	</beans:bean>
 		
 	<beans:bean id="intygTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
 		p:dataSource-ref="intygDataSource"/>

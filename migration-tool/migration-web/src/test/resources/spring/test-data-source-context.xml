@@ -6,18 +6,23 @@
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
           http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
 
-	<beans:description>Imports the intyg data source for the simulated
-		Intyg database and provides utilities for test purposes
+	<beans:description>Set up the intyg data source provides utilities for testing purposes
 	</beans:description>
-
-	<beans:import
-		resource="classpath:/META-INF/spring/batch/data-source-context.xml" />
 
 	<jdbc:initialize-database data-source="intygDataSource"
 		enabled="${intyg.generate.testdata}">
 		<jdbc:script location="${intyg.drop.script}" />
 		<jdbc:script location="${intyg.schema.script}" />
 	</jdbc:initialize-database>
+	
+	<beans:bean id="intygDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		p:driverClassName="${intyg.jdbc.driver}"
+		p:url="${intyg.jdbc.url}"
+		p:username="${intyg.jdbc.user}"
+		p:password="${intyg.jdbc.password}" />
+		
+	<beans:bean id="intygTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		p:dataSource-ref="intygDataSource"/>	
 
 	<beans:bean id="certificateDataInitialiser"
 		class="se.inera.certificate.migration.testutils.CertificateDataInitialiser"

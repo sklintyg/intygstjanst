@@ -66,6 +66,7 @@
 	<beans:bean id="convertCertificateXMLToJSONProcessor"
 		class="se.inera.certificate.migration.processors.ConvertCertificateXMLToJSONProcessor"
 		scope="step">
+		<beans:property name="converterRestServiceUrl" value="#{jobParameters['CONVERTER_SERVICE_URL']}" />
 	</beans:bean>
 
 </beans:beans>
