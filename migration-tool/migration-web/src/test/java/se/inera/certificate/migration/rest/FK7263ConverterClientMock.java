@@ -16,9 +16,8 @@ public class FK7263ConverterClientMock implements FK7263ConverterClient {
 	@Override
 	public String convertOriginalCertificate(OriginalCertificate orgCert) throws IOException {
 		LOG.debug("Running convertOriginalCertificate in FK263ConverterClientMock");
-		
 		String json = null;
-		Resource fileRes = new ClassPathResource("data/maximalt-fk7263.json");
+		Resource fileRes = new ClassPathResource("data/legacy-maximalt-fk7263-external.json");
 		json = FileUtils.readFileToString(fileRes.getFile());
 		return json;
 	}

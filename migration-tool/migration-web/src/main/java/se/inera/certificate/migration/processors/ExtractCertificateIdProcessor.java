@@ -57,7 +57,7 @@ public class ExtractCertificateIdProcessor implements ItemProcessor<OriginalCert
         XPathFactory xPathFactory = XPathFactory.newInstance();
         XPath xPath = xPathFactory.newXPath();
         
-        this.xPathExpression = xPath.compile("//utlatande/utlatande-id/@extension");
+        this.xPathExpression = xPath.compile("//RegisterMedicalCertificate/lakarutlatande/lakarutlatande-id");
         
     }
     
