@@ -35,9 +35,9 @@ import org.w3c.dom.Document;
 import se.inera.certificate.common.v1.UtlatandeType;
 import se.inera.certificate.integration.converter.ModelConverter;
 import se.inera.certificate.model.dao.Certificate;
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificateforcare.v1.rivtabp20.GetCertificateForCareResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificateforcareresponder.v1.GetCertificateForCareRequestType;
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificateforcareresponder.v1.GetCertificateForCareResponseType;
+import se.inera.ifv.clinicalprocess.healtcond.certificate.getcertificateforcare.v1.rivtabp20.GetCertificateForCareResponderInterface;
+import se.inera.ifv.clinicalprocess.healtcond.certificate.getcertificateforcareresponder.v1.GetCertificateForCareRequestType;
+import se.inera.ifv.clinicalprocess.healtcond.certificate.getcertificateforcareresponder.v1.GetCertificateForCareResponseType;
 
 /**
  * @author andreaskaltenbach
@@ -46,6 +46,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.getcertificateforcarerespon
 @SchemaValidation
 public class GetCertificateForCareResponderImpl extends AbstractGetCertificateResponderImpl implements
         GetCertificateForCareResponderInterface {
+
 
     private static final Logger LOG = LoggerFactory.getLogger(GetCertificateForCareResponderImpl.class);
 
@@ -62,7 +63,8 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
 
     @Override
     public GetCertificateForCareResponseType getCertificateForCare(AttributedURIType logicalAddress,
-            GetCertificateForCareRequestType request) {
+                                                                   GetCertificateForCareRequestType request) {
+
         GetCertificateForCareResponseType response = new GetCertificateForCareResponseType();
 
         CertificateOrResultOfCall certificateOrResultOfCall = getCertificate(request.getCertificateId(), null);

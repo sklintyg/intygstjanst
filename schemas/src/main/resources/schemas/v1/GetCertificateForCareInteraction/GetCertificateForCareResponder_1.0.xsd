@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:riv:insuranceprocess:healthreporting:GetCertificateForCareResponder:1"
-    xmlns:tns="urn:riv:insuranceprocess:healthreporting:GetCertificateForCareResponder:1" xmlns:pref2="urn:riv:insuranceprocess:healthreporting:2"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:riv:clinicalprocess:healtcond:certificate:GetCertificateForCareResponder:1"
+    xmlns:tns="urn:riv:clinicalprocess:healtcond:certificate:GetCertificateForCareResponder:1" xmlns:pref2="urn:riv:insuranceprocess:healthreporting:2"
     xmlns:meta="urn:riv:insuranceprocess:certificate:1"
     xmlns:cert="urn:intyg:common-model:1" elementFormDefault="qualified">
 

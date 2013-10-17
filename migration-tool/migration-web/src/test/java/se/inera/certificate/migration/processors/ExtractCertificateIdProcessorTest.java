@@ -84,7 +84,7 @@ public class ExtractCertificateIdProcessorTest {
         orgCert.setOriginalCertificateId(123);
         orgCert.setCertificateId("abc123");
         
-        Resource fileRes = new ClassPathResource("data/maximalt-fk7263.xml");
+        Resource fileRes = new ClassPathResource("/data/legacy-maximalt-fk7263-transport.xml");
         orgCert.setOriginalCertificate(FileUtils.readFileToByteArray(fileRes.getFile()));
         
         return orgCert;

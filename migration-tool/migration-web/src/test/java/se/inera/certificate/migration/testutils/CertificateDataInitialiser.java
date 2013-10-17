@@ -44,7 +44,7 @@ import se.inera.certificate.migration.testutils.dao.CertTestDao;
  */
 public class CertificateDataInitialiser {
 
-    private static final String[] CERT_TEMPLATES = {"data/maximalt-fk7263.xml"};
+    private static final String[] CERT_TEMPLATES = {"/data/legacy-maximalt-fk7263-transport.xml", "data/scenarios/legacy/scenario1.xml", "data/scenarios/legacy/scenario11.xml"};
     
     private static Logger LOG = LoggerFactory.getLogger(CertificateDataInitialiser.class);
     
@@ -187,9 +187,9 @@ public class CertificateDataInitialiser {
         XPathFactory xPathFactory = XPathFactory.newInstance();
         XPath xPath = xPathFactory.newXPath();
         
-        this.utlatandeIdXPath = xPath.compile("//utlatande/utlatande-id/@extension");
+        this.utlatandeIdXPath = xPath.compile("//RegisterMedicalCertificate/lakarutlatande/lakarutlatande-id");
         
-        this.civicRegNbrXPath = xPath.compile("//utlatande/patient/person-id/@extension");
+        this.civicRegNbrXPath = xPath.compile("//RegisterMedicalCertificate/lakarutlatande/patient/person-id/@extension");
     }
 
     private void calcYearOffsets() {
