@@ -43,6 +43,8 @@ public class OriginalCertificate {
     @Column(name = "DOCUMENT")
     private byte[] document;
 
+    public OriginalCertificate() {}
+    
     public OriginalCertificate(LocalDateTime received, String document) {
         this.received = received;
         this.document = toBytes(document);
