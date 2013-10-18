@@ -70,17 +70,12 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jcl-over-slf4j</artifactId>
-				<version>1.5.8</version>
+				<version>1.7.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.5.8</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
-				<version>1.5.8</version>
+				<version>1.7.5</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-lang</groupId>
@@ -108,12 +103,6 @@
 				<artifactId>commons-fileupload</artifactId>
 				<scope>runtime</scope>
 				<version>1.2.1</version>
-			</dependency>
-			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>1.2.14</version>
-				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>hsqldb</groupId>
@@ -248,11 +237,23 @@
 				<groupId>org.springframework.batch</groupId>
 				<artifactId>spring-batch-admin-manager</artifactId>
 				<version>${spring.batch.admin.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>slf4j-log4j12</artifactId>
+						<groupId>org.slf4j</groupId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.batch</groupId>
 				<artifactId>spring-batch-admin-resources</artifactId>
 				<version>${spring.batch.admin.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>slf4j-log4j12</artifactId>
+						<groupId>org.slf4j</groupId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.integration</groupId>
@@ -283,6 +284,16 @@
 				<artifactId>mockito-all</artifactId>
 				<version>1.9.5</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>log4j-over-slf4j</artifactId>
+				<version>1.7.5</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>1.0.13</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
