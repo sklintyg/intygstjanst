@@ -114,7 +114,7 @@
   <jaxws:endpoint address="/revoke-certificate-wiretap/v1.0"
                   implementor="se.inera.certificate.integration.RevokeMedicalCertificateResponderWiretapImpl">
     <jaxws:outFaultInterceptors>
-      <bean class="se.inera.certificate.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+      <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/revoke-medical-certificate-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
