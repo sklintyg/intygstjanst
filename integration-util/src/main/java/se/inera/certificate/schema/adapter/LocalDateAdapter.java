@@ -18,6 +18,8 @@
  */
 package se.inera.certificate.schema.adapter;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
@@ -28,11 +30,9 @@ import org.joda.time.LocalDateTime;
  */
 public final class LocalDateAdapter {
 
+    private static final DateTimeZone TIME_ZONE = DateTimeZone.forID("Europe/Stockholm");
     private static final String ISO_DATE_PATTERN = "YYYY-MM-dd";
     private static final String ISO_DATE_TIME_PATTERN = "YYYY-MM-dd'T'HH:mm:ss";
-
-    private static final int DATE_END_INDEX = 10;
-    private static final String TIMEZONE_PATTERN = "\\+.*";
 
     private LocalDateAdapter() {
     }
@@ -41,20 +41,14 @@ public final class LocalDateAdapter {
      * Converts an xs:date to a Joda Time LocalDate.
      */
     public static LocalDate parseDate(String dateString) {
-        if (dateString.length() > DATE_END_INDEX) {
-            return new LocalDate(dateString.substring(0, DATE_END_INDEX));
-        } else {
-            return new LocalDate(dateString);
-        }
+        return new LocalDate(new DateTime(dateString), TIME_ZONE);
     }
 
     /**
      * Converts an xs:datetime to a Joda Time LocalDateTime.
      */
     public static LocalDateTime parseDateTime(String dateString) {
-
-        // crop timezone information ('+...')
-        return new LocalDateTime(dateString.replaceAll(TIMEZONE_PATTERN, ""));
+        return new LocalDateTime(new DateTime(dateString), TIME_ZONE);
     }
 
     /**
@@ -75,14 +69,14 @@ public final class LocalDateAdapter {
      * Converts a Joda Time LocalDateTime to an xs:datetime.
      */
     public static String printDateTime(LocalDateTime dateTime) {
-        return dateTime.toString();
+        return printIsoDateTime(dateTime);
     }
 
     /**
      * Converts a Joda Time LocalDate to an xs:date.
      */
     public static String printDate(LocalDate date) {
-        return date.toString();
+        return printIsoDate(date);
     }
 
     /**
