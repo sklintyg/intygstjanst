@@ -21,6 +21,7 @@ import se.inera.certificate.integration.util.RestUtils;
 import se.inera.certificate.integration.util.XmlUtils;
 import se.inera.certificate.validate.ValidationException;
 import se.inera.certificate.model.Utlatande;
+import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
 
 /**
@@ -58,9 +59,6 @@ abstract class RegisterCertificateBase {
             String type = getType(soapBody);
             String utlatandeXml = XmlUtils.getDocumentAsString(soapBody);
 
-            // Save original xml to database
-            certificateService.storeOriginalCertificate(utlatandeXml);
-
             // Unmarshall xml to module external JSON model
             String externalJson = unmarshall(type, utlatandeXml);
 
@@ -68,7 +66,10 @@ abstract class RegisterCertificateBase {
             Utlatande utlatande = convertToCommonUtlatande(externalJson);
 
             // Store the intyg and meta data in a Certificate object
-            certificateService.storeCertificate(utlatande, externalJson);
+            Certificate certificate = certificateService.storeCertificate(utlatande, externalJson);
+
+            // Save original xml to database
+            certificateService.storeOriginalCertificate(utlatandeXml, certificate);
 
             return soapBody;
 

@@ -257,15 +257,22 @@ public class CertificateDaoImplTest {
 
     @Test
     public void testStoreOriginalCertificate() {
+        long originalCertId = certificateDao.storeOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "Some text", null));
 
-        assertNull(entityManager.find(OriginalCertificate.class, 1L));
-
-        certificateDao.storeOriginalCertificate(new OriginalCertificate(LocalDateTime.now(),"Some text"));
-
-        OriginalCertificate original = entityManager.find(OriginalCertificate.class, 1L);
+        OriginalCertificate original = entityManager.find(OriginalCertificate.class, originalCertId);
         assertNotNull(original);
         assertEquals("Some text", original.getDocument());
     }
 
+    @Test
+    public void testStoreOriginalCertificateWithCertificate() {
+        Certificate certificate = buildCertificate();
+        certificateDao.store(certificate);
+        long originalCertId = certificateDao.storeOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "Some text", certificate));
 
+        OriginalCertificate original = entityManager.find(OriginalCertificate.class, originalCertId);
+        assertNotNull(original);
+        assertEquals("Some text", original.getDocument());
+        assertEquals(CertificateFactory.CERTIFICATE_DOCUMENT, original.getCertificate().getDocument());
+    }
 }
