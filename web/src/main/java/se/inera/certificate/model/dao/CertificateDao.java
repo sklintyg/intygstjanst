@@ -68,8 +68,10 @@ public interface CertificateDao {
      * Stores the original JAXB serialization of a received certificate {@link OriginalCertificate}.
      *
      * @param originalCertificate
+     * 
+     * @return The id that the entity got when persisted.
      */
-    void storeOriginalCertificate(OriginalCertificate originalCertificate);
+    long storeOriginalCertificate(OriginalCertificate originalCertificate);
 
     /**
      * Updates the certificate's status.

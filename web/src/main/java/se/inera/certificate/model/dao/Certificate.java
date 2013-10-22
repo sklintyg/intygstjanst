@@ -33,7 +33,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.OrderBy;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.UnsupportedEncodingException;
@@ -69,6 +69,13 @@ public class Certificate {
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "DOCUMENT")
     private byte[] document;
+
+    /**
+     * The transport model (XML) that was used to generate this entity.
+     */
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "certificate")
+    private OriginalCertificate originalCertificate;
 
     /**
      * Type of the certificate.
@@ -170,6 +177,10 @@ public class Certificate {
      */
     public void setDocument(String document) {
         doSetDocument(document);
+    }
+
+    public OriginalCertificate getOriginalCertificate() {
+        return originalCertificate;
     }
 
     public String getType() {

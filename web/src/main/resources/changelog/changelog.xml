@@ -84,4 +84,14 @@
     </createTable>
   </changeSet>
 
+  <changeSet id="5" author="me">
+    <addColumn tableName="ORIGINAL_CERTIFICATE">
+      <column name="CERTIFICATE_ID" type="varchar(255)">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+    <addForeignKeyConstraint baseColumnNames="CERTIFICATE_ID"
+        baseTableName="ORIGINAL_CERTIFICATE" constraintName="FK_ORIGINAL_CERTIFICATE_CERTIFICATE"
+        referencedColumnNames="ID" referencedTableName="CERTIFICATE"/>
+  </changeSet>
 </databaseChangeLog>
