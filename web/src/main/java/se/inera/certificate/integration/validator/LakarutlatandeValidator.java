@@ -46,7 +46,7 @@ public class LakarutlatandeValidator {
     private static final String HOS_PERSONAL_OID = "1.2.752.129.2.1.4.1";
     private static final String ENHET_OID = "1.2.752.129.2.1.4.1";
 
-    public static final String PERSON_NUMBER_REGEX = "[0-9]{8}[-+][0-9]{4}";
+    public static final String PERSON_NUMBER_REGEX = "[0-9]{8}[-+]?[0-9]{4}";
 
     public LakarutlatandeValidator(LakarutlatandeType lakarutlatande) {
         this.lakarutlatande = lakarutlatande;

@@ -2,14 +2,18 @@ package se.inera.certificate.integration.converter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static se.inera.certificate.integration.converter.util.IsoTypeConverter.toCD;
 import static se.inera.certificate.model.codes.ObservationsKoder.DIAGNOS;
-
 import iso.v21090.dt.v1.CD;
 import iso.v21090.dt.v1.II;
 import iso.v21090.dt.v1.PQ;
+
 import org.joda.time.Partial;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import se.inera.certificate.common.v1.AktivitetType;
 import se.inera.certificate.common.v1.ArbetsuppgiftType;
 import se.inera.certificate.common.v1.DateInterval;
@@ -21,6 +25,7 @@ import se.inera.certificate.common.v1.ReferensType;
 import se.inera.certificate.common.v1.SysselsattningType;
 import se.inera.certificate.common.v1.Utlatande;
 import se.inera.certificate.common.v1.VardkontaktType;
+import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.Kod;
 import se.inera.certificate.model.codes.Aktivitetskoder;
 import se.inera.certificate.model.codes.ObservationsKoder;
@@ -40,6 +45,8 @@ import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.Prognosangivelse;
  * @author andreaskaltenbach
  */
 public final class LakarutlatandeTypeToUtlatandeConverter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LakarutlatandeTypeToUtlatandeConverter.class);
 
     public static final String FK_7263 = "fk7263";
 
@@ -69,7 +76,7 @@ public final class LakarutlatandeTypeToUtlatandeConverter {
         }
 
         utlatande.setSkapadAv(source.getSkapadAvHosPersonal());
-        utlatande.setPatient(convert(source.getPatient()));
+        utlatande.setPatient(convert(source.getPatient(), source));
 
         utlatande.getObservations().add(convert(source.getMedicinsktTillstand()));
 
@@ -98,6 +105,10 @@ public final class LakarutlatandeTypeToUtlatandeConverter {
             AktivitetType aktivitet = convert(aktivitetType);
             if (aktivitet != null) {
                 utlatande.getAktivitets().add(aktivitet);
+            } else {
+                LOGGER.info(LogMarkers.VALIDATION, "Validation failed for intyg " + source.getLakarutlatandeId() + " issued by " + 
+                        source.getSkapadAvHosPersonal().getEnhet().getEnhetsId().getExtension() +
+                        ": Aktivitet with missing aktivitetskod found - ignored.");
             }
         }
 
@@ -363,9 +374,21 @@ public final class LakarutlatandeTypeToUtlatandeConverter {
         return toCD(new Kod(source.value()));
     }
 
-    private static PatientType convert(se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType source) {
+    private static final String PERSON_NUMBER_WITHOUT_DASH_REGEX = "[0-9]{12}";
+    
+    private static PatientType convert(se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType source, LakarutlatandeType lakarutlatande) {
         PatientType patient = new PatientType();
         patient.setPersonId(source.getPersonId());
+        // If the personNumber is missing the separating dash, simply insert it.
+        // This is a temporary fix, since the schema currently allows any format
+        String personNumber = patient.getPersonId().getExtension();
+        if (personNumber.length() == 12 && Pattern.matches(PERSON_NUMBER_WITHOUT_DASH_REGEX, personNumber)) {
+            patient.getPersonId().setExtension(personNumber.substring(0,8) + "-" + personNumber.substring(8));
+            LOGGER.warn(LogMarkers.VALIDATION, "Validation failed for intyg " + lakarutlatande.getLakarutlatandeId() + " issued by " + 
+                                   lakarutlatande.getSkapadAvHosPersonal().getEnhet().getEnhetsId().getExtension() +
+                                   ": Person-id is lacking a separating dash - corrected.");
+        }
+
         // // TODO - sort out what should happen with fullständigt namn vs. förnamn/efternamn
         patient.getFornamns().add("");
         patient.getEfternamns().add(source.getFullstandigtNamn());

@@ -31,7 +31,7 @@ public class LakarutlatandeValidatingInterceptor extends AbstractSoapInterceptor
         try {
             new LakarutlatandeValidator(lakarutlatande).validate();
         } catch (ValidationException ex) {
-            throw new SoapFault("Validation failed for intyg " + lakarutlatande.getLakarutlatandeId() + ": " + ex.getMessage(), ex, Fault.FAULT_CODE_CLIENT);
+            throw new SoapFault("Validation failed for intyg " + lakarutlatande.getLakarutlatandeId() + " issued by " + lakarutlatande.getSkapadAvHosPersonal().getEnhet().getEnhetsId().getExtension() + ": " + ex.getMessage(), ex, Fault.FAULT_CODE_CLIENT);
         }
     }
 }
