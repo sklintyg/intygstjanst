@@ -18,7 +18,6 @@
  */
 package se.inera.certificate.schema.adapter;
 
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -41,14 +40,14 @@ public final class LocalDateAdapter {
      * Converts an xs:date to a Joda Time LocalDate.
      */
     public static LocalDate parseDate(String dateString) {
-        return new LocalDate(new DateTime(dateString), TIME_ZONE);
+        return new LocalDate(javax.xml.bind.DatatypeConverter.parseDate(dateString), TIME_ZONE);
     }
 
     /**
      * Converts an xs:datetime to a Joda Time LocalDateTime.
      */
-    public static LocalDateTime parseDateTime(String dateString) {
-        return new LocalDateTime(new DateTime(dateString), TIME_ZONE);
+    public static LocalDateTime parseDateTime(String dateTimeString) {
+        return new LocalDateTime(javax.xml.bind.DatatypeConverter.parseDateTime(dateTimeString), TIME_ZONE);
     }
 
     /**
@@ -61,8 +60,8 @@ public final class LocalDateAdapter {
     /**
      * Converts an intyg:common-model:1:dateTime to a Joda Time LocalDateTime.
      */
-    public static LocalDateTime parseIsoDateTime(String dateString) {
-        return LocalDateTime.parse(dateString);
+    public static LocalDateTime parseIsoDateTime(String dateTimeString) {
+        return LocalDateTime.parse(dateTimeString);
     }
 
     /**

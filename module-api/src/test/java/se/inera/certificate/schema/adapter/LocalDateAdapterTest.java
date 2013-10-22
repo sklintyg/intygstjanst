@@ -20,8 +20,10 @@ package se.inera.certificate.schema.adapter;
 
 import static org.junit.Assert.assertEquals;
 
+import org.joda.time.Chronology;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.joda.time.chrono.GregorianChronology;
 import org.junit.Test;
 
 /**
@@ -37,10 +39,14 @@ public final class LocalDateAdapterTest {
     private static final String DATE_TIME_STRING = "2012-11-13T13:55:50";
     private static final String DATE_STRING = "2012-11-13";
 
-    private static final LocalDate LOCAL_DATE = new LocalDate(2012, 11, 13);
-    private static final LocalDateTime LOCAL_DATE_TIME = new LocalDateTime(2012, 11, 13, 13, 55, 50, 0);
-    private static final LocalDateTime LOCAL_DATE_TIME_WITH_MILLIS = new LocalDateTime(2012, 11, 13, 13, 55, 50, 120);
-    private static final LocalDateTime LOCAL_DATE_TIME_START_OF_DAY_STRING = new LocalDateTime(2012, 11, 13, 0, 0, 0);
+    private static final Chronology CHRONOLOGY = GregorianChronology.getInstance();
+    private static final LocalDate LOCAL_DATE = new LocalDate(2012, 11, 13, CHRONOLOGY);
+    private static final LocalDateTime LOCAL_DATE_TIME = new LocalDateTime(2012, 11, 13, 13, 55, 50, 0, CHRONOLOGY);
+    private static final LocalDateTime LOCAL_DATE_TIME_WITH_MILLIS = new LocalDateTime(2012, 11, 13, 13, 55, 50, 120, CHRONOLOGY);
+    private static final LocalDateTime LOCAL_DATE_TIME_START_OF_DAY_STRING = new LocalDateTime(2012, 11, 13, 0, 0, 0, 0, CHRONOLOGY);
+
+    private static final LocalDate ISO_DATE = new LocalDate(2012, 11, 13);
+    private static final LocalDateTime ISO_DATE_TIME = new LocalDateTime(2012, 11, 13, 13, 55, 50, 0);
 
     private static final String ISO_DATE_TIME_STRING = "2012-11-13T13:55:50";
     private static final String ISO_DATE_STRING = "2012-11-13";
@@ -116,13 +122,13 @@ public final class LocalDateAdapterTest {
     @Test
     public void testParseIsoDate() {
         LocalDate date = LocalDateAdapter.parseIsoDate(ISO_DATE_STRING);
-        assertEquals(LOCAL_DATE, date);
+        assertEquals(ISO_DATE, date);
     }
 
     @Test
     public void testParseIsoDateTime() {
         LocalDateTime date = LocalDateAdapter.parseIsoDateTime(ISO_DATE_TIME_STRING);
-        assertEquals(LOCAL_DATE_TIME, date);
+        assertEquals(ISO_DATE_TIME, date);
     }
 
     @Test
