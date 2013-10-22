@@ -16,13 +16,13 @@ import org.w3c.dom.NodeList;
 /**
  *
  */
-@WebServiceProvider(targetNamespace = "urn:intyg:RegistreraIntyg:1", serviceName = "RegistreraIntygResponderService", wsdlLocation = "schemas/v1/RegistreraIntygInteraction/RegistreraIntygInteraction_1.0.wsdl")
+@WebServiceProvider(targetNamespace = "urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificate:1:rivtabp20", serviceName = "RegististerMedicalCertificateResponderService", wsdlLocation = "schemas/clinicalprocess/healtcond/certificate/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_1.0_rivtabp20.wsdl")
 @ServiceMode(value=Service.Mode.MESSAGE)
 public class RegistreraIntygResponderProvider extends RegisterCertificateBase implements Provider<SOAPMessage> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistreraIntygResponderProvider.class);
 
-    private static final QName BODY_NAME = new QName("urn:intyg:common-model:1", "utlatande");
+    private static final QName BODY_NAME = new QName("urn:riv:clinicalprocess:healtcond:certificate:1", "utlatande");
 
     @Override
     public SOAPMessage invoke(SOAPMessage request) {
@@ -41,7 +41,7 @@ public class RegistreraIntygResponderProvider extends RegisterCertificateBase im
     @Override
     String getType(Document document) {
         try {
-            NodeList nodes = document.getElementsByTagNameNS("urn:intyg:common-model:1", "typAvUtlatande");
+            NodeList nodes = document.getElementsByTagNameNS("urn:riv:clinicalprocess:healtcond:certificate:1", "typAvUtlatande");
             return nodes.item(0).getAttributes().getNamedItem("code").getNodeValue().trim();
         } catch (Exception e) {
             throw Throwables.propagate(e);

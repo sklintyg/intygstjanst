@@ -57,7 +57,7 @@ public class RegistreraIntygResponderProviderTest {
         DocumentBuilderFactory df = DocumentBuilderFactory.newInstance();
         df.setNamespaceAware(true);
         DocumentBuilder docBuilder = df.newDocumentBuilder();
-        Document doc = docBuilder.parse(new ClassPathResource("registrera-intyg/registrera-intyg.xml").getInputStream());;
+        Document doc = docBuilder.parse(new ClassPathResource("register-medical-certificate/register-medical-certificate.xml").getInputStream());;
         soapMessage.getSOAPBody().addDocument(doc);
 
         ArgumentCaptor<String> xmlText = ArgumentCaptor.forClass(String.class);
@@ -90,7 +90,7 @@ public class RegistreraIntygResponderProviderTest {
         DocumentBuilderFactory df = DocumentBuilderFactory.newInstance();
         df.setNamespaceAware(true);
         DocumentBuilder docBuilder = df.newDocumentBuilder();
-        Document doc = docBuilder.parse(new ClassPathResource("registrera-intyg/registrera-intyg.xml").getInputStream());;
+        Document doc = docBuilder.parse(new ClassPathResource("register-medical-certificate/register-medical-certificate.xml").getInputStream());;
         soapMessage.getSOAPBody().addDocument(doc);
 
         ArgumentCaptor<String> xmlText = ArgumentCaptor.forClass(String.class);
@@ -113,7 +113,7 @@ public class RegistreraIntygResponderProviderTest {
         DocumentBuilderFactory df = DocumentBuilderFactory.newInstance();
         df.setNamespaceAware(true);
         DocumentBuilder docBuilder = df.newDocumentBuilder();
-        Document doc = docBuilder.parse(new ClassPathResource("registrera-intyg/registrera-intyg.xml").getInputStream());;
+        Document doc = docBuilder.parse(new ClassPathResource("register-medical-certificate/register-medical-certificate.xml").getInputStream());;
         soapMessage.getSOAPBody().addDocument(doc);
 
         ArgumentCaptor<String> xmlText = ArgumentCaptor.forClass(String.class);
