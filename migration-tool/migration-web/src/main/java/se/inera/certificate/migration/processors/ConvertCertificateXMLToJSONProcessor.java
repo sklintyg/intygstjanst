@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -21,6 +22,12 @@ import org.springframework.util.Assert;
 import se.inera.certificate.migration.model.Certificate;
 import se.inera.certificate.migration.model.OriginalCertificate;
 
+/**
+ * Processor for sending the certificate XML to a REST web service for conversion into JSON.
+ * 
+ * @author nikpet
+ *
+ */
 public class ConvertCertificateXMLToJSONProcessor implements InitializingBean,
         ItemProcessor<OriginalCertificate, Certificate> {
     
@@ -52,8 +59,6 @@ public class ConvertCertificateXMLToJSONProcessor implements InitializingBean,
 
     public String convertOriginalCertificate(OriginalCertificate orgCert) throws IOException, CertificateProcessingException {
 
-        String returnedContent = null;
-
         HttpClient client = getHttpClient();
 
         HttpPost post = new HttpPost(converterRestServiceUrl);
@@ -68,16 +73,13 @@ public class ConvertCertificateXMLToJSONProcessor implements InitializingBean,
 
         HttpResponse response = client.execute(post);
 
-        if (response.getStatusLine().getStatusCode() == 200) {
-            returnedContent = EntityUtils.toString(response.getEntity(), UTF8);
-        } else {
+        if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
             String errMsg = MessageFormat.format("Got HTTP error code {0} when processing OriginalCertificate: {1}", 
                     new Object[]{response.getStatusLine().getStatusCode(), orgCert});
-            LOG.error(errMsg);
             throw new CertificateProcessingException(errMsg);
         }
 
-        return returnedContent;
+        return EntityUtils.toString(response.getEntity(), UTF8);
     }
 
     public static CloseableHttpClient getHttpClient() {

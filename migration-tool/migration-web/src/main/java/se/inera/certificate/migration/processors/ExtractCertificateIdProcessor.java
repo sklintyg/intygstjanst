@@ -23,6 +23,12 @@ import org.xml.sax.SAXException;
 import se.inera.certificate.migration.model.OriginalCertificate;
 
 
+/**
+ * Processor for extracting the id of the certificate from XML using XPath.
+ * 
+ * @author nikpet
+ *
+ */
 public class ExtractCertificateIdProcessor implements ItemProcessor<OriginalCertificate, OriginalCertificate> {
 
     private static Logger log = LoggerFactory.getLogger(ExtractCertificateIdProcessor.class);
