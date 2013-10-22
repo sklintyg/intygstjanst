@@ -23,9 +23,9 @@ import com.google.common.base.Throwables;
  */
 @WebServiceProvider(targetNamespace = "urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificate:3:rivtabp20", serviceName = "RegisterMedicalCertificateResponderService", wsdlLocation = "schemas/v3/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_3.0_rivtabp20.wsdl")
 @ServiceMode(value=Service.Mode.MESSAGE)
-public class RegisterMedicalCertificateResponderProvider extends RegisterCertificateBase implements Provider<SOAPMessage> {
+public class RegisterMedicalCertificateLegacyResponderProvider extends RegisterCertificateBase implements Provider<SOAPMessage> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisterMedicalCertificateResponderProvider.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisterMedicalCertificateLegacyResponderProvider.class);
 
     private static final QName BODY_NAME = new QName("urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3", "RegisterMedicalCertificate");
 

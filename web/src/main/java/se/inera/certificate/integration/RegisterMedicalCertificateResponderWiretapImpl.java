@@ -19,7 +19,7 @@ import se.inera.certificate.service.CertificateService;
  */
 @WebServiceProvider(targetNamespace = "urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificate:3:rivtabp20", serviceName = "RegisterMedicalCertificateResponderService", wsdlLocation = "schemas/v3/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_3.0_rivtabp20.wsdl")
 @ServiceMode(value= Service.Mode.MESSAGE)
-public class RegisterMedicalCertificateResponderWiretapImpl extends RegisterMedicalCertificateResponderProvider
+public class RegisterMedicalCertificateResponderWiretapImpl extends RegisterMedicalCertificateLegacyResponderProvider
         implements Provider<SOAPMessage> {
 
     @Autowired

@@ -120,9 +120,9 @@
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
 
-  <jaxws:endpoint address="/registrera-intyg/v1.0" implementor="se.inera.certificate.integration.RegistreraIntygResponderProvider"/>
+  <jaxws:endpoint address="/register-medical-certificate/v1.0" implementor="se.inera.certificate.integration.RegisterMedicalCertificateResponderImpl"/>
 
-  <jaxws:endpoint address="/register-certificate/v3.0" implementor="se.inera.certificate.integration.RegisterMedicalCertificateResponderProvider">
+  <jaxws:endpoint address="/register-certificate/v3.0" implementor="se.inera.certificate.integration.RegisterMedicalCertificateLegacyResponderProvider">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/register-medical-certificate-transform.xslt"/>

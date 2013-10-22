@@ -84,7 +84,6 @@
                   <extraarg>-xjc-XtoString</extraarg>
 
                   <extraarg>-xjc-Xinheritance</extraarg>
-
                   <extraarg>-p</extraarg>
                   <extraarg>
                     urn:riv:clinicalprocess:healtcond:certificate:RegisterMedicalCertificateResponder:1=se.inera.certificate.clinicalprocess.healtcond.certificate.registerMedicalCertificate.v1
@@ -248,6 +247,12 @@
                       ${basedir}/bindings/general-intyg-binding.xjb
                     </bindingFile>
                   </bindingFiles>
+                  <extraargs>
+                    <extraarg>-wsdlLocation</extraarg>
+                    <extraarg>
+                      classpath:schemas/clinicalprocess/healtcond/certificate/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_1.0_rivtabp20.wsdl
+                    </extraarg>
+                  </extraargs>
                 </wsdlOption>
 
                 <wsdlOption>

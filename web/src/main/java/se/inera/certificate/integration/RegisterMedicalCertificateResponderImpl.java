@@ -1,11 +1,11 @@
 package se.inera.certificate.integration;
 
+import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceProvider;
 
 import com.google.common.base.Throwables;
 import org.slf4j.Logger;
@@ -16,11 +16,11 @@ import org.w3c.dom.NodeList;
 /**
  *
  */
-@WebServiceProvider(targetNamespace = "urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificate:1:rivtabp20", serviceName = "RegististerMedicalCertificateResponderService", wsdlLocation = "schemas/clinicalprocess/healtcond/certificate/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_1.0_rivtabp20.wsdl")
+@WebService(targetNamespace = "urn:riv:clinicalprocess:healtcond:certificate:RegisterMedicalCertificate:1:rivtabp20", name = "RegisterMedicalCertificateResponderInterface")
 @ServiceMode(value=Service.Mode.MESSAGE)
-public class RegistreraIntygResponderProvider extends RegisterCertificateBase implements Provider<SOAPMessage> {
+public class RegisterMedicalCertificateResponderImpl extends RegisterCertificateBase implements Provider<SOAPMessage> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegistreraIntygResponderProvider.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisterMedicalCertificateResponderImpl.class);
 
     private static final QName BODY_NAME = new QName("urn:riv:clinicalprocess:healtcond:certificate:1", "utlatande");
 

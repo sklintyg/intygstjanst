@@ -33,7 +33,7 @@ import se.inera.certificate.validate.ValidationException;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class RegistreraIntygResponderProviderTest {
+public class RegisterMedicalCertificateResponderImplTest {
     @Mock
     ModuleRestApiFactory moduleRestApiFactory = mock(ModuleRestApiFactory.class);
 
@@ -47,7 +47,7 @@ public class RegistreraIntygResponderProviderTest {
     Response response = mock(Response.class);
 
     @InjectMocks
-    private RegistreraIntygResponderProvider responder = new RegistreraIntygResponderProvider();
+    private RegisterMedicalCertificateResponderImpl responder = new RegisterMedicalCertificateResponderImpl();
 
     @Test
     public void testHappyFlow() throws Exception {
