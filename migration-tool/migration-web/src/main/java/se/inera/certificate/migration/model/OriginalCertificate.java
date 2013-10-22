@@ -69,4 +69,14 @@ public class OriginalCertificate {
     public void setOriginalCertificate(byte[] originalCertificate) {
         this.originalCertificate = originalCertificate;
     }
+    
+    public int getOriginalCertificateSize() {
+        return (this.originalCertificate != null) ? this.originalCertificate.length : 0;
+    }
+    
+    @Override
+    public String toString() {
+        return "OriginalCertificate [originalCertificateId=" + originalCertificateId + ", certificateId="
+                + certificateId + ", originalCertificate=" + getOriginalCertificateSize() + " bytes]";
+    }  
 }

@@ -136,7 +136,12 @@
         	<version>2.3</version>
         	<scope>test</scope>
         </dependency>
-        
+
+        <dependency>
+        	<groupId>org.mockito</groupId>
+        	<artifactId>mockito-all</artifactId>
+        	<scope>test</scope>
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -152,6 +157,16 @@
 		            	<contextPath>/migrationtool</contextPath>
 		            	<jettyEnvXml>${basedir}/src/test/resources/jetty-env.xml</jettyEnvXml>
           			</webAppConfig>
+          			<systemProperties>
+			            <systemProperty>
+			              <name>catalina.home</name>
+			              <value>${project.build.directory}/logs</value>
+			            </systemProperty>
+			            <systemProperty>
+			              <name>jetty.port</name>
+			              <value>8082</value>
+			            </systemProperty>
+					</systemProperties>
 				</configuration>
 				<dependencies>
 					<dependency>

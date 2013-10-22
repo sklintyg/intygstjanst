@@ -9,11 +9,11 @@
 
 	<beans:description>Data source for the Intyg database, retrieved by JNDI from container</beans:description>
 	
-	<beans:bean id="intygDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	<beans:bean id="certificateDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
        <beans:property name="jndiName" value="java:comp/env/jdbc/intyg" />
   	</beans:bean>
 		
-	<beans:bean id="intygTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-		p:dataSource-ref="intygDataSource"/>
+	<beans:bean id="certificateTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		p:dataSource-ref="certificateDataSource"/>
 
 </beans:beans>

@@ -62,4 +62,9 @@ public class Certificate {
         this.certificateJson = certificateJson;
     }
 
+    @Override
+    public String toString() {
+        return "Certificate [certificateId=" + certificateId + ", certificateJson=" + getCertificateJsonSize() + " chars]";
+    }
+
 }

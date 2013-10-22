@@ -10,14 +10,14 @@
 	<beans:description>Context for the data migration jobs
 	</beans:description>
 
-	<beans:bean id="intygItemReader"
+	<beans:bean id="certificateItemReader"
 		class="org.springframework.batch.item.database.JdbcPagingItemReader"
 		scope="step">
-		<beans:property name="dataSource" ref="intygDataSource" />
+		<beans:property name="dataSource" ref="certificateDataSource" />
 		<beans:property name="queryProvider">
 			<beans:bean
 				class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
-				<beans:property name="dataSource" ref="intygDataSource" />
+				<beans:property name="dataSource" ref="certificateDataSource" />
 				<beans:property name="selectClause" value="${intyg.select.sql.select}" />
 				<beans:property name="fromClause" value="${intyg.select.sql.from}" />
 				<beans:property name="whereClause" value="${intyg.select.sql.where}" />
@@ -37,10 +37,10 @@
 	<beans:bean id="certificateRowMapper"
 		class="se.inera.certificate.migration.model.OriginalCertificateRowMapper" />
 
-	<beans:bean id="intygItemWriter"
+	<beans:bean id="certificateItemWriter"
 		class="org.springframework.batch.item.database.JdbcBatchItemWriter"
 		scope="step">
-		<beans:property name="dataSource" ref="intygDataSource" />
+		<beans:property name="dataSource" ref="certificateDataSource" />
 		<beans:property name="sql" value="${intyg.update.sql}" />
 		<beans:property name="itemPreparedStatementSetter">
 			<beans:bean
@@ -48,7 +48,7 @@
 		</beans:property>
 	</beans:bean>
 
-	<beans:bean id="compositeItemProcessor"
+	<beans:bean id="certificateCompositeItemProcessor"
 		class="org.springframework.batch.item.support.CompositeItemProcessor"
 		scope="step">
 		<beans:property name="delegates">

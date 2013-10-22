@@ -1,21 +1,25 @@
 package se.inera.certificate.migration.processors;
 
-public class CertificateProcessingException extends Exception {
+/**
+ * A non-fatal certifcate processing exception that does not fail the whole batch when thrown.
+ * 
+ * @author nikpet
+ *
+ */
+public class CertificateProcessingException extends AbstractCertificateProcessingException {
 
     private static final long serialVersionUID = -2631845978168019323L;
 
     public CertificateProcessingException() {
-        // TODO Auto-generated constructor stub
+        super();
     }
 
     public CertificateProcessingException(String message) {
         super(message);
-        // TODO Auto-generated constructor stub
     }
 
     public CertificateProcessingException(String message, Throwable cause) {
         super(message, cause);
-        // TODO Auto-generated constructor stub
     }
 
 }

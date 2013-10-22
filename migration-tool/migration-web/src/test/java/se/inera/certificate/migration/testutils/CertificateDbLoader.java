@@ -13,11 +13,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class CertificateDbLoader {
     
-    private static final int NBR_OF_CERTS = 100;
-    
     public static Logger logger = LoggerFactory.getLogger(CertificateDbLoader.class);
     
     public static void main(String[] args) throws Exception {
+        
+        if (args == null || args.length != 1) {
+            throw new IllegalArgumentException("The number of certs to load must be supplied!");
+        }
         
         logger.info("Initializing Spring context.");
         
@@ -27,7 +29,8 @@ public class CertificateDbLoader {
 
         CertificateDataInitialiser dataInitialiser = (CertificateDataInitialiser) applicationContext.getBean("certificateDataInitialiser");
         
-        dataInitialiser.generateAndLoadCerts(NBR_OF_CERTS);
+        int nbrOfCerts = Integer.parseInt(args[0]);
+        dataInitialiser.generateAndLoadCerts(nbrOfCerts);
         
         logger.info("Loading done!");
     }

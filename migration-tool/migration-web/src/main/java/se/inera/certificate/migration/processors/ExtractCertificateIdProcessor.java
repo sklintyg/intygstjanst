@@ -31,20 +31,20 @@ public class ExtractCertificateIdProcessor implements ItemProcessor<OriginalCert
     
     private XPathExpression xPathExpression;
     
-    public OriginalCertificate process(OriginalCertificate cert) throws Exception {
+    public OriginalCertificate process(OriginalCertificate orgCert) throws Exception {
         
-        log.debug("Extracting certificate id from original certificate XML with id {0}", cert.getOriginalCertificateId());
+        log.debug("Extracting certificate id from original certificate XML with id {0}", orgCert.getOriginalCertificateId());
         
-        String certificateId = extractIdFromOriginalXML(cert);
+        String certificateId = extractIdFromOriginalXML(orgCert);
         
         if (StringUtils.isEmpty(certificateId)) {
-            String errMsg = MessageFormat.format("Extraction of certificate id from original XML with id {0} failed", cert.getOriginalCertificateId());
+            String errMsg = MessageFormat.format("Extraction of certificate id from OriginalCertificate failed: {}", orgCert.toString());
             throw new CertificateProcessingException(errMsg);
         }
         
-        cert.setCertificateId(certificateId);
+        orgCert.setCertificateId(certificateId);
         
-        return cert;
+        return orgCert;
     }
     
     private String extractIdFromOriginalXML(OriginalCertificate orgCert) throws CertificateProcessingException {

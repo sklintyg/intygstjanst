@@ -14,8 +14,7 @@ public class CertificateItemPreparedStatementSetter implements ItemPreparedState
     @Override
     public void setValues(Certificate cert, PreparedStatement ps) throws SQLException {
         
-        LOG.debug("Preparing update statement for cert {}, with JSON payload of {} chars ", cert.getCertificateId()
-                , cert.getCertificateJsonSize());
+        LOG.debug("Preparing update statement for Certificate: {} ", cert.toString());
         
         ps.setBytes(1, cert.getCertificateJsonAsBytes());
         ps.setString(2, cert.getCertificateId());
