@@ -9,20 +9,20 @@
 	<beans:description>Set up the intyg data source provides utilities for testing purposes
 	</beans:description>
 
-	<jdbc:initialize-database data-source="intygDataSource"
+	<jdbc:initialize-database data-source="certificateDataSource"
 		enabled="${intyg.generate.testdata}">
 		<jdbc:script location="${intyg.drop.script}" />
 		<jdbc:script location="${intyg.schema.script}" />
 	</jdbc:initialize-database>
 	
-	<beans:bean id="intygDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+	<beans:bean id="certificateDataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		p:driverClassName="${intyg.jdbc.driver}"
 		p:url="${intyg.jdbc.url}"
 		p:username="${intyg.jdbc.user}"
 		p:password="${intyg.jdbc.password}" />
 		
-	<beans:bean id="intygTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-		p:dataSource-ref="intygDataSource"/>	
+	<beans:bean id="certificateTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		p:dataSource-ref="certificateDataSource"/>	
 
 	<beans:bean id="certificateDataInitialiser"
 		class="se.inera.certificate.migration.testutils.CertificateDataInitialiser"
@@ -30,6 +30,6 @@
 
 	<beans:bean id="certTestDao"
 		class="se.inera.certificate.migration.testutils.dao.CertTestDao"
-		p:dataSource-ref="intygDataSource" />
+		p:dataSource-ref="certificateDataSource" />
 
 </beans:beans>

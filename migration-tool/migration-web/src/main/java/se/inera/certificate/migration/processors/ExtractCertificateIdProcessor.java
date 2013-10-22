@@ -38,7 +38,7 @@ public class ExtractCertificateIdProcessor implements ItemProcessor<OriginalCert
         String certificateId = extractIdFromOriginalXML(orgCert);
         
         if (StringUtils.isEmpty(certificateId)) {
-            String errMsg = MessageFormat.format("Extraction of certificate id from OriginalCertificate failed: {}", orgCert.toString());
+            String errMsg = MessageFormat.format("Extraction of certificate id from OriginalCertificate failed: {0}", orgCert.toString());
             throw new CertificateProcessingException(errMsg);
         }
         
