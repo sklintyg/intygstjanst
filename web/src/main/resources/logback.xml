@@ -1,30 +1,48 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration scan="true" scanPeriod="30 seconds">
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <layout class="ch.qos.logback.classic.PatternLayout">
-      <pattern>%date{ISO8601} [%thread] %-5level %logger{10} - %msg%n
-      </pattern>
-    </layout>
+    <encoder>
+      <pattern>%date{ISO8601} [%thread] %-5level %logger{10} - %msg%n</pattern>
+    </encoder>
   </appender>
 
   <!--Daily rolling file appender -->
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <File>${catalina.home}/logs/certificate.log</File>
+    <filter class="se.inera.certificate.logging.MarkerFilter">
+        <marker>Validation</marker>
+        <onMatch>DENY</onMatch>
+        <onMismatch>ACCEPT</onMismatch>
+    </filter>
+    <file>${catalina.home}/logs/certificate.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <FileNamePattern>${catalina.home}/logs/certificate.%d{yyyy-MM-dd}.log</FileNamePattern>
+      <fileNamePattern>${catalina.home}/logs/certificate.%d{yyyy-MM-dd}.log</fileNamePattern>
     </rollingPolicy>
+    <encoder>
+      <pattern>%date{ISO8601} [%thread] %-5level %logger{10} - %msg%n</pattern>
+    </encoder>
+  </appender>
 
-    <layout class="ch.qos.logback.classic.PatternLayout">
-      <Pattern>%date{ISO8601} [%thread] %-5level %logger{10} - %msg%n
-      </Pattern>
-    </layout>
+  <!--Daily rolling file appender for validation messages -->
+  <appender name="VALIDATION" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="se.inera.certificate.logging.MarkerFilter">
+        <marker>Validation</marker>
+        <onMatch>ACCEPT</onMatch>
+        <onMismatch>DENY</onMismatch>
+    </filter>
+    <file>${catalina.home}/logs/validation.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.home}/logs/validation.%d{yyyy-MM-dd}.log</fileNamePattern>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%date{ISO8601} %-5level - %msg%n</pattern>
+    </encoder>
   </appender>
 
   <logger name="org.springframework" level="error" />
 
   <logger name="org.hibernate" level="error" />
 
-  <logger name="org.apache.cxf.services" level="error" />
+  <logger name="org.apache.cxf" level="error" />
 
   <logger name="se.inera.certificate" level="error" />
 
@@ -32,5 +50,7 @@
     <level value="error" />
     <appender-ref ref="STDOUT" />
     <appender-ref ref="FILE" />
+    <appender-ref ref="VALIDATION" />
   </root>
+
 </configuration>

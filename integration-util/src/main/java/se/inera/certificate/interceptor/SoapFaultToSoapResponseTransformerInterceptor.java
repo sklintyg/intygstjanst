@@ -9,6 +9,8 @@ import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import se.inera.certificate.logging.LogMarkers;
+
 /**
  * CXF interceptor which turns SOAP faults into valid SOAP responses.
  *
@@ -43,7 +45,7 @@ public class SoapFaultToSoapResponseTransformerInterceptor extends XSLTOutInterc
     @Override
     public void handleMessage(Message message) {
         Exception exception = message.getContent(Exception.class);
-        LOGGER.error("Exception during web service call.", exception);
+        LOGGER.error(LogMarkers.VALIDATION, exception.getMessage());
 
         // switch HTTP status from 500 (internal server error) to 200 (ok)
         message.getExchange().getOutFaultMessage().put(Message.RESPONSE_CODE, HTTP_OK);
