@@ -23,6 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import se.inera.certificate.migration.testutils.CertificateDataInitialiser;
 import se.inera.certificate.migration.testutils.dao.Cert;
+import se.inera.certificate.migration.testutils.dao.CertTestDao;
 import se.inera.certificate.migration.testutils.http.IntygHttpRequestHandler;
 import se.inera.certificate.migration.testutils.http.IntygHttpRequestHandler.IntygHttpRequestHandlerMode;
 
@@ -46,6 +47,9 @@ public class MigrationJobTest {
 
     @Autowired
     private CertificateDataInitialiser dataInitialiser;
+    
+    @Autowired
+    private CertTestDao certTestDao;
 
     private LocalTestServer server = null;
 
@@ -82,5 +86,7 @@ public class MigrationJobTest {
         
         final JobExecution jobExecution = jobLauncher.run(migrationJob, builder.toJobParameters());
         assertEquals("Batch status should be COMPLETED", BatchStatus.COMPLETED, jobExecution.getStatus());
+        
+        assertEquals(NBR_OF_CERTS_TO_LOAD, certTestDao.countOriginalCertsWithNoCertificateID());
     }
 }

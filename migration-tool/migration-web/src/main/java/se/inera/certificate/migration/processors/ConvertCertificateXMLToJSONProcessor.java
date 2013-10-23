@@ -54,7 +54,7 @@ public class ConvertCertificateXMLToJSONProcessor implements InitializingBean,
             throw new FatalCertificateProcessingException(errMsg, e);
         }
 
-        return new Certificate(orgCert.getCertificateId(), convertedJson);
+        return new Certificate(orgCert, convertedJson);
     }
 
     public String convertOriginalCertificate(OriginalCertificate orgCert) throws IOException, CertificateProcessingException {

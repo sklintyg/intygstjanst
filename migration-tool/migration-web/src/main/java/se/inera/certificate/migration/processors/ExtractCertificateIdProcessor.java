@@ -39,7 +39,7 @@ public class ExtractCertificateIdProcessor implements ItemProcessor<OriginalCert
     
     public OriginalCertificate process(OriginalCertificate orgCert) throws Exception {
         
-        log.debug("Extracting certificate id from original certificate XML with id {0}", orgCert.getOriginalCertificateId());
+        log.debug("Extracting certificate id from original certificate XML with id {}", orgCert.getOriginalCertificateId());
         
         String certificateId = extractIdFromOriginalXML(orgCert);
         

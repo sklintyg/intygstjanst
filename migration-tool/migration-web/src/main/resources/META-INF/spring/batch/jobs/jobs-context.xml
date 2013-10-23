@@ -22,20 +22,23 @@
 	<batch:step id="certificateInfoModelProcessingStep">
 		<batch:tasklet transaction-manager="certificateTransactionManager">
 			<batch:chunk reader="certificateItemReader" processor="certificateCompositeItemProcessor"
-				writer="certificateItemWriter" commit-interval="10" skip-limit="10">
-				<batch:skippable-exception-classes>
+				writer="certificateCompositeItemWriter" commit-interval="20" retry-limit="3">
+				<batch:retryable-exception-classes>
 					<batch:include class="se.inera.certificate.migration.processors.CertificateProcessingException"/>
-				</batch:skippable-exception-classes>
+				</batch:retryable-exception-classes>
 			</batch:chunk>
 			<batch:listeners>
-				<batch:listener ref="certificateSkipListener" />
+				<batch:listener>
+					<beans:bean class="se.inera.certificate.migration.listeners.CertificateProcessingSkipListener" />			
+				</batch:listener>
+				<batch:listener>
+					<beans:bean class="se.inera.certificate.migration.listeners.CertificateProcessingItemListener" />
+				</batch:listener>
 			</batch:listeners>	
 		</batch:tasklet>
 		<batch:fail on="FAILED" />
 		<batch:end on="*" />
 	</batch:step>
-
-	<beans:bean id="certificateSkipListener" class="se.inera.certificate.migration.listeners.CertificateProcessingSkipListener" />
 
 	<beans:bean id="certificatePartitioningHandler" class="org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler">
 		<beans:property name="taskExecutor" ref="certificateTaskExecutor" />

@@ -20,11 +20,14 @@ public class Certificate {
      */
     private String certificateJson;
     
+    private Integer originalCertificateId;
+    
     public Certificate() {
     }
     
-    public Certificate(String certificateId, String certificateJson) {
-        this.certificateId = certificateId;
+    public Certificate(OriginalCertificate orgCert, String certificateJson) {
+        this.originalCertificateId = orgCert.getOriginalCertificateId();
+        this.certificateId = orgCert.getCertificateId();
         this.certificateJson = certificateJson;
     }
 
@@ -62,9 +65,18 @@ public class Certificate {
         this.certificateJson = certificateJson;
     }
 
+    public Integer getOriginalCertificateId() {
+        return originalCertificateId;
+    }
+
+    public void setOriginalCertificateId(Integer originalCertificateId) {
+        this.originalCertificateId = originalCertificateId;
+    }
+
     @Override
     public String toString() {
-        return "Certificate [certificateId=" + certificateId + ", certificateJson=" + getCertificateJsonSize() + " chars]";
+        return "Certificate [certificateId=" + certificateId + ", originalCertificateId,"
+                + originalCertificateId + " certificateJson=" + getCertificateJsonSize() + " chars]";
     }
 
 }

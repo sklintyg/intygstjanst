@@ -18,10 +18,10 @@
 			<beans:bean
 				class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
 				<beans:property name="dataSource" ref="certificateDataSource" />
-				<beans:property name="selectClause" value="${intyg.select.sql.select}" />
-				<beans:property name="fromClause" value="${intyg.select.sql.from}" />
-				<beans:property name="whereClause" value="${intyg.select.sql.where}" />
-				<beans:property name="sortKey" value="${intyg.select.sortkey}" />
+				<beans:property name="selectClause" value="${certificate.reader.sql.select}" />
+				<beans:property name="fromClause" value="${certificate.reader.sql.from}" />
+				<beans:property name="whereClause" value="${certificate.reader.sql.where}" />
+				<beans:property name="sortKey" value="${certificate.reader.sortkey}" />
 			</beans:bean>
 		</beans:property>
 		<beans:property name="parameterValues">
@@ -31,23 +31,43 @@
 			</beans:map>
 		</beans:property>
 		<beans:property name="pageSize" value="200" />
-		<beans:property name="rowMapper" ref="certificateRowMapper" />
+		<beans:property name="rowMapper">
+			<beans:bean class="se.inera.certificate.migration.model.OriginalCertificateRowMapper" />
+		</beans:property>
 	</beans:bean>
-
-	<beans:bean id="certificateRowMapper"
-		class="se.inera.certificate.migration.model.OriginalCertificateRowMapper" />
 
 	<beans:bean id="certificateItemWriter"
 		class="org.springframework.batch.item.database.JdbcBatchItemWriter"
 		scope="step">
 		<beans:property name="dataSource" ref="certificateDataSource" />
-		<beans:property name="sql" value="${intyg.update.sql}" />
+		<beans:property name="sql" value="${certificate.writer.sql}" />
 		<beans:property name="itemPreparedStatementSetter">
 			<beans:bean
 				class="se.inera.certificate.migration.model.CertificateItemPreparedStatementSetter" />
 		</beans:property>
 	</beans:bean>
-
+	
+	<beans:bean id="originalCertificateItemWriter"
+		class="org.springframework.batch.item.database.JdbcBatchItemWriter"
+		scope="step">
+		<beans:property name="dataSource" ref="certificateDataSource" />
+		<beans:property name="sql" value="${originalcertificate.writer.sql}" />
+		<beans:property name="itemPreparedStatementSetter">
+			<beans:bean
+				class="se.inera.certificate.migration.model.OriginalCertificateUpdatePreparedStatementSetter" />
+		</beans:property>
+	</beans:bean>
+	
+	<beans:bean id="certificateCompositeItemWriter" 
+		class="org.springframework.batch.item.support.CompositeItemWriter" scope="step">
+		<beans:property name="delegates">
+			<beans:list>
+				<beans:ref bean="certificateItemWriter" />
+				<beans:ref bean="originalCertificateItemWriter" />
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+	
 	<beans:bean id="certificateCompositeItemProcessor"
 		class="org.springframework.batch.item.support.CompositeItemProcessor"
 		scope="step">

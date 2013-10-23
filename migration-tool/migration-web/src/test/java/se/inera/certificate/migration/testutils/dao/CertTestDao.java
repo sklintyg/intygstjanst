@@ -36,11 +36,19 @@ public class CertTestDao extends JdbcDaoSupport {
     private static final String INSERT_CERT = "INSERT INTO certificate (ID, CERTIFICATE_TYPE, CIVIC_REGISTRATION_NUMBER, " +
     		"CARE_UNIT_NAME, SIGNING_DOCTOR_NAME, SIGNED_DATE, VALID_FROM_DATE, VALID_TO_DATE, DOCUMENT " +
     		") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    
+    private static final String SELECT_ORGCERT_ID_NOT_NULL = "SELECT count(CERTIFICATE_ID) FROM original_certificate " +
+    		"WHERE CERTIFICATE_ID IS NOT NULL";
         
     private static Logger LOG = LoggerFactory.getLogger(CertificateDataInitialiser.class);
     
     private LobHandler lobHandler = new DefaultLobHandler();
         
+    public int countOriginalCertsWithNoCertificateID() {
+        return getJdbcTemplate().queryForInt(SELECT_ORGCERT_ID_NOT_NULL);
+    }
+    
     public void insertCert(Cert cert) {
         LOG.debug("Inserting certificate with id {}", cert.getCertId());        
         getJdbcTemplate().update(INSERT_CERT, new CertPreparedStatementSetter(cert));

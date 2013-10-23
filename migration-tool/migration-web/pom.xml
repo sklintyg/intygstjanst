@@ -164,7 +164,7 @@
 			            </systemProperty>
 			            <systemProperty>
 			              <name>jetty.port</name>
-			              <value>8082</value>
+			              <value>8090</value>
 			            </systemProperty>
 					</systemProperties>
 				</configuration>

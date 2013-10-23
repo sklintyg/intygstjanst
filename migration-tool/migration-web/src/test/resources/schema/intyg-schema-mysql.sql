@@ -17,5 +17,8 @@ CREATE TABLE `original_certificate` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `RECEIVED` datetime NOT NULL,
   `DOCUMENT` blob NOT NULL,
-  PRIMARY KEY (`ID`)
+  `CERTIFICATE_ID` varchar(255), 
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (CERTIFICATE_ID)
+      REFERENCES certificate(ID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
