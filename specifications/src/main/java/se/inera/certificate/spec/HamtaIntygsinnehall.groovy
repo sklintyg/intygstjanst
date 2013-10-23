@@ -1,11 +1,9 @@
 package se.inera.certificate.spec
 import org.skyscreamer.jsonassert.JSONAssert
 import se.inera.certificate.spec.util.WsClientFixture
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20.GetCertificateResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentRequest
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentRequestType
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponderInterface
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponderService
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponse
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
 /**
  *
@@ -28,11 +26,11 @@ public class HamtaIntygsinnehall extends WsClientFixture {
 	private String faktisktSvar
 	private String resultat
 
-    GetCertificateContentResponse response
+    GetCertificateContentResponseType response
 
     public void execute() {
 		faktisktSvar = null
-        GetCertificateContentRequest request = new GetCertificateContentRequest()
+        GetCertificateContentRequestType request = new GetCertificateContentRequestType()
         request.setNationalIdentityNumber(personnummer)
         request.setCertificateId(intyg)
 

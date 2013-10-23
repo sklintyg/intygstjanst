@@ -1,5 +1,17 @@
 package se.inera.certificate.integration;
 
+import javax.ws.rs.core.Response;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPMessage;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -13,23 +25,11 @@ import se.inera.certificate.integration.rest.ModuleRestApiFactory;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.service.CertificateService;
 
-import javax.ws.rs.core.Response;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPMessage;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 /**
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class RegisterMedicalCertificateResponderProviderTest {
+public class RegisterMedicalCertificateLegacyResponderProviderTest {
 
     @Mock
     ModuleRestApiFactory moduleRestApiFactory = mock(ModuleRestApiFactory.class);
@@ -44,7 +44,7 @@ public class RegisterMedicalCertificateResponderProviderTest {
     Response response = mock(Response.class);
 
     @InjectMocks
-    private RegisterMedicalCertificateResponderProvider responder = new RegisterMedicalCertificateResponderProvider();
+    private RegisterMedicalCertificateLegacyResponderProvider responder = new RegisterMedicalCertificateLegacyResponderProvider();
 
     @Test
     public void testIt() throws Exception {

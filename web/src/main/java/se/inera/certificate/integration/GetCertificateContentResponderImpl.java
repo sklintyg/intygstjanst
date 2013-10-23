@@ -16,9 +16,9 @@ import se.inera.certificate.integration.converter.CertificateStateHistoryEntryCo
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.certificate.v1.CertificateStatusType;
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentRequest;
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponse;
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponseType;
 
 /**
  * @author andreaskaltenbach
@@ -32,9 +32,9 @@ public class GetCertificateContentResponderImpl implements GetCertificateContent
     private CertificateService certificateService;
 
     @Override
-    public GetCertificateContentResponse getCertificateContent(AttributedURIType logicalAddress, GetCertificateContentRequest request) {
+    public GetCertificateContentResponseType getCertificateContent(AttributedURIType logicalAddress, GetCertificateContentRequestType request) {
 
-        GetCertificateContentResponse response = new GetCertificateContentResponse();
+        GetCertificateContentResponseType response = new GetCertificateContentResponseType();
 
         Certificate certificate;
         try {
@@ -66,7 +66,7 @@ public class GetCertificateContentResponderImpl implements GetCertificateContent
 
     }
 
-    private void attachCertificateDocument(Certificate certificate, GetCertificateContentResponse response) {
+    private void attachCertificateDocument(Certificate certificate, GetCertificateContentResponseType response) {
         // extract certificate states from certificate meta data
         List<CertificateStatusType> states = CertificateStateHistoryEntryConverter.toCertificateStatusType(certificate.getStates());
 

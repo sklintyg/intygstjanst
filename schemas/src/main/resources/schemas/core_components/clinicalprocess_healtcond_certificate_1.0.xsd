@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:intyg:common-model:1"
-           xmlns:iso="urn:iso:21090:dt:1" targetNamespace="urn:intyg:common-model:1"
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="urn:riv:clinicalprocess:healtcond:certificate:1"
+           xmlns:iso="urn:iso:21090:dt:1"
+           targetNamespace="urn:riv:clinicalprocess:healtcond:certificate:1"
            xmlns:hr="urn:riv:insuranceprocess:healthreporting:2"
            elementFormDefault="qualified" attributeFormDefault="unqualified"
-           version="0.1">
+           version="1.0">
 
-  <xs:import namespace="urn:iso:21090:dt:1" schemaLocation="../../core_components/iso_dt_subset_1.0.xsd"/>
+  <xs:import namespace="urn:iso:21090:dt:1" schemaLocation="iso_dt_subset_1.0.xsd"/>
   <xs:import namespace="urn:riv:insuranceprocess:healthreporting:2"
-             schemaLocation="../../core_components/insuranceprocess_healthreporting_2.0.xsd"/>
-  <xs:import namespace="urn:riv:insuranceprocess:certificate:1"
-             schemaLocation="../../core_components/insuranceprocess_certificate_1.0.xsd"/>
+             schemaLocation="insuranceprocess_healthreporting_2.0.xsd"/>
 
   <xs:element name="utlatande" type="utlatandeType"/>
 
@@ -41,30 +41,31 @@
   </xs:complexType>
 
   <xs:complexType name="hosPersonalType">
-  		<xs:sequence>
-  			<xs:element name="personal-id" type="iso:II">
-  				<xs:annotation>
-  					<xs:documentation>HSA-id, o.i.d för HSA-id är 1.2.752.129.2.1.4.1</xs:documentation>
-  				</xs:annotation>
-  			</xs:element>
-  			<xs:element name="fullstandigtNamn" type="xs:string" minOccurs="0">
-  				<xs:annotation>
-  					<xs:documentation>Förnamn +  efternamn sammanslaget.
-  					Är tomt om personen har en skyddad identitet.</xs:documentation>
-  				</xs:annotation>
-  			</xs:element>
-  			 <!-- Skyddad identitet -->
-  			<xs:element name="forskrivarkod" type="xs:string" minOccurs="0"/>
-  			<xs:element name="befattning" type="xs:string" minOccurs="0"/>
-  			<xs:element name="enhet" type="hr:enhetType"/>
-  			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
-  		</xs:sequence>
-  	</xs:complexType>
+    <xs:sequence>
+      <xs:element name="personal-id" type="iso:II">
+        <xs:annotation>
+          <xs:documentation>HSA-id, o.i.d för HSA-id är 1.2.752.129.2.1.4.1</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="fullstandigtNamn" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Förnamn + efternamn sammanslaget.
+            Är tomt om personen har en skyddad identitet.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <!-- Skyddad identitet -->
+      <xs:element name="forskrivarkod" type="xs:string" minOccurs="0"/>
+      <xs:element name="befattning" type="xs:string" minOccurs="0"/>
+      <xs:element name="enhet" type="hr:enhetType"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
 
   <xs:complexType name="patientType">
     <xs:sequence>
       <xs:element name="person-id" type="iso:II"/>
-      <xs:element name="fornamn" type="xs:string" maxOccurs="unbounded"/>
+      <xs:element name="fornamn" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="efternamn" type="xs:string"/>
       <xs:element name="mellannamn" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="postadress" type="xs:string" minOccurs="0"/>
@@ -147,7 +148,9 @@
       <xs:element name="beskrivning" type="xs:string" minOccurs="0"/>
 
       <xs:element name="utforsVidEnhet" type="hr:enhetType"
-                  minOccurs="0" maxOccurs="unbounded"/>
+                  minOccurs="0"/>
+      <xs:element name="beskrivsAv" type="utforarrollType"
+                        minOccurs="0" maxOccurs="unbounded"/>
 
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
@@ -169,9 +172,7 @@
     <xs:sequence>
       <xs:element name="rekommendationskod" type="iso:CD"/>
       <xs:element name="beskrivning" type="xs:string" minOccurs="0"/>
-      <xs:element name="sjukdomskannedom" type="iso:CD"
-                  minOccurs="0"/>
-
+      <xs:element name="sjukdomskannedom" type="iso:CD"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
     </xs:sequence>
