@@ -1,11 +1,11 @@
 package se.inera.certificate.integration;
 
+import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceProvider;
 
 import com.google.common.base.Throwables;
 import org.slf4j.Logger;
@@ -16,13 +16,13 @@ import org.w3c.dom.NodeList;
 /**
  *
  */
-@WebServiceProvider(targetNamespace = "urn:intyg:RegistreraIntyg:1", serviceName = "RegistreraIntygResponderService", wsdlLocation = "schemas/v1/RegistreraIntygInteraction/RegistreraIntygInteraction_1.0.wsdl")
+@WebService(targetNamespace = "urn:riv:clinicalprocess:healtcond:certificate:RegisterMedicalCertificate:1:rivtabp20", name = "RegisterMedicalCertificateResponderInterface")
 @ServiceMode(value=Service.Mode.MESSAGE)
-public class RegistreraIntygResponderProvider extends RegisterCertificateBase implements Provider<SOAPMessage> {
+public class RegisterMedicalCertificateResponderImpl extends RegisterCertificateBase implements Provider<SOAPMessage> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegistreraIntygResponderProvider.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisterMedicalCertificateResponderImpl.class);
 
-    private static final QName BODY_NAME = new QName("urn:intyg:common-model:1", "utlatande");
+    private static final QName BODY_NAME = new QName("urn:riv:clinicalprocess:healtcond:certificate:1", "utlatande");
 
     @Override
     public SOAPMessage invoke(SOAPMessage request) {
@@ -41,7 +41,7 @@ public class RegistreraIntygResponderProvider extends RegisterCertificateBase im
     @Override
     String getType(Document document) {
         try {
-            NodeList nodes = document.getElementsByTagNameNS("urn:intyg:common-model:1", "typAvUtlatande");
+            NodeList nodes = document.getElementsByTagNameNS("urn:riv:clinicalprocess:healtcond:certificate:1", "typAvUtlatande");
             return nodes.item(0).getAttributes().getNamedItem("code").getNodeValue().trim();
         } catch (Exception e) {
             throw Throwables.propagate(e);

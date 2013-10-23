@@ -31,7 +31,7 @@
     <wsdl:types>
         <xs:schema targetNamespace='urn:riv:clinicalprocess:healtcond:certificate:GetCertificateForCare:1:rivtabp20'>
             <xs:import schemaLocation='GetCertificateForCareResponder_1.0.xsd' namespace='urn:riv:clinicalprocess:healtcond:certificate:GetCertificateForCareResponder:1' />
-            <xs:import schemaLocation='../../core_components/ws-addressing-1.0.xsd' namespace='http://www.w3.org/2005/08/addressing' />
+            <xs:import schemaLocation='../../../../core_components/ws-addressing-1.0.xsd' namespace='http://www.w3.org/2005/08/addressing' />
         </xs:schema>
     </wsdl:types>
 

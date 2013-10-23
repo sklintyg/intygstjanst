@@ -20,6 +20,9 @@ package se.inera.certificate.model.dao;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.ModelException;
 import se.inera.certificate.model.util.Predicate;
@@ -74,6 +77,7 @@ public class Certificate {
      * The transport model (XML) that was used to generate this entity.
      */
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "certificate")
     private OriginalCertificate originalCertificate;
 
