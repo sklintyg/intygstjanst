@@ -143,13 +143,15 @@ public class CertificateServiceImpl implements CertificateService {
      * 
      * @param utlatandeXml
      *            the received certificate utlatande xml
+     * @param certificate
+     *            the {@link Certificate} generated from the utlatandeXml, or <code>null</code> if unknown.
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void storeOriginalCertificate(String utlatandeXml) {
+    public void storeOriginalCertificate(String utlatandeXml, Certificate certificate) {
         if (shouldStoreOriginalCertificate) {
             try {
-                OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), utlatandeXml);
+                OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), utlatandeXml, certificate);
                 certificateDao.storeOriginalCertificate(original);
             } catch (Exception e) {
                 LOGGER.error(

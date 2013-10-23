@@ -20,6 +20,9 @@ package se.inera.certificate.model.dao;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.ModelException;
 import se.inera.certificate.model.util.Predicate;
@@ -33,7 +36,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.OrderBy;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.UnsupportedEncodingException;
@@ -69,6 +72,14 @@ public class Certificate {
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "DOCUMENT")
     private byte[] document;
+
+    /**
+     * The transport model (XML) that was used to generate this entity.
+     */
+
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "certificate")
+    private OriginalCertificate originalCertificate;
 
     /**
      * Type of the certificate.
@@ -170,6 +181,10 @@ public class Certificate {
      */
     public void setDocument(String document) {
         doSetDocument(document);
+    }
+
+    public OriginalCertificate getOriginalCertificate() {
+        return originalCertificate;
     }
 
     public String getType() {

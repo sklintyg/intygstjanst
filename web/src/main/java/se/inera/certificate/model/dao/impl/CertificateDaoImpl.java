@@ -120,8 +120,9 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
-    public void storeOriginalCertificate(OriginalCertificate originalCertificate) {
+    public long storeOriginalCertificate(OriginalCertificate originalCertificate) {
         entityManager.persist(originalCertificate);
+        return originalCertificate.getId();
     }
 
     @Override

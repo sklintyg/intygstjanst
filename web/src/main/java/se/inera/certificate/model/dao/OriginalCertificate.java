@@ -1,18 +1,24 @@
 package se.inera.certificate.model.dao;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
-import se.inera.certificate.model.ModelException;
+import java.io.UnsupportedEncodingException;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import java.io.UnsupportedEncodingException;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDateTime;
+
+import se.inera.certificate.model.ModelException;
 
 /**
  * @author johannesc
@@ -43,11 +49,17 @@ public class OriginalCertificate {
     @Column(name = "DOCUMENT")
     private byte[] document;
 
-    public OriginalCertificate() {}
+    @OneToOne(optional = true, fetch = FetchType.LAZY)
+    @JoinColumn(name="CERTIFICATE_ID")
+    private Certificate certificate;
+
+    public OriginalCertificate() {
+    }
     
-    public OriginalCertificate(LocalDateTime received, String document) {
+    public OriginalCertificate(LocalDateTime received, String document, Certificate certificate) {
         this.received = received;
         this.document = toBytes(document);
+        this.certificate = certificate;
     }
 
     public LocalDateTime getReceived() {
@@ -94,5 +106,11 @@ public class OriginalCertificate {
         }
     }
 
+    public Certificate getCertificate() {
+        return certificate;
+    }
 
+    public void setCertificate(Certificate certificate) {
+        this.certificate = certificate;
+    }
 }

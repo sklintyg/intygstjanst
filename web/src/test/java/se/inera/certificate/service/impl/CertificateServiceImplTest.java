@@ -202,8 +202,15 @@ public class CertificateServiceImplTest {
 
     @Test
     public void testStoreOriginalCertificate() {
-        doNothing().when(certificateDao).storeOriginalCertificate((OriginalCertificate) anyObject());
-        certificateService.storeOriginalCertificate("Some text");
+        when(certificateDao.storeOriginalCertificate((OriginalCertificate) anyObject())).thenReturn(1L);
+        certificateService.storeOriginalCertificate("Some text", null);
+        verify(certificateDao).storeOriginalCertificate((OriginalCertificate) anyObject());
+    }
+
+    @Test
+    public void testStoreOriginalCertificateWithCertificate() {
+        when(certificateDao.storeOriginalCertificate((OriginalCertificate) anyObject())).thenReturn(1L);
+        certificateService.storeOriginalCertificate("Some text", new Certificate("1", "Some other text"));
         verify(certificateDao).storeOriginalCertificate((OriginalCertificate) anyObject());
     }
 
