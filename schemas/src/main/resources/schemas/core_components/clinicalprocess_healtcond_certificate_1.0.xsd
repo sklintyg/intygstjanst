@@ -65,7 +65,7 @@
   <xs:complexType name="patientType">
     <xs:sequence>
       <xs:element name="person-id" type="iso:II"/>
-      <xs:element name="fornamn" type="xs:string" maxOccurs="unbounded"/>
+      <xs:element name="fornamn" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="efternamn" type="xs:string"/>
       <xs:element name="mellannamn" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="postadress" type="xs:string" minOccurs="0"/>
@@ -148,7 +148,9 @@
       <xs:element name="beskrivning" type="xs:string" minOccurs="0"/>
 
       <xs:element name="utforsVidEnhet" type="hr:enhetType"
-                  minOccurs="0" maxOccurs="unbounded"/>
+                  minOccurs="0"/>
+      <xs:element name="beskrivsAv" type="utforarrollType"
+                        minOccurs="0" maxOccurs="unbounded"/>
 
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
@@ -170,9 +172,7 @@
     <xs:sequence>
       <xs:element name="rekommendationskod" type="iso:CD"/>
       <xs:element name="beskrivning" type="xs:string" minOccurs="0"/>
-      <xs:element name="sjukdomskannedom" type="iso:CD"
-                  minOccurs="0"/>
-
+      <xs:element name="sjukdomskannedom" type="iso:CD"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
     </xs:sequence>
