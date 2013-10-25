@@ -54,6 +54,56 @@ public class LakarutlatandeTypeToUtlatandeConverterTest {
         Assert.assertTrue(diff.toString(), diff.identical());
     }
 
+    @Test
+    public void testSchemaFelaktigtIntygAccepteras() throws JAXBException, IOException, SAXException {
+
+        JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class, Utlatande.class);
+
+        // read LakarutlatandeType from file
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        JAXBElement<LakarutlatandeType> lakarutlatandeElement = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("fk7263/felaktigt-intyg.xml").getInputStream()), LakarutlatandeType.class);
+
+        Utlatande utlatande = LakarutlatandeTypeToUtlatandeConverter.convert(lakarutlatandeElement.getValue());
+
+        // read expected XML and compare with resulting lakarutlatande
+        String expectation = FileUtils.readFileToString(new ClassPathResource("fk7263/maximalt-intyg-common-format.xml").getFile());
+
+        StringWriter stringWriter = new StringWriter();
+        Marshaller marshaller = jaxbContext.createMarshaller();
+        marshaller.marshal(utlatande, stringWriter);
+
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff diff = new Diff(expectation, stringWriter.toString());
+        diff.overrideDifferenceListener(new NamespacePrefixNameIgnoringListener());
+
+        Assert.assertTrue(diff.toString(), diff.identical());
+    }
+
+    @Test
+    public void testPersonnrKorrigeras() throws JAXBException, IOException, SAXException {
+
+        JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class, Utlatande.class);
+
+        // read LakarutlatandeType from file
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        JAXBElement<LakarutlatandeType> lakarutlatandeElement = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("fk7263/maximalt-intyg-felaktigt-personnr.xml").getInputStream()), LakarutlatandeType.class);
+
+        Utlatande utlatande = LakarutlatandeTypeToUtlatandeConverter.convert(lakarutlatandeElement.getValue());
+
+        // read expected XML and compare with resulting lakarutlatande
+        String expectation = FileUtils.readFileToString(new ClassPathResource("fk7263/maximalt-intyg-common-format.xml").getFile());
+
+        StringWriter stringWriter = new StringWriter();
+        Marshaller marshaller = jaxbContext.createMarshaller();
+        marshaller.marshal(utlatande, stringWriter);
+
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff diff = new Diff(expectation, stringWriter.toString());
+        diff.overrideDifferenceListener(new NamespacePrefixNameIgnoringListener());
+
+        Assert.assertTrue(diff.toString(), diff.identical());
+    }
+
     private class NamespacePrefixNameIgnoringListener implements DifferenceListener {
         public int differenceFound(Difference difference) {
             if (DifferenceConstants.NAMESPACE_PREFIX_ID == difference.getId()) {
