@@ -28,7 +28,7 @@ public class FkMedicalCertificatesStore {
     }
 
     public void makulera(String id) {
-        Map<String, String> m = new HashMap<>(certificates.get(id));
+        Map<String, String> m = certificates.get(id);
         if (m != null) {
         	m.put("Makulerad", "JA");
             certificates.put(id, m);
