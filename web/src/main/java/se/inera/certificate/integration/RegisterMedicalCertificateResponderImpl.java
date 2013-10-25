@@ -16,13 +16,13 @@ import org.w3c.dom.NodeList;
 /**
  *
  */
-@WebService(targetNamespace = "urn:riv:clinicalprocess:healtcond:certificate:RegisterMedicalCertificate:1:rivtabp20", name = "RegisterMedicalCertificateResponderInterface")
+@WebService(targetNamespace = "urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificate:1:rivtabp20", name = "RegisterMedicalCertificateResponderInterface")
 @ServiceMode(value=Service.Mode.MESSAGE)
 public class RegisterMedicalCertificateResponderImpl extends RegisterCertificateBase implements Provider<SOAPMessage> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterMedicalCertificateResponderImpl.class);
 
-    private static final QName BODY_NAME = new QName("urn:riv:clinicalprocess:healtcond:certificate:1", "utlatande");
+    private static final QName BODY_NAME = new QName("urn:riv:clinicalprocess:healthcond:certificate:1", "utlatande");
 
     @Override
     public SOAPMessage invoke(SOAPMessage request) {
@@ -41,7 +41,7 @@ public class RegisterMedicalCertificateResponderImpl extends RegisterCertificate
     @Override
     String getType(Document document) {
         try {
-            NodeList nodes = document.getElementsByTagNameNS("urn:riv:clinicalprocess:healtcond:certificate:1", "typAvUtlatande");
+            NodeList nodes = document.getElementsByTagNameNS("urn:riv:clinicalprocess:healthcond:certificate:1", "typAvUtlatande");
             return nodes.item(0).getAttributes().getNamedItem("code").getNodeValue().trim();
         } catch (Exception e) {
             throw Throwables.propagate(e);
