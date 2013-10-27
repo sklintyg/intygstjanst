@@ -31,7 +31,9 @@ public final class LocalDateAdapter {
 
     private static final DateTimeZone TIME_ZONE = DateTimeZone.forID("Europe/Stockholm");
     private static final String ISO_DATE_PATTERN = "YYYY-MM-dd";
-    private static final String ISO_DATE_TIME_PATTERN = "YYYY-MM-dd'T'HH:mm:ss";
+    private static final String ISO_DATETIME_PATTERN = "YYYY-MM-dd'T'HH:mm:ss";
+    private static final String XSD_DATE_TIMEZONE_REGEXP = "[0-9]{4}-[0-9]{2}-[0-9]{2}([+-].*|Z)";
+    private static final String XSD_DATETIME_TIMEZONE_REGEXP = "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.?[0-9]*([+-].*|Z)";
 
     private LocalDateAdapter() {
     }
@@ -40,14 +42,32 @@ public final class LocalDateAdapter {
      * Converts an xs:date to a Joda Time LocalDate.
      */
     public static LocalDate parseDate(String dateString) {
-        return new LocalDate(javax.xml.bind.DatatypeConverter.parseDate(dateString), TIME_ZONE);
+        // Workaround for the fact that DatatypeConverter doesn't allow setting the default TimeZone,
+        // (which means that the system default TimeZone will be used, which might be wrong if hosted in
+        // a different TimeZone), and that LocaleDate doesn't handle dates with explicit TimeZone.
+        // Hence if the date contains an explicit TimeZone, use DatatypeConverter to do the parsing,
+        // otherwise use LocalDate's parsing.
+        if (dateString.matches(XSD_DATE_TIMEZONE_REGEXP) || dateString.matches(XSD_DATETIME_TIMEZONE_REGEXP)) {
+            return new LocalDate(javax.xml.bind.DatatypeConverter.parseDate(dateString).getTime(), TIME_ZONE);
+        } else {
+            return new LocalDate(dateString.substring(0, ISO_DATE_PATTERN.length()), TIME_ZONE);
+        }
     }
 
     /**
      * Converts an xs:datetime to a Joda Time LocalDateTime.
      */
     public static LocalDateTime parseDateTime(String dateTimeString) {
-        return new LocalDateTime(javax.xml.bind.DatatypeConverter.parseDateTime(dateTimeString), TIME_ZONE);
+        // Workaround for the fact that DatatypeConverter doesn't allow setting the default TimeZone,
+        // (which means that the system default TimeZone will be used, which might be wrong if hosted in
+        // a different TimeZone), and that LocalDateTime doesn't handle datetimes with explicit TimeZone.
+        // Hence if the date contains an explicit TimeZone, use DatatypeConverter to do the parsing,
+        // otherwise use LocalDateTime's parsing.
+        if (dateTimeString.matches(XSD_DATETIME_TIMEZONE_REGEXP) || dateTimeString.matches(XSD_DATE_TIMEZONE_REGEXP) ) {
+            return new LocalDateTime(javax.xml.bind.DatatypeConverter.parseDateTime(dateTimeString).getTime(), TIME_ZONE);
+        } else {
+            return new LocalDateTime(dateTimeString, TIME_ZONE);
+        }
     }
 
     /**
@@ -65,28 +85,28 @@ public final class LocalDateAdapter {
     }
 
     /**
-     * Converts a Joda Time LocalDateTime to an xs:datetime.
+     * Print a DateTime (always using ISO format)
      */
     public static String printDateTime(LocalDateTime dateTime) {
         return printIsoDateTime(dateTime);
     }
 
     /**
-     * Converts a Joda Time LocalDate to an xs:date.
+     * Print a Date (always using ISO format)
      */
     public static String printDate(LocalDate date) {
         return printIsoDate(date);
     }
 
     /**
-     * Converts a Joda Time LocalDateTime to an intyg:common-model:1:date.
+     * Print a DateTime in ISO format.
      */
     public static String printIsoDateTime(LocalDateTime dateTime) {
-        return dateTime.toString(ISO_DATE_TIME_PATTERN);
+        return dateTime.toString(ISO_DATETIME_PATTERN);
     }
 
     /**
-     * Converts a Joda Time LocalDate to an intyg:common-model:1:dateTime.
+     * Print a Date in ISO format.
      */
     public static String printIsoDate(LocalDate date) {
         return date.toString(ISO_DATE_PATTERN);
