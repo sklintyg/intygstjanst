@@ -32,6 +32,10 @@ import se.inera.certificate.model.dao.Certificate;
  */
 public interface CertificateService {
 
+    public enum SendStatus {
+        OK, ALREADY_SENT
+    }
+    
     /**
      * Returns the list of certificates for the patient and filter criteria.
      *
@@ -72,8 +76,9 @@ public interface CertificateService {
      * Sends the certificate to the destined target.
      * @throws se.inera.certificate.exception.InvalidCertificateException if the certificate does not exist
      * @throws se.inera.certificate.exception.CertificateRevokedException if the certificate has been revoked
+     * @returns SendStatus further subclassifying the outcome of a successful send
      */
-    void sendCertificate(String civicRegistrationNumber, String certificateId, String target);
+    SendStatus sendCertificate(String civicRegistrationNumber, String certificateId, String target);
 
     Utlatande getLakarutlatande(Certificate certificate);
 

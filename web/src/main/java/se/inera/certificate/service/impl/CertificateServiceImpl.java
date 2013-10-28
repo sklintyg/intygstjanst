@@ -162,7 +162,7 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     @Transactional
-    public void sendCertificate(String civicRegistrationNumber, String certificateId, String target) {
+    public SendStatus sendCertificate(String civicRegistrationNumber, String certificateId, String target) {
         Certificate certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
 
         if (certificate == null) {
@@ -172,8 +172,13 @@ public class CertificateServiceImpl implements CertificateService {
             throw new CertificateRevokedException(certificateId);
         }
 
+        SendStatus sendStatus = SendStatus.OK;
+        if (certificate.wasSentToTarget("FK")) {
+            sendStatus = SendStatus.ALREADY_SENT;
+        }
         senderService.sendCertificate(certificate, target);
         setCertificateState(civicRegistrationNumber, certificateId, target, CertificateState.SENT, null);
+        return sendStatus;
     }
 
     private Certificate createCertificate(Utlatande utlatande, String externalJson) {

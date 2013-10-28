@@ -28,6 +28,16 @@
 |personnummer|intyg|resultat?|status?|
 |19121212-1212|intyg-1|OK|[SENT, RECEIVED]|
 
+!3 Skicka intyget på nytt skall ge INFO-meddelande
+
+|Skicka Intyg Till Fk|
+|personnummer|intyg|resultat?|
+|19121212-1212|intyg-1|[INFO] - Certificate 'intyg-1' is already sent.|
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|status?|
+|19121212-1212|intyg-1|OK|[SENT, SENT, RECEIVED]|
+
 !3 Ett rättat intyg ska informera Försäkringskassan. Intyget i intygstjänsten ska inte vara åtkomligt längre.
 
 |Ratta intyg|
@@ -41,6 +51,13 @@
 |Hamta intyg|
 |personnummer|intyg|resultat?|
 |19121212-1212|intyg-1|[INFO] - Certificate 'intyg-1' has been revoked|
+
+!3 Försök att skicka ett icke existerande intyg skall ge fel
+
+|Skicka Intyg Till Fk|
+|personnummer|intyg|resultat?|
+|19121212-1212|intyg-non-existing|[ERROR] - Certificate 'intyg-non-existing' does not exist for user + '19121212-1212'.|
+
 
 !3 Rensa bort test-intyg och samtycket
 
