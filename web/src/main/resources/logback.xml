@@ -45,6 +45,8 @@
   <logger name="org.apache.cxf" level="error" />
 
   <logger name="se.inera.certificate" level="error" />
+  
+  <logger name="se.inera.certificate.integration.converter" level="WARN" />
 
   <root>
     <level value="WARN" />
