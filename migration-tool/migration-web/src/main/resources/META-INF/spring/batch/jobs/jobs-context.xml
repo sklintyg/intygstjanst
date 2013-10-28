@@ -9,13 +9,23 @@
 
 	<beans:description>Certificate info model migration jobs</beans:description>
 
-	<batch:job id="certificateInfoModelMigrationJob" incrementer="jobIncrementer">
+	<batch:job id="certificateInfoModelMigrationJob" incrementer="jobIncrementer" restartable="false">
+        <batch:description>Job for migrating Certificate info model</batch:description>
+        <batch:step id="pingConversionServiceStep">
+          <batch:tasklet ref="pingConverterServiceTasklet"/>
+          <batch:next on="*" to="certificateInfoModelProcessingStep.master"/>
+          <batch:fail on="FAILED"/>
+        </batch:step>
 		<batch:step id="certificateInfoModelProcessingStep.master">
 			<batch:partition step="certificateInfoModelProcessingStep" partitioner="columnRangePartitioner" 
 				handler="certificatePartitioningHandler" />
 		</batch:step>
 	</batch:job>
-
+    
+    <beans:bean id="pingConverterServiceTasklet" class="se.inera.certificate.migration.task.PingConverterServiceTasklet" scope="step">
+      <beans:property name="converterRestServiceUrl" value="#{jobParameters['CONVERTER_SERVICE_URL']}" />
+    </beans:bean>
+    
 	<beans:bean id="jobIncrementer"
 		class="org.springframework.batch.core.launch.support.RunIdIncrementer" />
 
@@ -28,9 +38,6 @@
 				</batch:retryable-exception-classes>
 			</batch:chunk>
 			<batch:listeners>
-				<batch:listener>
-					<beans:bean class="se.inera.certificate.migration.listeners.CertificateProcessingSkipListener" />			
-				</batch:listener>
 				<batch:listener>
 					<beans:bean class="se.inera.certificate.migration.listeners.CertificateProcessingItemListener" />
 				</batch:listener>

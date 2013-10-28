@@ -60,6 +60,7 @@ public class MigrationJobTest {
         
         server = new LocalTestServer(null, null);
         server.register("/unmarshall", new IntygHttpRequestHandler(IntygHttpRequestHandlerMode.HANDLE_POST));
+        server.register("/notfound", new IntygHttpRequestHandler(IntygHttpRequestHandlerMode.NOT_FOUND_404));
         server.start();
                 
         dataInitialiser.generateAndLoadCerts(NBR_OF_CERTS_TO_LOAD);
@@ -80,6 +81,16 @@ public class MigrationJobTest {
     
     @Test
     @DirtiesContext
+    public void testExecuteMigrationJobWith404Response() throws Exception {
+        JobParametersBuilder builder = new JobParametersBuilder();
+        builder.addString("CONVERTER_SERVICE_URL", serverUrl + "/notfound");
+        
+        final JobExecution jobExecution = jobLauncher.run(migrationJob, builder.toJobParameters());
+        assertEquals("Batch status should be FAILED", BatchStatus.FAILED, jobExecution.getStatus());
+    }
+    
+    @Test
+    @DirtiesContext
     public void testExecuteMigrationJob() throws Exception {
         JobParametersBuilder builder = new JobParametersBuilder();
         builder.addString("CONVERTER_SERVICE_URL", serverUrl + "/unmarshall");
@@ -87,6 +98,6 @@ public class MigrationJobTest {
         final JobExecution jobExecution = jobLauncher.run(migrationJob, builder.toJobParameters());
         assertEquals("Batch status should be COMPLETED", BatchStatus.COMPLETED, jobExecution.getStatus());
         
-        assertEquals(NBR_OF_CERTS_TO_LOAD, certTestDao.countOriginalCertsWithNoCertificateID());
+        assertEquals(NBR_OF_CERTS_TO_LOAD, certTestDao.countOriginalCertsWithCertificateIDs());
     }
 }

@@ -36,7 +36,7 @@ public class ColumnRangePartitioner implements Partitioner {
         logger.debug("Min id in column {} of table {} is {}", new Object[] { column, table, minId });
 
         int maxId = jdbcTemplate.queryForInt("SELECT MAX(" + column + ") from " + table);
-        logger.debug("Max id in column {} of table {} is {}", new Object[] { column, table, minId });
+        logger.debug("Max id in column {} of table {} is {}", new Object[] { column, table, maxId });
 
         // calc desired size of partition
         int partitionSize = (maxId - minId) / gridSize + 1;

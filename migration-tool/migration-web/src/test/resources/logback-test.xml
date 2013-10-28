@@ -8,20 +8,10 @@
 		</encoder>
 	</appender>
 	
-	<appender name="FILEOUT" class="ch.qos.logback.core.FileAppender">
-		<file>target/jobExecLog.log</file>
-		<encoder>
-			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
-			</Pattern>
-		</encoder>
-	</appender>
-
 	<logger name="org.springframework.core.env.PropertySourcesPropertyResolver"
 		level="WARN" />
 
-	<logger name="se.inera.certificate.migration" level="DEBUG">
-		<appender-ref ref="FILEOUT" />
-	</logger>
+	<logger name="se.inera.certificate.migration" level="DEBUG"/>
 	
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />

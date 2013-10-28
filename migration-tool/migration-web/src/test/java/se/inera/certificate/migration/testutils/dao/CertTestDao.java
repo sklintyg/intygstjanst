@@ -45,7 +45,7 @@ public class CertTestDao extends JdbcDaoSupport {
     
     private LobHandler lobHandler = new DefaultLobHandler();
         
-    public int countOriginalCertsWithNoCertificateID() {
+    public int countOriginalCertsWithCertificateIDs() {
         return getJdbcTemplate().queryForInt(SELECT_ORGCERT_ID_NOT_NULL);
     }
     
