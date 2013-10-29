@@ -12,13 +12,22 @@
         }
     },
     "skapadAv" : {
-        "id" : "HOSID",
+        "id" : {
+            "root" : "1.2.752.129.2.1.4.1",
+            "extension" : "HOSID"
+        },
         "namn" : "Hans Rosling",
         "vardenhet" : {
-            "id" : "vardenhets-id",
+            "id" : {
+                "root" : "1.2.752.129.2.1.4.1",
+                "extension" : "vardenhets-id"
+            },
             "namn" : "Vårdcentrum i väst",
             "vardgivare" : {
-                "id" : "vardgivar-id",
+                "id" : {
+                    "root" : "1.2.752.129.2.1.4.1",
+                    "extension" : "vardgivar-id"
+                },
                 "namn" : "Vård i Väst"
             }
         }
@@ -46,7 +55,7 @@
                 "codeSystem" : "1.2.752.116.2.1.1.1",
                 "codeSystemName" : "SNOMED-CT",
                 "code" : "302119000"
-             },
+            },
             "observationsperiod" : {
                 "from" : "2013-06-01",
                 "tom" : "2013-06-04"
@@ -59,6 +68,6 @@
             ]
         }
     ],
-    "validFromDate": "2013-06-01",
-    "validToDate": "2013-06-12"
+    "validFromDate" : "2013-06-01",
+    "validToDate" : "2013-06-12"
 }

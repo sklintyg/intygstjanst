@@ -24,6 +24,11 @@ public class Kod {
         this.code = code;
     }
 
+    public Kod(String codeSystem, String code) {
+        this.codeSystem = codeSystem;
+        this.code = code;
+    }
+
     public String getCodeSystem() {
         return codeSystem;
     }

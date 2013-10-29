@@ -26,11 +26,6 @@ public class Id {
     public Id() {
     }
 
-    // TODO: Remove this. Needs a lot of fixing JSON with 'id' as a String (which is wrong).
-    public Id(String extension) {
-        this.extension = extension;
-    }
-
     public Id(String root, String extension) {
         this.root = root;
         this.extension = extension;
