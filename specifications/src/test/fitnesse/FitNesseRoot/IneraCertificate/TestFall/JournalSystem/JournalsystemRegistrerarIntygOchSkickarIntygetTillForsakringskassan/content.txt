@@ -8,6 +8,9 @@
 |personnummer|id|utfärdat|mall|resultat?|
 |19121212-1212|intyg-1|2013-08-01|S|OK|
 
+!4 Vänta 1 sekund, för att säkerställa att registrering och hämtning får olika tids-stämplar
+|script|Vänta|1|sekund|
+
 !3 Så ska intyget vara tillgänglig i intygstjänsten
 
 |Hamta intyg|
