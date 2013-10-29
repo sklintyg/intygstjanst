@@ -12,9 +12,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.joda.time.LocalDateTime;
 import org.springframework.transaction.annotation.Transactional;
 
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.model.dao.OriginalCertificate;
 
 /**
  * @author andreaskaltenbach
@@ -39,6 +41,7 @@ public class CertificateResource {
     @Transactional
     public Response deleteCertificate(@PathParam("id") String id) {
         Certificate certificate = entityManager.find(Certificate.class, id);
+        entityManager.remove(certificate.getOriginalCertificate());
         entityManager.remove(certificate);
         return Response.ok().build();
     }
@@ -47,7 +50,12 @@ public class CertificateResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/")
     public Response insertCertificate(Certificate certificate) {
+        OriginalCertificate originalCertificate = new OriginalCertificate();
+        originalCertificate.setReceived(new LocalDateTime());
+        originalCertificate.setDocument("");
+        originalCertificate.setCertificate(certificate);
         entityManager.persist(certificate);
+        entityManager.persist(originalCertificate);
         return Response.ok().build();
     }
 }

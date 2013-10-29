@@ -20,13 +20,18 @@
 |19121212-1212|intyg-1|OK|[SENT, RECEIVED]|
 |19121212-1212|intyg-2|OK|[RECEIVED]|
 
-
 !3 Journalsystem rättar intygen
 
 |Ratta intyg|
 |personnummer|intyg|resultat?|
 |19121212-1212|intyg-1|OK|
 |19121212-1212|intyg-2|OK|
+
+!3 Försök att rätta ett icke existerande intyg ger fel
+
+|Ratta intyg|
+|personnummer|intyg|resultat?|
+|19121212-1212|intyg-non-existing|[ERROR] - No certificate 'intyg-non-existing' found to revoke for patient '19121212-1212'.|
 
 !3 Intygstjänsten tillåter ej att rätta intyget en gång till
 

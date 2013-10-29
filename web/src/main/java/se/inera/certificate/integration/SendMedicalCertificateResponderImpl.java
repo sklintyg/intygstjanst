@@ -5,6 +5,7 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.integration.util.ResultOfCallUtil;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.CertificateService.SendStatus;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.v1.rivtabp20.SendMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateResponseType;
@@ -21,8 +22,12 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
         String certificateId = request.getSend().getLakarutlatande().getLakarutlatandeId();
         String civicRegistrationNumber = request.getSend().getLakarutlatande().getPatient().getPersonId().getExtension();
 
-        certificateService.sendCertificate(civicRegistrationNumber, certificateId, "FK");
-        response.setResult(ResultOfCallUtil.okResult());
+        SendStatus status = certificateService.sendCertificate(civicRegistrationNumber, certificateId, "FK");
+        if (status == SendStatus.ALREADY_SENT) {
+            response.setResult(ResultOfCallUtil.infoResult("Certificate '"+ certificateId + "' is already sent."));
+        } else {
+            response.setResult(ResultOfCallUtil.okResult());
+        }
 
         return response;
     }
