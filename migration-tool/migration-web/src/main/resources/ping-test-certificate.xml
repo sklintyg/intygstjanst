@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<utlatande xmlns="urn:intyg:common-model:1" xmlns:hr="urn:riv:insuranceprocess:healthreporting:2">
+<utlatande xmlns="urn:riv:clinicalprocess:healthcond:certificate:1">
   <utlatande-id extension="80832895-5a9c-450a-bd74-08af43750788" />
-  <typAvUtlatande code="fk7263" />
+  <typAvUtlatande code="fk7263"
+    codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" />
 
   <signeringsdatum>2011-01-26T00:00:00</signeringsdatum>
   <skickatdatum>2011-03-23T09:29:15</skickatdatum>
@@ -15,31 +16,30 @@
       </typAvArbetsuppgift>
     </arbetsuppgift>
     <sysselsattning>
-      <typAvSysselsattning code="224375002" codeSystem="1.2.752.116.2.1.1.1"
-        codeSystemName="SNOMED-CT" />
+      <typAvSysselsattning code="224375002"
+        codeSystem="1.2.752.116.2.1.1.1" codeSystemName="SNOMED-CT" />
     </sysselsattning>
   </patient>
 
   <skapadAv>
     <personal-id root="1.2.752.129.2.1.4.1" extension="Personal HSA-ID" />
     <fullstandigtNamn>
-    Dr Doktor
+      Dr Doktor
     </fullstandigtNamn>
     <enhet>
-      <hr:enhets-id root="1.2.752.129.2.1.4.1" extension="enhetsid" />
-      <hr:arbetsplatskod root="1.2.752.29.4.71"
-        extension="123456" />
-      <hr:enhetsnamn>Enhetsnamn</hr:enhetsnamn>
-      <hr:postadress>Enhetsadress</hr:postadress>
-      <hr:postnummer>1337</hr:postnummer>
-      <hr:postort>Stockholm</hr:postort>
-      <hr:telefonnummer>08-1337</hr:telefonnummer>
-      <hr:epost>epost@enhet.se</hr:epost>
-      <hr:vardgivare>
-        <hr:vardgivare-id root="1.2.752.129.2.1.4.1"
+      <enhets-id root="1.2.752.129.2.1.4.1" extension="enhetsid" />
+      <arbetsplatskod root="1.2.752.29.4.71" extension="123456" />
+      <enhetsnamn>Enhetsnamn</enhetsnamn>
+      <postadress>Enhetsadress</postadress>
+      <postnummer>1337</postnummer>
+      <postort>Stockholm</postort>
+      <telefonnummer>08-1337</telefonnummer>
+      <epost>epost@enhet.se</epost>
+      <vardgivare>
+        <vardgivare-id root="1.2.752.129.2.1.4.1"
           extension="VardgivarId" />
-        <hr:vardgivarnamn>Testvårdgivare</hr:vardgivarnamn>
-      </hr:vardgivare>
+        <vardgivarnamn>Testvårdgivare</vardgivarnamn>
+      </vardgivare>
     </enhet>
   </skapadAv>
 
