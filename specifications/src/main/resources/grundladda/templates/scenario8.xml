@@ -9,8 +9,6 @@
 			allmän försäkring
 		</ns5:typAvUtlatande>
 		
-		<ns5:kommentar>Annat kontaktsätt</ns5:kommentar>
-		
 		<ns5:signeringsdatum>2013-03-17T00:00:00</ns5:signeringsdatum>
 		<ns5:skickatDatum>2013-03-17T00:00:00</ns5:skickatDatum>
 		<ns5:patient>
@@ -53,13 +51,9 @@
 			<ns5:beskrivning>placeholder</ns5:beskrivning>
 		</ns5:bedomtTillstand>
 		<!-- to here -->
-		
+
 		<ns5:aktivitet>
-			<ns5:aktivitetskod>Patienten_behover_fa_kontakt_med_Arbetsformedlingen</ns5:aktivitetskod>
-		</ns5:aktivitet>
-		
-		<ns5:aktivitet>
-			<ns5:aktivitetskod>Forandrat_ressatt_till_arbetsplatsen_ar_aktuellt</ns5:aktivitetskod>
+			<ns5:aktivitetskod>Forandrat_ressatt_till_arbetsplatsen_ar_ej_aktuellt</ns5:aktivitetskod>
 		</ns5:aktivitet>
 		
 		<ns5:funktionstillstand>
@@ -71,12 +65,6 @@
 			</ns5:beskrivning>
 			<ns5:typAvFunktionstillstand>Kroppsfunktion</ns5:typAvFunktionstillstand>
 		</ns5:funktionstillstand>
-		
-	
-   	 	<ns5:referens>
-    		<ns5:referenstyp>Annat</ns5:referenstyp>
-     		<ns5:datum>2013-03-10</ns5:datum>
-   		</ns5:referens>
 
 		<ns5:funktionstillstand>
 			<ns5:beskrivning>Aktivitetsnedsättning:

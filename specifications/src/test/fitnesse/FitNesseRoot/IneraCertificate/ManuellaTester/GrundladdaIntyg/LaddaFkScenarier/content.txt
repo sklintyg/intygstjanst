@@ -1,0 +1,20 @@
+!contents -R2 -g -p -f -h
+
+!3 Skapa intyg baserat på XML-mallar för olika scenarier (1 - 13)
+|Skapa Intyg Baserat Pa Scenario|
+|mall|antalIntyg|resultat?|
+|scenario11.xml|100|OK|
+|scenario1.xml|100|OK|
+|scenario2.xml|100|OK|
+|scenario7.xml|100|OK|
+|scenario9.xml|100|OK|
+|scenario3.xml|100|OK|
+|scenario4.xml|100|OK|
+|scenario5.xml|100|OK|
+|scenario6.xml|100|OK|
+|scenario8.xml|100|OK|
+
+
+
+
+
