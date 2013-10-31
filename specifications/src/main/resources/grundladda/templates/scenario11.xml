@@ -8,9 +8,6 @@
 		<ns5:typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om
 			allmän försäkring
 		</ns5:typAvUtlatande>
-		
-		<ns5:kommentar>Annat kontaktsätt</ns5:kommentar>
-		
 		<ns5:signeringsdatum>2013-03-17T00:00:00</ns5:signeringsdatum>
 		<ns5:skickatDatum>2013-03-17T00:00:00</ns5:skickatDatum>
 		<ns5:patient>
@@ -45,23 +42,27 @@
 		</ns5:vardkontakt>
 
 		<ns5:medicinsktTillstand>
+			<ns5:beskrivning>Klämskada på överarm</ns5:beskrivning>
 			<ns5:tillstandskod code="S47" />
 		</ns5:medicinsktTillstand>
-		
-		<!-- Ignore -->
+
 		<ns5:bedomtTillstand>
-			<ns5:beskrivning>placeholder</ns5:beskrivning>
+			<ns5:beskrivning>Aktuellt sjukdomsförlopp</ns5:beskrivning>
 		</ns5:bedomtTillstand>
-		<!-- to here -->
-		
+
 		<ns5:aktivitet>
-			<ns5:aktivitetskod>Patienten_behover_fa_kontakt_med_Arbetsformedlingen</ns5:aktivitetskod>
+			<ns5:aktivitetskod>Planerad_eller_pagaende_behandling_eller_atgard_inom_sjukvarden</ns5:aktivitetskod>
+			<ns5:aktivitetsbeskrivning>Utreder om spektralanalys behövs</ns5:aktivitetsbeskrivning>
 		</ns5:aktivitet>
-		
+
 		<ns5:aktivitet>
-			<ns5:aktivitetskod>Forandrat_ressatt_till_arbetsplatsen_ar_aktuellt</ns5:aktivitetskod>
+			<ns5:aktivitetskod>Arbetslivsinriktad_rehabilitering_ar_aktuell</ns5:aktivitetskod>
 		</ns5:aktivitet>
-		
+
+		<ns5:aktivitet>
+			<ns5:aktivitetskod>Patienten_behover_fa_kontakt_med_foretagshalsovarden</ns5:aktivitetskod>
+		</ns5:aktivitet>
+
 		<ns5:funktionstillstand>
 			<ns5:beskrivning>Kraftigt nedsatt rörlighet i överarmen pga skadan.
 				Böj- och sträckförmågan är mycket dålig.
@@ -71,16 +72,9 @@
 			</ns5:beskrivning>
 			<ns5:typAvFunktionstillstand>Kroppsfunktion</ns5:typAvFunktionstillstand>
 		</ns5:funktionstillstand>
-		
-	
-   	 	<ns5:referens>
-    		<ns5:referenstyp>Annat</ns5:referenstyp>
-     		<ns5:datum>2013-03-10</ns5:datum>
-   		</ns5:referens>
 
 		<ns5:funktionstillstand>
-			<ns5:beskrivning>Aktivitetsnedsättning:
-				Patienten bör/kan inte använda armen förrän skadan
+			<ns5:beskrivning>Patienten bör/kan inte använda armen förrän skadan
 				läkt. Skadan förvärras vid för tidigt
 				påtvingad belastning. Patienten
 				kan inte lyfta armen utan den ska hållas
@@ -90,6 +84,15 @@
 			</ns5:beskrivning>
 			<ns5:typAvFunktionstillstand>Aktivitet</ns5:typAvFunktionstillstand>
 			<ns5:arbetsformaga>
+				<ns5:motivering>Skadan har förvärrats vid varje tillfälle patienten
+					använt armen. Måste hållas i total stillhet
+					tills läkningsprocessen
+					kommit en bit på väg. Eventuellt kan utredning
+					visa att operation är
+					nödvändig för att
+					läka skadan.
+				</ns5:motivering>
+				<ns5:prognosangivelse>Aterstallas_helt</ns5:prognosangivelse>
 				<ns5:arbetsuppgift>
 					<ns5:typAvArbetsuppgift>Dirigent
 						Dirigerar en för större orkester på
@@ -101,6 +104,28 @@
 					<ns5:varaktighetTom>2013-04-07</ns5:varaktighetTom>
 					<ns5:nedsattningsgrad>Helt_nedsatt</ns5:nedsattningsgrad>
 				</ns5:arbetsformagaNedsattning>
+			</ns5:arbetsformaga>
+		</ns5:funktionstillstand>
+
+		<ns5:funktionstillstand>
+			<ns5:typAvFunktionstillstand>Aktivitet</ns5:typAvFunktionstillstand>
+			<ns5:arbetsformaga>
+				<ns5:arbetsuppgift>
+					<ns5:typAvArbetsuppgift>Dirigent
+						Dirigerar en för större orkester på
+						deltid
+					</ns5:typAvArbetsuppgift>
+				</ns5:arbetsuppgift>
+
+				<ns5:arbetsformagaNedsattning>
+					<ns5:varaktighetFrom>2013-03-17</ns5:varaktighetFrom>
+					<ns5:varaktighetTom>2013-04-07</ns5:varaktighetTom>
+					<ns5:nedsattningsgrad>Helt_nedsatt</ns5:nedsattningsgrad>
+				</ns5:arbetsformagaNedsattning>
+
+				<ns5:sysselsattning>
+					<ns5:typAvSysselsattning>Nuvarande_arbete</ns5:typAvSysselsattning>
+				</ns5:sysselsattning>
 			</ns5:arbetsformaga>
 		</ns5:funktionstillstand>
 
