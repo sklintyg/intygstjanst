@@ -27,7 +27,7 @@
 
 !4 Vänta tills wiretap-implementationen har hunnit skicka meddelanden vidare till intygstjänsten (vilket sker asynkront)
 
-|script|Vänta|2|sekunder|
+|script|Vanta|2|sekunder|
 
 !3 Intygstjänsten tillåter ej att hämta ett rättat intyg
 |Hamta intyg|
@@ -42,7 +42,7 @@
 |123456789012344|Makulering_av_lakarintyg|Makulera detta intyg|2013-08-05T14:30:00|intyg-1|2013-08-03T00:00:00|19010101-0101|Test Testorsson|OK|
 |123456789012344|Makulering_av_lakarintyg|Makulera detta intyg|2013-08-05T14:30:00|intyg-2|2013-08-03T00:00:00|19010101-0101|Test Testorsson|OK|
 
-|script|Vänta|2|sekunder|
+|script|Vanta|2|sekunder|
 
 !3 Rensa bort test-intyg
 

@@ -17,7 +17,7 @@
 !3 Efter att skicka intyget till Försäkringskassan ska intyget finnas hos FK och får status SENT i intygstjänsten
 
 !4 Vänta 1 sekund, för att säkerställa att registrering och hämtning får olika tids-stämplar
-|script|Vänta|1|sekund|
+|script|Vanta|1|sekund|
 
 |Skicka Intyg Till Fk|
 |personnummer|intyg|resultat?|

@@ -18,7 +18,7 @@
 
 !4 Vänta tills wiretap-implementationen har hunnit skicka meddelanden vidare till intygstjänsten (vilket sker asynkront)
 
-|script|Vänta|2|sekunder|
+|script|Vanta|2|sekunder|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
@@ -30,7 +30,7 @@
 |personnummer|id|utfärdat|
 |19010101-0101|intyg-1|2013-08-01|
 
-|script|Vänta|2|sekunder|
+|script|Vanta|2|sekunder|
 
 !3 Rensa bort test-intyg
 
