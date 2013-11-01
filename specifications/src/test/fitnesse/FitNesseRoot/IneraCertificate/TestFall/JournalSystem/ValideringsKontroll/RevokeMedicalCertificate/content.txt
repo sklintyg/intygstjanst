@@ -79,19 +79,19 @@
 
 |validera revoke|
 |filnamn|resultat?|
-|validering/revoke/saknad-vårdreferens.xml|=~/.*ERROR.*Validation.*/|
+|validering/revoke/saknad-vardreferens.xml|=~/.*ERROR.*Validation.*/|
 
 !3 Saknat avsänt-datum ger fel
 
 |validera revoke|
 |filnamn|resultat?|
-|validering/revoke/saknat-avsänt-datum.xml|=~/.*ERROR.*Validation.*/|
+|validering/revoke/saknat-avsant-datum.xml|=~/.*ERROR.*Validation.*/|
 
 !3 Saknat address-vård ger fel
 
 |validera revoke|
 |filnamn|resultat?|
-|validering/revoke/saknad-address-vård.xml|=~/.*ERROR.*Validation.*/|
+|validering/revoke/saknad-address-vard.xml|=~/.*ERROR.*Validation.*/|
 
 !3 Saknat hos-personal ger fel
 
@@ -145,31 +145,31 @@
 
 |validera revoke|
 |filnamn|resultat?|
-|validering/revoke/saknad-vårdgivare.xml|=~/.*ERROR.*Validation.*/|
+|validering/revoke/saknad-vardgivare.xml|=~/.*ERROR.*Validation.*/|
 
 !3 Saknad vårdgivare-id ger fel
 
 |validera revoke|
 |filnamn|resultat?|
-|validering/revoke/saknat-vårdgivare-id.xml|=~/.*ERROR.*Validation.*/|
+|validering/revoke/saknat-vardgivare-id.xml|=~/.*ERROR.*Validation.*/|
 
 !3 Felaktig vårdgivare-id-kod ger fel
 
 |validera revoke|
 |filnamn|resultat?|
-|validering/revoke/felaktig-vårdgivare-id-kod.xml|=~/.*ERROR.*Validation.*/|
+|validering/revoke/felaktig-vardgivare-id-kod.xml|=~/.*ERROR.*Validation.*/|
 
 !3 Tomt vårdgivare-id ger fel
 
 |validera revoke|
 |filnamn|resultat?|
-|validering/revoke/tomt-vårdgivare-id.xml|=~/.*ERROR.*Validation.*/|
+|validering/revoke/tomt-vardgivare-id.xml|=~/.*ERROR.*Validation.*/|
 
 !3 Saknat vårdgivare-namn ger fel
 
 |validera revoke|
 |filnamn|resultat?|
-|validering/revoke/saknat-vårdgivare-namn.xml|=~/.*ERROR.*Validation.*/|
+|validering/revoke/saknat-vardgivare-namn.xml|=~/.*ERROR.*Validation.*/|
 
 
 !3 Återta samtycken:
