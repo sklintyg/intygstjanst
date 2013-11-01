@@ -130,7 +130,10 @@
               <directory>src/test/fitnesse/FitNesseRoot/RecentChanges</directory>
             </fileset>
             <fileset>
-              <directory>src/test/fitnesse/FitNesseRoot/files</directory>
+              <directory>src/test/fitnesse/FitNesseRoot/files/testProgress</directory>
+            </fileset>
+            <fileset>
+              <directory>src/test/fitnesse/FitNesseRoot/files/testResults</directory>
             </fileset>
           </filesets>
         </configuration>
