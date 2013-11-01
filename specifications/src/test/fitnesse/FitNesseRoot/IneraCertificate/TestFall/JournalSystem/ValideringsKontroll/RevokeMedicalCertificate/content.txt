@@ -171,7 +171,6 @@
 |filnamn|resultat?|
 |validering/revoke/saknat-vardgivare-namn.xml|=~/.*ERROR.*Validation.*/|
 
-
 !3 Återta samtycken:
 
 |Samtycke|
