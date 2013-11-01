@@ -1,0 +1,179 @@
+!3 Givet följande samtycken:
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|ja|
+
+!3 Saknat intygs-id ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/saknat-intygsid.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Tomt intygs-id ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/tomt-intygsid.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad patient ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/saknad-patient.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Felaktig patient-id kod ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/felaktig-patientid-kod.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Felaktigt personnr ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/felaktigt-personnr.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Personnr utan sekel-siffror ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/personnr-utan-sekel-siffror.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Personnr utan bindestreck korrigeras
+
+!4 Givet ett intyg
+
+|Intyg|
+|personnr|utfärdat|giltigtFrån|giltigtTill|utfärdare|enhet|typ|id|mall|
+|19121212-1212|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intygs-id-1234567890|M|
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/personnr-utan-bindestreck.xml|OK|
+
+!4 Intygstjänsten tillåter ej att hämta ett rättat intyg
+|Hamta intyg|
+|personnummer|intyg|resultat?|status?|
+|19121212-1212|intygs-id-1234567890|OK|[SENT,RECEIVED]|
+
+!4 Rensa bort intyget
+
+|ta bort Intyg|
+|id|
+|intygs-id-1234567890|
+
+!3 Saknat patient-namn ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/saknat-patient-namn.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknat signeringsdatum ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/saknat-signerings-datum.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad vårdreferens ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/saknad-vardreferens.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknat avsänt-datum ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/saknat-avsant-datum.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknat address-vård ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/saknad-address-vard.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknat hos-personal ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/saknad-hos-personal.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Felaktig personal-id-kod ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/felaktig-personal-id-kod.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Tomt personal-id ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/tomt-personal-id.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad enhet ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/saknad-enhet.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad enhets-id ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/saknat-enhets-id.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Felaktig enhets-id-kod ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/felaktig-enhets-id-kod.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Tomt enhets-id ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/tomt-enhets-id.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknat enhets-namn ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/saknat-enhets-namn.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad vårdgivare ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/saknad-vardgivare.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad vårdgivare-id ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/saknat-vardgivare-id.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Felaktig vårdgivare-id-kod ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/felaktig-vardgivare-id-kod.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Tomt vårdgivare-id ger fel
+
+|validera send|
+|filnamn|resultat?|
+|validering/send/tomt-vardgivare-id.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknat vårdgivare-namn ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/send/saknat-vardgivare-namn.xml|=~/.*ERROR.*Validation.*/|
+
+
+!3 Återta samtycken:
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|nej|
