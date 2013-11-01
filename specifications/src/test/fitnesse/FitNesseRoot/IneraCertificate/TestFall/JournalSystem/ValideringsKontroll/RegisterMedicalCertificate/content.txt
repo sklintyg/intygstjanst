@@ -1,0 +1,85 @@
+!3 Givet följande samtycken:
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|ja|
+
+!3 Saknat intygs-id ger fel
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/saknat-intygsid.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknat skickat-datum ger fel
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/saknat-skickat-datum.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad patient ger fel
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/saknad-patient.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Felaktigt person-id kod ger fel
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/felaktig-patientid-kod.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Felaktigt person-nr ger fel
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/felaktigt-personnr.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Person-nr utan sekel-siffror ger fel
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/personnr-utan-sekel-siffror.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Person-nr utan bindestreck korrigeras
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/personnr-utan-bindestreck.xml|OK|
+
+|Hamta intygsinnehall|
+|personnummer|intyg|förväntatSvar|resultat?|
+|19121212-1212|personnr-utan-bindestreck|{"utlatandeId":{"extension":"personnr-utan-bindestreck"}}|OK|
+
+!3 Saknat patient-namn ger fel
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/saknat-patient-namn.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad !-HoS-!-personal ger fel
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/saknad-hos-personal.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Felaktig personal-id-kod ger fel
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/felaktig-personal-id-kod.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Tomt personal-id ger fel
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/tomt-personal-id.xml|=~/.*ERROR.*Validation.*/|
+
+|ta bort intyg|
+|id|
+|personnr-utan-bindestreck|
+
+!3 Återta samtycken:
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|nej|

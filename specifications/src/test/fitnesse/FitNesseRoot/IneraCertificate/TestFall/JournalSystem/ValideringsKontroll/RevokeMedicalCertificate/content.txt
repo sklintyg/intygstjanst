@@ -1,0 +1,179 @@
+!3 Givet följande samtycken:
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|ja|
+
+!3 Saknat intygs-id ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/saknat-intygsid.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Tomt intygs-id ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/tomt-intygsid.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad patient ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/saknad-patient.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Felaktig patient-id kod ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/felaktig-patientid-kod.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Felaktigt personnr ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/felaktigt-personnr.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Personnr utan sekel-siffror ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/personnr-utan-sekel-siffror.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Personnr utan bindestreck korrigeras
+
+!4 Givet ett intyg
+
+|Intyg|
+|personnr|utfärdat|giltigtFrån|giltigtTill|utfärdare|enhet|typ|id|mall|
+|19121212-1212|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intygs-id-1234567890|M|
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/personnr-utan-bindestreck.xml|OK|
+
+!4 Intygstjänsten tillåter ej att hämta ett rättat intyg
+|Hamta intyg|
+|personnummer|intyg|resultat?|
+|19121212-1212|intygs-id-1234567890|[INFO] - Certificate 'intygs-id-1234567890' has been revoked|
+
+!4 Rensa bort intyget
+
+|ta bort Intyg|
+|id|
+|intygs-id-1234567890|
+
+!3 Saknat patient-namn ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/saknat-patient-namn.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknat signeringsdatum ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/saknat-signerings-datum.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad vårdreferens ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/saknad-vårdreferens.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknat avsänt-datum ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/saknat-avsänt-datum.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknat address-vård ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/saknad-address-vård.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknat hos-personal ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/saknad-hos-personal.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Felaktig personal-id-kod ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/felaktig-personal-id-kod.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Tomt personal-id ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/tomt-personal-id.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad enhet ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/saknad-enhet.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad enhets-id ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/saknat-enhets-id.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Felaktig enhets-id-kod ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/felaktig-enhets-id-kod.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Tomt enhets-id ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/tomt-enhets-id.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknat enhets-namn ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/saknat-enhets-namn.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad vårdgivare ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/saknad-vårdgivare.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad vårdgivare-id ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/saknat-vårdgivare-id.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Felaktig vårdgivare-id-kod ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/felaktig-vårdgivare-id-kod.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Tomt vårdgivare-id ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/tomt-vårdgivare-id.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknat vårdgivare-namn ger fel
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/saknat-vårdgivare-namn.xml|=~/.*ERROR.*Validation.*/|
+
+
+!3 Återta samtycken:
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|nej|

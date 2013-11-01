@@ -5,6 +5,7 @@
 
 !|Config|
 |property|value|
+|fitnesse.working|${fitnesse.working}|
 |certificate.baseUrl|${certificate.baseUrl}|
 |service.listCertificatesUrl|${services.listCertificatesUrl}|
 |service.getCertificateUrl|${services.getCertificateUrl}|
