@@ -38,8 +38,8 @@
   </xs:complexType>
 
   <xs:complexType name="utlatandeId">
-    <xs:attribute name="root" type="xs:string" use="optional"/>
-    <xs:attribute name="extension" type="xs:string" use="required"/>
+    <xs:attribute name="root" type="xs:string" use="required"/>
+    <xs:attribute name="extension" type="xs:string" use="optional"/>
   </xs:complexType>
 
   <xs:complexType name="utlatandeTyp">
