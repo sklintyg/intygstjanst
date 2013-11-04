@@ -55,7 +55,7 @@
 !4 Intygstjänsten tillåter ej att hämta ett rättat intyg
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19121212-1212|intygs-id-1234567890|OK|[SENT,RECEIVED]|
+|19121212-1212|intygs-id-1234567890|OK|[SENT, RECEIVED]|
 
 !4 Rensa bort intyget
 
@@ -167,7 +167,7 @@
 
 !3 Saknat vårdgivare-namn ger fel
 
-|validera revoke|
+|validera send|
 |filnamn|resultat?|
 |validering/send/saknat-vardgivare-namn.xml|=~/.*ERROR.*Validation.*/|
 
