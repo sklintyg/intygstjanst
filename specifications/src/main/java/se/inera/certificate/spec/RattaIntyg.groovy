@@ -27,6 +27,11 @@ class RattaIntyg extends WsClientFixture {
 
 	static String serviceUrl = System.getProperty("service.revokeCertificateUrl")
 
+    private static final String PATIENT_ID_OID = "1.2.752.129.2.1.3.1";
+    private static final String HOS_PERSONAL_OID = "1.2.752.129.2.1.4.1";
+    private static final String ENHET_OID = "1.2.752.129.2.1.4.1";
+    private static final String ARBETSPLATS_CODE_OID = "1.2.752.29.4.71";
+
     String personnummer
     String intyg
 
@@ -49,25 +54,36 @@ class RattaIntyg extends WsClientFixture {
         revokeType.meddelande = "Makulerat"
         revokeType.adressVard = new VardAdresseringsType()
         revokeType.adressVard.hosPersonal = new HosPersonalType()
+        revokeType.adressVard.hosPersonal.fullstandigtNamn = "MI"
         revokeType.adressVard.hosPersonal.personalId = new II()
+        revokeType.adressVard.hosPersonal.personalId.root = HOS_PERSONAL_OID;
         revokeType.adressVard.hosPersonal.personalId.extension = "personalid"
+
         revokeType.adressVard.hosPersonal.enhet = new EnhetType()
         revokeType.adressVard.hosPersonal.enhet.enhetsId = new II()
+        revokeType.adressVard.hosPersonal.enhet.enhetsId.root = ENHET_OID
         revokeType.adressVard.hosPersonal.enhet.enhetsId.extension = "1"
         revokeType.adressVard.hosPersonal.enhet.enhetsnamn = "Enhetsnamn"
         revokeType.adressVard.hosPersonal.enhet.vardgivare = new VardgivareType()
         revokeType.adressVard.hosPersonal.enhet.vardgivare.vardgivareId = new II()
-        revokeType.adressVard.hosPersonal.enhet.vardgivare.vardgivareId.extension = "1"
+        revokeType.adressVard.hosPersonal.enhet.vardgivare.vardgivareId.root = ENHET_OID
+        revokeType.adressVard.hosPersonal.enhet.vardgivare.vardgivareId.extension = ENHET_OID
         revokeType.adressVard.hosPersonal.enhet.vardgivare.vardgivarnamn = "Vårdgivarnamn"
-        
+
+        revokeType.adressVard.hosPersonal.enhet.arbetsplatskod = new II()
+        revokeType.adressVard.hosPersonal.enhet.arbetsplatskod.root = ARBETSPLATS_CODE_OID
+        revokeType.adressVard.hosPersonal.enhet.arbetsplatskod.extension = ARBETSPLATS_CODE_OID
+
         revokeType.lakarutlatande = new LakarutlatandeEnkelType()
         revokeType.lakarutlatande.lakarutlatandeId = intyg
         revokeType.lakarutlatande.signeringsTidpunkt = new LocalDateTime("2013-05-01T11:00:00")
         revokeType.lakarutlatande.patient = new PatientType()
+        revokeType.lakarutlatande.patient.fullstandigtNamn = "Test Testsson"
         revokeType.lakarutlatande.patient.personId = new II()
+        revokeType.lakarutlatande.patient.personId.root = PATIENT_ID_OID
         revokeType.lakarutlatande.patient.personId.extension = personnummer
 
-        
+
         RevokeMedicalCertificateResponseType response = revokeResponder.revokeMedicalCertificate(logicalAddress, revokeRequestType)
 
         resultAsString(response)

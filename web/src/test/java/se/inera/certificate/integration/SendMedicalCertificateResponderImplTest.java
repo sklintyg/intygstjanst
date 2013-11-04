@@ -83,7 +83,7 @@ public class SendMedicalCertificateResponderImplTest {
         personalId.setRoot(HOS_PERSONAL_OID);
         personalId.setExtension("MI");
         hosPersonal.setPersonalId(personalId);
-
+        hosPersonal.setFullstandigtNamn("hospersonal namn");
         vardAdresseringsType.setHosPersonal(hosPersonal);
 
         sendType.setAdressVard(vardAdresseringsType);
@@ -99,7 +99,7 @@ public class SendMedicalCertificateResponderImplTest {
         patientIdHolder.setRoot(PATIENT_ID_OID);
         patientIdHolder.setExtension(PERSONNUMMER);
         patient.setPersonId(patientIdHolder);
-        patient.setFullstandigtNamn("patiennamn");
+        patient.setFullstandigtNamn("patientnamn");
         lakarutlatande.setPatient(patient);
 
         sendType.setLakarutlatande(lakarutlatande);        
