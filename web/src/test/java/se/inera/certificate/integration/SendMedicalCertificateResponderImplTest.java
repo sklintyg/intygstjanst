@@ -44,12 +44,58 @@ public class SendMedicalCertificateResponderImplTest {
 
     private SendMedicalCertificateRequestType createRequest() {
         SendMedicalCertificateRequestType request = new SendMedicalCertificateRequestType();
-        request.setSend(new SendType());
-        request.getSend().setLakarutlatande(new LakarutlatandeEnkelType());
-        request.getSend().getLakarutlatande().setLakarutlatandeId(CERTIFICATE_ID);
-        request.getSend().getLakarutlatande().setPatient(new PatientType());
-        request.getSend().getLakarutlatande().getPatient().setPersonId(new II());
-        request.getSend().getLakarutlatande().getPatient().getPersonId().setExtension(PERSONNUMMER);
+        SendType sendType = new SendType();
+        
+        VardAdresseringsType vardAdresseringsType = new VardAdresseringsType();
+        HosPersonalType hosPersonal = new HosPersonalType();
+
+        // Enhet
+        EnhetType enhet = new EnhetType();
+        enhet.setEnhetsnamn("enhetsnamn");
+        II enhetsId = new II();
+        enhetsId.setRoot(ENHET_OID);
+        enhetsId.setExtension("enhetsid");
+        enhet.setEnhetsId(enhetsId);
+        II arbetsplatsKod = new II();
+        arbetsplatsKod.setRoot(ARBETSPLATS_CODE_OID);
+        arbetsplatsKod.setExtension("arbetsplatskod");
+        enhet.setArbetsplatskod(arbetsplatsKod);
+        VardgivareType vardGivare = new VardgivareType();
+        II vardGivarId = new II();
+        vardGivarId.setRoot(ENHET_OID);
+        vardGivarId.setExtension("vardgivarid");
+        vardGivare.setVardgivareId(vardGivarId);
+        vardGivare.setVardgivarnamn("MI");
+        enhet.setVardgivare(vardGivare);
+        hosPersonal.setEnhet(enhet);
+        hosPersonal.setFullstandigtNamn("MI");
+        II personalId = new II();
+        personalId.setRoot(HOS_PERSONAL_OID);
+        personalId.setExtension("MI");
+        hosPersonal.setPersonalId(personalId);
+        hosPersonal.setFullstandigtNamn("hospersonal namn");
+        vardAdresseringsType.setHosPersonal(hosPersonal);
+
+        sendType.setAdressVard(vardAdresseringsType);
+        sendType.setAvsantTidpunkt(new LocalDateTime());
+        sendType.setVardReferensId("MI");
+
+        // Lakarutlatande
+        LakarutlatandeEnkelType lakarutlatande = new LakarutlatandeEnkelType();
+        lakarutlatande.setLakarutlatandeId(CERTIFICATE_ID);
+        lakarutlatande.setSigneringsTidpunkt(new LocalDateTime());
+        PatientType patient = new PatientType();
+        II patientIdHolder = new II();
+        patientIdHolder.setRoot(PATIENT_ID_OID);
+        patientIdHolder.setExtension(PERSONNUMMER);
+        patient.setPersonId(patientIdHolder);
+        patient.setFullstandigtNamn("patientnamn");
+        lakarutlatande.setPatient(patient);
+
+        sendType.setLakarutlatande(lakarutlatande);        
+
+        request.setSend(sendType);
+
         return request;
     }
 }
