@@ -13,6 +13,7 @@
     <adressVard>
       <qa:hosPersonal>
         <core:personal-id root="1.2.752.129.2.1.4.1" extension="Personal HSA-ID"/>
+        <core:fullstandigtNamn>Doktor Doktorsson</core:fullstandigtNamn>
         <core:enhet>
           <core:enhets-id root="1.2.752.129.2.1.4.1" extension="VardenhetY"/>
           <core:arbetsplatskod root="1.2.752.29.4.71" extension="123456789011"/>
@@ -33,6 +34,7 @@
       <qa:signeringsTidpunkt>2011-01-26T00:00:00.000+01:00</qa:signeringsTidpunkt>
       <qa:patient xmlns="urn:riv:insuranceprocess:healthreporting:2">
         <person-id root="1.2.752.129.2.1.3.1" extension="19121212-1212"/>
+        <fullstandigtNamn>Test Testorsson</fullstandigtNamn>
       </qa:patient>
     </lakarutlatande>
   </Question>

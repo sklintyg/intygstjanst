@@ -1,0 +1,132 @@
+package se.inera.certificate.integration.validator;
+
+import iso.v21090.dt.v1.II;
+
+import java.util.List;
+
+import riv.insuranceprocess.healthreporting.medcertqa._1.VardAdresseringsType;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.EnhetType;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.HosPersonalType;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType;
+
+/**
+ * @author andreaskaltenbach
+ */
+public class VardAdresseringsTypeValidator {
+
+    private static final String ARBETSPLATS_CODE_OID = "1.2.752.29.4.71";
+    private VardAdresseringsType vardAdress;
+    private List<String> validationErrors = null;
+
+    private static final String HOS_PERSONAL_OID = "1.2.752.129.2.1.4.1";
+    private static final String ENHET_OID = "1.2.752.129.2.1.4.1";
+
+    public VardAdresseringsTypeValidator(VardAdresseringsType vardAdress, List<String> validationErrors) {
+        this.vardAdress = vardAdress;
+        this.validationErrors = validationErrors;
+    }
+
+    public void validateAndCorrect() {
+        if (vardAdress == null) {
+            validationErrors.add("No vardAdress element found!");
+            return;
+        }
+
+        HosPersonalType hosPersonal = vardAdress.getHosPersonal();
+        if (hosPersonal == null) {
+            validationErrors.add("No SkapadAvHosPersonal element found!");
+            return;
+        }
+
+        // Check lakar id - mandatory
+        if (hosPersonal.getPersonalId().getExtension() == null || hosPersonal.getPersonalId().getExtension().isEmpty()) {
+            validationErrors.add("No personal-id found!");
+        }
+
+        // Check lakar id o.i.d.
+        if (hosPersonal.getPersonalId().getRoot() == null
+                || !hosPersonal.getPersonalId().getRoot().equals(HOS_PERSONAL_OID)) {
+            validationErrors.add("Wrong o.i.d. for personalId! Should be " + HOS_PERSONAL_OID);
+        }
+
+        // Check lakarnamn - mandatory
+        if (hosPersonal.getFullstandigtNamn() == null || hosPersonal.getFullstandigtNamn().isEmpty()) {
+            validationErrors.add("No skapadAvHosPersonal fullstandigtNamn found.");
+        }
+
+        validateHosPersonalEnhet(hosPersonal.getEnhet());
+      
+    }
+
+    private void validateHosPersonalEnhet(EnhetType enhet) {
+
+        if (enhet == null) {
+            validationErrors.add("No enhet element found!");
+            return;
+        }
+
+        // Check enhets id - mandatory
+        if (enhet.getEnhetsId() == null || enhet.getEnhetsId().getExtension() == null
+                || enhet.getEnhetsId().getExtension().isEmpty()) {
+            validationErrors.add("No enhets-id found!");
+        }
+
+        // Check enhets o.i.d
+        if (enhet.getEnhetsId() == null || enhet.getEnhetsId().getRoot() == null
+                || !enhet.getEnhetsId().getRoot().equals(ENHET_OID)) {
+            validationErrors.add("Wrong o.i.d. for enhetsId! Should be " + ENHET_OID);
+        }
+
+        // Check enhetsnamn - mandatory
+        if (enhet.getEnhetsnamn() == null || enhet.getEnhetsnamn().length() < 1) {
+            validationErrors.add("No enhetsnamn found!");
+        }
+
+        validateVardgivare(enhet.getVardgivare());
+
+        validateArbetsplatskod(enhet.getArbetsplatskod());
+    }
+
+    private void validateArbetsplatskod(II arbetsplatskod) {
+        // Fält 17 - arbetsplatskod - Check that we got an element
+        if (arbetsplatskod == null) {
+            validationErrors.add("No Arbetsplatskod element found!");
+            return;
+        }
+
+        // Fält 17 arbetsplatskod id
+        if (arbetsplatskod.getExtension() == null || arbetsplatskod.getExtension().isEmpty()) {
+            validationErrors.add("Arbetsplatskod for enhet not found!");
+        }
+        // Fält 17 arbetsplatskod o.i.d.
+        if (arbetsplatskod.getRoot() == null || !arbetsplatskod.getRoot().equalsIgnoreCase(ARBETSPLATS_CODE_OID)) {
+            validationErrors.add("Wrong o.i.d. for arbetsplatskod! Should be " + ARBETSPLATS_CODE_OID);
+        }
+
+    }
+
+    private void validateVardgivare(VardgivareType vardgivare) {
+        if (vardgivare == null) {
+            validationErrors.add("No vardgivare element found!");
+            return;
+        }
+
+        // Check vardgivare id - mandatory
+        if (vardgivare.getVardgivareId() == null || vardgivare.getVardgivareId().getExtension() == null
+                || vardgivare.getVardgivareId().getExtension().isEmpty()) {
+            validationErrors.add("No vardgivare-id found!");
+        }
+        // Check vardgivare o.i.d.
+        if (vardgivare.getVardgivareId() == null || vardgivare.getVardgivareId().getRoot() == null
+                || !vardgivare.getVardgivareId().getRoot().equals(HOS_PERSONAL_OID)) {
+            validationErrors.add("Wrong o.i.d. for vardgivareId! Should be " + HOS_PERSONAL_OID);
+        }
+
+        // Check vardgivarename - mandatory
+        if (vardgivare.getVardgivarnamn() == null || vardgivare.getVardgivarnamn().isEmpty()) {
+            validationErrors.add("No vardgivarenamn found!");
+        }
+
+    }
+
+}
