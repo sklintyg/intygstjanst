@@ -106,8 +106,12 @@ public final class LakarutlatandeTypeToUtlatandeConverter {
             if (aktivitet != null) {
                 utlatande.getAktivitets().add(aktivitet);
             } else {
+                String issuedBy="issuedBy, not set" ;
+                if(source.getSkapadAvHosPersonal().getEnhet().getEnhetsId()!=null){
+                    issuedBy =  source.getSkapadAvHosPersonal().getEnhet().getEnhetsId().getExtension();
+                }
                 LOGGER.info(LogMarkers.VALIDATION, "Validation failed for intyg " + source.getLakarutlatandeId() + " issued by " + 
-                        source.getSkapadAvHosPersonal().getEnhet().getEnhetsId().getExtension() +
+                        issuedBy +
                         ": Aktivitet with missing aktivitetskod found - ignored.");
             }
         }
@@ -384,8 +388,12 @@ public final class LakarutlatandeTypeToUtlatandeConverter {
         String personNumber = patient.getPersonId().getExtension();
         if (personNumber.length() == 12 && Pattern.matches(PERSON_NUMBER_WITHOUT_DASH_REGEX, personNumber)) {
             patient.getPersonId().setExtension(personNumber.substring(0,8) + "-" + personNumber.substring(8));
-            LOGGER.warn(LogMarkers.VALIDATION, "Validation failed for intyg " + lakarutlatande.getLakarutlatandeId() + " issued by " + 
-                                   lakarutlatande.getSkapadAvHosPersonal().getEnhet().getEnhetsId().getExtension() +
+            String issuedBy="issuedBy, not set" ;
+            if(lakarutlatande.getSkapadAvHosPersonal().getEnhet().getEnhetsId()!=null){
+                issuedBy =  lakarutlatande.getSkapadAvHosPersonal().getEnhet().getEnhetsId().getExtension();
+            }
+            LOGGER.warn(LogMarkers.VALIDATION, "Validation failed for intyg " + lakarutlatande.getLakarutlatandeId() + " issued by " +
+                    issuedBy +
                                    ": Person-id is lacking a separating dash - corrected.");
         }
 

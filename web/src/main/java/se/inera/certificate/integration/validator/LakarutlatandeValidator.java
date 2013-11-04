@@ -115,18 +115,15 @@ public class LakarutlatandeValidator {
     }
 
     private void validateSkapadAvHosPersonal(HosPersonalType hosPersonal) {
-
-        if (hosPersonal == null) {
+        if (hosPersonal == null || hosPersonal.getPersonalId()==null) {
             validationErrors.add("No SkapadAvHosPersonal element found!");
             return;
         }
-
         // Check lakar id - mandatory
         if (hosPersonal.getPersonalId().getExtension() == null
                 || hosPersonal.getPersonalId().getExtension().isEmpty()) {
             validationErrors.add("No personal-id found!");
         }
-
         // Check lakar id o.i.d.
         if (hosPersonal.getPersonalId().getRoot() == null
                 || !hosPersonal.getPersonalId().getRoot().equals(HOS_PERSONAL_OID)) {
@@ -149,9 +146,10 @@ public class LakarutlatandeValidator {
         }
 
         // Check enhets id - mandatory
-        if (enhet.getEnhetsId().getExtension() == null
+        if (enhet.getEnhetsId() == null || enhet.getEnhetsId().getExtension() == null
                 || enhet.getEnhetsId().getExtension().isEmpty()) {
             validationErrors.add("No enhets-id found!");
+            return;
         }
 
         // Check enhets o.i.d
