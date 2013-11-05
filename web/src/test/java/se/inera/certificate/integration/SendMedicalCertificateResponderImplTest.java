@@ -5,27 +5,38 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
-
 import iso.v21090.dt.v1.II;
+
+import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import riv.insuranceprocess.healthreporting.medcertqa._1.LakarutlatandeEnkelType;
+import riv.insuranceprocess.healthreporting.medcertqa._1.VardAdresseringsType;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.v1.rivtabp20.SendMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.EnhetType;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.HosPersonalType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType;
 
 @RunWith( MockitoJUnitRunner.class )
 public class SendMedicalCertificateResponderImplTest {
 
     private static final String CERTIFICATE_ID = "Intygs-id-1234567890";
     private static final String PERSONNUMMER = "19121212-1212";
+    private static final String PATIENT_ID_OID = "1.2.752.129.2.1.3.1";
+    private static final String HOS_PERSONAL_OID = "1.2.752.129.2.1.4.1";
+    private static final String ENHET_OID = "1.2.752.129.2.1.4.1";
+    private static final String ARBETSPLATS_CODE_OID = "1.2.752.29.4.71";
+
 
     @Mock
     private CertificateService certificateService = mock(CertificateService.class);

@@ -13,6 +13,8 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
+import se.inera.certificate.integration.validator.RevokeRequestValidator;
+import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
@@ -20,7 +22,8 @@ import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateres
 
 @Transactional
 @SchemaValidation
-public class RevokeMedicalCertificateResponderWiretapImpl extends RevokeMedicalCertificateResponderImpl implements RevokeMedicalCertificateResponderInterface {
+public class RevokeMedicalCertificateResponderWiretapImpl extends RevokeMedicalCertificateResponderImpl implements
+        RevokeMedicalCertificateResponderInterface {
 
     private static final Logger LOG = LoggerFactory.getLogger(RevokeMedicalCertificateResponderWiretapImpl.class);
 
@@ -28,29 +31,60 @@ public class RevokeMedicalCertificateResponderWiretapImpl extends RevokeMedicalC
     private CertificateService certificateService;
 
     @Override
-    public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress, RevokeMedicalCertificateRequestType request) {
+    public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress,
+            RevokeMedicalCertificateRequestType request) {
 
         RevokeMedicalCertificateResponseType response = new RevokeMedicalCertificateResponseType();
 
-        String certificateId = request.getRevoke().getLakarutlatande().getLakarutlatandeId();
-        String civicRegistrationNumber = request.getRevoke().getLakarutlatande().getPatient().getPersonId().getExtension();
-
         try {
+            new RevokeRequestValidator(request.getRevoke()).validateAndCorrect();
+
+            String certificateId = request.getRevoke().getLakarutlatande().getLakarutlatandeId();
+            String civicRegistrationNumber = request.getRevoke().getLakarutlatande().getPatient().getPersonId()
+                    .getExtension();
+
             certificateService.revokeCertificate(civicRegistrationNumber, certificateId);
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
-            LOG.info("Tried to revoke certificate '" + certificateId + "' for patient '" + civicRegistrationNumber + "' but certificate does not exist");
-            response.setResult(failResult("No certificate '" + certificateId + "' found to revoke for patient '" + civicRegistrationNumber + "'."));
+            LOG.info("Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
+                    + safeGetCivicRegistrationNumber(request) + "' but certificate does not exist");
+            response.setResult(failResult("No certificate '" + safeGetCertificateId(request)
+                    + "' found to revoke for patient '" + safeGetCivicRegistrationNumber(request) + "'."));
             return response;
         } catch (CertificateRevokedException e) {
             // return with INFO response if certificate was revoked before
-            LOG.info("Tried to revoke certificate '" + certificateId + "' for patient '" + civicRegistrationNumber + "' which already is revoked");
-            response.setResult(infoResult("Certificate '" + certificateId + "' is already revoked."));
+            LOG.info("Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
+                    + safeGetCivicRegistrationNumber(request) + "' which already is revoked");
+            response.setResult(infoResult("Certificate '" + safeGetCertificateId(request) + "' is already revoked."));
+            return response;
+        } catch (ValidationException e) {
+            // return with ERROR response if certificate had validation errors
+            LOG.info("Validation error found for revoke certificate '" + safeGetCertificateId(request)
+                    + "' for patient '" + safeGetCivicRegistrationNumber(request) + ": " + e.getMessage());
+            response.setResult(failResult(e.getMessage()));
             return response;
         }
 
         response.setResult(okResult());
         return response;
+    }
+
+    private String safeGetCertificateId(RevokeMedicalCertificateRequestType request) {
+        // Initialize log context info if available
+        if (request.getRevoke() != null && request.getRevoke().getLakarutlatande() != null
+                && request.getRevoke().getLakarutlatande().getLakarutlatandeId() != null) {
+            return request.getRevoke().getLakarutlatande().getLakarutlatandeId();
+        }
+        return null;
+    }
+
+    private String safeGetCivicRegistrationNumber(RevokeMedicalCertificateRequestType request) {
+        // Initialize log context info if available
+        if (request.getRevoke().getLakarutlatande().getPatient() != null
+                && request.getRevoke().getLakarutlatande().getPatient().getPersonId() != null) {
+            return request.getRevoke().getLakarutlatande().getPatient().getPersonId().getExtension();
+        }
+        return null;
     }
 
 }
