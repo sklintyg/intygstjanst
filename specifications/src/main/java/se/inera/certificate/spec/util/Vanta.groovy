@@ -1,8 +1,8 @@
 package se.inera.certificate.spec.util
 
-class Vänta {
+class Vanta {
 
-    Vänta(int n, String tidsEnhet) {
+    Vanta(int n, String tidsEnhet) {
         int millis = n;
         if (tidsEnhet?.startsWith("sekund")) {
             millis = n * 1000
