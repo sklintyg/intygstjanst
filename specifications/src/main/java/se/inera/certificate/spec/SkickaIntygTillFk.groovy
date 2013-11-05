@@ -51,13 +51,17 @@ class SkickaIntygTillFk extends WsClientFixture {
         sendType.adressVard = new VardAdresseringsType()        
         sendType.adressVard.hosPersonal = new HosPersonalType()
         sendType.adressVard.hosPersonal.personalId = new II()
+        sendType.adressVard.hosPersonal.personalId.root = "1.2.752.129.2.1.4.1"
         sendType.adressVard.hosPersonal.personalId.extension = "personalid"
+        sendType.adressVard.hosPersonal.fullstandigtNamn = "En läkare"
         sendType.adressVard.hosPersonal.enhet = new EnhetType()
         sendType.adressVard.hosPersonal.enhet.enhetsId = new II()
+        sendType.adressVard.hosPersonal.enhet.enhetsId.root = "1.2.752.129.2.1.4.1"
         sendType.adressVard.hosPersonal.enhet.enhetsId.extension = "1"
         sendType.adressVard.hosPersonal.enhet.enhetsnamn = "Enhetsnamn"
         sendType.adressVard.hosPersonal.enhet.vardgivare = new VardgivareType()
         sendType.adressVard.hosPersonal.enhet.vardgivare.vardgivareId = new II()
+        sendType.adressVard.hosPersonal.enhet.vardgivare.vardgivareId.root = "1.2.752.129.2.1.4.1"
         sendType.adressVard.hosPersonal.enhet.vardgivare.vardgivareId.extension = "1"
         sendType.adressVard.hosPersonal.enhet.vardgivare.vardgivarnamn = "Vårdgivarnamn"
         
@@ -66,7 +70,9 @@ class SkickaIntygTillFk extends WsClientFixture {
         sendType.lakarutlatande.signeringsTidpunkt = new LocalDateTime("2013-05-01T11:00:00")
         sendType.lakarutlatande.patient = new PatientType()
         sendType.lakarutlatande.patient.personId = new II()
+        sendType.lakarutlatande.patient.personId.root = "1.2.752.129.2.1.3.1"
         sendType.lakarutlatande.patient.personId.extension = personnummer
+        sendType.lakarutlatande.patient.fullstandigtNamn = "Ett namn"
         
         response = sendResponder.sendMedicalCertificate(logicalAddress, sendRequestType)
     }
