@@ -83,26 +83,6 @@ public class VardAdresseringsTypeValidator {
         }
 
         validateVardgivare(enhet.getVardgivare());
-
-        validateArbetsplatskod(enhet.getArbetsplatskod());
-    }
-
-    private void validateArbetsplatskod(II arbetsplatskod) {
-        // Fält 17 - arbetsplatskod - Check that we got an element
-        if (arbetsplatskod == null) {
-            validationErrors.add("No Arbetsplatskod element found!");
-            return;
-        }
-
-        // Fält 17 arbetsplatskod id
-        if (arbetsplatskod.getExtension() == null || arbetsplatskod.getExtension().isEmpty()) {
-            validationErrors.add("Arbetsplatskod for enhet not found!");
-        }
-        // Fält 17 arbetsplatskod o.i.d.
-        if (arbetsplatskod.getRoot() == null || !arbetsplatskod.getRoot().equalsIgnoreCase(ARBETSPLATS_CODE_OID)) {
-            validationErrors.add("Wrong o.i.d. for arbetsplatskod! Should be " + ARBETSPLATS_CODE_OID);
-        }
-
     }
 
     private void validateVardgivare(VardgivareType vardgivare) {
