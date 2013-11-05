@@ -44,8 +44,8 @@
 
 |Skicka intyg till Fk|
 |personnummer|intyg|resultat?|
-|19121212-1212|intyg-1|[ERROR] - Certificate 'intyg-1' has been revoked.|
-|19121212-1212|intyg-2|[ERROR] - Certificate 'intyg-2' has been revoked.|
+|19121212-1212|intyg-1|[INFO] - Certificate 'intyg-1' has been revoked.|
+|19121212-1212|intyg-2|[INFO] - Certificate 'intyg-2' has been revoked.|
 
 !3 Intygstjänsten tillåter ej att hämta ett rättat intyg
 |Hamta intyg|

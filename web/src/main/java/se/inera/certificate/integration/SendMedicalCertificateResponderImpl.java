@@ -55,7 +55,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             // return with INFO response if certificate was revoked before
             LOG.info("Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + safeGetCivicRegistrationNumber(request) + "' which is revoked");
-            response.setResult(infoResult("Certificate '" + safeGetCertificateId(request) + "' is already revoked."));
+            response.setResult(infoResult("Certificate '" + safeGetCertificateId(request) + "' has been revoked."));
             return response;
         } catch (ValidationException e) {
             // return with ERROR response if certificate had validation errors
