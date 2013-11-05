@@ -9,7 +9,6 @@
         <core:fullstandigtNamn>En Läkare</core:fullstandigtNamn>
         <core:enhet>
           <core:enhets-id root="1.2.752.129.2.1.4.1" extension="VardenhetY"/>
-          <core:arbetsplatskod root="1.2.752.29.4.71" extension="123456789011"/>
           <core:enhetsnamn>Kir mott</core:enhetsnamn>
           <core:vardgivare>
             <core:vardgivare-id root="1.2.752.129.2.1.4.1" extension="VardgivarId"/>
