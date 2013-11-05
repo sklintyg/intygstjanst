@@ -59,7 +59,7 @@
 
 |Skicka Intyg Till Fk|
 |personnummer|intyg|resultat?|
-|19121212-1212|intyg-non-existing|[ERROR] - Certificate 'intyg-non-existing' does not exist for user + '19121212-1212'.|
+|19121212-1212|intyg-non-existing|[ERROR] - No certificate 'intyg-non-existing' found to revoke for patient '19121212-1212'.|
 
 
 !3 Rensa bort test-intyg och samtycket
