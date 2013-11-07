@@ -23,6 +23,7 @@ import java.util.List;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
+import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
@@ -60,7 +61,14 @@ public interface CertificateService {
      */
     Certificate getCertificate(String civicRegistrationNumber, String certificateId);
 
-    Certificate storeCertificate(String xml, String type);
+    /**
+     * Stores the given certificate
+     * @param xml the string representation of the incoming XML
+     * @param type the certificate type
+     * @return the created certificate
+     * @throws CertificateAlreadyExistsException when a certificate with the same identifier already exists
+     */
+    Certificate storeCertificate(String xml, String type) throws CertificateAlreadyExistsException;
 
     void setCertificateState(String civicRegistrationNumber, String certificateId, String target, CertificateState state, LocalDateTime timestamp);
 

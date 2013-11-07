@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.InvalidCertificateIdentifierException;
@@ -176,6 +177,9 @@ public class CertificateServiceImpl implements CertificateService {
         // turn a lakarutlatande into a certificate entity
         Certificate certificate = createCertificate(utlatande, externalJson);
 
+        // ensure that certificate does not exist yet
+        checkForExistingCertificate(certificate.getId(), certificate.getCivicRegistrationNumber());
+
         // add initial RECEIVED state using current time as receiving timestamp
         CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(MI, CertificateState.RECEIVED,
                 new LocalDateTime());
@@ -186,6 +190,12 @@ public class CertificateServiceImpl implements CertificateService {
         storeOriginalCertificate(xml, certificate);
 
         return certificate;
+    }
+
+    private void checkForExistingCertificate(String certificateId, String personnummer) {
+        if (certificateDao.getCertificate(personnummer, certificateId) != null) {
+            throw new CertificateAlreadyExistsException();
+        }
     }
 
     /**

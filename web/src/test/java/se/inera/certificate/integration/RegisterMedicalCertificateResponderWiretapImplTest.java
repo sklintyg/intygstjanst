@@ -1,6 +1,5 @@
 package se.inera.certificate.integration;
 
-import javax.persistence.PersistenceException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -28,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.xml.sax.SAXException;
+import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.util.NamespacePrefixNameIgnoringListener;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
@@ -87,9 +87,9 @@ public class RegisterMedicalCertificateResponderWiretapImplTest {
     }
 
     @Test
-    public void testWithServiceThrowingPersistenceException() throws Exception {
+    public void testWithExistingCertificate() throws Exception {
         when(certificateService.storeCertificate(any(String.class), eq("fk7263")))
-                .thenThrow(new PersistenceException());
+                .thenThrow(new CertificateAlreadyExistsException());
 
         RegisterMedicalCertificateResponseType response = responder.registerMedicalCertificate(null, request);
         assertEquals(ResultCodeEnum.INFO, response.getResult().getResultCode());

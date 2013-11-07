@@ -1,7 +1,6 @@
 package se.inera.certificate.integration;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.PersistenceException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -19,6 +18,7 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedic
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ObjectFactory;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
+import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.util.ResultOfCallUtil;
 import se.inera.certificate.service.CertificateService;
 
@@ -52,7 +52,7 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
             String xml = xmlToString(registerMedicalCertificate);
             certificateService.storeCertificate(xml, type);
             response.setResult(ResultOfCallUtil.okResult());
-        } catch (PersistenceException e) {
+        } catch (CertificateAlreadyExistsException e) {
             response.setResult(ResultOfCallUtil.infoResult("Certificate already exists"));
         } catch (JAXBException e) {
             LOGGER.error("JAXB error in Webservice: ", e);

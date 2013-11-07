@@ -1,7 +1,6 @@
 package se.inera.certificate.integration;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.PersistenceException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -13,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
+import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.util.ResultOfCallUtil;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
@@ -52,7 +52,7 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
             String xml = xmlToString(registerMedicalCertificate);
             certificateService.storeCertificate(xml, FK7263);
             response.setResult(ResultOfCallUtil.okResult());
-        } catch (PersistenceException e) {
+        } catch (CertificateAlreadyExistsException e) {
             response.setResult(ResultOfCallUtil.infoResult("Certificate already exists"));
         } catch (JAXBException e) {
             LOGGER.error("JAXB error in Webservice: ", e);

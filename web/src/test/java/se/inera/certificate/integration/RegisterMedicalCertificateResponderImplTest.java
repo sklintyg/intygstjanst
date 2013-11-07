@@ -1,6 +1,5 @@
 package se.inera.certificate.integration;
 
-import javax.persistence.PersistenceException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -29,6 +28,7 @@ import org.xml.sax.SAXException;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
+import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.util.NamespacePrefixNameIgnoringListener;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
@@ -82,9 +82,9 @@ public class RegisterMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testWithServiceThrowingPersistenceException() throws Exception {
+    public void testWithExistingCertificate() throws Exception {
         when(certificateService.storeCertificate(any(String.class), eq("fk7263")))
-                .thenThrow(new PersistenceException());
+                .thenThrow(new CertificateAlreadyExistsException());
 
         RegisterMedicalCertificateResponseType response = responder.registerMedicalCertificate(null, request);
         assertEquals(ResultCodeEnum.INFO, response.getResult().getResultCode());
