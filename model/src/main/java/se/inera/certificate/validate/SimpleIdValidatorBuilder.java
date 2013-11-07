@@ -84,6 +84,14 @@ public class SimpleIdValidatorBuilder {
 
 		return this;
 	}
+	
+	public SimpleIdValidatorBuilder withHsaIdValidator() {
+	    HsaIdValidator newValidator = new HsaIdValidator();
+	    
+	    validator.registerValidator(newValidator);
+	    
+	    return this;
+	}
 
 	/**
 	 * Returns an instance of the {@link IdValidator} being built.
