@@ -1,55 +1,75 @@
 package se.inera.certificate.integration;
 
-import javax.jws.WebService;
-import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.Provider;
-import javax.xml.ws.Service;
-import javax.xml.ws.ServiceMode;
+import javax.annotation.PostConstruct;
+import javax.persistence.PersistenceException;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import java.io.StringWriter;
 
 import com.google.common.base.Throwables;
+import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.w3.wsaddressing10.AttributedURIType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponderInterface;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ObjectFactory;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
+import se.inera.certificate.integration.util.ResultOfCallUtil;
+import se.inera.certificate.service.CertificateService;
 
-/**
- *
- */
-@WebService(targetNamespace = "urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificate:1:rivtabp20", name = "RegisterMedicalCertificateResponderInterface")
-@ServiceMode(value=Service.Mode.MESSAGE)
-public class RegisterMedicalCertificateResponderImpl extends RegisterCertificateBase implements Provider<SOAPMessage> {
+@SchemaValidation
+public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalCertificateResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterMedicalCertificateResponderImpl.class);
 
-    private static final QName BODY_NAME = new QName("urn:riv:clinicalprocess:healthcond:certificate:1", "utlatande");
+    @Autowired
+    private CertificateService certificateService;
+
+    private Marshaller marshaller;
+    private ObjectFactory objectFactory;
+
+    @PostConstruct
+    public void initializeJaxbContext() throws JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(UtlatandeType.class);
+        marshaller = jaxbContext.createMarshaller();
+        objectFactory = new ObjectFactory();
+    }
 
     @Override
-    public SOAPMessage invoke(SOAPMessage request) {
+    public RegisterMedicalCertificateResponseType registerMedicalCertificate(AttributedURIType logicalAddress,
+            RegisterMedicalCertificateType registerMedicalCertificate) {
+        RegisterMedicalCertificateResponseType response = new RegisterMedicalCertificateResponseType();
 
-        SOAPMessage response = null;
+        // Extract document type and xml
+        String type = registerMedicalCertificate.getUtlatande().getTypAvUtlatande().getCode();
+
         try {
-            convertAndPersist(request);
-            response = request;
+            String xml = xmlToString(registerMedicalCertificate);
+            certificateService.storeCertificate(xml, type);
+            response.setResult(ResultOfCallUtil.okResult());
+        } catch (PersistenceException e) {
+            response.setResult(ResultOfCallUtil.infoResult("Certificate already exists"));
+        } catch (JAXBException e) {
+            LOGGER.error("JAXB error in Webservice: ", e);
+            Throwables.propagate(e);
         } catch (Exception e) {
-            LOGGER.warn("Error in Webservice: ", e);
+            LOGGER.error("Error in Webservice: ", e);
             Throwables.propagate(e);
         }
+
         return response;
     }
 
-    @Override
-    String getType(Document document) {
-        try {
-            NodeList nodes = document.getElementsByTagNameNS("urn:riv:clinicalprocess:healthcond:certificate:1", "typAvUtlatande");
-            return nodes.item(0).getAttributes().getNamedItem("code").getNodeValue().trim();
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
-        }
-    }
-
-    @Override
-    QName getBodyElementQName() {
-        return BODY_NAME;
+    private String xmlToString(RegisterMedicalCertificateType registerMedicalCertificate) throws JAXBException {
+        StringWriter stringWriter = new StringWriter();
+        JAXBElement<UtlatandeType> utlatandeElement = objectFactory.createUtlatande(registerMedicalCertificate
+                .getUtlatande());
+        marshaller.marshal(utlatandeElement, stringWriter);
+        return stringWriter.toString();
     }
 }

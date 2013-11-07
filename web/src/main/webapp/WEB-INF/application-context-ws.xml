@@ -56,7 +56,6 @@
         <constructor-arg value="transform/get-certificate-content-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
-
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/register-certificate-wiretap/v3.0"

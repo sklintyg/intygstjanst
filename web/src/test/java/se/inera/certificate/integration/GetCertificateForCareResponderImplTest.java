@@ -119,10 +119,9 @@ public class GetCertificateForCareResponderImplTest {
     private void compareResponseWithReferenceFile(GetCertificateForCareResponseType response, String fileName)
             throws Exception {
         ByteArrayOutputStream byteArr = new ByteArrayOutputStream();
-        JAXBElement<GetCertificateForCareResponseType> jaxbElement = new ObjectFactory()
-                .createGetCertificateForCareResponse(response);
         JAXBContext context = JAXBContext.newInstance(GetCertificateForCareResponseType.class);
-        context.createMarshaller().marshal(jaxbElement, byteArr);
+        JAXBElement<GetCertificateForCareResponseType> responseElement = new ObjectFactory().createGetCertificateForCareResponse(response);
+        context.createMarshaller().marshal(responseElement, byteArr);
 
         String referenceXml = FileUtils.readFileToString(new ClassPathResource(fileName).getFile());
 

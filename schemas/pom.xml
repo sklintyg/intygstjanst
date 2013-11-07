@@ -261,7 +261,7 @@
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
-                      ${basedir}/bindings/general-binding.xjb
+                      ${basedir}/bindings/general-intyg-binding.xjb
                     </bindingFile>
                   </bindingFiles>
                   <extraargs>

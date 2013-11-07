@@ -18,14 +18,15 @@
  */
 package se.inera.certificate.service.impl;
 
-import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
-
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Throwables;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -35,11 +36,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.exception.MissingConsentException;
+import se.inera.certificate.integration.rest.ModuleRestApi;
+import se.inera.certificate.integration.rest.ModuleRestApiFactory;
+import se.inera.certificate.integration.rest.exception.ModuleCallFailedException;
+import se.inera.certificate.integration.util.RestUtils;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
@@ -50,8 +54,7 @@ import se.inera.certificate.schema.adapter.PartialAdapter;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import se.inera.certificate.validate.ValidationException;
 
 /**
  * @author andreaskaltenbach
@@ -59,10 +62,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class CertificateServiceImpl implements CertificateService {
 
+    private static final int OK = 200;
+
+    private static final int BAD_REQUEST = 400;
+
+    private static final int NOT_FOUND = 404;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateServiceImpl.class);
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private ModuleRestApiFactory moduleRestApiFactory;
 
     private static final Comparator<CertificateStateHistoryEntry> SORTER = new Comparator<CertificateStateHistoryEntry>() {
 
@@ -120,9 +132,46 @@ public class CertificateServiceImpl implements CertificateService {
         return fixDeletedStatus(certificateDao.getCertificate(civicRegistrationNumber, id));
     }
 
+    private String unmarshall(String type, String transportXml) {
+
+        ModuleRestApi endpoint = moduleRestApiFactory.getModuleRestService(type);
+
+        Response response = endpoint.unmarshall(transportXml);
+
+        String entityContent = RestUtils.entityAsString(response);
+
+        switch (response.getStatus()) {
+        case NOT_FOUND:
+            String errorMessage = "Module of type " + type + " not found, 404!";
+            LOGGER.error(errorMessage);
+            throw new ModuleCallFailedException("Module of type " + type + " not found, 404!", response);
+        case BAD_REQUEST:
+            throw new ValidationException(entityContent);
+        case OK:
+            return entityContent;
+        default:
+            String message = "Failed to validate certificate for certificate type '" + type
+                    + "'. HTTP status code is " + response.getStatus();
+            LOGGER.error(message);
+            throw new ModuleCallFailedException(message, response);
+        }
+    }
+
+    private Utlatande convertToCommonUtlatande(String externalJson) {
+        try {
+            return objectMapper.readValue(externalJson, Utlatande.class);
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
+        }
+    }
+
     @Override
     @Transactional
-    public Certificate storeCertificate(Utlatande utlatande, String externalJson) {
+    public Certificate storeCertificate(String xml, String type) {
+
+        String externalJson = unmarshall(type, xml);
+
+        Utlatande utlatande = convertToCommonUtlatande(externalJson);
 
         // turn a lakarutlatande into a certificate entity
         Certificate certificate = createCertificate(utlatande, externalJson);
@@ -134,29 +183,22 @@ public class CertificateServiceImpl implements CertificateService {
 
         certificateDao.store(certificate);
 
+        storeOriginalCertificate(xml, certificate);
+
         return certificate;
     }
 
     /**
-     * Method has propagation REQUIRES_NEW because it should run independently of any outer transactions. If it fails,
-     * nothing else should fail.
      * 
      * @param utlatandeXml
      *            the received certificate utlatande xml
      * @param certificate
      *            the {@link Certificate} generated from the utlatandeXml, or <code>null</code> if unknown.
      */
-    @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void storeOriginalCertificate(String utlatandeXml, Certificate certificate) {
+    private void storeOriginalCertificate(String utlatandeXml, Certificate certificate) {
         if (shouldStoreOriginalCertificate) {
-            try {
-                OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), utlatandeXml, certificate);
-                certificateDao.storeOriginalCertificate(original);
-            } catch (Exception e) {
-                LOGGER.error(
-                        "Could not write original document to database. Does not interrupt certificate registration", e);
-            }
+            OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), utlatandeXml, certificate);
+            certificateDao.storeOriginalCertificate(original);
         }
     }
 
@@ -216,8 +258,8 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.MANDATORY,
-                   noRollbackFor = { InvalidCertificateException.class, CertificateRevokedException.class })
+    @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = { InvalidCertificateException.class,
+            CertificateRevokedException.class })
     public Certificate revokeCertificate(String civicRegistrationNumber, String certificateId) {
         Certificate certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
 

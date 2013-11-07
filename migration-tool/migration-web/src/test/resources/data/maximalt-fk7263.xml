@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<utlatande xmlns="urn:intyg:common-model:1"
-           xmlns:hr="urn:riv:insuranceprocess:healthreporting:2">
+<utlatande xmlns="urn:riv:clinicalprocess:healthcond:certificate:1">
   <utlatande-id extension="80832895-5a9c-450a-bd74-08af43750788"/>
   <typAvUtlatande code="fk7263"/>
 
@@ -30,18 +29,18 @@
     <personal-id root="1.2.752.129.2.1.4.1" extension="Personal HSA-ID"/>
     <fullstandigtNamn>En Läkare</fullstandigtNamn>
     <enhet>
-      <hr:enhets-id root="1.2.752.129.2.1.4.1" extension="VardenhetY"/>
-      <hr:arbetsplatskod root="1.2.752.29.4.71" extension="123456789011"/>
-      <hr:enhetsnamn>Kir mott</hr:enhetsnamn>
-      <hr:postadress>Lasarettsvägen 13</hr:postadress>
-      <hr:postnummer>85150</hr:postnummer>
-      <hr:postort>Sundsvall</hr:postort>
-      <hr:telefonnummer>060-1818000</hr:telefonnummer>
-      <hr:epost>kirmott@vardenhet.se</hr:epost>
-      <hr:vardgivare>
-        <hr:vardgivare-id root="1.2.752.129.2.1.4.1" extension="VardgivarId"/>
-        <hr:vardgivarnamn>Landstinget Norrland</hr:vardgivarnamn>
-      </hr:vardgivare>
+      <enhets-id root="1.2.752.129.2.1.4.1" extension="VardenhetY"/>
+      <arbetsplatskod root="1.2.752.29.4.71" extension="123456789011"/>
+      <enhetsnamn>Kir mott</enhetsnamn>
+      <postadress>Lasarettsvägen 13</postadress>
+      <postnummer>85150</postnummer>
+      <postort>Sundsvall</postort>
+      <telefonnummer>060-1818000</telefonnummer>
+      <epost>kirmott@vardenhet.se</epost>
+      <vardgivare>
+        <vardgivare-id root="1.2.752.129.2.1.4.1" extension="VardgivarId"/>
+        <vardgivarnamn>Landstinget Norrland</vardgivarnamn>
+      </vardgivare>
     </enhet>
   </skapadAv>
 
