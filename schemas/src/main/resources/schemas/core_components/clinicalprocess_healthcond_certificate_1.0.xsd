@@ -59,7 +59,7 @@
   </xs:simpleType>
   <xs:simpleType name="patientIdExtension">
     <xs:restriction base="xs:string">
-      <xs:pattern value="(\d{8})([+-])(\d{3})(\d)"/>
+      <xs:pattern value="\d{8}-\d{4}"/>
     </xs:restriction>
   </xs:simpleType>
 
