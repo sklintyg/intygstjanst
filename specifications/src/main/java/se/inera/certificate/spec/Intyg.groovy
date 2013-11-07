@@ -110,6 +110,7 @@ public class Intyg extends RestClientFixture {
         def certificate = new JsonSlurper().parse(new InputStreamReader(new ClassPathResource("${typ}_${mall}_template.json").getInputStream()))
 
         // setting the certificate ID
+        certificate.'id'.root = id
         certificate.'id'.extension = id
 
         // setting personnr in certificate XML
