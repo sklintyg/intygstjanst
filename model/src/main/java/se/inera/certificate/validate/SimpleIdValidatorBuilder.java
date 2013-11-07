@@ -3,8 +3,8 @@ package se.inera.certificate.validate;
 import org.joda.time.LocalDate;
 
 /**
- * A simple builder of {@link IdValidator}s with {@link RootValidator}s without the need for dependency injection. For
- * more complex configuration of the IdValidator, use the spring configuration.
+ * A simple builder of {@link IdValidator}s supporting {@link RootValidator}s without the need for dependency injection.
+ * For more complex configuration of the IdValidator, use the spring configuration.
  * 
  * @author Gustav Norbäcker, R2M
  */
@@ -85,13 +85,18 @@ public class SimpleIdValidatorBuilder {
 		return this;
 	}
 	
-	public SimpleIdValidatorBuilder withHsaIdValidator() {
-	    HsaIdValidator newValidator = new HsaIdValidator();
-	    
-	    validator.registerValidator(newValidator);
-	    
-	    return this;
-	}
+    /**
+     * Adds support for validation of HSA id to the IdValidator.
+     * 
+     * @return This builder, for method chaining.
+     */
+    public SimpleIdValidatorBuilder withHsaIdValidator() {
+        HsaIdValidator newValidator = new HsaIdValidator();
+
+        validator.registerValidator(newValidator);
+
+        return this;
+    }
 
 	/**
 	 * Returns an instance of the {@link IdValidator} being built.
