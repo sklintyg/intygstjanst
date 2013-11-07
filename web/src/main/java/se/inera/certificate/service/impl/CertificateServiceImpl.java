@@ -224,7 +224,7 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     private Certificate createCertificate(Utlatande utlatande, String externalJson) {
-        Certificate certificate = new Certificate(utlatande.getId().getExtension(), externalJson);
+        Certificate certificate = new Certificate(utlatande.getId().getRoot(), externalJson);
 
         certificate.setType(utlatande.getTyp().getCode());
         certificate.setSigningDoctorName(utlatande.getSkapadAv().getNamn());
