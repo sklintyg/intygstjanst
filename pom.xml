@@ -11,7 +11,7 @@
   </description>
   <scm>
     <connection>scm:git:https://code.google.com/p/inera-certificate/</connection>
-    <tag>HEAD</tag>
+    <tag>certificate-1.1-RB</tag>
   </scm>
   <distributionManagement>
     <repository>
