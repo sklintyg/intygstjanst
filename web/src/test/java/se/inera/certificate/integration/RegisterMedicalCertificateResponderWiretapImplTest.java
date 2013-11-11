@@ -4,6 +4,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.stream.StreamSource;
+
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -27,11 +28,13 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.xml.sax.SAXException;
+
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.util.NamespacePrefixNameIgnoringListener;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.StatisticsService;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
@@ -44,6 +47,9 @@ public class RegisterMedicalCertificateResponderWiretapImplTest {
 
     @Mock
     CertificateService certificateService = mock(CertificateService.class);
+
+    @Mock
+    StatisticsService statisticsService = mock(StatisticsService.class);
 
     @InjectMocks
     private RegisterMedicalCertificateResponderWiretapImpl responder = new RegisterMedicalCertificateResponderWiretapImpl();

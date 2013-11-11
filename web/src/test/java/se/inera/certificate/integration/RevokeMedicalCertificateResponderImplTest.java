@@ -2,6 +2,7 @@ package se.inera.certificate.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
@@ -29,6 +30,7 @@ import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.StatisticsService;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
@@ -47,6 +49,9 @@ public class RevokeMedicalCertificateResponderImplTest {
 
     @Mock
     private CertificateService certificateService;
+
+    @Mock
+    StatisticsService statisticsService = mock(StatisticsService.class);
 
     @Mock
     private SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
