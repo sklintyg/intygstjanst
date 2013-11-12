@@ -22,10 +22,17 @@
 
 !3 Journalsystem rättar intygen
 
+!4 Meddelande-text kan utelämnas
+
 |Ratta intyg|
 |personnummer|intyg|resultat?|
 |19121212-1212|intyg-1|OK|
-|19121212-1212|intyg-2|OK|
+
+!4 Meddelande-text kan specificeras
+
+|Ratta intyg|
+|personnummer|intyg|meddelande|resultat?|
+|19121212-1212|intyg-2|meddelande|OK|
 
 !3 Försök att rätta ett icke existerande intyg ger fel
 

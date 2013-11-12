@@ -17,7 +17,6 @@ public class VerifieraRattatIntygHosFk extends RestClientFixture {
                 contentType: 'application/json'
         )
     }
-
     
     public String rattat() {
         def row = response.data[id]
@@ -25,6 +24,15 @@ public class VerifieraRattatIntygHosFk extends RestClientFixture {
             return row['Makulerad']
         } else {
             return "Nej"
+        }
+    }
+
+    public String meddelande() {
+        def row = response.data[id]
+        if (row != null) {
+            return row['Meddelande']
+        } else {
+            return null
         }
     }
 }

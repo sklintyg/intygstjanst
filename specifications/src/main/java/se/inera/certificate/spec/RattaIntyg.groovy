@@ -34,6 +34,7 @@ class RattaIntyg extends WsClientFixture {
 
     String personnummer
     String intyg
+    String meddelande
 
     public RattaIntyg() {
         this(WsClientFixture.LOGICAL_ADDRESS)
@@ -45,13 +46,17 @@ class RattaIntyg extends WsClientFixture {
 		revokeResponder = createClient(RevokeMedicalCertificateResponderInterface.class, url)
     }
 
+    public void reset() {
+        meddelande = null
+    }
+
     public String resultat() {
         RevokeMedicalCertificateRequestType revokeRequestType = new RevokeMedicalCertificateRequestType()
         RevokeType revokeType = new RevokeType();
         revokeRequestType.setRevoke(revokeType)
         revokeType.vardReferensId = 1
         revokeType.avsantTidpunkt = new LocalDateTime("2013-05-01T11:00:00")
-        revokeType.meddelande = "Makulerat"
+        revokeType.meddelande = meddelande
         revokeType.adressVard = new VardAdresseringsType()
         revokeType.adressVard.hosPersonal = new HosPersonalType()
         revokeType.adressVard.hosPersonal.fullstandigtNamn = "MI"

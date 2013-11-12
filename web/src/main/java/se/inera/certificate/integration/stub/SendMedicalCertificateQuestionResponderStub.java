@@ -53,11 +53,12 @@ public class SendMedicalCertificateQuestionResponderStub implements SendMedicalC
 
         try {
             String id = request.getQuestion().getLakarutlatande().getLakarutlatandeId();
+            String meddelande = request.getQuestion().getFraga().getMeddelandeText();
 
             marshalCertificate(request);
             logger.info("STUB Received question concerning certificate with id: " + id);
             if  (request.getQuestion().getAmne().equals(Amnetyp.MAKULERING_AV_LAKARINTYG)) {
-                fkMedicalCertificatesStore.makulera(id);            	
+                fkMedicalCertificatesStore.makulera(id, meddelande);            	
             }
         } catch (JAXBException e) {
             response.setResult(failResult("Unable to marshal certificate information"));

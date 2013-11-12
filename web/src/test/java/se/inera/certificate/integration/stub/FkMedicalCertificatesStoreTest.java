@@ -40,8 +40,9 @@ public class FkMedicalCertificatesStoreTest {
     
     @Test
     public void testMakulera() throws Exception {
-        store.makulera("id-0001");
+        store.makulera("id-0001", "meddelande");
         assertEquals("JA", store.getAll().get("id-0001").get("Makulerad"));
+        assertEquals("meddelande", store.getAll().get("id-0001").get("Meddelande"));
     }
     
     @Test
