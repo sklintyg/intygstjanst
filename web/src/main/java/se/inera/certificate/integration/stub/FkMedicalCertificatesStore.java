@@ -27,10 +27,11 @@ public class FkMedicalCertificatesStore {
         certificates.clear();
     }
 
-    public void makulera(String id) {
+    public void makulera(String id, String meddelande) {
         Map<String, String> m = certificates.get(id);
         if (m != null) {
         	m.put("Makulerad", "JA");
+        	m.put("Meddelande", meddelande);
             certificates.put(id, m);
         }
     }

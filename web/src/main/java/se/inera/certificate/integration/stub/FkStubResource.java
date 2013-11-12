@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class FkStubResource {
 
-    private static final String[] KEYS = {"Personnummer", "Makulerad"};
+    private static final String[] KEYS = {"Personnummer", "Makulerad", "Meddelande"};
 
     @Autowired
     private FkMedicalCertificatesStore fkMedicalCertificatesStore;
