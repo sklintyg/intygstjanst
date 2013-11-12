@@ -4,7 +4,7 @@
 |personnr|samtycke|
 |19121212-1212|ja|
 
-!3 Giltigt meddelande ger inga fel
+!3 Korrekt meddelande ger inga fel
 
 !4 Givet ett intyg
 
@@ -14,7 +14,7 @@
 
 |validera revoke|
 |filnamn|resultat?|
-|validering/revoke/giltigt.xml|OK|
+|validering/revoke/giltig-revoke.xml|OK|
 
 !4 Rensa bort intyget
 
