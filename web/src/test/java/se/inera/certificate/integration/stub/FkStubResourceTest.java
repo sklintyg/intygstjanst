@@ -57,17 +57,20 @@ public class FkStubResourceTest {
         Map<String, String> v1 = newHashMap();
         v1.put("Personnummer", "19121212-1111");
         v1.put("Makulerad", "NEJ");
+        v1.put("Meddelande", "m1");
         Map<String, String> v2 = newHashMap();
         v2.put("Personnummer", "19121212-2222");
         v2.put("Makulerad", "NEJ");
+        v2.put("Meddelande", "m2");
         Map<String, String> v3 = newHashMap();
         v3.put("Personnummer", "19121212-3333");
         v3.put("Makulerad", "JA");
-        when(value.getValue()).thenReturn(v1, v1, v2, v2, v3, v3);
+        v3.put("Meddelande", "m3");
+        when(value.getValue()).thenReturn(v1, v1, v1, v2, v2, v2, v3, v3, v3);
 
-        String v1Str = "<tr><td>1</td><td>19121212-1111</td><td>NEJ</td></tr>";
-        String v2Str = "<tr><td>2</td><td>19121212-2222</td><td>NEJ</td></tr>";
-        String v3Str = "<tr><td>3</td><td>19121212-3333</td><td>JA</td></tr>";
+        String v1Str = "<tr><td>1</td><td>19121212-1111</td><td>NEJ</td><td>m1</td></tr>";
+        String v2Str = "<tr><td>2</td><td>19121212-2222</td><td>NEJ</td><td>m2</td></tr>";
+        String v3Str = "<tr><td>3</td><td>19121212-3333</td><td>JA</td><td>m3</td></tr>";
 
         String result = stub.certificates();
 
