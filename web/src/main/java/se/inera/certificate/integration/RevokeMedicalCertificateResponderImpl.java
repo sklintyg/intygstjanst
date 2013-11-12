@@ -65,6 +65,9 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
             if (certificate.wasSentToTarget("FK")) {
                 String vardref = request.getRevoke().getVardReferensId();
                 String meddelande = request.getRevoke().getMeddelande();
+                if (meddelande == null || meddelande.isEmpty()) {
+                    meddelande = "meddelande saknas";
+                }
 
                 // TODO: Vi behöver signeringstidpunkt för både fråga och intyg... /PW
                 LocalDateTime signTs = request.getRevoke().getLakarutlatande().getSigneringsTidpunkt();
