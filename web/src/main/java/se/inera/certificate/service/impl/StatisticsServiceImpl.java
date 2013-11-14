@@ -20,6 +20,11 @@ import se.inera.certificate.service.StatisticsService;
 @Component
 public class StatisticsServiceImpl implements StatisticsService {
 
+    private static final String CREATED = "created";
+    private static final String REVOKED = "revoked";
+    private static final String CERTIFICATE_ID = "certificate-id";
+    private static final String ACTION = "action";
+
     private static final Logger LOG = LoggerFactory.getLogger(StatisticsServiceImpl.class);
 
     @Autowired(required = false)
@@ -31,7 +36,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public boolean created(Certificate certificate) {
         if (enabled) {
-            return doSend("C", certificate);
+            return doSend(CREATED, certificate);
         } else {
             return true;
         }
@@ -40,7 +45,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public boolean revoked(Certificate certificate) {
         if (enabled) {
-            return doSend("R", certificate);
+            return doSend(REVOKED, certificate);
         } else {
             return true;
         }
@@ -74,7 +79,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         public Message createMessage(Session session) throws JMSException {
             TextMessage message = session.createTextMessage(certificate.getDocument());
-            message.setJMSCorrelationID(type + ':' + certificate.getId());
+            message.setStringProperty(ACTION, type);
+            message.setStringProperty(CERTIFICATE_ID, certificate.getId());
             return message;
         }
     }

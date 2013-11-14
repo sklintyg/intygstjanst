@@ -45,7 +45,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
     private SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
 
     @Autowired
-    private StatisticsService statisticsService;
+    protected StatisticsService statisticsService;
 
     @Autowired
     @Value("${revokecertificate.address.fk7263}")

@@ -60,7 +60,8 @@ public class StatisticsServiceImplTest {
         
         verify(template, only()).send(captor.capture());
         captor.getValue().createMessage(session);
-        verify(message).setJMSCorrelationID("C:The id");
+        verify(message).setStringProperty("action", "created");
+        verify(message).setStringProperty("certificate-id", "The id");
     }
 
     @Test
@@ -80,6 +81,7 @@ public class StatisticsServiceImplTest {
         
         verify(template, only()).send(captor.capture());
         captor.getValue().createMessage(session);
-        verify(message).setJMSCorrelationID("R:The id");
+        verify(message).setStringProperty("action", "revoked");
+        verify(message).setStringProperty("certificate-id", "The id");
     }
 }

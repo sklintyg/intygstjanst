@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.xml.sax.SAXException;
@@ -85,6 +86,7 @@ public class RegisterMedicalCertificateResponderImplTest {
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
         compareSoapMessageWithReferenceFile(xmlCaptor.getValue());
+        Mockito.verify(statisticsService, Mockito.only()).created(certificate);
     }
 
     @Test
@@ -94,6 +96,7 @@ public class RegisterMedicalCertificateResponderImplTest {
 
         RegisterMedicalCertificateResponseType response = responder.registerMedicalCertificate(null, request);
         assertEquals(ResultCodeEnum.INFO, response.getResult().getResultCode());
+        Mockito.verifyZeroInteractions(statisticsService);
     }
 
     private void compareSoapMessageWithReferenceFile(String xmlCaptorValue) throws IOException, SAXException {

@@ -12,6 +12,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
 import org.joda.time.LocalDateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -32,29 +33,16 @@ import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateres
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RevokeMedicalCertificateResponderWiretapImplTest {
+public class RevokeMedicalCertificateResponderWiretapImplTest extends RevokeMedicalCertificateResponderImplTest {
 
-    private static final String CERTIFICATE_ID = "intygs-id-1234567890";
-    private static final String PERSONNUMMER = "19121212-1212";
-
-    private static final AttributedURIType ADDRESS = new AttributedURIType();
-
-    @Mock
-    private CertificateService certificateService;
-
-    @InjectMocks
-    private RevokeMedicalCertificateResponderInterface responder = new RevokeMedicalCertificateResponderWiretapImpl();
-
-    private RevokeMedicalCertificateRequestType revokeRequest() throws Exception {
-        // read request from file
-        JAXBContext jaxbContext = JAXBContext.newInstance(RevokeMedicalCertificateRequestType.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        JAXBElement<RevokeMedicalCertificateRequestType> request = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("revoke-medical-certificate/revoke-medical-certificate-request.xml").getInputStream()), RevokeMedicalCertificateRequestType.class);
-        return request.getValue();
-    }
+    @Override
+    protected RevokeMedicalCertificateResponderInterface createResponder() {
+        return new RevokeMedicalCertificateResponderWiretapImpl();
+    };
 
     @Test
-    public void testRevokeCertificate() throws Exception {
+    @Override
+    public void testRevokeCertificateWhichWasAlreadySentToForsakringskassan() throws Exception {
 
         Certificate certificate = new Certificate(CERTIFICATE_ID, "text");
 
@@ -65,28 +53,10 @@ public class RevokeMedicalCertificateResponderWiretapImplTest {
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
     }
-
-    @Test
-    public void testRevokeUnknownCertificate() throws Exception {
-        when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenThrow(new InvalidCertificateException("certificateId", "civicRegistrationNumber"));
-
-        RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
-
-        assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
-        assertEquals("No certificate 'intygs-id-1234567890' found to revoke for patient '19121212-1212'.", response.getResult().getErrorText());
+    
+    @Override
+    public void testRevokeCertificateWithForsakringskassanReturningError() {
+        // This is not a valid case for wiretap (no communication with Forsakringskassan so no error can occur).
     }
 
-    @Test
-    public void testRevokeAlreadyRevokedCertificate() throws Exception {
-        Certificate certificate = new Certificate(CERTIFICATE_ID, "text");
-        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry("FK", CertificateState.CANCELLED, new LocalDateTime());
-        certificate.setStates(Collections.singletonList(historyEntry));
-
-        when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenThrow(new CertificateRevokedException("id"));
-
-        RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
-
-        assertEquals(ResultCodeEnum.INFO, response.getResult().getResultCode());
-        assertEquals("Certificate 'intygs-id-1234567890' is already revoked.", response.getResult().getInfoText());
-    }
 }
