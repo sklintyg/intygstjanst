@@ -1,0 +1,42 @@
+!3 Sätt upp ActiveMQ
+
+!|script|ActiveMQConnectionFixture|
+|set ConnectionFactory url|tcp://localhost:61616|
+
+!|script|ActiveMQDestinationFixture|
+|register queue|CERTIFICATE.QUEUE|as|queue|
+
+!3 Töm kön
+|script|Consumer|queue|
+|clear queue|
+
+!3 Give samtycke för 19121212-1212
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|ja|
+
+!3 När ett nytt intyg har registrerats, så skall ett meddelande ha lagts på kö
+
+|Registrera fk7263 intyg|
+|personnummer|id|utfärdat|resultat?|
+|19121212-1212|intyg-1|2013-08-01|OK|
+
+|script|Consumer|queue|
+|check|queue depth|1|
+|receive message|
+|check|message|=~/"id":\{"root":"intyg-1"\}.*/|
+|check|queue depth|0|
+
+!3 Ta bort samtycke
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|nej|
+
+!3 Rensa bort test-intyg
+
+|ta bort Intyg|
+|id|
+|intyg-1|
+
