@@ -42,7 +42,7 @@
 
   <import resource="application-context-ws.xml"/>
 
-  <import resource="application-context-mq.xml"/>
+  <import resource="classpath:jms-config.xml"/>
 
   <import resource="jaxrs-context.xml"/>
 
