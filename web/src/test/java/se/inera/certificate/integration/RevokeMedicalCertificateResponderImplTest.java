@@ -2,6 +2,7 @@ package se.inera.certificate.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
@@ -19,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
@@ -29,6 +31,7 @@ import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.StatisticsService;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
@@ -40,21 +43,28 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 @RunWith(MockitoJUnitRunner.class)
 public class RevokeMedicalCertificateResponderImplTest {
 
-    private static final String CERTIFICATE_ID = "intygs-id-1234567890";
-    private static final String PERSONNUMMER = "19121212-1212";
+    protected static final String CERTIFICATE_ID = "intygs-id-1234567890";
+    protected static final String PERSONNUMMER = "19121212-1212";
 
-    private static final AttributedURIType ADDRESS = new AttributedURIType();
+    protected static final AttributedURIType ADDRESS = new AttributedURIType();
 
     @Mock
-    private CertificateService certificateService;
+    protected CertificateService certificateService;
+
+    @Mock
+    StatisticsService statisticsService = mock(StatisticsService.class);
 
     @Mock
     private SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
 
     @InjectMocks
-    private RevokeMedicalCertificateResponderInterface responder = new RevokeMedicalCertificateResponderImpl();
+    protected RevokeMedicalCertificateResponderInterface responder = createResponder();
 
-    private RevokeMedicalCertificateRequestType revokeRequest() throws Exception {
+    protected RevokeMedicalCertificateResponderInterface createResponder() {
+        return new RevokeMedicalCertificateResponderImpl();
+    }
+
+    protected RevokeMedicalCertificateRequestType revokeRequest() throws Exception {
         // read request from file
         JAXBContext jaxbContext = JAXBContext.newInstance(RevokeMedicalCertificateRequestType.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -88,6 +98,7 @@ public class RevokeMedicalCertificateResponderImplTest {
         verify(sendMedicalCertificateQuestionResponderInterface).sendMedicalCertificateQuestion(ADDRESS, expectedSendRequest());
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
+        Mockito.verify(statisticsService, Mockito.only()).revoked(certificate);
     }
 
     @Test
@@ -108,6 +119,7 @@ public class RevokeMedicalCertificateResponderImplTest {
         } catch (RuntimeException ex) {
             assertEquals("Informing Försäkringskassan about revoked certificate resulted in error", ex.getMessage());
         }
+        Mockito.verifyZeroInteractions(statisticsService);
     }
 
     @Test
@@ -121,6 +133,7 @@ public class RevokeMedicalCertificateResponderImplTest {
         verify(certificateService).revokeCertificate(PERSONNUMMER, CERTIFICATE_ID);
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
+        Mockito.verify(statisticsService, Mockito.only()).revoked(certificate);
     }
 
     @Test
@@ -131,6 +144,7 @@ public class RevokeMedicalCertificateResponderImplTest {
 
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals("No certificate 'intygs-id-1234567890' found to revoke for patient '19121212-1212'.", response.getResult().getErrorText());
+        Mockito.verifyZeroInteractions(statisticsService);
     }
 
     @Test
@@ -145,5 +159,6 @@ public class RevokeMedicalCertificateResponderImplTest {
 
         assertEquals(ResultCodeEnum.INFO, response.getResult().getResultCode());
         assertEquals("Certificate 'intygs-id-1234567890' is already revoked.", response.getResult().getInfoText());
+        Mockito.verifyZeroInteractions(statisticsService);
     }
 }

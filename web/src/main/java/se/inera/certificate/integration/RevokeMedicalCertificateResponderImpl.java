@@ -23,6 +23,7 @@ import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.integration.validator.RevokeRequestValidator;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.StatisticsService;
 import se.inera.certificate.validate.ValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
@@ -42,6 +43,9 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
 
     @Autowired
     private SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
+
+    @Autowired
+    protected StatisticsService statisticsService;
 
     @Autowired
     @Value("${revokecertificate.address.fk7263}")
@@ -93,6 +97,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
                     handleForsakringskassaError(certificateId, sendResponse.getResult());
                 }
             }
+            statisticsService.revoked(certificate);
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
             LOG.info("Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"

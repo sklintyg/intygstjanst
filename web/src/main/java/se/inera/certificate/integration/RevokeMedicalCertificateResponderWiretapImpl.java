@@ -14,6 +14,7 @@ import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.integration.validator.RevokeRequestValidator;
 import se.inera.certificate.integration.validator.ValidationException;
+import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
@@ -41,7 +42,8 @@ public class RevokeMedicalCertificateResponderWiretapImpl extends RevokeMedicalC
             String civicRegistrationNumber = request.getRevoke().getLakarutlatande().getPatient().getPersonId()
                     .getExtension();
 
-            certificateService.revokeCertificate(civicRegistrationNumber, certificateId);
+            Certificate certificate = certificateService.revokeCertificate(civicRegistrationNumber, certificateId);
+            statisticsService.revoked(certificate);
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
             LOG.info("Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"

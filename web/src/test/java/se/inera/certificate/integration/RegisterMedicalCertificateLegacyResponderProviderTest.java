@@ -4,6 +4,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.stream.StreamSource;
+
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -22,13 +23,16 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.xml.sax.SAXException;
+
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.util.NamespacePrefixNameIgnoringListener;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.StatisticsService;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
@@ -41,6 +45,9 @@ public class RegisterMedicalCertificateLegacyResponderProviderTest {
 
     @Mock
     CertificateService certificateService = mock(CertificateService.class);
+
+    @Mock
+    StatisticsService statisticsService = mock(StatisticsService.class);
 
     private RegisterMedicalCertificateType request;
     private String xml;
@@ -79,6 +86,7 @@ public class RegisterMedicalCertificateLegacyResponderProviderTest {
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
         compareSoapMessageWithReferenceFile(xmlCaptor.getValue());
+        Mockito.verify(statisticsService, Mockito.only()).created(certificate);
     }
 
     @Test
@@ -88,6 +96,7 @@ public class RegisterMedicalCertificateLegacyResponderProviderTest {
 
         RegisterMedicalCertificateResponseType response = responder.registerMedicalCertificate(null, request);
         assertEquals(ResultCodeEnum.INFO, response.getResult().getResultCode());
+        Mockito.verifyZeroInteractions(statisticsService);
     }
 
     private void compareSoapMessageWithReferenceFile(String xmlCaptorValue) throws IOException, SAXException {

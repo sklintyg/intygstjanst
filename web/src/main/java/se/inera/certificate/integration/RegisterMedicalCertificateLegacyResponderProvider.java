@@ -5,16 +5,21 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+
 import java.io.StringWriter;
 
 import com.google.common.base.Throwables;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
+
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.util.ResultOfCallUtil;
+import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.StatisticsService;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.ObjectFactory;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
@@ -36,6 +41,9 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
     @Autowired
     private CertificateService certificateService;
 
+    @Autowired
+    private StatisticsService statisticsService;
+
     @PostConstruct
     public void initializeJaxbContext() throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
@@ -50,8 +58,9 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
 
         try {
             String xml = xmlToString(registerMedicalCertificate);
-            certificateService.storeCertificate(xml, FK7263);
+            Certificate certificate = certificateService.storeCertificate(xml, FK7263);
             response.setResult(ResultOfCallUtil.okResult());
+            statisticsService.created(certificate);
         } catch (CertificateAlreadyExistsException e) {
             response.setResult(ResultOfCallUtil.infoResult("Certificate already exists"));
         } catch (JAXBException e) {

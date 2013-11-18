@@ -42,6 +42,8 @@
 
   <import resource="application-context-ws.xml"/>
 
+  <import resource="classpath:jms-config.xml"/>
+
   <import resource="jaxrs-context.xml"/>
 
   <context:annotation-config/>

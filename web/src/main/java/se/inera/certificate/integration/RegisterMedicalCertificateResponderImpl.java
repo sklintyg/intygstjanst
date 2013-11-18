@@ -5,14 +5,17 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+
 import java.io.StringWriter;
 
 import com.google.common.base.Throwables;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
+
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponderInterface;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType;
@@ -20,7 +23,9 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ObjectFact
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.util.ResultOfCallUtil;
+import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.StatisticsService;
 
 @SchemaValidation
 public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalCertificateResponderInterface {
@@ -29,6 +34,9 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
 
     @Autowired
     private CertificateService certificateService;
+
+    @Autowired
+    StatisticsService statisticsService;
 
     private Marshaller marshaller;
     private ObjectFactory objectFactory;
@@ -50,8 +58,9 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
 
         try {
             String xml = xmlToString(registerMedicalCertificate);
-            certificateService.storeCertificate(xml, type);
+            Certificate certificate = certificateService.storeCertificate(xml, type);
             response.setResult(ResultOfCallUtil.okResult());
+            statisticsService.created(certificate);
         } catch (CertificateAlreadyExistsException e) {
             response.setResult(ResultOfCallUtil.infoResult("Certificate already exists"));
         } catch (JAXBException e) {
