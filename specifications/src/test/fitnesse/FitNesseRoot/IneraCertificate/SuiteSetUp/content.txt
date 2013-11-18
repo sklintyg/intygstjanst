@@ -2,6 +2,7 @@
 |Import|
 |se.inera.certificate.spec|
 |se.inera.certificate.spec.util|
+|se.inera.certificate.spec.util.jms|
 
 !|Config|
 |property|value|

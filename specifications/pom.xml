@@ -86,6 +86,17 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>javax.jms</groupId>
+      <artifactId>jms-api</artifactId>
+      <version>1.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-client</artifactId>
+      <version>5.8.0</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -152,6 +163,7 @@
           <useProjectDependencies>
               <scope>compile</scope>
               <scope>test</scope>
+              <scope>provided</scope>
           </useProjectDependencies>
         </configuration>
       </plugin>
