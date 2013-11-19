@@ -102,9 +102,16 @@
                   </extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
+                    urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCare:1:rivtabp21=se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1
+                  </extraarg>
+                  <extraarg>-p</extraarg>
+                  <extraarg>
+                    urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCareResponder:1=se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1
+                  </extraarg>
+                  <extraarg>-p</extraarg>
+                  <extraarg>
                     urn:riv:clinicalprocess:healthcond:certificate:1=se.inera.certificate.clinicalprocess.healthcond.certificate.v1
                   </extraarg>
-
 
                   <extraarg>-p</extraarg>
                   <extraarg>
@@ -268,6 +275,23 @@
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
                       classpath:schemas/clinicalprocess/healthcond/certificate/GetCertificateForCareInteraction/GetCertificateForCareInteraction_1.0_rivtabp20.wsdl
+                    </extraarg>
+                  </extraargs>
+                </wsdlOption>
+
+                <wsdlOption>
+                  <wsdl>
+                    ${schema.path}/clinicalprocess/healthcond/certificate/ListCertificatesForCareInteraction/ListCertificatesForCareInteraction_1.0_RIVTABP21.wsdl
+                  </wsdl>
+                  <bindingFiles>
+                    <bindingFile>
+                      ${basedir}/bindings/general-intyg-binding.xjb
+                    </bindingFile>
+                  </bindingFiles>
+                  <extraargs>
+                    <extraarg>-wsdlLocation</extraarg>
+                    <extraarg>
+                      classpath:schemas/clinicalprocess/healthcond/certificate/ListCertificatesForCareInteraction/ListCertificatesForCareInteraction_1.0_RIVTABP21.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>

@@ -325,4 +325,44 @@
       <xs:element name="tom" type="partialDate"/>
     </xs:sequence>
   </xs:complexType>
+
+  <xs:simpleType name="ResultCodeType">
+    <xs:annotation>
+      <xs:documentation xml:lang='sv'>
+        Enumerationsvärde som anger de svarskoder som finns.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="OK">
+        <xs:annotation>
+          <xs:documentation xml:lang='sv'>
+            Transaktionen har utförts enligt uppdraget.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="INFO">
+        <xs:annotation>
+          <xs:documentation xml:lang='sv'>
+            Transaktionen har utförts enligt begäran, men det finns ett meddelande som konsumenten måste visa upp för
+            användaren (om tillämpbart). Exempel på detta kan vara &amp;quot;kom fastande&amp;quot;.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="ERROR">
+        <xs:annotation>
+          <xs:documentation xml:lang='sv'>
+            Transaktionen har INTE kunnat utföras p.g.a ett logiskt fel. Det finns ett meddelande som konsumenten måste
+            visa upp. Exempel på detta kan vara &amp;quot;tiden har bokats av annan patient&amp;quot;.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="VALIDATION_ERROR">
+        <xs:annotation>
+          <xs:documentation xml:lang='sv'>
+            En eller flera inparametrar innehåller felaktiga värden. Angiven tjänst utfördes ej.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
 </xs:schema>

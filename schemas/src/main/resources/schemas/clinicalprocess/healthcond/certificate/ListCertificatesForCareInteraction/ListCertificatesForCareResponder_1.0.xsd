@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCareResponder:1"
+        xmlns:tns="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCareResponder:1"
+        elementFormDefault="qualified"
+        xmlns:cert="urn:riv:insuranceprocess:certificate:1" version="1.0"
+        xmlns:c="urn:riv:clinicalprocess:healthcond:certificate:1">
+
+  <import schemaLocation="../../../../core_components/insuranceprocess_certificate_1.0.xsd"
+          namespace="urn:riv:insuranceprocess:certificate:1"/>
+  <import schemaLocation="../../../../core_components/clinicalprocess_healthcond_certificate_1.0.xsd"
+          namespace="urn:riv:clinicalprocess:healthcond:certificate:1"/>
+
+  <element name="ListCertificatesForCare" type="tns:ListCertificatesForCareType"/>
+  <element name="ListCertificatesForCareResponse" type="tns:ListCertificatesForCareResponseType"/>
+
+  <complexType name="ListCertificatesForCareType">
+    <sequence>
+      <element name="nationalIdentityNumber" type="string"/>
+      <element name="careUnit" type="string" minOccurs="1" maxOccurs="unbounded"/>
+      <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <complexType name="ListCertificatesForCareResponseType">
+    <sequence>
+      <element name="meta" type="cert:CertificateMetaType" maxOccurs="unbounded" minOccurs="0"/>
+      <element name="resultCode" type="c:ResultCodeType" minOccurs="1" maxOccurs="1"/>
+      <element name="resultText" type="string" minOccurs="0" maxOccurs="1"/>
+      <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+</schema>
