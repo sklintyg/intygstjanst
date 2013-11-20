@@ -13,7 +13,14 @@ public class ResultTypeUtil {
 
     public static ResultType okResult() {
         ResultType result = new ResultType();
-        result.setResultCode(ResultCodeType.OK.OK);
+        result.setResultCode(ResultCodeType.OK);
+        return result;
+    }
+
+    public static ResultType result(ResultCodeType resultCode, String resultText) {
+        ResultType result = new ResultType();
+        result.setResultCode(resultCode);
+        result.setResultText(resultText);
         return result;
     }
 }

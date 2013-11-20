@@ -23,18 +23,18 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.dom.DOMSource;
 
-import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
+import static se.inera.certificate.integration.util.ResultTypeUtil.okResult;
 
 import com.google.common.base.Throwables;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
-import org.w3.wsaddressing10.AttributedURIType;
 import org.w3c.dom.Document;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareRequestType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponderInterface;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponseType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.integration.converter.ModelConverter;
 import se.inera.certificate.model.dao.Certificate;
@@ -46,7 +46,6 @@ import se.inera.certificate.model.dao.Certificate;
 @SchemaValidation
 public class GetCertificateForCareResponderImpl extends AbstractGetCertificateResponderImpl implements
         GetCertificateForCareResponderInterface {
-
 
     private static final Logger LOG = LoggerFactory.getLogger(GetCertificateForCareResponderImpl.class);
 
@@ -62,19 +61,20 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
     }
 
     @Override
-    public GetCertificateForCareResponseType getCertificateForCare(AttributedURIType logicalAddress,
-                                                                   GetCertificateForCareRequestType request) {
+    public GetCertificateForCareResponseType getCertificateForCare(String logicalAddress,
+            GetCertificateForCareRequestType request) {
 
         GetCertificateForCareResponseType response = new GetCertificateForCareResponseType();
 
-        CertificateOrResultOfCall certificateOrResultOfCall = getCertificate(request.getCertificateId(), null);
+        CertificateOrResultType certificateOrResultType = getCertificate(request.getCertificateId(), null);
 
-        if (certificateOrResultOfCall.hasError()) {
-            response.setResult(certificateOrResultOfCall.getResultOfCall());
+        if (certificateOrResultType.hasError()) {
+            ResultType resultType = certificateOrResultType.getResultType();
+            response.setResult(resultType);
             return response;
         }
 
-        Certificate certificate = certificateOrResultOfCall.getCertificate();
+        Certificate certificate = certificateOrResultType.getCertificate();
         response.setMeta(ModelConverter.toCertificateMetaType(certificate));
         attachCertificateDocument(certificate, response);
         return response;

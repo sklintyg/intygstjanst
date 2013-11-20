@@ -1,7 +1,7 @@
 !3 Ett journalsystem försöker att hämta ett intyg som inte är registrerad ännu
 |Journalsystem hamtar intyg|
 |intyg|resultat?|
-|intyg-1|[ERROR] - Unknown certificate ID: intyg-1|
+|intyg-1|[VALIDATION_ERROR] - Unknown certificate ID: intyg-1|
 
 !3 Efter journalsystemet har registrerat ett nytt intyg så ska det vara tillgängligt
 
