@@ -159,6 +159,7 @@ public class CertificateServiceImplTest {
         assertEquals("fk7263", certificate.getType());
         assertNotNull(certificate.getDocument());
         assertEquals("Hans Rosling", certificate.getSigningDoctorName());
+        assertEquals("vardenhets-id", certificate.getCareUnitId());
         assertEquals("Vårdcentrum i väst", certificate.getCareUnitName());
         assertEquals("19001122-3344", certificate.getCivicRegistrationNumber());
         assertEquals(new LocalDateTime("2013-05-31T09:51:38.570"), certificate.getSignedDate());

@@ -246,6 +246,7 @@ public class CertificateServiceImpl implements CertificateService {
         certificate.setSignedDate(utlatande.getSigneringsdatum());
 
         if (utlatande.getSkapadAv() != null && utlatande.getSkapadAv().getVardenhet() != null) {
+            certificate.setCareUnitId(utlatande.getSkapadAv().getVardenhet().getId().getExtension());
             certificate.setCareUnitName(utlatande.getSkapadAv().getVardenhet().getNamn());
         }
 
