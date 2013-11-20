@@ -42,7 +42,7 @@ public interface CertificateDao {
      * @param toDate To data when the certificate is valid
      * @return
      */
-    List<Certificate> findCertificate(String civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate);
+    List<Certificate> findCertificate(String civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate, List<String> careUnits);
 
     /**
      * Gets one {@link Certificate}.

@@ -110,7 +110,12 @@ public class CertificateServiceImpl implements CertificateService {
             LocalDate fromDate, LocalDate toDate) {
         assertConsent(civicRegistrationNumber);
         return fixDeletedStatus(certificateDao.findCertificate(civicRegistrationNumber, certificateTypes, fromDate,
-                toDate));
+                toDate, null));
+    }
+
+    @Override
+    public List<Certificate> listCertificatesForCare(String civicRegistrationNumber, List<String> careUnits) {
+        return fixDeletedStatus(certificateDao.findCertificate(civicRegistrationNumber, null, null, null, careUnits));
     }
 
     @Override
@@ -256,6 +261,7 @@ public class CertificateServiceImpl implements CertificateService {
         certificate.setSignedDate(utlatande.getSigneringsdatum());
 
         if (utlatande.getSkapadAv() != null && utlatande.getSkapadAv().getVardenhet() != null) {
+            certificate.setCareUnitId(utlatande.getSkapadAv().getVardenhet().getId().getExtension());
             certificate.setCareUnitName(utlatande.getSkapadAv().getVardenhet().getNamn());
         }
 

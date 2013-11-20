@@ -36,10 +36,15 @@ public class CertificateBuilder {
         return this;
     }
 
-    public CertificateBuilder careUnitName(String careUnitName) {
-        certificate.setCareUnitName(careUnitName);
+    public CertificateBuilder careUnitId(String careUnitId) {
+        certificate.setCareUnitId(careUnitId);
         return this;
     }
+
+    public CertificateBuilder careUnitName(String careUnitName) {
+            certificate.setCareUnitName(careUnitName);
+            return this;
+        }
 
     public CertificateBuilder signingDoctorName(String signingDoctorName) {
         certificate.setSigningDoctorName(signingDoctorName);

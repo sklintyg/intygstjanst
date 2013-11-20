@@ -15,6 +15,8 @@
 |service.setConsentUrl|${services.setConsentUrl}|
 |service.registerMedicalCertificateUrl|${services.registerMedicalCertificateUrl}|
 |service.clinicalProcess.registerMedicalCertificateUrl|${services.clinicalProcess.registerMedicalCertificateUrl}|
+|service.clinicalProcess.getCertificateUrl|${services.clinicalProcess.getCertificateUrl}|
+|service.clinicalProcess.listCertificatesUrl|${services.clinicalProcess.listCertificatesUrl}|
 |service.sendCertificateUrl|${services.sendCertificateUrl}|
 |service.sendMedicalCertificateQuestionUrl|${services.sendMedicalCertificateQuestionUrl}|
 |service.sendMedicalCertificateAnswerUrl|${services.sendMedicalCertificateAnswerUrl}|
