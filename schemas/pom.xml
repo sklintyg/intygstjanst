@@ -90,7 +90,7 @@
                   </extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
-                    urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificate:1:rivtabp20=se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1
+                    urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificate:1:rivtabp21=se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1
                   </extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
@@ -247,7 +247,7 @@
 
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/clinicalprocess/healthcond/certificate/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_1.0_rivtabp20.wsdl
+                    ${schema.path}/clinicalprocess/healthcond/certificate/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_1.0_RIVTABP21.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -257,7 +257,7 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/clinicalprocess/healthcond/certificate/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_1.0_rivtabp20.wsdl
+                      classpath:schemas/clinicalprocess/healthcond/certificate/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_1.0_RIVTABP21.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>

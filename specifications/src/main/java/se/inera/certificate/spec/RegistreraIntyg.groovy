@@ -1,15 +1,18 @@
 package se.inera.certificate.spec
+
 import org.joda.time.LocalDateTime
 import org.springframework.core.io.ClassPathResource
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponderInterface
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType
+import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType
 import se.inera.certificate.spec.util.WsClientFixture
 
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
 import javax.xml.transform.stream.StreamSource
+
 /**
  *
  * @author andreaskaltenbach
@@ -65,10 +68,17 @@ public class RegistreraIntyg extends WsClientFixture {
 
         request.utlatande = utlatande
 
-        response = registerMedicalCertificateResponder.registerMedicalCertificate(logicalAddress, request);
+        response = registerMedicalCertificateResponder.registerMedicalCertificate(LOGICAL_ADDRESS, request);
     }
 
     public String resultat() {
-        resultAsString(response)
+        if (response) {
+            switch (response.result.resultCode) {
+                case ResultCodeType.OK:
+                    return response.result.resultCode.toString()
+                default:
+                    return "[${response.result.resultCode.toString()}] - ${response.result.resultText}"
+            }
+        }
     }
 }
