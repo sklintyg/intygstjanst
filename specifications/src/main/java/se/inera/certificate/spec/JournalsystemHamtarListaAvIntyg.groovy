@@ -43,37 +43,9 @@ public class JournalsystemHamtarListaAvIntyg extends WsClientFixture {
         }
     }
 
-
-    public String resultat() {
+    def String resultat() {
         resultat
     }
-
-    /* @XmlElement(required = true)
-        protected String certificateId;
-        @XmlElement(required = true)
-        protected String certificateType;
-        @XmlElement(required = true, type = String.class)
-        @XmlJavaTypeAdapter(Adapter2 .class)
-        @XmlSchemaType(name = "date")
-        protected LocalDate validFrom;
-        @XmlElement(required = true, type = String.class)
-        @XmlJavaTypeAdapter(Adapter2 .class)
-        @XmlSchemaType(name = "date")
-        protected LocalDate validTo;
-        @XmlElement(required = true)
-        protected String issuerName;
-        @XmlElement(required = true)
-        protected String facilityName;
-        @XmlElement(required = true, type = String.class)
-        @XmlJavaTypeAdapter(Adapter2 .class)
-        @XmlSchemaType(name = "date")
-        protected LocalDate signDate;
-        @XmlElement(required = true)
-        protected String available;
-        protected List<CertificateStatusType> status;
-        @XmlAnyElement(lax = true)
-        protected List<Object> any;    */
-
 
     def intyg() {
         intygMeta.collect { it.certificateId }
