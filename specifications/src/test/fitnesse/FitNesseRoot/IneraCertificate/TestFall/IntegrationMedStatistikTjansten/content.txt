@@ -9,6 +9,7 @@
 !3 Töm kön
 |script|Consumer|queue|
 |clear queue|
+|check|queue depth|0|
 
 !3 Give samtycke för 19121212-1212
 
