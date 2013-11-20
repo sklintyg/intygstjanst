@@ -25,12 +25,16 @@ class Consumer {
         Connection conn = null;
         Session session = null;
         MessageConsumer consumer = null;
+        int itemCount = queueDepth()
         try {
             conn = ActiveMQConnectionFixture.getConnection()
             conn.start()
             session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE)
             consumer = session.createConsumer(destination)
-            while(consumer.receiveNoWait() != null) {}
+            
+            itemCount.times {
+                consumer.receive(timeout)
+            }
         } finally {
             JMSUtils.closeQuitely(conn, session, consumer)
         }
@@ -66,7 +70,6 @@ class Consumer {
             session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE)
             browser = session.createBrowser(destination)
             Enumeration<Message> messages = browser.getEnumeration();
-            
             while(messages.hasMoreElements()) {
                 depth++;
                 messages.nextElement();
