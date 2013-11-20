@@ -18,15 +18,14 @@
  */
 package se.inera.certificate.service.impl;
 
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
+import javax.ws.rs.core.Response;
+
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -36,6 +35,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
@@ -51,11 +51,16 @@ import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
+import se.inera.certificate.model.util.Strings;
 import se.inera.certificate.schema.adapter.PartialAdapter;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
+import se.inera.certificate.validate.CommonModelValidator;
 import se.inera.certificate.validate.ValidationException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Throwables;
 
 /**
  * @author andreaskaltenbach
@@ -174,6 +179,8 @@ public class CertificateServiceImpl implements CertificateService {
 
         Utlatande utlatande = convertToCommonUtlatande(externalJson);
 
+        validateCommonModel(utlatande);
+        
         // turn a lakarutlatande into a certificate entity
         Certificate certificate = createCertificate(utlatande, externalJson);
 
@@ -190,6 +197,14 @@ public class CertificateServiceImpl implements CertificateService {
         storeOriginalCertificate(xml, certificate);
 
         return certificate;
+    }
+
+    private void validateCommonModel(Utlatande utlatande) {
+         List<String> validationErrors = new CommonModelValidator(utlatande).validate();
+         if (!validationErrors.isEmpty()) {
+             throw new ValidationException(Strings.join(",", validationErrors));
+         }
+        return;
     }
 
     private void checkForExistingCertificate(String certificateId, String personnummer) {
