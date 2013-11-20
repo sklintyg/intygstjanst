@@ -105,7 +105,12 @@ public class CertificateServiceImpl implements CertificateService {
             LocalDate fromDate, LocalDate toDate) {
         assertConsent(civicRegistrationNumber);
         return fixDeletedStatus(certificateDao.findCertificate(civicRegistrationNumber, certificateTypes, fromDate,
-                toDate));
+                toDate, null));
+    }
+
+    @Override
+    public List<Certificate> listCertificatesForCare(String civicRegistrationNumber, List<String> careUnits) {
+        return fixDeletedStatus(certificateDao.findCertificate(civicRegistrationNumber, null, null, null, careUnits));
     }
 
     @Override

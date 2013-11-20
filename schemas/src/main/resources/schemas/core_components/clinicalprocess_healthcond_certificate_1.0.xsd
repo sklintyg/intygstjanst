@@ -326,6 +326,21 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="ResultType">
+  		<xs:annotation>
+  		    <xs:documentation xml:lang='sv'>
+  		        Datatyp som returneras som ett generellt svar från alla förändrande tjänster, t.ex. skapa, radera, etc.
+  		        En anropande klient skall alltid kontrollera att resultatkoden inte innehåller fel för att på så sätt veta om anropet lyckades.
+  		        Alla svarskoder förutom OK och INFO betyder att åtgärden inte genomfördes.
+  		    </xs:documentation>
+  		</xs:annotation>
+  		<xs:sequence>
+  			<xs:element name="resultCode" type="ResultCodeType"/>
+  			<xs:element name="resultText" type="xs:string" minOccurs="0"/>
+  			<xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
+  		</xs:sequence>
+  	</xs:complexType>
+
   <xs:simpleType name="ResultCodeType">
     <xs:annotation>
       <xs:documentation xml:lang='sv'>

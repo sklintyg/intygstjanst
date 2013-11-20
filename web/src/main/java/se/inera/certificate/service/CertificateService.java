@@ -49,6 +49,8 @@ public interface CertificateService {
      */
     List<Certificate> listCertificates(String civicRegistrationNumber, List<String> certificateTypes, LocalDate fromDate, LocalDate toDate);
 
+    List<Certificate> listCertificatesForCare(String civicRegistrationNumber, List<String> careUnits);
+
     /**
      * Returns the certificate for the given patient and certificate ID.
      *
