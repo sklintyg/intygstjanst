@@ -13,6 +13,7 @@
 |intyg|förväntatSvar|resultat?|status?|
 |intyg-1|{"utlatandeId":{"root":"intyg-1"}}|OK|[RECEIVED]|
 
+
 !3 Rensa bort test-intyg
 
 |ta bort Intyg|

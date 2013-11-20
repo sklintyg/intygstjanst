@@ -58,7 +58,7 @@ public class RegistreraIntyg extends WsClientFixture {
         if (typ) utlatande.typAvUtlatande.code = typ
         utlatande.patient.personId.extension = personnummer
         utlatande.utlatandeId.root = id
-        utlatande.signeringsdatum = LocalDateTime.parse(utfärdat)
+        if (utfärdat) utlatande.signeringsdatum = LocalDateTime.parse(utfärdat)
         utlatande.skickatdatum = LocalDateTime.now()
         utlatande.skapadAv.fullstandigtNamn = utfärdare
         utlatande.skapadAv.enhet.enhetsId.extension = enhet
