@@ -23,6 +23,7 @@ public final class CertificateFactory {
     public static final LocalDateTime SIGNED_DATE = new LocalDateTime(1999, 12, 31, 10, 32);
     public static final String SIGNING_DOCTOR = "Dr. Oetker";
 
+    public static final String CARE_UNIT_ID = "1.2.3.4.5.6";
     public static final String CARE_UNIT_NAME = "London Bridge Hospital";
 
     public static Certificate buildCertificate() {
@@ -48,6 +49,7 @@ public final class CertificateFactory {
                 .validity(validFrom, validTo)
                 .signedDate(SIGNED_DATE)
                 .signingDoctorName(SIGNING_DOCTOR)
+                .careUnitId(CARE_UNIT_ID)
                 .careUnitName(CARE_UNIT_NAME)
                 .build();
     }

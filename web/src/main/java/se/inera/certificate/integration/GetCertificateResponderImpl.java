@@ -18,11 +18,16 @@
  */
 package se.inera.certificate.integration;
 
+import static se.inera.certificate.integration.util.ResultOfCallUtil.applicationErrorResult;
+import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
+import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 
 import org.apache.cxf.annotations.SchemaValidation;
 import org.w3.wsaddressing10.AttributedURIType;
 import org.w3c.dom.Document;
+
+import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType;
 import se.inera.certificate.integration.converter.ModelConverter;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20.GetCertificateResponderInterface;
@@ -41,15 +46,29 @@ public class GetCertificateResponderImpl extends AbstractGetCertificateResponder
     public GetCertificateResponseType getCertificate(AttributedURIType logicalAddress, GetCertificateRequestType request) {
         GetCertificateResponseType response = new GetCertificateResponseType();
 
-        CertificateOrResultOfCall certificateOrResultOfCall = getCertificate(request.getCertificateId(),
+        CertificateOrResultType certificateOrResultType = getCertificate(request.getCertificateId(),
                 request.getNationalIdentityNumber());
 
-        if (certificateOrResultOfCall.hasError()) {
-            response.setResult(certificateOrResultOfCall.getResultOfCall());
+        if (certificateOrResultType.hasError()) {
+            ResultType result = certificateOrResultType.getResultType();
+
+            switch (result.getResultCode()) {
+            case OK:
+                response.setResult(okResult());
+                break;
+            case INFO:
+                response.setResult(infoResult(result.getResultText()));
+                break;
+            case VALIDATION_ERROR:
+                response.setResult(failResult(result.getResultText()));
+                break;
+            default:
+                response.setResult(applicationErrorResult(result.getResultText()));
+            }
             return response;
         }
 
-        Certificate certificate = certificateOrResultOfCall.getCertificate();
+        Certificate certificate = certificateOrResultType.getCertificate();
         response.setMeta(ModelConverter.toCertificateMetaType(certificate));
         attachCertificateDocument(certificate, response);
         return response;

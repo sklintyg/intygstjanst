@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <GetCertificateForCareResponse xmlns:c="urn:riv:insuranceprocess:certificate:1"
                                    xmlns="urn:riv:clinicalprocess:healthcond:certificate:GetCertificateForCareResponder:1"
-                                   xmlns:ns3="urn:riv:clinicalprocess:healthcond:certificate:1"
-                                   xmlns:ns4="urn:riv:insuranceprocess:healthreporting:2">
+                                   xmlns:ns3="urn:riv:clinicalprocess:healthcond:certificate:1">
   <meta>
     <c:certificateId>123456</c:certificateId>
     <c:certificateType>fk7263</c:certificateType>
@@ -15,6 +14,6 @@
     <ns3:utlatande-id extension="123" root="root"/>
   </certificate>
   <result>
-    <ns4:resultCode>OK</ns4:resultCode>
+    <ns3:resultCode>OK</ns3:resultCode>
   </result>
 </GetCertificateForCareResponse>

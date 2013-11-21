@@ -4,8 +4,9 @@ import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 
-import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.INFO;
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.VALIDATION_ERROR;
+import static se.inera.certificate.integration.util.ResultTypeUtil.result;
 
 import com.google.common.base.Throwables;
 import org.slf4j.Logger;
@@ -35,23 +36,22 @@ public abstract class AbstractGetCertificateResponderImpl {
     @Autowired
     private ModuleRestApiFactory moduleRestApiFactory;
 
-    protected CertificateOrResultOfCall getCertificate(String certificateId, String personnummer) {
+    protected CertificateOrResultType getCertificate(String certificateId, String personnummer) {
         try {
-            return new CertificateOrResultOfCall(certificateService.getCertificate(personnummer, certificateId));
+            return new CertificateOrResultType(certificateService.getCertificate(personnummer, certificateId));
         } catch (MissingConsentException ex) {
             // return ERROR if user has not given consent
             LOG.info("Tried to get certificate '" + certificateId + "' but user '" + personnummer
                     + "' has not given consent.");
-            return new CertificateOrResultOfCall(failResult(String.format("Missing consent for patient %s",
-                    personnummer)));
+            return new CertificateOrResultType(result(VALIDATION_ERROR, String.format("Missing consent for patient %s", personnummer)));
         } catch (InvalidCertificateException ex) {
             LOG.info("Tried to get certificate '" + certificateId + "' but no such certificate does exist for user '"
                     + personnummer + "'.");
-            return new CertificateOrResultOfCall(failResult(String.format("Unknown certificate ID: %s", certificateId)));
+            return new CertificateOrResultType(result(VALIDATION_ERROR, String.format("Unknown certificate ID: %s", certificateId)));
         } catch (CertificateRevokedException ex) {
             // return INFO if certificate is revoked
             LOG.info("Tried to get certificate '" + certificateId + "' but certificate has been revoked'.");
-            return new CertificateOrResultOfCall((infoResult("Certificate '" + certificateId + "' has been revoked")));
+            return new CertificateOrResultType((result(INFO, "Certificate '" + certificateId + "' has been revoked")));
         }
     }
 

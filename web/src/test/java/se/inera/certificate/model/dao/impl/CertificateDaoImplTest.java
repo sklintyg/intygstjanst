@@ -20,7 +20,7 @@ package se.inera.certificate.model.dao.impl;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,7 +49,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-
 import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
@@ -58,7 +57,7 @@ import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.support.CertificateFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:persistence-config.xml"})
+@ContextConfiguration(locations = { "classpath:persistence-config.xml" })
 @ActiveProfiles("dev")
 @Transactional
 public class CertificateDaoImplTest {
@@ -71,13 +70,14 @@ public class CertificateDaoImplTest {
 
     @Test
     public void testFindCertificateWithoutUserId() {
-        List<Certificate> certificate = certificateDao.findCertificate(null, null, null, null);
+        List<Certificate> certificate = certificateDao.findCertificate(null, null, null, null, null);
         assertTrue(certificate.isEmpty());
     }
 
     @Test
     public void testFindCertificateForUserWithoutCertificates() {
-        List<Certificate> certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER, null, null, null);
+        List<Certificate> certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER, null, null, null,
+                null);
         assertTrue(certificate.isEmpty());
     }
 
@@ -86,7 +86,8 @@ public class CertificateDaoImplTest {
 
         entityManager.persist(buildCertificate());
 
-        List<Certificate> certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER, null, null, null);
+        List<Certificate> certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER, null, null, null,
+                null);
         assertEquals(1, certificate.size());
     }
 
@@ -94,7 +95,8 @@ public class CertificateDaoImplTest {
     public void testFindCertificateWithEmptyTypeForUserWithOneCertificate() {
         entityManager.persist(buildCertificate());
 
-        List<Certificate> certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER, Collections.<String>emptyList(), null, null);
+        List<Certificate> certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER,
+                Collections.<String> emptyList(), null, null, null);
         assertEquals(1, certificate.size());
     }
 
@@ -108,23 +110,52 @@ public class CertificateDaoImplTest {
         entityManager.persist(buildCertificate("otherCertificateId", otherCertificateType));
 
         // no certificate type -> no filtering by certificate type
-        List<Certificate> certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER, null, null, null);
+        List<Certificate> certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER, null, null, null,
+                null);
         assertEquals(2, certificate.size());
 
         // filter by FK7263 -> only return FK7263
-        certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER, singletonList(FK7263), null, null);
+        certificate = certificateDao
+                .findCertificate(CIVIC_REGISTRATION_NUMBER, singletonList(FK7263), null, null, null);
         assertEquals(1, certificate.size());
         assertEquals(FK7263, certificate.get(0).getType());
 
         // filter by other type -> only return other certificate
-        certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER,
-                singletonList(otherCertificateType), null, null);
+        certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER, singletonList(otherCertificateType),
+                null, null, null);
         assertEquals(1, certificate.size());
         assertEquals(otherCertificateType, certificate.get(0).getType());
 
         // filter by both types -> both certificates are returned
-        certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER,
-                asList(FK7263, otherCertificateType), null, null);
+        certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER, asList(FK7263, otherCertificateType),
+                null, null, null);
+        assertEquals(2, certificate.size());
+    }
+
+    @Test
+    public void testFindCertificateWithCareUnitFilter() {
+
+        // two certificates with different care units IDs
+        Certificate west = buildCertificate("1");
+        west.setCareUnitId("west");
+        entityManager.persist(west);
+
+        Certificate east = buildCertificate("2");
+        east.setCareUnitId("east");
+        entityManager.persist(east);
+
+        // no matching care unit ID, no certificates
+        List<Certificate> certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER, null, null, null,
+                Collections.singletonList("unknown"));
+        assertEquals(0, certificate.size());
+
+        // filter by 'west' -> only return 'west'-based intyg
+        certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER, null, null, null, Collections.singletonList("west"));
+        assertEquals(1, certificate.size());
+        assertEquals(west, certificate.get(0));
+
+        // filter by 'west' and 'east' -> both 'west'- and 'east'-based intyg
+        certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER, null, null, null, Arrays.asList("west", "east"));
         assertEquals(2, certificate.size());
     }
 
@@ -137,7 +168,7 @@ public class CertificateDaoImplTest {
         entityManager.persist(buildCertificate(String.valueOf(certificateId++), "2013-05-13", "2013-06-13"));
 
         List<Certificate> certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER,
-                singletonList(FK7263), new LocalDate("2013-04-01"), new LocalDate("2013-04-15"));
+                singletonList(FK7263), new LocalDate("2013-04-01"), new LocalDate("2013-04-15"), null);
 
         assertEquals(2, certificate.size());
     }
@@ -176,7 +207,8 @@ public class CertificateDaoImplTest {
 
     @Test(expected = InvalidCertificateIdentifierException.class)
     public void testUpdateStatusForWrongCertificate() {
-        certificateDao.updateStatus("<unknownCertId>", "<unknownPersonnummer>", CertificateState.IN_PROGRESS, "fk", null);
+        certificateDao.updateStatus("<unknownCertId>", "<unknownPersonnummer>", CertificateState.IN_PROGRESS, "fk",
+                null);
     }
 
     @Test
@@ -257,7 +289,8 @@ public class CertificateDaoImplTest {
 
     @Test
     public void testStoreOriginalCertificate() {
-        long originalCertId = certificateDao.storeOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "Some text", null));
+        long originalCertId = certificateDao.storeOriginalCertificate(new OriginalCertificate(LocalDateTime.now(),
+                "Some text", null));
 
         OriginalCertificate original = entityManager.find(OriginalCertificate.class, originalCertId);
         assertNotNull(original);
@@ -268,7 +301,8 @@ public class CertificateDaoImplTest {
     public void testStoreOriginalCertificateWithCertificate() {
         Certificate certificate = buildCertificate();
         certificateDao.store(certificate);
-        long originalCertId = certificateDao.storeOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "Some text", certificate));
+        long originalCertId = certificateDao.storeOriginalCertificate(new OriginalCertificate(LocalDateTime.now(),
+                "Some text", certificate));
 
         OriginalCertificate original = entityManager.find(OriginalCertificate.class, originalCertId);
         assertNotNull(original);

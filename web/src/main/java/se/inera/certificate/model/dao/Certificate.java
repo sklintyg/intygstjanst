@@ -18,15 +18,6 @@
  */
 package se.inera.certificate.model.dao;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import se.inera.certificate.model.CertificateState;
-import se.inera.certificate.model.ModelException;
-import se.inera.certificate.model.util.Predicate;
-
 import javax.persistence.Basic;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -47,10 +38,17 @@ import java.util.List;
 
 import static se.inera.certificate.model.util.Iterables.find;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDateTime;
+import se.inera.certificate.model.CertificateState;
+import se.inera.certificate.model.ModelException;
+import se.inera.certificate.model.util.Predicate;
+
 /**
- * This class represents the document part of a certificate. The document is stored as a binary large object
- * in the database. The encoding is UTF-8.
- *
+ * This class represents the document part of a certificate. The document is stored as a binary large object in the
+ * database. The encoding is UTF-8.
+ * 
  * @author andreaskaltenbach
  */
 @Entity
@@ -97,6 +95,12 @@ public class Certificate {
     /**
      * Name of care unit.
      */
+    @Column(name = "CARE_UNIT_ID", nullable = false)
+    private String careUnitId;
+
+    /**
+     * Name of care unit.
+     */
     @Column(name = "CARE_UNIT_NAME", nullable = false)
     private String careUnitName;
 
@@ -132,17 +136,16 @@ public class Certificate {
     private Boolean deleted = Boolean.FALSE;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-            name = "CERTIFICATE_STATE",
-            joinColumns = @JoinColumn(name = "CERTIFICATE_ID")
-    )
+    @CollectionTable(name = "CERTIFICATE_STATE", joinColumns = @JoinColumn(name = "CERTIFICATE_ID"))
     private Collection<CertificateStateHistoryEntry> states = new ArrayList<>();
 
     /**
      * Constructor that takes an id and a document.
-     *
-     * @param id       the id
-     * @param document the document
+     * 
+     * @param id
+     *            the id
+     * @param document
+     *            the document
      */
     public Certificate(String id, String document) {
         this.id = id;
@@ -176,7 +179,7 @@ public class Certificate {
 
     /**
      * Sets the document data.
-     *
+     * 
      * @param document
      */
     public void setDocument(String document) {
@@ -201,6 +204,14 @@ public class Certificate {
 
     public void setSigningDoctorName(String signingDoctorName) {
         this.signingDoctorName = signingDoctorName;
+    }
+
+    public String getCareUnitId() {
+        return careUnitId;
+    }
+
+    public void setCareUnitId(String careUnitId) {
+        this.careUnitId = careUnitId;
     }
 
     public String getCareUnitName() {
@@ -252,8 +263,7 @@ public class Certificate {
     }
 
     public List<CertificateStateHistoryEntry> getStates() {
-        return Collections.unmodifiableList(
-                CertificateStateHistoryEntry.byTimestampDesc.sortedCopy(states));
+        return Collections.unmodifiableList(CertificateStateHistoryEntry.byTimestampDesc.sortedCopy(states));
     }
 
     public void setStates(List<CertificateStateHistoryEntry> states) {
@@ -305,19 +315,11 @@ public class Certificate {
 
     @Override
     public String toString() {
-        return "Certificate{" +
-                "id='" + id + '\'' +
-                ", document=" + fromBytes(document) +
-                ", type='" + type + '\'' +
-                ", signingDoctorName='" + signingDoctorName + '\'' +
-                ", careUnitName='" + careUnitName + '\'' +
-                ", civicRegistrationNumber='" + civicRegistrationNumber + '\'' +
-                ", signedDate=" + signedDate +
-                ", validFromDate='" + validFromDate + '\'' +
-                ", validToDate='" + validToDate + '\'' +
-                ", deleted=" + deleted +
-                ", states=" + states +
-                '}';
+        return "Certificate{" + "id='" + id + '\'' + ", document=" + fromBytes(document) + ", type='" + type + '\''
+                + ", signingDoctorName='" + signingDoctorName + '\'' + ", careUnitName='" + careUnitName + '\''
+                + ", civicRegistrationNumber='" + civicRegistrationNumber + '\'' + ", signedDate=" + signedDate
+                + ", validFromDate='" + validFromDate + '\'' + ", validToDate='" + validToDate + '\'' + ", deleted="
+                + deleted + ", states=" + states + '}';
     }
 
 }

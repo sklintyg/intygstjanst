@@ -32,9 +32,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ERROR;
-import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
-import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.INFO;
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.OK;
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.VALIDATION_ERROR;
 
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.Diff;
@@ -61,7 +61,6 @@ import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
-import se.inera.ifv.insuranceprocess.healthreporting.v2.ErrorIdEnum;
 
 /**
  * @author andreaskaltenbach
@@ -120,7 +119,8 @@ public class GetCertificateForCareResponderImplTest {
             throws Exception {
         ByteArrayOutputStream byteArr = new ByteArrayOutputStream();
         JAXBContext context = JAXBContext.newInstance(GetCertificateForCareResponseType.class);
-        JAXBElement<GetCertificateForCareResponseType> responseElement = new ObjectFactory().createGetCertificateForCareResponse(response);
+        JAXBElement<GetCertificateForCareResponseType> responseElement = new ObjectFactory()
+                .createGetCertificateForCareResponse(response);
         context.createMarshaller().marshal(responseElement, byteArr);
 
         String referenceXml = FileUtils.readFileToString(new ClassPathResource(fileName).getFile());
@@ -160,9 +160,8 @@ public class GetCertificateForCareResponderImplTest {
 
         assertNull(response.getMeta());
         assertNull(response.getCertificate());
-        assertEquals(ERROR, response.getResult().getResultCode());
-        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
-        assertEquals("Unknown certificate ID: 123456", response.getResult().getErrorText());
+        assertEquals(VALIDATION_ERROR, response.getResult().getResultCode());
+        assertEquals("Unknown certificate ID: 123456", response.getResult().getResultText());
     }
 
     @Test
@@ -178,7 +177,7 @@ public class GetCertificateForCareResponderImplTest {
         assertNull(response.getMeta());
         assertNull(response.getCertificate());
         assertEquals(INFO, response.getResult().getResultCode());
-        assertEquals("Certificate '123456' has been revoked", response.getResult().getInfoText());
+        assertEquals("Certificate '123456' has been revoked", response.getResult().getResultText());
     }
 
     private GetCertificateForCareRequestType createGetCertificateForCareRequest(String certificateId) {

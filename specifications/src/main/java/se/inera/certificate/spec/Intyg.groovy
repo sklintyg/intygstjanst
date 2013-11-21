@@ -16,6 +16,7 @@ public class Intyg extends RestClientFixture {
 	String giltigtFrån
 	String giltigtTill
 	String utfärdare
+    String enhetsId = "1.2.3"
 	String enhet
     String typ
     String id
@@ -57,7 +58,7 @@ public class Intyg extends RestClientFixture {
 	
     public void execute() {
         def restClient = new RESTClient(baseUrl)
-		if (!giltigtFrån) giltigtFrån = utfärdat
+        if (!giltigtFrån) giltigtFrån = utfärdat
 		if (!giltigtTill) giltigtTill = new Date().parse("yyyy-MM-dd", utfärdat).plus(14).format("yyyy-MM-dd")
 		if (from && to && !idTemplate) {
 			template = "test-${personnr}-intyg-%1\$s"
@@ -90,6 +91,7 @@ public class Intyg extends RestClientFixture {
             signingDoctorName: utfärdare,
             validFromDate:giltigtFrån,
             validToDate:giltigtTill,
+            careUnitId: (enhetsId) ? enhet : "1.2.3",
             careUnitName: enhet,
 			states: stateList,
             document: document()
