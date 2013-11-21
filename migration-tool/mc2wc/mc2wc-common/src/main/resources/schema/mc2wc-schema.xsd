@@ -11,6 +11,7 @@
       <element name="sent" type="dateTime"></element>
       <element name="created" type="dateTime"></element>
       <element name="origin" type="string"></element>
+      <element name="migratedFrom" type="string"></element>
       <element name="contents" type="base64Binary"></element>
     </sequence>
   </complexType>

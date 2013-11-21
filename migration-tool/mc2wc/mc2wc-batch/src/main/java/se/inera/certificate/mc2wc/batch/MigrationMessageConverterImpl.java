@@ -34,7 +34,7 @@ public class MigrationMessageConverterImpl {
 
         MigrationMessage msg = new MigrationMessage();
         
-        if (migrateCert) {
+        if (shouldCertBeMigrated(mcCert)) {
             CertificateType wcCert = toWCCertificate(mcCert);
             msg.setCertificate(wcCert);
         }
@@ -48,11 +48,22 @@ public class MigrationMessageConverterImpl {
 
         return msg;
     }
+    
+    private boolean shouldCertBeMigrated(Certificate cert) {
+        return (cert.getDocument() != null && cert.getDocument().length > 0);
+    }
 
     private CertificateType toWCCertificate(Certificate mcCert) {
         CertificateType wcCert = new CertificateType();
         
         wcCert.setCertificateId(mcCert.getId());
+        //wcCert.setCertificateType(value);
+        wcCert.setCareUnitId(mcCert.getCareUnitId());
+        wcCert.setOrigin(mcCert.getOrigin().toString());
+        
+        wcCert.setCreated(LocalDateTime.fromDateFields(mcCert.getCreatedAt()));
+        wcCert.setSent(LocalDateTime.fromDateFields(mcCert.getSentAt()));
+        
         wcCert.setContents(mcCert.getDocument());
         
         PatientType wcPatient = new PatientType();

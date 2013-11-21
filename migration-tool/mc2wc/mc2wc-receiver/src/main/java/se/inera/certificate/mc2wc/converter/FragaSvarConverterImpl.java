@@ -21,13 +21,13 @@ import se.inera.webcert.persistence.fragasvar.model.Komplettering;
 import se.inera.webcert.persistence.fragasvar.model.Status;
 import se.inera.webcert.persistence.fragasvar.model.Vardperson;
 
-public class MigrationMessageConverterImpl implements MigrationMessageConverter {
+public class FragaSvarConverterImpl implements FragaSvarConverter {
 
-    public MigrationMessageConverterImpl() {
+    public FragaSvarConverterImpl() {
     }
 
     @Override
-    public FragaSvar populateFragaSvar(QuestionType qa) {
+    public FragaSvar toFragaSvar(QuestionType qa) {
 
         FragaSvar fs = new FragaSvar();
 
