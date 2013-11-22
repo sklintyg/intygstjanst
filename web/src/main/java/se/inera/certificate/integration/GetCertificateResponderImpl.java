@@ -28,7 +28,6 @@ import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 
-import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificater
 /**
  * @author andreaskaltenbach
  */
-@SchemaValidation
 public class GetCertificateResponderImpl implements GetCertificateResponderInterface {
 
     private static final Logger LOG = LoggerFactory.getLogger(GetCertificateResponderImpl.class);
@@ -63,10 +61,23 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
     @Override
     public GetCertificateResponseType getCertificate(AttributedURIType logicalAddress, GetCertificateRequestType parameters) {
         GetCertificateResponseType response = new GetCertificateResponseType();
+        
+        String certificateId = parameters.getCertificateId();
+        String nationalIdentityNumber = parameters.getNationalIdentityNumber();
+        if (certificateId == null || certificateId.length() == 0) {
+            LOG.info("Tried to get certificate with non-existing ceritificateId '.");
+            response.setResult(failResult("Validation error: missing  certificateId"));
+            return response;
+        }
+        if (nationalIdentityNumber == null || nationalIdentityNumber.length() == 0) {
+            LOG.info("Tried to get certificate with non-existing nationalIdentityNumber '.");
+            response.setResult(failResult("Validation error: missing  nationalIdentityNumber"));
+            return response;
+        }
 
         Certificate certificate;
         try {
-            certificate = certificateService.getCertificate(parameters.getNationalIdentityNumber(), parameters.getCertificateId());
+            certificate = certificateService.getCertificate(nationalIdentityNumber,  certificateId);
         } catch (MissingConsentException ex) {
             // return ERROR if user has not given consent
             LOG.info("Tried to get certificate '" + parameters.getCertificateId() + "' but user '" + parameters.getNationalIdentityNumber() + "' has not given consent.");
