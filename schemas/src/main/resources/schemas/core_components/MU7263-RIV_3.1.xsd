@@ -294,7 +294,7 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="motivering" type="xs:string" minOccurs="0"/>
-			<xs:element name="prognosangivelse" type="Prognosangivelse"/>
+			<xs:element name="prognosangivelse" type="Prognosangivelse" minOccurs="0"/>
 			<xs:element name="arbetsuppgift" type="arbetsuppgiftType" minOccurs="0"/>
 			<xs:element name="arbetsformagaNedsattning" type="arbetsformagaNedsattningType" maxOccurs="4"/>
 			<xs:element name="sysselsattning" type="sysselsattningType" minOccurs="0" maxOccurs="3"/>
