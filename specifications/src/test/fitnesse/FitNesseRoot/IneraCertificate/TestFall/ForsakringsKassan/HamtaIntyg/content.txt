@@ -7,6 +7,8 @@
 |Hamta intyg|
 |personnummer|intyg|förväntat svar|resultat?|
 |19010101-0101|intyg-1|{"lakarutlatande":{"lakarutlatandeId":"intyg-1","signeringsdatum":"2013-04-01T00:00:00.000","patient":{"personId":{"extension":"19010101-0101"}}}}|OK|
+|19010101-0101|intyg-2|{"lakarutlatande":{"lakarutlatandeId":"intyg-2","signeringsdatum":"2013-04-02T00:00:00.000","patient":{"personId":{"extension":"19010101-0101"}}}}|OK|
+|19010101-0101|intyg-3|{"lakarutlatande":{"lakarutlatandeId":"intyg-3","signeringsdatum":"2013-04-03T00:00:00.000","patient":{"personId":{"extension":"19010101-0101"}}}}|OK|
 
 !3 Testfall Get-Certificate-1.2: Verifiera !-HoS-!-informationen hos intyget
 
