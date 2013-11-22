@@ -14,13 +14,13 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
   <tx:annotation-driven />
 
-  <jpa:repositories base-package="se.inera.webcert.persistence.fragasvar.repository" />
+  <jpa:repositories base-package="se.inera.webcert.persistence" />
 
   <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
     <property name="entityManagerFactory" ref="entityManagerFactory" />
   </bean>
   
-  <!-- This should not run any other profile than dev -->
+  <!-- Liquibase should not run in any other profile than dev -->
   <beans profile="dev">
     <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
       <property name="dataSource" ref="dataSource" />

@@ -7,6 +7,8 @@
   
   <bean id="migrationService" class="se.inera.certificate.mc2wc.service.MigrationServiceImpl"/>
   
-  <bean id="migrationMessageConverter" class="se.inera.certificate.mc2wc.converter.MigrationMessageConverterImpl" ></bean>
+  <bean id="fragaSvarConverter" class="se.inera.certificate.mc2wc.converter.FragaSvarConverterImpl"/>
+  
+  <bean id="medcertIntygConverter" class="se.inera.certificate.mc2wc.converter.MedcertIntygConverterImpl"/>
         
 </beans>

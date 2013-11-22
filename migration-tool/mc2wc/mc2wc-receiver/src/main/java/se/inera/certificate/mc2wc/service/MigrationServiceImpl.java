@@ -12,9 +12,9 @@ import se.inera.certificate.mc2wc.message.MigrationMessage;
 import se.inera.certificate.mc2wc.message.MigrationResultType;
 import se.inera.certificate.mc2wc.message.QuestionType;
 import se.inera.webcert.persistence.fragasvar.model.FragaSvar;
-import se.inera.webcert.persistence.fragasvar.model.MigreratMedcertIntyg;
 import se.inera.webcert.persistence.fragasvar.repository.FragaSvarRepository;
-import se.inera.webcert.persistence.fragasvar.repository.MigreratMedcertIntygRepository;
+import se.inera.webcert.persistence.legacy.model.MigreratMedcertIntyg;
+import se.inera.webcert.persistence.legacy.repository.MigreratMedcertIntygRepository;
 
 public class MigrationServiceImpl implements MigrationService {
     

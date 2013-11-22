@@ -2,7 +2,7 @@ package se.inera.certificate.mc2wc.converter;
 
 import se.inera.certificate.mc2wc.message.CertificateType;
 import se.inera.certificate.mc2wc.message.PatientType;
-import se.inera.webcert.persistence.fragasvar.model.MigreratMedcertIntyg;
+import se.inera.webcert.persistence.legacy.model.MigreratMedcertIntyg;
 
 public class MedcertIntygConverterImpl implements MedcertIntygConverter {
 
