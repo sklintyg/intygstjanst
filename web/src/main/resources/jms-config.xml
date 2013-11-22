@@ -20,17 +20,20 @@
   </beans>
 
   <beans profile="dev">
-    <amq:broker start="true">
+  <amq:broker start="true">
+    <amq:persistenceAdapter>
+      <amq:kahaDB directory="target/activemq-data" journalMaxFileLength="32mb" />
+    </amq:persistenceAdapter>
     <amq:transportConnectors>
       <amq:transportConnector uri="tcp://localhost:61616" />
     </amq:transportConnectors>
-    </amq:broker>
-    
-    <bean id="jmsFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-      <property name="brokerURL" value="tcp://localhost:61616"/>
-    </bean>
-    <bean id="queue" class="org.apache.activemq.command.ActiveMQQueue">
-      <constructor-arg value="CERTIFICATE.QUEUE" />
-    </bean>
-  </beans>
+  </amq:broker>
+
+  <bean id="jmsFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+    <property name="brokerURL" value="tcp://localhost:61616" />
+  </bean>
+  <bean id="queue" class="org.apache.activemq.command.ActiveMQQueue">
+    <constructor-arg value="CERTIFICATE.QUEUE" />
+  </bean>
+</beans>
 </beans>
