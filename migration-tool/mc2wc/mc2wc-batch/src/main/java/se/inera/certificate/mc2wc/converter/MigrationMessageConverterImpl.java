@@ -1,4 +1,4 @@
-package se.inera.certificate.mc2wc.batch;
+package se.inera.certificate.mc2wc.converter;
 
 import java.util.Set;
 
@@ -24,12 +24,16 @@ import se.inera.certificate.mc2wc.message.QuestionOriginatorType;
 import se.inera.certificate.mc2wc.message.QuestionSubjectType;
 import se.inera.certificate.mc2wc.message.StatusType;
 
-public class MigrationMessageConverterImpl {
+public class MigrationMessageConverterImpl implements MigrationMessageConverter {
 
     public MigrationMessageConverterImpl() {
 
     }
 
+    /* (non-Javadoc)
+     * @see se.inera.certificate.mc2wc.converter.MigrationMessageConverter#toMigrationMessage(se.inera.certificate.mc2wc.jpa.model.Certificate, boolean)
+     */
+    @Override
     public MigrationMessage toMigrationMessage(Certificate mcCert, boolean migrateCert) {
 
         MigrationMessage msg = new MigrationMessage();
