@@ -349,7 +349,7 @@
 
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/v3/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_3.0_rivtabp20.wsdl
+                    ${schema.path}/v3/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_3.1_rivtabp20.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -359,7 +359,7 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/v3/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_3.0_rivtabp20.wsdl
+                      classpath:schemas/v3/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_3.1_rivtabp20.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>
