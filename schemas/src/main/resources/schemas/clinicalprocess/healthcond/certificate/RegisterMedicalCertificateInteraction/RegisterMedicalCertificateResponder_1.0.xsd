@@ -20,15 +20,12 @@
 <xs:schema
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:cert="urn:riv:clinicalprocess:healthcond:certificate:1"
-        xmlns:core="urn:riv:insuranceprocess:healthreporting:2"
         xmlns:tns="urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1"
         targetNamespace="urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1"
         elementFormDefault="qualified"
         attributeFormDefault="unqualified"
         version="1.0">
 
-  <xs:import namespace="urn:riv:insuranceprocess:healthreporting:2"
-             schemaLocation="../../../../core_components/insuranceprocess_healthreporting_2.0.xsd"/>
   <xs:import namespace="urn:riv:clinicalprocess:healthcond:certificate:1"
              schemaLocation="../../../../core_components/clinicalprocess_healthcond_certificate_1.0.xsd"/>
 
@@ -44,7 +41,7 @@
 
   <xs:complexType name="RegisterMedicalCertificateResponseType">
     <xs:sequence>
-      <xs:element name="result" type="core:ResultOfCall" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="result" type="cert:ResultType"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>

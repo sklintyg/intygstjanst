@@ -23,7 +23,6 @@ import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 
-import org.apache.cxf.annotations.SchemaValidation;
 import org.w3.wsaddressing10.AttributedURIType;
 import org.w3c.dom.Document;
 
@@ -38,7 +37,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.
 /**
  * @author andreaskaltenbach
  */
-@SchemaValidation
 public class GetCertificateResponderImpl extends AbstractGetCertificateResponderImpl implements
         GetCertificateResponderInterface {
 
@@ -46,8 +44,16 @@ public class GetCertificateResponderImpl extends AbstractGetCertificateResponder
     public GetCertificateResponseType getCertificate(AttributedURIType logicalAddress, GetCertificateRequestType request) {
         GetCertificateResponseType response = new GetCertificateResponseType();
 
-        CertificateOrResultType certificateOrResultType = getCertificate(request.getCertificateId(),
-                request.getNationalIdentityNumber());
+        String certificateId = request.getCertificateId();
+        String nationalIdentityNumber = request.getNationalIdentityNumber();
+        
+        if (nationalIdentityNumber == null || nationalIdentityNumber.length() == 0) {
+            LOG.info("Tried to get certificate with non-existing nationalIdentityNumber '.");
+            response.setResult(failResult("Validation error: missing  nationalIdentityNumber"));
+            return response;
+        }
+        
+        CertificateOrResultType certificateOrResultType = getCertificate(certificateId, nationalIdentityNumber);
 
         if (certificateOrResultType.hasError()) {
             ResultType result = certificateOrResultType.getResultType();

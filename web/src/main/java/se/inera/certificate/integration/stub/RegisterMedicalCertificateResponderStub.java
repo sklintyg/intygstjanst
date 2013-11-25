@@ -26,7 +26,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificater
  * @author par.wenaker
  */
 @Transactional
-@WebServiceProvider(targetNamespace = "urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificate:3:rivtabp20", serviceName = "RegisterMedicalCertificateResponderService", wsdlLocation = "schemas/v3/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_3.0_rivtabp20.wsdl")
+@WebServiceProvider(targetNamespace = "urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificate:3:rivtabp20", serviceName = "RegisterMedicalCertificateResponderService", wsdlLocation = "schemas/v3/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_3.1_rivtabp20.wsdl")
 public class RegisterMedicalCertificateResponderStub implements RegisterMedicalCertificateResponderInterface {
 
     private Logger logger = LoggerFactory.getLogger(RegisterMedicalCertificateResponderStub.class);

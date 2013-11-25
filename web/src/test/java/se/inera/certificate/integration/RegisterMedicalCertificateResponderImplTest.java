@@ -4,7 +4,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.stream.StreamSource;
-
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -27,16 +26,15 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.xml.sax.SAXException;
-
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.util.NamespacePrefixNameIgnoringListener;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.StatisticsService;
-import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 
 /**
  *
@@ -84,7 +82,7 @@ public class RegisterMedicalCertificateResponderImplTest {
 
         RegisterMedicalCertificateResponseType response = responder.registerMedicalCertificate(null, request);
 
-        assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
         compareSoapMessageWithReferenceFile(xmlCaptor.getValue());
         Mockito.verify(statisticsService, Mockito.only()).created(certificate);
     }
@@ -95,7 +93,7 @@ public class RegisterMedicalCertificateResponderImplTest {
                 .thenThrow(new CertificateAlreadyExistsException());
 
         RegisterMedicalCertificateResponseType response = responder.registerMedicalCertificate(null, request);
-        assertEquals(ResultCodeEnum.INFO, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.INFO, response.getResult().getResultCode());
         Mockito.verifyZeroInteractions(statisticsService);
     }
 
