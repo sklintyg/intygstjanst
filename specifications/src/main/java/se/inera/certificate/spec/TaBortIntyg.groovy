@@ -1,7 +1,7 @@
 package se.inera.certificate.spec
 
-import groovyx.net.http.RESTClient
 import se.inera.certificate.spec.util.RestClientFixture
+
 import static groovyx.net.http.ContentType.JSON
 
 public class TaBortIntyg extends RestClientFixture {
@@ -24,7 +24,7 @@ public class TaBortIntyg extends RestClientFixture {
 		} else if (idTemplate) {
 			template = idTemplate
 		}
-        def restClient = new RESTClient(baseUrl)
+        def restClient = createRestClient()
         Exception pendingException
         String failedIds = ""
         for (i in from..to) {

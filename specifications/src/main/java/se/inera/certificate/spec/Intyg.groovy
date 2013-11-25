@@ -1,13 +1,10 @@
 package se.inera.certificate.spec
-
-import static groovyx.net.http.ContentType.JSON
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import groovyx.net.http.RESTClient
-
 import org.springframework.core.io.ClassPathResource
-
 import se.inera.certificate.spec.util.RestClientFixture
+
+import static groovyx.net.http.ContentType.JSON
 
 public class Intyg extends RestClientFixture {
 
@@ -57,7 +54,7 @@ public class Intyg extends RestClientFixture {
 	}
 	
     public void execute() {
-        def restClient = new RESTClient(baseUrl)
+        def restClient = createRestClient()
         if (!giltigtFrån) giltigtFrån = utfärdat
 		if (!giltigtTill) giltigtTill = new Date().parse("yyyy-MM-dd", utfärdat).plus(14).format("yyyy-MM-dd")
 		if (from && to && !idTemplate) {
