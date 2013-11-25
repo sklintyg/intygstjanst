@@ -91,7 +91,7 @@ public class Intyg extends RestClientFixture {
             signingDoctorName: utfärdare,
             validFromDate:giltigtFrån,
             validToDate:giltigtTill,
-            careUnitId: (enhetsId) ? enhet : "1.2.3",
+            careUnitId: (enhetsId) ? enhetsId : "1.2.3",
             careUnitName: enhet,
 			states: stateList,
             document: document()
