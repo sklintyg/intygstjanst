@@ -1,0 +1,246 @@
+!3 Givet följande samtycken:
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|ja|
+
+
+!3 Saknat utlatande-id ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknat-utlatandeid.xml|=~/Unmarshalling Error:.*utlatande-id.*is expected./|
+
+
+!3 Saknad typavutlatande ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknad-typavutlatande.xml|=~/Unmarshalling Error.*/|
+
+
+!3 Saknat personnr ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknat-personnr.xml|=~/Unmarshalling Error:.*person-id.*is expected./|
+
+
+!3 Saknad kommentar ger OK
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknad-kommentar.xml|OK|
+
+
+!3 Saknat skickatdatum ger OK
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknat-skickatdatum.xml|OK|
+
+
+!3 Saknat signdatum ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknat-signdatum.xml|=~/Unmarshalling Error:.*signeringsdatum.*is expected./|
+
+
+!3 Saknad patient ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknad-patient.xml|=~/Unmarshalling Error:.*patient.*is expected./|
+
+
+!3 Saknar skapare ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknar-skapare.xml|=~/.Unmarshalling Error:.*/|
+
+
+!3 Saknade vardkontakter ger OK
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknade-vardkontakter.xml|OK|
+
+
+!3 Saknade referenser ger OK
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknade-referenser.xml|OK|
+
+
+!3 Saknade aktiviteter ger OK
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknade-aktiviteter.xml|OK|
+
+
+!3 Saknade observartioner ger OK
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknade-observationer.xml|OK|
+
+
+!3 Felaktigt personnr ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/felaktigt-personnr.xml|=~/.*ERROR.*Validation.*patientIdExtension*/|
+
+
+!3 Personnr utan bindestreck ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/personnr-utanbindestreck.xml|=~/.*ERROR.*Validation.*patientIdExtension*/|
+
+
+!3 Personnr utan sekelsiffra ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/personnr-utansekel.xml|=~/.*ERROR.*Validation.*patientIdExtension*/|
+
+
+!3 Tomt Personnr ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tomt-personnr.xml|=~/.*ERROR.*Validation.*patientIdExtension*/|
+
+
+!3 Saknat fornamn ger OK
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknat-fornamn.xml|OK|
+
+
+!3 Saknat efternamn ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknat-efternamn.xml|=~/Unmarshalling Error:.*/|
+
+
+!3 Saknad sysselsattning ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknad-sysselsattning.xml|=~/.*ERROR.*Validation.*/|
+
+
+!3 Saknad arbetsuppgift ger OK
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknad-arbetsuppgift.xml|OK|
+
+
+!3 Felaktigt vårdgivarid ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/felaktigt-vardgivarid.xml|=~/.*ERROR.*Validation.*/|
+
+
+!3 Saknad vårdgivare ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknad-vardgivare.xml|=~/.*ERROR.*/|
+
+
+!3 Saknad vårdkontakttyp ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknad-vardkontakttyp.xml|=~/Unmarshalling Error:.*/|
+
+
+!3 Saknad vårdkontakttid ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknad-vardkontakttid.xml|=~/.*Failed.*/|
+
+
+!3 Saknad from vårdkontakttid ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknad-from-vardkontakttid.xml|=~/Unmarshalling Error:.*/|
+
+
+!3 Tomt from vårdkontakttid ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tomt-from-vardkontakttid.xml|=~/Unmarshalling Error:.*/|
+
+
+!3 Tomt tom vårdkontakttid ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tomt-tom-vardkontakttid.xml|=~/Unmarshalling Error:.*/|
+
+
+!3 Saknar enhet ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknar-enhet.xml|=~/Unmarshalling Error:.*/|
+
+
+!3 Saknar enhetsid ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknar-enhetsid.xml|=~/Unmarshalling Error:.*/|
+
+
+
+!3 Felaktigt enhetsid ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/felaktigt-enhetsid.xml|=~/.*failed.*/|
+
+
+!3 Saknad arbetsplatskod ger OK
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknad-arbetsplatskod.xml|OK|
+
+
+!3 Felaktig arbetsplatskod ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/felaktig-arbetsplatskod.xml|=~/.*failed.*/|
+
+
+!3 Saknar enhetsnamn ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknar-enhetsnamn.xml|=~/Unmarshalling Error:.*/|
+
+
+!3 Återta samtycken:
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|nej|
+
+
