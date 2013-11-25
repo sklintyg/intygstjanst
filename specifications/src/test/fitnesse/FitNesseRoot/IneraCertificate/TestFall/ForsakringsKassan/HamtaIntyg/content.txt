@@ -7,6 +7,8 @@
 |Hamta intyg|
 |personnummer|intyg|förväntat svar|resultat?|
 |19010101-0101|intyg-1|{"lakarutlatande":{"lakarutlatandeId":"intyg-1","patient":{"personId":{"extension":"19010101-0101"}}}}|OK|
+|19010101-0101|intyg-2|{"lakarutlatande":{"lakarutlatandeId":"intyg-2","patient":{"personId":{"extension":"19010101-0101"}}}}|OK|
+|19010101-0101|intyg-3|{"lakarutlatande":{"lakarutlatandeId":"intyg-3","patient":{"personId":{"extension":"19010101-0101"}}}}|OK|
 
 !3 Testfall Get-Certificate-1.2: Verifiera !-HoS-!-informationen hos intyget
 
@@ -47,3 +49,15 @@
 |Hamta intyg|
 |personnummer|intyg|resultat?|
 |19999999-9999|intyg-6|[ERROR] - Missing consent for patient 19999999-9999|
+
+!3 Testfall Get-Certificate-3.4: Försök hämta intyg utan intygsid
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|
+|19999999-9999||[ERROR] - Validation error: missing  certificateId|
+
+!3 Testfall Get-Certificate-3.5: Försök hämta intyg utan patient
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|
+||intyg-1|[ERROR] - Validation error: missing  nationalIdentityNumber|

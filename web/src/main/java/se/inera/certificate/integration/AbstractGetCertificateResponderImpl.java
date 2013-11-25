@@ -8,12 +8,12 @@ import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.Res
 import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.VALIDATION_ERROR;
 import static se.inera.certificate.integration.util.ResultTypeUtil.result;
 
-import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
@@ -23,12 +23,14 @@ import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
 
+import com.google.common.base.Throwables;
+
 /**
  * @author andreaskaltenbach
  */
 public abstract class AbstractGetCertificateResponderImpl {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractGetCertificateResponderImpl.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(AbstractGetCertificateResponderImpl.class);
 
     @Autowired
     private CertificateService certificateService;
@@ -37,6 +39,10 @@ public abstract class AbstractGetCertificateResponderImpl {
     private ModuleRestApiFactory moduleRestApiFactory;
 
     protected CertificateOrResultType getCertificate(String certificateId, String personnummer) {
+        if (certificateId == null || certificateId.length() == 0) {
+            LOG.info("Tried to get certificate with non-existing ceritificateId '.");
+            return new CertificateOrResultType(result(VALIDATION_ERROR, "Validation error: missing  certificateId"));
+        }
         try {
             return new CertificateOrResultType(certificateService.getCertificate(personnummer, certificateId));
         } catch (MissingConsentException ex) {
