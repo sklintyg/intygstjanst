@@ -18,11 +18,12 @@
  */
 package se.inera.certificate.integration;
 
+import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 
-import org.apache.cxf.annotations.SchemaValidation;
 import org.w3.wsaddressing10.AttributedURIType;
 import org.w3c.dom.Document;
+
 import se.inera.certificate.integration.converter.ModelConverter;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20.GetCertificateResponderInterface;
@@ -33,16 +34,23 @@ import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.
 /**
  * @author andreaskaltenbach
  */
-@SchemaValidation
 public class GetCertificateResponderImpl extends AbstractGetCertificateResponderImpl implements
         GetCertificateResponderInterface {
 
     @Override
     public GetCertificateResponseType getCertificate(AttributedURIType logicalAddress, GetCertificateRequestType request) {
         GetCertificateResponseType response = new GetCertificateResponseType();
-
-        CertificateOrResultOfCall certificateOrResultOfCall = getCertificate(request.getCertificateId(),
-                request.getNationalIdentityNumber());
+        
+        String certificateId = request.getCertificateId();
+        String nationalIdentityNumber = request.getNationalIdentityNumber();
+        
+        if (nationalIdentityNumber == null || nationalIdentityNumber.length() == 0) {
+            LOG.info("Tried to get certificate with non-existing nationalIdentityNumber '.");
+            response.setResult(failResult("Validation error: missing  nationalIdentityNumber"));
+            return response;
+        }
+        
+        CertificateOrResultOfCall certificateOrResultOfCall = getCertificate(certificateId, nationalIdentityNumber);
 
         if (certificateOrResultOfCall.hasError()) {
             response.setResult(certificateOrResultOfCall.getResultOfCall());

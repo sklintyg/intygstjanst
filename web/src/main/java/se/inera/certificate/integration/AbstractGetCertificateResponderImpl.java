@@ -1,18 +1,19 @@
 package se.inera.certificate.integration;
 
-import javax.ws.rs.core.Response;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.InputStream;
-
 import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
 
-import com.google.common.base.Throwables;
+import java.io.InputStream;
+
+import javax.ws.rs.core.Response;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
@@ -22,12 +23,14 @@ import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
 
+import com.google.common.base.Throwables;
+
 /**
  * @author andreaskaltenbach
  */
 public abstract class AbstractGetCertificateResponderImpl {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractGetCertificateResponderImpl.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(AbstractGetCertificateResponderImpl.class);
 
     @Autowired
     private CertificateService certificateService;
@@ -36,6 +39,10 @@ public abstract class AbstractGetCertificateResponderImpl {
     private ModuleRestApiFactory moduleRestApiFactory;
 
     protected CertificateOrResultOfCall getCertificate(String certificateId, String personnummer) {
+        if (certificateId == null || certificateId.length() == 0) {
+            LOG.info("Tried to get certificate with non-existing ceritificateId '.");
+            return new CertificateOrResultOfCall(failResult("Validation error: missing  certificateId"));
+        }
         try {
             return new CertificateOrResultOfCall(certificateService.getCertificate(personnummer, certificateId));
         } catch (MissingConsentException ex) {
