@@ -23,16 +23,17 @@ import se.inera.certificate.migration.model.Certificate;
 import se.inera.certificate.migration.model.OriginalCertificate;
 
 /**
- * Processor for sending the certificate XML to a REST web service for conversion into JSON.
+ * Processor for sending the certificate XML to a REST web service for
+ * conversion into JSON.
  * 
  * @author nikpet
- *
+ * 
  */
 public class ConvertCertificateXMLToJSONProcessor implements InitializingBean,
         ItemProcessor<OriginalCertificate, Certificate> {
-    
+
     private static final String UTF8 = "UTF-8";
-    
+
     private static Logger LOG = LoggerFactory.getLogger(ConvertCertificateXMLToJSONProcessor.class);
 
     private static CloseableHttpClient httpClient;
@@ -41,23 +42,33 @@ public class ConvertCertificateXMLToJSONProcessor implements InitializingBean,
 
     public Certificate process(OriginalCertificate orgCert) throws Exception {
 
+        if (orgCert == null) {
+            LOG.warn("Supplied OriginalCertificate was null, returning null");
+            return null;
+        }
+        
         LOG.debug("Converting OriginalCertificate to JSON: {}", orgCert);
 
-        String convertedJson = null;
-
         try {
-            convertedJson = convertOriginalCertificate(orgCert);
+            String convertedJson = convertOriginalCertificate(orgCert);
 
+            if (convertedJson == null) {
+                LOG.error("Conversion failed for OriginalCertificate {}, this certificate will not be updated", orgCert);
+                return null;
+            }
+            
+            return new Certificate(orgCert, convertedJson);
+            
         } catch (IOException e) {
-            String errMsg = MessageFormat.format("A fatal error occured when processing OriginalCertificate: {0}", orgCert); 
+            String errMsg = MessageFormat.format("A fatal error occured when processing OriginalCertificate: {0}",
+                    orgCert);
             LOG.error(errMsg, e);
             throw new FatalCertificateProcessingException(errMsg, e);
         }
-
-        return new Certificate(orgCert, convertedJson);
     }
 
-    public String convertOriginalCertificate(OriginalCertificate orgCert) throws IOException, CertificateProcessingException {
+    public String convertOriginalCertificate(OriginalCertificate orgCert) throws IOException,
+            CertificateProcessingException {
 
         HttpClient client = getHttpClient();
 
@@ -73,10 +84,24 @@ public class ConvertCertificateXMLToJSONProcessor implements InitializingBean,
 
         HttpResponse response = client.execute(post);
 
-        if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            String errMsg = MessageFormat.format("Got HTTP error code {0} when processing OriginalCertificate: {1}", 
-                    new Object[]{response.getStatusLine().getStatusCode(), orgCert});
-            throw new CertificateProcessingException(errMsg);
+        int statusCode = response.getStatusLine().getStatusCode();
+
+        if (statusCode != HttpStatus.SC_OK) {
+
+            if (statusCode == HttpStatus.SC_BAD_REQUEST) {
+                
+                LOG.error("HTTP 400: Bad Request when converting OriginalCertificate {}, ", orgCert);
+                LOG.error("Error from conversion service: {}", EntityUtils.toString(response.getEntity(), UTF8));
+                LOG.error(orgCert.getOrignalCertificateAsString());
+                
+                return null;
+                
+            } else {
+                String errMsg = MessageFormat.format(
+                        "Got HTTP error code {0} when processing OriginalCertificate: {1}", new Object[] {
+                                statusCode, orgCert });
+                throw new CertificateProcessingException(errMsg);
+            }
         }
 
         return EntityUtils.toString(response.getEntity(), UTF8);
