@@ -18,11 +18,6 @@
  */
 package se.inera.certificate.integration;
 
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import java.io.ByteArrayOutputStream;
-
 import static junit.framework.Assert.assertNull;
 import static org.custommonkey.xmlunit.DifferenceConstants.NAMESPACE_PREFIX_ID;
 import static org.junit.Assert.assertEquals;
@@ -32,9 +27,15 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.INFO;
 import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.OK;
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.REVOKED;
 import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.VALIDATION_ERROR;
+
+import java.io.ByteArrayOutputStream;
+
+import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.Diff;
@@ -49,6 +50,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3c.dom.Node;
+
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareRequestType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.ObjectFactory;
@@ -176,7 +178,7 @@ public class GetCertificateForCareResponderImplTest {
 
         assertNull(response.getMeta());
         assertNull(response.getCertificate());
-        assertEquals(INFO, response.getResult().getResultCode());
+        assertEquals(REVOKED, response.getResult().getResultCode());
         assertEquals("Certificate '123456' has been revoked", response.getResult().getResultText());
     }
 
