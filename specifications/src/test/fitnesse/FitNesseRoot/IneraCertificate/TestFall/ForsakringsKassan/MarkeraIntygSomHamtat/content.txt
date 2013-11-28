@@ -20,7 +20,7 @@
 
 |Hamta intyg|
 |personnummer|intyg|status?|
-|19010101-0101|intyg-2|[SENT, RECEIVED]|
+|19010101-0101|intyg-2|[RECEIVED, SENT]|
 
 !3 Testfall Set-Certificate-Status-1.2: Multipel markering av befintligt intyg som hämtat
 
@@ -28,7 +28,7 @@
 
 |Hamta intyg|
 |personnummer|intyg|status?|
-|19010101-0101|intyg-1|[SENT, RECEIVED]|
+|19010101-0101|intyg-1|[RECEIVED, SENT]|
 
 !4 Ändra status
 
@@ -40,7 +40,7 @@
 
 |Hamta intyg|
 |personnummer|intyg|status?|
-|19010101-0101|intyg-1|[SENT, SENT, RECEIVED]|
+|19010101-0101|intyg-1|[RECEIVED, SENT, SENT]|
 
 
 !2 Felhantering
