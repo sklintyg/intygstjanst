@@ -25,7 +25,7 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19121212-1212|intyg-1|OK|[SENT, RECEIVED]|
+|19121212-1212|intyg-1|OK|[RECEIVED, SENT]|
 
 !3 Rensa bort test-intyg och samtycket
 

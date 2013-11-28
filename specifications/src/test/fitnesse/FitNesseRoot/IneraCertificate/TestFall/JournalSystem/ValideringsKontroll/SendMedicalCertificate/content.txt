@@ -55,7 +55,7 @@
 !4 Intygstjänsten rapporterar rätt status efter skicka
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19121212-1212|intygs-id-1234567890|OK|[SENT, RECEIVED]|
+|19121212-1212|intygs-id-1234567890|OK|[RECEIVED, SENT]|
 
 !4 Rensa bort intyget
 
