@@ -62,10 +62,6 @@
           <groupId>org.codehaus.groovy</groupId>
           <artifactId>groovy</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>xerces</groupId>
-          <artifactId>xercesImpl</artifactId>
-        </exclusion>
       </exclusions>
     </dependency>
 

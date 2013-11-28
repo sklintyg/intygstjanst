@@ -37,7 +37,7 @@ public class TaBortIntyg extends RestClientFixture {
                     requestContentType: JSON
             )
             } catch(e) {
-                failedIds += template + ","
+                failedIds += id + ","
                 if (!pendingException) {
                     pendingException = e
                 }
