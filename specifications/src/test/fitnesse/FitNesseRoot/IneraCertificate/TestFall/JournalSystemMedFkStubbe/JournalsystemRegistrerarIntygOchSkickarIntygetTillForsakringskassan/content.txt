@@ -16,9 +16,6 @@
 
 !3 Efter att skicka intyget till Försäkringskassan ska intyget finnas hos FK och får status SENT i intygstjänsten
 
-!4 Vänta 1 sekund, för att säkerställa att registrering och hämtning får olika tids-stämplar
-|script|Vanta|1|sekund|
-
 |Skicka Intyg Till Fk|
 |personnummer|intyg|resultat?|
 |19121212-1212|intyg-1|OK|
@@ -29,7 +26,7 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19121212-1212|intyg-1|OK|[SENT, RECEIVED]|
+|19121212-1212|intyg-1|OK|[RECEIVED, SENT]|
 
 !3 Skicka intyget på nytt skall ge INFO-meddelande
 
@@ -39,7 +36,7 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19121212-1212|intyg-1|OK|[SENT, SENT, RECEIVED]|
+|19121212-1212|intyg-1|OK|[RECEIVED, SENT, SENT]|
 
 !3 Ett rättat intyg ska informera Försäkringskassan. Intyget i intygstjänsten ska inte vara åtkomligt längre.
 
