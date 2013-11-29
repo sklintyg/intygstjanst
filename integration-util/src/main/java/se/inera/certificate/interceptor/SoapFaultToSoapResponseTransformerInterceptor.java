@@ -45,7 +45,7 @@ public class SoapFaultToSoapResponseTransformerInterceptor extends XSLTOutInterc
     @Override
     public void handleMessage(Message message) {
         Exception exception = message.getContent(Exception.class);
-        LOGGER.error(LogMarkers.VALIDATION, exception.getMessage());
+        LOGGER.error(exception.getMessage(), exception);
 
         // switch HTTP status from 500 (internal server error) to 200 (ok)
         message.getExchange().getOutFaultMessage().put(Message.RESPONSE_CODE, HTTP_OK);

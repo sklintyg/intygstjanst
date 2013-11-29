@@ -45,6 +45,9 @@
   <logger name="org.apache.cxf" level="error" />
 
   <logger name="se.inera.certificate" level="error" />
+  <logger name="se.inera.certificate.integration" level="warn" />
+  <logger name="se.inera.certificate.interceptor" level="warn" />
+  <logger name="se.inera.certificate.modules.fk7263.model.converter.TransportToExternalFk7263LegacyConverter" level="warn" />
 
   <root>
     <level value="error" />

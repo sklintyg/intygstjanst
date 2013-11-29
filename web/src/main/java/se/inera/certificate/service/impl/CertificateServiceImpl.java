@@ -45,6 +45,7 @@ import se.inera.certificate.integration.rest.ModuleRestApi;
 import se.inera.certificate.integration.rest.ModuleRestApiFactory;
 import se.inera.certificate.integration.rest.exception.ModuleCallFailedException;
 import se.inera.certificate.integration.util.RestUtils;
+import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
@@ -55,7 +56,6 @@ import se.inera.certificate.schema.adapter.PartialAdapter;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
-import se.inera.certificate.validate.ValidationException;
 
 /**
  * @author andreaskaltenbach
