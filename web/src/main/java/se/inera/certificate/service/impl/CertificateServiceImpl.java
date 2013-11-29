@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.exception.CertificateRevokedException;
@@ -121,10 +122,8 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public Certificate getCertificate(String civicRegistrationNumber, String id) {
 
-        // if personnummer is provided, we check for given consent
-        if (civicRegistrationNumber != null) {
-            assertConsent(civicRegistrationNumber);
-        }
+        assertConsent(civicRegistrationNumber);
+       
 
         Certificate certificate = getCertificateInternal(civicRegistrationNumber, id);
 
@@ -134,6 +133,18 @@ public class CertificateServiceImpl implements CertificateService {
 
         if (certificate.isRevoked()) {
             throw new CertificateRevokedException(id);
+        }
+
+        return certificate;
+    }
+
+    @Override
+    public Certificate getCertificate(String id) {
+
+        Certificate certificate = getCertificateInternal(null, id);
+
+        if (certificate == null) {
+            throw new InvalidCertificateException(id, null);
         }
 
         return certificate;
@@ -161,8 +172,8 @@ public class CertificateServiceImpl implements CertificateService {
         case OK:
             return entityContent;
         default:
-            String message = "Failed to validate certificate for certificate type '" + type
-                    + "'. HTTP status code is " + response.getStatus();
+            String message = "Failed to validate certificate for certificate type '" + type + "'. HTTP status code is "
+                    + response.getStatus();
             LOGGER.error(message);
             throw new ModuleCallFailedException(message, response);
         }
@@ -185,7 +196,7 @@ public class CertificateServiceImpl implements CertificateService {
         Utlatande utlatande = convertToCommonUtlatande(externalJson);
 
         validateCommonModel(utlatande);
-        
+
         // turn a lakarutlatande into a certificate entity
         Certificate certificate = createCertificate(utlatande, externalJson);
 
@@ -205,10 +216,10 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     private void validateCommonModel(Utlatande utlatande) {
-         List<String> validationErrors = new CommonModelValidator(utlatande).validate();
-         if (!validationErrors.isEmpty()) {
-             throw new ValidationException(Strings.join(",", validationErrors));
-         }
+        List<String> validationErrors = new CommonModelValidator(utlatande).validate();
+        if (!validationErrors.isEmpty()) {
+            throw new ValidationException(Strings.join(",", validationErrors));
+        }
         return;
     }
 
@@ -306,6 +317,11 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     private void assertConsent(String civicRegistrationNumber) {
+        
+        if (StringUtils.isEmpty(civicRegistrationNumber)) {
+            throw new IllegalArgumentException("Invalid/missing civicRegistrationNumber");
+        }
+        
         if (!consentService.isConsent(civicRegistrationNumber)) {
             throw new MissingConsentException(civicRegistrationNumber);
         }
