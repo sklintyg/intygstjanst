@@ -16,7 +16,7 @@ import se.inera.certificate.spec.util.WsClientFixture
  *
  * @author andreaskaltenbach
  */
-class ValideraFk7263Intyg extends WsClientFixture {
+class ValideraFk7263Intyg extends WsNewClientFixtureV1 {
 
     RegisterMedicalCertificateResponderInterface registerMedicalCertificateResponder
 
@@ -43,7 +43,7 @@ class ValideraFk7263Intyg extends WsClientFixture {
         RegisterMedicalCertificateType request = unmarshaller.unmarshal(new StreamSource(new FileInputStream (FitnesseHelper.getFile(filnamn))),
                                                                         RegisterMedicalCertificateType.class).getValue()
 
-        response = registerMedicalCertificateResponder.registerMedicalCertificate(logicalAddress, request);
+        response = registerMedicalCertificateResponder.registerMedicalCertificate(logicalAddress.toString(), request);
     }
 
     public String resultat() {
