@@ -57,7 +57,7 @@ public class GetCertificateContentResponderImpl implements GetCertificateContent
         } catch (InvalidCertificateException ex) {
             LOG.info("Tried to get certificate '" + request.getCertificateId()
                     + "' but no such certificate does exist for user '" + request.getNationalIdentityNumber() + "'.");
-            response.setResult(failResult(String.format("Unknown certificate ID: %s", request.getCertificateId())));
+            response.setResult(failResult(ex.getMessage()));
             return response;
         }
 
