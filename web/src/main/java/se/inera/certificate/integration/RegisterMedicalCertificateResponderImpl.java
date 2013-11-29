@@ -1,15 +1,17 @@
 package se.inera.certificate.integration;
 
+import java.io.StringWriter;
+
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import java.io.StringWriter;
 
 import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.INFO;
 
 import com.google.common.base.Throwables;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +23,7 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ObjectFact
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.util.ResultTypeUtil;
+import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.StatisticsService;
@@ -61,6 +64,10 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
             statisticsService.created(certificate);
         } catch (CertificateAlreadyExistsException e) {
             response.setResult(ResultTypeUtil.result(INFO, "Certificate already exists"));
+            String certificateId = registerMedicalCertificate.getUtlatande().getUtlatandeId().getRoot();
+            String issuedBy =  registerMedicalCertificate.getUtlatande().getSkapadAv().getEnhet().getEnhetsId().getExtension();
+            LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId +
+                    " issued by " + issuedBy +": Certificate already exists - ignored.");
         } catch (JAXBException e) {
             LOGGER.error("JAXB error in Webservice: ", e);
             Throwables.propagate(e);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<utlatande xmlns="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2">
+<utlatande xmlns="urn:riv:clinicalprocess:healthcond:certificate:1">
   <utlatande-id extension="b2f6d5bc-2f50-4623-9ce9-bf1ee5404347"/>
   <typAvUtlatande code="fk7263"/>
   <kommentar>Har haft mailkontakt med patienten
@@ -27,22 +27,22 @@
     </sysselsattning>
   </patient>
   <skapadAv>
-    <ns2:personal-id root="1.2.752.129.2.1.4.1" extension="Personal HSA-ID"/>
-    <ns2:fullstandigtNamn>En Läkare</ns2:fullstandigtNamn>
-    <ns2:forskrivarkod>1234567</ns2:forskrivarkod>
-    <ns2:enhet>
-      <ns2:enhets-id root="1.2.752.129.2.1.4.1" extension="VardenhetY"/>
-      <ns2:arbetsplatskod root="1.2.752.29.4.71" extension="123456789011"/>
-      <ns2:enhetsnamn>Kir mott</ns2:enhetsnamn>
-      <ns2:postadress>Lasarettsvägen 13</ns2:postadress>
-      <ns2:postnummer>85150</ns2:postnummer>
-      <ns2:postort>Sundsvall</ns2:postort>
-      <ns2:telefonnummer>060-1818000</ns2:telefonnummer>
-      <ns2:vardgivare>
-        <ns2:vardgivare-id root="1.2.752.129.2.1.4.1" extension="VardgivarId"/>
-        <ns2:vardgivarnamn>Landstinget Norrland</ns2:vardgivarnamn>
-      </ns2:vardgivare>
-    </ns2:enhet>
+    <personal-id root="1.2.752.129.2.1.4.1" extension="Personal HSA-ID"/>
+    <fullstandigtNamn>En Läkare</fullstandigtNamn>
+    <forskrivarkod>1234567</forskrivarkod>
+    <enhet>
+      <enhets-id root="1.2.752.129.2.1.4.1" extension="VardenhetY"/>
+      <arbetsplatskod root="1.2.752.29.4.71" extension="123456789011"/>
+      <enhetsnamn>Kir mott</enhetsnamn>
+      <postadress>Lasarettsvägen 13</postadress>
+      <postnummer>85150</postnummer>
+      <postort>Sundsvall</postort>
+      <telefonnummer>060-1818000</telefonnummer>
+      <vardgivare>
+        <vardgivare-id root="1.2.752.129.2.1.4.1" extension="VardgivarId"/>
+        <vardgivarnamn>Landstinget Norrland</vardgivarnamn>
+      </vardgivare>
+    </enhet>
   </skapadAv>
   <vardkontakt>
     <vardkontakttyp code="5880005" codeSystem="1.2.752.116.2.1.1.1" codeSystemName="SNOMED-CT"/>
