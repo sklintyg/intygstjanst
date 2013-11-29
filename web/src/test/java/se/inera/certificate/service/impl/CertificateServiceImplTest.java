@@ -1,9 +1,5 @@
 package se.inera.certificate.service.impl;
 
-import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -12,8 +8,11 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import ch.qos.logback.core.Appender;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.io.FileUtils;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
@@ -23,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
+
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
@@ -39,6 +39,9 @@ import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.ConsentService;
+import ch.qos.logback.core.Appender;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author andreaskaltenbach
@@ -242,8 +245,22 @@ public class CertificateServiceImplTest {
         when(consentService.isConsent(PERSONNUMMER)).thenReturn(false);
         certificateService.getCertificate(PERSONNUMMER, CERTIFICATE_ID);
     }
+    
+    @Test(expected = InvalidCertificateException.class)
+    public void testGetCertificateNotFound() {
+        when(certificateDao.getCertificate(PERSONNUMMER,CERTIFICATE_ID)).thenReturn(null);
+        certificateService.getCertificate(CERTIFICATE_ID);
+    }
+    
+    @Test(expected = InvalidCertificateException.class)
+    public void testGetCertificateRevoked() {
+        Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID).state(CertificateState.CANCELLED, null)
+                .build();
+        when(certificateDao.getCertificate(PERSONNUMMER,CERTIFICATE_ID)).thenReturn(revokedCertificate);
+        certificateService.getCertificate(CERTIFICATE_ID);
+    }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testGetCertificateWithoutConsentCheckForEmptyPersonnummer() {
         Certificate certificate = createCertificate();
         when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(certificate);

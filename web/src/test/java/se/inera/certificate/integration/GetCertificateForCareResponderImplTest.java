@@ -32,6 +32,7 @@ import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.Res
 import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.VALIDATION_ERROR;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
@@ -54,10 +55,10 @@ import org.w3c.dom.Node;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareRequestType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.ObjectFactory;
-import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.integration.rest.ModuleRestApi;
 import se.inera.certificate.integration.rest.ModuleRestApiFactory;
+import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Kod;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
@@ -94,7 +95,7 @@ public class GetCertificateForCareResponderImplTest {
         Utlatande utlatande = new Utlatande();
         utlatande.setTyp(new Kod(CERTIFICATE_TYPE));
 
-        when(certificateService.getCertificate(null, CERTIFICATE_ID)).thenReturn(
+        when(certificateService.getCertificate(CERTIFICATE_ID)).thenReturn(
                 new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DATA).certificateType(CERTIFICATE_TYPE)
                         .validity("2013-10-01", "2013-10-03").signedDate(new LocalDateTime("2013-10-03")).build());
 
@@ -108,7 +109,7 @@ public class GetCertificateForCareResponderImplTest {
         GetCertificateForCareRequestType request = createGetCertificateForCareRequest(CERTIFICATE_ID);
         GetCertificateForCareResponseType response = responder.getCertificateForCare(null, request);
 
-        verify(certificateService).getCertificate(null, CERTIFICATE_ID);
+        verify(certificateService).getCertificate(CERTIFICATE_ID);
 
         assertNotNull(response.getMeta());
         assertEquals(OK, response.getResult().getResultCode());
@@ -153,7 +154,7 @@ public class GetCertificateForCareResponderImplTest {
     @Test
     public void getCertificateForCareWithUnknownCertificateId() {
 
-        when(certificateService.getCertificate(null, CERTIFICATE_ID)).thenThrow(
+        when(certificateService.getCertificate(CERTIFICATE_ID)).thenThrow(
                 new InvalidCertificateException("123456", null));
 
         GetCertificateForCareRequestType parameters = createGetCertificateForCareRequest(CERTIFICATE_ID);
@@ -167,19 +168,29 @@ public class GetCertificateForCareResponderImplTest {
     }
 
     @Test
-    public void getRevokedCertificate() {
+    public void getRevokedCertificate() throws IOException {
+        Utlatande utlatande = new Utlatande();
+        utlatande.setTyp(new Kod(CERTIFICATE_TYPE));
 
-        when(certificateService.getCertificate(null, CERTIFICATE_ID)).thenThrow(
-                new CertificateRevokedException("123456"));
+        when(certificateService.getCertificate(CERTIFICATE_ID)).thenReturn(
+                new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DATA).certificateType(CERTIFICATE_TYPE)
+                        .validity("2013-10-01", "2013-10-03").signedDate(new LocalDateTime("2013-10-03")).state(CertificateState.CANCELLED, "FK").build());
+
+        when(certificateService.getLakarutlatande(any(Certificate.class))).thenReturn(utlatande);
+
+        when(moduleRestApiFactory.getModuleRestService("fk7263")).thenReturn(moduleRestApi);
+        when(restResponse.getEntity()).thenReturn(
+                new ClassPathResource("GetCertificateForCareResponderImplTest/utlatande.xml").getInputStream());
+        when(moduleRestApi.marshall("2.0", CERTIFICATE_DATA)).thenReturn(restResponse);
 
         GetCertificateForCareRequestType parameters = createGetCertificateForCareRequest(CERTIFICATE_ID);
 
         GetCertificateForCareResponseType response = responder.getCertificateForCare(null, parameters);
 
-        assertNull(response.getMeta());
-        assertNull(response.getCertificate());
+        assertNotNull(response.getMeta());
+        assertNotNull(response.getCertificate());
         assertEquals(REVOKED, response.getResult().getResultCode());
-        assertEquals("Certificate '123456' has been revoked", response.getResult().getResultText());
+        assertEquals("Certificate '" + CERTIFICATE_ID  + "' has been revoked", response.getResult().getResultText());
     }
 
     private GetCertificateForCareRequestType createGetCertificateForCareRequest(String certificateId) {

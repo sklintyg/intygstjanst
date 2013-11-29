@@ -78,6 +78,7 @@ public class GetCertificateResponderImpl extends AbstractGetCertificateResponder
         Certificate certificate = certificateOrResultType.getCertificate();
         response.setMeta(ModelConverter.toCertificateMetaType(certificate));
         attachCertificateDocument(certificate, response);
+        response.setResult(okResult());
         return response;
     }
 
@@ -85,9 +86,7 @@ public class GetCertificateResponderImpl extends AbstractGetCertificateResponder
         Document document = getCertificateDocument(certificate);
         CertificateType certificateType = new CertificateType();
         certificateType.getAny().add(document.getDocumentElement());
-
         response.setCertificate(certificateType);
-        response.setResult(okResult());
     }
 
     @Override

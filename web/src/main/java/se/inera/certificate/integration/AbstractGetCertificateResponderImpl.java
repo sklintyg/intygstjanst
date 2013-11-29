@@ -38,12 +38,24 @@ public abstract class AbstractGetCertificateResponderImpl {
 
     @Autowired
     private ModuleRestApiFactory moduleRestApiFactory;
-
+    
+    /**
+     * 
+     * @param certificateId
+     * @param personnummer
+     * @return
+     */
     protected CertificateOrResultType getCertificate(String certificateId, String personnummer) {
         if (certificateId == null || certificateId.length() == 0) {
             LOG.info("Tried to get certificate with non-existing ceritificateId '.");
             return new CertificateOrResultType(result(VALIDATION_ERROR, "Validation error: missing  certificateId"));
         }
+        
+        if (personnummer == null || personnummer.length() == 0) {
+            LOG.info("Tried to get certificate with non-existing personnummer '.");
+            return new CertificateOrResultType(result(VALIDATION_ERROR, "Validation error: missing  personnummer"));
+        }
+        
         try {
             return new CertificateOrResultType(certificateService.getCertificate(personnummer, certificateId));
         } catch (MissingConsentException ex) {
@@ -59,6 +71,25 @@ public abstract class AbstractGetCertificateResponderImpl {
             // return INFO if certificate is revoked
             LOG.info("Tried to get certificate '" + certificateId + "' but certificate has been revoked'.");
             return new CertificateOrResultType((result(REVOKED, "Certificate '" + certificateId + "' has been revoked")));
+        }
+    }
+    
+    /**
+     * Returns certificate matching specified certificateId.
+     * Also returns revoked certificated, it's up to implemented subclass to determine behavior in that case.
+     * @param certificateId
+     * @return
+     */
+    protected CertificateOrResultType getCertificate(String certificateId) {
+        if (certificateId == null || certificateId.length() == 0) {
+            LOG.info("Tried to get certificate with non-existing ceritificateId '.");
+            return new CertificateOrResultType(result(VALIDATION_ERROR, "Validation error: missing  certificateId"));
+        }
+        try {
+            return new CertificateOrResultType(certificateService.getCertificate(certificateId));
+        }  catch (InvalidCertificateException ex) {
+            LOG.info("Tried to get certificate '" + certificateId + "' but no such certificate does exist.");
+            return new CertificateOrResultType(result(VALIDATION_ERROR, String.format("Unknown certificate ID: %s", certificateId)));
         }
     }
 

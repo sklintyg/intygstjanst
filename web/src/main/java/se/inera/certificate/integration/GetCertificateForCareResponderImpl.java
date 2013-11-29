@@ -18,26 +18,30 @@
  */
 package se.inera.certificate.integration;
 
+import static se.inera.certificate.integration.util.ResultTypeUtil.okResult;
+import static se.inera.certificate.integration.util.ResultTypeUtil.result;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.dom.DOMSource;
 
-import static se.inera.certificate.integration.util.ResultTypeUtil.okResult;
-
-import com.google.common.base.Throwables;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
+
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareRequestType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponderInterface;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponseType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.integration.converter.ModelConverter;
 import se.inera.certificate.model.dao.Certificate;
+
+import com.google.common.base.Throwables;
 
 /**
  * @author andreaskaltenbach
@@ -66,7 +70,7 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
 
         GetCertificateForCareResponseType response = new GetCertificateForCareResponseType();
 
-        CertificateOrResultType certificateOrResultType = getCertificate(request.getCertificateId(), null);
+        CertificateOrResultType certificateOrResultType = getCertificate(request.getCertificateId());
 
         if (certificateOrResultType.hasError()) {
             ResultType resultType = certificateOrResultType.getResultType();
@@ -77,6 +81,12 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
         Certificate certificate = certificateOrResultType.getCertificate();
         response.setMeta(ModelConverter.toCertificateMetaType(certificate));
         attachCertificateDocument(certificate, response);
+
+        if (certificate.isRevoked()) {
+            response.setResult(result(ResultCodeType.REVOKED, "Certificate '" + request.getCertificateId()  + "' has been revoked"));
+        } else {
+            response.setResult(okResult());
+        }
         return response;
     }
 
@@ -98,6 +108,5 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
         }
 
         response.setCertificate(utlatande);
-        response.setResult(okResult());
     }
 }
