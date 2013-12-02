@@ -6,13 +6,14 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.service.CertificateService;
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 
 /**
  * @author andreaskaltenbach
  */
-public class RegisterMedicalCertificateResponderWiretapImpl extends RegisterMedicalCertificateLegacyResponderProvider {
+public class RegisterMedicalCertificateResponderWiretapImpl extends RegisterMedicalCertificateLegacyResponderProvider implements RegisterMedicalCertificateResponderInterface {
 
     @Autowired
     private CertificateService certificateService;

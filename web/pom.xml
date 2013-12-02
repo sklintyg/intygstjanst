@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -117,6 +118,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-client</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
     </dependency>
@@ -190,7 +196,7 @@
             <systemProperty>
               <name>java.awt.headless</name>
               <value>true</value>
-            </systemProperty>            
+            </systemProperty>
           </systemProperties>
         </configuration>
         <dependencies>
@@ -204,35 +210,23 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.24</version>
           </dependency>
+          <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+            <version>5.8.0</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-kahadb-store</artifactId>
+            <version>5.8.0</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_1.1_spec</artifactId>
+            <version>1.1.1</version>
+          </dependency>
         </dependencies>
       </plugin>
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>jetty</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-broker</artifactId>
-          <version>5.8.0</version>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-kahadb-store</artifactId>
-          <version>5.8.0</version>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-spring</artifactId>
-          <version>5.8.0</version>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jms_1.1_spec</artifactId>
-          <version>1.1.1</version>
-        </dependency>
-      </dependencies>
-    </profile>
-  </profiles>
 </project>

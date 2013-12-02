@@ -45,7 +45,6 @@
   </wsdl:types>
   <wsdl:message name='GetCertificateForCareRequest'>
     <wsdl:part name='LogicalAddress' element='itr:LogicalAddress'>
-      <wsdl:documentation>hsaid of the healthcare_facility owning the schedule</wsdl:documentation>
     </wsdl:part>
     <wsdl:part name='parameters' element='tjsr:GetCertificateForCare'/>
   </wsdl:message>

@@ -378,6 +378,13 @@
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
+      <xs:enumeration value="REVOKED">
+        <xs:annotation>
+          <xs:documentation xml:lang='sv'>
+            Den efterfrågade informationen existerar men har rättats/dragits tillbaka och är ej längre giltig eller tillgänglig. Angiven tjänst utfördes ej.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>      
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>

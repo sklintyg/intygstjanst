@@ -1,12 +1,14 @@
 package se.inera.certificate.integration;
 
+import java.io.StringWriter;
+
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import java.io.StringWriter;
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.INFO;
 
 import com.google.common.base.Throwables;
 
@@ -14,15 +16,14 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.w3.wsaddressing10.AttributedURIType;
-
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponderInterface;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ObjectFactory;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
-import se.inera.certificate.integration.util.ResultOfCallUtil;
+import se.inera.certificate.integration.util.ResultTypeUtil;
+import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.StatisticsService;
@@ -49,7 +50,7 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
     }
 
     @Override
-    public RegisterMedicalCertificateResponseType registerMedicalCertificate(AttributedURIType logicalAddress,
+    public RegisterMedicalCertificateResponseType registerMedicalCertificate(String logicalAddress,
             RegisterMedicalCertificateType registerMedicalCertificate) {
         RegisterMedicalCertificateResponseType response = new RegisterMedicalCertificateResponseType();
 
@@ -59,10 +60,14 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
         try {
             String xml = xmlToString(registerMedicalCertificate);
             Certificate certificate = certificateService.storeCertificate(xml, type);
-            response.setResult(ResultOfCallUtil.okResult());
+            response.setResult(ResultTypeUtil.okResult());
             statisticsService.created(certificate);
         } catch (CertificateAlreadyExistsException e) {
-            response.setResult(ResultOfCallUtil.infoResult("Certificate already exists"));
+            response.setResult(ResultTypeUtil.result(INFO, "Certificate already exists"));
+            String certificateId = registerMedicalCertificate.getUtlatande().getUtlatandeId().getRoot();
+            String issuedBy =  registerMedicalCertificate.getUtlatande().getSkapadAv().getEnhet().getEnhetsId().getExtension();
+            LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId +
+                    " issued by " + issuedBy +": Certificate already exists - ignored.");
         } catch (JAXBException e) {
             LOGGER.error("JAXB error in Webservice: ", e);
             Throwables.propagate(e);

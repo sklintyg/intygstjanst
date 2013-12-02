@@ -53,6 +53,19 @@ public interface CertificateService {
 
     /**
      * Returns the certificate for the given patient and certificate ID.
+     * Implementation should not return revoked certificates - but rather throw an {@link CertificateRevokedException}
+     *
+     * @param civicRegistrationNumber the patient's civic registration number that must match same info on certificate
+     * @param certificateId the certificate ID
+     * @return the certificate information or null if the requested certificate does not exist
+     * @throws se.inera.certificate.exception.MissingConsentException if the patient has not given consent for accessing her certificates
+     * @throws se.inera.certificate.exception.InvalidCertificateException if the certificate does not exist
+     * @throws se.inera.certificate.exception.CertificateRevokedException if the certificate has been revoked
+     */
+    Certificate getCertificate(String civicRegistrationNumber, String certificateId);
+    /**
+     * Returns the certificate for the given certificate ID.
+     * Implementation should also return revoked certificates - but with resultCode REVOKED
      *
      * @param civicRegistrationNumber the patient's civic registration number. If left empty, no consent check will be performed.
      * @param certificateId the certificate ID
@@ -61,7 +74,7 @@ public interface CertificateService {
      * @throws se.inera.certificate.exception.InvalidCertificateException if the certificate does not exist
      * @throws se.inera.certificate.exception.CertificateRevokedException if the certificate has been revoked
      */
-    Certificate getCertificate(String civicRegistrationNumber, String certificateId);
+    Certificate getCertificate(String certificateId);
 
     /**
      * Stores the given certificate
