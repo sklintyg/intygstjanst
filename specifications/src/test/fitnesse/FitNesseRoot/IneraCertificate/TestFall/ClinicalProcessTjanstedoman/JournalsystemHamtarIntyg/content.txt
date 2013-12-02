@@ -13,15 +13,15 @@
 |intyg|förväntatSvar|resultat?|status?|
 |intyg-1|{"utlatandeId":{"root":"intyg-1"}}|OK|[RECEIVED]|
 
-!3 Journalsystemet rättar intyget och efter det skall det inte vara tillgängligt
+!3 Journalsystemet rättar intyget och efter det skall det vara tillgängligt, men returneras med annan status
 
 |Ratta intyg|
 |personnummer|intyg|resultat?|
 |19121212-1212|intyg-1|OK|
 
 |Journalsystem hamtar intyg|
-|intyg|resultat?|
-|intyg-1|[REVOKED] - Certificate 'intyg-1' has been revoked|
+|intyg|förväntatSvar|resultat?|
+|intyg-1|{"utlatandeId":{"root":"intyg-1"}}|[REVOKED] - Certificate 'intyg-1' has been revoked|
 
 !3 Rensa bort test-intyg
 
