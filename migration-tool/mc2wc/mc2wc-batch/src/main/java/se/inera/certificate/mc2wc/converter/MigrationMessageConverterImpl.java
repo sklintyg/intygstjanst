@@ -1,9 +1,12 @@
-package se.inera.certificate.mc2wc.batch;
+package se.inera.certificate.mc2wc.converter;
 
+import java.util.Date;
 import java.util.Set;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import se.inera.certificate.mc2wc.jpa.model.AddressCare;
 import se.inera.certificate.mc2wc.jpa.model.Answer;
@@ -24,23 +27,37 @@ import se.inera.certificate.mc2wc.message.QuestionOriginatorType;
 import se.inera.certificate.mc2wc.message.QuestionSubjectType;
 import se.inera.certificate.mc2wc.message.StatusType;
 
-public class MigrationMessageConverterImpl {
+public class MigrationMessageConverterImpl implements MigrationMessageConverter {
 
+    private static Logger log = LoggerFactory.getLogger(MigrationMessageConverter.class);
+    
     public MigrationMessageConverterImpl() {
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see se.inera.certificate.mc2wc.converter.MigrationMessageConverter#
+     * toMigrationMessage(se.inera.certificate.mc2wc.jpa.model.Certificate,
+     * boolean)
+     */
+    @Override
     public MigrationMessage toMigrationMessage(Certificate mcCert, boolean migrateCert) {
-
-        MigrationMessage msg = new MigrationMessage();
         
+        log.debug("Processing Certificate {}", mcCert.getId());
+        
+        MigrationMessage msg = new MigrationMessage();
+
         if (shouldCertBeMigrated(mcCert)) {
             CertificateType wcCert = toWCCertificate(mcCert);
             msg.setCertificate(wcCert);
         }
-        
+
         Set<Question> questions = mcCert.getQuestions();
 
+        log.debug("Certificate {} has {} questions", mcCert.getId(), questions.size());
+        
         for (Question mcQuestion : questions) {
             QuestionType wcQuestionAnswer = toWCQuestionAnswer(mcCert.getId(), mcQuestion);
             msg.getQuestions().add(wcQuestionAnswer);
@@ -48,56 +65,72 @@ public class MigrationMessageConverterImpl {
 
         return msg;
     }
-    
+
     private boolean shouldCertBeMigrated(Certificate cert) {
         return (cert.getDocument() != null && cert.getDocument().length > 0);
     }
 
     private CertificateType toWCCertificate(Certificate mcCert) {
-        CertificateType wcCert = new CertificateType();
         
+        log.debug("Converting the contents of Certificate {}", mcCert.getId());
+        
+        CertificateType wcCert = new CertificateType();
+
         wcCert.setCertificateId(mcCert.getId());
-        //wcCert.setCertificateType(value);
+        // wcCert.setCertificateType(value);
         wcCert.setCareUnitId(mcCert.getCareUnitId());
         wcCert.setOrigin(mcCert.getOrigin().toString());
-        
-        wcCert.setCreated(LocalDateTime.fromDateFields(mcCert.getCreatedAt()));
-        wcCert.setSent(LocalDateTime.fromDateFields(mcCert.getSentAt()));
-        
+
+        wcCert.setCreated(toLocalDateTime(mcCert.getCreatedAt()));
+        wcCert.setSent(toLocalDateTime(mcCert.getSentAt()));
+
         wcCert.setContents(mcCert.getDocument());
-        
+
         PatientType wcPatient = new PatientType();
         wcPatient.setFullName(mcCert.getPatientName());
         wcPatient.setPersonId(mcCert.getPatientSsn());
         wcCert.setPatient(wcPatient);
-        
+
         return wcCert;
     }
 
     private QuestionType toWCQuestionAnswer(String certificateId, Question mcQuestion) {
-
+        
+        log.debug("Converting Question {}, part of Certificate {}", mcQuestion.getId(), certificateId);
+        
         QuestionType qa = new QuestionType();
 
         qa.setCertificateId(certificateId);
         qa.setExternalReference(mcQuestion.getFkReferenceId());
 
-        qa.setQuestionLastAnswerDate(LocalDate.fromDateFields(mcQuestion.getLastDateForAnswer()));
-        qa.setSent(LocalDateTime.fromDateFields(mcQuestion.getSentAt()));
-        qa.setSigned(LocalDateTime.fromDateFields(mcQuestion.getTextSignedAt()));
+        qa.setQuestionLastAnswerDate(toLocalDate(mcQuestion.getLastDateForAnswer()));
+        qa.setSent(toLocalDateTime(mcQuestion.getSentAt()));
+        qa.setSigned(toLocalDateTime(mcQuestion.getTextSignedAt()));
 
         qa.setOriginator(toQuestionOriginatorType(mcQuestion.getOriginator()));
         qa.setStatus(toStatusType(mcQuestion.getState()));
         qa.setSubject(toQuestionSubject(mcQuestion.getSubject()));
-        
+
         qa.setQuestionText(mcQuestion.getText());
         qa.setCaption(mcQuestion.getCaption());
 
         qa.setPatient(toPatient(mcQuestion.getPatient()));
         qa.setCarePerson(toCarePerson(mcQuestion.getAddressCare()));
-
-        qa.setAnswer(toAnswer(mcQuestion.getAnswer()));
+        
+        if (mcQuestion.getAnswer() != null ) {
+            log.debug("Converting Answer for Question {}", mcQuestion.getId());
+            qa.setAnswer(toAnswer(mcQuestion.getAnswer()));
+        }
 
         return qa;
+    }
+
+    private LocalDate toLocalDate(Date theDate) {
+        return (theDate != null) ? LocalDate.fromDateFields(theDate) : null;
+    }
+
+    private LocalDateTime toLocalDateTime(Date theDate) {
+        return (theDate != null) ? LocalDateTime.fromDateFields(theDate) : null;
     }
 
     private CarePersonType toCarePerson(AddressCare addressCare) {
@@ -151,16 +184,20 @@ public class MigrationMessageConverterImpl {
         }
         
         AnswerType answerType = new AnswerType();
-        
+
         answerType.setText(answer.getText());
         answerType.setStatus(toStatusType(answer.getState()));
-        answerType.setSigned(LocalDateTime.fromDateFields(answer.getTextSignedAt()));
-        answerType.setSent(LocalDateTime.fromDateFields(answer.getSentAt()));
-        
+        answerType.setSigned(toLocalDateTime(answer.getTextSignedAt()));
+        answerType.setSent(toLocalDateTime(answer.getSentAt()));
+
         return answerType;
     }
 
     private QuestionSubjectType toQuestionSubject(Subject subject) {
+        
+        if (subject == null) {
+            return null;
+        }
 
         switch (subject) {
         case CONTACT:
@@ -170,7 +207,7 @@ public class MigrationMessageConverterImpl {
         case MAKULERING:
             return QuestionSubjectType.MAKULERING;
         case MEETING:
-            return QuestionSubjectType.MEETING ;
+            return QuestionSubjectType.MEETING;
         case REMINDER:
             return QuestionSubjectType.REMINDER;
         case WORK_PROLONGING:
@@ -183,7 +220,7 @@ public class MigrationMessageConverterImpl {
     }
 
     private StatusType toStatusType(State state) {
-        
+
         switch (state) {
         case CREATED:
             return StatusType.CREATED;

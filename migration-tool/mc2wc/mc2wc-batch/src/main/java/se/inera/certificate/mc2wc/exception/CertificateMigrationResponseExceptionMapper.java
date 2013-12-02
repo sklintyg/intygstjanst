@@ -1,0 +1,45 @@
+package se.inera.certificate.mc2wc.exception;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status.Family;
+import javax.ws.rs.core.Response.StatusType;
+
+import org.apache.cxf.jaxrs.client.ResponseExceptionMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Maps HTTP status codes in the response to different types of exceptions.
+ * 
+ * @author nikpet
+ *
+ */
+public class CertificateMigrationResponseExceptionMapper implements
+        ResponseExceptionMapper<AbstractCertificateMigrationException> {
+
+    private static Logger log = LoggerFactory.getLogger(CertificateMigrationResponseExceptionMapper.class);
+        
+    public CertificateMigrationResponseExceptionMapper() {
+    
+    }
+
+    @Override
+    public AbstractCertificateMigrationException fromResponse(Response response) {
+        
+        StatusType statusInfo = response.getStatusInfo();
+        Family responseFamily = statusInfo.getFamily();
+        
+        if (responseFamily.equals(Family.CLIENT_ERROR)) {
+            log.error("A client error (HTTP code {}) occured when migrating Certificate", statusInfo.getStatusCode());
+            
+            throw new CertificateMigrationException();
+        } else if(responseFamily.equals(Family.SERVER_ERROR)) {
+            log.error("A server error (HTTP code {}) occured when migrating Certificate {}", statusInfo.getStatusCode());
+            
+            throw new FatalCertificateMigrationException();
+        } 
+        
+        return null;
+    }
+
+}

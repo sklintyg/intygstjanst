@@ -54,7 +54,7 @@
 	</beans:bean>
 	
 	<beans:bean id="columnRangePartitioner" class="se.inera.certificate.migration.partition.ColumnRangePartitioner">
-		<beans:property name="table" value="original_certificate" />
+		<beans:property name="table" value="ORIGINAL_CERTIFICATE" />
 		<beans:property name="column" value="id" />
 		<beans:property name="dataSource" ref="certificateDataSource" />
 	</beans:bean>
