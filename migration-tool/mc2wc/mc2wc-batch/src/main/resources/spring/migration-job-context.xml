@@ -11,7 +11,7 @@
     <batch:step id="certificateMigrationStep">
       <batch:tasklet transaction-manager="medcertTransactionManager">
         <batch:chunk reader="migrationStepItemReader"
-          processor="migrationStepCompositeProcessor" writer="migrationStepDummyWriter"
+          processor="certificateConverterProcessor" writer="restServiceItemWriter"
            commit-interval="5">
         </batch:chunk>
       </batch:tasklet>

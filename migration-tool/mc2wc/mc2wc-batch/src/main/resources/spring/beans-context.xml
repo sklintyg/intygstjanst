@@ -6,26 +6,8 @@
           http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-
-  
-  <bean id="migrationStepItemReader" class="org.springframework.batch.item.database.JpaPagingItemReader">
-    <property name="entityManagerFactory" ref="medcertEntityManagerFactory"/>
-    <property name="queryString" value="select c from Certificate c"/>
-    <property name="pageSize" value="25"/>
-  </bean>
     
-  <bean id="migrationStepDummyWriter" class="se.inera.certificate.mc2wc.batch.processors.DummyItemWriter" />
-
-  <bean id="migrationStepCompositeProcessor" class="org.springframework.batch.item.support.CompositeItemProcessor">
-    <property name="delegates">
-      <list>
-        <ref bean="certificateConverterProcessor"/>
-        <ref bean="migrationMessageSenderProcessor"/>
-      </list>
-    </property>
-  </bean>
-
-  <bean id="migrationMessageSenderProcessor" class="se.inera.certificate.mc2wc.batch.processors.MigrationMessageSenderProcessor"/>
+  <bean id="restServiceItemWriter" class="se.inera.certificate.mc2wc.batch.writer.RestServiceItemWriter" />
   
   <bean id="certificateConverterProcessor" class="se.inera.certificate.mc2wc.batch.processors.CertificateConverterProcessor" />
   

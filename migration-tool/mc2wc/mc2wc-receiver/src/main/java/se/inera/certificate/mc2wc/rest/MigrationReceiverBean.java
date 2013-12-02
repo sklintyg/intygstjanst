@@ -1,5 +1,6 @@
 package se.inera.certificate.mc2wc.rest;
 
+import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -34,12 +35,7 @@ public class MigrationReceiverBean implements MigrationReceiver {
             return Response.ok().entity(reply).build();
             
         } catch (MigrationServiceException e) {
-            
-            reply = new MigrationReply();
-            reply.setResult(MigrationResultType.ERROR);
-            reply.setMessage(e.getMessage());
-            
-            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+            throw new ServerErrorException(Status.INTERNAL_SERVER_ERROR, e);
         }
         
     }

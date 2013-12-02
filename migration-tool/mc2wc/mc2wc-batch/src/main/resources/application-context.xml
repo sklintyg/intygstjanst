@@ -3,11 +3,15 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:context="http://www.springframework.org/schema/context"
   xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
   <import resource="spring/batch-infrastructure-context.xml" />
   <import resource="spring/persistence-context.xml" />
+  <import resource="spring/rest-service-context.xml" />
   <import resource="spring/beans-context.xml" />
   <import resource="spring/migration-job-context.xml" />
+  
+  <context:annotation-config/>
   
 </beans>

@@ -10,7 +10,9 @@
 	
 	<logger name="org.springframework.core.env.PropertySourcesPropertyResolver"
 		level="WARN" />
-
+    
+    <logger name="org.apache.cxf" level="DEBUG" />
+    
 	<logger name="se.inera.certificate.mc2wc" level="DEBUG"/>
 	
 	<root level="INFO">
