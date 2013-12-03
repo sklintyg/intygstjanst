@@ -3,7 +3,7 @@
 	xmlns:urn="urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1"
 	xmlns="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2">
 	<urn:utlatande>
-		<utlatande-id root="saknat-fornamn.xml" />
+		<utlatande-id root="saknad-enhets-postort.xml" />
 		<typAvUtlatande code="fk7263"
 			codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" />
 
@@ -13,8 +13,8 @@
 		<skickatdatum>2011-03-23T09:29:15</skickatdatum>
 		<patient>
 			<person-id root="1.2.752.129.2.1.3.1" extension="19121212-1212" />
-			
-			<efternamn>Testorsson</efternamn>
+			<fornamn></fornamn>
+			<efternamn>Test Testorsson</efternamn>
 			<arbetsuppgift>
 				<typAvArbetsuppgift>Dirigent. Dirigerar en större orkester på deltid
 				</typAvArbetsuppgift>
@@ -42,7 +42,7 @@
 				<enhetsnamn>Kir mott</enhetsnamn>
 				<postadress>Lasarettsvägen 13</postadress>
 				<postnummer>85150</postnummer>
-				<postort>Sundsvall</postort>
+				
 				<telefonnummer>060-1818000</telefonnummer>
 				<epost>kirmott@vardenhet.se</epost>
 				<vardgivare>

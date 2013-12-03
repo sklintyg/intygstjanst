@@ -3,18 +3,18 @@
 	xmlns:urn="urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1"
 	xmlns="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2">
 	<urn:utlatande>
-		<utlatande-id root="saknat-fornamn.xml" />
+		<utlatande-id root="felaktigt-datumformat-signering.xml" />
 		<typAvUtlatande code="fk7263"
 			codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" />
 
 		<kommentar>Prognosen för patienten är god. Han kommer att kunna återgå
 			till sitt arbete efter genomförd behandling.</kommentar>
-		<signeringsdatum>2011-01-26T00:00:00</signeringsdatum>
+		<signeringsdatum>FELAKTIGT_DATUM</signeringsdatum>
 		<skickatdatum>2011-03-23T09:29:15</skickatdatum>
 		<patient>
 			<person-id root="1.2.752.129.2.1.3.1" extension="19121212-1212" />
-			
-			<efternamn>Testorsson</efternamn>
+			<fornamn></fornamn>
+			<efternamn>Test Testorsson</efternamn>
 			<arbetsuppgift>
 				<typAvArbetsuppgift>Dirigent. Dirigerar en större orkester på deltid
 				</typAvArbetsuppgift>

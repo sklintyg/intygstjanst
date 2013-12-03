@@ -3,7 +3,7 @@
 	xmlns:urn="urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1"
 	xmlns="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2">
 	<urn:utlatande>
-		<utlatande-id root="b2f6d5bc-2f50-4623-9ce9-bf1ee540434a" />
+		<utlatande-id root="tomt-personal-id.xml" />
 		<typAvUtlatande code="fk7263"
 			codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" />
 
@@ -15,7 +15,10 @@
 			<person-id root="1.2.752.129.2.1.3.1" extension="19121212-1212" />
 			<fornamn></fornamn>
 			<efternamn>Test Testorsson</efternamn>
-
+			<arbetsuppgift>
+				<typAvArbetsuppgift>Dirigent. Dirigerar en större orkester på deltid
+				</typAvArbetsuppgift>
+			</arbetsuppgift>
 			<sysselsattning>
 				<typAvSysselsattning code="224375002"
 					codeSystem="1.2.752.116.2.1.1.1" codeSystemName="SNOMED-CT" />
@@ -31,7 +34,7 @@
 		</patient>
 
 		<skapadAv>
-			<personal-id root="1.2.752.129.2.1.4.1" extension="Personal HSA-ID" />
+			<personal-id root="1.2.752.129.2.1.4.1" extension="" />
 			<fullstandigtNamn>En Läkare</fullstandigtNamn>
 			<enhet>
 				<enhets-id root="1.2.752.129.2.1.4.1" extension="VardenhetY" />
