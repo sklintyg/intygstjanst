@@ -21,6 +21,7 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ObjectFact
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.util.ResultOfCallUtil;
+import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
@@ -68,6 +69,9 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
             String issuedBy =  registerMedicalCertificate.getUtlatande().getSkapadAv().getEnhet().getEnhetsId().getExtension();
             LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId +
                     " issued by " + issuedBy +": Certificate already exists - ignored.");
+        } catch (ValidationException e) {
+            response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
+            LOGGER.error(LogMarkers.VALIDATION, e.getMessage());
         } catch (JAXBException e) {
             LOGGER.error("JAXB error in Webservice: ", e);
             Throwables.propagate(e);
