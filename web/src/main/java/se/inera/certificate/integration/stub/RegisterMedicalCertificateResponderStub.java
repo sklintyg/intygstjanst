@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 
+import se.inera.certificate.integration.validator.LakarutlatandeValidator;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.ObjectFactory;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
@@ -51,6 +52,7 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
         RegisterMedicalCertificateResponseType response = new RegisterMedicalCertificateResponseType();
 
         try {
+            new LakarutlatandeValidator(request.getLakarutlatande()).validate();
             String id = request.getLakarutlatande().getLakarutlatandeId();
 
             Map<String, String> props = new HashMap<>();
