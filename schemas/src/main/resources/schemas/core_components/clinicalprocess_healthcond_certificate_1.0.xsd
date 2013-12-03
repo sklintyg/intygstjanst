@@ -113,7 +113,7 @@
       <xs:element name="postort" type="xs:string" minOccurs="0"/>
       <xs:element name="telefonnummer" type="xs:string" minOccurs="0"/>
       <xs:element name="epost" type="xs:string" minOccurs="0"/>
-      <xs:element name="vardgivare" type="vardgivareType" minOccurs="0"/>
+      <xs:element name="vardgivare" type="vardgivareType" />
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
