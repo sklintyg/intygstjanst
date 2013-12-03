@@ -22,10 +22,13 @@ public class RegisterMedicalCertificateResponderStubTest {
     
     @Mock
     FkMedicalCertificatesStore store;
-    
+
     @InjectMocks
-    RegisterMedicalCertificateResponderStub stub = new RegisterMedicalCertificateResponderStub();
-    
+    RegisterMedicalCertificateResponderStub stub = new RegisterMedicalCertificateResponderStub() {
+        @Override
+        protected void validate(RegisterMedicalCertificateType registerMedicalCertificate) {}
+    };
+
     @SuppressWarnings("unchecked")
     @Test
     public void testName() {

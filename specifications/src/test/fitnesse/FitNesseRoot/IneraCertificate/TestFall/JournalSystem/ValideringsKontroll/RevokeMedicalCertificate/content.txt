@@ -22,6 +22,24 @@
 |id|
 |intygs-id-1234567890|
 
+!3 Meddelande med blanksteg i obligatoriska fält ger inga fel
+
+!4 Givet ett intyg
+
+|Intyg|
+|personnr|utfärdat|giltigtFrån|giltigtTill|utfärdare|enhet|typ|id|mall|
+|19121212-1212|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intygs-id-1234567890|M|
+
+|validera revoke|
+|filnamn|resultat?|
+|validering/revoke/revoke-med-blanksteg.xml|OK|
+
+!4 Rensa bort intyget
+
+|ta bort Intyg|
+|id|
+|intygs-id-1234567890|
+
 !3 Saknat intygs-id ger fel
 
 |validera revoke|
