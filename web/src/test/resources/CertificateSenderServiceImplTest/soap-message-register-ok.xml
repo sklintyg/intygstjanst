@@ -1,11 +1,7 @@
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  <SOAP-ENV:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"/>
-  <soap:Body><ns3:RegisterMedicalCertificateResponse
-                                            xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2"
-                                            xmlns:ns3="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3">
-      <ns3:result>
-        <ns2:resultCode>OK</ns2:resultCode>
-      </ns3:result>
-    </ns3:RegisterMedicalCertificateResponse>
-  </soap:Body>
-</soap:Envelope>
+<ns3:RegisterMedicalCertificateResponse
+        xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2"
+        xmlns:ns3="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3">
+  <ns3:result>
+    <ns2:resultCode>OK</ns2:resultCode>
+  </ns3:result>
+</ns3:RegisterMedicalCertificateResponse>
