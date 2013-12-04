@@ -1,1 +1,5 @@
-<Certificate>Some medical information</Certificate>
+<RegisterMedicalCertificate xmlns="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3" xmlns:l="urn:riv:insuranceprocess:healthreporting:mu7263:3">
+  <lakarutlatande>
+    <l:lakarutlatande-id>123</l:lakarutlatande-id>
+  </lakarutlatande>
+</RegisterMedicalCertificate>
