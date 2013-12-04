@@ -438,6 +438,13 @@
 |validering/ny_fk7263/register/felaktigt-datumformat-signering.xml|=~/Unmarshalling Error:.*/|
 
 
+!3 multipla ressatt
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/multipla-ressatt.xml|=~/.*Validation failed.*/|
+
+
 !3 Återta samtycken:
 
 |Samtycke|
