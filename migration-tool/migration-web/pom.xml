@@ -159,8 +159,8 @@
           			</webAppConfig>
           			<systemProperties>
 			            <systemProperty>
-			              <name>catalina.home</name>
-			              <value>${project.build.directory}/logs</value>
+			              <name>catalina.base</name>
+			              <value>${project.build.directory}/catalina.base</value>
 			            </systemProperty>
 			            <systemProperty>
 			              <name>jetty.port</name>
