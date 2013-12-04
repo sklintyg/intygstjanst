@@ -1,44 +1,49 @@
 package se.inera.certificate.integration.stub;
 
-import java.util.Map;
-
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
-import iso.v21090.dt.v1.II;
+import java.io.IOException;
+import java.util.Map;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
-import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.LakarutlatandeType;
+
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
-import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterMedicalCertificateResponderStubTest {
     
     @Mock
     FkMedicalCertificatesStore store;
-    
+
     @InjectMocks
-    RegisterMedicalCertificateResponderStub stub = new RegisterMedicalCertificateResponderStub();
-    
+    RegisterMedicalCertificateResponderStub stub = new RegisterMedicalCertificateResponderStub() {
+        @Override
+        protected void validate(RegisterMedicalCertificateType registerMedicalCertificate) {}
+    };
+
     @SuppressWarnings("unchecked")
     @Test
-    public void testName() {
+    public void testName() throws JAXBException, IOException {
         AttributedURIType logicalAddress = new AttributedURIType();
-        RegisterMedicalCertificateType request = new RegisterMedicalCertificateType();
-        LakarutlatandeType lakarutlatande = new LakarutlatandeType();
-        lakarutlatande.setLakarutlatandeId("id-1234567890");
-        PatientType patient = new PatientType();
-        II iiid = new II();
-        iiid.setExtension("19121212-1212");
-        patient.setPersonId(iiid);
-        lakarutlatande.setPatient(patient);
-        request.setLakarutlatande(lakarutlatande);
+        // read request from file
+        JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        RegisterMedicalCertificateType request = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("fk7263/fk7263.xml").getInputStream()), RegisterMedicalCertificateType.class).getValue();
+
+        request.getLakarutlatande().setLakarutlatandeId("id-1234567890");
         
         stub.registerMedicalCertificate(logicalAddress, request);
         

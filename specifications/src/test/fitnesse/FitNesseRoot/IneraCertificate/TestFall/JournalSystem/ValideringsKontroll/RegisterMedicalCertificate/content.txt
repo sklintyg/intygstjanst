@@ -4,6 +4,26 @@
 |personnr|samtycke|
 |19121212-1212|ja|
 
+!3 Giltigt intyg ger inga fel
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/giltigt-intyg.xml|OK|
+
+|ta bort intyg|
+|id|
+|giltigt-intyg|
+
+!3 Intyg med blanktecken i obligatoriska fält ger inga fel
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/intyg-med-blanksteg.xml|OK|
+
+|ta bort intyg|
+|id|
+|intyg-med-blanksteg|
+
 !3 Saknat intygs-id ger fel
 
 |validera intyg|
