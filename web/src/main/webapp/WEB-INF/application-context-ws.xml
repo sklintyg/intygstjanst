@@ -146,6 +146,11 @@
                 address="${sendmedicalcertificatequestionv1.endpoint.url}">
   </jaxws:client>
 
+  <jaxws:client id="registerMedicalCertificateQuestionClient"
+                  serviceClass="se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface"
+                  address="${registermedicalcertificatev3.endpoint.url}">
+    </jaxws:client>
+
   <import resource="application-context-ws-stub.xml"/>
 
   <beans profile="qa,prod">
