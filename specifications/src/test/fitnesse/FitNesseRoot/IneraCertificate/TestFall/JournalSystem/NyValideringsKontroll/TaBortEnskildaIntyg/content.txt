@@ -1,0 +1,25 @@
+!3 Rensa bort test-intyg
+
+|ta bort Intyg|
+|id|
+|saknad-enhets-postort.xml|
+|saknad-enhets-postnr.xml|
+|saknad-enhets-postadress.xml|
+|saknat-enhets-telefonnr.xml|
+|tomt-enhets-id.xml|
+|tomt-personal-id.xml|
+|tomt-vardgivare-id.xml|
+|tomt-arbetsplatskod.xml|
+|saknade-vardkontakter.xml|
+|saknade-referenser.xml|
+|saknade-aktiviteter.xml|
+|saknad-funktionstillstand-aktivitet.xml||
+|saknat-fornamn.xml|
+|saknad-typ-av-arbetsuppgift-vid-normalt-arbete.xml|
+|saknat-vardgivare-id.xml|
+|saknat-vardgivare-namn.xml|
+|saknad-arbetsplatskod.xml|
+|tom-aktivitet-beskrivning.xml|
+|tom-observation-beskrivning.xml|
+|felaktigt-datumformat-signering.xml|
+|felaktigt-utlatande-id-typ.xml|

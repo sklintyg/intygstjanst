@@ -68,7 +68,7 @@
 			</vardkontakttid>
 		</vardkontakt>
 
-		<referens>
+	<!-- 	<referens>
 			<referenstyp code="419891008" codeSystem="1.2.752.116.2.1.1.1"
 				codeSystemName="SNOMED-CT" />
 			<referensdatum>2010-01-14</referensdatum>
@@ -116,6 +116,8 @@
 			<aktivitetskod code="AKT10"
 				codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a" codeSystemName="kv_aktiviteter_intyg" />
 		</aktivitet>
+		
+		 -->
 
 		<observation>
 			<observationskategori code="439401001"
