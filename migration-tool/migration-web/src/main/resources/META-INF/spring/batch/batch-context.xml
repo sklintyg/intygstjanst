@@ -94,6 +94,7 @@
   <beans:bean id="checkCertificateExistsProcessor"
     class="se.inera.certificate.migration.processors.CheckCertificateExistsProcessor"
     scope="step">
+    <beans:property name="certificateCheckSql" value="${certificate.check.sql}"/>
     <beans:property name="dataSource" ref="certificateDataSource" />
   </beans:bean>
 

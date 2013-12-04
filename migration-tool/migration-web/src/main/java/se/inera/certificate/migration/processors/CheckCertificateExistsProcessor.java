@@ -10,9 +10,9 @@ import se.inera.certificate.migration.model.OriginalCertificate;
 public class CheckCertificateExistsProcessor extends JdbcDaoSupport implements
         ItemProcessor<OriginalCertificate, OriginalCertificate> {
 
-    private static final String SELECT_COUNT = "SELECT count(*) FROM certificate WHERE id = ?";
-
     private static Logger log = LoggerFactory.getLogger(CheckCertificateExistsProcessor.class);
+    
+    private String certificateCheckSql;
     
     public CheckCertificateExistsProcessor() {
         super();
@@ -39,9 +39,16 @@ public class CheckCertificateExistsProcessor extends JdbcDaoSupport implements
 
     public boolean checkIfCertificateExists(String certId) {
 
-        int res = getJdbcTemplate().queryForInt(SELECT_COUNT, certId);
+        int res = getJdbcTemplate().queryForInt(certificateCheckSql, certId);
 
         return (res == 1);
     }
+        
+    public String getCertificateCheckSql() {
+        return certificateCheckSql;
+    }
 
+    public void setCertificateCheckSql(String certificateCheckSql) {
+        this.certificateCheckSql = certificateCheckSql;
+    }
 }
