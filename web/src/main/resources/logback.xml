@@ -13,9 +13,9 @@
         <onMatch>DENY</onMatch>
         <onMismatch>ACCEPT</onMismatch>
     </filter>
-    <file>${catalina.home}/logs/certificate.log</file>
+    <file>${catalina.base}/logs/certificate.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${catalina.home}/logs/certificate.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <fileNamePattern>${catalina.base}/logs/certificate.%d{yyyy-MM-dd}.log</fileNamePattern>
     </rollingPolicy>
     <encoder>
       <pattern>%date{ISO8601} [%thread] %-5level %logger{10} - %msg%n</pattern>
@@ -29,9 +29,9 @@
         <onMatch>ACCEPT</onMatch>
         <onMismatch>DENY</onMismatch>
     </filter>
-    <file>${catalina.home}/logs/validation.log</file>
+    <file>${catalina.base}/logs/validation.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${catalina.home}/logs/validation.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <fileNamePattern>${catalina.base}/logs/validation.%d{yyyy-MM-dd}.log</fileNamePattern>
     </rollingPolicy>
     <encoder>
       <pattern>%date{ISO8601} %-5level - %msg%n</pattern>
