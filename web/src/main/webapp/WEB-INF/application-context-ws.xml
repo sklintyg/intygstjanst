@@ -188,7 +188,7 @@
     </http:conduit>
 
     <http:conduit
-            name="{urn:riv:insuranceprocess:healthreporting:RevokeMedicalCertificateResponder:1:rivtabp20}RevokeMedicalCertificateResponderInterfacePort.http-conduit">
+            name="{urn:riv:insuranceprocess:healthreporting:SendMedicalCertificateQuestion:1:rivtabp20}SendMedicalCertificateQuestionResponderInterfacePort.http-conduit">
       <http:client AllowChunking="false" AutoRedirect="true" Connection="Keep-Alive"/>
       <http:tlsClientParameters disableCNCheck="true">
         <sec:keyManagers keyPassword="${ws.key.manager.password}">
