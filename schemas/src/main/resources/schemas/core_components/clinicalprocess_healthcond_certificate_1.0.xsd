@@ -14,8 +14,7 @@
     <xs:sequence>
       <xs:element name="utlatande-id" type="utlatandeId"/>
       <xs:element name="typAvUtlatande" type="utlatandeTyp"/>
-      <xs:element name="kommentar" type="xs:string" minOccurs="0"
-                  maxOccurs="unbounded"/>
+      <xs:element name="kommentar" type="nonEmptyString" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="signeringsdatum" type="dateTime"/>
       <xs:element name="skickatdatum" type="dateTime" minOccurs="0"/>
 
@@ -38,8 +37,8 @@
   </xs:complexType>
 
   <xs:complexType name="utlatandeId">
-    <xs:attribute name="root" type="xs:string" use="required"/>
-    <xs:attribute name="extension" type="xs:string" use="optional"/>
+    <xs:attribute name="root" type="nonEmptyString" use="required"/>
+    <xs:attribute name="extension" type="nonEmptyString" use="optional"/>
   </xs:complexType>
 
   <xs:complexType name="utlatandeTyp">
@@ -53,6 +52,7 @@
   </xs:complexType>
   <xs:simpleType name="patientIdRoot">
     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
       <xs:enumeration value="1.2.752.129.2.1.3.1"/>
       <xs:enumeration value="1.2.752.129.2.1.3.3"/>
     </xs:restriction>
@@ -65,12 +65,12 @@
 
   <xs:complexType name="hsaId">
     <xs:attribute name="root" type="xs:string" use="required" fixed="1.2.752.129.2.1.4.1"/>
-    <xs:attribute name="extension" type="xs:string" use="required"/>
+    <xs:attribute name="extension" type="nonEmptyString" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="arbetsplatsKod">
     <xs:attribute name="root" type="xs:string" use="required" fixed="1.2.752.29.4.71"/>
-    <xs:attribute name="extension" type="xs:string" use="required"/>
+    <xs:attribute name="extension" type="nonEmptyString" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="hosPersonalType">
@@ -80,7 +80,7 @@
           <xs:documentation>HSA-id, o.i.d för HSA-id är 1.2.752.129.2.1.4.1</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="fullstandigtNamn" type="xs:string" minOccurs="0">
+      <xs:element name="fullstandigtNamn" type="nonEmptyString" minOccurs="0">
         <xs:annotation>
           <xs:documentation>Förnamn + efternamn sammanslaget.
             Är tomt om personen har en skyddad identitet.
@@ -88,7 +88,7 @@
         </xs:annotation>
       </xs:element>
       <!-- Skyddad identitet -->
-      <xs:element name="forskrivarkod" type="xs:string" minOccurs="0"/>
+      <xs:element name="forskrivarkod" type="nonEmptyString" minOccurs="0"/>
       <xs:element name="befattning" type="xs:string" minOccurs="0"/>
       <xs:element name="enhet" type="enhetType"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -107,13 +107,13 @@
           <xs:documentation>o.i.d för arbetsplatskod är 1.2.752.29.4.71</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="enhetsnamn" type="xs:string"/>
-      <xs:element name="postadress" type="xs:string" minOccurs="0"/>
-      <xs:element name="postnummer" type="xs:string" minOccurs="0"/>
-      <xs:element name="postort" type="xs:string" minOccurs="0"/>
-      <xs:element name="telefonnummer" type="xs:string" minOccurs="0"/>
-      <xs:element name="epost" type="xs:string" minOccurs="0"/>
-      <xs:element name="vardgivare" type="vardgivareType" />
+      <xs:element name="enhetsnamn" type="nonEmptyString"/>
+      <xs:element name="postadress" type="nonEmptyString" minOccurs="0"/>
+      <xs:element name="postnummer" type="nonEmptyString" minOccurs="0"/>
+      <xs:element name="postort" type="nonEmptyString" minOccurs="0"/>
+      <xs:element name="telefonnummer" type="nonEmptyString" minOccurs="0"/>
+      <xs:element name="epost" type="nonEmptyString" minOccurs="0"/>
+      <xs:element name="vardgivare" type="vardgivareType"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
@@ -125,7 +125,7 @@
           <xs:documentation>HSA-id, o.i.d för HSA-id är 1.2.752.129.2.1.4.1</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="vardgivarnamn" type="xs:string"/>
+      <xs:element name="vardgivarnamn" type="nonEmptyString"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
@@ -133,12 +133,12 @@
   <xs:complexType name="patientType">
     <xs:sequence>
       <xs:element name="person-id" type="personId"/>
-      <xs:element name="fornamn" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="efternamn" type="xs:string"/>
-      <xs:element name="mellannamn" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="postadress" type="xs:string" minOccurs="0"/>
-      <xs:element name="postnummer" type="xs:string" minOccurs="0"/>
-      <xs:element name="postort" type="xs:string" minOccurs="0"/>
+      <xs:element name="fornamn" type="nonEmptyString" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="efternamn" type="nonEmptyString"/>
+      <xs:element name="mellannamn" type="nonEmptyString" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="postadress" type="nonEmptyString" minOccurs="0"/>
+      <xs:element name="postnummer" type="nonEmptyString" minOccurs="0"/>
+      <xs:element name="postort" type="nonEmptyString" minOccurs="0"/>
 
       <xs:element name="patientRelation" type="patientRelationType"
                   minOccurs="0" maxOccurs="unbounded"/>
@@ -157,13 +157,13 @@
       <xs:element name="relationskategori" type="iso:CD"/>
       <xs:element name="relationTyp" type="iso:CD" maxOccurs="unbounded"/>
       <xs:element name="person-id" type="personId" minOccurs="0"/>
-      <xs:element name="fornamn" type="xs:string" maxOccurs="unbounded"/>
-      <xs:element name="efternamn" type="xs:string"/>
-      <xs:element name="mellannamn" type="xs:string" minOccurs="0"
+      <xs:element name="fornamn" type="nonEmptyString" maxOccurs="unbounded"/>
+      <xs:element name="efternamn" type="nonEmptyString"/>
+      <xs:element name="mellannamn" type="nonEmptyString" minOccurs="0"
                   maxOccurs="unbounded"/>
-      <xs:element name="postadress" type="xs:string" minOccurs="0"/>
-      <xs:element name="postnummer" type="xs:string" minOccurs="0"/>
-      <xs:element name="postort" type="xs:string" minOccurs="0"/>
+      <xs:element name="postadress" type="nonEmptyString" minOccurs="0"/>
+      <xs:element name="postnummer" type="nonEmptyString" minOccurs="0"/>
+      <xs:element name="postort" type="nonEmptyString" minOccurs="0"/>
 
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
@@ -172,7 +172,7 @@
 
   <xs:complexType name="arbetsuppgiftType">
     <xs:sequence>
-      <xs:element name="typAvArbetsuppgift" type="xs:string"/>
+      <xs:element name="typAvArbetsuppgift" type="nonEmptyString"/>
 
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
@@ -213,7 +213,7 @@
       <xs:element name="aktivitetskod" type="iso:CD"/>
       <xs:element name="aktivitetstid" type="partialDateInterval"
                   minOccurs="0"/>
-      <xs:element name="beskrivning" type="xs:string" minOccurs="0"/>
+      <xs:element name="beskrivning" type="nonEmptyString" minOccurs="0"/>
 
       <xs:element name="utforsVidEnhet" type="enhetType"
                   minOccurs="0"/>
@@ -239,7 +239,7 @@
   <xs:complexType name="rekommendationType">
     <xs:sequence>
       <xs:element name="rekommendationskod" type="iso:CD"/>
-      <xs:element name="beskrivning" type="xs:string" minOccurs="0"/>
+      <xs:element name="beskrivning" type="nonEmptyString" minOccurs="0"/>
       <xs:element name="sjukdomskannedom" type="iso:CD"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
@@ -252,7 +252,7 @@
                   minOccurs="0"/>
       <xs:element name="observationskod" type="iso:CD"
                   minOccurs="0"/>
-      <xs:element name="beskrivning" type="xs:string" minOccurs="0"/>
+      <xs:element name="beskrivning" type="nonEmptyString" minOccurs="0"/>
       <xs:element name="observationsperiod" type="partialDateInterval" minOccurs="0"/>
       <xs:element name="varde" type="iso:PQ" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="utforsAv" type="utforarrollType"
@@ -266,11 +266,17 @@
   <xs:complexType name="prognosType">
     <xs:sequence>
       <xs:element name="prognoskod" type="iso:CD" minOccurs="0"/>
-      <xs:element name="beskrivning" type="xs:string" minOccurs="0"/>
+      <xs:element name="beskrivning" type="nonEmptyString" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
+
+  <xs:simpleType name="nonEmptyString">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:simpleType name="date">
     <xs:annotation>
@@ -327,19 +333,20 @@
   </xs:complexType>
 
   <xs:complexType name="ResultType">
-  		<xs:annotation>
-  		    <xs:documentation xml:lang='sv'>
-  		        Datatyp som returneras som ett generellt svar från alla förändrande tjänster, t.ex. skapa, radera, etc.
-  		        En anropande klient skall alltid kontrollera att resultatkoden inte innehåller fel för att på så sätt veta om anropet lyckades.
-  		        Alla svarskoder förutom OK och INFO betyder att åtgärden inte genomfördes.
-  		    </xs:documentation>
-  		</xs:annotation>
-  		<xs:sequence>
-  			<xs:element name="resultCode" type="ResultCodeType"/>
-  			<xs:element name="resultText" type="xs:string" minOccurs="0"/>
-  			<xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
-  		</xs:sequence>
-  	</xs:complexType>
+    <xs:annotation>
+      <xs:documentation xml:lang='sv'>
+        Datatyp som returneras som ett generellt svar från alla förändrande tjänster, t.ex. skapa, radera, etc.
+        En anropande klient skall alltid kontrollera att resultatkoden inte innehåller fel för att på så sätt veta om
+        anropet lyckades.
+        Alla svarskoder förutom OK och INFO betyder att åtgärden inte genomfördes.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="resultCode" type="ResultCodeType"/>
+      <xs:element name="resultText" type="xs:string" minOccurs="0"/>
+      <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
+    </xs:sequence>
+  </xs:complexType>
 
   <xs:simpleType name="ResultCodeType">
     <xs:annotation>
@@ -381,10 +388,11 @@
       <xs:enumeration value="REVOKED">
         <xs:annotation>
           <xs:documentation xml:lang='sv'>
-            Den efterfrågade informationen existerar men har rättats/dragits tillbaka och är ej längre giltig eller tillgänglig. Angiven tjänst utfördes ej.
+            Den efterfrågade informationen existerar men har rättats/dragits tillbaka och är ej längre giltig eller
+            tillgänglig. Angiven tjänst utfördes ej.
           </xs:documentation>
         </xs:annotation>
-      </xs:enumeration>      
+      </xs:enumeration>
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>
