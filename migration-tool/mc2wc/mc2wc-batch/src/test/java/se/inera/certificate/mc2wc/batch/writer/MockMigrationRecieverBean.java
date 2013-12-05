@@ -3,8 +3,10 @@ package se.inera.certificate.mc2wc.batch.writer;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import se.inera.certificate.mc2wc.message.MigrationMessage;
 import se.inera.certificate.mc2wc.message.MigrationReply;
@@ -16,6 +18,8 @@ public class MockMigrationRecieverBean implements MigrationReceiver {
     public static final String HTTP_500 = "badCertificateHttp500";
     public static final String HTTP_400 = "badCertificateHttp400";
     
+    public static Logger log = LoggerFactory.getLogger(MockMigrationRecieverBean.class);
+    
     public MockMigrationRecieverBean() {
         
     }
@@ -24,7 +28,9 @@ public class MockMigrationRecieverBean implements MigrationReceiver {
         
         Response response = null;
         
-        String certificateId = message.getCertificate().getCertificateId();
+        String certificateId = message.getCertificateId();
+        
+        log.info("-- Received MigrationMessage for certificate {} --", certificateId);
         
         if (HTTP_500.equals(certificateId)) {
             throw new ServerErrorException(Status.INTERNAL_SERVER_ERROR);

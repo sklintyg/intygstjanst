@@ -31,6 +31,10 @@ public class MigrationMessageConverterImpl implements MigrationMessageConverter 
 
     private static Logger log = LoggerFactory.getLogger(MigrationMessageConverter.class);
     
+    private static final String migratedFrom = "Landsting X";
+    
+    private static final String INTYGS_TYP = "FK7363";
+    
     public MigrationMessageConverterImpl() {
 
     }
@@ -48,6 +52,7 @@ public class MigrationMessageConverterImpl implements MigrationMessageConverter 
         log.debug("Processing Certificate {}", mcCert.getId());
         
         MigrationMessage msg = new MigrationMessage();
+        msg.setCertificateId(mcCert.getId());
 
         if (shouldCertBeMigrated(mcCert)) {
             CertificateType wcCert = toWCCertificate(mcCert);
@@ -77,7 +82,7 @@ public class MigrationMessageConverterImpl implements MigrationMessageConverter 
         CertificateType wcCert = new CertificateType();
 
         wcCert.setCertificateId(mcCert.getId());
-        // wcCert.setCertificateType(value);
+        wcCert.setCertificateType("FK7263");
         wcCert.setCareUnitId(mcCert.getCareUnitId());
         wcCert.setOrigin(mcCert.getOrigin().toString());
 
@@ -90,6 +95,8 @@ public class MigrationMessageConverterImpl implements MigrationMessageConverter 
         wcPatient.setFullName(mcCert.getPatientName());
         wcPatient.setPersonId(mcCert.getPatientSsn());
         wcCert.setPatient(wcPatient);
+        
+        wcCert.setMigratedFrom(migratedFrom);
 
         return wcCert;
     }
@@ -101,6 +108,7 @@ public class MigrationMessageConverterImpl implements MigrationMessageConverter 
         QuestionType qa = new QuestionType();
 
         qa.setCertificateId(certificateId);
+        qa.setCertificateType(INTYGS_TYP);
         qa.setExternalReference(mcQuestion.getFkReferenceId());
 
         qa.setQuestionLastAnswerDate(toLocalDate(mcQuestion.getLastDateForAnswer()));
@@ -178,10 +186,12 @@ public class MigrationMessageConverterImpl implements MigrationMessageConverter 
     }
 
     private AnswerType toAnswer(Answer answer) {
-
+        
         if (answer == null) {
             return null;
         }
+        
+        log.debug("Converting Answer {}", answer.getId());
         
         AnswerType answerType = new AnswerType();
 

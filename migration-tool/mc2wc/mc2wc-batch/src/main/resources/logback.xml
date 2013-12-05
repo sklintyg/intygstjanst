@@ -18,7 +18,9 @@
 
 	<logger name="org.springframework.core.env.PropertySourcesPropertyResolver"
 		level="WARN" />
-
+    
+    <logger name="org.apache.cxf" level="ERROR"/>
+    
 	<logger name="se.inera.certificate.mc2wc" level="INFO">
 		<appender-ref ref="FILEOUT" />
 	</logger>

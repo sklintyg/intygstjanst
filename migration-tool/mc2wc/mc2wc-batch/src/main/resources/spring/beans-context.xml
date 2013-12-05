@@ -6,11 +6,13 @@
           http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-    
-  <bean id="restServiceItemWriter" class="se.inera.certificate.mc2wc.batch.writer.RestServiceItemWriter" />
   
   <bean id="certificateConverterProcessor" class="se.inera.certificate.mc2wc.batch.processors.CertificateConverterProcessor" />
   
   <bean id="migrationMessageConverter" class="se.inera.certificate.mc2wc.converter.MigrationMessageConverterImpl"/>
-          
+
+  <bean id="migrationMessageValidationProcessor" class="se.inera.certificate.mc2wc.batch.processors.MigrationMessageValidationProcessor" />
+  
+  <bean id="migrationMessageSchemaValidator" class="se.inera.certificate.mc2wc.schema.MigrationMessageSchemaValidatorImpl" init-method="init" />
+            
 </beans>

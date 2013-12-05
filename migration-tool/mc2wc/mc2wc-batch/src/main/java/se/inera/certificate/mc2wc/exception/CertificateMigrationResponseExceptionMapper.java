@@ -32,11 +32,11 @@ public class CertificateMigrationResponseExceptionMapper implements
         if (responseFamily.equals(Family.CLIENT_ERROR)) {
             log.error("A client error (HTTP code {}) occured when migrating Certificate", statusInfo.getStatusCode());
             
-            throw new CertificateMigrationException();
+            return new CertificateMigrationException();
         } else if(responseFamily.equals(Family.SERVER_ERROR)) {
             log.error("A server error (HTTP code {}) occured when migrating Certificate {}", statusInfo.getStatusCode());
             
-            throw new FatalCertificateMigrationException();
+            return new FatalCertificateMigrationException();
         } 
         
         return null;

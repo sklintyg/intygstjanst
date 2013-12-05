@@ -12,7 +12,7 @@
       <cxf:logging />
     </cxf:features>
   </cxf:bus>
-
+  
   <bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider">
     <property name="schemaLocations">
       <list>
@@ -30,5 +30,7 @@
       <ref bean="jaxbProvider"/>
     </jaxrs:providers>
   </jaxrs:client>
+  
+  <bean id="restServiceItemWriter" class="se.inera.certificate.mc2wc.batch.writer.RestServiceItemWriter" />
 
 </beans>
