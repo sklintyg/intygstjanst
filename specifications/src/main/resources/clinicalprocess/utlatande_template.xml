@@ -171,8 +171,4 @@ Patienten kan inte lyfta armen utan den ska hållas riktad nedåt och i fast lä
       <beskrivning>Arbetsförmåga: Skadan har förvärrats vid varje tillfälle patienten använt armen. Måste hållas i total stillhet tills läkningsprocessen kommit en bit på väg. Eventuellt kan utredning visa att operation är nödvändig för att läka skadan.</beskrivning>
     </prognos>
   </observation>
-<<<<<<< HEAD:specifications/src/main/resources/clinicalprocess/utlatande_template.xml
-=======
-  <ovrigt><arrangmang><bokningsreferens>ABC-123</bokningsreferens></arrangmang></ovrigt>
->>>>>>> 463af55... Fix för INTYG-750: Intyg med blanksteg i obligatoriska fält kan registreras, men inte skickas till FK.:schemas/src/test/resources/generic/maximalt-fk7263.xml
 </utlatande>
