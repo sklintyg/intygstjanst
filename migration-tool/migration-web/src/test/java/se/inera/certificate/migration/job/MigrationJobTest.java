@@ -33,7 +33,7 @@ import se.inera.certificate.migration.testutils.http.IntygHttpRequestHandler.Int
  * @author nikpet
  *
  */
-@ContextConfiguration(locations = { "/test-application-context.xml", "/META-INF/spring/batch/jobs/jobs-context.xml"})
+@ContextConfiguration(locations = { "/test-application-context.xml", "/spring/infomodel-migration-context.xml", "/META-INF/spring/batch/jobs/infomodel-migration-job.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class MigrationJobTest {
 

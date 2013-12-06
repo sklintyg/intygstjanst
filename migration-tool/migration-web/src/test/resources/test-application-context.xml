@@ -14,7 +14,6 @@
 	<beans:import resource="classpath:spring/test-env-context.xml" />
 	<beans:import resource="classpath:spring/test-batch-data-source-context.xml" />
 	<beans:import resource="classpath:spring/test-data-source-context.xml" />
-	<beans:import resource="classpath:META-INF/spring/batch/batch-context.xml" />
 
 	<context:annotation-config />
 	

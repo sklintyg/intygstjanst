@@ -7,19 +7,6 @@
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-  <batch:job id="sendCertificatesToStatisticsJob" incrementer="jobIncrementer"
-    restartable="false">
-    <batch:step id="sendCerts">
-      <batch:tasklet transaction-manager="certificateTransactionManager">
-        <batch:chunk reader="certificateToStatisticsJdbcReader"
-          processor="checkCertificateStateProcessor" writer="certificateToStatisticsJMSWriter"
-          commit-interval="50" />
-      </batch:tasklet>
-      <batch:end on="*" />
-      <batch:fail on="FAILED" />
-    </batch:step>
-  </batch:job>
-
   <bean id="certificateToStatisticsJdbcReader"
     class="org.springframework.batch.item.database.JdbcPagingItemReader">
     <property name="dataSource" ref="certificateDataSource" />
@@ -27,28 +14,25 @@
       <bean
         class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
         <property name="dataSource" ref="certificateDataSource" />
-        <property name="selectClause"
-          value="${certificate.reader.sql.select}" />
-        <property name="fromClause"
-          value="${certificate.reader.sql.from}" />
-        <property name="whereClause"
-          value="${certificate.reader.sql.where}" />
-        <property name="sortKey"
-          value="${certificate.reader.sortkey}" />
+        <property name="selectClause" value="${certificate.reader.sql.select}" />
+        <property name="fromClause" value="${certificate.reader.sql.from}" />
+        <property name="whereClause" value="${certificate.reader.sql.where}" />
+        <property name="sortKey" value="${certificate.reader.sortkey}" />
       </bean>
     </property>
     <property name="pageSize" value="100" />
     <property name="rowMapper">
-      <bean
-        class="se.inera.certificate.migration.model.CertificateRowMapper" />
+      <bean class="se.inera.certificate.migration.model.CertificateRowMapper" />
     </property>
   </bean>
 
-  <bean id="checkCertificateStateProcessor" class="se.inera.certificate.migration.processors.CheckCertificateStateProcessor">
+  <bean id="checkCertificateStateProcessor"
+    class="se.inera.certificate.migration.processors.CheckCertificateStateProcessor">
     <property name="dataSource" ref="certificateDataSource" />
-    <property name="checkSql" value="${check.sql}"/>
+    <property name="checkSql" value="${check.sql}" />
   </bean>
 
-  <bean id="certificateToStatisticsJMSWriter" class="se.inera.certificate.migration.writers.CertificateToStatisticsJMSWriter" />
+  <bean id="certificateToStatisticsJMSWriter"
+    class="se.inera.certificate.migration.writers.CertificateToStatisticsJMSWriter" />
 
 </beans>
