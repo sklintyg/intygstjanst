@@ -3,7 +3,7 @@
 	xmlns:urn="urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1"
 	xmlns="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2">
 	<urn:utlatande>
-		<utlatande-id root="maximalt-fk7263.xml" />
+		<utlatande-id root="tomt-vardgivarenamn.xml" />
 		<typAvUtlatande code="fk7263"
 			codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" />
 
@@ -35,7 +35,7 @@
 
 		<skapadAv>
 			<personal-id root="1.2.752.129.2.1.4.1" extension="Personal HSA-ID" />
-			<fullstandigtNamn>En LÃ¤kare</fullstandigtNamn>
+			<fullstandigtNamn>En Läkare</fullstandigtNamn>
 			<enhet>
 				<enhets-id root="1.2.752.129.2.1.4.1" extension="VardenhetY" />
 				<arbetsplatskod root="1.2.752.29.4.71" extension="123456789011" />
@@ -47,7 +47,7 @@
 				<epost>kirmott@vardenhet.se</epost>
 				<vardgivare>
 					<vardgivare-id root="1.2.752.129.2.1.4.1" extension="VardgivarId" />
-					<vardgivarnamn>Landstinget Norrland</vardgivarnamn>
+					<vardgivarnamn></vardgivarnamn>
 				</vardgivare>
 			</enhet>
 		</skapadAv>

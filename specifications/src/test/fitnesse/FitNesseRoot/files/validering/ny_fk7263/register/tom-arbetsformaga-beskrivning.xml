@@ -3,7 +3,7 @@
 	xmlns:urn="urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1"
 	xmlns="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2">
 	<urn:utlatande>
-		<utlatande-id root="maximalt-fk7263.xml" />
+		<utlatande-id root="tom-arbetsformaga-beskrivning.xml" />
 		<typAvUtlatande code="fk7263"
 			codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" />
 
@@ -165,13 +165,7 @@
 			<prognos>
 				<prognoskod code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 					codeSystemName="kv_prognos_intyg" />
-				<beskrivning>Arbetsförmåga: Skadan har förvärrats vid varje
-					tillfälle patienten
-					använt armen. Måste hållas i total stillhet tills läkningsprocessen
-					kommit en bit på väg. Eventuellt kan utredning visa att operation
-					är
-					nödvändig för att läka skadan.
-				</beskrivning>
+				<beskrivning></beskrivning>
 			</prognos>
 		</observation>
 		<observation>

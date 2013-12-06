@@ -5,6 +5,17 @@
 |19121212-1212|ja|
 
 
+!3 Giltigt intyg ger inga fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/maximalt-fk7263.xml|=~/OK*/|
+
+|ta bort intyg|
+|id|
+|maximalt-fk7263.xml|
+
+
 !3 Saknad funktionstillstand kroppsfunktion ger fel
 
 |validera fk7263 intyg|
@@ -17,6 +28,21 @@
 |validera fk7263 intyg|
 |filnamn|resultat?|
 |validering/ny_fk7263/register/saknad-funktionstillstand-kroppsfunktion-beskrivning.xml|=~/.*ERROR.*Validation.*/|
+
+
+!3 Tom funktionstillstand kroppsfunktion ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tom-funktionstillstand-kroppsfunktion.xml|=~/.*ERROR.*Validation.*/|
+
+
+!3 Tom funktionstillstand aktivitet beskrivning ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tom-funktionstillstand-aktivitet-beskrivning.xml|=~/.*ERROR.*Validation.*/|
+
 
 !3 Felaktig diagnos-kod-system ger fel
 
@@ -45,6 +71,11 @@
 |filnamn|resultat?|
 |validering/ny_fk7263/register/saknat-personal-namn.xml|=~/.*ERROR.*Validation.*/|
 
+!3 Tomt personal namn ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tomt-personal-namn.xml|=~/.*ERROR.*Validation.*/|
 
 !3 Saknad arbetsformaga ger fel
 
@@ -52,6 +83,11 @@
 |filnamn|resultat?|
 |validering/ny_fk7263/register/saknad-arbetsformaga.xml|=~/.*ERROR.*Validation.*/|
 
+!3 Tom arbetsformaga beskrivning ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tom-arbetsformaga-beskrivning.xml|=~/.*ERROR.*Validation.*/|
 
 !3 Saknad diagnos kod system ger fel
 
@@ -80,6 +116,12 @@
 |filnamn|resultat?|
 |validering/ny_fk7263/register/saknad-enhets-postnr.xml|=~/.*ERROR.*Validation.*/|
 
+!3 Tom enhets postnr ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tom-enhets-postnr.xml|=~/.*ERROR.*Validation.*/|
+
 
 !3 Saknad enhets postort ger fel
 
@@ -88,11 +130,24 @@
 |validering/ny_fk7263/register/saknad-enhets-postort.xml|=~/.*ERROR.*Validation.*/|
 
 
+!3 Tom enhets postort ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tom-enhets-postort.xml|=~/.*ERROR.*Validation.*/|
+
+
 !3 Saknad enhets postadress ger fel
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
 |validering/ny_fk7263/register/saknad-enhets-postadress.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Tom enhets postadress ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tom-enhets-postadress.xml|=~/.*ERROR.*Validation.*/|
 
 
 !3 Saknat enhets telefonnr ger fel
@@ -100,6 +155,18 @@
 |validera fk7263 intyg|
 |filnamn|resultat?|
 |validering/ny_fk7263/register/saknat-enhets-telefonnr.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Tom enhets telefonnr ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tom-enhets-telefonnr.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Tomt enhetsnamn ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tomt-enhetsnamn.xml|=~/.*ERROR.*Validation.*/|
 
 !3 Tomt enhets id ger fel
 
@@ -119,6 +186,12 @@
 |validera fk7263 intyg|
 |filnamn|resultat?|
 |validering/ny_fk7263/register/tomt-vardgivare-id.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Tomt vardgivarenamn ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tomt-vardgivarenamn.xml|=~/.*ERROR.*Validation.*/|
 
 !3 Tomt arbetsplatskod ger fel
 
@@ -140,9 +213,6 @@
 |validering/ny_fk7263/register/felaktigt-utlatande-id-typ.xml|=~/.*FEL.*/|
 
 
-
-
-
 !3 Saknad typavutlatande ger fel
 
 |validera fk7263 intyg|
@@ -162,6 +232,13 @@
 |validera fk7263 intyg|
 |filnamn|resultat?|
 |validering/ny_fk7263/register/saknad-kommentar.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Tom kommentar ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tom-kommentar.xml|=~/.*ERROR.*Validation.*/|
+
 
 !3 Saknad kommentar vid resferenstyp annat ger fel
 
@@ -203,28 +280,6 @@
 |filnamn|resultat?|
 |validering/ny_fk7263/register/saknar-skapare.xml|=~/.Unmarshalling Error:.*/|
 
-
-!3 Saknade vardkontakter ger OK
-
-|validera fk7263 intyg|
-|filnamn|resultat?|
-|validering/ny_fk7263/register/saknade-vardkontakter.xml|=~/OK*/|
-
-
-!3 Saknade referenser ger OK
-
-|validera fk7263 intyg|
-|filnamn|resultat?|
-|validering/ny_fk7263/register/saknade-referenser.xml|=~/OK*/|
-
-
-!3 Saknade aktiviteter ger OK
-
-|validera fk7263 intyg|
-|filnamn|resultat?|
-|validering/ny_fk7263/register/saknade-aktiviteter.xml|=~/OK*/|
-
-
 !3 Saknade observartioner ger fel
 
 |validera fk7263 intyg|
@@ -248,12 +303,6 @@
 |validera fk7263 intyg|
 |filnamn|resultat?|
 |validering/ny_fk7263/register/saknad-varaktighet-tom.xml|=~/Unmarshalling Error:.*/|
-
-!3 Saknad funktionstillstand aktivitet ger fel
-
-|validera fk7263 intyg|
-|filnamn|resultat?|
-|validering/ny_fk7263/register/saknad-funktionstillstand-aktivitet.xml|=~/.*ERROR.*Validation.*/|
 
 
 !3 Felaktigt personnr ger fel
@@ -284,18 +333,17 @@
 |validering/ny_fk7263/register/tomt-personnr.xml|=~/.*ERROR.*Validation.*patientIdExtension*/|
 
 
-!3 Saknat fornamn ger OK
-
-|validera fk7263 intyg|
-|filnamn|resultat?|
-|validering/ny_fk7263/register/saknat-fornamn.xml|=~/OK*/|
-
-
 !3 Saknat efternamn ger fel
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
 |validering/ny_fk7263/register/saknat-efternamn.xml|=~/Unmarshalling Error:.*/|
+
+!3 Tomt efternamn ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tomt-efternamn.xml|=~/.*ERROR.*Validation.*/|
 
 
 !3 Saknad sysselsattning ger fel
@@ -397,13 +445,6 @@
 |validering/ny_fk7263/register/felaktigt-enhetsid.xml|=~/.*failed.*/|
 
 
-!3 Saknad arbetsplatskod ger OK
-
-|validera fk7263 intyg|
-|filnamn|resultat?|
-|validering/ny_fk7263/register/saknad-arbetsplatskod.xml|=~/OK*/|
-
-
 !3 Felaktig arbetsplatskod ger fel
 
 |validera fk7263 intyg|
@@ -421,14 +462,14 @@
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/register/tom-aktivitet-beskrivning.xml|=~/OK.*/|
+|validering/ny_fk7263/register/tom-aktivitet-beskrivning.xml|=~/.*Validation failed.*/|
 
 
 !3 Tom beskrivning i observation
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/register/tom-observation-beskrivning.xml|=~/OK.*/|
+|validering/ny_fk7263/register/tom-observation-beskrivning.xml|=~/.*Validation failed.*/|
 
 
 !3 felaktigt datumformat signering
@@ -443,6 +484,74 @@
 |validera fk7263 intyg|
 |filnamn|resultat?|
 |validering/ny_fk7263/register/multipla-ressatt.xml|=~/.*Validation failed.*/|
+
+
+!3 Saknad funktionstillstand aktivitet ger OK
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknad-funktionstillstand-aktivitet.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|saknad-funktionstillstand-aktivitet.xml|
+
+!3 Saknat fornamn ger OK
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknat-fornamn.xml|=~/OK*/|
+
+|ta bort intyg|
+|id|
+|saknat-fornamn.xml|
+
+!3 Tomt fornamn ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tomt-fornamn.xml|=~/.*Error.*/|
+
+!3 Saknade vardkontakter ger OK
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknade-vardkontakter.xml|=~/OK*/|
+
+|ta bort intyg|
+|id|
+|saknade-vardkontakter.xml|
+
+!3 Saknade referenser ger OK
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknade-referenser.xml|=~/OK*/|
+
+|ta bort intyg|
+|id|
+|saknade-referenser.xml|
+
+!3 Saknade aktiviteter ger OK
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknade-aktiviteter.xml|=~/OK*/|
+
+|ta bort intyg|
+|id|
+|saknade-aktiviteter.xml|
+
+!3 Saknad arbetsplatskod ger OK
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknad-arbetsplatskod.xml|=~/OK*/|
+
+|ta bort intyg|
+|id|
+|saknad-arbetsplatskod.xml|
+
 
 
 !3 Återta samtycken:
