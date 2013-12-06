@@ -22,6 +22,8 @@ public class Certificate {
     
     private Integer originalCertificateId;
     
+    private boolean isRevoked = false;
+    
     public Certificate() {
     }
     
@@ -71,6 +73,14 @@ public class Certificate {
 
     public void setOriginalCertificateId(Integer originalCertificateId) {
         this.originalCertificateId = originalCertificateId;
+    }
+
+    public boolean isRevoked() {
+        return isRevoked;
+    }
+
+    public void setRevoked(boolean isRevoked) {
+        this.isRevoked = isRevoked;
     }
 
     @Override

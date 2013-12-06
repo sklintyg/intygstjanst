@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
-<!-- 
-  Jetty env configuration file, configures resources that satisfies 
-  <env-entry>, <resource-env-ref> and <resource-ref> linkages in web.xml.
--->
+<!-- Jetty env configuration file, configures resources that satisfies <env-entry>, 
+  <resource-env-ref> and <resource-ref> linkages in web.xml. -->
 <Configure class="org.eclipse.jetty.webapp.WebAppContext">
   <New id="DataSource" class="org.eclipse.jetty.plus.jndi.Resource">
     <Arg>jdbc/intyg</Arg>
@@ -12,6 +10,22 @@
         <Set name="Url">jdbc:mysql://localhost:3306/testintyg</Set>
         <Set name="User">inera</Set>
         <Set name="Password">inera</Set>
+      </New>
+    </Arg>
+  </New>
+  <New id="ConnectionFactory" class="org.eclipse.jetty.plus.jndi.Resource">
+    <Arg>jms/ConnectionFactory</Arg>
+    <Arg>
+      <New class="org.apache.activemq.ActiveMQConnectionFactory">
+        <Arg>vm://localhost?broker.persistent=false</Arg>
+      </New>
+    </Arg>
+  </New>
+  <New id="Queue" class="org.eclipse.jetty.plus.jndi.Resource">
+    <Arg>jms/Queue</Arg>
+    <Arg>
+      <New class="org.apache.activemq.command.ActiveMQQueue">
+        <Arg>CERTIFICATE.QUEUE</Arg>
       </New>
     </Arg>
   </New>
