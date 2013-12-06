@@ -253,7 +253,7 @@
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/register/saknad-funktionstillstand-aktivitet.xml|=~/Unmarshalling Error:.*/|
+|validering/ny_fk7263/register/saknad-funktionstillstand-aktivitet.xml|=~/.*ERROR.*Validation.*/|
 
 
 !3 Felaktigt personnr ger fel
