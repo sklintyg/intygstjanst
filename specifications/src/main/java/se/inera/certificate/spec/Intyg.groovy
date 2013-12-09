@@ -15,6 +15,7 @@ public class Intyg extends RestClientFixture {
 	String utfärdare
     String enhetsId = "1.2.3"
 	String enhet
+    String vårdgivarId
     String typ
     String id
     String idTemplate
@@ -116,28 +117,18 @@ public class Intyg extends RestClientFixture {
         certificate.patient.'id'.extension = personnr
 
 		certificate.skapadAv.namn = utfärdare
-		certificate.skapadAv.vardenhet.'id'.extension = enhet
-		certificate.skapadAv.vardenhet.namn = enhet
+		if (enhetsId) certificate.skapadAv.vardenhet.'id'.extension = enhetsId
+		if (enhet) certificate.skapadAv.vardenhet.namn = enhet
+
+        if (vårdgivarId) certificate.skapadAv.vardenhet.vardgivare.'id'.extension = vårdgivarId
 		
         // setting the signing date, from date and to date
         certificate.signeringsDatum = utfärdat
         certificate.skickatDatum = utfärdat
 
-		/*
-        certificate.vardkontakter.each {
-			it.vardkontaktstid.start = utfärdat
-			it.vardkontaktstid.end = utfärdat
-		}
-		*/
 
         certificate.referenser.each { it.datum = utfärdat }
 
-		/*
-        certificate.aktivitetsbegransningar.arbetsformaga.arbetsformagaNedsattningar[0].each {
-            it.varaktighetFrom = giltigtFrån
-            it.varaktighetTom = giltigtTill
-        }
-        */
         JsonOutput.toJson(certificate)
     }
 }
