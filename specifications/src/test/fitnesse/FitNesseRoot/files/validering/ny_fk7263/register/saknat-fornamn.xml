@@ -3,7 +3,7 @@
 	xmlns:urn="urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1"
 	xmlns="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2">
 	<urn:utlatande>
-		<utlatande-id root="b2f6d5bc-2f50-4623-9ce9-bf1ee540434b" />
+		<utlatande-id root="saknat-fornamn.xml" />
 		<typAvUtlatande code="fk7263"
 			codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" />
 

@@ -1,34 +1,28 @@
 package se.inera.certificate.service.impl;
 
 import javax.ws.rs.core.Response;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.WebServiceException;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.apache.commons.io.FileUtils;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
+import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.certificate.integration.exception.ExternalWebServiceCallFailedException;
 import se.inera.certificate.integration.json.CustomObjectMapper;
 import se.inera.certificate.integration.rest.ModuleRestApi;
@@ -37,6 +31,9 @@ import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 
 /**
  * @author andreaskaltenbach
@@ -54,31 +51,28 @@ public class CertificateSenderServiceImplTest {
     private ModuleRestApi moduleRestApi;
 
     @Mock
-    private DispatchFactory dispatchFactory;
-    @Mock
-    private Dispatch<SOAPMessage> dispatch;
-
+    private RegisterMedicalCertificateResponderInterface registerClient;
+    
     @Mock
     private Response response = mock(Response.class);
-
-    private static String certificateXml;
 
     private static Certificate certificate = new CertificateBuilder("123456").certificateType("fk7263").build();
     private static Utlatande utlatande;
 
-    private static SOAPMessage soapErrorMessage;
-    private static SOAPMessage soapOkMessage;
-
-    @BeforeClass
-    public static void readCertificateXml() throws IOException {
-        certificateXml = FileUtils.readFileToString(new ClassPathResource(
-                "CertificateSenderServiceImplTest/utlatande.xml").getFile());
+    private static RegisterMedicalCertificateResponseType errorWsMessage;
+    private static RegisterMedicalCertificateResponseType okWsMessage;
+    
+    public RegisterMedicalCertificateType request() throws IOException, JAXBException {
+        Unmarshaller unmarshaller= JAXBContext.newInstance(RegisterMedicalCertificateResponseType.class).createUnmarshaller();
+        return unmarshaller.unmarshal(new StreamSource(new ClassPathResource("CertificateSenderServiceImplTest/utlatande.xml").getInputStream()), RegisterMedicalCertificateType.class).getValue();
     }
 
     @BeforeClass
     public static void setupSoapMessages() throws Exception {
-        soapErrorMessage = soapMessageFromFile("CertificateSenderServiceImplTest/soap-message-register-error.xml");
-        soapOkMessage = soapMessageFromFile("CertificateSenderServiceImplTest/soap-message-register-ok.xml");
+        
+        Unmarshaller unmarshaller= JAXBContext.newInstance(RegisterMedicalCertificateResponseType.class).createUnmarshaller();
+        okWsMessage = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("CertificateSenderServiceImplTest/soap-message-register-ok.xml").getInputStream()), RegisterMedicalCertificateResponseType.class).getValue();
+        errorWsMessage = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("CertificateSenderServiceImplTest/soap-message-register-error.xml").getInputStream()), RegisterMedicalCertificateResponseType.class).getValue();
     }
 
     @BeforeClass
@@ -98,17 +92,18 @@ public class CertificateSenderServiceImplTest {
     }
 
     @Before
-    public void setupDispatchFactory() {
-        when(dispatchFactory.dispatchForRegisterMedicalCertificate()).thenReturn(dispatch);
-    }
-
-    @Before
     public void setupCertificateService() {
         when(certificateService.getLakarutlatande(certificate)).thenReturn(utlatande);
     }
 
     @InjectMocks
     private CertificateSenderServiceImpl senderService = new CertificateSenderServiceImpl();
+
+    private AttributedURIType logicalAddress() {
+        AttributedURIType address = new AttributedURIType();
+        address.setValue("someLogicalAddress");
+        return address;
+    }
 
     @Test
     public void testSend() throws Exception {
@@ -118,12 +113,11 @@ public class CertificateSenderServiceImplTest {
         when(moduleRestApi.marshall(eq("1.0"), anyString())).thenReturn(response);
 
         // setup captor for verifying outbound SOAP message
-        ArgumentCaptor<SOAPMessage> soapMessage = ArgumentCaptor.forClass(SOAPMessage.class);
-        when(dispatch.invoke(soapMessage.capture())).thenReturn(soapOkMessage);
+        when(registerClient.registerMedicalCertificate(logicalAddress(), request())).thenReturn(okWsMessage);
 
         senderService.sendCertificate(certificate, "fk");
 
-        compareSoapMessageWithReferenceFile(soapMessage.getValue(), "CertificateSenderServiceImplTest/soap-message.xml");
+        verify(registerClient).registerMedicalCertificate(logicalAddress(), request());
     }
 
     private void okResponse() throws Exception {
@@ -137,28 +131,7 @@ public class CertificateSenderServiceImplTest {
         when(response.getStatus()).thenReturn(500);
     }
 
-    private void compareSoapMessageWithReferenceFile(SOAPMessage soapMessage, String fileName) throws Exception {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        soapMessage.writeTo(outputStream);
-        String registerMedicalCertificateRequest = outputStream.toString("UTF-8");
-
-        String soapMessageXml = FileUtils.readFileToString(new ClassPathResource(fileName).getFile());
-
-        XMLUnit.setIgnoreWhitespace(true);
-        XMLUnit.setNormalizeWhitespace(true);
-        Diff diff = new Diff(soapMessageXml, registerMedicalCertificateRequest);
-        assertTrue(diff.toString(), diff.identical());
-    }
-
-    private static SOAPMessage soapMessageFromFile(String file) throws Exception {
-        SOAPMessage message = MessageFactory.newInstance().createMessage();
-        SOAPPart soapPart = message.getSOAPPart();
-        soapPart.setContent(new StreamSource(new ClassPathResource(file).getInputStream()));
-        message.saveChanges();
-        return message;
-    }
-
-    @Test(expected = WebServiceException.class)
+    @Test(expected = ExternalWebServiceCallFailedException.class)
     public void testSendWithReceiverDown() throws Exception {
 
         // Module API mock returns transport XML for certificate (OK)
@@ -166,23 +139,9 @@ public class CertificateSenderServiceImplTest {
         when(moduleRestApi.marshall(eq("1.0"), anyString())).thenReturn(response);
 
         // web service call fails
-        when(dispatch.invoke(any(SOAPMessage.class))).thenThrow(WebServiceException.class);
+        when(registerClient.registerMedicalCertificate(any(AttributedURIType.class), any(RegisterMedicalCertificateType.class))).thenReturn(errorWsMessage);
 
         senderService.sendCertificate(certificate, "fk");
-    }
-
-    @Test(expected = ExternalWebServiceCallFailedException.class)
-    public void testSendWithUnsuccessfulCallToReceiver() throws Exception {
-
-        // Module API mock returns transport XML for certificate (OK)
-        okResponse();
-        when(moduleRestApi.marshall(eq("1.0"), anyString())).thenReturn(response);
-
-        // web service call returns resultOfCall = error
-        when(dispatch.invoke(any(SOAPMessage.class))).thenReturn(soapErrorMessage);
-
-        senderService.sendCertificate(certificate, "fk");
-
     }
 
     @Test(expected = RuntimeException.class)
