@@ -9,12 +9,21 @@
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/register/maximalt-fk7263.xml|=~/OK*/|
+|validering/ny_fk7263/register/maximalt-fk7263.xml|=~/OK/|
 
 |ta bort intyg|
 |id|
 |maximalt-fk7263.xml|
 
+
+!3 Avstangning smittskydd ger inga fel
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/avstangning.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|avstangning.xml|
 
 !3 Saknad funktionstillstand kroppsfunktion ger fel
 
