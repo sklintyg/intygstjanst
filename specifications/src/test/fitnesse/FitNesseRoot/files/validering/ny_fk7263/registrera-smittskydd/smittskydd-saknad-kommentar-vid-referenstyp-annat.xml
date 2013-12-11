@@ -73,10 +73,6 @@
 		</vardkontakt>
 
 		<referens>
-			<referenstyp>Annat</referenstyp>
-			<referensdatum>2010-01-14</referensdatum>
-		</referens>
-		<referens>
 			<referenstyp code="74964007" codeSystem="1.2.752.116.2.1.1.1"
 				codeSystemName="SNOMED-CT" />
 			<referensdatum>2010-01-24</referensdatum>
@@ -171,7 +167,7 @@
 			</observationsperiod>
 			<varde value="75.0" unit="percent" />
 			<prognos>
-				<prognoskod code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
+				<prognoskod code="PRO1" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 					codeSystemName="kv_prognos_intyg" />
 				<beskrivning>Arbetsförmåga: Skadan har förvärrats vid varje
 					tillfälle patienten
@@ -193,7 +189,7 @@
 			</observationsperiod>
 			<varde value="50.0" unit="percent" />
 			<prognos>
-				<prognoskod code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
+				<prognoskod code="PRO2" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 					codeSystemName="kv_prognos_intyg" />
 				<beskrivning>Arbetsförmåga: Skadan har förvärrats vid varje
 					tillfälle patienten
@@ -215,7 +211,7 @@
 			</observationsperiod>
 			<varde value="25.0" unit="percent" />
 			<prognos>
-				<prognoskod code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
+				<prognoskod code="PRO3" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 					codeSystemName="kv_prognos_intyg" />
 				<beskrivning>Arbetsförmåga: Skadan har förvärrats vid varje
 					tillfälle patienten
@@ -237,7 +233,7 @@
 			</observationsperiod>
 			<varde value="0.0" unit="percent" />
 			<prognos>
-				<prognoskod code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
+				<prognoskod code="PRO1" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 					codeSystemName="kv_prognos_intyg" />
 				<beskrivning>Arbetsförmåga: Skadan har förvärrats vid varje
 					tillfälle patienten
