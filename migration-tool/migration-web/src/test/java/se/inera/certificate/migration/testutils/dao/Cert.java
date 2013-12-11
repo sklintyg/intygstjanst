@@ -20,7 +20,9 @@ public class Cert {
     
     private String careUnitName = "Vardenheten";
     
-    private String signingDoctorName = "Dr Dengroth";
+    private String careUnitId = "SE2321000016-A1P9";
+    
+    private String signingDoctorName = "Dr Börje Dengroth";
     
     private DateTime signedDate = DateTime.now();
     
@@ -65,6 +67,14 @@ public class Cert {
 
     public void setCareUnitName(String careUnitName) {
         this.careUnitName = careUnitName;
+    }
+
+    public String getCareUnitId() {
+        return careUnitId;
+    }
+
+    public void setCareUnitId(String careUnitId) {
+        this.careUnitId = careUnitId;
     }
 
     public String getSigningDoctorName() {

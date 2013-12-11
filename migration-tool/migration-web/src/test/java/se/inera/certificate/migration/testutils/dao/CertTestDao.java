@@ -34,8 +34,8 @@ public class CertTestDao extends JdbcDaoSupport {
             "VALUES (?, ?)";
     
     private static final String INSERT_CERT = "INSERT INTO certificate (ID, CERTIFICATE_TYPE, CIVIC_REGISTRATION_NUMBER, " +
-    		"CARE_UNIT_NAME, SIGNING_DOCTOR_NAME, SIGNED_DATE, VALID_FROM_DATE, VALID_TO_DATE, DOCUMENT " +
-    		") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    		"CARE_UNIT_NAME, CARE_UNIT_ID, SIGNING_DOCTOR_NAME, SIGNED_DATE, VALID_FROM_DATE, VALID_TO_DATE, DOCUMENT " +
+    		") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     
     private static final String SELECT_ORGCERT_ID_NOT_NULL = "SELECT count(CERTIFICATE_ID) FROM original_certificate " +
@@ -93,14 +93,15 @@ public class CertTestDao extends JdbcDaoSupport {
             ps.setString(2, cert.getCertType());
             ps.setString(3, cert.getCivicRegNbr());
             ps.setString(4, cert.getCareUnitName());
-            ps.setString(5, cert.getSigningDoctorName());
+            ps.setString(5, cert.getCareUnitId());
+            ps.setString(6, cert.getSigningDoctorName());
             
             DateTime certSignedDate = cert.getSignedDate();
             
-            ps.setDate(6, new Date(certSignedDate.getMillis()));
-            ps.setString(7, dateTimeFormatter.print(certSignedDate));
-            ps.setString(8, dateTimeFormatter.print(certSignedDate.plusDays(30)));
-            ps.setBytes(9, cert.getDocumentAsBytes());
+            ps.setDate(7, new Date(certSignedDate.getMillis()));
+            ps.setString(8, dateTimeFormatter.print(certSignedDate));
+            ps.setString(9, dateTimeFormatter.print(certSignedDate.plusDays(30)));
+            ps.setBytes(10, cert.getDocumentAsBytes());
         }
         
     }

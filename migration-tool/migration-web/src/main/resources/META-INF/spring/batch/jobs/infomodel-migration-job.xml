@@ -32,9 +32,6 @@
       value="#{jobParameters['CONVERTER_SERVICE_URL']}" />
   </bean>
 
-  <bean id="jobIncrementer"
-    class="org.springframework.batch.core.launch.support.RunIdIncrementer" />
-
   <batch:step id="certificateInfoModelProcessingStep">
     <batch:tasklet transaction-manager="certificateTransactionManager">
       <batch:chunk reader="certificateItemReader"

@@ -7,7 +7,7 @@
     <Arg>jdbc/intyg</Arg>
     <Arg>
       <New class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource">
-        <Set name="Url">jdbc:mysql://localhost:3306/testintyg</Set>
+        <Set name="Url">jdbc:mysql://localhost:3306/intyg11pre</Set>
         <Set name="User">inera</Set>
         <Set name="Password">inera</Set>
       </New>
@@ -18,6 +18,7 @@
     <Arg>
       <New class="org.apache.activemq.ActiveMQConnectionFactory">
         <Arg>vm://localhost?broker.persistent=false</Arg>
+        <!-- Arg>tcp://localhost:61616</Arg -->
       </New>
     </Arg>
   </New>

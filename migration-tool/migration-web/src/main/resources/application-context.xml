@@ -10,6 +10,6 @@
 	<beans:description>Master application context</beans:description>
     	
 	<beans:import resource="classpath*:/org/springframework/batch/admin/web/resources/webapp-config.xml"/>
-	<beans:import resource="classpath:/spring/batch/*-context.xml"/>
+	<beans:import resource="classpath:/spring/*-context.xml"/>
 		    
 </beans:beans>

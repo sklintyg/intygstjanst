@@ -14,10 +14,10 @@
       <bean
         class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
         <property name="dataSource" ref="certificateDataSource" />
-        <property name="selectClause" value="${certificate.reader.sql.select}" />
-        <property name="fromClause" value="${certificate.reader.sql.from}" />
-        <property name="whereClause" value="${certificate.reader.sql.where}" />
-        <property name="sortKey" value="${certificate.reader.sortkey}" />
+        <property name="selectClause" value="${certs2stats.reader.sql.select}" />
+        <property name="fromClause" value="${certs2stats.reader.sql.from}" />
+        <property name="whereClause" value="${certs2stats.reader.sql.where}" />
+        <property name="sortKey" value="${certs2stats.reader.sortkey}" />
       </bean>
     </property>
     <property name="pageSize" value="100" />
@@ -29,7 +29,7 @@
   <bean id="checkCertificateStateProcessor"
     class="se.inera.certificate.migration.processors.CheckCertificateStateProcessor">
     <property name="dataSource" ref="certificateDataSource" />
-    <property name="checkSql" value="${check.sql}" />
+    <property name="checkSql" value="${certs2stats.statecheck.sql}" />
   </bean>
 
   <bean id="certificateToStatisticsJMSWriter"

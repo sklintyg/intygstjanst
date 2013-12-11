@@ -17,6 +17,7 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -33,7 +34,8 @@ import se.inera.certificate.migration.testutils.http.IntygHttpRequestHandler.Int
  * @author nikpet
  *
  */
-@ContextConfiguration(locations = { "/test-application-context.xml", "/spring/infomodel-migration-context.xml", "/META-INF/spring/batch/jobs/infomodel-migration-job.xml"})
+@ContextConfiguration(locations = { "/test-application-context.xml", "/spring/batch-context.xml", 
+        "/spring/infomodel-migration-context.xml", "/META-INF/spring/batch/jobs/infomodel-migration-job.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class MigrationJobTest {
 

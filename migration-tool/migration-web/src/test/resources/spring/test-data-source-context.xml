@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+<beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
 	xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
           http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
 
-	<beans:description>Set up the intyg data source provides utilities for testing purposes
-	</beans:description>
+	<description>Set up the 'intyg' data source</description>
 
 	<jdbc:initialize-database data-source="certificateDataSource"
 		enabled="${intyg.generate.testdata}">
@@ -15,21 +14,13 @@
 		<jdbc:script location="${intyg.schema.script}" />
 	</jdbc:initialize-database>
 	
-	<beans:bean id="certificateDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+	<bean id="certificateDataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		p:driverClassName="${intyg.jdbc.driver}"
 		p:url="${intyg.jdbc.url}"
 		p:username="${intyg.jdbc.user}"
 		p:password="${intyg.jdbc.password}" />
 		
-	<beans:bean id="certificateTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+	<bean id="certificateTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
 		p:dataSource-ref="certificateDataSource"/>	
 
-	<beans:bean id="certificateDataInitialiser"
-		class="se.inera.certificate.migration.testutils.CertificateDataInitialiser"
-		init-method="init" p:generateTestData="${intyg.generate.testdata}" />
-
-	<beans:bean id="certTestDao"
-		class="se.inera.certificate.migration.testutils.dao.CertTestDao"
-		p:dataSource-ref="certificateDataSource" />
-
-</beans:beans>
+</beans>
