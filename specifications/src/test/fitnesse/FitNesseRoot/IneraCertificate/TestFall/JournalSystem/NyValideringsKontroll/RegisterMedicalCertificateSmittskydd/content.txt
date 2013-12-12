@@ -74,6 +74,12 @@
 |filnamn|resultat?|
 |validering/ny_fk7263/registrera-smittskydd/smittskydd-felaktiga-datumintervall-observationsperiod.xml|=~/ERROR.*Validation failed.*/|
 
+!3 Samma gränsvärde av datumintervall observationsperiod ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-datumintervall-gransfall-observationsperiod.xml|=~/ERROR.*Validation failed.*/|
+
 
 !3 Felaktig diagnos-kod-system ger fel
 
