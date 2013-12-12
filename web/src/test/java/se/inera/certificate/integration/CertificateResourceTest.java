@@ -22,7 +22,9 @@ public class CertificateResourceTest {
     private EntityManager entityManager = mock(EntityManager.class);
 
     @InjectMocks
-    private CertificateResource certificateResource = new CertificateResource();
+    private CertificateResource certificateResource = new CertificateResource() {
+        @Override protected String marshall(Certificate certificate) { return ""; }
+    };
 
     @Test
     public void testGetCertificate() throws Exception {
