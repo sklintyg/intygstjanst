@@ -70,7 +70,7 @@ public class CertificateResource {
         return Response.ok().build();
     }
     
-    private String marshall(Certificate certificate) {
+    protected String marshall(Certificate certificate) {
         ModuleRestApi moduleRestApi = moduleRestApiFactory.getModuleRestService("fk7263");
         Response response = moduleRestApi.marshall("1.0", certificate.getDocument());
 
