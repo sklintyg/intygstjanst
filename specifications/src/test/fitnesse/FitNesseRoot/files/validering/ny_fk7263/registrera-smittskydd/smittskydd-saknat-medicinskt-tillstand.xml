@@ -122,18 +122,6 @@
 				codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a" codeSystemName="kv_aktiviteter_intyg" />
 		</aktivitet>
 
-		<observation>
-			<observationskategori code="439401001"
-				codeSystem="1.2.752.116.2.1.1.1" codeSystemName="SNOMED-CT" />
-
-			<beskrivning>Medicinskttillstånd: Klämskada på överarm</beskrivning>
-		</observation>
-
-		<observation>
-
-			<beskrivning>Bedömttillstånd: Patienten klämde höger överarm vid
-				olycka i hemmet. Problemen har pågått en längre tid.</beskrivning>
-		</observation>
 
 		<observation>
 			<observationskategori code="b"

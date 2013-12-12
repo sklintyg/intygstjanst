@@ -39,12 +39,15 @@
 
 
 
-!3 Saknad funktionstillstand kroppsfunktion ger fel
+!3 Saknad funktionstillstand kroppsfunktion vid smittskydd är ok
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-funktionstillstand-kroppsfunktion.xml|=~/.*ERROR.*Validation.*/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-funktionstillstand-kroppsfunktion.xml|=~/OK/|
 
+|ta bort intyg|
+|id|
+|smittskydd-saknad-funktionstillstand-kroppsfunktion.xml|
 
 !3 Saknad funktionstillstand kroppsfunktion beskrivning ger fel
 
@@ -244,7 +247,7 @@
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-utlatandeid.xml|=~/Unmarshalling Error:.*utlatande-id.*is expected./|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-utlatandeid.xml|=~/Unmarshalling Error:.*/|
 
 
 !3 felaktigt utlatande id typ ger fel
@@ -265,7 +268,7 @@
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-personnr.xml|=~/Unmarshalling Error:.*person-id.*is expected./|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-personnr.xml|=~/Unmarshalling Error:.*/|
 
 
 !3 Saknad kommentar ger fel
@@ -299,20 +302,24 @@
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-signdatum.xml|=~/Unmarshalling Error:.*signeringsdatum.*is expected./|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-signdatum.xml|=~/Unmarshalling Error:.*/|
 
 
 !3 Saknad patient ger fel
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-patient.xml|=~/Unmarshalling Error:.*patient.*is expected./|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-patient.xml|=~/Unmarshalling Error:.*/|
 
-!3 Saknad medicinskt tillstand ger fel
+!3 Saknad medicinskt tillstand vid smittskydd är OK
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-medicinskt-tillstand.xml|=~/.*Validation failed.*/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-medicinskt-tillstand.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|smittskydd-saknat-medicinskt-tillstand.xml|
 
 
 !3 Saknar skapare ger fel
@@ -350,28 +357,28 @@
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-felaktigt-personnr.xml|=~/.*ERROR.*Validation.*patientIdExtension*/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-felaktigt-personnr.xml|=~/.*ERROR.*Validation.*/|
 
 
 !3 Personnr utan bindestreck ger fel
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-personnr-utanbindestreck.xml|=~/.*ERROR.*Validation.*patientIdExtension*/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-personnr-utanbindestreck.xml|=~/.*ERROR.*Validation.*/|
 
 
 !3 Personnr utan sekelsiffra ger fel
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-personnr-utansekel.xml|=~/.*ERROR.*Validation.*patientIdExtension*/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-personnr-utansekel.xml|=~/.*ERROR.*Validation.*/|
 
 
 !3 Tomt Personnr ger fel
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-tomt-personnr.xml|=~/.*ERROR.*Validation.*patientIdExtension*/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-tomt-personnr.xml|=~/.*ERROR.*Validation.*/|
 
 
 !3 Saknat efternamn ger fel
@@ -415,21 +422,21 @@
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-vardgivare.xml|=~/.*ERROR.*/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-vardgivare.xml|=~/Unmarshalling Error.*/|
 
 
 !3 Saknat vårdgivare id ger fel
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-vardgivare-id.xml|=~/.*ERROR.*/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-vardgivare-id.xml|=~/Unmarshalling Error.*/|
 
 
 !3 Saknat vårdgivare namn ger fel
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-vardgivare-namn.xml|=~/.*ERROR.*/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-vardgivare-namn.xml|=~/.*ERROR.*Validation.*/|
 
 
 !3 Saknad vårdkontakttyp ger fel
@@ -439,15 +446,11 @@
 |validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-vardkontakttyp.xml|=~/Unmarshalling Error:.*/|
 
 
-!3 Saknad vårdkontakttid ger inga fel
+!3 Saknad vårdkontakttid ger fel
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
 |validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-vardkontakttid.xml|=~/ERROR.*Validation.*/|
-
-|ta bort intyg|
-|id|
-|smittskydd-saknad-vardkontakttid.xml|
 
 
 !3 Saknad from vårdkontakttid ger fel
@@ -490,14 +493,14 @@
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-felaktigt-enhetsid.xml|=~/.*failed.*/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-felaktigt-enhetsid.xml|=~/ERROR.*Validation .*/|
 
 
 !3 Felaktig arbetsplatskod ger fel
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-felaktig-arbetsplatskod.xml|=~/.*failed.*/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-felaktig-arbetsplatskod.xml|=~/ERROR.*Validation .*/|
 
 
 !3 Saknar enhetsnamn ger fel
