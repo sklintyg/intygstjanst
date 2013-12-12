@@ -126,11 +126,15 @@
 
 
 
-!3 Saknad diagnos kod system ger fel
+!3 Saknad diagnos kod system vid smittskydd är OK
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-diagnos-kod-system.xml|=~/.*ERROR.*Validation.*/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-diagnos-kod-system.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|smittskydd-saknad-diagnos-kod-system.xml|
 
 
 !3 Saknad diagnos kod ger fel
@@ -383,12 +387,15 @@
 |validering/ny_fk7263/registrera-smittskydd/smittskydd-tomt-efternamn.xml|=~/.*ERROR.*Validation.*/|
 
 
-!3 Saknad sysselsattning ger fel
+!3 Saknad sysselsattning vid smittskydd är OK
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-sysselsattning.xml|=~/.*ERROR.*Validation.*/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-sysselsattning.xml|=~/OK/|
 
+|ta bort intyg|
+|id|
+|smittskydd-saknad-sysselsattning.xml|
 
 !3 Saknad typ av arbetsuppgift vid normalt arbete ger fel
 
@@ -432,11 +439,15 @@
 |validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-vardkontakttyp.xml|=~/Unmarshalling Error:.*/|
 
 
-!3 Saknad vårdkontakttid ger fel
+!3 Saknad vårdkontakttid ger inga fel
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-vardkontakttid.xml|=~/.*Failed.*/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-vardkontakttid.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|smittskydd-saknad-vardkontakttid.xml|
 
 
 !3 Saknad from vårdkontakttid ger fel
