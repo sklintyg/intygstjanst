@@ -5,8 +5,8 @@ import java.util.List;
 
 import static se.inera.certificate.model.util.Iterables.find;
 
+import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-import org.joda.time.Partial;
 import se.inera.certificate.model.util.Predicate;
 
 /**
@@ -42,13 +42,13 @@ public class Utlatande {
      * To which point in time is this certificate considered valid. Modules implementing this model should use their own
      * getters calculating the date suitable for the certificate type and rules.
      */
-    private Partial validToDate;
+    private LocalDate validToDate;
 
     /**
      * From which point in time is this certificate considered valid. Modules implementing this model should use their
      * own getters calculating the date suitable for the certificate type and rules.
      */
-    private Partial validFromDate;
+    private LocalDate validFromDate;
 
     public Id getId() {
         return id;
@@ -181,19 +181,19 @@ public class Utlatande {
         }, null);
     }
 
-    public Partial getValidFromDate() {
+    public LocalDate getValidFromDate() {
         return validFromDate;
     }
 
-    public void setValidFromDate(Partial date) {
+    public void setValidFromDate(LocalDate date) {
         validFromDate = date;
     }
 
-    public Partial getValidToDate() {
+    public LocalDate getValidToDate() {
         return validToDate;
     }
 
-    public void setValidToDate(Partial date) {
+    public void setValidToDate(LocalDate date) {
         validToDate = date;
     }
 

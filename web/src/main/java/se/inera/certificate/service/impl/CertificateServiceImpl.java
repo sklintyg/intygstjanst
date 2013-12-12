@@ -220,7 +220,6 @@ public class CertificateServiceImpl implements CertificateService {
         if (!validationErrors.isEmpty()) {
             throw new ValidationException(Strings.join(",", validationErrors));
         }
-        return;
     }
 
     private void checkForExistingCertificate(String certificateId, String personnummer) {
@@ -277,8 +276,8 @@ public class CertificateServiceImpl implements CertificateService {
         }
 
         certificate.setCivicRegistrationNumber(utlatande.getPatient().getId().getExtension());
-        certificate.setValidFromDate(PartialAdapter.printPartial(utlatande.getValidFromDate()));
-        certificate.setValidToDate(PartialAdapter.printPartial(utlatande.getValidToDate()));
+        certificate.setValidFromDate(utlatande.getValidFromDate().toString());
+        certificate.setValidToDate(utlatande.getValidToDate().toString());
 
         return certificate;
     }
