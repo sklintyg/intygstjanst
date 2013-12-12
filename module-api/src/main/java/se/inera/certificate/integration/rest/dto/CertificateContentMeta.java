@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.Partial;
+import org.joda.time.LocalDateTime;
 
 /**
  * Wrapper class that holds meta information about a certificate, such as the list of statuses
@@ -16,23 +16,23 @@ public class CertificateContentMeta implements Serializable {
     private String id;
     private String type;
     private String patientId;
-    private Partial fromDate;
-    private Partial tomDate;
+    private LocalDateTime fromDate;
+    private LocalDateTime tomDate;
     private List<CertificateStatus> statuses = new ArrayList<>();
 
-    public Partial getFromDate() {
+    public LocalDateTime getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(Partial fromDate) {
+    public void setFromDate(LocalDateTime fromDate) {
         this.fromDate = fromDate;
     }
 
-    public Partial getTomDate() {
+    public LocalDateTime getTomDate() {
         return tomDate;
     }
 
-    public void setTomDate(Partial tomDate) {
+    public void setTomDate(LocalDateTime tomDate) {
         this.tomDate = tomDate;
     }
 
