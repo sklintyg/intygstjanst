@@ -9,6 +9,7 @@ import javax.jms.TextMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.JmsException;
@@ -17,7 +18,7 @@ import org.springframework.jms.core.MessageCreator;
 
 import se.inera.certificate.migration.model.Certificate;
 
-public class CertificateToStatisticsJMSWriter implements ItemWriter<Certificate> {
+public class CertificateToStatisticsJMSWriter implements ItemWriter<Certificate>, ChunkListener {
 
     private static final String CREATED = "created";
     private static final String REVOKED = "revoked";
@@ -49,7 +50,7 @@ public class CertificateToStatisticsJMSWriter implements ItemWriter<Certificate>
         boolean isCreated = doSend(CREATED, certificate);
         
         if (isCreated && certificate.isRevoked()) {
-            log.info("Certificate '{}' is revoked", certificate.getCertificateId());
+            log.info("Certificate '{}' is revoked, adding revoke message", certificate.getCertificateId());
             doSend(REVOKED, certificate);
         }
     }
@@ -93,5 +94,17 @@ public class CertificateToStatisticsJMSWriter implements ItemWriter<Certificate>
             message.setStringProperty(CERTIFICATE_ID, certificate.getCertificateId());
             return message;
         }
+    }
+
+    @Override
+    public void beforeChunk() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void afterChunk() {
+        // TODO Auto-generated method stub
+        
     }
 }

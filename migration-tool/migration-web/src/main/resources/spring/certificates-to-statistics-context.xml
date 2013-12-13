@@ -7,7 +7,7 @@
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-  <bean id="certificateToStatisticsJdbcReader"
+  <bean id="certsToStatsJdbcPagingItemReader"
     class="org.springframework.batch.item.database.JdbcPagingItemReader">
     <property name="dataSource" ref="certificateDataSource" />
     <property name="queryProvider">
@@ -26,13 +26,19 @@
     </property>
   </bean>
 
+  <bean id="fetchCertificatePayloadProcessor"
+    class="se.inera.certificate.migration.processors.FetchCertificatePayloadProcessor">
+    <property name="dataSource" ref="certificateDataSource" />
+    <property name="sql" value="${certs2stats.fetchcertificate.sql}" />
+  </bean>
+
   <bean id="checkCertificateStateProcessor"
     class="se.inera.certificate.migration.processors.CheckCertificateStateProcessor">
     <property name="dataSource" ref="certificateDataSource" />
     <property name="checkSql" value="${certs2stats.statecheck.sql}" />
   </bean>
 
-  <bean id="certificateToStatisticsJMSWriter"
+  <bean id="certsToStatsJMSItemWriter"
     class="se.inera.certificate.migration.writers.CertificateToStatisticsJMSWriter" />
-
+  
 </beans>

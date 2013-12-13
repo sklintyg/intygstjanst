@@ -7,6 +7,12 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import se.inera.certificate.migration.model.OriginalCertificate;
 
+/**
+ * Checks the database if a Certificate exists in the CERTIFICATE table.
+ * 
+ * @author nikpet
+ *
+ */
 public class CheckCertificateExistsProcessor extends JdbcDaoSupport implements
         ItemProcessor<OriginalCertificate, OriginalCertificate> {
 

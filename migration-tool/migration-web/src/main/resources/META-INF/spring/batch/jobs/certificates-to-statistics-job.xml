@@ -8,16 +8,28 @@
           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
   <batch:job id="sendCertificatesToStatisticsJob" incrementer="jobIncrementer"
-    restartable="false">
+    restartable="true">
+
     <batch:step id="sendCerts">
       <batch:tasklet transaction-manager="certificateTransactionManager">
-        <batch:chunk reader="certificateToStatisticsJdbcReader"
-          processor="checkCertificateStateProcessor" writer="certificateToStatisticsJMSWriter"
-          commit-interval="50" />
+        <batch:chunk reader="certsToStatsJdbcPagingItemReader"
+          processor="certsToStatsCompositeItemProcessor" writer="certsToStatsJMSItemWriter"
+          commit-interval="50"/>
       </batch:tasklet>
       <batch:end on="*" />
       <batch:fail on="FAILED" />
     </batch:step>
+
   </batch:job>
+  
+  <bean id="certsToStatsCompositeItemProcessor"
+    class="org.springframework.batch.item.support.CompositeItemProcessor">
+    <property name="delegates">
+      <list>
+        <ref bean="fetchCertificatePayloadProcessor" />
+        <ref bean="checkCertificateStateProcessor" />
+      </list>
+    </property>
+  </bean>
 
 </beans>

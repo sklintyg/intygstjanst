@@ -12,6 +12,7 @@
 	<jdbc:initialize-database data-source="dataSource">
 		<jdbc:script location="${batch.drop.script}" />
 		<jdbc:script location="${batch.schema.script}" />
+        <jdbc:script location="${batch.business.schema.script}"/>
 	</jdbc:initialize-database>
 	
 	<beans:bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"

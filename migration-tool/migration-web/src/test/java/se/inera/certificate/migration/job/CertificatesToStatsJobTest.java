@@ -18,37 +18,38 @@ import se.inera.certificate.migration.testutils.jms.TestQueueInspector;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @ContextConfiguration(locations = { "/test-application-context.xml", "/spring/batch-context.xml",
-        "/spring/certificates-to-statistics-context.xml", "/spring/test-jms-context.xml", "/META-INF/spring/batch/jobs/certificates-to-statistics-job.xml" })
+        "/spring/certificates-to-statistics-context.xml", "/spring/test-jms-context.xml",
+        "/META-INF/spring/batch/jobs/certificates-to-statistics-job.xml" })
 @DatabaseSetup("/data/certificate-dataset.xml")
 public class CertificatesToStatsJobTest extends AbstractDbUnitSpringTest {
-    
+
     @Value("${activemq.test.queue}")
     private String queueName;
-        
+
     @Autowired
     private JobLauncher jobLauncher;
-    
+
     @Autowired
     private Job certsToStatsJob;
-    
+
     @Autowired
     private TestQueueInspector inspector;
-    
+
     public CertificatesToStatsJobTest() {
-        
+
     }
 
     @Test
     public void runJob() throws Exception {
-        
+
         JobParametersBuilder builder = new JobParametersBuilder();
-        
+
         final JobExecution jobExecution = jobLauncher.run(certsToStatsJob, builder.toJobParameters());
         assertEquals("Batch status should be COMPLETED", BatchStatus.COMPLETED, jobExecution.getStatus());
-        
-        //TODO: Enable when getting JMX to work properly
-        //Long queueSize = inspector.getQueueSize(queueName);
-        //assertEquals(new Long(5L), queueSize);
+
+        // TODO: Enable when getting JMX to work properly
+        // Long queueSize = inspector.getQueueSize(queueName);
+        // assertEquals(new Long(5L), queueSize);
     }
-    
+
 }
