@@ -249,11 +249,44 @@
 |validering/ny_fk7263/register/tom-kommentar.xml|=~/.*ERROR.*Validation.*/|
 
 
-!3 Saknad kommentar vid resferenstyp annat ger fel
+!3 Saknad kommentar vid referenstyp annat ger fel
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
 |validering/ny_fk7263/register/saknad-kommentar-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Felaktigt referensdatum vid referenstyp annat ger fel
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/felaktigt-referensdatum-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknat referensdatum vid referenstyp annat ger fel
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknat-referensdatum-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
+
+
+!3 Tom referensdatum vid referenstyp annat ger fel
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tomt-referensdatum-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
+
+
+!3 Felaktigt referensdatum vid journaluppgift ger fel
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/felaktigt-referensdatum-journaluppgift.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknat referensdatum vid journaluppgift ger fel
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/saknat-referensdatum-journaluppgift.xml|=~/.*ERROR.*Validation.*/|
+
+
+!3 Tom referensdatum vid journaluppgift ger fel
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tomt-referensdatum-journaluppgift.xml|=~/.*ERROR.*Validation.*/|
 
 
 !3 Saknat skickatdatum ger fel
@@ -262,25 +295,49 @@
 |filnamn|resultat?|
 |validering/ny_fk7263/register/saknat-skickatdatum.xml|=~/.*Validation failed.*/|
 
+!3 Tomt skickatdatum ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tomt-skickatdatum.xml|=~/.*Validation failed.*/|
+
+!3 felaktigt datumformat skickatdatum
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/felaktigt-datumformat-skickatdatum.xml|=~/ERROR.*Validation failed.*/|
+
 
 !3 Saknat signdatum ger fel
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/register/saknat-signdatum.xml|=~/Unmarshalling Error:.*signeringsdatum.*is expected./|
+|validering/ny_fk7263/register/saknat-signdatum.xml|=~/Unmarshalling Error:.*/|
+
+!3 Tomt signeringsdatum ger fel
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/tomt-signeringsdatum.xml|=~/Unmarshalling Error:.*/|
+
+!3 felaktigt datumformat signering
+
+|validera fk7263 intyg|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/felaktigt-datumformat-signering.xml|=~/Unmarshalling Error:.*/|
 
 
 !3 Saknad patient ger fel
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/register/saknad-patient.xml|=~/Unmarshalling Error:.*patient.*is expected./|
+|validering/ny_fk7263/register/saknad-patient.xml|=~/Unmarshalling Error:.*/|
 
 !3 Saknad medicinskt tillstand ger fel
 
 |validera fk7263 intyg|
 |filnamn|resultat?|
-|validering/ny_fk7263/register/saknat-medicinskt-tillstand.xml|=~/.*Validation failed.*/|
+|validering/ny_fk7263/register/saknat-medicinskt-tillstand.xml|=~/ERROR.*Validation failed.*/|
 
 
 !3 Saknar skapare ger fel
@@ -479,13 +536,6 @@
 |validera fk7263 intyg|
 |filnamn|resultat?|
 |validering/ny_fk7263/register/tom-observation-beskrivning.xml|=~/.*Validation failed.*/|
-
-
-!3 felaktigt datumformat signering
-
-|validera fk7263 intyg|
-|filnamn|resultat?|
-|validering/ny_fk7263/register/felaktigt-datumformat-signering.xml|=~/Unmarshalling Error:.*/|
 
 
 !3 multipla ressatt
