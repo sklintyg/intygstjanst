@@ -3,9 +3,11 @@
 	xmlns:ns3="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3"
 	xmlns:ns4="http://www.w3.org/2005/08/addressing">
 	<ns3:lakarutlatande>
-		<lakarutlatande-id>avstangning</lakarutlatande-id>
+		<lakarutlatande-id>saknat-referensdatum-journaluppgift
+		</lakarutlatande-id>
 		<typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om
-			allmän försäkring</typAvUtlatande>
+			allmän försäkring
+		</typAvUtlatande>
 		<signeringsdatum>2011-01-24T00:00:00</signeringsdatum>
 		<skickatDatum>2011-03-23T09:28:10</skickatDatum>
 		<patient>
@@ -35,6 +37,10 @@
 			<vardkontakttyp>Min_undersokning_av_patienten</vardkontakttyp>
 			<vardkontaktstid>2011-01-24</vardkontaktstid>
 		</vardkontakt>
+		<referens>
+			<refernenstyp>Journaluppgifter</refernenstyp>
+			<datum></datum>
+		</referens>
 		<medicinsktTillstand>
 			<tillstandskod codeSystemName="ICD-10" code="M25" />
 		</medicinsktTillstand>
@@ -60,8 +66,5 @@
 				</sysselsattning>
 			</arbetsformaga>
 		</funktionstillstand>
-		<aktivitet>
-			<aktivitetskod>AVSTANGNING_ENLIGT_SM_L_PGA_SMITTA</aktivitetskod>
-		</aktivitet>
 	</ns3:lakarutlatande>
 </ns3:RegisterMedicalCertificate>
