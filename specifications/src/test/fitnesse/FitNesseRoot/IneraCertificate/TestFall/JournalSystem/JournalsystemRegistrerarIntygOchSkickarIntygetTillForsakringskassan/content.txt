@@ -41,6 +41,11 @@
 |personnummer|intyg|resultat?|status?|
 |19121212-1212|intyg-blanksteg|OK|[RECEIVED, SENT]|
 
+!3 Försök att skicka ett intyg som inte finns ger fel
+|Skicka Intyg Till Fk|
+|personnummer|intyg|resultat?|
+|19121212-1212|intyg-som-inte-finns|[ERROR] - No certificate 'intyg-som-inte-finns' found to send for patient '19121212-1212'.|
+
 !3 Rensa bort test-intyg och samtycket
 
 |ta bort Intyg|
