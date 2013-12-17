@@ -392,7 +392,7 @@ public final class LakarutlatandeTypeToUtlatandeConverter {
             if(lakarutlatande.getSkapadAvHosPersonal().getEnhet().getEnhetsId()!=null){
                 issuedBy =  lakarutlatande.getSkapadAvHosPersonal().getEnhet().getEnhetsId().getExtension();
             }
-            LOGGER.warn(LogMarkers.VALIDATION, "Validation failed for intyg " + lakarutlatande.getLakarutlatandeId() + " issued by " +
+            LOGGER.info(LogMarkers.VALIDATION, "Validation failed for intyg " + lakarutlatande.getLakarutlatandeId() + " issued by " +
                     issuedBy +
                                    ": Person-id is lacking a separating dash - corrected.");
         }

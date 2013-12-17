@@ -64,7 +64,7 @@ public class LakarutlatandeEnkelTypeValidator {
         String personNumber = patient.getPersonId().getExtension();
         if (personNumber.length() == 12 && Pattern.matches(PERSON_NUMBER_WITHOUT_DASH_REGEX, personNumber)) {
             patient.getPersonId().setExtension(personNumber.substring(0,8) + "-" + personNumber.substring(8));
-            LOG.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + lakarutlatandeEnkelType.getLakarutlatandeId() + ": Person-id " + personNumber + " is lacking a separating dash - corrected.");
+            LOG.info(LogMarkers.VALIDATION, "Validation warning for intyg " + lakarutlatandeEnkelType.getLakarutlatandeId() + ": Person-id " + personNumber + " is lacking a separating dash - corrected.");
         }
         // Check patient o.i.d.
         if (patient.getPersonId().getRoot() == null || !PATIENT_ID_OIDS.contains(patient.getPersonId().getRoot())) {
