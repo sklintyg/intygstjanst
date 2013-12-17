@@ -269,10 +269,12 @@ public class UtlatandeToUtlatandeJaxbConverter {
     }
 
     private ArbetsuppgiftType convert(Arbetsuppgift source) {
-        if (source == null) return null;
-        
         ArbetsuppgiftType arbetsuppgift = new ArbetsuppgiftType();
-        arbetsuppgift.setTypAvArbetsuppgift(source.getTypAvArbetsuppgift());
+        if (source == null || source.getTypAvArbetsuppgift() == null) {
+            arbetsuppgift.setTypAvArbetsuppgift("");
+        } else {
+            arbetsuppgift.setTypAvArbetsuppgift(source.getTypAvArbetsuppgift());
+        }
         return arbetsuppgift;
     }
 

@@ -144,6 +144,9 @@ public final class UtlatandeToRegisterMedicalCertificate {
             if (patient.getArbetsuppgifts() != null && !patient.getArbetsuppgifts().isEmpty()) {
                 ArbetsuppgiftType arbetsuppgift = new ArbetsuppgiftType();
                 arbetsuppgift.setTypAvArbetsuppgift(patient.getArbetsuppgifts().get(0).getTypAvArbetsuppgift());
+                if (arbetsuppgift.getTypAvArbetsuppgift() == null) {
+                    arbetsuppgift.setTypAvArbetsuppgift("");
+                }
                 arbetsformagaType.setArbetsuppgift(arbetsuppgift);
             }
 

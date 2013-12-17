@@ -27,7 +27,6 @@ import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 /**
  * @author andreaskaltenbach
  */
-@SchemaValidation
 public class GetCertificateContentResponderImpl implements GetCertificateContentResponderInterface {
 
     private static final Logger LOG = LoggerFactory.getLogger(GetCertificateResponderImpl.class);
