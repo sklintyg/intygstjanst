@@ -13,6 +13,7 @@
 |intyg-4|
 |intyg-5|
 |intyg-6|
+|intyg-tom-arbetsuppgift|
 
 !3 Återta samtycken:
 
