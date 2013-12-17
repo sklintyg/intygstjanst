@@ -16,7 +16,7 @@
     "efternamns" : [ "Testorsson" ],
     "sysselsattnings" : [ {
       "sysselsattningsTyp" : {
-        "code" : "224375002",
+        "code" : "73438004",
         "codeSystem" : "1.2.752.116.2.1.1.1",
         "codeSystemName" : "SNOMED-CT"
       }

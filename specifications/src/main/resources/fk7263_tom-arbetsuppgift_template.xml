@@ -48,7 +48,7 @@
                <nedsattningsgrad>Helt_nedsatt</nedsattningsgrad>
             </arbetsformagaNedsattning>
             <sysselsattning>
-               <typAvSysselsattning>Nuvarande_arbete</typAvSysselsattning>
+               <typAvSysselsattning>Arbetsloshet</typAvSysselsattning>
             </sysselsattning>
          </arbetsformaga>
       </funktionstillstand>
