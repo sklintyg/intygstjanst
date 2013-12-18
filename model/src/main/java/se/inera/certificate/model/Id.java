@@ -46,4 +46,35 @@ public class Id {
     public void setRoot(String root) {
         this.root = root;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((extension == null) ? 0 : extension.hashCode());
+        result = prime * result + ((root == null) ? 0 : root.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Id other = (Id) obj;
+        if (extension == null) {
+            if (other.extension != null)
+                return false;
+        } else if (!extension.equals(other.extension))
+            return false;
+        if (root == null) {
+            if (other.root != null)
+                return false;
+        } else if (!root.equals(other.root))
+            return false;
+        return true;
+    }
 }
