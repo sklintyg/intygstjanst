@@ -13,8 +13,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import se.inera.certificate.integration.rest.ModuleRestApi;
+import se.inera.certificate.integration.rest.ModuleRestApiFactory;
+import se.inera.certificate.integration.util.RestUtils;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.OriginalCertificate;
 
@@ -25,8 +31,13 @@ import se.inera.certificate.model.dao.OriginalCertificate;
 @Transactional
 public class CertificateResource {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CertificateResource.class);
+
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private ModuleRestApiFactory moduleRestApiFactory;
 
     @GET
     @Path("/{id}")
@@ -52,10 +63,26 @@ public class CertificateResource {
     public Response insertCertificate(Certificate certificate) {
         OriginalCertificate originalCertificate = new OriginalCertificate();
         originalCertificate.setReceived(new LocalDateTime());
-        originalCertificate.setDocument("");
+        originalCertificate.setDocument(marshall(certificate));
         originalCertificate.setCertificate(certificate);
         entityManager.persist(certificate);
         entityManager.persist(originalCertificate);
         return Response.ok().build();
+    }
+    
+    protected String marshall(Certificate certificate) {
+        ModuleRestApi moduleRestApi = moduleRestApiFactory.getModuleRestService("fk7263");
+        Response response = moduleRestApi.marshall("1.0", certificate.getDocument());
+
+        switch (response.getStatus()) {
+        case 200:
+            return RestUtils.entityAsString(response);
+        default:
+            String errorMessage = "Failed to unmarshal certificate for certificate type '" + certificate.getType()
+                    + "'. HTTP status code is " + response.getStatus();
+            LOGGER.error(errorMessage);
+            return "";
+        }
+
     }
 }

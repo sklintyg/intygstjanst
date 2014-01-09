@@ -3,24 +3,23 @@
 	xmlns:urn="urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1"
 	xmlns="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2">
 	<urn:utlatande>
-		<utlatande-id root="b2f6d5bc-2f50-4623-9ce9-bf1ee5404347" />
+		<utlatande-id root="avstangning.xml" />
 		<typAvUtlatande code="fk7263"
 			codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" />
 
 		<kommentar>Prognosen för patienten är god. Han kommer att kunna återgå
-			till sitt arbete efter genomförd behandling.</kommentar>
+			till sitt arbete efter genomförd behandling.
+		</kommentar>
 		<signeringsdatum>2011-01-26T00:00:00</signeringsdatum>
 		<skickatdatum>2011-03-23T09:29:15</skickatdatum>
 		<patient>
 			<person-id root="1.2.752.129.2.1.3.1" extension="19121212-1212" />
-			<fornamn></fornamn>
+			<fornamn>Per</fornamn>
 			<efternamn>Test Testorsson</efternamn>
 			<arbetsuppgift>
 				<typAvArbetsuppgift>Dirigent. Dirigerar en större orkester på deltid
 				</typAvArbetsuppgift>
 			</arbetsuppgift>
-			
-			
 		</patient>
 
 		<skapadAv>
@@ -42,20 +41,12 @@
 			</enhet>
 		</skapadAv>
 
-
-		
-		
-
 		<aktivitet>
 			<aktivitetskod code="AKT11"
 				codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a" codeSystemName="kv_aktiviteter_intyg" />
 		</aktivitet>
 
-		
-
-		
-
-	    <observation>
+		<observation>
 			<observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1"
 				codeSystemName="SNOMED-CT" />
 			<observationsperiod>
@@ -68,15 +59,14 @@
 					codeSystemName="kv_prognos_intyg" />
 				<beskrivning>Arbetsförmåga: Skadan har förvärrats vid varje
 					tillfälle patienten
-					använt armen. Måste hållas i total stillhet tills läkningsprocessen
-					kommit en bit på väg. Eventuellt kan utredning visa att operation
+					använt armen. Måste hållas i total stillhet
+					tills läkningsprocessen
+					kommit en bit på väg. Eventuellt kan
+					utredning visa att operation
 					är
 					nödvändig för att läka skadan.
 				</beskrivning>
 			</prognos>
 		</observation>
-		
-
-		
 	</urn:utlatande>
 </urn:RegisterMedicalCertificate>

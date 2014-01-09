@@ -7,30 +7,30 @@ import org.joda.time.LocalDate;
  */
 public class LocalDateInterval {
 
-    private LocalDate start;
-    private LocalDate end;
+    private LocalDate from;
+    private LocalDate tom;
 
     public LocalDateInterval() {
     }
 
-    public LocalDateInterval(LocalDate start, LocalDate end) {
-        this.start = start;
-        this.end = end;
+    public LocalDateInterval(LocalDate from, LocalDate tom) {
+        this.from = from;
+        this.tom = tom;
     }
 
-    public LocalDate getStart() {
-        return start;
+    public LocalDate getFrom() {
+        return from;
     }
 
-    public void setStart(LocalDate start) {
-        this.start = start;
+    public void setFrom(LocalDate from) {
+        this.from = from;
     }
 
-    public LocalDate getEnd() {
-        return end;
+    public LocalDate getTom() {
+        return tom;
     }
 
-    public void setEnd(LocalDate end) {
-        this.end = end;
+    public void setTom(LocalDate tom) {
+        this.tom = tom;
     }
 }
