@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
-	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
-          http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
-          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<beans:description>Data source for the Intyg database, retrieved by JNDI from container</beans:description>
+	<description>Loads data source for the Intyg database, which context is used depends on which profile is enabled</description>
 	
-	<beans:bean id="certificateDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-       <beans:property name="jndiName" value="java:comp/env/jdbc/intyg" />
-  	</beans:bean>
-		
-	<beans:bean id="certificateTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-		p:dataSource-ref="certificateDataSource"/>
+    <import resource="classpath:/spring/env/*-data-source-context.xml"/>
 
-</beans:beans>
+</beans>

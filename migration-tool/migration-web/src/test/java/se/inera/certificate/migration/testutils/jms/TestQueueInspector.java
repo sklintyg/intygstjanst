@@ -15,21 +15,21 @@ import org.slf4j.LoggerFactory;
 public class TestQueueInspector {
     
     private static Logger log = LoggerFactory.getLogger(TestQueueInspector.class);
-    
+        
     private MBeanServerConnection mBeanConn;
     
     public TestQueueInspector() {
-
+        
     }
 
     public Long getQueueSize(String queueName) {
-        
+                
         Long queueSize = null;
         
         try {
-
+                                                
             ObjectName objectNameRequest = new ObjectName(
-                    "org.apache.activemq:type=Broker,BrokerName=local*,destinationType=Queue,DestinationName=" + queueName);
+                    "org.apache.activemq:type=Broker,brokerName=localhost,destinationType=Queue,destinationName=" + queueName);
 
             queueSize = (Long) mBeanConn.getAttribute(objectNameRequest, "QueueSize");
 

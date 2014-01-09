@@ -58,7 +58,7 @@ public class CertificateDataInitialiser {
     
     private long timeRange;
     
-    private boolean generateTestData = false;
+    private boolean generateTestData = true;
     
     @Autowired
     private CertTestDao certTestDao;
@@ -83,6 +83,16 @@ public class CertificateDataInitialiser {
             loadCert(cert);
         }
         
+    }
+    
+    /**
+     * Deletes all Certificates and OriginalCertificates from database.
+     */
+    public void resetDb() {
+        LOG.info("Resetting db");
+        certTestDao.dropAllOriginalCertificates();
+        certTestDao.dropAllCertificates();
+        LOG.info("Db reset");
     }
     
     /**

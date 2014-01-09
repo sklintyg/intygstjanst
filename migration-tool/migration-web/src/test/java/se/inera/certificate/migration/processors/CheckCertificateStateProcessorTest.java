@@ -11,13 +11,20 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 
 import se.inera.certificate.migration.model.Certificate;
 import se.inera.certificate.migration.testutils.dbunit.AbstractDbUnitSpringTest;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-@DatabaseSetup("/data/certificate-dataset.xml") 
+@ContextConfiguration({"/spring/props-context.xml","/spring/data-source-context.xml"})
+@DatabaseSetup("/data/certificate-dataset.xml")
+@ActiveProfiles("test")
+@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class CheckCertificateStateProcessorTest extends AbstractDbUnitSpringTest {
 
     @Autowired

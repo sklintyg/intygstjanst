@@ -18,7 +18,6 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/spring/test-env-context.xml", "/spring/test-data-source-context.xml"})
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
     DbUnitTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @DbUnitConfiguration(databaseConnection = "certificateDataSource", dataSetLoader = CustomFlatXmlDataSetLoader.class)

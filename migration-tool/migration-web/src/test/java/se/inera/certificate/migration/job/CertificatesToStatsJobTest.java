@@ -9,7 +9,9 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
 import se.inera.certificate.migration.testutils.dbunit.AbstractDbUnitSpringTest;
@@ -17,14 +19,13 @@ import se.inera.certificate.migration.testutils.jms.TestQueueInspector;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-@ContextConfiguration(locations = { "/test-application-context.xml", "/spring/batch-context.xml",
-        "/spring/certificates-to-statistics-context.xml", "/spring/test-jms-context.xml",
-        "/META-INF/spring/batch/jobs/certificates-to-statistics-job.xml" })
+@ContextConfiguration(locations = { "/application-context.xml", "/META-INF/spring/batch/jobs/certificates-to-statistics-job.xml" })
 @DatabaseSetup("/data/certificate-dataset.xml")
+@ActiveProfiles({"test","unit-testing"})
+@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class CertificatesToStatsJobTest extends AbstractDbUnitSpringTest {
 
-    @Value("${activemq.test.queue}")
-    private String queueName;
+    private String queueName = "CERTIFICATE.QUEUE";
 
     @Autowired
     private JobLauncher jobLauncher;
@@ -45,11 +46,18 @@ public class CertificatesToStatsJobTest extends AbstractDbUnitSpringTest {
         JobParametersBuilder builder = new JobParametersBuilder();
 
         final JobExecution jobExecution = jobLauncher.run(certsToStatsJob, builder.toJobParameters());
+                
+        boolean running = jobExecution.isRunning();
+        
+        while(running) {
+            running = jobExecution.isRunning();
+            Thread.sleep(250);
+        }
+        
         assertEquals("Batch status should be COMPLETED", BatchStatus.COMPLETED, jobExecution.getStatus());
-
-        // TODO: Enable when getting JMX to work properly
-        // Long queueSize = inspector.getQueueSize(queueName);
-        // assertEquals(new Long(5L), queueSize);
+        
+        Long queueSize = inspector.getQueueSize(queueName);
+        assertEquals("Queue should contain 5 create and 1 revoke messages", new Long(6L), queueSize);
     }
 
 }

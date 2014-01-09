@@ -3,6 +3,7 @@ package se.inera.certificate.migration.testutils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -17,6 +18,16 @@ public class PersonnummerGeneratorTest {
     public void testGenerateRandom() {
         String res = PersonnummerGenerator.generateRandomPersonnummer();
         assertNotNull(res);   
+    }
+    
+    @Test
+    @Ignore
+    public void testGenerateALotOfRandom() {
+        for (int i = 0; i < 100; i++) {
+            String res = PersonnummerGenerator.generateRandomPersonnummer();
+            assertNotNull(res);
+            System.out.println(res + ",Testperson" + (i+1));
+        }
     }
     
     @Test

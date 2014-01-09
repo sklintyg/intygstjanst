@@ -30,18 +30,22 @@ import se.inera.certificate.migration.testutils.CertificateDataInitialiser;
  */
 public class CertTestDao extends JdbcDaoSupport {
 
-    private static final String INSERT_ORG_CERT = "INSERT INTO original_certificate (RECEIVED, DOCUMENT) " +
+    private static final String INSERT_ORG_CERT = "INSERT INTO ORIGINAL_CERTIFICATE (RECEIVED, DOCUMENT) " +
             "VALUES (?, ?)";
     
-    private static final String INSERT_CERT = "INSERT INTO certificate (ID, CERTIFICATE_TYPE, CIVIC_REGISTRATION_NUMBER, " +
+    private static final String INSERT_CERT = "INSERT INTO CERTIFICATE (ID, CERTIFICATE_TYPE, CIVIC_REGISTRATION_NUMBER, " +
     		"CARE_UNIT_NAME, CARE_UNIT_ID, SIGNING_DOCTOR_NAME, SIGNED_DATE, VALID_FROM_DATE, VALID_TO_DATE, DOCUMENT " +
     		") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     
-    private static final String SELECT_ORGCERT_ID_NOT_NULL = "SELECT count(CERTIFICATE_ID) FROM original_certificate " +
+    private static final String SELECT_ORGCERT_ID_NOT_NULL = "SELECT COUNT(CERTIFICATE_ID) FROM ORIGINAL_CERTIFICATE " +
     		"WHERE CERTIFICATE_ID IS NOT NULL";
+    
+    private static final String DELETE_ALL_CERTS = "DELETE FROM CERTIFICATE WHERE ID IS NOT NULL";
+    
+    private static final String DELETE_ALL_ORGCERTS = "DELETE FROM ORIGINAL_CERTIFICATE WHERE CERTIFICATE_ID IS NOT NULL";
         
-    private static Logger LOG = LoggerFactory.getLogger(CertificateDataInitialiser.class);
+    private static Logger LOG = LoggerFactory.getLogger(CertTestDao.class);
     
     private LobHandler lobHandler = new DefaultLobHandler();
         
@@ -73,6 +77,16 @@ public class CertTestDao extends JdbcDaoSupport {
             }
         });
         
+    }
+    
+    public void dropAllCertificates() {
+        LOG.info("Deleting all Certificates in db");
+        getJdbcTemplate().execute(DELETE_ALL_CERTS);
+    }
+    
+    public void dropAllOriginalCertificates() {
+        LOG.info("Deleting all OriginalCertificates in db");
+        getJdbcTemplate().execute(DELETE_ALL_ORGCERTS);
     }
         
     private class CertPreparedStatementSetter implements PreparedStatementSetter {

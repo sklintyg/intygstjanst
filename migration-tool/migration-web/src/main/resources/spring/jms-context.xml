@@ -1,21 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-  xmlns:amq="http://activemq.apache.org/schema/core"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-       
-  <bean id="jmsProducerTemplate" class="org.springframework.jms.core.JmsTemplate">
-    <property name="connectionFactory" ref="jmsFactory" />
-    <property name="defaultDestination" ref="queue" />
-  </bean>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <bean id="jmsFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
-    <property name="jndiName" value="java:comp/env/jms/ConnectionFactory" />
-  </bean>
-  
-  <bean id="queue" class="org.springframework.jndi.JndiObjectFactoryBean">
-    <property name="jndiName" value="java:comp/env/jms/Queue" />
-  </bean>
+	<description>Loads the JMS contexts, which one is used depends on which profile is enabled</description>
+	
+    <import resource="classpath:/spring/env/*-jms-context.xml"/>
 
 </beans>

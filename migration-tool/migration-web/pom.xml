@@ -16,7 +16,32 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <activemq.version>5.8.0</activemq.version>
+    <context.path>/migrationtool</context.path>
+    <log.path>${project.build.directory}/logs</log.path>
+    <jetty.xml>${project.build.outputDirectory}/jetty-env.xml</jetty.xml>
+    <jetty.port>8090</jetty.port>
+    <system.mode>prod</system.mode>
   </properties>
+  <profiles>
+    <profile>
+      <id>local-broker</id>
+      <properties>
+        <!-- <broker.url>vm://localhost?broker.persistent=false</broker.url> -->
+        <broker.url>tcp://localhost:61616</broker.url>
+        <system.mode>test</system.mode>
+      </properties>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+    <profile>
+      <id>remote-broker</id>
+      <properties>
+        <broker.url>tcp://localhost:61616</broker.url>
+        <system.mode>prod</system.mode>
+      </properties>
+    </profile>
+  </profiles>
   <dependencies>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -189,8 +214,29 @@
       <version>${activemq.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <excludes>
+          <exclude>**/*.xml</exclude>
+        </excludes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -201,17 +247,21 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <configuration>
           <webAppConfig>
-            <contextPath>/migrationtool</contextPath>
-            <jettyEnvXml>${basedir}/src/test/resources/jetty-env.xml</jettyEnvXml>
+            <contextPath>${context.path}</contextPath>
+            <jettyEnvXml>${jetty.xml}</jettyEnvXml>
           </webAppConfig>
           <systemProperties>
             <systemProperty>
-              <name>catalina.home</name>
-              <value>${project.build.directory}/logs</value>
+              <name>spring.profiles.active</name>
+              <value>${system.mode}</value>
+            </systemProperty>
+            <systemProperty>
+              <name>catalina.base</name>
+              <value>${log.path}</value>
             </systemProperty>
             <systemProperty>
               <name>jetty.port</name>
-              <value>8090</value>
+              <value>${jetty.port}</value>
             </systemProperty>
             <systemProperty>
               <name>java.awt.headless</name>

@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans:beans
-        xmlns:beans="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:batch="http://www.springframework.org/schema/batch"
-        xsi:schemaLocation="
-          http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
-          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<beans:description>Master application context</beans:description>
-    	
-	<beans:import resource="classpath*:/org/springframework/batch/admin/web/resources/webapp-config.xml"/>
-	<beans:import resource="classpath:/spring/*-context.xml"/>
-		    
-</beans:beans>
+  <description>Master application context</description>
+  
+  <context:annotation-config/>
+  
+  <context:component-scan base-package="se.inera.certificate.migration" />
+
+  <!-- Load the context for the deployed batch jobs -->
+  <import resource="classpath:/spring/props-context.xml" />
+  <import resource="classpath:/spring/data-source-context.xml" />
+  <import resource="classpath:/spring/batch-context.xml" />
+  <import resource="classpath:/spring/jms-context.xml" />
+  <import resource="classpath:/spring/certificates-to-statistics-context.xml" />
+  <import resource="classpath:/spring/infomodel-migration-context.xml" />
+
+</beans>

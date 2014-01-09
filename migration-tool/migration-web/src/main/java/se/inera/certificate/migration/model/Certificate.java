@@ -51,6 +51,10 @@ public class Certificate {
         return (this.certificateJson != null) ? this.certificateJson.length() : 0;
     }
     
+    public boolean isCertificateJsonEmpty() {
+        return (getCertificateJsonSize() == 0);
+    }
+    
     public String getCertificateId() {
         return certificateId;
     }

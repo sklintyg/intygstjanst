@@ -13,6 +13,12 @@ import org.springframework.util.Assert;
 
 import se.inera.certificate.migration.model.Certificate;
 
+/**
+ * Processor which fetches the JSON payload of a Certificate and sets it on the Certificate object.
+ *  
+ * @author nikpet
+ *
+ */
 public class FetchCertificatePayloadProcessor extends JdbcDaoSupport implements ItemProcessor<Certificate, Certificate> {
 
     private static Logger log = LoggerFactory.getLogger(FetchCertificatePayloadProcessor.class);
@@ -36,6 +42,11 @@ public class FetchCertificatePayloadProcessor extends JdbcDaoSupport implements 
         RowCallbackHandler rowCaller = new CertificateDecoratingCallbackHandler(cert);
         
         getJdbcTemplate().query(sql, rowCaller, cert.getCertificateId());
+        
+        if (cert.isCertificateJsonEmpty()) {
+            log.info("Payload for certificate with id {} is empty, returning null", cert.getCertificateId());
+            return null;
+        }
         
         return cert;
     }

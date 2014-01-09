@@ -44,10 +44,8 @@ public class CheckCertificateExistsProcessor extends JdbcDaoSupport implements
     }
 
     public boolean checkIfCertificateExists(String certId) {
-
         int res = getJdbcTemplate().queryForInt(certificateCheckSql, certId);
-
-        return (res == 1);
+        return (res > 0);
     }
         
     public String getCertificateCheckSql() {
