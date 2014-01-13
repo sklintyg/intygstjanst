@@ -21,7 +21,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @ContextConfiguration(locations = { "/application-context.xml", "/META-INF/spring/batch/jobs/certificates-to-statistics-job.xml" })
 @DatabaseSetup("/data/certificate-dataset.xml")
-@ActiveProfiles({"test","unit-testing"})
+@ActiveProfiles({"dev","unit-testing"})
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class CertificatesToStatsJobTest extends AbstractDbUnitSpringTest {
 

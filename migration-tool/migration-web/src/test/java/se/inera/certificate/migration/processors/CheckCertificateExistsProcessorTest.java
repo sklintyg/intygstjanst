@@ -23,7 +23,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 @ContextConfiguration({"/spring/props-context.xml","/spring/data-source-context.xml"})
 @DatabaseSetup("/data/certificate-dataset.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
-@ActiveProfiles("test")
+@ActiveProfiles("dev")
 public class CheckCertificateExistsProcessorTest extends AbstractDbUnitSpringTest {
 
     @Autowired

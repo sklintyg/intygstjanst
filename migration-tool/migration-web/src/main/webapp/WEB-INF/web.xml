@@ -10,6 +10,12 @@
     <param-value>classpath:/web-application-context.xml</param-value>
   </context-param>
 
+  <!-- Default Spring profile to use if not overridden using -Dspring.profiles.active -->
+  <context-param>
+    <param-name>spring.profiles.default</param-name>
+    <param-value>prod</param-value>
+  </context-param>
+
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>

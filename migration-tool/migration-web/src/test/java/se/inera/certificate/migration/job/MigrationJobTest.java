@@ -35,7 +35,7 @@ import se.inera.certificate.migration.testutils.http.IntygHttpRequestHandler.Int
 @ContextConfiguration(locations = { "/application-context.xml",
         "/META-INF/spring/batch/jobs/infomodel-migration-job.xml" })
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles({"test","unit-testing"})
+@ActiveProfiles({"dev","unit-testing"})
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class MigrationJobTest {
 

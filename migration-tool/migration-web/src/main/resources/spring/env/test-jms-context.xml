@@ -10,7 +10,12 @@
                            http://www.springframework.org/schema/jms 
                            http://www.springframework.org/schema/jms/spring-jms.xsd
                            http://activemq.apache.org/schema/core 
-                           http://activemq.apache.org/schema/core/activemq-core.xsd" profile="test">
+                           http://activemq.apache.org/schema/core/activemq-core.xsd"
+  profile="dev">
+
+  <description>Activates and configures an embedded ActiveMQ JMS broker
+    for use in the DEV environment
+  </description>
 
   <!-- Embedded ActiveMQ Broker -->
   <amq:broker id="amqBroker" useJmx="true" persistent="false">
@@ -32,18 +37,23 @@
     class="org.springframework.jms.connection.SingleConnectionFactory"
     depends-on="amqBroker" p:targetConnectionFactory-ref="jmsFactory" />
 
-  <!-- Will be injected in tests using auto-wire -->
-  <bean id="jmsProducerTemplate" class="org.springframework.jms.core.JmsTemplate"
-    p:connectionFactory-ref="jmsProducerConnectionFactory"
-    p:defaultDestination-ref="statsDestination" />
+  <beans profile="unit-testing">
 
-  <!-- Used for unit testing -->
-  <bean id="mBeanConnection"
-    class="org.springframework.jmx.support.MBeanServerConnectionFactoryBean"
-    p:serviceUrl="service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi" />
+    <description>JMX beans for use with the embedded broker in unit
+      testing</description>
 
-  <bean id="testQueueInspector"
-    class="se.inera.certificate.migration.testutils.jms.TestQueueInspector"
-    p:mBeanConn-ref="mBeanConnection" />
+    <!-- Will be injected in tests using auto-wire -->
+    <bean id="jmsProducerTemplate" class="org.springframework.jms.core.JmsTemplate"
+      p:connectionFactory-ref="jmsProducerConnectionFactory"
+      p:defaultDestination-ref="statsDestination" />
+
+    <bean id="mBeanConnection"
+      class="org.springframework.jmx.support.MBeanServerConnectionFactoryBean"
+      p:serviceUrl="service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi" />
+
+    <bean id="testQueueInspector"
+      class="se.inera.certificate.migration.testutils.jms.TestQueueInspector"
+      p:mBeanConn-ref="mBeanConnection" />
+  </beans>
 
 </beans>
