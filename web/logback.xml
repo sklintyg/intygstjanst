@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration scan="true" scanPeriod="30 seconds">
+  <jmxConfigurator />
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <filter class="se.inera.certificate.logging.MarkerFilter">
+        <marker>Validation</marker>
+        <onMatch>DENY</onMatch>
+        <onMismatch>ACCEPT</onMismatch>
+    </filter>
     <encoder>
       <pattern>%date{ISO8601} [%thread] %-5level %logger{10} - %msg%n</pattern>
     </encoder>
