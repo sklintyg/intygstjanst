@@ -29,7 +29,7 @@
 	http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd">
 
   <context:property-placeholder
-          location="file:${user.home}/.${spring.profiles.active}.service-minaintyg.se/config.properties"
+          location="file:${certificate.config.dir}/.${spring.profiles.active}.service-minaintyg.se/config.properties"
           ignore-resource-not-found="true" ignore-unresolvable="true"/>
 
   <context:property-placeholder
