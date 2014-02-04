@@ -49,6 +49,7 @@
   <logger name="org.hibernate" level="error" />
   <logger name="org.hibernate.engine.jdbc.spi.SqlExceptionHelper" level="off" />
 
+  <logger name="org.apache.camel" level="WARN" />
   <logger name="org.apache.cxf" level="error" />
 
   <logger name="se.inera.certificate" level="error" />
