@@ -122,6 +122,12 @@
       <artifactId>xmlunit</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>se.inera.certificate</groupId>
+      <artifactId>logback-marker-filter</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
     <!-- Test dependencies -->
     <dependency>
       <groupId>com.h2database</groupId>
@@ -191,6 +197,10 @@
             <systemProperty>
               <name>catalina.base</name>
               <value>${project.build.directory}/catalina.base</value>
+            </systemProperty>
+            <systemProperty>
+              <name>certificate.config.dir</name>
+              <value>${certificate.config.dir}</value>
             </systemProperty>
             <systemProperty>
               <name>logback.configurationFile</name>
