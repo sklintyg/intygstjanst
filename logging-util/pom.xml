@@ -6,6 +6,18 @@
   <version>1.0.0</version>
   <name>LogBack Marker Filter</name>
 
+  <scm>
+    <connection>scm:git:https://code.google.com/p/inera-certificate/logging-util</connection>
+  </scm>
+  <distributionManagement>
+    <repository>
+      <id>cloudbees-private-release-repository</id>
+      <name>Callista Software Release Respository</name>
+      <url>dav:https://repository-callistasoftware.forge.cloudbees.com/release</url>
+      <layout>default</layout>
+    </repository>
+  </distributionManagement>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <logback.version>1.0.11</logback.version>
