@@ -28,24 +28,37 @@
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 	http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd">
 
-  <context:property-placeholder
-          location="file:${certificate.config.dir}/.${spring.profiles.active}.service-minaintyg.se/config.properties"
-          ignore-resource-not-found="true" ignore-unresolvable="true"/>
+  <beans profile="qa,prod">
+    <!-- Config file must be present in qa and prod -->
+    <context:property-placeholder
+      location="file:${certificate.config.dir}/.${spring.profiles.active}.service-minaintyg.se/config.properties" order="1" 
+      ignore-resource-not-found="false" ignore-unresolvable="true"/>
+  </beans>
+  <beans profile="dev,test">
+    <!-- Config file could be missing in dev and test -->
+    <context:property-placeholder
+      location="file:${certificate.config.dir}/.${spring.profiles.active}.service-minaintyg.se/config.properties" order="1" 
+      ignore-resource-not-found="true" ignore-unresolvable="true"/>
+  </beans>
 
-  <context:property-placeholder
-          location="classpath:default.${spring.profiles.active}.properties, classpath:override.${spring.profiles.active}.properties, classpath:version.properties"
-          ignore-resource-not-found="true"/>
+  <beans>
 
-  <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    <context:property-placeholder
+      location="classpath:default.${spring.profiles.active}.properties, classpath:override.${spring.profiles.active}.properties, classpath:version.properties"
+      order="2" ignore-resource-not-found="true"/>
+  
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+  
+    <import resource="classpath:persistence-config.xml"/>
+  
+    <import resource="application-context-ws.xml"/>
+  
+    <import resource="classpath:jms-config.xml"/>
+  
+    <import resource="jaxrs-context.xml"/>
+  
+    <context:annotation-config/>
+    <context:component-scan base-package="se.inera.certificate"/>
 
-  <import resource="classpath:persistence-config.xml"/>
-
-  <import resource="application-context-ws.xml"/>
-
-  <import resource="classpath:jms-config.xml"/>
-
-  <import resource="jaxrs-context.xml"/>
-
-  <context:annotation-config/>
-  <context:component-scan base-package="se.inera.certificate"/>
+  </beans>
 </beans>
