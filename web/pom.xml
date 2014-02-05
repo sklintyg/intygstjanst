@@ -13,7 +13,6 @@
 
   <properties>
     <checkstyle.basedir>${project.basedir}/..</checkstyle.basedir>
-    <certificate.config.dir>${project.basedir}</certificate.config.dir>
     <inera.certificates.basedir>${project.basedir}/../../inera-certificate-modules</inera.certificates.basedir>
   </properties>
 
@@ -199,12 +198,12 @@
               <value>${project.build.directory}/catalina.base</value>
             </systemProperty>
             <systemProperty>
-              <name>certificate.config.dir</name>
-              <value>${certificate.config.dir}</value>
+              <name>certificate.config.file</name>
+              <value>${project.basedir}/config.properties</value>
             </systemProperty>
             <systemProperty>
               <name>logback.configurationFile</name>
-              <value>${certificate.config.dir}/logback.xml</value>
+              <value>${project.basedir}/logback.xml</value>
             </systemProperty>
           </systemProperties>
         </configuration>
