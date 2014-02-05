@@ -16,6 +16,7 @@ import org.xml.sax.InputSource;
 
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
+import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.integration.rest.ModuleRestApi;
 import se.inera.certificate.integration.rest.ModuleRestApiFactory;
@@ -51,7 +52,7 @@ public abstract class AbstractGetCertificateResponderImpl {
                     + "' has not given consent.");
             return new CertificateOrResultOfCall(failResult(String.format("Missing consent for patient %s",
                     personnummer)));
-        } catch (InvalidCertificateException ex) {
+        } catch (InvalidCertificateIdentifierException | InvalidCertificateException ex) {
             LOG.info("Tried to get certificate '" + certificateId + "' but no such certificate does exist for user '"
                     + personnummer + "'.");
             return new CertificateOrResultOfCall(failResult(String.format("Unknown certificate ID: %s", certificateId)));

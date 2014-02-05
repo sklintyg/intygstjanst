@@ -36,7 +36,7 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19010101-0101|intyg-6|[ERROR] - There is no certificate 'intyg-6' for user '19010101-0101'.|
+|19010101-0101|intyg-6|[ERROR] - Unknown certificate ID: intyg-6|
 
 !3 Testfall Get-Certificate-3.2: Försök hämta okänt intyg
 
