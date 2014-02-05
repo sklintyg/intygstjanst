@@ -14,6 +14,7 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
+import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.integration.converter.CertificateStateHistoryEntryConverter;
 import se.inera.certificate.model.dao.Certificate;
@@ -50,14 +51,15 @@ public class GetCertificateContentResponderImpl implements GetCertificateContent
             response.setResult(failResult(String.format("Missing consent for patient %s",
                     request.getNationalIdentityNumber())));
             return response;
+        } catch (InvalidCertificateIdentifierException | InvalidCertificateException ex) {
+            // return ERROR if no such certificate does exist
+            LOG.info("Tried to get certificate '" + request.getCertificateId() + "' but no such certificate does exist for user '" + request.getNationalIdentityNumber() + "'.");
+            response.setResult(failResult(String.format("Unknown certificate ID: %s", request.getCertificateId())));
+            return response;
         } catch (CertificateRevokedException ex) {
+            // return INFO if certificate is revoked
             LOG.info("Tried to get certificate '" + request.getCertificateId() + "' but certificate has been revoked'.");
             response.setResult(infoResult("Certificate '" + request.getCertificateId() + "' has been revoked"));
-            return response;
-        } catch (InvalidCertificateException ex) {
-            LOG.info("Tried to get certificate '" + request.getCertificateId()
-                    + "' but no such certificate does exist for user '" + request.getNationalIdentityNumber() + "'.");
-            response.setResult(failResult(ex.getMessage()));
             return response;
         }
 
