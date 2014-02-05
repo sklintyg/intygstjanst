@@ -16,7 +16,10 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import se.inera.certificate.integration.rest.ModuleRestApi;
 import se.inera.certificate.integration.rest.ModuleRestApiFactory;
@@ -28,13 +31,19 @@ import se.inera.certificate.model.dao.OriginalCertificate;
  * @author andreaskaltenbach
  */
 @Path("/certificate")
-@Transactional
 public class CertificateResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateResource.class);
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    private TransactionTemplate transactionTemplate;
+    
+    @Autowired
+    public void setTxManager(PlatformTransactionManager txManager) {
+        this.transactionTemplate = new TransactionTemplate(txManager); 
+    }
 
     @Autowired
     private ModuleRestApiFactory moduleRestApiFactory;
@@ -49,25 +58,44 @@ public class CertificateResource {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
-    public Response deleteCertificate(@PathParam("id") String id) {
-        Certificate certificate = entityManager.find(Certificate.class, id);
-        entityManager.remove(certificate.getOriginalCertificate());
-        entityManager.remove(certificate);
-        return Response.ok().build();
+    public Response deleteCertificate(@PathParam("id") final String id) {
+        return transactionTemplate.execute(new TransactionCallback<Response>() {
+            public Response doInTransaction(TransactionStatus status) {
+                try {
+                    Certificate certificate = entityManager.find(Certificate.class, id);
+                    entityManager.remove(certificate.getOriginalCertificate());
+                    entityManager.remove(certificate);
+                    return Response.ok().build();
+                } catch (Throwable t) {
+                    status.setRollbackOnly();
+                    LOGGER.warn("delete certificate with id " + id + " failed: " + t.getMessage());
+                    return Response.serverError().build();
+                }
+            }
+        });
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/")
-    public Response insertCertificate(Certificate certificate) {
-        OriginalCertificate originalCertificate = new OriginalCertificate();
-        originalCertificate.setReceived(new LocalDateTime());
-        originalCertificate.setDocument(marshall(certificate));
-        originalCertificate.setCertificate(certificate);
-        entityManager.persist(certificate);
-        entityManager.persist(originalCertificate);
-        return Response.ok().build();
+    public Response insertCertificate(final Certificate certificate) {
+        return transactionTemplate.execute(new TransactionCallback<Response>() {
+            public Response doInTransaction(TransactionStatus status) {
+                try {
+                    OriginalCertificate originalCertificate = new OriginalCertificate();
+                    originalCertificate.setReceived(new LocalDateTime());
+                    originalCertificate.setDocument(marshall(certificate));
+                    originalCertificate.setCertificate(certificate);
+                    entityManager.persist(certificate);
+                    entityManager.persist(originalCertificate);
+                    return Response.ok().build();
+                } catch (Throwable t) {
+                    status.setRollbackOnly();
+                    LOGGER.warn("insert certificate with id " + certificate.getId() + " failed: " + t.getMessage());
+                    return Response.serverError().build();
+                }
+            }
+        });
     }
     
     protected String marshall(Certificate certificate) {
