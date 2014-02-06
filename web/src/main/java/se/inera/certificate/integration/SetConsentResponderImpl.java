@@ -1,7 +1,11 @@
 package se.inera.certificate.integration;
 
 import org.apache.cxf.annotations.SchemaValidation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.integration.util.ResultOfCallUtil;
@@ -13,14 +17,28 @@ import se.inera.ifv.insuranceprocess.healthreporting.setconsentresponder.v1.SetC
 @SchemaValidation
 public class SetConsentResponderImpl implements SetConsentResponderInterface {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SetConsentResponderImpl.class);
+
     @Autowired
     private ConsentService consentService;
 
     @Override
     public SetConsentResponseType setConsent(AttributedURIType logicalAddress, SetConsentRequestType parameters) {
-        consentService.setConsent(parameters.getPersonnummer(), parameters.isConsentGiven());
         SetConsentResponseType response = new SetConsentResponseType();
-        response.setResult(ResultOfCallUtil.okResult());
+        try {
+            consentService.setConsent(parameters.getPersonnummer(), parameters.isConsentGiven());
+            response.setResult(ResultOfCallUtil.okResult());
+        } catch (DataIntegrityViolationException e) {
+            // INTYG-886 GeSamtycke anropas ibland flera gånger i rask takt av klienter, vilket leder till ett
+            // race condition som ger DataIntegrityViolationException.
+            LOG.warn("Consent already given for " + parameters.getPersonnummer() + " - ignored.");
+            response.setResult(ResultOfCallUtil.infoResult("Consent already given for " + parameters.getPersonnummer()));
+        } catch (HibernateOptimisticLockingFailureException e) {
+            // INTYG-886 ÅtertaSamtycke kan teoretiskt anropas flera gånger i rask takt av klienter, vilket leder till ett
+            // race condition som ger HibernateOptimisticLockingFailureException.
+            LOG.warn("Consent already revoked for " + parameters.getPersonnummer() + " - ignored.");
+            response.setResult(ResultOfCallUtil.infoResult("Consent already revoked for " + parameters.getPersonnummer()));
+        }
         return response;
     }
 
