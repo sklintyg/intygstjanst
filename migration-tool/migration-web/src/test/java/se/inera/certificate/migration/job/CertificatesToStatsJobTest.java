@@ -25,7 +25,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class CertificatesToStatsJobTest extends AbstractDbUnitSpringTest {
 
-    private String queueName = "CERTIFICATE.QUEUE";
+    private String queueName = "statistik.utlatande.queue";
 
     @Autowired
     private JobLauncher jobLauncher;

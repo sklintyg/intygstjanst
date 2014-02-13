@@ -17,6 +17,8 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
 import se.inera.certificate.migration.model.Certificate;
+import se.inera.certificate.migration.processors.AbstractCertificateProcessingException;
+import se.inera.certificate.migration.processors.FatalCertificateProcessingException;
 
 public class CertificateToStatisticsJMSWriter implements ItemWriter<Certificate>, ChunkListener {
 
@@ -36,61 +38,61 @@ public class CertificateToStatisticsJMSWriter implements ItemWriter<Certificate>
 
     @Override
     public void write(List<? extends Certificate> items) throws Exception {
-        
+
         log.debug("Received {} Certificates", items.size());
-        
+
         for (Certificate certificate : items) {
             sendCertToStatistics(certificate);
         }
 
     }
 
-    private void sendCertToStatistics(Certificate certificate) {
-        
+    private void sendCertToStatistics(Certificate certificate) throws AbstractCertificateProcessingException {
+
         boolean isCreated = doSend(CREATED, certificate);
-        
+
         if (isCreated && certificate.isRevoked()) {
             log.info("Certificate '{}' is revoked, adding revoke message", certificate.getCertificateId());
             doSend(REVOKED, certificate);
         }
     }
 
-    private boolean doSend(String type, Certificate certificate) {
+    private boolean doSend(String actionType, Certificate certificate) throws AbstractCertificateProcessingException {
         try {
 
             if (jmsTemplate == null) {
                 log.error("Failure sending certificate '{}' type '{}' to statistics, no JmsTemplate configured",
-                        certificate.getCertificateId(), type);
-                return false;
+                        certificate.getCertificateId(), actionType);
+                throw new FatalCertificateProcessingException("No JmsTemplate configured!");
             }
 
-            MessageCreator messageCreator = new MC(type, certificate);
+            MessageCreator messageCreator = new MC(actionType, certificate);
             jmsTemplate.send(messageCreator);
 
-            log.info("Certificate '{}' sent to statistics with action {}", certificate.getCertificateId(), type);
+            log.info("Certificate '{}' sent to statistics with action {}", certificate.getCertificateId(), actionType);
 
             return true;
         } catch (JmsException jmsex) {
-            log.error("Failure sending certificate '{}' type '{}'to statistics", certificate.getCertificateId(), type,
-                    jmsex);
-            return false;
+            log.error("Failure sending certificate '{}' type '{}' to statistics", certificate.getCertificateId(),
+                    actionType, jmsex);
+            throw new FatalCertificateProcessingException("JMS failure occured when sending certificate", jmsex);
         }
     }
 
     private static final class MC implements MessageCreator {
-        
-        private final Certificate certificate;
-        
-        private final String type;
 
-        public MC(String type, Certificate certificate) {
-            this.type = type;
+        private final Certificate certificate;
+
+        private final String actionType;
+
+        public MC(String actionType, Certificate certificate) {
+            this.actionType = actionType;
             this.certificate = certificate;
         }
 
         public Message createMessage(Session session) throws JMSException {
             TextMessage message = session.createTextMessage(certificate.getCertificateJson());
-            message.setStringProperty(ACTION, type);
+            message.setStringProperty(ACTION, actionType);
             message.setStringProperty(CERTIFICATE_ID, certificate.getCertificateId());
             return message;
         }
@@ -99,12 +101,12 @@ public class CertificateToStatisticsJMSWriter implements ItemWriter<Certificate>
     @Override
     public void beforeChunk() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void afterChunk() {
         // TODO Auto-generated method stub
-        
+
     }
 }

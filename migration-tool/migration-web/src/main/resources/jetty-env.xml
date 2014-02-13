@@ -25,7 +25,7 @@
     <Arg>jms/Queue</Arg>
     <Arg>
       <New class="org.apache.activemq.command.ActiveMQQueue">
-        <Arg>CERTIFICATE.QUEUE</Arg>
+        <Arg>statistik.utlatande.queue</Arg>
       </New>
     </Arg>
   </New>
