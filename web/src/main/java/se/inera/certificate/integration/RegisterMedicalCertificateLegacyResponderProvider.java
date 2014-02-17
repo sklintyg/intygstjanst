@@ -15,6 +15,7 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.util.ResultOfCallUtil;
+import se.inera.certificate.integration.validator.RegisterMedicalCertificateRequestValidator;
 import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
@@ -59,6 +60,7 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
         RegisterMedicalCertificateResponseType response = new RegisterMedicalCertificateResponseType();
 
         try {
+            new RegisterMedicalCertificateRequestValidator(registerMedicalCertificate).validateAndCorrect();
             String xml = xmlToString(registerMedicalCertificate);
             Certificate certificate = certificateService.storeCertificate(xml, FK7263);
             response.setResult(ResultOfCallUtil.okResult());
