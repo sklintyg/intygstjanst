@@ -38,6 +38,12 @@
 |personnummer|intyg|resultat?|status?|
 |19121212-1212|intyg-2|OK|[RECEIVED, SENT]|
 
+!3 Försök att registrera intyg med felaktigt person-nr via WireTAP ger fel
+
+|Registrera fk7263 intyg via wire tap|
+|personnummer|id|utfärdat|resultat?|
+|121212-1212|intyg-3|2013-08-01|[ERROR] - Validation Error(s) found: Wrong format for person-id! Valid format is YYYYMMDD-XXXX or YYYYMMDD+XXXX.|
+
 !3 Ta bort samtycke
 
 |Samtycke|
