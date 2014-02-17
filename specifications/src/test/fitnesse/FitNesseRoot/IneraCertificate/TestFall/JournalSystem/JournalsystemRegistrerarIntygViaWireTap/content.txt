@@ -28,6 +28,16 @@
 |personnummer|intyg|resultat?|status?|
 |19121212-1212|intyg-1|OK|[RECEIVED, SENT, SENT]|
 
+!3 Registrering av intyg via WireTAP korrigerar person-nr utan bindestreck
+
+|Registrera fk7263 intyg via wire tap|
+|personnummer|id|utfärdat|resultat?|
+|191212121212|intyg-2|2013-08-01|OK|
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|status?|
+|19121212-1212|intyg-2|OK|[RECEIVED, SENT]|
+
 !3 Ta bort samtycke
 
 |Samtycke|
@@ -39,3 +49,4 @@
 |ta bort Intyg|
 |id|
 |intyg-1|
+|intyg-2|
