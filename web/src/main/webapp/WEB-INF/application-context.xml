@@ -44,7 +44,7 @@
   <beans>
 
     <context:property-placeholder
-      location="classpath:default.${spring.profiles.active}.properties, classpath:override.${spring.profiles.active}.properties, classpath:version.properties"
+      location="classpath:default.properties, classpath:default.${spring.profiles.active}.properties, classpath:version.properties"
       order="2" ignore-resource-not-found="true"/>
   
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
