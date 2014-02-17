@@ -9,6 +9,7 @@ import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 
 /**
  * @author andreaskaltenbach
@@ -24,7 +25,9 @@ public class RegisterMedicalCertificateResponderWiretapImpl extends RegisterMedi
         RegisterMedicalCertificateResponseType response = super.registerMedicalCertificate(logicalAddress,
                 registerMedicalCertificate);
 
-        setSendStatus(registerMedicalCertificate);
+        if (response.getResult().getResultCode() != ResultCodeEnum.ERROR) {
+            setSendStatus(registerMedicalCertificate);
+        }
 
         return response;
     }
