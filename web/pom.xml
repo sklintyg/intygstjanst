@@ -123,8 +123,8 @@
 
     <dependency>
       <groupId>se.inera.certificate</groupId>
-      <artifactId>logback-marker-filter</artifactId>
-      <version>1.0.0</version>
+      <artifactId>logback-util</artifactId>
+      <version>1.1.0</version>
     </dependency>
 
     <!-- Test dependencies -->
@@ -202,8 +202,12 @@
               <value>${project.basedir}/config.properties</value>
             </systemProperty>
             <systemProperty>
-              <name>logback.configurationFile</name>
-              <value>${project.basedir}/logback.xml</value>
+              <name>certificate.logback.file</name>
+              <value>${project.basedir}/certificate-logback.xml</value>
+            </systemProperty>
+            <systemProperty>
+              <name>fk7263.logback.file</name>
+              <value>classpath:fk7263-logback.xml</value>
             </systemProperty>
           </systemProperties>
         </configuration>
