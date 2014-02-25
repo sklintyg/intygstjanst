@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
+<!--
+  This file is used when running Jetty embedded from maven with target
+
+  > mvn jetty:run
+
+  See the jetty-maven-plugin in the pom.xml file of this project.
+
+-->
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+  <New id="DataSource" class="org.eclipse.jetty.plus.jndi.Resource">
+    <Arg>java:comp/env/jdbc/intyg</Arg>
+    <Arg>
+      <New class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource">
+        <Set name="Url">jdbc:mysql://localhost:3306/intyg</Set>
+        <Set name="User">intyg</Set>
+        <Set name="Password">intyg</Set>
+      </New>
+    </Arg>
+  </New>
+  <New id="ConnectionFactory" class="org.eclipse.jetty.plus.jndi.Resource">
+    <Arg>java:comp/env/jms/ConnectionFactory</Arg>
+    <Arg>
+      <New class="org.apache.activemq.ActiveMQConnectionFactory">
+         <Arg>vm://localhost?broker.persistent=false</Arg>
+      </New>
+    </Arg>
+  </New>
+  <New id="Queue" class="org.eclipse.jetty.plus.jndi.Resource">
+    <Arg>java:comp/env/jms/Queue</Arg>
+    <Arg>
+      <New class="org.apache.activemq.command.ActiveMQQueue">
+        <Arg>CERTIFICATE.QUEUE</Arg>
+      </New>
+    </Arg>
+  </New>
+</Configure>
