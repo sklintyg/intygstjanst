@@ -9,7 +9,7 @@
 	</appender>
 	
 	<appender name="FILEOUT" class="ch.qos.logback.core.FileAppender">
-		<file>${catalina.home}/logs/mc2wc-batch.log</file>
+		<file>${catalina.base}/logs/mc2wc-batch.log</file>
 		<encoder>
 			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
 			</Pattern>
