@@ -7,11 +7,11 @@ public class Arbetsuppgift {
 
     private String typAvArbetsuppgift;
 
-    public String getTypAvArbetsuppgift() {
+    public final String getTypAvArbetsuppgift() {
         return typAvArbetsuppgift;
     }
 
-    public void setTypAvArbetsuppgift(String typAvArbetsuppgift) {
+    public final void setTypAvArbetsuppgift(String typAvArbetsuppgift) {
         this.typAvArbetsuppgift = typAvArbetsuppgift;
     }
 }

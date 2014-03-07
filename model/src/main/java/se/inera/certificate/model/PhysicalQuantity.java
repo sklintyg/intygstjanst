@@ -3,7 +3,7 @@ package se.inera.certificate.model;
 /**
  * @author andreaskaltenbach
  */
-public class PhysicalQuantity {
+public final class PhysicalQuantity {
 
     private Double quantity;
     private String unit;

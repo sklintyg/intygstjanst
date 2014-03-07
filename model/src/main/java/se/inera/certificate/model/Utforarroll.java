@@ -25,11 +25,11 @@ public class Utforarroll {
     private Kod utforartyp;
     private HosPersonal antasAv;
 
-    public Kod getUtforartyp() {
+    public final Kod getUtforartyp() {
         return utforartyp;
     }
 
-    public void setUtforartyp(Kod utforartyp) {
+    public final void setUtforartyp(Kod utforartyp) {
         this.utforartyp = utforartyp;
     }
 

@@ -13,31 +13,31 @@ public class Aktivitet {
     private List<Utforarroll> beskrivsAv;
     private Vardenhet utforsVid;
 
-    public Kod getAktivitetskod() {
+    public final Kod getAktivitetskod() {
         return aktivitetskod;
     }
 
-    public void setAktivitetskod(Kod aktivitetskod) {
+    public final void setAktivitetskod(Kod aktivitetskod) {
         this.aktivitetskod = aktivitetskod;
     }
 
-    public String getBeskrivning() {
+    public final String getBeskrivning() {
         return beskrivning;
     }
 
-    public void setBeskrivning(String beskrivning) {
+    public final void setBeskrivning(String beskrivning) {
         this.beskrivning = beskrivning;
     }
 
-    public PartialInterval getAktivitetstid() {
+    public final PartialInterval getAktivitetstid() {
         return aktivitetstid;
     }
 
-    public void setAktivitetstid(PartialInterval aktivitetstid) {
+    public final void setAktivitetstid(PartialInterval aktivitetstid) {
         this.aktivitetstid = aktivitetstid;
     }
 
-    public List<Utforarroll> getBeskrivsAv() {
+    public List<? extends Utforarroll> getBeskrivsAv() {
         if (beskrivsAv == null) {
             beskrivsAv = new ArrayList<Utforarroll>();
         }

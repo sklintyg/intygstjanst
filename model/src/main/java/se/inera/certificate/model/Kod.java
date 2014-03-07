@@ -3,7 +3,7 @@ package se.inera.certificate.model;
 /**
  * @author andreaskaltenbach
  */
-public class Kod {
+public final class Kod {
 
     private String codeSystem;
     private String codeSystemName;

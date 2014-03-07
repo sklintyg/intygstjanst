@@ -33,73 +33,72 @@ public class PatientRelation {
     private String postnummer;
     private String postort;
 
-    public Kod getRelationskategori() {
+    public final Kod getRelationskategori() {
         return relationskategori;
     }
 
-    public void setRelationskategori(Kod relationskategori) {
+    public final void setRelationskategori(Kod relationskategori) {
         this.relationskategori = relationskategori;
     }
 
-    public List<Kod> getRelationtyper() {
+    public final List<Kod> getRelationtyper() {
         if (relationtyper == null) {
             relationtyper = new ArrayList<Kod>();
         }
         return this.relationtyper;
     }
 
-    public Id getPersonId() {
+    public final Id getPersonId() {
         return personId;
     }
 
-    public void setPersonId(Id personId) {
+    public final void setPersonId(Id personId) {
         this.personId = personId;
     }
 
-    public List<String> getFornamn() {
+    public final List<String> getFornamn() {
         if (fornamn == null) {
             fornamn = new ArrayList<String>();
         }
         return this.fornamn;
     }
 
-    public String getEfternamn() {
+    public final String getEfternamn() {
         return efternamn;
     }
 
-    public void setEfternamn(String efternamn) {
+    public final void setEfternamn(String efternamn) {
         this.efternamn = efternamn;
     }
 
-    public List<String> getMellannamn() {
+    public final List<String> getMellannamn() {
         if (mellannamn == null) {
             mellannamn = new ArrayList<String>();
         }
         return this.mellannamn;
     }
 
-    public String getPostadress() {
+    public final String getPostadress() {
         return postadress;
     }
 
-    public void setPostadress(String postadress) {
+    public final void setPostadress(String postadress) {
         this.postadress = postadress;
     }
 
-    public String getPostnummer() {
+    public final String getPostnummer() {
         return postnummer;
     }
 
-    public void setPostnummer(String postnummer) {
+    public final void setPostnummer(String postnummer) {
         this.postnummer = postnummer;
     }
 
-    public String getPostort() {
+    public final String getPostort() {
         return postort;
     }
 
-    public void setPostort(String postort) {
+    public final void setPostort(String postort) {
         this.postort = postort;
     }
-
 }
