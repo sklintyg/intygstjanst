@@ -14,16 +14,6 @@
 |id|
 |giltigt-intyg|
 
-!3 Avstangning ger inga fel
-
-|validera intyg|
-|filnamn|resultat?|
-|validering/register/avstangning.xml|OK|
-
-|ta bort intyg|
-|id|
-|avstangning|
-
 !3 SMiL-Intyg utan diagnos-kod ger inga fel
 
 |validera intyg|
