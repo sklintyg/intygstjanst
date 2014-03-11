@@ -31,6 +31,7 @@ import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.support.TestUtlatande;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
@@ -78,7 +79,7 @@ public class CertificateSenderServiceImplTest {
     @BeforeClass
     public static void setupUtlatande() throws Exception {
         utlatande = new CustomObjectMapper().readValue(
-                new ClassPathResource("lakarutlatande/maximalt-fk7263.json").getFile(), Utlatande.class);
+                new ClassPathResource("lakarutlatande/maximalt-fk7263.json").getFile(), TestUtlatande.class);
     }
 
     @Before

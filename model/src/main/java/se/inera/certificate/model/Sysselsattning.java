@@ -1,8 +1,5 @@
 package se.inera.certificate.model;
 
-/**
- * @author andreaskaltenbach
- */
 public class Sysselsattning {
 
     private Kod sysselsattningstyp;

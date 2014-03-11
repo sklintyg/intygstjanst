@@ -1,17 +1,15 @@
 package se.inera.certificate.model;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-/**
- * @author andreaskaltenbach
- */
 public class Aktivitet {
+
     private Kod aktivitetskod;
+
     private String beskrivning;
+
     private PartialInterval aktivitetstid;
-    private List<Utforarroll> beskrivsAv;
-    private Vardenhet utforsVid;
 
     public final Kod getAktivitetskod() {
         return aktivitetskod;
@@ -38,17 +36,10 @@ public class Aktivitet {
     }
 
     public List<? extends Utforarroll> getBeskrivsAv() {
-        if (beskrivsAv == null) {
-            beskrivsAv = new ArrayList<Utforarroll>();
-        }
-        return this.beskrivsAv;
+        return Collections.emptyList();
     }
 
     public Vardenhet getUtforsVid() {
-        return utforsVid;
-    }
-
-    public void setUtforsVid(Vardenhet utforsVid) {
-        this.utforsVid = utforsVid;
+        return null;
     }
 }

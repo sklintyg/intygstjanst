@@ -1,14 +1,14 @@
 package se.inera.certificate.model;
 
-/**
- * @author andreaskaltenbach
- */
-public class HosPersonal {
+public abstract class HosPersonal {
+
     private Id id;
+
     private String namn;
+
     private String forskrivarkod;
+
     private String befattning;
-    private Vardenhet vardenhet;
 
     public final Id getId() {
         return id;
@@ -42,11 +42,5 @@ public class HosPersonal {
         this.befattning = befattning;
     }
 
-    public Vardenhet getVardenhet() {
-        return vardenhet;
-    }
-
-    public void setVardenhet(Vardenhet vardenhet) {
-        this.vardenhet = vardenhet;
-    }
+    public abstract Vardenhet getVardenhet();
 }

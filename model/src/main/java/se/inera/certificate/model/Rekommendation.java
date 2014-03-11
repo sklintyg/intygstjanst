@@ -21,7 +21,9 @@ package se.inera.certificate.model;
 public class Rekommendation {
 
     private Kod rekommendationskod;
+
     private String beskrivning;
+
     private Kod sjukdomskannedom;
 
     public final Kod getRekommendationskod() {

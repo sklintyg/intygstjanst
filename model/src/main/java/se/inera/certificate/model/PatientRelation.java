@@ -24,13 +24,21 @@ import java.util.List;
 public class PatientRelation {
 
     private Kod relationskategori;
+
     private List<Kod> relationtyper;
+
     private Id personId;
+
     private List<String> fornamn;
+
     private String efternamn;
+
     private List<String> mellannamn;
+
     private String postadress;
+
     private String postnummer;
+
     private String postort;
 
     public final Kod getRelationskategori() {

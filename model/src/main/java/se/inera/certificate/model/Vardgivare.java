@@ -1,11 +1,9 @@
 package se.inera.certificate.model;
 
-/**
- * @author andreaskaltenbach
- */
 public class Vardgivare {
 
     private Id id;
+
     private String namn;
 
     public final Id getId() {

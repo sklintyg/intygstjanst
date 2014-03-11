@@ -1,10 +1,9 @@
 package se.inera.certificate.model;
 
-/**
- * @author andreaskaltenbach
- */
 public class Vardkontakt {
+
     private Kod vardkontakttyp;
+
     private LocalDateInterval vardkontaktstid;
 
     public final Kod getVardkontakttyp() {

@@ -23,7 +23,6 @@ import se.inera.certificate.model.Kod;
 public class Utforarroll {
 
     private Kod utforartyp;
-    private HosPersonal antasAv;
 
     public final Kod getUtforartyp() {
         return utforartyp;
@@ -34,10 +33,6 @@ public class Utforarroll {
     }
 
     public HosPersonal getAntasAv() {
-        return antasAv;
-    }
-
-    public void setAntasAv(HosPersonal antasAv) {
-        this.antasAv = antasAv;
+        return null;
     }
 }

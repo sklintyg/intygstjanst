@@ -1,20 +1,22 @@
 package se.inera.certificate.model;
 
-/**
- * @author andreaskaltenbach
- */
-public class Vardenhet {
+public abstract class Vardenhet {
 
     private Id id;
-    private Id arbetsplatskod;
-    private String namn;
-    private String postadress;
-    private String postnummer;
-    private String postort;
-    private String telefonnummer;
-    private String epost;
 
-    private Vardgivare vardgivare;
+    private Id arbetsplatskod;
+
+    private String namn;
+
+    private String postadress;
+
+    private String postnummer;
+
+    private String postort;
+
+    private String telefonnummer;
+
+    private String epost;
 
     public final Id getId() {
         return id;
@@ -80,11 +82,5 @@ public class Vardenhet {
         this.epost = epost;
     }
 
-    public final Vardgivare getVardgivare() {
-        return vardgivare;
-    }
-
-    public final void setVardgivare(Vardgivare vardgivare) {
-        this.vardgivare = vardgivare;
-    }
+    public abstract Vardgivare getVardgivare();
 }

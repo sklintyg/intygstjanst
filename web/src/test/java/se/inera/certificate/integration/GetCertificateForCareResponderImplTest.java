@@ -64,6 +64,7 @@ import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.support.TestUtlatande;
 
 /**
  * @author andreaskaltenbach
@@ -92,7 +93,7 @@ public class GetCertificateForCareResponderImplTest {
 
     @Test
     public void getCertificateForCare() throws Exception {
-        Utlatande utlatande = new Utlatande();
+        Utlatande utlatande = new TestUtlatande();
         utlatande.setTyp(new Kod(CERTIFICATE_TYPE));
 
         when(certificateService.getCertificate(CERTIFICATE_ID)).thenReturn(
@@ -169,7 +170,7 @@ public class GetCertificateForCareResponderImplTest {
 
     @Test
     public void getRevokedCertificate() throws IOException {
-        Utlatande utlatande = new Utlatande();
+        Utlatande utlatande = new TestUtlatande();
         utlatande.setTyp(new Kod(CERTIFICATE_TYPE));
 
         when(certificateService.getCertificate(CERTIFICATE_ID)).thenReturn(

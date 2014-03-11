@@ -2,12 +2,10 @@ package se.inera.certificate.model;
 
 import org.joda.time.LocalDate;
 
-/**
- * @author andreaskaltenbach
- */
 public class Referens {
 
     private Kod referenstyp;
+
     private LocalDate datum;
 
     public final Kod getReferenstyp() {

@@ -1,27 +1,26 @@
 package se.inera.certificate.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import se.inera.certificate.model.util.Strings;
 
-/**
- * @author andreaskaltenbach
- */
 public class Patient {
 
     private Id id;
+
     private List<String> fornamn;
+
     private List<String> mellannamn;
+
     private String efternamn;
 
     private String postadress;
-    private String postnummer;
-    private String postort;
 
-    private List<Sysselsattning> sysselsattningar;
-    private List<Arbetsuppgift> arbetsuppgifter;
-    private List<PatientRelation> patientrelationer;
+    private String postnummer;
+
+    private String postort;
 
     public final Id getId() {
         return id;
@@ -53,7 +52,7 @@ public class Patient {
         this.efternamn = efternamn;
     }
 
-    public String getFullstandigtNamn() {
+    public final String getFullstandigtNamn() {
         List<String> names = new ArrayList<>();
 
         names.addAll(getFornamn());
@@ -88,23 +87,14 @@ public class Patient {
     }
 
     public List<? extends Sysselsattning> getSysselsattningar() {
-        if (sysselsattningar == null) {
-            sysselsattningar = new ArrayList<>();
-        }
-        return sysselsattningar;
+        return Collections.emptyList();
     }
 
     public List<? extends Arbetsuppgift> getArbetsuppgifter() {
-        if (arbetsuppgifter == null) {
-            arbetsuppgifter = new ArrayList<>();
-        }
-        return arbetsuppgifter;
+        return Collections.emptyList();
     }
 
     public List<? extends PatientRelation> getPatientrelationer() {
-        if (patientrelationer == null) {
-            patientrelationer = new ArrayList<>();
-        }
-        return patientrelationer;
+        return Collections.emptyList();
     }
 }

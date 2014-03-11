@@ -1,15 +1,29 @@
 package se.inera.certificate.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
 /**
- * @author andreaskaltenbach
+ * Definition of the common domain model for a 'utlåtande'. This model allows reading of all common fields. Setting the
+ * model must be done through subclasses. All modules share this common base which is extendible such that:
+ * <ul>
+ * <li>New fields can be added to the model.
+ * <li>The entities {@link Patient}, {@link HosPersonal}, {@link Aktivitet}, {@link Observation}, {@link Vardkontakt},
+ * {@link Rekommendation} and {@link Referens} can be extended with sub classes of themself.
+ * </ul>
+ * <p>
+ * Observe that the methods {@link #getAktiviteter()}, {@link #getObservationer()}, {@link #getVardkontakter()},
+ * {@link #getRekommendationer()} and {@link #getReferenser()} are stubbed to return an empty immutable list of
+ * entities. If any of these entities are to be used in a module, these methods have to be overridden.
+ * <p>
+ * The {@link #getPatient()} and {@link #getSkapadAv()} are abstract since they need an implementation (should never
+ * return null). These must be implemented to return the correct subclass by the modules.
  */
-public class Utlatande {
+public abstract class Utlatande {
 
     private Id id;
 
@@ -21,30 +35,10 @@ public class Utlatande {
 
     private LocalDateTime skickatdatum;
 
-    private Patient patient;
-
-    private HosPersonal skapadAv;
-
-    private List<Aktivitet> aktiviteter;
-
-    private List<Observation> observationer;
-
-    private List<Vardkontakt> vardkontakter;
-
-    private List<Rekommendation> rekommendationer;
-
-    private List<Referens> referenser;
-
-    /**
-     * To which point in time is this certificate considered valid. Modules implementing this model should use their own
-     * getters calculating the date suitable for the certificate type and rules.
-     */
+    /** To which point in time is this certificate considered valid. */
     private LocalDate validToDate;
 
-    /**
-     * From which point in time is this certificate considered valid. Modules implementing this model should use their
-     * own getters calculating the date suitable for the certificate type and rules.
-     */
+    /** From which point in time is this certificate considered valid. */
     private LocalDate validFromDate;
 
     public final Id getId() {
@@ -86,55 +80,104 @@ public class Utlatande {
         this.skickatdatum = skickatdatum;
     }
 
-    public Patient getPatient() {
-        return patient;
-    }
+    /**
+     * Returns the patient of this utlatande.
+     * <p>
+     * The implementing class is free to chose a sub type of {@link Patient} as return value. A <code>setPatient</code>
+     * method should also be created by the implementing class.
+     * 
+     * @return The patient of this utlatande.
+     */
+    public abstract Patient getPatient();
 
-    public void setPatient(Patient patient) {
-        this.patient = patient;
-    }
+    /**
+     * Returns the hos-personal of this utlatande.
+     * <p>
+     * The implementing class is free to chose a sub type of {@link HosPersonal} as return value. A
+     * <code>setSkapadAv</code> method should also be created by the implementing class.
+     * 
+     * @return The hos-personal of this utlatande.
+     */
+    public abstract HosPersonal getSkapadAv();
 
-    public HosPersonal getSkapadAv() {
-        return skapadAv;
-    }
-
-    public void setSkapadAv(HosPersonal skapadAv) {
-        this.skapadAv = skapadAv;
-    }
-
+    /**
+     * Returns the list of aktiviteter for this utlatande.
+     * <p>
+     * Note that this implementation only returns an immutable empty list of {@link Aktivitet}er. Subclasses which
+     * override this method should do this by concretise the return type like:
+     * <p>
+     * <code>List&lt;Aktivitet></code><br>
+     * or<br>
+     * <code>List&lt;SubclassOfAktivitet></code>
+     * 
+     * @return A list of {@link Aktivitet}er.
+     */
     public List<? extends Aktivitet> getAktiviteter() {
-        if (aktiviteter == null) {
-            aktiviteter = new ArrayList<>();
-        }
-        return aktiviteter;
+        return Collections.emptyList();
     }
 
+    /**
+     * Returns the list of observationer for this utlatande.
+     * <p>
+     * Note that this implementation only returns an immutable empty list of {@link Observation}er. Subclasses which
+     * override this method should do this by concretise the return type like:
+     * <p>
+     * <code>List&lt;Observation></code><br>
+     * or<br>
+     * <code>List&lt;SubclassOfObservation></code>
+     * 
+     * @return A list of {@link Observation}er.
+     */
     public List<? extends Observation> getObservationer() {
-        if (observationer == null) {
-            observationer = new ArrayList<>();
-        }
-        return observationer;
+        return Collections.emptyList();
     }
 
+    /**
+     * Returns the list of vardkontakter for this utlatande.
+     * <p>
+     * Note that this implementation only returns an immutable empty list of {@link Vardkontakt}er. Subclasses which
+     * override this method should do this by concretise the return type like:
+     * <p>
+     * <code>List&lt;Vardkontakt></code><br>
+     * or<br>
+     * <code>List&lt;SubclassOfVardkontakt></code>
+     * 
+     * @return A list of {@link Vardkontakt}er.
+     */
     public List<? extends Vardkontakt> getVardkontakter() {
-        if (vardkontakter == null) {
-            vardkontakter = new ArrayList<>();
-        }
-        return vardkontakter;
+        return Collections.emptyList();
     }
 
+    /**
+     * Returns the list of rekommendationer for this utlatande.
+     * <p>
+     * Note that this implementation only returns an immutable empty list of {@link Rekommendation}er. Subclasses which
+     * override this method should do this by concretise the return type like:
+     * <p>
+     * <code>List&lt;Rekommendation></code><br>
+     * or<br>
+     * <code>List&lt;SubclassOfRekommendation></code>
+     * 
+     * @return A list of {@link Rekommendation}er.
+     */
     public List<? extends Rekommendation> getRekommendationer() {
-        if (rekommendationer == null) {
-            rekommendationer = new ArrayList<>();
-        }
-        return rekommendationer;
+        return Collections.emptyList();
     }
 
+    /**
+     * Returns the list of referenser for this utlatande.
+     * <p>
+     * Note that this implementation only returns an immutable empty list of {@link Referens}er. Subclasses which
+     * override this method should do this by concretise the return type like:
+     * <p>
+     * <code>List&lt;Referens></code><br>
+     * or<br>
+     * <code>List&lt;SubclassOfReferens></code>
+     * 
+     * @return A list of {@link Referens}er.
+     */
     public List<? extends Referens> getReferenser() {
-        if (referenser == null) {
-            referenser = new ArrayList<>();
-        }
-        return referenser;
+        return Collections.emptyList();
     }
 
     public final LocalDate getValidToDate() {

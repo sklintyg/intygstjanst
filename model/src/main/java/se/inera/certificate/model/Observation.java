@@ -3,18 +3,17 @@ package se.inera.certificate.model;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author andreaskaltenbach
- */
 public class Observation {
 
     private Kod observationskategori;
+
     private Kod observationskod;
+
     private PartialInterval observationsperiod;
+
     private String beskrivning;
-    private List<Prognos> prognoser;
+
     private List<PhysicalQuantity> varde;
-    private Utforarroll utforsAv;
 
     public final Kod getObservationskategori() {
         return observationskategori;
@@ -48,13 +47,6 @@ public class Observation {
         this.beskrivning = beskrivning;
     }
 
-    public List<? extends Prognos> getPrognoser() {
-        if (prognoser == null) {
-            prognoser = new ArrayList<>();
-        }
-        return prognoser;
-    }
-
     public final List<PhysicalQuantity> getVarde() {
         if (varde == null) {
             varde = new ArrayList<>();
@@ -63,10 +55,6 @@ public class Observation {
     }
 
     public Utforarroll getUtforsAv() {
-        return utforsAv;
-    }
-
-    public void setUtforsAv(Utforarroll utforsAv) {
-        this.utforsAv = utforsAv;
+        return null;
     }
 }
