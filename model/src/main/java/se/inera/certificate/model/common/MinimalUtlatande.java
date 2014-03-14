@@ -1,32 +1,73 @@
 package se.inera.certificate.model.common;
 
-import se.inera.certificate.model.Patient;
+import java.util.List;
+
+import se.inera.certificate.model.Aktivitet;
+import se.inera.certificate.model.Observation;
+import se.inera.certificate.model.Referens;
+import se.inera.certificate.model.Rekommendation;
 import se.inera.certificate.model.Utlatande;
+import se.inera.certificate.model.Vardkontakt;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- * Minimal concrete implementation of the generic domain model. Useful if an application needs to deserialize JSON etc.
+ * Concrete implementation of the generic domain model with a bare minimal of fields. Useful if an application needs to
+ * deserialize JSON etc.
+ * <p>
+ * Consider extending {@link Utlatande} with your own implementation if anything more specific is needed.
  */
 public class MinimalUtlatande extends Utlatande {
 
-    private Patient patient;
+    private MinimalPatient patient;
 
     private MinimalHosPersonal skapadAv;
 
     @Override
-    public final Patient getPatient() {
+    public MinimalPatient getPatient() {
         return patient;
     }
 
-    public final void setPatient(Patient patient) {
+    public void setPatient(MinimalPatient patient) {
         this.patient = patient;
     }
 
     @Override
-    public final MinimalHosPersonal getSkapadAv() {
+    public MinimalHosPersonal getSkapadAv() {
         return skapadAv;
     }
 
-    public final void setSkapadAv(MinimalHosPersonal skapadAv) {
+    public void setSkapadAv(MinimalHosPersonal skapadAv) {
         this.skapadAv = skapadAv;
+    }
+
+    @Override
+    @JsonIgnore
+    public List<? extends Aktivitet> getAktiviteter() {
+        return super.getAktiviteter();
+    }
+
+    @Override
+    @JsonIgnore
+    public List<? extends Observation> getObservationer() {
+        return super.getObservationer();
+    }
+
+    @Override
+    @JsonIgnore
+    public List<? extends Vardkontakt> getVardkontakter() {
+        return super.getVardkontakter();
+    }
+
+    @Override
+    @JsonIgnore
+    public List<? extends Rekommendation> getRekommendationer() {
+        return super.getRekommendationer();
+    }
+
+    @Override
+    @JsonIgnore
+    public List<? extends Referens> getReferenser() {
+        return super.getReferenser();
     }
 }

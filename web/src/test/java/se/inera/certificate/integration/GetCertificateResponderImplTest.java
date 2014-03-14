@@ -18,9 +18,6 @@
  */
 package se.inera.certificate.integration;
 
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -32,6 +29,10 @@ import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ER
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
+import java.io.IOException;
+
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.io.FileUtils;
 import org.h2.util.IOUtils;
 import org.junit.Test;
@@ -40,6 +41,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
+
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
@@ -48,9 +50,9 @@ import se.inera.certificate.integration.rest.ModuleRestApi;
 import se.inera.certificate.integration.rest.ModuleRestApiFactory;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
+import se.inera.certificate.model.common.MinimalUtlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
-import se.inera.certificate.support.TestUtlatande;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ErrorIdEnum;
@@ -82,7 +84,7 @@ public class GetCertificateResponderImplTest {
     @Test
     public void getCertificate() throws IOException {
         String document = FileUtils.readFileToString(new ClassPathResource("lakarutlatande/maximalt-fk7263.json").getFile());
-        Utlatande utlatande = new CustomObjectMapper().readValue(document, TestUtlatande.class);
+        Utlatande utlatande = new CustomObjectMapper().readValue(document, MinimalUtlatande.class);
 
         when(certificateService.getCertificate(civicRegistrationNumber, certificateId)).thenReturn(
                 new CertificateBuilder("123456", document).certificateType("fk7263").build());
