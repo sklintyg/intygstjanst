@@ -1,6 +1,6 @@
 <ns3:RegisterMedicalCertificate xmlns="urn:riv:insuranceprocess:healthreporting:mu7263:3" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2" xmlns:ns3="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3" xmlns:ns4="http://www.w3.org/2005/08/addressing">
    <ns3:lakarutlatande>
-      <lakarutlatande-id>saknar-typavutlatande</lakarutlatande-id>
+      <lakarutlatande-id>saknad-typavutlatande</lakarutlatande-id>
       <kommentar> </kommentar>
       <signeringsdatum>2011-01-26T00:00:00.000</signeringsdatum>
       <skickatDatum>2011-03-23T09:29:15.193</skickatDatum>

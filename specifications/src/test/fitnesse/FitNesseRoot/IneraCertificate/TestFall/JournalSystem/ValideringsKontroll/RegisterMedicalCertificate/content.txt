@@ -136,11 +136,11 @@
 |filnamn|resultat?|
 |validering/register/felaktigt-referensdatum-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
 
-!3 Saknar typ av utlatande ger fel
+!3 Saknad typ av utlatande ger fel
 
 |validera intyg|
 |filnamn|resultat?|
-|validering/register/saknar-typavutlatande.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-typavutlatande.xml|=~/.*ERROR.*Validation.*/|
 
 !3 felaktigt utlatande id typ ger fel
 
