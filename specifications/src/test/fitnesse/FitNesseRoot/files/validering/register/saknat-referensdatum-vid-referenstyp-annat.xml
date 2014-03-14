@@ -37,6 +37,7 @@
 		<referens>
 			<referenstyp>Annat</referenstyp>
 		</referens>
+		<kommentar>Kommentar</kommentar>
 		<medicinsktTillstand>
 			<tillstandskod codeSystemName="ICD-10" code="M25" />
 		</medicinsktTillstand>
