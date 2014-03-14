@@ -100,12 +100,6 @@
 |filnamn|resultat?|
 |validering/register/tomt-personnr.xml|=~/.*ERROR.*Validation.*/|
 
-!3 felaktigt referensdatum journaluppgift ger fel
-
-|validera intyg|
-|filnamn|resultat?|
-|validering/register/felaktigt-referensdatum-journaluppgift.xml|=~/.*ERROR.*Validation.*/|
-
 !3 saknat referensdatum journaluppgift ger fel
 
 |validera intyg|
@@ -130,7 +124,11 @@
 |filnamn|resultat?|
 |validering/register/tomt-referensdatum-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
 
+!3 felaktigt referensdatum journaluppgift ger fel
 
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/felaktigt-referensdatum-journaluppgift.xml|=~/.*ERROR.*Validation.*/|
 
 !3 felaktigt referensdatum vid referenstyp annat ger fel
 
@@ -469,7 +467,7 @@
 
 |validera intyg|
 |filnamn|resultat?|
-|validering/register/tomt-referensdatum-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tom-kommentar-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
 
 
 !3 Saknad kommentar ger fel om prognos är "går inte att bedömma"

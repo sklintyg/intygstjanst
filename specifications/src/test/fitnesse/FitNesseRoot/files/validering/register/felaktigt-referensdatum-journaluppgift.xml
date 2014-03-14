@@ -4,9 +4,7 @@
 	xmlns:ns4="http://www.w3.org/2005/08/addressing">
 	<ns3:lakarutlatande>
 		<lakarutlatande-id>felaktigt-referensdatum-journaluppgift</lakarutlatande-id>
-		<typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om
-			allmän försäkring
-		</typAvUtlatande>
+		<typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om allmän försäkring </typAvUtlatande>
 		<signeringsdatum>2011-01-24T00:00:00</signeringsdatum>
 		<skickatDatum>2011-03-23T09:28:10</skickatDatum>
 		<patient>
@@ -32,7 +30,10 @@
 				</ns2:vardgivare>
 			</ns2:enhet>
 		</skapadAvHosPersonal>
-
+		<vardkontakt>
+			<vardkontakttyp>Min_undersokning_av_patienten</vardkontakttyp>
+			<vardkontaktstid>2011-01-24</vardkontaktstid>
+		</vardkontakt>
 		<referens>
 			<referenstyp>Journaluppgifter</referenstyp>
 			<datum>2010-31-24</datum>
