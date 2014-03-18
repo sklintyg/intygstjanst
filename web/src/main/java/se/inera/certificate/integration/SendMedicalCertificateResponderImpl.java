@@ -49,7 +49,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             LOG.info("Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + safeGetCivicRegistrationNumber(request) + "' but certificate does not exist");
             response.setResult(failResult("No certificate '" + safeGetCertificateId(request)
-                    + "' found to revoke for patient '" + safeGetCivicRegistrationNumber(request) + "'."));
+                    + "' found to send for patient '" + safeGetCivicRegistrationNumber(request) + "'."));
             return response;
         } catch (CertificateRevokedException e) {
             // return with INFO response if certificate was revoked before
