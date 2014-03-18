@@ -14,6 +14,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
 
+import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.StatisticsService;
 
@@ -60,7 +61,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 
             MessageCreator messageCreator = new MC(type, certificate);
             jmsTemplate.send(messageCreator );
-            LOG.info("Certificate '{}' sent to statistics", certificate.getId());
+            LOG.info(LogMarkers.MONITORING, "Certificate '{}' type '{}' sent to statistics", certificate.getId(), type);
             return true;
         } catch (JmsException e) {
             LOG.error("Failure sending certificate '{}' type '{}'to statistics", certificate.getId(), type, e);

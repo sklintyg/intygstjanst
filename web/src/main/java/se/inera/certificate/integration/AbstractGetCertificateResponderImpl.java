@@ -20,6 +20,7 @@ import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.integration.rest.ModuleRestApi;
 import se.inera.certificate.integration.rest.ModuleRestApiFactory;
+import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
@@ -31,7 +32,7 @@ import com.google.common.base.Throwables;
  */
 public abstract class AbstractGetCertificateResponderImpl {
 
-    protected static final Logger LOG = LoggerFactory.getLogger(AbstractGetCertificateResponderImpl.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractGetCertificateResponderImpl.class);
 
     @Autowired
     private CertificateService certificateService;
@@ -41,24 +42,24 @@ public abstract class AbstractGetCertificateResponderImpl {
 
     protected CertificateOrResultOfCall getCertificate(String certificateId, String personnummer) {
         if (certificateId == null || certificateId.length() == 0) {
-            LOG.info("Tried to get certificate with non-existing ceritificateId '.");
+            LOGGER.info(LogMarkers.VALIDATION, "Tried to get certificate with non-existing ceritificateId '.");
             return new CertificateOrResultOfCall(failResult("Validation error: missing  certificateId"));
         }
         try {
             return new CertificateOrResultOfCall(certificateService.getCertificate(personnummer, certificateId));
         } catch (MissingConsentException ex) {
             // return ERROR if user has not given consent
-            LOG.info("Tried to get certificate '" + certificateId + "' but user '" + personnummer
+            LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + certificateId + "' but user '" + personnummer
                     + "' has not given consent.");
             return new CertificateOrResultOfCall(failResult(String.format("Missing consent for patient %s",
                     personnummer)));
         } catch (InvalidCertificateIdentifierException | InvalidCertificateException ex) {
-            LOG.info("Tried to get certificate '" + certificateId + "' but no such certificate does exist for user '"
+            LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + certificateId + "' but no such certificate does exist for user '"
                     + personnummer + "'.");
             return new CertificateOrResultOfCall(failResult(String.format("Unknown certificate ID: %s", certificateId)));
         } catch (CertificateRevokedException ex) {
             // return INFO if certificate is revoked
-            LOG.info("Tried to get certificate '" + certificateId + "' but certificate has been revoked'.");
+            LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + certificateId + "' but certificate has been revoked'.");
             return new CertificateOrResultOfCall((infoResult("Certificate '" + certificateId + "' has been revoked")));
         }
     }
