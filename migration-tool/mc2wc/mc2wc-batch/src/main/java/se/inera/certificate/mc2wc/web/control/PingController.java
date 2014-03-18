@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import se.inera.certificate.mc2wc.message.PingRequest;
-import se.inera.certificate.mc2wc.message.PingResponse;
 import se.inera.certificate.mc2wc.rest.MigrationReceiver;
 
 /**

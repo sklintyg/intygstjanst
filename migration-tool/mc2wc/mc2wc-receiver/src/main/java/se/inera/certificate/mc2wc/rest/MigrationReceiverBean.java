@@ -1,15 +1,14 @@
 package se.inera.certificate.mc2wc.rest;
 
-import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.core.Response.Status;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.certificate.mc2wc.message.*;
 import se.inera.certificate.mc2wc.service.MigrationService;
 import se.inera.certificate.mc2wc.service.MigrationServiceException;
+
+import javax.ws.rs.ServerErrorException;
+import javax.ws.rs.core.Response.Status;
 
 public class MigrationReceiverBean implements MigrationReceiver {
 

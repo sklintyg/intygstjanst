@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
-  xsi:schemaLocation="
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:batch="http://www.springframework.org/schema/batch" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="
           http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
@@ -12,22 +12,23 @@
           <batch:listener ref="certificateMigrationListener" />
         </batch:listeners>
         <batch:chunk reader="migrationStepItemReader"
-          processor="migrationMessageCompositeProcessor" writer="restServiceItemWriter"
-           commit-interval="5">
+                     processor="migrationMessageCompositeProcessor" writer="restServiceItemWriter"
+                     commit-interval="5">
         </batch:chunk>
       </batch:tasklet>
     </batch:step>
   </batch:job>
 
-  <bean id="certificateMigrationListener" class="se.inera.certificate.mc2wc.batch.listener.CertificateMigrationListener">
+  <bean id="certificateMigrationListener"
+        class="se.inera.certificate.mc2wc.batch.listener.CertificateMigrationListener">
 
   </bean>
 
   <bean id="migrationMessageCompositeProcessor" class="org.springframework.batch.item.support.CompositeItemProcessor">
     <property name="delegates">
       <list>
-        <ref bean="certificateConverterProcessor"/>
-        <ref bean="migrationMessageValidationProcessor"/>
+        <ref bean="certificateConverterProcessor" />
+        <ref bean="migrationMessageValidationProcessor" />
       </list>
     </property>
   </bean>

@@ -7,7 +7,6 @@ import se.inera.certificate.mc2wc.rest.MigrationReceiver;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
 import java.util.List;

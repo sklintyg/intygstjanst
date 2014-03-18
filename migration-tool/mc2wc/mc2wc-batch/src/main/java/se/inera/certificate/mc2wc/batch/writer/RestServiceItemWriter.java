@@ -1,17 +1,16 @@
 package se.inera.certificate.mc2wc.batch.writer;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
 import se.inera.certificate.mc2wc.exception.AbstractCertificateMigrationException;
 import se.inera.certificate.mc2wc.message.MigrationMessage;
 import se.inera.certificate.mc2wc.message.MigrationReply;
 import se.inera.certificate.mc2wc.rest.MigrationReceiver;
+
+import java.util.List;
 
 public class RestServiceItemWriter implements ItemWriter<MigrationMessage> {
 

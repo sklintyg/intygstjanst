@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:cxf="http://cxf.apache.org/core"
-  xmlns:http="http://cxf.apache.org/transports/http/configuration"
-  xmlns:sec="http://cxf.apache.org/configuration/security"
-  xsi:schemaLocation="
+<beans xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cxf="http://cxf.apache.org/core"
+       xmlns:http="http://cxf.apache.org/transports/http/configuration"
+       xmlns:sec="http://cxf.apache.org/configuration/security"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
           http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
         http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
@@ -24,20 +24,20 @@
     </property>
   </bean>
 
-  <bean id="exceptionMapper" class="se.inera.certificate.mc2wc.exception.CertificateMigrationResponseExceptionMapper"/>
+  <bean id="exceptionMapper" class="se.inera.certificate.mc2wc.exception.CertificateMigrationResponseExceptionMapper" />
 
   <jaxrs:client id="migrationMessageReceiverService"
-    address="${migration.service.url}" serviceClass="se.inera.certificate.mc2wc.rest.MigrationReceiver">
+                address="${migration.service.url}" serviceClass="se.inera.certificate.mc2wc.rest.MigrationReceiver">
     <jaxrs:providers>
-      <ref bean="exceptionMapper"/>
-      <ref bean="jaxbProvider"/>
+      <ref bean="exceptionMapper" />
+      <ref bean="jaxbProvider" />
     </jaxrs:providers>
   </jaxrs:client>
 
   <bean id="restServiceItemWriter" class="se.inera.certificate.mc2wc.batch.writer.RestServiceItemWriter" />
 
   <http:conduit name="*.http-conduit">
-    <http:client AllowChunking="false" AutoRedirect="true" Connection="Keep-Alive"/>
+    <http:client AllowChunking="false" AutoRedirect="true" Connection="Keep-Alive" />
     <http:authorization>
       <sec:UserName>mc2wc-sender</sec:UserName>
       <sec:Password>medcert</sec:Password>

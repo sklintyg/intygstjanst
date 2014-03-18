@@ -1,7 +1,10 @@
 package se.inera.certificate.mc2wc.schema;
 
-import java.io.IOException;
-import java.text.MessageFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.xml.sax.SAXException;
+import se.inera.certificate.mc2wc.message.MigrationMessage;
 
 import javax.annotation.PostConstruct;
 import javax.xml.XMLConstants;
@@ -13,13 +16,8 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.xml.sax.SAXException;
-
-import se.inera.certificate.mc2wc.message.MigrationMessage;
+import java.io.IOException;
+import java.text.MessageFormat;
 
 public class MigrationMessageSchemaValidatorImpl implements MigrationMessageSchemaValidator {
 

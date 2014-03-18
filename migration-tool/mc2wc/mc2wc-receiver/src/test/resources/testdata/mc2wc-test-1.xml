@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<migrationMessage xmlns="urn:inera:certificates:mc2wc:1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:inera:certificates:mc2wc:1 mc2wc-schema.xsd ">
+<migrationMessage xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:inera:certificates:mc2wc:1"
+                  xsi:schemaLocation="urn:inera:certificates:mc2wc:1 mc2wc-schema.xsd ">
   <certificate>
     <certificateId>certificateId</certificateId>
     <certificateType>certificateType</certificateType>

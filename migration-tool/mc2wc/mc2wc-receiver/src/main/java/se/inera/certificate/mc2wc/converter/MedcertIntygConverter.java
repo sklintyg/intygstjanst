@@ -6,5 +6,5 @@ import se.inera.webcert.persistence.legacy.model.MigreratMedcertIntyg;
 public interface MedcertIntygConverter {
 
     public MigreratMedcertIntyg toMigreratMedcertIntyg(CertificateType cert);
-    
+
 }

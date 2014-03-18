@@ -4,13 +4,13 @@
     <title>Migration finished</title>
 </head>
 <body>
-    <h1>We are done!</h1>
-    ${status}<br>
+<h1>We are done!</h1>
+${status}<br>
 
-    ReadCount: ${readCount}<br>
-    ReadError: ${readError}<br>
-    SkipCount: ${skipCount}<br>
-    WriteCount: ${writeCount}<br>
-    WriteError: ${writeError}<br>
+ReadCount: ${readCount}<br>
+ReadError: ${readError}<br>
+SkipCount: ${skipCount}<br>
+WriteCount: ${writeCount}<br>
+WriteError: ${writeError}<br>
 </body>
 </html>

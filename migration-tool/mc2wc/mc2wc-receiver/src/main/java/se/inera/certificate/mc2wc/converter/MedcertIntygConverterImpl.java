@@ -12,25 +12,25 @@ public class MedcertIntygConverterImpl implements MedcertIntygConverter {
 
     @Override
     public MigreratMedcertIntyg toMigreratMedcertIntyg(CertificateType cert) {
-        
+
         MigreratMedcertIntyg mmCert = new MigreratMedcertIntyg();
-        
+
         mmCert.setIntygsId(cert.getCertificateId());
         mmCert.setEnhetsId(cert.getCareUnitId());
         mmCert.setIntygsTyp(cert.getCertificateType());
-        
+
         PatientType patient = cert.getPatient();
         mmCert.setPatientNamn(patient.getFullName());
         mmCert.setPatientPersonnummer(patient.getPersonId());
-        
+
         mmCert.setUrsprung(cert.getOrigin());
         mmCert.setMigreradFran(cert.getMigratedFrom());
-        
+
         mmCert.setSkapad(cert.getCreated());
         mmCert.setSkickad(cert.getSent());
-        
+
         mmCert.setIntygsData(cert.getContents());
-        
+
         return mmCert;
     }
 

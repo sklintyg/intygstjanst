@@ -2,12 +2,12 @@
 <html>
 <head>
     <title>Checking job status</title>
-    <meta http-equiv="refresh" content="3;url=<%= request.getContextPath() %>/d/checkMigration" />
+    <meta http-equiv="refresh" content="3;url=<%= request.getContextPath() %>/d/checkMigration"/>
 
 </head>
 <body>
-    ${status}
+${status}
 <br>
-    ${readCount}
+${readCount}
 </body>
 </html>

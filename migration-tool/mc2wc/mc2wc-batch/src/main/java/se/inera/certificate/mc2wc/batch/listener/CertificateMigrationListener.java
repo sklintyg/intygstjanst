@@ -6,7 +6,6 @@ import org.springframework.batch.core.SkipListener;
 import se.inera.certificate.mc2wc.jpa.model.Certificate;
 import se.inera.certificate.mc2wc.message.MigrationMessage;
 
-
 import java.util.List;
 
 /**
@@ -20,7 +19,7 @@ public class CertificateMigrationListener implements ItemReadListener<Certificat
     private long writeError = 0;
     private long skipCount = 0;
 
-    public void reset(){
+    public void reset() {
         readCount = 0;
         readError = 0;
         writeCount = 0;
@@ -30,7 +29,6 @@ public class CertificateMigrationListener implements ItemReadListener<Certificat
 
     @Override
     public void beforeRead() {
-
     }
 
     @Override
@@ -45,7 +43,6 @@ public class CertificateMigrationListener implements ItemReadListener<Certificat
 
     @Override
     public void beforeWrite(List<? extends MigrationMessage> items) {
-
     }
 
     @Override
@@ -60,7 +57,6 @@ public class CertificateMigrationListener implements ItemReadListener<Certificat
 
     @Override
     public void onSkipInRead(Throwable t) {
-
     }
 
     @Override

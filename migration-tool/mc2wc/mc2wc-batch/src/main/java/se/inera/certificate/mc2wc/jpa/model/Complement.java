@@ -12,30 +12,22 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 package se.inera.certificate.mc2wc.jpa.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * @author Pär Wenåker
- *
  */
 @Entity
-@Table(name="COMPLEMENT")
+@Table(name = "COMPLEMENT")
 public class Complement {
-    
+
     @SuppressWarnings("unused")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,17 +36,18 @@ public class Complement {
 
     @Column(name = "FALT")
     private String falt;
-    
+
     @Column(name = "TEXT")
     private String text;
-    
+
     @ManyToOne
-    @JoinColumn(nullable=false, name="QUESTION_ID")
+    @JoinColumn(nullable = false, name = "QUESTION_ID")
     private Question question;
 
     @SuppressWarnings("unused")
-    private Complement(){}
-    
+    private Complement() {
+    }
+
     /**
      * @param falt2
      * @param text2
@@ -68,25 +61,25 @@ public class Complement {
         return falt;
     }
 
-    public String getText() {
-        return text;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
     public void setFalt(String falt) {
         this.falt = falt;
+    }
+
+    public String getText() {
+        return text;
     }
 
     public void setText(String text) {
         this.text = text;
     }
 
+    public Question getQuestion() {
+        return question;
+    }
+
     public void setQuestion(Question question) {
         this.question = question;
     }
-    
-    
+
+
 }

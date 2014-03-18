@@ -2,7 +2,9 @@ package se.inera.certificate.mc2wc.web.control;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,7 +34,7 @@ public class IndexController {
     private JobExecution execution;
 
     @RequestMapping("/home")
-    public String home(){
+    public String home() {
         return "home";
     }
 
@@ -58,7 +60,7 @@ public class IndexController {
         model.addAttribute("writeCount", migrationListener.getWriteCount());
         model.addAttribute("writeError", migrationListener.getWriteError());
 
-        if(execution.isRunning()){
+        if (execution.isRunning()) {
             return "checkMigration";
         }
         return "forward:/d/migrationFinished";
@@ -67,7 +69,7 @@ public class IndexController {
     @RequestMapping("/migrationFinished")
     public String migrationFinished() throws Exception {
 
-        switch (execution.getStatus()){
+        switch (execution.getStatus()) {
             case COMPLETED:
 
                 break;
@@ -81,11 +83,6 @@ public class IndexController {
 
         return "migrationSummary";
     }
-
-
-
-
-
 
 
 }

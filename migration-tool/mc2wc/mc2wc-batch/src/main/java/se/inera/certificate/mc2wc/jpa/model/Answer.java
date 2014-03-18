@@ -12,53 +12,41 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 package se.inera.certificate.mc2wc.jpa.model;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 import se.vgregion.dao.domain.patterns.entity.AbstractEntity;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @author Pär Wenåker
- *
  */
 @Entity
-@Table(name="ANSWER")
+@Table(name = "ANSWER")
 public class Answer extends AbstractEntity<Answer, String> {
-    
-	@Id
+
+    @Id
     @Column(name = "ID")
     private String id;
-	
-	@Column(name = "ORIGINATOR")
+
+    @Column(name = "ORIGINATOR")
     private String originator;
 
     @Column(name = "STATE")
     @Enumerated(EnumType.STRING)
     private State state = State.EDITED;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "CREATED")
     private Date created;
-    
-    @Column(name = "TEXT", length=2048)
+
+    @Column(name = "TEXT", length = 2048)
     private String text;
 
     @Column(name = "TEXT_SIGNED_AT")
@@ -70,25 +58,26 @@ public class Answer extends AbstractEntity<Answer, String> {
 
     @Embedded
     private AddressCare addressCare = new AddressCare();
-    
+
     // moved in from AnswerFromCare
-    @Column(name="SIGNED_DATA", length=2048)
+    @Column(name = "SIGNED_DATA", length = 2048)
     private String signedData;
-    
+
     // moved in from AnswerFromFk
-    @Column(name="FK_CONTACT")
+    @Column(name = "FK_CONTACT")
     private String fkContact;
-        
+
     @OneToOne
-    @JoinColumn(name="QUESTION_ID")
+    @JoinColumn(name = "QUESTION_ID")
     private Question question;
 
-    public Answer() {}
-    
+    public Answer() {
+    }
+
     public String getId() {
         return id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
@@ -108,7 +97,7 @@ public class Answer extends AbstractEntity<Answer, String> {
     public void setState(State state) {
         this.state = state;
     }
-        
+
     public Date getSentAt() {
         return sentAt;
     }
@@ -116,11 +105,11 @@ public class Answer extends AbstractEntity<Answer, String> {
     public void setSentAt(Date sentAt) {
         this.sentAt = sentAt;
     }
-    
+
     public Date getCreated() {
         return created;
     }
-    
+
     public void setCreated(Date created) {
         this.created = created;
     }
@@ -128,7 +117,7 @@ public class Answer extends AbstractEntity<Answer, String> {
     public String getText() {
         return text;
     }
-    
+
     public void setText(String text) {
         this.text = text;
     }
@@ -144,7 +133,7 @@ public class Answer extends AbstractEntity<Answer, String> {
     public AddressCare getAddressCare() {
         return addressCare;
     }
-    
+
     public void setAddressCare(AddressCare addressCare) {
         this.addressCare = addressCare;
     }

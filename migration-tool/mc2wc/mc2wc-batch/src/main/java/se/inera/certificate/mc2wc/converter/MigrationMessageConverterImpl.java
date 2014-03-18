@@ -1,39 +1,20 @@
 package se.inera.certificate.mc2wc.converter;
 
-import java.util.Date;
-import java.util.Set;
-
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.inera.certificate.mc2wc.jpa.model.*;
+import se.inera.certificate.mc2wc.message.*;
 
-import se.inera.certificate.mc2wc.jpa.model.AddressCare;
-import se.inera.certificate.mc2wc.jpa.model.Answer;
-import se.inera.certificate.mc2wc.jpa.model.Certificate;
-import se.inera.certificate.mc2wc.jpa.model.Patient;
-import se.inera.certificate.mc2wc.jpa.model.Question;
-import se.inera.certificate.mc2wc.jpa.model.State;
-import se.inera.certificate.mc2wc.jpa.model.Subject;
-import se.inera.certificate.mc2wc.message.AnswerType;
-import se.inera.certificate.mc2wc.message.CareGiverType;
-import se.inera.certificate.mc2wc.message.CarePersonType;
-import se.inera.certificate.mc2wc.message.CareUnitType;
-import se.inera.certificate.mc2wc.message.CertificateType;
-import se.inera.certificate.mc2wc.message.MigrationMessage;
-import se.inera.certificate.mc2wc.message.PatientType;
-import se.inera.certificate.mc2wc.message.QuestionType;
-import se.inera.certificate.mc2wc.message.QuestionOriginatorType;
-import se.inera.certificate.mc2wc.message.QuestionSubjectType;
-import se.inera.certificate.mc2wc.message.StatusType;
+import java.util.Date;
+import java.util.Set;
 
 public class MigrationMessageConverterImpl implements MigrationMessageConverter {
 
-    private static Logger log = LoggerFactory.getLogger(MigrationMessageConverter.class);
-
     private static final String migratedFrom = "Landsting X";
-
     private static final String INTYGS_TYP = "FK7363";
+    private static Logger log = LoggerFactory.getLogger(MigrationMessageConverter.class);
 
     /*
      * (non-Javadoc)
@@ -121,7 +102,7 @@ public class MigrationMessageConverterImpl implements MigrationMessageConverter 
         qa.setPatient(toPatient(mcQuestion.getPatient()));
         qa.setCarePerson(toCarePerson(mcQuestion.getAddressCare()));
 
-        if (mcQuestion.getAnswer() != null ) {
+        if (mcQuestion.getAnswer() != null) {
             log.debug("Converting Answer for Question {}", mcQuestion.getId());
             qa.setAnswer(toAnswer(mcQuestion.getAnswer()));
         }
@@ -206,46 +187,46 @@ public class MigrationMessageConverterImpl implements MigrationMessageConverter 
         }
 
         switch (subject) {
-        case CONTACT:
-            return QuestionSubjectType.CONTACT;
-        case KOMPLEMENTING:
-            return QuestionSubjectType.KOMPLEMENTING;
-        case MAKULERING:
-            return QuestionSubjectType.MAKULERING;
-        case MEETING:
-            return QuestionSubjectType.MEETING;
-        case REMINDER:
-            return QuestionSubjectType.REMINDER;
-        case WORK_PROLONGING:
-            return QuestionSubjectType.WORK_PROLONGING;
-        case OTHER:
-            return QuestionSubjectType.OTHER;
-        default:
-            return null;
+            case CONTACT:
+                return QuestionSubjectType.CONTACT;
+            case KOMPLEMENTING:
+                return QuestionSubjectType.KOMPLEMENTING;
+            case MAKULERING:
+                return QuestionSubjectType.MAKULERING;
+            case MEETING:
+                return QuestionSubjectType.MEETING;
+            case REMINDER:
+                return QuestionSubjectType.REMINDER;
+            case WORK_PROLONGING:
+                return QuestionSubjectType.WORK_PROLONGING;
+            case OTHER:
+                return QuestionSubjectType.OTHER;
+            default:
+                return null;
         }
     }
 
     private StatusType toStatusType(State state) {
 
         switch (state) {
-        case CREATED:
-            return StatusType.CREATED;
-        case EDITED:
-            return StatusType.EDITED;
-        case PRINTED:
-            return StatusType.PRINTED;
-        case SENT:
-            return StatusType.SENT;
-        case SIGNED:
-            return StatusType.SIGNED;
-        case SIGNED_AND_SENT:
-            return StatusType.SIGNED_AND_SENT;
-        case SENT_HANDLED:
-            return StatusType.SENT_HANDLED;
-        case SENT_UNHANDLED:
-            return StatusType.SENT_UNHANDLED;
-        default:
-            return null;
+            case CREATED:
+                return StatusType.CREATED;
+            case EDITED:
+                return StatusType.EDITED;
+            case PRINTED:
+                return StatusType.PRINTED;
+            case SENT:
+                return StatusType.SENT;
+            case SIGNED:
+                return StatusType.SIGNED;
+            case SIGNED_AND_SENT:
+                return StatusType.SIGNED_AND_SENT;
+            case SENT_HANDLED:
+                return StatusType.SENT_HANDLED;
+            case SENT_UNHANDLED:
+                return StatusType.SENT_UNHANDLED;
+            default:
+                return null;
         }
     }
 

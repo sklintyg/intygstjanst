@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans 
-xmlns="http://www.springframework.org/schema/beans" 
-xmlns:jpa="http://www.springframework.org/schema/data/jpa" 
-xmlns:tx="http://www.springframework.org/schema/tx" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="
+<beans
+    xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.springframework.org/schema/beans"
+    xsi:schemaLocation="
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-<!-- Import environment profiles (they should all use bean scope)  -->
+  <!-- Import environment profiles (they should all use bean scope)  -->
   <import resource="classpath:env/*-persistence-config.xml" />
 
   <tx:annotation-driven />
@@ -19,7 +19,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
   <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
     <property name="entityManagerFactory" ref="entityManagerFactory" />
   </bean>
-  
+
   <!-- Liquibase should not run in any other profile than dev -->
   <beans profile="dev">
     <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">

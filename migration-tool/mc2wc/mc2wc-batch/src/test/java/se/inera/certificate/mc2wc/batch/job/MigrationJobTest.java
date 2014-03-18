@@ -1,9 +1,6 @@
 package se.inera.certificate.mc2wc.batch.job;
 
-import static org.junit.Assert.assertEquals;
-
-import static com.jayway.awaitility.Awaitility.await;
-
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,19 +12,19 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-
 import se.inera.certificate.mc2wc.batch.writer.MockMigrationRecieverBean;
 import se.inera.certificate.mc2wc.dbunit.AbstractDbUnitSpringTest;
-
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-@ContextConfiguration(locations = { "/spring/rest-client-test-context.xml",
+import static com.jayway.awaitility.Awaitility.await;
+import static org.junit.Assert.assertEquals;
+
+@ContextConfiguration(locations = {"/spring/rest-client-test-context.xml",
         "/spring/rest-client-context.xml", "/spring/batch-infrastructure-context.xml",
-        "/spring/beans-context.xml", "/spring/migration-job-context.xml" })
-@DatabaseSetup({ "/data/certificate_dataset_25.xml" })
+        "/spring/beans-context.xml", "/spring/migration-job-context.xml"})
+@DatabaseSetup({"/data/certificate_dataset_25.xml"})
 public class MigrationJobTest extends AbstractDbUnitSpringTest {
 
     private Logger logger = LoggerFactory.getLogger(MigrationJobTest.class);

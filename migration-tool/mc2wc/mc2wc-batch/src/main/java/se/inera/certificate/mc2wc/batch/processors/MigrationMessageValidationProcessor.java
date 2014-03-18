@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.certificate.mc2wc.message.MigrationMessage;
 import se.inera.certificate.mc2wc.schema.MigrationMessageSchemaValidator;
 import se.inera.certificate.mc2wc.schema.SchemaValidatorException;
@@ -13,7 +12,6 @@ import se.inera.certificate.mc2wc.schema.SchemaValidatorException;
  * Processor to validate if the MigrationMessage contains anything at all to migrate.
  *
  * @author nikpet
- *
  */
 public class MigrationMessageValidationProcessor implements ItemProcessor<MigrationMessage, MigrationMessage> {
 

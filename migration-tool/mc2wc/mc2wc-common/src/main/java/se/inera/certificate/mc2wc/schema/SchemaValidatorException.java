@@ -6,9 +6,9 @@ import java.util.List;
 public class SchemaValidatorException extends Exception {
 
     private static final long serialVersionUID = 3138286317278101287L;
-    
+
     public static String NL = System.getProperty("line.separator");
-    
+
     private List<String> validationErrors;
 
     public SchemaValidatorException() {
@@ -34,20 +34,20 @@ public class SchemaValidatorException extends Exception {
 
     @Override
     public String getMessage() {
-        
+
         if (this.validationErrors == null) {
             return super.getMessage();
         }
-        
+
         StringBuilder sb = new StringBuilder();
         sb.append(super.getMessage());
-        
+
         Iterator<String> iter = this.validationErrors.iterator();
-        
+
         if (iter.hasNext()) {
             sb.append(NL);
         }
-        
+
         while (iter.hasNext()) {
             sb.append(iter.next());
             if (iter.hasNext()) {

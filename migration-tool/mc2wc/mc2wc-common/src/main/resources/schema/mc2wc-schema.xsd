@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:inera:certificates:mc2wc:1"
-  xmlns:tns="urn:inera:certificates:mc2wc:1" elementFormDefault="qualified">
+<schema xmlns:tns="urn:inera:certificates:mc2wc:1" xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="urn:inera:certificates:mc2wc:1" elementFormDefault="qualified">
 
   <complexType name="certificateType">
     <sequence>
@@ -20,10 +20,10 @@
     <sequence>
       <element name="certificateId" type="string"></element>
       <element name="certificate" type="tns:certificateType"
-        maxOccurs="1" minOccurs="0">
+               maxOccurs="1" minOccurs="0">
       </element>
       <element name="questions" type="tns:questionType"
-        maxOccurs="unbounded" minOccurs="0">
+               maxOccurs="unbounded" minOccurs="0">
       </element>
     </sequence>
   </complexType>
@@ -46,10 +46,10 @@
       <element name="questionText" type="string"></element>
       <element name="questionLastAnswerDate" type="date" maxOccurs="1" minOccurs="0"></element>
       <element name="answer" type="tns:answerType" maxOccurs="1"
-        minOccurs="0">
+               minOccurs="0">
       </element>
       <element name="supplement" type="tns:supplementType"
-        maxOccurs="unbounded" minOccurs="0">
+               maxOccurs="unbounded" minOccurs="0">
       </element>
     </sequence>
   </complexType>
@@ -65,14 +65,14 @@
     <sequence>
       <element name="id" type="string"></element>
       <element name="name" type="string"></element>
-            <element name="workplaceCode" type="string" maxOccurs="1" minOccurs="0"></element>
-            <element name="phone" type="string" maxOccurs="1" minOccurs="0"></element>
+      <element name="workplaceCode" type="string" maxOccurs="1" minOccurs="0"></element>
+      <element name="phone" type="string" maxOccurs="1" minOccurs="0"></element>
       <element name="email" type="string" maxOccurs="1" minOccurs="0"></element>
       <element name="postalAddress" type="string" maxOccurs="1" minOccurs="0"></element>
       <element name="postalNumber" type="string" maxOccurs="1" minOccurs="0"></element>
       <element name="postalCity" type="string" maxOccurs="1" minOccurs="0"></element>
       <element name="careGiver" type="tns:careGiverType"
-        maxOccurs="1" minOccurs="1"></element>
+               maxOccurs="1" minOccurs="1"></element>
     </sequence>
   </complexType>
 
@@ -82,7 +82,7 @@
       <element name="fullName" type="string"></element>
       <element name="prescriptionCode" type="string" maxOccurs="1" minOccurs="0"></element>
       <element name="careUnit" type="tns:careUnitType"
-        maxOccurs="1" minOccurs="1"></element>
+               maxOccurs="1" minOccurs="1"></element>
     </sequence>
   </complexType>
 
@@ -91,9 +91,9 @@
   <complexType name="migrationReplyType">
     <sequence>
       <element name="result" type="tns:migrationResultType"
-        maxOccurs="1" minOccurs="1"></element>
+               maxOccurs="1" minOccurs="1"></element>
       <element name="message" type="string" maxOccurs="1"
-        minOccurs="0"></element>
+               minOccurs="0"></element>
     </sequence>
   </complexType>
 
@@ -171,9 +171,9 @@
     </sequence>
   </complexType>
 
-  <element name="pingRequest" type="tns:pingRequestType"/>
+  <element name="pingRequest" type="tns:pingRequestType" />
 
-  <element name="pingResponse" type="tns:pingResponseType"/>
+  <element name="pingResponse" type="tns:pingResponseType" />
 
   <complexType name="pingRequestType">
   </complexType>

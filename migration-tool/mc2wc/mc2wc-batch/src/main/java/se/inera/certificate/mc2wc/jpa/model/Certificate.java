@@ -12,43 +12,28 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 package se.inera.certificate.mc2wc.jpa.model;
 
+import se.vgregion.dao.domain.patterns.entity.AbstractEntity;
+
+import javax.persistence.*;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import se.vgregion.dao.domain.patterns.entity.AbstractEntity;
-
 /**
  * @author Pär Wenåker
- *
  */
 @Entity
 @Table(name = "CERTIFICATE")
 public class Certificate extends AbstractEntity<Certificate, String> {
-    
+
     @Id
     @Column(name = "ID")
     private String id;
@@ -77,17 +62,17 @@ public class Certificate extends AbstractEntity<Certificate, String> {
     @Column(name = "ORIGIN")
     @Enumerated(EnumType.STRING)
     private CreatorOrigin origin;
-    
+
     @Column(name = "DOCUMENT")
     @Basic(fetch = FetchType.LAZY)
     @Lob
     private byte[] document;
-    
+
     @Column(name = "SIGNATURE")
     @Basic(fetch = FetchType.LAZY)
     @Lob
     private byte[] signature;
-    
+
     @Column(name = "STATE")
     @Enumerated(EnumType.STRING)
     private State state = State.CREATED;
@@ -101,7 +86,7 @@ public class Certificate extends AbstractEntity<Certificate, String> {
 
     /**
      * Constructor. Use {@see CertificateBuilder} to create Certificates.
-     * 
+     *
      * @param id
      * @param fullName
      * @param ssn
@@ -173,7 +158,7 @@ public class Certificate extends AbstractEntity<Certificate, String> {
     public void setDocument(byte[] document) {
         this.document = document;
     }
-    
+
     public Date getSignedAt() {
         return signedAt;
     }
@@ -213,5 +198,5 @@ public class Certificate extends AbstractEntity<Certificate, String> {
     public void setSignature(byte[] signature) {
         this.signature = signature;
     }
-        
+
 }
