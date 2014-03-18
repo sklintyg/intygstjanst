@@ -22,6 +22,7 @@ import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.integration.validator.RevokeRequestValidator;
 import se.inera.certificate.integration.validator.ValidationException;
+import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.StatisticsService;
@@ -36,7 +37,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultOfCall;
 
 public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCertificateResponderInterface {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RevokeMedicalCertificateResponderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RevokeMedicalCertificateResponderImpl.class);
 
     @Autowired
     private CertificateService certificateService;
@@ -100,24 +101,25 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
                     handleForsakringskassaError(certificateId, sendResponse.getResult());
                 }
             }
+            LOGGER.info(LogMarkers.MONITORING, certificateId + " revoked");
             statisticsService.revoked(certificate);
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
-            LOG.info("Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
+            LOGGER.info(LogMarkers.MONITORING, "Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + safeGetCivicRegistrationNumber(request) + "' but certificate does not exist");
             response.setResult(failResult("No certificate '" + safeGetCertificateId(request)
                     + "' found to revoke for patient '" + safeGetCivicRegistrationNumber(request) + "'."));
             return response;
         } catch (CertificateRevokedException e) {
             // return with INFO response if certificate was revoked before
-            LOG.info("Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
+            LOGGER.info(LogMarkers.MONITORING, "Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + safeGetCivicRegistrationNumber(request) + "' which already is revoked");
             response.setResult(infoResult("Certificate '" + safeGetCertificateId(request) + "' is already revoked."));
             return response;
         } catch (ValidationException e) {
             // return with ERROR response if certificate had validation errors
-            LOG.info("Validation error found for revoke certificate '" + safeGetCertificateId(request)
-                    + "' for patient '" + safeGetCivicRegistrationNumber(request) + ": " + e.getMessage());
+            LOGGER.info(LogMarkers.VALIDATION, "Validation error found for revoke certificate '" + safeGetCertificateId(request)
+                    + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + safeGetCivicRegistrationNumber(request) + ": " + e.getMessage());
             response.setResult(failResult(e.getMessage()));
             return response;
         }
@@ -126,7 +128,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
         return response;
     }
 
-    private String safeGetCertificateId(RevokeMedicalCertificateRequestType request) {
+    protected String safeGetCertificateId(RevokeMedicalCertificateRequestType request) {
         // Initialize log context info if available
         if (request.getRevoke() != null && request.getRevoke().getLakarutlatande() != null
                 && request.getRevoke().getLakarutlatande().getLakarutlatandeId() != null) {
@@ -135,7 +137,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
         return null;
     }
 
-    private String safeGetCivicRegistrationNumber(RevokeMedicalCertificateRequestType request) {
+    protected String safeGetCivicRegistrationNumber(RevokeMedicalCertificateRequestType request) {
         // Initialize log context info if available
         if (request.getRevoke().getLakarutlatande().getPatient() != null
                 && request.getRevoke().getLakarutlatande().getPatient().getPersonId() != null) {
@@ -144,13 +146,25 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
         return null;
     }
 
+
+    protected String safeGetIssuedBy(RevokeMedicalCertificateRequestType request) {
+        // Initialize log context info if available
+        if (request.getRevoke().getAdressVard() != null 
+                && request.getRevoke().getAdressVard().getHosPersonal() != null
+                && request.getRevoke().getAdressVard().getHosPersonal().getEnhet() != null
+                && request.getRevoke().getAdressVard().getHosPersonal().getEnhet().getEnhetsId() != null) {
+            return request.getRevoke().getAdressVard().getHosPersonal().getEnhet().getEnhetsId().getExtension();
+        }
+        return null;
+    }
+
     private void handleForsakringskassaError(String certificateId, ResultOfCall result) {
         if (result.getResultCode() == INFO) {
-            LOG.error("Failed to send question to Försäkringskassan for revoking certificate '" + certificateId
+            LOGGER.error("Failed to send question to Försäkringskassan for revoking certificate '" + certificateId
                     + "'. Info from forsakringskassan: " + result.getInfoText());
         }
         if (result.getResultCode() == ERROR) {
-            LOG.error("Failed to send question to Försäkringskassan for revoking certificate '" + certificateId
+            LOGGER.error("Failed to send question to Försäkringskassan for revoking certificate '" + certificateId
                     + "'. Error from forsakringskassan: " + result.getErrorId() + " - " + result.getErrorText());
         }
         throw new RuntimeException("Informing Försäkringskassan about revoked certificate resulted in error");
