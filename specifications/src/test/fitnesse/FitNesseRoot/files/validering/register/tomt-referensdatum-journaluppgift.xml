@@ -3,11 +3,8 @@
 	xmlns:ns3="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3"
 	xmlns:ns4="http://www.w3.org/2005/08/addressing">
 	<ns3:lakarutlatande>
-		<lakarutlatande-id>saknat-referensdatum-journaluppgift
-		</lakarutlatande-id>
-		<typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om
-			allmän försäkring
-		</typAvUtlatande>
+		<lakarutlatande-id>tomt-referensdatum-journaluppgift</lakarutlatande-id>
+		<typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om allmän försäkring</typAvUtlatande>
 		<signeringsdatum>2011-01-24T00:00:00</signeringsdatum>
 		<skickatDatum>2011-03-23T09:28:10</skickatDatum>
 		<patient>
@@ -38,7 +35,7 @@
 			<vardkontaktstid>2011-01-24</vardkontaktstid>
 		</vardkontakt>
 		<referens>
-			<refernenstyp>Journaluppgifter</refernenstyp>
+			<referenstyp>Journaluppgifter</referenstyp>
 			<datum></datum>
 		</referens>
 		<medicinsktTillstand>

@@ -37,7 +37,7 @@
 			<vardkontaktstid>2011-01-24</vardkontaktstid>
 		</vardkontakt>
 		<referens>
-			<refernenstyp>Journaluppgifter</refernenstyp>
+			<referenstyp>Journaluppgifter</referenstyp>
 		</referens>
 		<medicinsktTillstand>
 			<tillstandskod codeSystemName="ICD-10" code="M25" />
