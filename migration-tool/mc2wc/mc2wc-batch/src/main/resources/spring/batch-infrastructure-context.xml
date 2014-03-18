@@ -15,13 +15,16 @@
   <jdbc:embedded-database id="batchDataSource"
     type="H2" />
 
+  <bean id="executor" class="org.springframework.core.task.SimpleAsyncTaskExecutor" />
+
   <batch:job-repository id="migrationJobRepository"
     data-source="batchDataSource" transaction-manager="batchTransactionManager" />
-    
+
   <bean id="migrationJobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
     <property name="jobRepository" ref="migrationJobRepository"/>
-  </bean>  
-    
+    <property name="taskExecutor" ref="executor" />
+  </bean>
+
   <bean id="batchTransactionManager"
     class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
     <property name="dataSource" ref="batchDataSource" />

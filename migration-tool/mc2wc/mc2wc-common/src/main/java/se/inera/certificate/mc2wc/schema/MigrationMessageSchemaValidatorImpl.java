@@ -29,16 +29,12 @@ public class MigrationMessageSchemaValidatorImpl implements MigrationMessageSche
 
     private static Schema schema;
 
-    public MigrationMessageSchemaValidatorImpl() {
-
-    }
-
     /* (non-Javadoc)
      * @see se.inera.certificate.mc2wc.schema.MigrationMessageSchemaValidator#validateMigrationMessage(se.inera.certificate.mc2wc.message.MigrationMessage)
      */
     @Override
     public void validateMigrationMessage(MigrationMessage migrationMessage) throws SchemaValidatorException {
-        
+
         CollectingErrorHandler errorHandler = performValidation(migrationMessage);
 
         if (errorHandler.hasValidationWarnings()) {
@@ -57,10 +53,10 @@ public class MigrationMessageSchemaValidatorImpl implements MigrationMessageSche
     }
 
     CollectingErrorHandler performValidation(MigrationMessage migrationMessage) throws SchemaValidatorException {
-        
+
         log.debug("Performing validation of MigrationMessage for certificate {}",
                 migrationMessage.getCertificateId());
-        
+
         CollectingErrorHandler errorHandler = new CollectingErrorHandler();
 
         Validator validator = schema.newValidator();

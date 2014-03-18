@@ -14,7 +14,7 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 /**
  * Abstract base class for data loading unit tests.
- * 
+ *
  * @author nikpet
  *
  */
@@ -25,9 +25,5 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 @DbUnitConfiguration(databaseConnection = "medcertDataSource", dataSetLoader = CustomFlatXmlDataSetLoader.class)
 @ActiveProfiles("dev")
 public abstract class AbstractDbUnitSpringTest {
-
-    public AbstractDbUnitSpringTest() {
-        
-    }
 
 }

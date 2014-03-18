@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:context="http://www.springframework.org/schema/context" xmlns:cxf="http://cxf.apache.org/core"
+  xmlns:cxf="http://cxf.apache.org/core"
+  xmlns:http="http://cxf.apache.org/transports/http/configuration"
+  xmlns:sec="http://cxf.apache.org/configuration/security"
   xsi:schemaLocation="
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-          http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+          http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+        http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
+        http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd">
 
   <cxf:bus>
     <cxf:features>
       <cxf:logging />
     </cxf:features>
   </cxf:bus>
-  
+
   <bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider">
     <property name="schemaLocations">
       <list>
@@ -30,7 +33,16 @@
       <ref bean="jaxbProvider"/>
     </jaxrs:providers>
   </jaxrs:client>
-  
+
   <bean id="restServiceItemWriter" class="se.inera.certificate.mc2wc.batch.writer.RestServiceItemWriter" />
+
+  <http:conduit name="*.http-conduit">
+    <http:client AllowChunking="false" AutoRedirect="true" Connection="Keep-Alive"/>
+    <http:authorization>
+      <sec:UserName>mc2wc-sender</sec:UserName>
+      <sec:Password>medcert</sec:Password>
+      <sec:AuthorizationType>Basic</sec:AuthorizationType>
+    </http:authorization>
+  </http:conduit>
 
 </beans>

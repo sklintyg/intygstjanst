@@ -85,6 +85,11 @@
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
         <artifactId>spring-jdbc</artifactId>
         <version>${spring.version}</version>
       </dependency>
@@ -108,6 +113,12 @@
         <groupId>org.springframework.batch</groupId>
         <artifactId>spring-batch-core</artifactId>
         <version>${spring.batch.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.jayway.awaitility</groupId>
+        <artifactId>awaitility</artifactId>
+        <version>1.4.0</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>

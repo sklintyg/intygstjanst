@@ -24,6 +24,7 @@
 
   <modules>
     <module>migration-web</module>
+    <module>mc2wc</module>
   </modules>
 
   <properties>
@@ -370,4 +371,4 @@
     </pluginRepository>
   </pluginRepositories>
 </project>
- 
+

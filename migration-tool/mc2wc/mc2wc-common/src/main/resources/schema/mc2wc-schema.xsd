@@ -170,4 +170,13 @@
       <element name="status" type="tns:statusType"></element>
     </sequence>
   </complexType>
+
+  <element name="pingRequest" type="tns:pingRequestType"/>
+
+  <element name="pingResponse" type="tns:pingResponseType"/>
+
+  <complexType name="pingRequestType">
+  </complexType>
+  <complexType name="pingResponseType">
+  </complexType>
 </schema>

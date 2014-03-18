@@ -30,27 +30,23 @@ import se.inera.certificate.mc2wc.message.StatusType;
 public class MigrationMessageConverterImpl implements MigrationMessageConverter {
 
     private static Logger log = LoggerFactory.getLogger(MigrationMessageConverter.class);
-    
-    private static final String migratedFrom = "Landsting X";
-    
-    private static final String INTYGS_TYP = "FK7363";
-    
-    public MigrationMessageConverterImpl() {
 
-    }
+    private static final String migratedFrom = "Landsting X";
+
+    private static final String INTYGS_TYP = "FK7363";
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see se.inera.certificate.mc2wc.converter.MigrationMessageConverter#
      * toMigrationMessage(se.inera.certificate.mc2wc.jpa.model.Certificate,
      * boolean)
      */
     @Override
     public MigrationMessage toMigrationMessage(Certificate mcCert, boolean migrateCert) {
-        
+
         log.debug("Processing Certificate {}", mcCert.getId());
-        
+
         MigrationMessage msg = new MigrationMessage();
         msg.setCertificateId(mcCert.getId());
 
@@ -62,7 +58,7 @@ public class MigrationMessageConverterImpl implements MigrationMessageConverter 
         Set<Question> questions = mcCert.getQuestions();
 
         log.debug("Certificate {} has {} questions", mcCert.getId(), questions.size());
-        
+
         for (Question mcQuestion : questions) {
             QuestionType wcQuestionAnswer = toWCQuestionAnswer(mcCert.getId(), mcQuestion);
             msg.getQuestions().add(wcQuestionAnswer);
@@ -76,9 +72,9 @@ public class MigrationMessageConverterImpl implements MigrationMessageConverter 
     }
 
     private CertificateType toWCCertificate(Certificate mcCert) {
-        
+
         log.debug("Converting the contents of Certificate {}", mcCert.getId());
-        
+
         CertificateType wcCert = new CertificateType();
 
         wcCert.setCertificateId(mcCert.getId());
@@ -95,16 +91,16 @@ public class MigrationMessageConverterImpl implements MigrationMessageConverter 
         wcPatient.setFullName(mcCert.getPatientName());
         wcPatient.setPersonId(mcCert.getPatientSsn());
         wcCert.setPatient(wcPatient);
-        
+
         wcCert.setMigratedFrom(migratedFrom);
 
         return wcCert;
     }
 
     private QuestionType toWCQuestionAnswer(String certificateId, Question mcQuestion) {
-        
+
         log.debug("Converting Question {}, part of Certificate {}", mcQuestion.getId(), certificateId);
-        
+
         QuestionType qa = new QuestionType();
 
         qa.setCertificateId(certificateId);
@@ -124,7 +120,7 @@ public class MigrationMessageConverterImpl implements MigrationMessageConverter 
 
         qa.setPatient(toPatient(mcQuestion.getPatient()));
         qa.setCarePerson(toCarePerson(mcQuestion.getAddressCare()));
-        
+
         if (mcQuestion.getAnswer() != null ) {
             log.debug("Converting Answer for Question {}", mcQuestion.getId());
             qa.setAnswer(toAnswer(mcQuestion.getAnswer()));
@@ -186,13 +182,13 @@ public class MigrationMessageConverterImpl implements MigrationMessageConverter 
     }
 
     private AnswerType toAnswer(Answer answer) {
-        
+
         if (answer == null) {
             return null;
         }
-        
+
         log.debug("Converting Answer {}", answer.getId());
-        
+
         AnswerType answerType = new AnswerType();
 
         answerType.setText(answer.getText());
@@ -204,7 +200,7 @@ public class MigrationMessageConverterImpl implements MigrationMessageConverter 
     }
 
     private QuestionSubjectType toQuestionSubject(Subject subject) {
-        
+
         if (subject == null) {
             return null;
         }

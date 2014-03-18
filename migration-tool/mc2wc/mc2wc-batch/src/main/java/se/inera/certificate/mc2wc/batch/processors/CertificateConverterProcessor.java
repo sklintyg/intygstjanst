@@ -12,22 +12,16 @@ import se.inera.certificate.mc2wc.message.MigrationMessage;
 public class CertificateConverterProcessor implements ItemProcessor<Certificate, MigrationMessage> {
 
     private static Logger log = LoggerFactory.getLogger(CertificateConverterProcessor.class);
-    
+
     @Autowired
     private MigrationMessageConverter converter;
-    
-    public CertificateConverterProcessor() {
-        // TODO Auto-generated constructor stub
-    }
 
     @Override
     public MigrationMessage process(Certificate cert) throws Exception {
-        
+
         log.debug("Processing Certificate {}", cert.getId());
-        
-        MigrationMessage message = converter.toMigrationMessage(cert, true);
-        
-        return message;
+
+        return converter.toMigrationMessage(cert, true);
     }
 
 }
