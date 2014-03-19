@@ -60,5 +60,11 @@
     <context:annotation-config/>
     <context:component-scan base-package="se.inera.certificate"/>
 
+  <!-- In dev and demo mode we bootstrap data
+  <beans profile="dev">
+    <bean id="IntygBootstrapBean" class="se.inera.certificate.service.util.IntygBootstrapBean"/>
+  </beans>
+   -->
+   
   </beans>
 </beans>
