@@ -5,7 +5,7 @@ import org.joda.time.Partial;
 /**
  * @author andreaskaltenbach
  */
-public class PartialInterval {
+public final class PartialInterval {
 
     private Partial from;
     private Partial tom;

@@ -33,6 +33,7 @@ import se.inera.certificate.integration.rest.exception.ModuleCallFailedException
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
+import se.inera.certificate.model.common.MinimalUtlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
@@ -138,7 +139,7 @@ public class CertificateServiceImplTest {
 
     private Utlatande utlatande() throws IOException {
         return new CustomObjectMapper().readValue(new ClassPathResource(
-                "CertificateServiceImplTest/lakarutlatande_external_format.json").getFile(), Utlatande.class);
+                "CertificateServiceImplTest/lakarutlatande_external_format.json").getFile(), MinimalUtlatande.class);
     }
 
     @Test

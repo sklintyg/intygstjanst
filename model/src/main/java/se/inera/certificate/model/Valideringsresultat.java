@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author andreaskaltenbach
  */
-public class Valideringsresultat {
+public final class Valideringsresultat {
 
     private List<String> fel;
 

@@ -3,59 +3,51 @@ package se.inera.certificate.model;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author andreaskaltenbach
- */
 public class Observation {
 
     private Kod observationskategori;
-    private Kod observationskod;
-    private PartialInterval observationsperiod;
-    private String beskrivning;
-    private List<Prognos> prognoser;
-    private List<PhysicalQuantity> varde;
-    private Utforarroll utforsAv;
 
-    public Kod getObservationskategori() {
+    private Kod observationskod;
+
+    private PartialInterval observationsperiod;
+
+    private String beskrivning;
+
+    private List<PhysicalQuantity> varde;
+
+    public final Kod getObservationskategori() {
         return observationskategori;
     }
 
-    public void setObservationskategori(Kod observationskategori) {
+    public final void setObservationskategori(Kod observationskategori) {
         this.observationskategori = observationskategori;
     }
 
-    public Kod getObservationskod() {
+    public final Kod getObservationskod() {
         return observationskod;
     }
 
-    public void setObservationskod(Kod observationskod) {
+    public final void setObservationskod(Kod observationskod) {
         this.observationskod = observationskod;
     }
 
-    public PartialInterval getObservationsperiod() {
+    public final PartialInterval getObservationsperiod() {
         return observationsperiod;
     }
 
-    public void setObservationsperiod(PartialInterval observationsperiod) {
+    public final void setObservationsperiod(PartialInterval observationsperiod) {
         this.observationsperiod = observationsperiod;
     }
 
-    public String getBeskrivning() {
+    public final String getBeskrivning() {
         return beskrivning;
     }
 
-    public void setBeskrivning(String beskrivning) {
+    public final void setBeskrivning(String beskrivning) {
         this.beskrivning = beskrivning;
     }
 
-    public List<Prognos> getPrognoser() {
-        if (prognoser == null) {
-            prognoser = new ArrayList<>();
-        }
-        return prognoser;
-    }
-
-    public List<PhysicalQuantity> getVarde() {
+    public final List<PhysicalQuantity> getVarde() {
         if (varde == null) {
             varde = new ArrayList<>();
         }
@@ -63,10 +55,6 @@ public class Observation {
     }
 
     public Utforarroll getUtforsAv() {
-        return utforsAv;
-    }
-
-    public void setUtforsAv(Utforarroll utforsAv) {
-        this.utforsAv = utforsAv;
+        return null;
     }
 }

@@ -18,7 +18,7 @@
  */
 package se.inera.certificate.model;
 
-public class Id {
+public final class Id {
 
     private String root;
     private String extension;

@@ -13,6 +13,7 @@ import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.integration.util.ResultOfCallUtil;
 import se.inera.certificate.integration.validator.SendCertificateRequestValidator;
 import se.inera.certificate.integration.validator.ValidationException;
+import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.CertificateService.SendStatus;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.v1.rivtabp20.SendMedicalCertificateResponderInterface;
@@ -21,7 +22,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificaterespo
 
 public class SendMedicalCertificateResponderImpl implements SendMedicalCertificateResponderInterface {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SendMedicalCertificateResponderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SendMedicalCertificateResponderImpl.class);
 
     @Autowired
     private CertificateService certificateService;
@@ -40,27 +41,29 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             SendStatus status = certificateService.sendCertificate(civicRegistrationNumber, certificateId, "FK");
             if (status == SendStatus.ALREADY_SENT) {
                 response.setResult(ResultOfCallUtil.infoResult("Certificate '" + certificateId + "' is already sent."));
+                LOGGER.info(LogMarkers.MONITORING, certificateId + " already sent to FK");
             } else {
                 response.setResult(ResultOfCallUtil.okResult());
+                LOGGER.info(LogMarkers.MONITORING, certificateId + " sent to FK");
             }
             return response;
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
-            LOG.info("Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
+            LOGGER.info(LogMarkers.MONITORING, "Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + safeGetCivicRegistrationNumber(request) + "' but certificate does not exist");
             response.setResult(failResult("No certificate '" + safeGetCertificateId(request)
-                    + "' found to revoke for patient '" + safeGetCivicRegistrationNumber(request) + "'."));
+                    + "' found to send for patient '" + safeGetCivicRegistrationNumber(request) + "'."));
             return response;
         } catch (CertificateRevokedException e) {
             // return with INFO response if certificate was revoked before
-            LOG.info("Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
+            LOGGER.info(LogMarkers.MONITORING, "Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + safeGetCivicRegistrationNumber(request) + "' which is revoked");
             response.setResult(infoResult("Certificate '" + safeGetCertificateId(request) + "' has been revoked."));
             return response;
         } catch (ValidationException e) {
+            LOGGER.error(LogMarkers.VALIDATION, "Validation error found for send certificate '" + safeGetCertificateId(request)
+                    + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + safeGetCivicRegistrationNumber(request) + ": " + e.getMessage());
             // return with ERROR response if certificate had validation errors
-            LOG.info("Validation error found for send certificate '" + safeGetCertificateId(request)
-                    + "' for patient '" + safeGetCivicRegistrationNumber(request) + ": " + e.getMessage());
             response.setResult(failResult(e.getMessage()));
             return response;
         }
@@ -81,6 +84,17 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
         if (request.getSend().getLakarutlatande().getPatient() != null
                 && request.getSend().getLakarutlatande().getPatient().getPersonId() != null) {
             return request.getSend().getLakarutlatande().getPatient().getPersonId().getExtension();
+        }
+        return null;
+    }
+
+    private String safeGetIssuedBy(SendMedicalCertificateRequestType request) {
+        // Initialize log context info if available
+        if (request.getSend().getAdressVard() != null 
+                && request.getSend().getAdressVard().getHosPersonal() != null
+                && request.getSend().getAdressVard().getHosPersonal().getEnhet() != null
+                && request.getSend().getAdressVard().getHosPersonal().getEnhet().getEnhetsId() != null) {
+            return request.getSend().getAdressVard().getHosPersonal().getEnhet().getEnhetsId().getExtension();
         }
         return null;
     }

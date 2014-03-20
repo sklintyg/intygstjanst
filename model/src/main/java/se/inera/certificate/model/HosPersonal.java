@@ -1,52 +1,46 @@
 package se.inera.certificate.model;
 
-/**
- * @author andreaskaltenbach
- */
-public class HosPersonal {
-    private Id id;
-    private String namn;
-    private String forskrivarkod;
-    private String befattning;
-    private Vardenhet vardenhet;
+public abstract class HosPersonal {
 
-    public Id getId() {
+    private Id id;
+
+    private String namn;
+
+    private String forskrivarkod;
+
+    private String befattning;
+
+    public final Id getId() {
         return id;
     }
 
-    public void setId(Id id) {
+    public final void setId(Id id) {
         this.id = id;
     }
 
-    public String getNamn() {
+    public final String getNamn() {
         return namn;
     }
 
-    public void setNamn(String namn) {
+    public final void setNamn(String namn) {
         this.namn = namn;
     }
 
-    public String getForskrivarkod() {
+    public final String getForskrivarkod() {
         return forskrivarkod;
     }
 
-    public void setForskrivarkod(String forskrivarkod) {
+    public final void setForskrivarkod(String forskrivarkod) {
         this.forskrivarkod = forskrivarkod;
     }
 
-    public String getBefattning() {
+    public final String getBefattning() {
         return befattning;
     }
 
-    public void setBefattning(String befattning) {
+    public final void setBefattning(String befattning) {
         this.befattning = befattning;
     }
 
-    public Vardenhet getVardenhet() {
-        return vardenhet;
-    }
-
-    public void setVardenhet(Vardenhet vardenhet) {
-        this.vardenhet = vardenhet;
-    }
+    public abstract Vardenhet getVardenhet();
 }

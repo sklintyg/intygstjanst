@@ -63,6 +63,8 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
             String xml = xmlToString(registerMedicalCertificate);
             Certificate certificate = certificateService.storeCertificate(xml, type);
             response.setResult(ResultTypeUtil.okResult());
+            String certificateId = registerMedicalCertificate.getUtlatande().getUtlatandeId().getRoot();
+            LOGGER.info(LogMarkers.MONITORING, certificateId + " registered");
             statisticsService.created(certificate);
         } catch (CertificateAlreadyExistsException e) {
             response.setResult(ResultTypeUtil.result(INFO, "Certificate already exists"));

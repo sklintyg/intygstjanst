@@ -8,4 +8,5 @@ public final class LogMarkers {
     private LogMarkers() {}
     
     public static Marker VALIDATION = MarkerFactory.getMarker("Validation");
+    public static Marker MONITORING = MarkerFactory.getMarker("Monitoring");
 }

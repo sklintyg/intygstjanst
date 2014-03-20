@@ -64,6 +64,8 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
             String xml = xmlToString(registerMedicalCertificate);
             Certificate certificate = certificateService.storeCertificate(xml, FK7263);
             response.setResult(ResultOfCallUtil.okResult());
+            String certificateId = registerMedicalCertificate.getLakarutlatande().getLakarutlatandeId();
+            LOGGER.info(LogMarkers.MONITORING, certificateId + " registered");
             statisticsService.created(certificate);
         } catch (CertificateAlreadyExistsException e) {
             response.setResult(ResultOfCallUtil.infoResult("Certificate already exists"));

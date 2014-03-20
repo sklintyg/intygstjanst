@@ -1,9 +1,12 @@
 package se.inera.certificate.integration;
 
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
 
+import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
@@ -15,6 +18,9 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
  * @author andreaskaltenbach
  */
 public class RegisterMedicalCertificateResponderWiretapImpl extends RegisterMedicalCertificateLegacyResponderProvider implements RegisterMedicalCertificateResponderInterface {
+
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(RegisterMedicalCertificateResponderWiretapImpl.class);
 
     @Autowired
     private CertificateService certificateService;
@@ -38,5 +44,6 @@ public class RegisterMedicalCertificateResponderWiretapImpl extends RegisterMedi
         String certificateId = request.getLakarutlatande().getLakarutlatandeId();
         certificateService.setCertificateState(personnummer, certificateId, "FK", CertificateState.SENT,
                 new LocalDateTime());
+        LOGGER.info(LogMarkers.MONITORING, certificateId + " marked as sent");
     }
 }

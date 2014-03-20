@@ -1,18 +1,29 @@
 package se.inera.certificate.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import static se.inera.certificate.model.util.Iterables.find;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-import se.inera.certificate.model.util.Predicate;
 
 /**
- * @author andreaskaltenbach
+ * Definition of the common domain model for a 'utlåtande'. This model allows reading of all common fields. Setting the
+ * model must be done through subclasses. All modules share this common base which is extendible such that:
+ * <ul>
+ * <li>New fields can be added to the model.
+ * <li>The entities {@link Patient}, {@link HosPersonal}, {@link Aktivitet}, {@link Observation}, {@link Vardkontakt},
+ * {@link Rekommendation} and {@link Referens} can be extended with sub classes of themself.
+ * </ul>
+ * <p>
+ * Observe that the methods {@link #getAktiviteter()}, {@link #getObservationer()}, {@link #getVardkontakter()},
+ * {@link #getRekommendationer()} and {@link #getReferenser()} are stubbed to return an empty immutable list of
+ * entities. If any of these entities are to be used in a module, these methods have to be overridden.
+ * <p>
+ * The {@link #getPatient()} and {@link #getSkapadAv()} are abstract since they need an implementation (should never
+ * return null). These must be implemented to return the correct subclass by the modules.
  */
-public class Utlatande {
+public abstract class Utlatande {
 
     private Id id;
 
@@ -24,208 +35,164 @@ public class Utlatande {
 
     private LocalDateTime skickatdatum;
 
-    private Patient patient;
-
-    private HosPersonal skapadAv;
-
-    private List<Aktivitet> aktiviteter;
-
-    private List<Observation> observationer;
-
-    private List<Vardkontakt> vardkontakter;
-
-    private List<Rekommendation> rekommendationer;
-
-    private List<Referens> referenser;
-
-    /**
-     * To which point in time is this certificate considered valid. Modules implementing this model should use their own
-     * getters calculating the date suitable for the certificate type and rules.
-     */
+    /** To which point in time is this certificate considered valid. */
     private LocalDate validToDate;
 
-    /**
-     * From which point in time is this certificate considered valid. Modules implementing this model should use their
-     * own getters calculating the date suitable for the certificate type and rules.
-     */
+    /** From which point in time is this certificate considered valid. */
     private LocalDate validFromDate;
 
-    public Id getId() {
+    public final Id getId() {
         return id;
     }
 
-    public void setId(Id id) {
+    public final void setId(Id id) {
         this.id = id;
     }
 
-    public Kod getTyp() {
+    public final Kod getTyp() {
         return typ;
     }
 
-    public void setTyp(Kod typ) {
+    public final void setTyp(Kod typ) {
         this.typ = typ;
     }
 
-    public List<String> getKommentarer() {
+    public final List<String> getKommentarer() {
         if (kommentarer == null) {
             kommentarer = new ArrayList<>();
         }
         return kommentarer;
     }
 
-    public LocalDateTime getSigneringsdatum() {
+    public final LocalDateTime getSigneringsdatum() {
         return signeringsdatum;
     }
 
-    public void setSigneringsdatum(LocalDateTime signeringsdatum) {
+    public final void setSigneringsdatum(LocalDateTime signeringsdatum) {
         this.signeringsdatum = signeringsdatum;
     }
 
-    public Patient getPatient() {
-        return patient;
-    }
-
-    public void setPatient(Patient patient) {
-        this.patient = patient;
-    }
-
-    public HosPersonal getSkapadAv() {
-        return skapadAv;
-    }
-
-    public void setSkapadAv(HosPersonal skapadAv) {
-        this.skapadAv = skapadAv;
-    }
-
-    public List<Aktivitet> getAktiviteter() {
-        if (aktiviteter == null) {
-            aktiviteter = new ArrayList<>();
-        }
-        return aktiviteter;
-    }
-
-    public List<Observation> getObservationer() {
-        if (observationer == null) {
-            observationer = new ArrayList<>();
-        }
-        return observationer;
-    }
-
-    public List<Vardkontakt> getVardkontakter() {
-        if (vardkontakter == null) {
-            vardkontakter = new ArrayList<>();
-        }
-        return vardkontakter;
-    }
-
-    public List<Rekommendation> getRekommendationer() {
-        if (rekommendationer == null) {
-            rekommendationer = new ArrayList<>();
-        }
-        return rekommendationer;
-    }
-
-    public List<Referens> getReferenser() {
-        if (referenser == null) {
-            referenser = new ArrayList<>();
-        }
-        return referenser;
-    }
-
-    public LocalDateTime getSkickatdatum() {
+    public final LocalDateTime getSkickatdatum() {
         return skickatdatum;
     }
 
-    public void setSkickatdatum(LocalDateTime skickatdatum) {
+    public final void setSkickatdatum(LocalDateTime skickatdatum) {
         this.skickatdatum = skickatdatum;
     }
 
-    public List<Observation> getObservationsByKod(Kod observationsKod) {
-        List<Observation> observations = new ArrayList<>();
-        for (Observation observation : this.observationer) {
-            if (observation.getObservationskod() != null && observation.getObservationskod().equals(observationsKod)) {
-                observations.add(observation);
-            }
-        }
-        return observations;
+    /**
+     * Returns the patient of this utlatande.
+     * <p>
+     * The implementing class is free to chose a sub type of {@link Patient} as return value. A <code>setPatient</code>
+     * method should also be created by the implementing class.
+     * 
+     * @return The patient of this utlatande.
+     */
+    public abstract Patient getPatient();
+
+    /**
+     * Returns the hos-personal of this utlatande.
+     * <p>
+     * The implementing class is free to chose a sub type of {@link HosPersonal} as return value. A
+     * <code>setSkapadAv</code> method should also be created by the implementing class.
+     * 
+     * @return The hos-personal of this utlatande.
+     */
+    public abstract HosPersonal getSkapadAv();
+
+    /**
+     * Returns the list of aktiviteter for this utlatande.
+     * <p>
+     * Note that this implementation only returns an immutable empty list of {@link Aktivitet}er. Subclasses which
+     * override this method should do this by concretise the return type like:
+     * <p>
+     * <code>List&lt;Aktivitet></code><br>
+     * or<br>
+     * <code>List&lt;SubclassOfAktivitet></code>
+     * 
+     * @return A list of {@link Aktivitet}er.
+     */
+    public List<? extends Aktivitet> getAktiviteter() {
+        return Collections.emptyList();
     }
 
-    public List<Observation> getObservationsByKategori(Kod observationsKategori) {
-        List<Observation> observations = new ArrayList<>();
-        for (Observation observation : this.observationer) {
-            if (observation.getObservationskategori() != null
-                    && observation.getObservationskategori().equals(observationsKategori)) {
-                observations.add(observation);
-            }
-        }
-        return observations;
+    /**
+     * Returns the list of observationer for this utlatande.
+     * <p>
+     * Note that this implementation only returns an immutable empty list of {@link Observation}er. Subclasses which
+     * override this method should do this by concretise the return type like:
+     * <p>
+     * <code>List&lt;Observation></code><br>
+     * or<br>
+     * <code>List&lt;SubclassOfObservation></code>
+     * 
+     * @return A list of {@link Observation}er.
+     */
+    public List<? extends Observation> getObservationer() {
+        return Collections.emptyList();
     }
 
-    public Observation findObservationByKategori(final Kod observationsKategori) {
-        return find(observationer, new Predicate<Observation>() {
-            @Override
-            public boolean apply(Observation observation) {
-                return observation.getObservationskategori() != null
-                        && observation.getObservationskategori().equals(observationsKategori);
-            }
-        }, null);
+    /**
+     * Returns the list of vardkontakter for this utlatande.
+     * <p>
+     * Note that this implementation only returns an immutable empty list of {@link Vardkontakt}er. Subclasses which
+     * override this method should do this by concretise the return type like:
+     * <p>
+     * <code>List&lt;Vardkontakt></code><br>
+     * or<br>
+     * <code>List&lt;SubclassOfVardkontakt></code>
+     * 
+     * @return A list of {@link Vardkontakt}er.
+     */
+    public List<? extends Vardkontakt> getVardkontakter() {
+        return Collections.emptyList();
     }
 
-    public Observation findObservationByKod(final Kod observationsKod) {
-        return find(observationer, new Predicate<Observation>() {
-            @Override
-            public boolean apply(Observation observation) {
-                return observation.getObservationskod() != null
-                        && observation.getObservationskod().equals(observationsKod);
-            }
-        }, null);
+    /**
+     * Returns the list of rekommendationer for this utlatande.
+     * <p>
+     * Note that this implementation only returns an immutable empty list of {@link Rekommendation}er. Subclasses which
+     * override this method should do this by concretise the return type like:
+     * <p>
+     * <code>List&lt;Rekommendation></code><br>
+     * or<br>
+     * <code>List&lt;SubclassOfRekommendation></code>
+     * 
+     * @return A list of {@link Rekommendation}er.
+     */
+    public List<? extends Rekommendation> getRekommendationer() {
+        return Collections.emptyList();
     }
 
-    public LocalDate getValidFromDate() {
-        return validFromDate;
+    /**
+     * Returns the list of referenser for this utlatande.
+     * <p>
+     * Note that this implementation only returns an immutable empty list of {@link Referens}er. Subclasses which
+     * override this method should do this by concretise the return type like:
+     * <p>
+     * <code>List&lt;Referens></code><br>
+     * or<br>
+     * <code>List&lt;SubclassOfReferens></code>
+     * 
+     * @return A list of {@link Referens}er.
+     */
+    public List<? extends Referens> getReferenser() {
+        return Collections.emptyList();
     }
 
-    public void setValidFromDate(LocalDate date) {
-        validFromDate = date;
-    }
-
-    public LocalDate getValidToDate() {
+    public final LocalDate getValidToDate() {
         return validToDate;
     }
 
-    public void setValidToDate(LocalDate date) {
+    public final void setValidToDate(LocalDate date) {
         validToDate = date;
     }
 
-    public Aktivitet getAktivitet(final Kod aktivitetsKod) {
-        if (aktiviteter == null) {
-            return null;
-        }
-
-        return find(aktiviteter, new Predicate<Aktivitet>() {
-            @Override
-            public boolean apply(Aktivitet aktivitet) {
-                return aktivitetsKod.equals(aktivitet.getAktivitetskod());
-            }
-        }, null);
+    public final LocalDate getValidFromDate() {
+        return validFromDate;
     }
 
-    public Vardkontakt getVardkontakt(final Kod vardkontaktTyp) {
-        return find(vardkontakter, new Predicate<Vardkontakt>() {
-            @Override
-            public boolean apply(Vardkontakt vardkontakt) {
-                return vardkontaktTyp.equals(vardkontakt.getVardkontakttyp());
-            }
-        }, null);
+    public final void setValidFromDate(LocalDate date) {
+        validFromDate = date;
     }
-
-    public Referens getReferens(final Kod referensTyp) {
-        return find(referenser, new Predicate<Referens>() {
-            @Override
-            public boolean apply(Referens referens) {
-                return referensTyp.equals(referens.getReferenstyp());
-            }
-        }, null);
-    }
-
 }

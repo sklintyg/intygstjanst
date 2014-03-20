@@ -51,7 +51,7 @@ import com.google.common.base.Throwables;
 public class GetCertificateForCareResponderImpl extends AbstractGetCertificateResponderImpl implements
         GetCertificateForCareResponderInterface {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GetCertificateForCareResponderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GetCertificateForCareResponderImpl.class);
 
     private static Unmarshaller unmarshaller;
 
@@ -103,7 +103,7 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
         try {
             utlatande = unmarshaller.unmarshal(new DOMSource(document), UtlatandeType.class).getValue();
         } catch (JAXBException e) {
-            LOG.error("Failed to unmarshall intyg coming from module " + certificate.getType());
+            LOGGER.error("Failed to unmarshall intyg coming from module " + certificate.getType());
             Throwables.propagate(e);
         }
 

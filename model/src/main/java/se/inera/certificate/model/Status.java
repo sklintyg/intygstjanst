@@ -21,19 +21,19 @@ public class Status {
         this.type = type;
     }
 
-    public String getTarget() {
+    public final String getTarget() {
         return target;
     }
 
-    public void setTarget(String target) {
+    public final void setTarget(String target) {
         this.target = target;
     }
 
-    public LocalDateTime getTimestamp() {
+    public final LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
+    public final void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 }

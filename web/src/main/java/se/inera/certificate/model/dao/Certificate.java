@@ -155,7 +155,7 @@ public class Certificate {
     /**
      * Constructor for JPA.
      */
-    Certificate() {
+    public Certificate() {
         // Empty
     }
 
