@@ -21,30 +21,32 @@ package se.inera.certificate.model;
 public class Rekommendation {
 
     private Kod rekommendationskod;
+
     private String beskrivning;
+
     private Kod sjukdomskannedom;
 
-    public Kod getRekommendationskod() {
+    public final Kod getRekommendationskod() {
         return rekommendationskod;
     }
 
-    public void setRekommendationskod(Kod rekommendationskod) {
+    public final void setRekommendationskod(Kod rekommendationskod) {
         this.rekommendationskod = rekommendationskod;
     }
 
-    public String getBeskrivning() {
+    public final String getBeskrivning() {
         return beskrivning;
     }
 
-    public void setBeskrivning(String beskrivning) {
+    public final void setBeskrivning(String beskrivning) {
         this.beskrivning = beskrivning;
     }
 
-    public Kod getSjukdomskannedom() {
+    public final Kod getSjukdomskannedom() {
         return sjukdomskannedom;
     }
 
-    public void setSjukdomskannedom(Kod sjukdomskannedom) {
+    public final void setSjukdomskannedom(Kod sjukdomskannedom) {
         this.sjukdomskannedom = sjukdomskannedom;
     }
 }

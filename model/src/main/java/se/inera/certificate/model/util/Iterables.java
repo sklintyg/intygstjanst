@@ -8,7 +8,7 @@ public final class Iterables {
     private Iterables() {
     }
 
-    public static <T> T find(List<T> list, Predicate<T> predicate, T defaultResult) {
+    public static <T> T find(List<? extends T> list, Predicate<T> predicate, T defaultResult) {
         if (list != null) {
             for (T item: list) {
                 if (predicate.apply(item)) {

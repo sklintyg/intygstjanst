@@ -1,26 +1,24 @@
 package se.inera.certificate.model;
 
-/**
- * @author andreaskaltenbach
- */
 public class Vardgivare {
 
     private Id id;
+
     private String namn;
 
-    public Id getId() {
+    public final Id getId() {
         return id;
     }
 
-    public void setId(Id id) {
+    public final void setId(Id id) {
         this.id = id;
     }
 
-    public String getNamn() {
+    public final String getNamn() {
         return namn;
     }
 
-    public void setNamn(String namn) {
+    public final void setNamn(String namn) {
         this.namn = namn;
     }
 }

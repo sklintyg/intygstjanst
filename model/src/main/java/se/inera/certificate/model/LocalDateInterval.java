@@ -5,7 +5,7 @@ import org.joda.time.LocalDate;
 /**
  * @author andreaskaltenbach
  */
-public class LocalDateInterval {
+public final class LocalDateInterval {
 
     private LocalDate from;
     private LocalDate tom;
