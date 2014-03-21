@@ -21,11 +21,14 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import se.inera.certificate.integration.rest.ModuleRestApi;
-import se.inera.certificate.integration.rest.ModuleRestApiFactory;
-import se.inera.certificate.integration.util.RestUtils;
+import se.inera.certificate.integration.module.ModuleApiFactory;
+import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.OriginalCertificate;
+import se.inera.certificate.modules.support.api.ModuleApi;
+import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
+import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
+import se.inera.certificate.modules.support.api.exception.ModuleException;
 
 /**
  * @author andreaskaltenbach
@@ -46,7 +49,7 @@ public class CertificateResource {
     }
 
     @Autowired
-    private ModuleRestApiFactory moduleRestApiFactory;
+    private ModuleApiFactory moduleApiFactory;
 
     @GET
     @Path("/{id}")
@@ -99,18 +102,20 @@ public class CertificateResource {
     }
     
     protected String marshall(Certificate certificate) {
-        ModuleRestApi moduleRestApi = moduleRestApiFactory.getModuleRestService("fk7263");
-        Response response = moduleRestApi.marshall("1.0", certificate.getDocument());
+        String moduleName = "fk7263";
 
-        switch (response.getStatus()) {
-        case 200:
-            return RestUtils.entityAsString(response);
-        default:
-            String errorMessage = "Failed to unmarshal certificate for certificate type '" + certificate.getType()
-                    + "'. HTTP status code is " + response.getStatus();
-            LOGGER.error(errorMessage);
-            return "";
+        try {
+            ModuleApi moduleApi = moduleApiFactory.getModuleApi(moduleName);
+            TransportModelResponse response = moduleApi.marshall(new ExternalModelHolder(certificate.getDocument()) /*, "1.0" */);
+            return response.getTransportModel();
+
+        } catch (ModuleNotFoundException e) {
+            LOGGER.error(String.format("The module %s was not found - not registered in application", moduleName), e);
+
+        } catch (ModuleException e) {
+            LOGGER.error(String.format("Failed to unmarshal certificate for certificate type '%s'", moduleName), e);
         }
 
+        return "";
     }
 }

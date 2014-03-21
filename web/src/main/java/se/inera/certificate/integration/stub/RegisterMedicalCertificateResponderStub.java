@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -21,19 +20,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.integration.rest.ModuleRestApi;
-import se.inera.certificate.integration.rest.ModuleRestApiFactory;
-import se.inera.certificate.integration.rest.exception.ModuleCallFailedException;
-import se.inera.certificate.integration.util.RestUtils;
+import se.inera.certificate.integration.module.ModuleApiFactory;
+import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.integration.util.ResultOfCallUtil;
 import se.inera.certificate.integration.validator.ValidationException;
-import se.inera.certificate.logging.LogMarkers;
+import se.inera.certificate.modules.support.api.ModuleApi;
+import se.inera.certificate.modules.support.api.dto.TransportModelHolder;
+import se.inera.certificate.modules.support.api.exception.ModuleException;
+import se.inera.certificate.modules.support.api.exception.ModuleValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.ObjectFactory;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
-
-import com.google.common.base.Throwables;
 
 /**
  * @author par.wenaker
@@ -42,29 +40,25 @@ import com.google.common.base.Throwables;
 @WebServiceProvider(targetNamespace = "urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificate:3:rivtabp20", serviceName = "RegisterMedicalCertificateResponderService", wsdlLocation = "schemas/v3/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_3.1_rivtabp20.wsdl")
 public class RegisterMedicalCertificateResponderStub implements RegisterMedicalCertificateResponderInterface {
 
-    private static final int OK = 200;
-    private static final int BAD_REQUEST = 400;
-    private static final int NOT_FOUND = 404;
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterMedicalCertificateResponderStub.class);
     private static final String FK7263 = "fk7263";
 
-    private JAXBContext jaxbContext;
     private Marshaller marshaller;
     private ObjectFactory objectFactory;
-    private ModuleRestApi endpoint;
+    private ModuleApi endpoint;
 
     @Autowired
     private FkMedicalCertificatesStore fkMedicalCertificatesStore;
 
     @Autowired
-    private ModuleRestApiFactory moduleRestApiFactory;
+    private ModuleApiFactory moduleApiFactory;
 
     @PostConstruct
-    public void initializeJaxbContext() throws JAXBException {
-        jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
+    public void initializeJaxbContext() throws JAXBException, ModuleNotFoundException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
         marshaller = jaxbContext.createMarshaller();
         objectFactory = new ObjectFactory();
-        endpoint = moduleRestApiFactory.getModuleRestService(FK7263);
+        endpoint = moduleApiFactory.getModuleApi(FK7263);
     }
 
     @Override
@@ -102,24 +96,18 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
     }
 
     protected void validate(RegisterMedicalCertificateType registerMedicalCertificate) throws JAXBException {
-        String transportXml = xmlToString(registerMedicalCertificate);
-        Response response = endpoint.unmarshall(transportXml);
-        String entityContent = RestUtils.entityAsString(response);
+        try {
+            String transportXml = xmlToString(registerMedicalCertificate);
+            endpoint.unmarshall(new TransportModelHolder(transportXml));
 
-        switch (response.getStatus()) {
-        case NOT_FOUND:
-            String errorMessage = "Module of type " + FK7263 + " not found, 404!";
-            LOGGER.error(errorMessage);
-            throw new ModuleCallFailedException("Module of type " + FK7263 + " not found, 404!", response);
-        case BAD_REQUEST:
-            throw new ValidationException(entityContent);
-        case OK:
-            break;
-        default:
-            String message = "Failed to validate certificate for certificate type '" + FK7263
-                    + "'. HTTP status code is " + response.getStatus();
+        } catch (ModuleValidationException e) {
+            throw new ValidationException(e.getValidationEntries());
+
+        } catch (ModuleException e) {
+            String message = String.format("Failed to validate certificate for certificate type '%s'",FK7263);
             LOGGER.error(message);
-            throw new ModuleCallFailedException(message, response);
+            // TODO: Throw better exception here?
+            throw new RuntimeException(message, e);
         }
     }
 

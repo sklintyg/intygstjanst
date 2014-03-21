@@ -4,9 +4,8 @@ import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.Res
 import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.VALIDATION_ERROR;
 import static se.inera.certificate.integration.util.ResultTypeUtil.result;
 
-import java.io.InputStream;
+import java.io.StringReader;
 
-import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.slf4j.Logger;
@@ -19,11 +18,13 @@ import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.exception.MissingConsentException;
-import se.inera.certificate.integration.rest.ModuleRestApi;
-import se.inera.certificate.integration.rest.ModuleRestApiFactory;
+import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.ModuleApi;
+import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
+import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
 import se.inera.certificate.service.CertificateService;
 
 import com.google.common.base.Throwables;
@@ -39,7 +40,7 @@ public abstract class AbstractGetCertificateResponderImpl {
     private CertificateService certificateService;
 
     @Autowired
-    private ModuleRestApiFactory moduleRestApiFactory;
+    private ModuleApiFactory moduleApiFactory;
     
     /**
      * 
@@ -103,14 +104,17 @@ public abstract class AbstractGetCertificateResponderImpl {
     }
 
     private Document marshall(Certificate certificate, Utlatande utlatande) {
-        ModuleRestApi restApi = moduleRestApiFactory.getModuleRestService(utlatande.getTyp().getCode());
-        Response response = restApi.marshall(getMarshallVersion(), certificate.getDocument());
-
         try {
+            ModuleApi moduleApi = moduleApiFactory.getModuleApi(utlatande.getTyp().getCode());
+            // TODO: Extend marshall with version
+            TransportModelResponse response = moduleApi.marshall(new ExternalModelHolder(certificate.getDocument())/*, getMarshallVersion()*/);
+
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            Document document = factory.newDocumentBuilder().parse(new InputSource((InputStream) response.getEntity()));
-            response.close();
-            return document;
+
+            InputSource source = new InputSource();
+            source.setCharacterStream(new StringReader(response.getTransportModel()));
+
+            return factory.newDocumentBuilder().parse(source);
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }

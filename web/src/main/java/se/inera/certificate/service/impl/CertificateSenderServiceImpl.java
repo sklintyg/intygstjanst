@@ -18,32 +18,37 @@
  */
 package se.inera.certificate.service.impl;
 
-import javax.ws.rs.core.Response;
+import java.io.ByteArrayInputStream;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
 
-import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
+
 import se.inera.certificate.integration.exception.ExternalWebServiceCallFailedException;
-import se.inera.certificate.integration.rest.ModuleRestApi;
-import se.inera.certificate.integration.rest.ModuleRestApiFactory;
-import se.inera.certificate.integration.util.RestUtils;
+import se.inera.certificate.integration.module.ModuleApiFactory;
+import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.ModuleApi;
+import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
+import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
+import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
+
+import com.google.common.base.Throwables;
 
 /**
  * @author andreaskaltenbach
@@ -59,7 +64,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     private CertificateService certificateService;
 
     @Autowired
-    private ModuleRestApiFactory moduleRestApiFactory;
+    private ModuleApiFactory moduleApiFactory;
 
     @Value("${certificatesender.address.fk7263}")
     String logicalAddress;
@@ -72,18 +77,25 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
         Utlatande utlatande = certificateService.getLakarutlatande(certificate);
 
-        ModuleRestApi moduleRestApi = moduleRestApiFactory.getModuleRestService(utlatande);
-        Response response = moduleRestApi.marshall("1.0", certificate.getDocument());
+        try {
+            ModuleApi moduleApi = moduleApiFactory.getModuleApi(utlatande);
+            TransportModelResponse response = moduleApi.marshall(new ExternalModelHolder(certificate.getDocument()) /* ,"1.0" */);
 
-        switch (response.getStatus()) {
-        case 200:
-            invokeReceiverService(RestUtils.entityAsString(response));
-            break;
-        default:
-            String errorMessage = "Failed to unmarshal certificate for certificate type '" + certificate.getType()
-                    + "'. HTTP status code is " + response.getStatus();
-            LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            invokeReceiverService(response.getTransportModel());
+
+        } catch (ModuleNotFoundException e) {
+            String message = String.format("The module '%s' was not found - not registered in application",
+                    certificate.getType());
+            LOGGER.error(message);
+            // TODO: Throw better exception here?
+            throw new RuntimeException(message, e);
+
+        } catch (ModuleException e) {
+            String message = String.format("Failed to unmarshal certificate for certificate type '%s'",
+                    certificate.getType());
+            LOGGER.error(message);
+            // TODO: Throw better exception here?
+            throw new RuntimeException(message);
         }
     }
 

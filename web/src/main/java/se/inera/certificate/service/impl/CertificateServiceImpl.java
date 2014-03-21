@@ -24,8 +24,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -42,10 +40,8 @@ import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.exception.MissingConsentException;
-import se.inera.certificate.integration.rest.ModuleRestApi;
-import se.inera.certificate.integration.rest.ModuleRestApiFactory;
-import se.inera.certificate.integration.rest.exception.ModuleCallFailedException;
-import se.inera.certificate.integration.util.RestUtils;
+import se.inera.certificate.integration.module.ModuleApiFactory;
+import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
@@ -54,7 +50,11 @@ import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.model.util.Strings;
-import se.inera.certificate.schema.adapter.PartialAdapter;
+import se.inera.certificate.modules.support.api.ModuleApi;
+import se.inera.certificate.modules.support.api.dto.ExternalModelResponse;
+import se.inera.certificate.modules.support.api.dto.TransportModelHolder;
+import se.inera.certificate.modules.support.api.exception.ModuleException;
+import se.inera.certificate.modules.support.api.exception.ModuleValidationException;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
@@ -69,19 +69,13 @@ import com.google.common.base.Throwables;
 @Service
 public class CertificateServiceImpl implements CertificateService {
 
-    private static final int OK = 200;
-
-    private static final int BAD_REQUEST = 400;
-
-    private static final int NOT_FOUND = 404;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateServiceImpl.class);
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
-    private ModuleRestApiFactory moduleRestApiFactory;
+    private ModuleApiFactory moduleApiFactory;
 
     private static final Comparator<CertificateStateHistoryEntry> SORTER = new Comparator<CertificateStateHistoryEntry>() {
 
@@ -155,27 +149,25 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     private String unmarshall(String type, String transportXml) {
+        ExternalModelResponse response;
+        try {
+            ModuleApi endpoint = moduleApiFactory.getModuleApi(type);
+            response = endpoint.unmarshall(new TransportModelHolder(transportXml));
 
-        ModuleRestApi endpoint = moduleRestApiFactory.getModuleRestService(type);
+            return response.getExternalModelJson();
 
-        Response response = endpoint.unmarshall(transportXml);
-
-        String entityContent = RestUtils.entityAsString(response);
-
-        switch (response.getStatus()) {
-        case NOT_FOUND:
-            String errorMessage = "Module of type " + type + " not found, 404!";
-            LOGGER.error(errorMessage);
-            throw new ModuleCallFailedException("Module of type " + type + " not found, 404!", response);
-        case BAD_REQUEST:
-            throw new ValidationException(entityContent);
-        case OK:
-            return entityContent;
-        default:
-            String message = "Failed to validate certificate for certificate type '" + type + "'. HTTP status code is "
-                    + response.getStatus();
+        } catch (ModuleNotFoundException e) {
+            String message = String.format("The module '%s' was not found - not registered in application", type);
             LOGGER.error(message);
-            throw new ModuleCallFailedException(message, response);
+            throw new RuntimeException(message, e);
+
+        } catch (ModuleValidationException e) {
+            throw new ValidationException(e.getValidationEntries());
+
+        } catch (ModuleException e) {
+            String message = String.format("Failed to validate certificate for certificate type '%s'", type);
+            LOGGER.error(message);
+            throw new RuntimeException(message, e);
         }
     }
 

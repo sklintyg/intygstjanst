@@ -1,17 +1,16 @@
 package se.inera.certificate.service.impl;
 
+import static junit.framework.Assert.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
-import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.LocalDateTime;
@@ -27,9 +26,8 @@ import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.integration.json.CustomObjectMapper;
-import se.inera.certificate.integration.rest.ModuleRestApi;
-import se.inera.certificate.integration.rest.ModuleRestApiFactory;
-import se.inera.certificate.integration.rest.exception.ModuleCallFailedException;
+import se.inera.certificate.integration.module.ModuleApiFactory;
+import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
@@ -38,9 +36,12 @@ import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
+import se.inera.certificate.modules.support.api.ModuleApi;
+import se.inera.certificate.modules.support.api.dto.ExternalModelResponse;
+import se.inera.certificate.modules.support.api.dto.TransportModelHolder;
+import se.inera.certificate.modules.support.api.exception.ModuleSystemException;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.ConsentService;
-import ch.qos.logback.core.Appender;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -57,9 +58,6 @@ public class CertificateServiceImplTest {
     private CertificateDao certificateDao;
 
     @Mock
-    private Appender mockAppender;
-
-    @Mock
     private ConsentService consentService;
 
     @Mock
@@ -69,13 +67,10 @@ public class CertificateServiceImplTest {
     private CertificateSenderService certificateSender;
 
     @Mock
-    ModuleRestApiFactory moduleRestApiFactory;
+    ModuleApiFactory moduleApiFactory;
 
     @Mock
-    ModuleRestApi moduleRestApi;
-
-    @Mock
-    Response response;
+    ModuleApi moduleApi;
 
     @InjectMocks
     private CertificateServiceImpl certificateService = new CertificateServiceImpl();
@@ -143,15 +138,13 @@ public class CertificateServiceImplTest {
     }
 
     @Test
-    public void testStoreCertificateHappyCase() throws IOException {
+    public void testStoreCertificateHappyCase() throws Exception {
 
-        when(moduleRestApiFactory.getModuleRestService("fk7263")).thenReturn(moduleRestApi);
-        when(moduleRestApi.unmarshall(utlatandeXml())).thenReturn(response);
-        when(response.getStatus()).thenReturn(200);
-        when(response.hasEntity()).thenReturn(true);
-        when(response.getEntity()).thenReturn(new ByteArrayInputStream("{utlatande}".getBytes("UTF-8")));
+        when(moduleApiFactory.getModuleApi("fk7263")).thenReturn(moduleApi);
+        ExternalModelResponse unmarshallResponse = new ExternalModelResponse(utlatandeJson(), utlatande());
+        when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenReturn(unmarshallResponse);
 
-        when(objectMapper.readValue("{utlatande}", Utlatande.class)).thenReturn(utlatande());
+        when(objectMapper.readValue(utlatandeJson(), Utlatande.class)).thenReturn(utlatande());
 
         ArgumentCaptor<OriginalCertificate> originalCertificateCaptor = ArgumentCaptor
                 .forClass(OriginalCertificate.class);
@@ -170,7 +163,7 @@ public class CertificateServiceImplTest {
         assertEquals("2013-06-01", certificate.getValidFromDate());
         assertEquals("2013-06-12", certificate.getValidToDate());
 
-        assertEquals("{utlatande}", certificate.getDocument());
+        assertEquals(utlatandeJson(), certificate.getDocument());
 
         assertEquals(1, certificate.getStates().size());
         assertEquals(CertificateState.RECEIVED, certificate.getStates().get(0).getState());
@@ -190,24 +183,29 @@ public class CertificateServiceImplTest {
         assertTrue(originalCertificate.getReceived().isBefore(inAMinute));
     }
 
-    @Test(expected = ModuleCallFailedException.class)
-    public void testModuleNotFound() throws IOException {
+    @Test
+    public void testModuleNotFound() throws Exception {
 
-        when(moduleRestApiFactory.getModuleRestService("fk7263")).thenReturn(moduleRestApi);
-        when(moduleRestApi.unmarshall(utlatandeJson())).thenReturn(response);
-        when(response.getStatus()).thenReturn(404);
+        when(moduleApiFactory.getModuleApi("fk7263")).thenThrow(new ModuleNotFoundException());
 
-        certificateService.storeCertificate(utlatandeJson(), "fk7263");
+        try {
+            certificateService.storeCertificate(utlatandeJson(), "fk7263");
+            fail("Expected RuntimeException");
+        } catch (RuntimeException ignore) {
+        }
     }
 
-    @Test(expected = ModuleCallFailedException.class)
-    public void testModuleError() throws IOException {
+    @Test
+    public void testModuleError() throws Exception {
 
-        when(moduleRestApiFactory.getModuleRestService("fk7263")).thenReturn(moduleRestApi);
-        when(moduleRestApi.unmarshall(utlatandeJson())).thenReturn(response);
-        when(response.getStatus()).thenReturn(500);
+        when(moduleApiFactory.getModuleApi("fk7263")).thenReturn(moduleApi);
+        when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenThrow(new ModuleSystemException());
 
-        certificateService.storeCertificate(utlatandeJson(), "fk7263");
+        try {
+            certificateService.storeCertificate(utlatandeJson(), "fk7263");
+            fail("Expected RuntimeException");
+        } catch (RuntimeException ignore) {
+        }
     }
 
     @Test

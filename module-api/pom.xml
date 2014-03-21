@@ -19,31 +19,15 @@
   </description>
 
   <dependencies>
-
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>model</artifactId>
+      <groupId>se.inera.certificate.modules</groupId>
+      <artifactId>module-support</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>schemas</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-transports-http</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.jaxrs</groupId>
-      <artifactId>jackson-jaxrs-json-provider</artifactId>
-    </dependency>
-
   </dependencies>
 
 </project>

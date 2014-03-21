@@ -1,20 +1,17 @@
 package se.inera.certificate.service.impl;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
-import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,12 +24,16 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.integration.exception.ExternalWebServiceCallFailedException;
 import se.inera.certificate.integration.json.CustomObjectMapper;
-import se.inera.certificate.integration.rest.ModuleRestApi;
-import se.inera.certificate.integration.rest.ModuleRestApiFactory;
+import se.inera.certificate.integration.module.ModuleApiFactory;
+import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.common.MinimalUtlatande;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.ModuleApi;
+import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
+import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
+import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
@@ -48,17 +49,14 @@ public class CertificateSenderServiceImplTest {
     private CertificateService certificateService;
 
     @Mock
-    private ModuleRestApiFactory moduleRestApiFactory;
+    private ModuleApiFactory moduleApiFactory;
 
     @Mock
-    private ModuleRestApi moduleRestApi;
+    private ModuleApi moduleApi;
 
     @Mock
     private RegisterMedicalCertificateResponderInterface registerClient;
     
-    @Mock
-    private Response response = mock(Response.class);
-
     private static Certificate certificate = new CertificateBuilder("123456").certificateType("fk7263").build();
     private static Utlatande utlatande;
 
@@ -90,8 +88,8 @@ public class CertificateSenderServiceImplTest {
     }
 
     @Before
-    public void setupModuleRestApiFactory() {
-        when(moduleRestApiFactory.getModuleRestService(any(Utlatande.class))).thenReturn(moduleRestApi);
+    public void setupModuleRestApiFactory() throws ModuleNotFoundException {
+        when(moduleApiFactory.getModuleApi(any(Utlatande.class))).thenReturn(moduleApi);
     }
 
     @Before
@@ -113,7 +111,6 @@ public class CertificateSenderServiceImplTest {
 
         // Module API mock returns transport XML for certificate (OK)
         okResponse();
-        when(moduleRestApi.marshall(eq("1.0"), anyString())).thenReturn(response);
 
         // setup captor for verifying outbound SOAP message
         when(registerClient.registerMedicalCertificate(logicalAddress(), request())).thenReturn(okWsMessage);
@@ -124,14 +121,13 @@ public class CertificateSenderServiceImplTest {
     }
 
     private void okResponse() throws Exception {
-        when(response.getStatus()).thenReturn(200);
-        when(response.hasEntity()).thenReturn(true);
-        when(response.getEntity()).thenReturn(
-                new ClassPathResource("CertificateSenderServiceImplTest/utlatande.xml").getInputStream());
+        TransportModelResponse response = new TransportModelResponse(IOUtils.toString(new ClassPathResource(
+                "CertificateSenderServiceImplTest/utlatande.xml").getInputStream()));
+        when(moduleApi.marshall(any(ExternalModelHolder.class))).thenReturn(response);
     }
 
     private void errorResponse() throws Exception {
-        when(response.getStatus()).thenReturn(500);
+        when(moduleApi.marshall(any(ExternalModelHolder.class))).thenThrow(new ModuleException());
     }
 
     @Test(expected = ExternalWebServiceCallFailedException.class)
@@ -139,7 +135,6 @@ public class CertificateSenderServiceImplTest {
 
         // Module API mock returns transport XML for certificate (OK)
         okResponse();
-        when(moduleRestApi.marshall(eq("1.0"), anyString())).thenReturn(response);
 
         // web service call fails
         when(registerClient.registerMedicalCertificate(any(AttributedURIType.class), any(RegisterMedicalCertificateType.class))).thenReturn(errorWsMessage);
@@ -151,7 +146,6 @@ public class CertificateSenderServiceImplTest {
     public void testSendWithFailingModule() throws Exception {
         // Module API mock returns with error (Internal Server Error)
         errorResponse();
-        when(moduleRestApi.marshall(eq("1.0"), anyString())).thenReturn(response);
 
         senderService.sendCertificate(certificate, "fk");
     }

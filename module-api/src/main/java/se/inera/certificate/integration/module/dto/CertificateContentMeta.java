@@ -1,4 +1,4 @@
-package se.inera.certificate.integration.rest.dto;
+package se.inera.certificate.integration.module.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;

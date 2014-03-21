@@ -83,6 +83,11 @@
         <artifactId>module-api</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>se.inera.certificate.modules</groupId>
+        <artifactId>module-support</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.apache.cxf</groupId>

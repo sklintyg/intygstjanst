@@ -32,13 +32,12 @@ import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.Res
 import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.VALIDATION_ERROR;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
-import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceListener;
@@ -56,14 +55,16 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificat
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.ObjectFactory;
 import se.inera.certificate.exception.InvalidCertificateException;
-import se.inera.certificate.integration.rest.ModuleRestApi;
-import se.inera.certificate.integration.rest.ModuleRestApiFactory;
+import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Kod;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.common.MinimalUtlatande;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.ModuleApi;
+import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
+import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
 import se.inera.certificate.service.CertificateService;
 
 /**
@@ -74,7 +75,7 @@ public class GetCertificateForCareResponderImplTest {
 
     private static final String CERTIFICATE_ID = "123456";
     private static final String CERTIFICATE_TYPE = "fk7263";
-    private static final String CERTIFICATE_DATA = "<intyg>";
+    private static final ExternalModelHolder CERTIFICATE_DATA = new ExternalModelHolder("<intyg>");
 
     @Mock
     private CertificateService certificateService = mock(CertificateService.class);
@@ -83,13 +84,10 @@ public class GetCertificateForCareResponderImplTest {
     private GetCertificateForCareResponderImpl responder = new GetCertificateForCareResponderImpl();
 
     @Mock
-    private ModuleRestApiFactory moduleRestApiFactory = mock(ModuleRestApiFactory.class);
+    private ModuleApiFactory moduleApiFactory = mock(ModuleApiFactory.class);
 
     @Mock
-    private ModuleRestApi moduleRestApi = mock(ModuleRestApi.class);
-
-    @Mock
-    private Response restResponse = mock(Response.class);
+    private ModuleApi moduleRestApi = mock(ModuleApi.class);
 
     @Test
     public void getCertificateForCare() throws Exception {
@@ -97,15 +95,15 @@ public class GetCertificateForCareResponderImplTest {
         utlatande.setTyp(new Kod(CERTIFICATE_TYPE));
 
         when(certificateService.getCertificate(CERTIFICATE_ID)).thenReturn(
-                new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DATA).certificateType(CERTIFICATE_TYPE)
+                new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DATA.getExternalModel()).certificateType(CERTIFICATE_TYPE)
                         .validity("2013-10-01", "2013-10-03").signedDate(new LocalDateTime("2013-10-03")).build());
 
         when(certificateService.getLakarutlatande(any(Certificate.class))).thenReturn(utlatande);
 
-        when(moduleRestApiFactory.getModuleRestService("fk7263")).thenReturn(moduleRestApi);
-        when(restResponse.getEntity()).thenReturn(
-                new ClassPathResource("GetCertificateForCareResponderImplTest/utlatande.xml").getInputStream());
-        when(moduleRestApi.marshall("2.0", CERTIFICATE_DATA)).thenReturn(restResponse);
+        when(moduleApiFactory.getModuleApi("fk7263")).thenReturn(moduleRestApi);
+        TransportModelResponse marshallResponse = new TransportModelResponse(IOUtils.toString(new ClassPathResource(
+                "GetCertificateForCareResponderImplTest/utlatande.xml").getInputStream()));
+        when(moduleRestApi.marshall(any(ExternalModelHolder.class))).thenReturn(marshallResponse);
 
         GetCertificateForCareRequestType request = createGetCertificateForCareRequest(CERTIFICATE_ID);
         GetCertificateForCareResponseType response = responder.getCertificateForCare(null, request);
@@ -169,20 +167,20 @@ public class GetCertificateForCareResponderImplTest {
     }
 
     @Test
-    public void getRevokedCertificate() throws IOException {
+    public void getRevokedCertificate() throws Exception {
         Utlatande utlatande = new MinimalUtlatande();
         utlatande.setTyp(new Kod(CERTIFICATE_TYPE));
 
         when(certificateService.getCertificate(CERTIFICATE_ID)).thenReturn(
-                new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DATA).certificateType(CERTIFICATE_TYPE)
+                new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DATA.getExternalModel()).certificateType(CERTIFICATE_TYPE)
                         .validity("2013-10-01", "2013-10-03").signedDate(new LocalDateTime("2013-10-03")).state(CertificateState.CANCELLED, "FK").build());
 
         when(certificateService.getLakarutlatande(any(Certificate.class))).thenReturn(utlatande);
 
-        when(moduleRestApiFactory.getModuleRestService("fk7263")).thenReturn(moduleRestApi);
-        when(restResponse.getEntity()).thenReturn(
-                new ClassPathResource("GetCertificateForCareResponderImplTest/utlatande.xml").getInputStream());
-        when(moduleRestApi.marshall("2.0", CERTIFICATE_DATA)).thenReturn(restResponse);
+        when(moduleApiFactory.getModuleApi("fk7263")).thenReturn(moduleRestApi);
+        TransportModelResponse marshallResponse = new TransportModelResponse(IOUtils.toString(new ClassPathResource(
+                "GetCertificateForCareResponderImplTest/utlatande.xml").getInputStream()));
+        when(moduleRestApi.marshall(any(ExternalModelHolder.class))).thenReturn(marshallResponse);
 
         GetCertificateForCareRequestType parameters = createGetCertificateForCareRequest(CERTIFICATE_ID);
 

@@ -29,12 +29,7 @@ import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ER
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
-import java.io.IOException;
-
-import javax.ws.rs.core.Response;
-
 import org.apache.commons.io.FileUtils;
-import org.h2.util.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -46,12 +41,14 @@ import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.integration.json.CustomObjectMapper;
-import se.inera.certificate.integration.rest.ModuleRestApi;
-import se.inera.certificate.integration.rest.ModuleRestApiFactory;
+import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.common.MinimalUtlatande;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.ModuleApi;
+import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
+import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType;
@@ -73,16 +70,13 @@ public class GetCertificateResponderImplTest {
     private GetCertificateResponderImpl responder = new GetCertificateResponderImpl();
 
     @Mock
-    private ModuleRestApiFactory moduleRestApiFactory = mock(ModuleRestApiFactory.class);
+    private ModuleApiFactory moduleRestApiFactory = mock(ModuleApiFactory.class);
 
     @Mock
-    private ModuleRestApi moduleRestApi = mock(ModuleRestApi.class);
-
-    @Mock
-    private Response restResponse = mock(Response.class);
+    private ModuleApi moduleRestApi = mock(ModuleApi.class);
 
     @Test
-    public void getCertificate() throws IOException {
+    public void getCertificate() throws Exception {
         String document = FileUtils.readFileToString(new ClassPathResource("lakarutlatande/maximalt-fk7263.json").getFile());
         Utlatande utlatande = new CustomObjectMapper().readValue(document, MinimalUtlatande.class);
 
@@ -91,9 +85,9 @@ public class GetCertificateResponderImplTest {
 
         when(certificateService.getLakarutlatande(any(Certificate.class))).thenReturn(utlatande);
 
-        when(moduleRestApiFactory.getModuleRestService("fk7263")).thenReturn(moduleRestApi);
-        when(restResponse.getEntity()).thenReturn(IOUtils.getInputStreamFromString("<someXml></someXml>"));
-        when(moduleRestApi.marshall("1.0", document)).thenReturn(restResponse);
+        when(moduleRestApiFactory.getModuleApi("fk7263")).thenReturn(moduleRestApi);
+        TransportModelResponse marshallResult = new TransportModelResponse("<someXml></someXml>");
+        when(moduleRestApi.marshall(any(ExternalModelHolder.class))).thenReturn(marshallResult);
 
         GetCertificateRequestType parameters = createGetCertificateRequest(civicRegistrationNumber, certificateId);
 
