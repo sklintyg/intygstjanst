@@ -2,6 +2,7 @@ package se.inera.certificate.integration.module;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 import javax.annotation.PostConstruct;
 
@@ -30,11 +31,13 @@ public class ModuleApiFactory {
 
     @PostConstruct
     private void initModulesList() {
+        TreeSet<String> moduleIds = new TreeSet<String>();
         for (ModuleEntryPoint entryPoint : moduleEntryPoints) {
             moduleApiMap.put(entryPoint.getModuleId(), entryPoint);
+            moduleIds.add(entryPoint.getModuleId());
         }
 
-        LOG.info("Module registry loaded with {} modules", moduleApiMap.size());
+        LOG.info("Module registry loaded with modules {}", moduleIds);
     }
 
     /**
