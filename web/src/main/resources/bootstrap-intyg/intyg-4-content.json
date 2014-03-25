@@ -1,0 +1,114 @@
+{
+  "id" : {
+    "root" : "intyg-4-revoked",  
+    "extension" : "intyg-4-revoked"
+  },
+  "typ" : {
+    "codeSystem":"f6fb361a-e31d-48b8-8657-99b63912dd9b",
+    "code" : "fk7263"
+  },
+  "signeringsdatum" : "2011-01-26T00:00:00.000",
+  "skickatdatum" : "2011-03-23T09:29:15.000",
+  "patient" : {
+    "id" : {
+      "root" : "1.2.752.129.2.1.3.1",
+      "extension" : "19121212-1212"
+    },
+    "fornamn" : [ "Test" ],
+    "efternamn" : "Testorsson",
+    "sysselsattningar" : [ {
+      "sysselsattningstyp" : {
+        "code" : "224375002",
+        "codeSystem" : "1.2.752.116.2.1.1.1",
+        "codeSystemName" : "SNOMED-CT"
+      }
+    } ],
+    "arbetsuppgifter" : [ {
+      "typAvArbetsuppgift" : "Brevbärare"
+    } ]
+  },
+  "skapadAv" : {
+    "id" : {
+      "root" : "1.2.752.129.2.1.4.1",
+      "extension" : "eva"
+    },
+    "namn" : "Eva Rättare",
+    "vardenhet" : {
+      "id" : {
+        "root" : "1.2.752.129.2.1.4.1",
+        "extension" : "centrum-vast"
+      },
+      "arbetsplatskod" : {
+        "root" : "1.2.752.29.4.71",
+        "extension" : "123456789011"
+      },
+      "namn" : "Kir mott",
+      "postadress" : "Lasarettsvägen 13",
+      "postnummer" : "85150",
+      "postort" : "Sundsvall",
+      "telefonnummer" : "060-1818000",
+      "epost" : "kirmott@vardenhet.se",
+      "vardgivare" : {
+        "id" : {
+          "root" : "1.2.752.129.2.1.4.1",
+          "extension" : "Landstinget Norrland"
+        },
+        "namn" : "Landstinget Norrland"
+      }
+    }
+  },
+  "aktiviteter" : [ ],
+  "observationer" : [ {
+    "observationskategori" : {
+      "code" : "439401001",
+      "codeSystem" : "1.2.752.116.2.1.1.1",
+      "codeSystemName" : "SNOMED-CT"
+    },
+    "observationskod" : {
+      "codeSystemName" : "ICD-10",
+      "code" : "M25"
+    }
+  }, {
+    "observationskategori" : {
+      "code" : "d",
+      "codeSystem" : "1.2.752.116.1.1.3.1.1",
+      "codeSystemName" : "ICF"
+    },
+    "beskrivning" : "Patienten arbetar som postiljon i distrikt med höghus, sjukdomen omöjliggör gång i trappor."
+  }, {
+    "observationskategori" : {
+      "code" : "b",
+      "codeSystem" : "1.2.752.116.1.1.3.1.1",
+      "codeSystemName" : "ICF"
+    },
+    "beskrivning" : "Svullnad och värmeökning. Smärta vid manipulation."
+  }, {
+    "observationskod" : {
+      "code" : "302119000",
+      "codeSystem" : "1.2.752.116.2.1.1.1",
+      "codeSystemName" : "SNOMED-CT"
+    },
+    "observationsperiod" : {
+      "from" : "2012-12-23",
+      "tom" : "2013-12-23"
+    },
+    "varde" : [ {
+      "quantity" : 0,
+      "unit" : "percent"
+    } ]
+  } ],
+  "vardkontakter" : [ {
+    "vardkontakttyp" : {
+      "code" : "5880005",
+      "codeSystem" : "1.2.752.116.2.1.1.1",
+      "codeSystemName" : "SNOMED-CT"
+    },
+    "vardkontaktstid" : {
+      "from"  : "2012-12-23",
+      "tom"  : "2012-12-23"
+    }
+  } ],
+  "referenser" : [ ],
+  "validFromDate" : "2012-12-23",
+  "validToDate" : "2013-12-23"
+}

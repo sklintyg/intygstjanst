@@ -1,0 +1,13 @@
+{"id": "intyg-1",
+  "type" : "fk7263",
+  "civicRegistrationNumber" : "19121212-1212",
+  "signedDate" : "2011-03-23T09:29:15.000",
+  "signingDoctorName": "Eva Holgersson",
+  "validFromDate" : "2011-01-26",
+  "validToDate" : "2011-05-31",
+  "careUnitId": "centrum-vast",
+  "states": [{"state":"RECEIVED", "target":"MI", "timestamp":"2013-08-05T14:30:03.227"},
+             {"state":"SENT", "target" : "FK", "timestamp" : "2013-08-05T14:31:03.227"}
+            ],
+  "careUnitName": "Kir mott"
+}
