@@ -1,6 +1,7 @@
 package se.inera.certificate.integration.test;
 
 import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.LEGACY_LAKARUTLATANDE;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -74,6 +75,31 @@ public class CertificateResource {
                 } catch (Throwable t) {
                     status.setRollbackOnly();
                     LOGGER.warn("delete certificate with id " + id + " failed: " + t.getMessage());
+                    return Response.serverError().build();
+                }
+            }
+        });
+    }
+
+    @DELETE
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteAllCertificates() {
+        return transactionTemplate.execute(new TransactionCallback<Response>() {
+            public Response doInTransaction(TransactionStatus status) {
+                try {
+                    @SuppressWarnings("unchecked")
+                    List<Certificate> certificates = entityManager.createQuery("SELECT c FROM Certificate c").getResultList();
+                    for (Certificate certificate : certificates) {
+                        if (certificate.getOriginalCertificate() != null) {
+                            entityManager.remove(certificate.getOriginalCertificate());
+                        }
+                        entityManager.remove(certificate);
+                    }
+                    return Response.ok().build();
+                } catch (Throwable t) {
+                    status.setRollbackOnly();
+                    LOGGER.warn("delete all certificates failed: " + t.getMessage());
                     return Response.serverError().build();
                 }
             }
