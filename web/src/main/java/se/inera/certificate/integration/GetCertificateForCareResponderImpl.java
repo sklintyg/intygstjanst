@@ -79,7 +79,8 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
         }
 
         Certificate certificate = certificateOrResultType.getCertificate();
-        response.setMeta(ModelConverter.toCertificateMetaType(certificate));
+        response.setMeta(ModelConverter.toClinicalProcessCertificateMetaType(ModelConverter
+                .toCertificateMetaType(certificate)));
         attachCertificateDocument(certificate, response);
 
         if (certificate.isRevoked()) {

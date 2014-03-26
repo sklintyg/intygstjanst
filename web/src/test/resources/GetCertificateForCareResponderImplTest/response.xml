@@ -3,12 +3,12 @@
                                    xmlns="urn:riv:clinicalprocess:healthcond:certificate:GetCertificateForCareResponder:1"
                                    xmlns:ns3="urn:riv:clinicalprocess:healthcond:certificate:1">
   <meta>
-    <c:certificateId>123456</c:certificateId>
-    <c:certificateType>fk7263</c:certificateType>
-    <c:validFrom>2013-10-01</c:validFrom>
-    <c:validTo>2013-10-03</c:validTo>
-    <c:signDate>2013-10-03</c:signDate>
-    <c:available>true</c:available>
+    <ns3:certificateId>123456</ns3:certificateId>
+    <ns3:certificateType>fk7263</ns3:certificateType>
+    <ns3:validFrom>2013-10-01</ns3:validFrom>
+    <ns3:validTo>2013-10-03</ns3:validTo>
+    <ns3:signDate>2013-10-03</ns3:signDate>
+    <ns3:available>true</ns3:available>
   </meta>
   <certificate>
     <ns3:utlatande-id extension="123" root="root"/>
