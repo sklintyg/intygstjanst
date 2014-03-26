@@ -395,4 +395,41 @@
       </xs:enumeration>
     </xs:restriction>
   </xs:simpleType>
+
+  <xs:complexType name="CertificateMetaType">
+    <xs:sequence>
+      <xs:element name="certificateId" type="nonEmptyString" />
+      <xs:element name="certificateType" type="nonEmptyString" />
+      <xs:element name="validFrom" type="date" />
+      <xs:element name="validTo" type="date" />
+      <xs:element name="issuerName" type="nonEmptyString" />
+      <xs:element name="facilityName" type="nonEmptyString" />
+      <xs:element name="signDate" type="date" />
+      <xs:element name="available" type="nonEmptyString" />
+      <xs:element name="status" type="CertificateStatusType" maxOccurs="unbounded" minOccurs="0" />
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CertificateStatusType">
+    <xs:sequence>
+      <xs:element name="target" type="nonEmptyString" />
+      <xs:element name="type" type="StatusType" />
+      <xs:element name="timestamp" type="xs:dateTime" />
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="StatusType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="UNHANDLED" />
+      <xs:enumeration value="DELETED" />
+      <xs:enumeration value="RESTORED" />
+      <xs:enumeration value="CANCELLED" />
+      <xs:enumeration value="SENT" />
+      <xs:enumeration value="RECEIVED" />
+      <xs:enumeration value="IN_PROGRESS" />
+      <xs:enumeration value="PROCESSED" />
+    </xs:restriction>
+  </xs:simpleType>
 </xs:schema>
