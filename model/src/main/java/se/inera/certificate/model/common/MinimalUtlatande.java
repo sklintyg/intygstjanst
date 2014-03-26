@@ -2,6 +2,8 @@ package se.inera.certificate.model.common;
 
 import java.util.List;
 
+import org.joda.time.LocalDate;
+
 import se.inera.certificate.model.Aktivitet;
 import se.inera.certificate.model.Observation;
 import se.inera.certificate.model.Referens;
@@ -22,6 +24,10 @@ public class MinimalUtlatande extends Utlatande {
     private MinimalPatient patient;
 
     private MinimalHosPersonal skapadAv;
+    
+    private LocalDate validToDate; 
+    
+    private LocalDate validFromDate; 
 
     @Override
     public MinimalPatient getPatient() {
@@ -69,5 +75,23 @@ public class MinimalUtlatande extends Utlatande {
     @JsonIgnore
     public List<? extends Referens> getReferenser() {
         return super.getReferenser();
+    }
+
+    @Override
+    public LocalDate getValidToDate() {
+        return validToDate;
+    }
+    
+    public void setValidToDate(LocalDate validToDate) {
+        this.validToDate = validToDate;
+    }
+
+    @Override
+    public LocalDate getValidFromDate() {
+        return validFromDate;
+    }
+
+    public void setValidFromDate(LocalDate validFromDate) {
+        this.validFromDate = validFromDate;
     }
 }

@@ -35,12 +35,6 @@ public abstract class Utlatande {
 
     private LocalDateTime skickatdatum;
 
-    /** To which point in time is this certificate considered valid. */
-    private LocalDate validToDate;
-
-    /** From which point in time is this certificate considered valid. */
-    private LocalDate validFromDate;
-
     public final Id getId() {
         return id;
     }
@@ -180,19 +174,17 @@ public abstract class Utlatande {
         return Collections.emptyList();
     }
 
-    public final LocalDate getValidToDate() {
-        return validToDate;
-    }
+    /**
+     * Subclasses need to decide their respective validToDate, should return null if not applicable.
+     * 
+     * @return {@link LocalDate}, or null if not applicable
+     */
+    public abstract LocalDate getValidToDate();
 
-    public final void setValidToDate(LocalDate date) {
-        validToDate = date;
-    }
-
-    public final LocalDate getValidFromDate() {
-        return validFromDate;
-    }
-
-    public final void setValidFromDate(LocalDate date) {
-        validFromDate = date;
-    }
+    /**
+     * Subclasses need to decide their respective validFromDate, should return null if not applicable.
+     * 
+     * @return {@link LocalDate}, or null if not applicable
+     */
+    public abstract LocalDate getValidFromDate();
 }
