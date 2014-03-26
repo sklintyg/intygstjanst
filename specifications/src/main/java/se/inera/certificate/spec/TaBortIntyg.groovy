@@ -6,6 +6,8 @@ import static groovyx.net.http.ContentType.JSON
 
 public class TaBortIntyg extends RestClientFixture {
 
+    def restClient = createRestClient()
+
     String personnr
     String id
     String idTemplate
@@ -24,7 +26,6 @@ public class TaBortIntyg extends RestClientFixture {
 		} else if (idTemplate) {
 			template = idTemplate
 		}
-        def restClient = createRestClient()
         Exception pendingException
         String failedIds = ""
         for (i in from..to) {
@@ -48,4 +49,10 @@ public class TaBortIntyg extends RestClientFixture {
         }
     }
 
+    public void taBortAllaIntyg() {
+        restClient.delete(
+            path: 'certificate/',
+            requestContentType: JSON
+        )
+    }
 }

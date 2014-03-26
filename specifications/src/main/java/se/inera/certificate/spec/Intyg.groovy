@@ -12,7 +12,8 @@ public class Intyg extends RestClientFixture {
     String utfärdat
 	String giltigtFrån
 	String giltigtTill
-	String utfärdare
+    String utfärdarId
+    String utfärdare
     String enhetsId = "1.2.3"
 	String enhet
     String vårdgivarId = "EnVårdGivare"
@@ -42,8 +43,10 @@ public class Intyg extends RestClientFixture {
 
 	public void reset() {
 		mall = "M"
-		utfärdare = "EnUtfärdare"
-		enhet = "EnVårdEnhet"
+		utfärdarId = "EttUtfärdarId"
+        utfärdare = "EnUtfärdare"
+        enhetsId = "1.2.3"
+		enhet = null
         vårdgivarId = "EnVårdGivare"
 		giltigtFrån = null
 		giltigtTill = null
@@ -56,6 +59,7 @@ public class Intyg extends RestClientFixture {
     public void execute() {
         def restClient = createRestClient()
         if (!giltigtFrån) giltigtFrån = utfärdat
+        if (!enhet) enhet = enhetsId
 		if (!giltigtTill) giltigtTill = new Date().parse("yyyy-MM-dd", utfärdat).plus(14).format("yyyy-MM-dd")
 		if (from && to && !idTemplate) {
 			template = "test-${personnr}-intyg-%1\$s"
@@ -119,13 +123,16 @@ public class Intyg extends RestClientFixture {
         // setting personnr in certificate XML
         certificate.patient.'id'.extension = personnr
 
-		certificate.skapadAv.namn = utfärdare
-		certificate.skapadAv.vardenhet.'id'.extension = enhet
-		certificate.skapadAv.vardenhet.namn = enhet
+        if (utfärdarId) certificate.skapadAv.'id'.extension = utfärdarId
+        if (utfärdare) certificate.skapadAv.namn = utfärdare
+        if (enhetsId) certificate.skapadAv.vardenhet.'id'.extension = enhetsId
+        if (enhet) certificate.skapadAv.vardenhet.namn = enhet
+        if (vårdgivarId) certificate.skapadAv.vardenhet.vardgivare.'id'.extension = vårdgivarId
+
 		
         // setting the signing date, from date and to date
-        certificate.signeringsDatum = utfärdat
-        certificate.skickatDatum = utfärdat
+        certificate.signeringsdatum = utfärdat
+        certificate.skickatdatum = utfärdat
 
 		/*
         certificate.vardkontakter.each {
@@ -134,14 +141,26 @@ public class Intyg extends RestClientFixture {
 		}
 		*/
 
+        certificate.vardkontakter.each { it.vardkontaktstid.from = utfärdat; it.vardkontaktstid.tom = utfärdat }
         certificate.referenser.each { it.datum = utfärdat }
 
-		/*
-        certificate.aktivitetsbegransningar.arbetsformaga.arbetsformagaNedsattningar[0].each {
-            it.varaktighetFrom = giltigtFrån
-            it.varaktighetTom = giltigtTill
+        def observationsperioder = []
+        certificate.observationer.each {observation ->
+            if (observation?.observationskod?.code == "302119000") {
+                observationsperioder << observation.observationsperiod
+            }
         }
-        */
+        observationsperioder.eachWithIndex {period, index ->
+            period.from = new Date().parse("yyyy-MM-dd", giltigtFrån).plus(index * 2).format("yyyy-MM-dd")
+            if (index + 1 < observationsperioder.size()) {
+                period.tom = new Date().parse("yyyy-MM-dd", giltigtFrån).plus((index * 2) + 1).format("yyyy-MM-dd")
+            } else {
+                period.tom = giltigtTill
+            }
+        }
+        certificate.validFromDate = giltigtFrån
+        certificate.validToDate = giltigtTill
+        
         JsonOutput.toJson(certificate)
     }
 }

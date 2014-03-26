@@ -4,6 +4,7 @@
     "extension" : "09a9f186-ba33-4a6b-9014-0564e6868387"
   },
   "typ" : {
+    "codeSystem":"f6fb361a-e31d-48b8-8657-99b63912dd9b",
     "code" : "fk7263"
   },
   "signeringsdatum" : "2011-01-24T00:00:00.000",
@@ -80,27 +81,6 @@
       "codeSystemName" : "SNOMED-CT"
     },
     "observationsperiod" : {
-      "from" : "2011-06-17",
-      "tom" : "2011-06-30"
-    },
-    "prognoser" : [{
-      "prognoskod" : {
-        "codeSystem" : "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
-        "codeSystemName" : "kv_prognos_intyg",
-        "code" : "PRO1"
-      }
-    }],
-    "varde" : [ {
-      "quantity" : 50,
-      "unit" : "percent"
-    } ]
-  }, {
-    "observationskod" : {
-      "code" : "302119000",
-      "codeSystem" : "1.2.752.116.2.1.1.1",
-      "codeSystemName" : "SNOMED-CT"
-    },
-    "observationsperiod" : {
       "from" : "2011-05-05",
       "tom" : "2011-05-16"
     },
@@ -113,6 +93,27 @@
     }],
     "varde" : [ {
       "quantity" : 0,
+      "unit" : "percent"
+    } ]
+  }, {
+    "observationskod" : {
+      "code" : "302119000",
+      "codeSystem" : "1.2.752.116.2.1.1.1",
+      "codeSystemName" : "SNOMED-CT"
+    },
+    "observationsperiod" : {
+      "from" : "2011-06-17",
+      "tom" : "2011-06-30"
+    },
+    "prognoser" : [{
+      "prognoskod" : {
+        "codeSystem" : "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
+        "codeSystemName" : "kv_prognos_intyg",
+        "code" : "PRO1"
+      }
+    }],
+    "varde" : [ {
+      "quantity" : 50,
       "unit" : "percent"
     } ]
   }],

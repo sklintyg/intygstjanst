@@ -161,8 +161,8 @@
       "codeSystemName" : "SNOMED-CT"
     },
     "observationsperiod" : {
-      "from" : "2011-04-01",
-      "tom" : "2011-05-31"
+      "from" : "2011-01-26",
+      "tom" : "2011-02-13"
     },
     "prognoser" : [{
       "prognoskod" : {
@@ -173,29 +173,7 @@
       "beskrivning" : "Skadan har förvärrats vid varje tillfälle patienten använt armen. Måste hållas i total stillhet tills läkningsprocessen kommit en bit på väg. Eventuellt kan utredning visa att operation är nödvändig för att läka skadan."
     }],
     "varde" : [ {
-      "quantity" : 75,
-      "unit" : "percent"
-    } ]
-  }, {
-    "observationskod" : {
-      "code" : "302119000",
-      "codeSystem" : "1.2.752.116.2.1.1.1",
-      "codeSystemName" : "SNOMED-CT"
-    },
-    "observationsperiod" : {
-      "from" : "2011-03-07",
-      "tom" : "2011-03-31"
-    },
-    "prognoser" : [{
-      "prognoskod" : {
-        "codeSystem" : "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
-        "codeSystemName" : "kv_prognos_intyg",
-        "code" : "PRO4"
-      },
-      "beskrivning" : "Skadan har förvärrats vid varje tillfälle patienten använt armen. Måste hållas i total stillhet tills läkningsprocessen kommit en bit på väg. Eventuellt kan utredning visa att operation är nödvändig för att läka skadan."
-    }],
-    "varde" : [ {
-      "quantity" : 50,
+      "quantity" : 0,
       "unit" : "percent"
     } ]
   }, {
@@ -227,8 +205,8 @@
       "codeSystemName" : "SNOMED-CT"
     },
     "observationsperiod" : {
-      "from" : "2011-01-26",
-      "tom" : "2011-02-13"
+      "from" : "2011-03-07",
+      "tom" : "2011-03-31"
     },
     "prognoser" : [{
       "prognoskod" : {
@@ -239,7 +217,29 @@
       "beskrivning" : "Skadan har förvärrats vid varje tillfälle patienten använt armen. Måste hållas i total stillhet tills läkningsprocessen kommit en bit på väg. Eventuellt kan utredning visa att operation är nödvändig för att läka skadan."
     }],
     "varde" : [ {
-      "quantity" : 0,
+      "quantity" : 50,
+      "unit" : "percent"
+    } ]
+  }, {
+    "observationskod" : {
+      "code" : "302119000",
+      "codeSystem" : "1.2.752.116.2.1.1.1",
+      "codeSystemName" : "SNOMED-CT"
+    },
+    "observationsperiod" : {
+      "from" : "2011-04-01",
+      "tom" : "2011-05-31"
+    },
+    "prognoser" : [{
+      "prognoskod" : {
+        "codeSystem" : "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
+        "codeSystemName" : "kv_prognos_intyg",
+        "code" : "PRO4"
+      },
+      "beskrivning" : "Skadan har förvärrats vid varje tillfälle patienten använt armen. Måste hållas i total stillhet tills läkningsprocessen kommit en bit på väg. Eventuellt kan utredning visa att operation är nödvändig för att läka skadan."
+    }],
+    "varde" : [ {
+      "quantity" : 75,
       "unit" : "percent"
     } ]
   } ],
