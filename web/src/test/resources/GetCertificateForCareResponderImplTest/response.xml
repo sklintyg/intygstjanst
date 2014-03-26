@@ -7,7 +7,7 @@
     <ns3:certificateType>fk7263</ns3:certificateType>
     <ns3:validFrom>2013-10-01</ns3:validFrom>
     <ns3:validTo>2013-10-03</ns3:validTo>
-    <ns3:signDate>2013-10-03</ns3:signDate>
+    <ns3:signDate>2013-10-03T00:00:00</ns3:signDate>
     <ns3:available>true</ns3:available>
   </meta>
   <certificate>

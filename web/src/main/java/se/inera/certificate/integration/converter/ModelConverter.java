@@ -19,6 +19,7 @@
 package se.inera.certificate.integration.converter;
 
 import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.StatusType;
 import se.inera.certificate.integration.builder.CertificateMetaTypeBuilder;
@@ -70,7 +71,7 @@ public final class ModelConverter {
         result.setValidTo(meta.getValidTo());
         result.setIssuerName(meta.getIssuerName());
         result.setFacilityName(meta.getFacilityName());
-        result.setSignDate(meta.getSignDate());
+        result.setSignDate(meta.getSignDate().toLocalDateTime(LocalTime.MIDNIGHT));
         result.setAvailable(meta.getAvailable());
 
         for (CertificateStatusType statusType : meta.getStatus()) {
