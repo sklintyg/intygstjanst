@@ -404,7 +404,7 @@
       <xs:element name="validTo" type="date" />
       <xs:element name="issuerName" type="nonEmptyString" />
       <xs:element name="facilityName" type="nonEmptyString" />
-      <xs:element name="signDate" type="date" />
+      <xs:element name="signDate" type="dateTime" />
       <xs:element name="available" type="nonEmptyString" />
       <xs:element name="status" type="CertificateStatusType" maxOccurs="unbounded" minOccurs="0" />
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
@@ -415,7 +415,7 @@
     <xs:sequence>
       <xs:element name="target" type="nonEmptyString" />
       <xs:element name="type" type="StatusType" />
-      <xs:element name="timestamp" type="xs:dateTime" />
+      <xs:element name="timestamp" type="dateTime" />
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
