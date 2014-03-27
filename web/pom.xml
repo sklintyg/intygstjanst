@@ -170,31 +170,31 @@
       </resource>
     </resources>
     <plugins>
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-dependency-plugin</artifactId>
-      <version>2.8</version>
-      <executions>
-        <execution>
-          <id>copy</id>
-          <phase>process-resources</phase>
-          <goals>
-            <goal>unpack</goal>
-          </goals>
-          <configuration>
-            <artifactItems>
-              <artifactItem>
-                <groupId>se.inera.certificate.modules</groupId>
-                <artifactId>fk7263</artifactId>
-                <version>${project.version}</version>
-                <type>war</type>
-                <outputDirectory>${project.build.directory}/fk7263.war</outputDirectory>
-              </artifactItem>
-            </artifactItems>
-          </configuration>
-        </execution>
-      </executions>
-    </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.8</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>se.inera.certificate.modules</groupId>
+                  <artifactId>fk7263</artifactId>
+                  <version>${project.version}</version>
+                  <type>war</type>
+                  <outputDirectory>${project.build.directory}/fk7263.war</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
