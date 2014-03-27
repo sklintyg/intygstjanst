@@ -191,6 +191,12 @@
         </properties>
     </profile>
     <profile>
+      <id>nmt</id>
+        <properties>
+          <certificate.baseUrl>https://intygstjanst.inera.nordicmedtest.se:23443/inera-certificate/</certificate.baseUrl>
+        </properties>
+    </profile>
+    <profile>
       <id>ssh-tunnel-server</id>
         <properties>
           <certificate.baseUrl>http://localhost:18080/inera-certificate/</certificate.baseUrl>
