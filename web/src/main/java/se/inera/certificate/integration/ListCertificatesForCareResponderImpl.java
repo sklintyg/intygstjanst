@@ -28,7 +28,7 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
         List<Certificate> certificates = certificateService.listCertificatesForCare(
                 parameters.getNationalIdentityNumber(), parameters.getCareUnit());
         for (Certificate certificate : certificates) {
-            response.getMeta().add(ModelConverter.toCertificateMetaType(certificate));
+            response.getMeta().add(ModelConverter.toClinicalProcessCertificateMetaType(ModelConverter.toCertificateMetaType(certificate)));
         }
         response.setResult(ResultTypeUtil.okResult());
 
