@@ -30,6 +30,7 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType
 import se.inera.certificate.integration.converter.ModelConverter;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20.GetCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.CertificateType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType;
@@ -91,7 +92,7 @@ public class GetCertificateResponderImpl extends AbstractGetCertificateResponder
     }
 
     @Override
-    protected String getMarshallVersion() {
-        return "1.0";
+    protected TransportModelVersion getMarshallVersion() {
+        return TransportModelVersion.LEGACY_LAKARUTLATANDE;
     }
 }

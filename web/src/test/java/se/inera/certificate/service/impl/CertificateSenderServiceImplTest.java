@@ -1,8 +1,10 @@
 package se.inera.certificate.service.impl;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.UTLATANDE_V1;
 
 import java.io.IOException;
 
@@ -33,6 +35,7 @@ import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
 import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
+import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
@@ -123,11 +126,11 @@ public class CertificateSenderServiceImplTest {
     private void okResponse() throws Exception {
         TransportModelResponse response = new TransportModelResponse(IOUtils.toString(new ClassPathResource(
                 "CertificateSenderServiceImplTest/utlatande.xml").getInputStream()));
-        when(moduleApi.marshall(any(ExternalModelHolder.class))).thenReturn(response);
+        when(moduleApi.marshall(any(ExternalModelHolder.class), any(TransportModelVersion.class))).thenReturn(response);
     }
 
     private void errorResponse() throws Exception {
-        when(moduleApi.marshall(any(ExternalModelHolder.class))).thenThrow(new ModuleException());
+        when(moduleApi.marshall(any(ExternalModelHolder.class), any(TransportModelVersion.class))).thenThrow(new ModuleException());
     }
 
     @Test(expected = ExternalWebServiceCallFailedException.class)

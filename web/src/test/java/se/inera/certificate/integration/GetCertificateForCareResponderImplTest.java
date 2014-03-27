@@ -24,12 +24,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.OK;
 import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.REVOKED;
 import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.VALIDATION_ERROR;
+import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.UTLATANDE_V1;
 
 import java.io.ByteArrayOutputStream;
 
@@ -103,7 +105,7 @@ public class GetCertificateForCareResponderImplTest {
         when(moduleApiFactory.getModuleApi("fk7263")).thenReturn(moduleRestApi);
         TransportModelResponse marshallResponse = new TransportModelResponse(IOUtils.toString(new ClassPathResource(
                 "GetCertificateForCareResponderImplTest/utlatande.xml").getInputStream()));
-        when(moduleRestApi.marshall(any(ExternalModelHolder.class))).thenReturn(marshallResponse);
+        when(moduleRestApi.marshall(any(ExternalModelHolder.class), eq(UTLATANDE_V1))).thenReturn(marshallResponse);
 
         GetCertificateForCareRequestType request = createGetCertificateForCareRequest(CERTIFICATE_ID);
         GetCertificateForCareResponseType response = responder.getCertificateForCare(null, request);
@@ -180,7 +182,7 @@ public class GetCertificateForCareResponderImplTest {
         when(moduleApiFactory.getModuleApi("fk7263")).thenReturn(moduleRestApi);
         TransportModelResponse marshallResponse = new TransportModelResponse(IOUtils.toString(new ClassPathResource(
                 "GetCertificateForCareResponderImplTest/utlatande.xml").getInputStream()));
-        when(moduleRestApi.marshall(any(ExternalModelHolder.class))).thenReturn(marshallResponse);
+        when(moduleRestApi.marshall(any(ExternalModelHolder.class), eq(UTLATANDE_V1))).thenReturn(marshallResponse);
 
         GetCertificateForCareRequestType parameters = createGetCertificateForCareRequest(CERTIFICATE_ID);
 

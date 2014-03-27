@@ -40,6 +40,7 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.integration.converter.ModelConverter;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 
 import com.google.common.base.Throwables;
 
@@ -92,8 +93,8 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
     }
 
     @Override
-    protected String getMarshallVersion() {
-        return "2.0";
+    protected TransportModelVersion getMarshallVersion() {
+        return TransportModelVersion.UTLATANDE_V1;
     }
 
     protected void attachCertificateDocument(Certificate certificate, GetCertificateForCareResponseType response) {

@@ -18,6 +18,8 @@
  */
 package se.inera.certificate.service.impl;
 
+import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.LEGACY_LAKARUTLATANDE;
+
 import java.io.ByteArrayInputStream;
 
 import javax.xml.bind.JAXBContext;
@@ -79,7 +81,8 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
         try {
             ModuleApi moduleApi = moduleApiFactory.getModuleApi(utlatande);
-            TransportModelResponse response = moduleApi.marshall(new ExternalModelHolder(certificate.getDocument()) /* ,"1.0" */);
+            TransportModelResponse response = moduleApi.marshall(new ExternalModelHolder(certificate.getDocument()),
+                    LEGACY_LAKARUTLATANDE);
 
             invokeReceiverService(response.getTransportModel());
 

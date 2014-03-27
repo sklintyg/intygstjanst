@@ -22,9 +22,11 @@ import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.LEGACY_LAKARUTLATANDE;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ERROR;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
@@ -87,7 +89,7 @@ public class GetCertificateResponderImplTest {
 
         when(moduleRestApiFactory.getModuleApi("fk7263")).thenReturn(moduleRestApi);
         TransportModelResponse marshallResult = new TransportModelResponse("<someXml></someXml>");
-        when(moduleRestApi.marshall(any(ExternalModelHolder.class))).thenReturn(marshallResult);
+        when(moduleRestApi.marshall(any(ExternalModelHolder.class), eq(LEGACY_LAKARUTLATANDE))).thenReturn(marshallResult);
 
         GetCertificateRequestType parameters = createGetCertificateRequest(civicRegistrationNumber, certificateId);
 

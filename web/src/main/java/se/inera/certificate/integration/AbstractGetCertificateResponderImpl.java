@@ -25,6 +25,7 @@ import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
 import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
+import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.service.CertificateService;
 
 import com.google.common.base.Throwables;
@@ -96,7 +97,7 @@ public abstract class AbstractGetCertificateResponderImpl {
         }
     }
 
-    protected abstract String getMarshallVersion();
+    protected abstract TransportModelVersion getMarshallVersion();
 
     protected Document getCertificateDocument(Certificate certificate) {
         Utlatande utlatande = certificateService.getLakarutlatande(certificate);
@@ -107,7 +108,7 @@ public abstract class AbstractGetCertificateResponderImpl {
         try {
             ModuleApi moduleApi = moduleApiFactory.getModuleApi(utlatande.getTyp().getCode());
             // TODO: Extend marshall with version
-            TransportModelResponse response = moduleApi.marshall(new ExternalModelHolder(certificate.getDocument())/*, getMarshallVersion()*/);
+            TransportModelResponse response = moduleApi.marshall(new ExternalModelHolder(certificate.getDocument()), getMarshallVersion());
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 

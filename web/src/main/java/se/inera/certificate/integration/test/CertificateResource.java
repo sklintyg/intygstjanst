@@ -1,5 +1,7 @@
 package se.inera.certificate.integration.test;
 
+import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.LEGACY_LAKARUTLATANDE;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
@@ -106,7 +108,8 @@ public class CertificateResource {
 
         try {
             ModuleApi moduleApi = moduleApiFactory.getModuleApi(moduleName);
-            TransportModelResponse response = moduleApi.marshall(new ExternalModelHolder(certificate.getDocument()) /*, "1.0" */);
+            TransportModelResponse response = moduleApi.marshall(new ExternalModelHolder(certificate.getDocument()),
+                    LEGACY_LAKARUTLATANDE);
             return response.getTransportModel();
 
         } catch (ModuleNotFoundException e) {
