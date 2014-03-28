@@ -45,6 +45,7 @@ import se.inera.certificate.integration.module.exception.ModuleNotFoundException
 import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
+import se.inera.certificate.model.common.MinimalUtlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
@@ -173,7 +174,7 @@ public class CertificateServiceImpl implements CertificateService {
 
     private Utlatande convertToCommonUtlatande(String externalJson) {
         try {
-            return objectMapper.readValue(externalJson, Utlatande.class);
+            return objectMapper.readValue(externalJson, MinimalUtlatande.class);
         } catch (IOException e) {
             throw Throwables.propagate(e);
         }
@@ -284,7 +285,7 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public Utlatande getLakarutlatande(Certificate certificate) {
         try {
-            return objectMapper.readValue(certificate.getDocument(), Utlatande.class);
+            return objectMapper.readValue(certificate.getDocument(), MinimalUtlatande.class);
         } catch (IOException e) {
             throw new IllegalStateException("Could not parse document for " + certificate.getId(), e);
         }

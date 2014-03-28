@@ -29,7 +29,6 @@ import se.inera.certificate.integration.json.CustomObjectMapper;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.CertificateState;
-import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.common.MinimalUtlatande;
 import se.inera.certificate.model.dao.Certificate;
@@ -132,7 +131,7 @@ public class CertificateServiceImplTest {
                 "CertificateServiceImplTest/lakarutlatande_external_format.json").getFile());
     }
 
-    private Utlatande utlatande() throws IOException {
+    private MinimalUtlatande utlatande() throws IOException {
         return new CustomObjectMapper().readValue(new ClassPathResource(
                 "CertificateServiceImplTest/lakarutlatande_external_format.json").getFile(), MinimalUtlatande.class);
     }
@@ -144,7 +143,7 @@ public class CertificateServiceImplTest {
         ExternalModelResponse unmarshallResponse = new ExternalModelResponse(utlatandeJson(), utlatande());
         when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenReturn(unmarshallResponse);
 
-        when(objectMapper.readValue(utlatandeJson(), Utlatande.class)).thenReturn(utlatande());
+        when(objectMapper.readValue(utlatandeJson(), MinimalUtlatande.class)).thenReturn(utlatande());
 
         ArgumentCaptor<OriginalCertificate> originalCertificateCaptor = ArgumentCaptor
                 .forClass(OriginalCertificate.class);

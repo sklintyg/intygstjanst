@@ -58,8 +58,7 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
         JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
         marshaller = jaxbContext.createMarshaller();
         objectFactory = new ObjectFactory();
-        // TODO: Bring back in when FK7263 module is ready.
-        // endpoint = moduleApiFactory.getModuleApi(FK7263);
+        endpoint = moduleApiFactory.getModuleApi(FK7263);
     }
 
     @Override
