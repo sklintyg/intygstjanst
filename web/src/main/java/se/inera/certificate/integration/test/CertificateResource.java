@@ -28,7 +28,7 @@ import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.OriginalCertificate;
-import se.inera.certificate.modules.support.api.ModuleApi;
+import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
 import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
@@ -130,12 +130,12 @@ public class CertificateResource {
     }
     
     protected String marshall(Certificate certificate) {
-        String moduleName = "fk7263";
+        String moduleName = certificate.getType();
 
         try {
-            ModuleApi moduleApi = moduleApiFactory.getModuleApi(moduleName);
-            TransportModelResponse response = moduleApi.marshall(new ExternalModelHolder(certificate.getDocument()),
-                    LEGACY_LAKARUTLATANDE);
+            ModuleEntryPoint module = moduleApiFactory.getModuleEntryPoint(moduleName);
+            TransportModelResponse response = module.getModuleApi().marshall(
+                    new ExternalModelHolder(certificate.getDocument()), LEGACY_LAKARUTLATANDE);
             return response.getTransportModel();
 
         } catch (ModuleNotFoundException e) {

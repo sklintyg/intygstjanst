@@ -62,6 +62,7 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
         try {
             new RegisterMedicalCertificateRequestValidator(registerMedicalCertificate).validateAndCorrect();
             String xml = xmlToString(registerMedicalCertificate);
+            // FK7263 is the only certificate using the legacy format so we can hard code the type.
             Certificate certificate = certificateService.storeCertificate(xml, FK7263);
             response.setResult(ResultOfCallUtil.okResult());
             String certificateId = registerMedicalCertificate.getLakarutlatande().getLakarutlatandeId();

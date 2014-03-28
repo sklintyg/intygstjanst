@@ -48,6 +48,7 @@ import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.common.MinimalUtlatande;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
 import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
@@ -72,7 +73,10 @@ public class GetCertificateResponderImplTest {
     private GetCertificateResponderImpl responder = new GetCertificateResponderImpl();
 
     @Mock
-    private ModuleApiFactory moduleRestApiFactory = mock(ModuleApiFactory.class);
+    private ModuleApiFactory moduleApiFactory = mock(ModuleApiFactory.class);
+
+    @Mock
+    private ModuleEntryPoint moduleEntryPoint = mock(ModuleEntryPoint.class);
 
     @Mock
     private ModuleApi moduleRestApi = mock(ModuleApi.class);
@@ -87,7 +91,8 @@ public class GetCertificateResponderImplTest {
 
         when(certificateService.getLakarutlatande(any(Certificate.class))).thenReturn(utlatande);
 
-        when(moduleRestApiFactory.getModuleApi("fk7263")).thenReturn(moduleRestApi);
+        when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenReturn(moduleEntryPoint);
+        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleRestApi);
         TransportModelResponse marshallResult = new TransportModelResponse("<someXml></someXml>");
         when(moduleRestApi.marshall(any(ExternalModelHolder.class), eq(LEGACY_LAKARUTLATANDE))).thenReturn(marshallResult);
 

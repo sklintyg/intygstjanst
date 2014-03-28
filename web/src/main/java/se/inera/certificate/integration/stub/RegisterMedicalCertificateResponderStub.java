@@ -58,7 +58,8 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
         JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
         marshaller = jaxbContext.createMarshaller();
         objectFactory = new ObjectFactory();
-        endpoint = moduleApiFactory.getModuleApi(FK7263);
+        // Since only FK7263 uses RegisterMedicalCertificateType we can hard code it here.
+        endpoint = moduleApiFactory.getModuleEntryPoint(FK7263).getModuleApi();
     }
 
     @Override
@@ -104,7 +105,7 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
             throw new ValidationException(e.getValidationEntries());
 
         } catch (ModuleException e) {
-            String message = String.format("Failed to validate certificate for certificate type '%s'",FK7263);
+            String message = String.format("Failed to validate certificate for certificate type '%s'", FK7263);
             LOGGER.error(message);
             // TODO: Throw better exception here?
             throw new RuntimeException(message, e);

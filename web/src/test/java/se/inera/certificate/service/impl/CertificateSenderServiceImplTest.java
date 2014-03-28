@@ -1,10 +1,8 @@
 package se.inera.certificate.service.impl;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.UTLATANDE_V1;
 
 import java.io.IOException;
 
@@ -32,6 +30,7 @@ import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.common.MinimalUtlatande;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
 import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
@@ -48,11 +47,16 @@ import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificater
 @RunWith(MockitoJUnitRunner.class)
 public class CertificateSenderServiceImplTest {
 
+    private static final String LOGICAL_ADDRESS = "someLogicalAddress";
+
     @Mock
     private CertificateService certificateService;
 
     @Mock
     private ModuleApiFactory moduleApiFactory;
+
+    @Mock
+    private ModuleEntryPoint moduleEntryPoint;
 
     @Mock
     private ModuleApi moduleApi;
@@ -86,13 +90,10 @@ public class CertificateSenderServiceImplTest {
     }
 
     @Before
-    public void setLogicalAddress() {
-        senderService.logicalAddress = "someLogicalAddress";
-    }
-
-    @Before
     public void setupModuleRestApiFactory() throws ModuleNotFoundException {
-        when(moduleApiFactory.getModuleApi(any(Utlatande.class))).thenReturn(moduleApi);
+        when(moduleApiFactory.getModuleEntryPoint(any(Utlatande.class))).thenReturn(moduleEntryPoint);
+        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
+        when(moduleEntryPoint.getDefaultRecieverLogicalAddress()).thenReturn(LOGICAL_ADDRESS);
     }
 
     @Before
@@ -105,7 +106,7 @@ public class CertificateSenderServiceImplTest {
 
     private AttributedURIType logicalAddress() {
         AttributedURIType address = new AttributedURIType();
-        address.setValue("someLogicalAddress");
+        address.setValue(LOGICAL_ADDRESS);
         return address;
     }
 

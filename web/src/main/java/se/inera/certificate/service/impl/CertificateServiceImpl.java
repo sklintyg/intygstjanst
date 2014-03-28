@@ -51,7 +51,7 @@ import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.model.util.Strings;
-import se.inera.certificate.modules.support.api.ModuleApi;
+import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.dto.ExternalModelResponse;
 import se.inera.certificate.modules.support.api.dto.TransportModelHolder;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
@@ -152,8 +152,8 @@ public class CertificateServiceImpl implements CertificateService {
     private String unmarshall(String type, String transportXml) {
         ExternalModelResponse response;
         try {
-            ModuleApi endpoint = moduleApiFactory.getModuleApi(type);
-            response = endpoint.unmarshall(new TransportModelHolder(transportXml));
+            ModuleEntryPoint endpoint = moduleApiFactory.getModuleEntryPoint(type);
+            response = endpoint.getModuleApi().unmarshall(new TransportModelHolder(transportXml));
 
             return response.getExternalModelJson();
 
@@ -248,7 +248,7 @@ public class CertificateServiceImpl implements CertificateService {
         }
 
         SendStatus sendStatus = SendStatus.OK;
-        if (certificate.wasSentToTarget("FK")) {
+        if (certificate.wasSentToTarget(target)) {
             sendStatus = SendStatus.ALREADY_SENT;
         }
         senderService.sendCertificate(certificate, target);
@@ -304,7 +304,10 @@ public class CertificateServiceImpl implements CertificateService {
         if (certificate.isRevoked()) {
             throw new CertificateRevokedException(certificateId);
         }
-        setCertificateState(civicRegistrationNumber, certificateId, "FK", CertificateState.CANCELLED, null);
+
+        String type = certificate.getType();
+        setCertificateState(civicRegistrationNumber, certificateId, type, CertificateState.CANCELLED, null);
+
         return certificate;
     }
 

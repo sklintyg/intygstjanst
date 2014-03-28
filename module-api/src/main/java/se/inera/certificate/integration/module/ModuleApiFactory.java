@@ -45,10 +45,10 @@ public class ModuleApiFactory {
      * 
      * @throws ModuleNotFoundException
      */
-    public ModuleApi getModuleApi(String type) throws ModuleNotFoundException {
+    public ModuleEntryPoint getModuleEntryPoint(String type) throws ModuleNotFoundException {
         ModuleEntryPoint moduleEntryPoint = moduleApiMap.get(type);
         if (moduleEntryPoint != null) {
-            return moduleEntryPoint.getModuleApi();
+            return moduleEntryPoint;
         }
 
         throw new ModuleNotFoundException("Could not find module " + type);
@@ -59,7 +59,7 @@ public class ModuleApiFactory {
      * 
      * @throws ModuleNotFoundException
      */
-    public ModuleApi getModuleApi(Utlatande utlatande) throws ModuleNotFoundException {
-        return getModuleApi(utlatande.getTyp().getCode());
+    public ModuleEntryPoint getModuleEntryPoint(Utlatande utlatande) throws ModuleNotFoundException {
+        return getModuleEntryPoint(utlatande.getTyp().getCode());
     }
 }

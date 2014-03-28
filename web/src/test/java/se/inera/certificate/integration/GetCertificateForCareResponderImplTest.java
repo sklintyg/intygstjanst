@@ -64,6 +64,7 @@ import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.common.MinimalUtlatande;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
 import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
@@ -89,6 +90,9 @@ public class GetCertificateForCareResponderImplTest {
     private ModuleApiFactory moduleApiFactory = mock(ModuleApiFactory.class);
 
     @Mock
+    private ModuleEntryPoint moduleEntryPoint = mock(ModuleEntryPoint.class);
+
+    @Mock
     private ModuleApi moduleRestApi = mock(ModuleApi.class);
 
     @Test
@@ -102,7 +106,8 @@ public class GetCertificateForCareResponderImplTest {
 
         when(certificateService.getLakarutlatande(any(Certificate.class))).thenReturn(utlatande);
 
-        when(moduleApiFactory.getModuleApi("fk7263")).thenReturn(moduleRestApi);
+        when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenReturn(moduleEntryPoint);
+        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleRestApi);
         TransportModelResponse marshallResponse = new TransportModelResponse(IOUtils.toString(new ClassPathResource(
                 "GetCertificateForCareResponderImplTest/utlatande.xml").getInputStream()));
         when(moduleRestApi.marshall(any(ExternalModelHolder.class), eq(UTLATANDE_V1))).thenReturn(marshallResponse);
@@ -179,7 +184,8 @@ public class GetCertificateForCareResponderImplTest {
 
         when(certificateService.getLakarutlatande(any(Certificate.class))).thenReturn(utlatande);
 
-        when(moduleApiFactory.getModuleApi("fk7263")).thenReturn(moduleRestApi);
+        when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenReturn(moduleEntryPoint);
+        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleRestApi);
         TransportModelResponse marshallResponse = new TransportModelResponse(IOUtils.toString(new ClassPathResource(
                 "GetCertificateForCareResponderImplTest/utlatande.xml").getInputStream()));
         when(moduleRestApi.marshall(any(ExternalModelHolder.class), eq(UTLATANDE_V1))).thenReturn(marshallResponse);

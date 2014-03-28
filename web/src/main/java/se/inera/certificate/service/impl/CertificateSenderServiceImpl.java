@@ -30,7 +30,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
 
@@ -39,7 +38,7 @@ import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.modules.support.api.ModuleApi;
+import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
 import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
@@ -68,9 +67,6 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     @Autowired
     private ModuleApiFactory moduleApiFactory;
 
-    @Value("${certificatesender.address.fk7263}")
-    String logicalAddress;
-
     @Autowired
     private RegisterMedicalCertificateResponderInterface registerMedicalCertificateQuestionClient;
 
@@ -80,11 +76,11 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
         Utlatande utlatande = certificateService.getLakarutlatande(certificate);
 
         try {
-            ModuleApi moduleApi = moduleApiFactory.getModuleApi(utlatande);
-            TransportModelResponse response = moduleApi.marshall(new ExternalModelHolder(certificate.getDocument()),
+            ModuleEntryPoint module = moduleApiFactory.getModuleEntryPoint(utlatande);
+            TransportModelResponse response = module.getModuleApi().marshall(new ExternalModelHolder(certificate.getDocument()),
                     LEGACY_LAKARUTLATANDE);
 
-            invokeReceiverService(response.getTransportModel());
+            invokeReceiverService(response.getTransportModel(), module.getDefaultRecieverLogicalAddress());
 
         } catch (ModuleNotFoundException e) {
             String message = String.format("The module '%s' was not found - not registered in application",
@@ -111,7 +107,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
         }
     }
 
-    private void invokeReceiverService(String xml) {
+    private void invokeReceiverService(String xml, String logicalAddress) {
 
         try {
             RegisterMedicalCertificateType request = UNMARSHALLER.unmarshal(

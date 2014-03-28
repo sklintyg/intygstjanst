@@ -19,6 +19,8 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
  */
 public class RegisterMedicalCertificateResponderWiretapImpl extends RegisterMedicalCertificateLegacyResponderProvider implements RegisterMedicalCertificateResponderInterface {
 
+    private static final String REGISTER_MEDICAL_CERTIFICATE_RECIPIENT = "FK";
+
     private static final Logger LOGGER = LoggerFactory
             .getLogger(RegisterMedicalCertificateResponderWiretapImpl.class);
 
@@ -42,8 +44,8 @@ public class RegisterMedicalCertificateResponderWiretapImpl extends RegisterMedi
         // extract personnummer & certificate ID and explicitly set status SENT for Försäkringskassan
         String personnummer = request.getLakarutlatande().getPatient().getPersonId().getExtension();
         String certificateId = request.getLakarutlatande().getLakarutlatandeId();
-        certificateService.setCertificateState(personnummer, certificateId, "FK", CertificateState.SENT,
-                new LocalDateTime());
+        certificateService.setCertificateState(personnummer, certificateId, REGISTER_MEDICAL_CERTIFICATE_RECIPIENT,
+                CertificateState.SENT, new LocalDateTime());
         LOGGER.info(LogMarkers.MONITORING, certificateId + " marked as sent");
     }
 }

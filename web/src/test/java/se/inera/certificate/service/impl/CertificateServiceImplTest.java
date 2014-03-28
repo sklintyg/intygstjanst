@@ -35,6 +35,7 @@ import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
+import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.ExternalModelResponse;
 import se.inera.certificate.modules.support.api.dto.TransportModelHolder;
@@ -67,6 +68,9 @@ public class CertificateServiceImplTest {
 
     @Mock
     ModuleApiFactory moduleApiFactory;
+
+    @Mock
+    ModuleEntryPoint moduleEntryPoint;
 
     @Mock
     ModuleApi moduleApi;
@@ -139,7 +143,8 @@ public class CertificateServiceImplTest {
     @Test
     public void testStoreCertificateHappyCase() throws Exception {
 
-        when(moduleApiFactory.getModuleApi("fk7263")).thenReturn(moduleApi);
+        when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenReturn(moduleEntryPoint);
+        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
         ExternalModelResponse unmarshallResponse = new ExternalModelResponse(utlatandeJson(), utlatande());
         when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenReturn(unmarshallResponse);
 
@@ -185,7 +190,7 @@ public class CertificateServiceImplTest {
     @Test
     public void testModuleNotFound() throws Exception {
 
-        when(moduleApiFactory.getModuleApi("fk7263")).thenThrow(new ModuleNotFoundException());
+        when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenThrow(new ModuleNotFoundException());
 
         try {
             certificateService.storeCertificate(utlatandeJson(), "fk7263");
@@ -197,7 +202,8 @@ public class CertificateServiceImplTest {
     @Test
     public void testModuleError() throws Exception {
 
-        when(moduleApiFactory.getModuleApi("fk7263")).thenReturn(moduleApi);
+        when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenReturn(moduleEntryPoint);
+        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
         when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenThrow(new ModuleSystemException());
 
         try {
