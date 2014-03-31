@@ -1,5 +1,8 @@
 package se.inera.certificate.logging;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -35,7 +38,14 @@ public class LogbackConfiguratorContextListener implements ServletContextListene
             loggerContext.reset();
             configurator.setContext(loggerContext);
             try {
-                configurator.doConfigure(logbackConfigurationResource.getInputStream());
+                try {
+                    File logbackConfigurationFile = logbackConfigurationResource.getFile();
+                    configurator.doConfigure(logbackConfigurationFile);
+                } catch (IOException e) {
+                    // If the resource is not available as a file (i.e. if it is bundled in
+                    // a jar on the classpath), load it from an InputStream instead
+                    configurator.doConfigure(logbackConfigurationResource.getInputStream());
+                }
                 LOGGER.info("default configuration overrided by logback configuration "
                         + logbackConfigurationResource.getDescription());
             } catch (Exception exception) {
