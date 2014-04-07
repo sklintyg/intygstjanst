@@ -113,6 +113,7 @@ public abstract class AbstractGetCertificateResponderImpl {
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
+            factory.setNamespaceAware(true);
             InputSource source = new InputSource();
             source.setCharacterStream(new StringReader(response.getTransportModel()));
 
