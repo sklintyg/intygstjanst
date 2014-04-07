@@ -1,5 +1,6 @@
 package se.inera.certificate.integration.module;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
@@ -38,6 +39,10 @@ public class ModuleApiFactory {
         }
 
         LOG.info("Module registry loaded with modules {}", moduleIds);
+    }
+    
+    public List<ModuleEntryPoint> getRegisteredModules() {
+        return new ArrayList<ModuleEntryPoint>(moduleApiMap.values());
     }
 
     /**
