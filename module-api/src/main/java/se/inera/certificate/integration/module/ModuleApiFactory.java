@@ -32,9 +32,9 @@ public class ModuleApiFactory {
 
     @PostConstruct
     private void initModulesList() {
-        TreeSet<String> moduleIds = new TreeSet<String>();
+        TreeSet<String> moduleIds = new TreeSet<>();
         for (ModuleEntryPoint entryPoint : moduleEntryPoints) {
-            moduleApiMap.put(entryPoint.getModuleId(), entryPoint);
+            moduleApiMap.put(entryPoint.getModuleId().toLowerCase(), entryPoint);
             moduleIds.add(entryPoint.getModuleId());
         }
 
@@ -51,7 +51,7 @@ public class ModuleApiFactory {
      * @throws ModuleNotFoundException
      */
     public ModuleEntryPoint getModuleEntryPoint(String type) throws ModuleNotFoundException {
-        ModuleEntryPoint moduleEntryPoint = moduleApiMap.get(type);
+        ModuleEntryPoint moduleEntryPoint = moduleApiMap.get(type.toLowerCase());
         if (moduleEntryPoint != null) {
             return moduleEntryPoint;
         }
