@@ -2,6 +2,8 @@ package se.inera.certificate.service.util;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -25,15 +27,17 @@ import se.inera.certificate.integration.json.CustomObjectMapper;
 import se.inera.certificate.model.dao.Certificate;
 
 public class IntygBootstrapBean {
+
     private static final Logger LOG = LoggerFactory.getLogger(IntygBootstrapBean.class);
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
     private TransactionTemplate transactionTemplate;
+
     @Autowired
     public void setTxManager(PlatformTransactionManager txManager) {
-        this.transactionTemplate = new TransactionTemplate(txManager); 
+        this.transactionTemplate = new TransactionTemplate(txManager);
     }
 
     @PostConstruct
@@ -41,6 +45,8 @@ public class IntygBootstrapBean {
 
         List<Resource> metadataFiles = getResourceListing("bootstrap-intyg/*-metadata.json");
         List<Resource> contentFiles = getResourceListing("bootstrap-intyg/*-content.json");
+        Collections.sort(metadataFiles, new ResourceFilenameComparator());
+        Collections.sort(contentFiles, new ResourceFilenameComparator());
         int count = metadataFiles.size();
         for (int i = 0; i < count; i++) {
             Resource metadata = metadataFiles.get(i);
@@ -50,13 +56,41 @@ public class IntygBootstrapBean {
         }
     }
 
+    private class ResourceFilenameComparator implements Comparator<Resource> {
+        @Override
+        public int compare(Resource arg0, Resource arg1) {
+            String firstObjectsStrings[] = arg0.getFilename().split("-");
+            String secondObjectsStrings[] = arg1.getFilename().split("-");
+            int first = 0, second = 0;
+            for (String s : firstObjectsStrings) {
+                try {
+                    first = Integer.parseInt(s);
+                } catch (NumberFormatException e) {
+                }
+            }
+            for (String s : secondObjectsStrings) {
+                try {
+                    second = Integer.parseInt(s);
+                } catch (NumberFormatException e) {
+                }
+            }
+            if (first > second) {
+                return 1;
+            } else if (first < second) {
+                return -1;
+            }
+            return 0;
+        }
+
+    }
+
     private void addIntyg(final Resource metadata, final Resource content) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 try {
                     Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
-                    certificate.setDocument(IOUtils.toString(content.getInputStream(), "UTF-8"));            
+                    certificate.setDocument(IOUtils.toString(content.getInputStream(), "UTF-8"));
                     entityManager.persist(certificate);
                 } catch (Throwable t) {
                     status.setRollbackOnly();
