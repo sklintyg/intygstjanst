@@ -87,7 +87,7 @@ public class Intyg extends RestClientFixture {
 		if (rättat)
 			stateList << [state:"CANCELLED", target:"MI", timestamp:"2013-08-05T14:32:03.227"]
         [id:String.format(id, utfärdat),
-            type:typ,
+            type:typ.toLowerCase(),
             civicRegistrationNumber:personnr,
             signedDate:utfärdat,
             signingDoctorName: utfärdare,
