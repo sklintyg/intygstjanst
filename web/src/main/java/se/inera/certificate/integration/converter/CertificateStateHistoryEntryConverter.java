@@ -17,7 +17,9 @@ public class CertificateStateHistoryEntryConverter {
     }
 
     public static List<CertificateStatusType> toCertificateStatusType(List<CertificateStateHistoryEntry> source) {
-        if (source == null || source.isEmpty()) return Collections.emptyList();
+        if (source == null || source.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         List<CertificateStatusType> states = new ArrayList<>();
         for (CertificateStateHistoryEntry state : source) {

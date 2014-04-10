@@ -63,22 +63,28 @@ public final class Kod {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
 
         Kod kod = (Kod) o;
 
-        if (code != null ? !code.equals(kod.code) : kod.code != null)
+        if (code != null ? !code.equals(kod.code) : kod.code != null) {
             return false;
-        if (codeSystem != null ? !codeSystem.equals(kod.codeSystem) : kod.codeSystem != null)
+        }
+        if (codeSystem != null ? !codeSystem.equals(kod.codeSystem) : kod.codeSystem != null) {
             return false;
-        if (codeSystemName != null ? !codeSystemName.equals(kod.codeSystemName) : kod.codeSystemName != null)
+        }
+        if (codeSystemName != null ? !codeSystemName.equals(kod.codeSystemName) : kod.codeSystemName != null) {
             return false;
+        }
         if (codeSystemVersion != null ? !codeSystemVersion.equals(kod.codeSystemVersion)
-                : kod.codeSystemVersion != null)
+                : kod.codeSystemVersion != null) {
             return false;
+        }
 
         return true;
     }

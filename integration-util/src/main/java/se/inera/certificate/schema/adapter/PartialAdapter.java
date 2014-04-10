@@ -20,7 +20,9 @@ public class PartialAdapter {
      * Converts an intyg:common-model:1:partialDate to a Joda Partial.
      */
     public static Partial parsePartial(String dateString) {
-        if (dateString == null) return null;
+        if (dateString == null) {
+            return null;
+        }
 
         LocalDate localDate = new LocalDate(dateString);
 
@@ -41,7 +43,9 @@ public class PartialAdapter {
      */
     public static String printPartial(Partial partial) {
 
-        if (partial == null) return null;
+        if (partial == null) {
+            return null;
+        }
 
         if (!partial.isSupported(dayOfMonth()) && !partial.isSupported(monthOfYear())) {
             return partial.toString(ISODateTimeFormat.year());

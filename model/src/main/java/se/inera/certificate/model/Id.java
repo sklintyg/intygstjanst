@@ -58,23 +58,30 @@ public final class Id {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Id other = (Id) obj;
         if (extension == null) {
-            if (other.extension != null)
+            if (other.extension != null) {
                 return false;
-        } else if (!extension.equals(other.extension))
+            }
+        } else if (!extension.equals(other.extension)) {
             return false;
+        }
         if (root == null) {
-            if (other.root != null)
+            if (other.root != null) {
                 return false;
-        } else if (!root.equals(other.root))
+            }
+        } else if (!root.equals(other.root)) {
             return false;
+        }
         return true;
     }
 }
