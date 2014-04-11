@@ -26,7 +26,6 @@
   <modules>
     <module>integration-util</module>
     <module>schemas</module>
-    <module>model</module>
     <module>module-api</module>
     <module>web</module>
     <module>specifications</module>
