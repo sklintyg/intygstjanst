@@ -1,5 +1,7 @@
 package se.inera.certificate.integration;
 
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType.VALIDATION_ERROR;
+
 import java.io.StringWriter;
 
 import javax.annotation.PostConstruct;
@@ -8,15 +10,11 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.ERROR;
-import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.INFO;
-
-import com.google.common.base.Throwables;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponderInterface;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType;
@@ -29,6 +27,8 @@ import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.StatisticsService;
+
+import com.google.common.base.Throwables;
 
 @SchemaValidation
 public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalCertificateResponderInterface {
@@ -67,13 +67,13 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
             LOGGER.info(LogMarkers.MONITORING, certificateId + " registered");
             statisticsService.created(certificate);
         } catch (CertificateAlreadyExistsException e) {
-            response.setResult(ResultTypeUtil.result(INFO, "Certificate already exists"));
+            response.setResult(ResultTypeUtil.infoResult("Certificate already exists"));
             String certificateId = registerMedicalCertificate.getUtlatande().getUtlatandeId().getRoot();
             String issuedBy =  registerMedicalCertificate.getUtlatande().getSkapadAv().getEnhet().getEnhetsId().getExtension();
             LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId +
                     " issued by " + issuedBy +": Certificate already exists - ignored.");
         } catch (ValidationException e) {
-            response.setResult(ResultTypeUtil.result(ERROR, e.getMessage()));
+            response.setResult(ResultTypeUtil.errorResult(VALIDATION_ERROR, e.getMessage()));
             LOGGER.error(LogMarkers.VALIDATION, e.getMessage());
         } catch (JAXBException e) {
             LOGGER.error("JAXB error in Webservice: ", e);

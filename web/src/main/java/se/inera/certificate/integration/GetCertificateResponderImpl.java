@@ -64,11 +64,18 @@ public class GetCertificateResponderImpl extends AbstractGetCertificateResponder
                 response.setResult(okResult());
                 break;
             case INFO:
-            case REVOKED:
-                response.setResult(infoResult(result.getResultText()));
-                break;
-            case VALIDATION_ERROR:
-                response.setResult(failResult(result.getResultText()));
+            case ERROR:
+                switch (result.getErrorId()) {
+                case REVOKED:
+                    response.setResult(infoResult(result.getResultText()));
+                    break;
+                case VALIDATION_ERROR:
+                    response.setResult(failResult(result.getResultText()));
+                    break;
+                default:
+                    response.setResult(failResult(result.getResultText()));
+                    break;
+                }
                 break;
             default:
                 response.setResult(applicationErrorResult(result.getResultText()));

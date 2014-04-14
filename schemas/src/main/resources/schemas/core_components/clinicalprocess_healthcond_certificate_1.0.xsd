@@ -339,11 +339,15 @@
         En anropande klient skall alltid kontrollera att resultatkoden inte innehåller fel för att på så sätt veta om
         anropet lyckades.
         Alla svarskoder förutom OK och INFO betyder att åtgärden inte genomfördes.
+        Om svarskoden är INFO skall fältet resultText innehålla mer information.
+        Om svarskorden är ERROR skall fältet errorId innehålla en specifik felkod, och fältet
+        resultText innehålla mer information.
       </xs:documentation>
     </xs:annotation>
     <xs:sequence>
       <xs:element name="resultCode" type="ResultCodeType"/>
       <xs:element name="resultText" type="xs:string" minOccurs="0"/>
+      <xs:element name="errorId" type="ErrorIdType" minOccurs="0" />
       <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
     </xs:sequence>
   </xs:complexType>
@@ -365,23 +369,44 @@
       <xs:enumeration value="INFO">
         <xs:annotation>
           <xs:documentation xml:lang='sv'>
-            Transaktionen har utförts enligt begäran, men det finns ett meddelande som konsumenten måste visa upp för
-            användaren (om tillämpbart). Exempel på detta kan vara &amp;quot;kom fastande&amp;quot;.
+            Transaktionen har utförts enligt begäran, men det finns ett meddelande som konsumenten bör visa upp.
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
       <xs:enumeration value="ERROR">
         <xs:annotation>
           <xs:documentation xml:lang='sv'>
-            Transaktionen har INTE kunnat utföras p.g.a ett logiskt fel. Det finns ett meddelande som konsumenten måste
-            visa upp. Exempel på detta kan vara &amp;quot;tiden har bokats av annan patient&amp;quot;.
+            Transaktionen har INTE kunnat utföras. Det finns en felkod som klassificerar felet, samt
+            ett meddelande som konsumenten bör visa upp.
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ErrorIdType">
+    <xs:restriction base="xs:string">
       <xs:enumeration value="VALIDATION_ERROR">
         <xs:annotation>
           <xs:documentation xml:lang='sv'>
-            En eller flera inparametrar innehåller felaktiga värden. Angiven tjänst utfördes ej.
+            En eller flera inparametrar innehåller felaktiga värden. Angiven tjänst utfördes ej, och omsändning av
+            transaktionen är inte tillämpbart.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="APPLICATION_ERROR">
+        <xs:annotation>
+          <xs:documentation xml:lang='sv'>
+            Transaktionen har INTE kunnat utföras p.g.a ett logiskt fel. Det finns ett meddelande som konsumenten bör
+            visa upp. Då felet är logisk är omsändning av transaktionen inte tillämpbart.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="TECHNICAL_ERROR">
+        <xs:annotation>
+          <xs:documentation xml:lang='sv'>
+            Transaktionen har INTE kunnat utföras p.g.a ett tekniskt fel. Det finns ett meddelande som konsumenten bör
+            visa upp. Felet kan vara intermittent, varför omsändning av transaktionen är tillämpbart.
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
@@ -389,7 +414,7 @@
         <xs:annotation>
           <xs:documentation xml:lang='sv'>
             Den efterfrågade informationen existerar men har rättats/dragits tillbaka och är ej längre giltig eller
-            tillgänglig. Angiven tjänst utfördes ej.
+            tillgänglig. Angiven tjänst utfördes ej, och omsändning av transaktionen är inte tillämpbart.
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>

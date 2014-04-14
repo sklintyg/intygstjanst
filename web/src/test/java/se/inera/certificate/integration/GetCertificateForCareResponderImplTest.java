@@ -28,8 +28,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.OK;
-import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.REVOKED;
-import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.VALIDATION_ERROR;
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.ERROR;
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType.VALIDATION_ERROR;
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType.REVOKED;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -163,7 +164,8 @@ public class GetCertificateForCareResponderImplTest {
 
         assertNull(response.getMeta());
         assertNull(response.getCertificate());
-        assertEquals(VALIDATION_ERROR, response.getResult().getResultCode());
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Unknown certificate ID: 123456", response.getResult().getResultText());
     }
 
@@ -189,7 +191,8 @@ public class GetCertificateForCareResponderImplTest {
 
         assertNotNull(response.getMeta());
         assertNotNull(response.getCertificate());
-        assertEquals(REVOKED, response.getResult().getResultCode());
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(REVOKED, response.getResult().getErrorId());
         assertEquals("Certificate '" + CERTIFICATE_ID  + "' has been revoked", response.getResult().getResultText());
     }
 
