@@ -3,13 +3,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>se.inera.certificate.migration</groupId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <artifactId>migration-tool-webapp</artifactId>
   <description>A Spring Batch application for doing data migration work</description>
   <parent>
     <groupId>se.inera.certificate.migration</groupId>
     <artifactId>migration-tool-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
   </parent>
   <packaging>war</packaging>
   <name>Inera Certificate Data Migration Tool</name>
