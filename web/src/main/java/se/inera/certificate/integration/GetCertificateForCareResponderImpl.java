@@ -19,7 +19,7 @@
 package se.inera.certificate.integration;
 
 import static se.inera.certificate.integration.util.ResultTypeUtil.okResult;
-import static se.inera.certificate.integration.util.ResultTypeUtil.result;
+import static se.inera.certificate.integration.util.ResultTypeUtil.errorResult;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -35,7 +35,7 @@ import org.w3c.dom.Document;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareRequestType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponderInterface;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponseType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.integration.converter.ModelConverter;
@@ -85,7 +85,7 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
         attachCertificateDocument(certificate, response);
 
         if (certificate.isRevoked()) {
-            response.setResult(result(ResultCodeType.REVOKED, "Certificate '" + request.getCertificateId()  + "' has been revoked"));
+            response.setResult(errorResult(ErrorIdType.REVOKED, "Certificate '" + request.getCertificateId()  + "' has been revoked"));
         } else {
             response.setResult(okResult());
         }
