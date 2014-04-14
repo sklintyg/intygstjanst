@@ -11,22 +11,23 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedic
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType
 import se.inera.certificate.spec.util.FitnesseHelper
 import se.inera.certificate.spec.util.WsClientFixture
+import se.inera.certificate.spec.util.WsClientFixtureNyaKontraktet
 
 /**
  *
  * @author andreaskaltenbach
  */
-class ValideraFk7263Intyg extends WsNewClientFixtureV1 {
+class ValideraRegisterMotNyaKontraktet extends WsClientFixtureNyaKontraktet {
 
     RegisterMedicalCertificateResponderInterface registerMedicalCertificateResponder
 
     static String serviceUrl = System.getProperty("service.registerMedicalCertificateUrl")
 
-    public ValideraFk7263Intyg() {
+    public ValideraRegisterMotNyaKontraktet() {
         this(WsClientFixture.LOGICAL_ADDRESS)
     }
     
-    public ValideraFk7263Intyg(String logiskAddress) {
+    public ValideraRegisterMotNyaKontraktet(String logiskAddress) {
         super(logiskAddress)
         String url = serviceUrl ? serviceUrl : baseUrl + "register-medical-certificate/v1.0"
         registerMedicalCertificateResponder = createClient(RegisterMedicalCertificateResponderInterface.class, url)
