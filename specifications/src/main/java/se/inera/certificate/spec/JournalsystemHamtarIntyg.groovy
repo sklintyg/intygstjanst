@@ -51,8 +51,12 @@ public class JournalsystemHamtarIntyg extends WsClientFixture {
                 status = response.meta.status.sort{a, b -> a.timestamp < b.timestamp ? 1 : -1}.collect{it.type.toString()}
 				resultat = "OK"
 				break
-            default:
-				resultat = "[${response.result.resultCode.toString()}] - ${response.result.resultText}"
+            case ResultCodeType.INFO:
+                resultat = "[${response.result.resultCode.toString()}] - ${response.result.resultText}"
+                break
+            case ResultCodeType.ERROR:
+                resultat = "[${response.result.errorId.toString()}] - ${response.result.resultText}"
+                break
 		} 
     }
 
