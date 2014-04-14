@@ -105,7 +105,7 @@ public class Intyg extends RestClientFixture {
             "\"" + document("fk7263") + "\""
         }
         else {
-            "\"" + document("rli") + "\""
+            "\"" + document(typ.toLowerCase()) + "\""
         }
     }
 
@@ -131,8 +131,13 @@ public class Intyg extends RestClientFixture {
         certificate.signeringsdatum = utfärdat
         certificate.skickatdatum = utfärdat
 
-
-        certificate.vardkontakter.each { it.vardkontaktstid.from = utfärdat; it.vardkontaktstid.tom = utfärdat }
+        certificate.vardkontakter.each {
+            if (it.vardkontaktstid != null) {
+                it.vardkontaktstid.from = utfärdat; it.vardkontaktstid.tom = utfärdat
+            }
+        }
+//        certificate.vardkontakter.each { it.vardkontaktstid.from = utfärdat; it.vardkontaktstid.tom = utfärdat }
+        
         certificate.referenser.each { it.datum = utfärdat }
         def observationsperioder = []
         certificate.observationer.each {observation ->

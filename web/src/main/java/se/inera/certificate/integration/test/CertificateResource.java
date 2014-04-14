@@ -1,6 +1,7 @@
 package se.inera.certificate.integration.test;
 
 import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.LEGACY_LAKARUTLATANDE;
+import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.UTLATANDE_V1;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -31,6 +32,7 @@ import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
 import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
+import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 
 /**
@@ -45,10 +47,10 @@ public class CertificateResource {
     private EntityManager entityManager;
 
     private TransactionTemplate transactionTemplate;
-    
+
     @Autowired
     public void setTxManager(PlatformTransactionManager txManager) {
-        this.transactionTemplate = new TransactionTemplate(txManager); 
+        this.transactionTemplate = new TransactionTemplate(txManager);
     }
 
     @Autowired
@@ -128,14 +130,16 @@ public class CertificateResource {
             }
         });
     }
-    
+
     protected String marshall(Certificate certificate) {
         String moduleName = certificate.getType();
+        TransportModelVersion transportModelVersion = moduleName.equals("fk7263") ?
+                TransportModelVersion.LEGACY_LAKARUTLATANDE : TransportModelVersion.UTLATANDE_V1;
 
         try {
             ModuleEntryPoint module = moduleApiFactory.getModuleEntryPoint(moduleName);
             TransportModelResponse response = module.getModuleApi().marshall(
-                    new ExternalModelHolder(certificate.getDocument()), LEGACY_LAKARUTLATANDE);
+                    new ExternalModelHolder(certificate.getDocument()), transportModelVersion);
             return response.getTransportModel();
 
         } catch (ModuleNotFoundException e) {
