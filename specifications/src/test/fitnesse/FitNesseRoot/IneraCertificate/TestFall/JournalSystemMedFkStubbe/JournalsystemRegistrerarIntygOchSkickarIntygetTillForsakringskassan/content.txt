@@ -6,83 +6,83 @@
 
 |Registrera fk7263 intyg|
 |personnummer|id|utfärdat|resultat?|
-|19121212-1212|intyg-1|2013-08-01|OK|
+|19121212-1212|fit-intyg-1|2013-08-01|OK|
 
 !3 Så ska intyget vara tillgänglig i intygstjänsten
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19121212-1212|intyg-1|OK|[RECEIVED]|
+|19121212-1212|fit-intyg-1|OK|[RECEIVED]|
 
 !3 Efter att skicka intyget till Försäkringskassan ska intyget finnas hos FK och får status SENT i intygstjänsten
 
 |Skicka Intyg Till Fk|
 |personnummer|intyg|resultat?|
-|19121212-1212|intyg-1|OK|
+|19121212-1212|fit-intyg-1|OK|
 
 |Verifiera Intyg Hos Fk|
 |id|status?|
-|intyg-1|skickat|
+|fit-intyg-1|skickat|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19121212-1212|intyg-1|OK|[RECEIVED, SENT]|
+|19121212-1212|fit-intyg-1|OK|[RECEIVED, SENT]|
 
 !3 Skicka intyget på nytt skall ge INFO-meddelande
 
 |Skicka Intyg Till Fk|
 |personnummer|intyg|resultat?|
-|19121212-1212|intyg-1|[INFO] - Certificate 'intyg-1' is already sent.|
+|19121212-1212|fit-intyg-1|[INFO] - Certificate 'fit-intyg-1' is already sent.|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19121212-1212|intyg-1|OK|[RECEIVED, SENT, SENT]|
+|19121212-1212|fit-intyg-1|OK|[RECEIVED, SENT, SENT]|
 
 !3 Ett rättat intyg ska informera Försäkringskassan. Intyget i intygstjänsten ska inte vara åtkomligt längre.
 
 |Ratta intyg|
 |personnummer|intyg|meddelande|resultat?|
-|19121212-1212|intyg-1|meddelande|OK|
+|19121212-1212|fit-intyg-1|meddelande|OK|
 
 |Verifiera Rattat Intyg Hos Fk|
 |id|rattat?|meddelande?|
-|intyg-1|JA|meddelande|
+|fit-intyg-1|JA|meddelande|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19121212-1212|intyg-1|[INFO] - Certificate 'intyg-1' has been revoked|
+|19121212-1212|fit-intyg-1|[INFO] - Certificate 'fit-intyg-1' has been revoked|
 
 !3 Om inget meddelande ges vid rättning, måste vi ändå skicka en meddelande-text till FK
 
 !4 Givet ytterligare ett intyg
 |Registrera fk7263 intyg|
 |personnummer|id|utfärdat|resultat?|
-|19121212-1212|intyg-2|2013-08-01|OK|
+|19121212-1212|fit-intyg-2|2013-08-01|OK|
 
 |Skicka Intyg Till Fk|
 |personnummer|intyg|resultat?|
-|19121212-1212|intyg-2|OK|
+|19121212-1212|fit-intyg-2|OK|
   
 |Ratta intyg|
 |personnummer|intyg|resultat?|
-|19121212-1212|intyg-2|OK|
+|19121212-1212|fit-intyg-2|OK|
 
 |Verifiera Rattat Intyg Hos Fk|
 |id|rattat?|meddelande?|
-|intyg-2|JA|meddelande saknas|
+|fit-intyg-2|JA|meddelande saknas|
 
 !3 Försök att skicka ett icke existerande intyg skall ge fel
 
 |Skicka Intyg Till Fk|
 |personnummer|intyg|resultat?|
-|19121212-1212|intyg-non-existing|[ERROR] - No certificate 'intyg-non-existing' found to send for patient '19121212-1212'.|
+|19121212-1212|fit-intyg-non-existing|[ERROR] - No certificate 'fit-intyg-non-existing' found to send for patient '19121212-1212'.|
 
 !3 Rensa bort test-intyg och samtycket
 
 |ta bort Intyg|
 |id|
-|intyg-1|
-|intyg-2|
+|fit-intyg-1|
+|fit-intyg-2|
 
 |Samtycke|
 |personnr|samtycke|

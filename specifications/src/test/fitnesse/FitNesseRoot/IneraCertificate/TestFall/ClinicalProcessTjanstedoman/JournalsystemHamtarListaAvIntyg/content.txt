@@ -1,18 +1,18 @@
 |Registrera intyg|
 |personnummer|id|enhet|resultat?|
-|19121212-1212|intyg-1|1.2.3.4|OK|
-|19121212-1212|intyg-2|5.6.7.8|OK|
+|19121212-1212|fit-intyg-1|1.2.3.4|OK|
+|19121212-1212|fit-intyg-2|5.6.7.8|OK|
 
 |Journalsystem hamtar lista av intyg|
 |personnummer|enhet|resultat?|intyg?|
 |19121212-1212|okänt|OK|[]|
 |okänt|1.2.3.4|OK|[]|
-|19121212-1212|1.2.3.4|OK|[intyg-1]|
-|19121212-1212|5.6.7.8|OK|[intyg-2]|
+|19121212-1212|1.2.3.4|OK|[fit-intyg-1]|
+|19121212-1212|5.6.7.8|OK|[fit-intyg-2]|
 
 !3 Rensa bort test-intyg
 
 |ta bort Intyg|
 |id|
-|intyg-1|
-|intyg-2|
+|fit-intyg-1|
+|fit-intyg-2|

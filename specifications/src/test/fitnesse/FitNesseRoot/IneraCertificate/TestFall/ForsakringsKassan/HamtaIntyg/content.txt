@@ -6,21 +6,21 @@
 
 |Hamta intyg|
 |personnummer|intyg|förväntat svar|resultat?|
-|19010101-0101|intyg-1|{"lakarutlatande":{"lakarutlatandeId":"intyg-1","patient":{"personId":{"extension":"19010101-0101"}}}}|OK|
-|19010101-0101|intyg-2|{"lakarutlatande":{"lakarutlatandeId":"intyg-2","patient":{"personId":{"extension":"19010101-0101"}}}}|OK|
-|19010101-0101|intyg-3|{"lakarutlatande":{"lakarutlatandeId":"intyg-3","patient":{"personId":{"extension":"19010101-0101"}}}}|OK|
+|19010101-0101|fit-intyg-1|{"lakarutlatande":{"lakarutlatandeId":"fit-intyg-1","patient":{"personId":{"extension":"19010101-0101"}}}}|OK|
+|19010101-0101|fit-intyg-2|{"lakarutlatande":{"lakarutlatandeId":"fit-intyg-2","patient":{"personId":{"extension":"19010101-0101"}}}}|OK|
+|19010101-0101|fit-intyg-3|{"lakarutlatande":{"lakarutlatandeId":"fit-intyg-3","patient":{"personId":{"extension":"19010101-0101"}}}}|OK|
 
 !3 Testfall Get-Certificate-1.2: Verifiera !-HoS-!-informationen hos intyget
 
 |Hamta intyg|
 |personnummer|intyg|förväntat svar|resultat?|
-|19010101-0101|intyg-1|{"lakarutlatande":{"lakarutlatandeId":"intyg-1","skapadAvHosPersonal":{"personalId":{"extension":"Personal HSA-ID"},"fullstandigtNamn":"läkare1"}}}|OK|
+|19010101-0101|fit-intyg-1|{"lakarutlatande":{"lakarutlatandeId":"fit-intyg-1","skapadAvHosPersonal":{"personalId":{"extension":"EttUtfärdarId"},"fullstandigtNamn":"läkare1"}}}|OK|
 
 !3 Testfall Get-Certificate-1.3: Hämta intyg enligt !-SmL-!
 
 |Hamta intyg|
 |personnummer|intyg|förväntat svar|resultat?|
-|19010101-0101|intyg-SmL|{"lakarutlatande":{"lakarutlatandeId":"intyg-SmL"}}|OK|
+|19010101-0101|fit-intyg-SmL|{"lakarutlatande":{"lakarutlatandeId":"fit-intyg-SmL"}}|OK|
 
 !2 Hantering av samtycke
 
@@ -28,7 +28,7 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19020202-0202|intyg-1|[ERROR] - Missing consent for patient 19020202-0202|
+|19020202-0202|fit-intyg-1|[ERROR] - Missing consent for patient 19020202-0202|
 
 !2 Felscenarier
 
@@ -36,19 +36,19 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19010101-0101|intyg-6|[ERROR] - Unknown certificate ID: intyg-6|
+|19010101-0101|fit-intyg-6|[ERROR] - Unknown certificate ID: fit-intyg-6|
 
 !3 Testfall Get-Certificate-3.2: Försök hämta okänt intyg
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19010101-0101|intyg-7|[ERROR] - Unknown certificate ID: intyg-7|
+|19010101-0101|fit-intyg-7|[ERROR] - Unknown certificate ID: fit-intyg-7|
 
 !3 Testfall Get-Certificate-3.3: Försök hämta intyg för okänd invånare
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19999999-9999|intyg-6|[ERROR] - Missing consent for patient 19999999-9999|
+|19999999-9999|fit-intyg-6|[ERROR] - Missing consent for patient 19999999-9999|
 
 !3 Testfall Get-Certificate-3.4: Försök hämta intyg utan intygsid
 
@@ -60,4 +60,4 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-||intyg-1|[ERROR] - Validation error: missing  nationalIdentityNumber|
+||fit-intyg-1|[ERROR] - Validation error: missing  nationalIdentityNumber|

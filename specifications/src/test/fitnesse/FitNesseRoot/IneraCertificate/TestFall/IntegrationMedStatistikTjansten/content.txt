@@ -21,12 +21,12 @@
 
 |Registrera fk7263 intyg|
 |personnummer|id|utfärdat|resultat?|
-|19121212-1212|intyg-1|2013-08-01|OK|
+|19121212-1212|fit-intyg-1|2013-08-01|OK|
 
 |script|Consumer|queue|
 |check|queue depth|1|
 |receive message|
-|check|message|json:{"id":{"root":"intyg-1"},"typ":{"code":"fk7263"}}|
+|check|message|json:{"id":{"root":"fit-intyg-1"},"typ":{"code":"fk7263"}}|
 |check|queue depth|0|
 
 !3 Ta bort samtycke
@@ -39,5 +39,5 @@
 
 |ta bort Intyg|
 |id|
-|intyg-1|
+|fit-intyg-1|
 

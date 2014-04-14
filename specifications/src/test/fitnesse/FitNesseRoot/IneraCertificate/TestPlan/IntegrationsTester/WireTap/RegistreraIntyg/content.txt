@@ -8,13 +8,13 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19010101-0101|intyg-1|[ERROR] - Unknown certificate ID: intyg-1|
+|19010101-0101|fit-intyg-1|[ERROR] - Unknown certificate ID: fit-intyg-1|
 
 !3 Efter journalsystemet har registrerat ett nytt intyg så ska det vara tillgängligt
 
 |Registrera fk7263 intyg|${fk.logiskAddress}|
 |personnummer|id|utfärdat|mall|resultat?|
-|19010101-0101|intyg-1|2013-08-01|S|OK|
+|19010101-0101|fit-intyg-1|2013-08-01|S|OK|
 
 !4 Vänta tills wiretap-implementationen har hunnit skicka meddelanden vidare till intygstjänsten (vilket sker asynkront)
 
@@ -22,13 +22,13 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19010101-0101|intyg-1|OK|[RECEIVED, SENT]|
+|19010101-0101|fit-intyg-1|OK|[RECEIVED, SENT]|
 
 !3 Försök att registrera ett redan registrerat intyg nonchaleras
 
 |Registrera fk7263 intyg|${fk.logiskAddress}|
 |personnummer|id|utfärdat|
-|19010101-0101|intyg-1|2013-08-01|
+|19010101-0101|fit-intyg-1|2013-08-01|
 
 |script|Vanta|2|sekunder|
 
@@ -36,7 +36,7 @@
 
 |ta bort Intyg|
 |id|
-|intyg-1|
+|fit-intyg-1|
 
 !3 Återta samtycke:
 
