@@ -21,7 +21,18 @@
 
   <!-- Transform <faultcode> and <faultstring> elements to <resultCode> and <resultText> -->
   <xsl:template name="result">
-    <c:resultCode>ERROR</c:resultCode>
+    <xsl:choose>
+      <xsl:when test="contains(faultstring/text(), 'Unmarshalling Error')">
+        <!-- Schema validation errors are transformed to VALIDATION_ERROR -->
+        <c:resultCode>ERROR</c:resultCode>
+        <c:errorId>VALIDATION_ERROR</c:errorId>
+      </xsl:when>
+      <xsl:otherwise>
+        <!-- 'soap:Server' is transformed to APPLICATION_ERROR -->
+        <c:resultCode>ERROR</c:resultCode>
+        <c:errorId>APPLICATION_ERROR</c:errorId>
+      </xsl:otherwise>
+    </xsl:choose>
     <c:resultText>
       <xsl:value-of select="faultstring/text()"/>
     </c:resultText>
