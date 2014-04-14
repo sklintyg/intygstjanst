@@ -32,7 +32,7 @@
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>se.inera.certificate.modules</groupId>
       <artifactId>integration-util</artifactId>
     </dependency>
 
