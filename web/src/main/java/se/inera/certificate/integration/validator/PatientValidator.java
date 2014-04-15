@@ -33,8 +33,9 @@ public class PatientValidator {
         }
 
         // Check patient id - mandatory
-        if (patient.getPersonId().getExtension() == null
-                || patient.getPersonId().getExtension().isEmpty()) {
+        if (patient.getPersonId() == null
+            || patient.getPersonId().getExtension() == null
+            || patient.getPersonId().getExtension().isEmpty()) {
             validationErrors.add("No Patient Id found!");
             return false;
         }
