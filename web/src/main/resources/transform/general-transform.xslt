@@ -26,8 +26,7 @@
     <xsl:choose>
       <xsl:when test="contains(faultstring/text(), 'Unmarshalling Error')">
         <!-- Schema validation errors are transformed to VALIDATION_ERROR -->
-        <c:resultCode>ERROR</c:resultCode>
-        <c:errorId>VALIDATION_ERROR</c:errorId>
+        <hr:errorId>VALIDATION_ERROR</hr:errorId>
       </xsl:when>
       <xsl:when test="contains(faultcode/text(), 'soap:Client')">
         <!-- 'soap:Client' is transformed to VALIDATION_ERROR -->
