@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<properties>
+	<Edit>true</Edit>
+	<Files>true</Files>
+	<Help/>
+	<Properties>true</Properties>
+	<RecentChanges>true</RecentChanges>
+	<Refactor>true</Refactor>
+	<Search>true</Search>
+	<Suite/>
+	<Suites/>
+	<SymbolicLinks>
+		<MinaIntyg>.IneraCertificate.TestFall.MinaIntyg</MinaIntyg>
+		<ClinicalProcessTjanstedoman>.IneraCertificate.TestFall.ClinicalProcessTjanstedoman</ClinicalProcessTjanstedoman>
+		<JournalSystem>.IneraCertificate.TestFall.JournalSystem</JournalSystem>
+		<ForsakringsKassan>.IneraCertificate.TestFall.ForsakringsKassan</ForsakringsKassan>
+	</SymbolicLinks>
+	<Versions>true</Versions>
+	<WhereUsed>true</WhereUsed>
+</properties>
