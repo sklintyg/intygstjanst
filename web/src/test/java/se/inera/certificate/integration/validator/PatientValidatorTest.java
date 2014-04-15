@@ -38,6 +38,13 @@ public class PatientValidatorTest {
     }
 
     @Test
+    public void testNullPatientId() {
+        patient.setPersonId(null);
+        assertFalse(validatePatient());
+        assertTrue(errors.contains("No Patient Id found!"));
+    }
+
+    @Test
     public void testEmtpyPatientIdRoot() {
         patientId.setRoot(null);
         assertTrue(validatePatient());
