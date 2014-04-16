@@ -85,6 +85,12 @@
     </dependency>
 
     <dependency>
+      <groupId>xmlunit</groupId>
+      <artifactId>xmlunit</artifactId>
+      <scope>compile</scope>
+    </dependency>
+            
+    <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-client</artifactId>
       <version>5.8.0</version>
@@ -124,6 +130,7 @@
                  <exclude>${fitnesse.root}/FrontPage/**</exclude>
                  <exclude>${fitnesse.root}/PageFooter/**</exclude>
                  <exclude>${fitnesse.root}/files/validering/**</exclude>
+                 <exclude>${fitnesse.root}/files/transformering/**</exclude>
                  <exclude>plugins.properties</exclude>
                  <exclude>**/.gitignore</exclude>
                </excludes>

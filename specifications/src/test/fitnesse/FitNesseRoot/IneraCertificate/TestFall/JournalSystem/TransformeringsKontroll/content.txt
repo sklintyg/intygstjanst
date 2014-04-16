@@ -1,0 +1,22 @@
+!3 Givet följande samtycken:
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|ja|
+
+!3 Säkerställ att intyg registrerade via !-RegisterCertificate-! transformeras korrekt, så att !-GetCertificate-! ger tillbaka samma intygsinformation
+
+|transformera intyg|
+|filnamn|resultat?|
+|transformering/legacy-fk7263-L.xml|OK|
+|transformering/legacy-fk7263-M.xml|OK|
+|transformering/legacy-fk7263-S.xml|OK|
+|transformering/legacy-fk7263-Motivering-utan-prognosangivelse.xml|OK|
+|transformering/legacy-fk7263-SmL-L.xml|OK|
+|transformering/legacy-fk7263-SmL-S.xml|OK|
+
+!3 Återta samtycken:
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|nej|
