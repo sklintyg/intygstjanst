@@ -37,9 +37,9 @@
   </xs:annotation>
   <wsdl:types>
     <xs:schema targetNamespace='urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCare:1:rivtabp21'>
-      <xs:import schemaLocation='ListCertificatesForCareResponder_1.0.xsd'
+      <xs:import schemaLocation='ListCertificatesForCareResponder_0.9.xsd'
                  namespace='urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCareResponder:1'/>
-      <xs:import schemaLocation='../../../../core_components/itintegration_registry_1.0.xsd'
+      <xs:import schemaLocation='../../core_components/itintegration_registry_1.0.xsd'
                  namespace='urn:riv:itintegration:registry:1'/>
     </xs:schema>
   </wsdl:types>

@@ -253,7 +253,7 @@
 
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/clinicalprocess/healthcond/certificate/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_1.0_RIVTABP21.wsdl
+                    ${schema.path}/clinicalprocess_healthcond_certificate/interactions/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_0.9_RIVTABP21.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -263,14 +263,14 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/clinicalprocess/healthcond/certificate/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_1.0_RIVTABP21.wsdl
+                      classpath:schemas/clinicalprocess_healthcond_certificate/interactions/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_0.9_RIVTABP21.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>
 
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/clinicalprocess/healthcond/certificate/GetCertificateForCareInteraction/GetCertificateForCareInteraction_1.0_RIVTABP21.wsdl
+                    ${schema.path}/clinicalprocess_healthcond_certificate/interactions/GetCertificateForCareInteraction/GetCertificateForCareInteraction_0.9_RIVTABP21.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -280,14 +280,14 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/clinicalprocess/healthcond/certificate/GetCertificateForCareInteraction/GetCertificateForCareInteraction_1.0_RIVTABP21.wsdl
+                      classpath:schemas/clinicalprocess_healthcond_certificate/interactions/GetCertificateForCareInteraction/GetCertificateForCareInteraction_0.9_RIVTABP21.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>
 
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/clinicalprocess/healthcond/certificate/ListCertificatesForCareInteraction/ListCertificatesForCareInteraction_1.0_RIVTABP21.wsdl
+                    ${schema.path}/clinicalprocess_healthcond_certificate/interactions/ListCertificatesForCareInteraction/ListCertificatesForCareInteraction_0.9_RIVTABP21.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -297,14 +297,14 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/clinicalprocess/healthcond/certificate/ListCertificatesForCareInteraction/ListCertificatesForCareInteraction_1.0_RIVTABP21.wsdl
+                      classpath:schemas/clinicalprocess_healthcond_certificate/interactions/ListCertificatesForCareInteraction/ListCertificatesForCareInteraction_0.9_RIVTABP21.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>
 
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/v1/GetCertificateContent/GetCertificateContentInteraction.wsdl
+                    ${schema.path}/insuranceprocess_healthreporting/interactions/GetCertificateContent/GetCertificateContentInteraction.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -314,14 +314,14 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/v1/GetCertificateContent/GetCertificateContentInteraction.wsdl
+                      classpath:schemas/insuranceprocess_healthreporting/interactions/GetCertificateContent/GetCertificateContentInteraction.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>
 
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/v1/ListCertificatesInteraction/ListCertificatesInteraction_1.0_rivtabp20.wsdl
+                    ${schema.path}/insuranceprocess_healthreporting/interactions/ListCertificatesInteraction/ListCertificatesInteraction_1.0_rivtabp20.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -331,14 +331,14 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/v1/ListCertificatesInteraction/ListCertificatesInteraction_1.0_rivtabp20.wsdl
+                      classpath:schemas/insuranceprocess_healthreporting/interactions/ListCertificatesInteraction/ListCertificatesInteraction_1.0_rivtabp20.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>
 
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/v1/GetCertificateInteraction/GetCertificateInteraction_1.0_rivtabp20.wsdl
+                    ${schema.path}/insuranceprocess_healthreporting/interactions/GetCertificateInteraction/GetCertificateInteraction_1.0_rivtabp20.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -348,14 +348,14 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/v1/GetCertificateInteraction/GetCertificateInteraction_1.0_rivtabp20.wsdl
+                      classpath:schemas/insuranceprocess_healthreporting/interactions/GetCertificateInteraction/GetCertificateInteraction_1.0_rivtabp20.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>
 
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/v3/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_3.1_rivtabp20.wsdl
+                    ${schema.path}/insuranceprocess_healthreporting/interactions/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_3.1_rivtabp20.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -365,14 +365,14 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/v3/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_3.1_rivtabp20.wsdl
+                      classpath:schemas/insuranceprocess_healthreporting/interactions/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_3.1_rivtabp20.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>
 
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/v1/GetConsentInteraction/GetConsentInteraction_1.0_rivtabp20.wsdl
+                    ${schema.path}/insuranceprocess_healthreporting/interactions/GetConsentInteraction/GetConsentInteraction_1.0_rivtabp20.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -382,13 +382,13 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/v1/GetConsentInteraction/GetConsentInteraction_1.0_rivtabp20.wsdl
+                      classpath:schemas/insuranceprocess_healthreporting/interactions/GetConsentInteraction/GetConsentInteraction_1.0_rivtabp20.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/v1/SetConsentInteraction/SetConsentInteraction_1.0_rivtabp20.wsdl
+                    ${schema.path}/insuranceprocess_healthreporting/interactions/SetConsentInteraction/SetConsentInteraction_1.0_rivtabp20.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -398,31 +398,14 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/v1/SetConsentInteraction/SetConsentInteraction_1.0_rivtabp20.wsdl
-                    </extraarg>
-                  </extraargs>
-                </wsdlOption>
-
-                <wsdlOption>
-                  <wsdl>
-                    ${schema.path}/v1/SetCertificateStatusInteraction/SetCertificateStatusInteraction_1.0_rivtabp20.wsdl
-                  </wsdl>
-                  <bindingFiles>
-                    <bindingFile>
-                      ${basedir}/bindings/general-binding.xjb
-                    </bindingFile>
-                  </bindingFiles>
-                  <extraargs>
-                    <extraarg>-wsdlLocation</extraarg>
-                    <extraarg>
-                      classpath:schemas/v1/SetCertificateStatusInteraction/SetCertificateStatusInteraction_1.0_rivtabp20.wsdl
+                      classpath:schemas/insuranceprocess_healthreporting/interactions/SetConsentInteraction/SetConsentInteraction_1.0_rivtabp20.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>
 
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/v1/SendMedicalCertificateInteraction/SendMedicalCertificateInteraction_1.0_rivtabp20.wsdl
+                    ${schema.path}/insuranceprocess_healthreporting/interactions/SetCertificateStatusInteraction/SetCertificateStatusInteraction_1.0_rivtabp20.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -432,14 +415,14 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/v1/SendMedicalCertificateInteraction/SendMedicalCertificateInteraction_1.0_rivtabp20.wsdl
+                      classpath:schemas/insuranceprocess_healthreporting/interactions/SetCertificateStatusInteraction/SetCertificateStatusInteraction_1.0_rivtabp20.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>
 
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/v1/RevokeMedicalCertificateInteraction/RevokeMedicalCertificateInteraction_1.0_rivtabp20.wsdl
+                    ${schema.path}/insuranceprocess_healthreporting/interactions/SendMedicalCertificateInteraction/SendMedicalCertificateInteraction_1.0_rivtabp20.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -449,14 +432,14 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/v1/RevokeMedicalCertificateInteraction/RevokeMedicalCertificateInteraction_1.0_rivtabp20.wsdl
+                      classpath:schemas/insuranceprocess_healthreporting/interactions/SendMedicalCertificateInteraction/SendMedicalCertificateInteraction_1.0_rivtabp20.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>
 
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/v1/SendMedicalCertificateQuestionInteraction/SendMedicalCertificateQuestionInteraction_1.0_rivtabp20.wsdl
+                    ${schema.path}/insuranceprocess_healthreporting/interactions/RevokeMedicalCertificateInteraction/RevokeMedicalCertificateInteraction_1.0_rivtabp20.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -466,14 +449,14 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/v1/SendMedicalCertificateQuestionInteraction/SendMedicalCertificateQuestionInteraction_1.0_rivtabp20.wsdl
+                      classpath:schemas/insuranceprocess_healthreporting/interactions/RevokeMedicalCertificateInteraction/RevokeMedicalCertificateInteraction_1.0_rivtabp20.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>
 
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/v1/SendMedicalCertificateAnswerInteraction/SendMedicalCertificateAnswerInteraction_1.0_rivtabp20.wsdl
+                    ${schema.path}/insuranceprocess_healthreporting/interactions/SendMedicalCertificateQuestionInteraction/SendMedicalCertificateQuestionInteraction_1.0_rivtabp20.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -483,13 +466,30 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/v1/SendMedicalCertificateAnserInteraction/SendMedicalCertificateAnswerInteraction_1.0_rivtabp20.wsdl
+                      classpath:schemas/insuranceprocess_healthreporting/interactions/SendMedicalCertificateQuestionInteraction/SendMedicalCertificateQuestionInteraction_1.0_rivtabp20.wsdl
+                    </extraarg>
+                  </extraargs>
+                </wsdlOption>
+
+                <wsdlOption>
+                  <wsdl>
+                    ${schema.path}/insuranceprocess_healthreporting/interactions/SendMedicalCertificateAnswerInteraction/SendMedicalCertificateAnswerInteraction_1.0_rivtabp20.wsdl
+                  </wsdl>
+                  <bindingFiles>
+                    <bindingFile>
+                      ${basedir}/bindings/general-binding.xjb
+                    </bindingFile>
+                  </bindingFiles>
+                  <extraargs>
+                    <extraarg>-wsdlLocation</extraarg>
+                    <extraarg>
+                      classpath:schemas/insuranceprocess_healthreporting/interactions/SendMedicalCertificateAnserInteraction/SendMedicalCertificateAnswerInteraction_1.0_rivtabp20.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/interactions/PingForConfigurationInteraction/PingForConfigurationInteraction_1.0_RIVTABP21.wsdl
+                    ${schema.path}/itintegration_monitoring/interactions/PingForConfigurationInteraction/PingForConfigurationInteraction_1.0_RIVTABP21.wsdl
                   </wsdl>
                 </wsdlOption>
               </wsdlOptions>

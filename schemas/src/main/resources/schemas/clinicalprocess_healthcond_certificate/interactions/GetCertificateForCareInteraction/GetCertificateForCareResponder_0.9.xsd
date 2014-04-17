@@ -4,7 +4,7 @@
         xmlns:tns="urn:riv:clinicalprocess:healthcond:certificate:GetCertificateForCareResponder:1"
         xmlns:c="urn:riv:clinicalprocess:healthcond:certificate:1" elementFormDefault="qualified">
 
-  <import schemaLocation="../../../../core_components/clinicalprocess_healthcond_certificate_1.0.xsd"
+  <import schemaLocation="../../core_components/clinicalprocess_healthcond_certificate_0.9.xsd"
           namespace="urn:riv:clinicalprocess:healthcond:certificate:1"/>
 
   <element name="GetCertificateForCare" type="tns:GetCertificateForCareRequestType"/>
