@@ -76,6 +76,7 @@ public class MigrationJobTest {
         dataInitialiser.resetDb();
     }
     
+    @Ignore
     @Test
     public void testExecuteMigrationJobWithWrongUrl() throws Exception {
         JobParametersBuilder builder = new JobParametersBuilder();
@@ -93,6 +94,7 @@ public class MigrationJobTest {
         assertEquals("Batch status should be FAILED", BatchStatus.FAILED, jobExecution.getStatus());
     }
 
+    @Ignore
     @Test
     public void testExecuteMigrationJobWith404Response() throws Exception {
         JobParametersBuilder builder = new JobParametersBuilder();

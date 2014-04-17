@@ -7,7 +7,7 @@
 
   <description>Load application properties from file</description>
 
-  <bean id="hejhejAppProperties"
+  <bean id="appProperties"
     class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="locations">
       <list>

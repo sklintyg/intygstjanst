@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>se.inera.certificate.migration</groupId>
   <artifactId>migration-tool-parent</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>pom</packaging>
   <name>Inera Certificate Migration Tool parent POM</name>
   <description>
@@ -24,7 +24,6 @@
 
   <modules>
     <module>migration-web</module>
-    <module>mc2wc</module>
   </modules>
 
   <properties>

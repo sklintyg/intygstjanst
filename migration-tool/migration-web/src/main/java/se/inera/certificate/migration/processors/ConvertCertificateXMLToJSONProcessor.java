@@ -68,7 +68,7 @@ public class ConvertCertificateXMLToJSONProcessor implements InitializingBean,
     }
 
     public String convertOriginalCertificate(OriginalCertificate orgCert) throws IOException,
-            CertificateProcessingException {
+            AbstractCertificateProcessingException {
 
         HttpClient client = getHttpClient();
 
@@ -100,7 +100,7 @@ public class ConvertCertificateXMLToJSONProcessor implements InitializingBean,
                 String errMsg = MessageFormat.format(
                         "Got HTTP error code {0} when processing OriginalCertificate: {1}", new Object[] {
                                 statusCode, orgCert });
-                throw new CertificateProcessingException(errMsg);
+                throw new FatalCertificateProcessingException(errMsg);
             }
         }
 

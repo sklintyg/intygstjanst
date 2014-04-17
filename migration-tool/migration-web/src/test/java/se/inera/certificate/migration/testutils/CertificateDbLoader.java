@@ -30,7 +30,7 @@ public class CertificateDbLoader {
         CertificateDataInitialiser dataInitialiser = (CertificateDataInitialiser) applicationContext.getBean("certificateDataInitialiser");
         
         int nbrOfCerts = Integer.parseInt(args[0]);
-        dataInitialiser.generateAndLoadCerts(nbrOfCerts);
+        dataInitialiser.generateAndLoadCerts(nbrOfCerts, true);
         
         logger.info("Loading done!");
     }

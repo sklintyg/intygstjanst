@@ -30,8 +30,8 @@ import se.inera.certificate.migration.testutils.CertificateDataInitialiser;
  */
 public class CertTestDao extends JdbcDaoSupport {
 
-    private static final String INSERT_ORG_CERT = "INSERT INTO ORIGINAL_CERTIFICATE (RECEIVED, DOCUMENT) " +
-            "VALUES (?, ?)";
+    private static final String INSERT_ORG_CERT = "INSERT INTO ORIGINAL_CERTIFICATE (RECEIVED, DOCUMENT, CERTIFICATE_ID) " +
+            "VALUES (?, ?, ?)";
     
     private static final String INSERT_CERT = "INSERT INTO CERTIFICATE (ID, CERTIFICATE_TYPE, CIVIC_REGISTRATION_NUMBER, " +
     		"CARE_UNIT_NAME, CARE_UNIT_ID, SIGNING_DOCTOR_NAME, SIGNED_DATE, VALID_FROM_DATE, VALID_TO_DATE, DOCUMENT " +
@@ -58,7 +58,7 @@ public class CertTestDao extends JdbcDaoSupport {
         getJdbcTemplate().update(INSERT_CERT, new CertPreparedStatementSetter(cert));
     }
     
-    public void insertOriginalCertificate(String certificateId, final byte[] certXML) throws Exception {
+    public void insertOriginalCertificate(final String certificateId, final byte[] certXML) throws Exception {
                 
         if (certXML == null) {
             LOG.error("Can not complete insert operation for certificate with id {}", certificateId);
@@ -74,6 +74,7 @@ public class CertTestDao extends JdbcDaoSupport {
                 Timestamp ts = new Timestamp(System.currentTimeMillis());
                 ps.setTimestamp(1, ts);
                 lobCreator.setBlobAsBytes(ps, 2, certXML);
+                ps.setString(3, certificateId);
             }
         });
         

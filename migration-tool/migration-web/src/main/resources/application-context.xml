@@ -12,8 +12,7 @@
   <context:component-scan base-package="se.inera.certificate.migration" />
 
   <!-- Load the context for the deployed batch jobs -->
-  <import resource="classpath:/spring/props-context.xml" />
-  <import resource="classpath:/spring/data-source-context.xml" />
+  <import resource="classpath:/spring/data-source-context.xml"/>
   <import resource="classpath:/spring/batch-context.xml" />
   <import resource="classpath:/spring/jms-context.xml" />
   <import resource="classpath:/spring/certificates-to-statistics-context.xml" />

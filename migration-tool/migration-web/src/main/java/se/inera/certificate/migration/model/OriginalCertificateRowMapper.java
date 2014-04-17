@@ -13,6 +13,7 @@ public class OriginalCertificateRowMapper implements RowMapper<OriginalCertifica
         
         certificate.setOriginalCertificateId(rs.getInt("id"));
         certificate.setOriginalCertificate(rs.getBytes("document"));
+        certificate.setCertificateId(rs.getString("certificate_id"));
         
         return certificate ;
     }

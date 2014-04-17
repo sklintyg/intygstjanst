@@ -8,7 +8,7 @@
   <parent>
     <groupId>se.inera.certificate.migration</groupId>
     <artifactId>migration-tool-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
   </parent>
   <modules>
     <module>mc2wc-common</module>

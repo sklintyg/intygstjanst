@@ -132,7 +132,7 @@ public class ConvertCertificateXMLToJSONProcessorTest {
 		
 	}
 	
-	@Test(expected = CertificateProcessingException.class)
+	@Test(expected = FatalCertificateProcessingException.class)
     public void testProcessorWith404() throws Exception {
         
         processor = new ConvertCertificateXMLToJSONProcessor();
