@@ -1,7 +1,5 @@
 package se.inera.certificate.integration.validator;
 
-import iso.v21090.dt.v1.II;
-
 import java.util.List;
 
 import riv.insuranceprocess.healthreporting.medcertqa._1.VardAdresseringsType;
@@ -14,7 +12,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType;
  */
 public class VardAdresseringsTypeValidator {
 
-    private static final String ARBETSPLATS_CODE_OID = "1.2.752.29.4.71";
     private VardAdresseringsType vardAdress;
     private List<String> validationErrors = null;
 
