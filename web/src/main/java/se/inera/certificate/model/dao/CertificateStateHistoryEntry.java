@@ -27,9 +27,9 @@ public class CertificateStateHistoryEntry {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     private LocalDateTime timestamp;
 
-    private final static Ordering<LocalDateTime> ORDERING_DESC_TIME_NULL_LAST = Ordering.<LocalDateTime>natural().reverse().nullsFirst();
+    private static final Ordering<LocalDateTime> ORDERING_DESC_TIME_NULL_LAST = Ordering.<LocalDateTime>natural().reverse().nullsFirst();
 
-    final static Ordering<CertificateStateHistoryEntry> byTimestampDesc = new Ordering<CertificateStateHistoryEntry>() {
+    static final Ordering<CertificateStateHistoryEntry> BY_TIMESTAMP_DESC = new Ordering<CertificateStateHistoryEntry>() {
         @Override
         public int compare(CertificateStateHistoryEntry left, CertificateStateHistoryEntry right) {
             return ORDERING_DESC_TIME_NULL_LAST.compare(left.timestamp, right.timestamp);
@@ -75,10 +75,9 @@ public class CertificateStateHistoryEntry {
 
     @Override
     public String toString() {
-        return "CertificateStateHistoryEntry{" +
-                "target='" + target + '\'' +
-                ", state=" + state +
-                ", timestamp=" + timestamp +
-                '}';
+        return "CertificateStateHistoryEntry{"
+                + "target='" + target + '\''
+                + ", state=" + state + ", timestamp="
+                + timestamp + '}';
     }
 }

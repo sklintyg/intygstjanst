@@ -27,7 +27,7 @@ public class CertificateStateHistoryEntryTest {
 
         Collection<CertificateStateHistoryEntry> c = Arrays.asList( e1, e2, e3, e4 );
 
-        List<CertificateStateHistoryEntry> r = CertificateStateHistoryEntry.byTimestampDesc.sortedCopy(c);
+        List<CertificateStateHistoryEntry> r = CertificateStateHistoryEntry.BY_TIMESTAMP_DESC.sortedCopy(c);
 
         assertNull(r.get(0).getTimestamp());
         assertEquals(LocalDateTime.parse("2013-08-21T12:00:01"), r.get(1).getTimestamp());

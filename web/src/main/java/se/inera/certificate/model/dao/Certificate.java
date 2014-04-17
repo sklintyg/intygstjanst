@@ -263,7 +263,7 @@ public class Certificate {
     }
 
     public List<CertificateStateHistoryEntry> getStates() {
-        return Collections.unmodifiableList(CertificateStateHistoryEntry.byTimestampDesc.sortedCopy(states));
+        return Collections.unmodifiableList(CertificateStateHistoryEntry.BY_TIMESTAMP_DESC.sortedCopy(states));
     }
 
     public void setStates(List<CertificateStateHistoryEntry> states) {

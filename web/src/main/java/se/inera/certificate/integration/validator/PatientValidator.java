@@ -13,7 +13,7 @@ import com.google.common.base.Joiner;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
 
-public class PatientValidator {
+public final class PatientValidator {
 
     private static final Logger LOG = LoggerFactory.getLogger(PatientValidator.class);
 
@@ -22,8 +22,11 @@ public class PatientValidator {
     private static final String PERSON_NUMBER_REGEX = "[0-9]{8}[-+]?[0-9]{4}";
     private static final String PERSON_NUMBER_WITHOUT_DASH_REGEX = "[0-9]{12}";
 
+    private PatientValidator() {
+    }
+
     /**
-     *  Validate and correct patient information
+     *  Validate and correct patient information.
      *  @return true if valid enough to continue
      */
     public static boolean validateAndCorrect(String certificateId, PatientType patient, List<String> validationErrors) {
@@ -41,8 +44,8 @@ public class PatientValidator {
         }
         //Correct personnummer without dashes
         String personNumber = patient.getPersonId().getExtension();
-        if (personNumber.length() == 12 && Pattern.matches(PERSON_NUMBER_WITHOUT_DASH_REGEX, personNumber)) {
-            patient.getPersonId().setExtension(personNumber.substring(0,8) + "-" + personNumber.substring(8));
+        if (Pattern.matches(PERSON_NUMBER_WITHOUT_DASH_REGEX, personNumber)) {
+            patient.getPersonId().setExtension(formatWithDash(personNumber));
             LOG.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId + ": Person-id " + personNumber + " is lacking a separating dash - corrected.");
         }
         // Check patient o.i.d.
@@ -51,9 +54,15 @@ public class PatientValidator {
         }
 
         // Check format of patient id (has to be a valid personnummer)
-        if (personNumber == null || !Pattern.matches(PERSON_NUMBER_REGEX, personNumber)) {
+        if (!Pattern.matches(PERSON_NUMBER_REGEX, personNumber)) {
             validationErrors.add("Wrong format for person-id! Valid format is YYYYMMDD-XXXX or YYYYMMDD+XXXX.");
         }
         return true;
     }
+
+    // CHECKSTYLE:OFF MagicNumber
+    private static String formatWithDash(String personNumber) {
+        return personNumber.substring(0, 8) + "-" + personNumber.substring(8);
+    }
+    // CHECKSTYLE:ON MagicNumber
 }
