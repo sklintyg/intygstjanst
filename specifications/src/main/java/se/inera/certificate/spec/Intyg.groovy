@@ -118,7 +118,7 @@ public class Intyg extends RestClientFixture {
             // slurping the FK7263 template
             certificate = new JsonSlurper().parse(new InputStreamReader(new ClassPathResource("${typ}_${mall}_template.json").getInputStream()))
         } catch (IOException e) {
-            // slurping the FK7263 template
+            // if template for specific type cannot be loaded, use generic template
             certificate = new JsonSlurper().parse(new InputStreamReader(new ClassPathResource("generic_template.json").getInputStream()))
             certificate.typ.code = typ
         }
