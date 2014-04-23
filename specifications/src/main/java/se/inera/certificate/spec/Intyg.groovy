@@ -113,8 +113,15 @@ public class Intyg extends RestClientFixture {
     }
 
     protected document(typ) {
-        // slurping the FK7263 template
-        def certificate = new JsonSlurper().parse(new InputStreamReader(new ClassPathResource("${typ}_${mall}_template.json").getInputStream()))
+        def certificate
+        try {
+            // slurping the FK7263 template
+            certificate = new JsonSlurper().parse(new InputStreamReader(new ClassPathResource("${typ}_${mall}_template.json").getInputStream()))
+        } catch (IOException e) {
+            // slurping the FK7263 template
+            certificate = new JsonSlurper().parse(new InputStreamReader(new ClassPathResource("generic_template.json").getInputStream()))
+            certificate.typ.code = typ
+        }
 
         // setting the certificate ID
         certificate.'id'.root = id
