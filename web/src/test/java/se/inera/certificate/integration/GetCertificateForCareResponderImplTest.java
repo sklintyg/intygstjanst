@@ -50,6 +50,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3c.dom.Node;
@@ -58,6 +59,7 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificat
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.ObjectFactory;
 import se.inera.certificate.exception.InvalidCertificateException;
+import se.inera.certificate.integration.converter.MetaDataResolver;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Kod;
@@ -80,6 +82,7 @@ public class GetCertificateForCareResponderImplTest {
     private static final String CERTIFICATE_ID = "123456";
     private static final String CERTIFICATE_TYPE = "fk7263";
     private static final ExternalModelHolder CERTIFICATE_DATA = new ExternalModelHolder("<intyg>");
+    private static final String CERTIFICATE_COMPLEMENATARY_INFO = "DATA FROM MODULE";
 
     @Mock
     private CertificateService certificateService = mock(CertificateService.class);
@@ -95,6 +98,10 @@ public class GetCertificateForCareResponderImplTest {
 
     @Mock
     private ModuleApi moduleRestApi = mock(ModuleApi.class);
+
+    @Spy
+    @InjectMocks
+    private MetaDataResolver metaDataResolver = new MetaDataResolver();
 
     @Test
     public void getCertificateForCare() throws Exception {
@@ -112,6 +119,7 @@ public class GetCertificateForCareResponderImplTest {
         TransportModelResponse marshallResponse = new TransportModelResponse(IOUtils.toString(new ClassPathResource(
                 "GetCertificateForCareResponderImplTest/utlatande.xml").getInputStream()));
         when(moduleRestApi.marshall(any(ExternalModelHolder.class), eq(UTLATANDE_V1))).thenReturn(marshallResponse);
+        when(moduleRestApi.getComplementaryInfo(any(ExternalModelHolder.class))).thenReturn(CERTIFICATE_COMPLEMENATARY_INFO);
 
         GetCertificateForCareRequestType request = createGetCertificateForCareRequest(CERTIFICATE_ID);
         GetCertificateForCareResponseType response = responder.getCertificateForCare(null, request);

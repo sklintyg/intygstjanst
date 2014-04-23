@@ -9,6 +9,7 @@
     <ns3:validTo>2013-10-03</ns3:validTo>
     <ns3:signDate>2013-10-03T00:00:00</ns3:signDate>
     <ns3:available>true</ns3:available>
+    <ns3:complemantaryInfo>DATA FROM MODULE</ns3:complemantaryInfo>
   </meta>
   <certificate>
     <ns3:utlatande-id extension="123" root="root"/>

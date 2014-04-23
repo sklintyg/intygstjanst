@@ -19,14 +19,11 @@
 package se.inera.certificate.integration.converter;
 
 import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
 
-import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.StatusType;
 import se.inera.certificate.integration.builder.CertificateMetaTypeBuilder;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.util.Iterables;
 import se.inera.ifv.insuranceprocess.certificate.v1.CertificateMetaType;
-import se.inera.ifv.insuranceprocess.certificate.v1.CertificateStatusType;
 
 /**
  * @author andreaskaltenbach
@@ -51,39 +48,5 @@ public final class ModelConverter {
 
         Iterables.addAll(meta.getStatus(), CertificateStateHistoryEntryConverter.toCertificateStatusType(source.getStates()));
         return builder.build();
-    }
-
-    /**
-     * Converts a {@link CertificateMetaType} defined in insuranceprocess healthreporting to the counterpart in
-     * clinicalprocess heathcond.
-     * 
-     * @param meta
-     *            The metadata (in insuranceprocess healthreporting) to convert.
-     * @return The converted metadata (clinicalprocess heathcond).
-     */
-    public static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.CertificateMetaType toClinicalProcessCertificateMetaType(
-            CertificateMetaType meta) {
-        se.inera.certificate.clinicalprocess.healthcond.certificate.v1.CertificateMetaType result = new se.inera.certificate.clinicalprocess.healthcond.certificate.v1.CertificateMetaType();
-
-        result.setCertificateId(meta.getCertificateId());
-        result.setCertificateType(meta.getCertificateType());
-        result.setValidFrom(meta.getValidFrom());
-        result.setValidTo(meta.getValidTo());
-        result.setIssuerName(meta.getIssuerName());
-        result.setFacilityName(meta.getFacilityName());
-        result.setSignDate(meta.getSignDate().toLocalDateTime(LocalTime.MIDNIGHT));
-        result.setAvailable(meta.getAvailable());
-
-        for (CertificateStatusType statusType : meta.getStatus()) {
-            se.inera.certificate.clinicalprocess.healthcond.certificate.v1.CertificateStatusType resultStatusType = new se.inera.certificate.clinicalprocess.healthcond.certificate.v1.CertificateStatusType();
-
-            resultStatusType.setTarget(statusType.getTarget());
-            resultStatusType.setTimestamp(statusType.getTimestamp());
-            resultStatusType.setType(StatusType.fromValue(statusType.getType().name()));
-
-            result.getStatus().add(resultStatusType);
-        }
-
-        return result;
     }
 }

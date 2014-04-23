@@ -29,6 +29,7 @@ import javax.xml.transform.dom.DOMSource;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
 
@@ -38,9 +39,11 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificat
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
-import se.inera.certificate.integration.converter.ModelConverter;
+import se.inera.certificate.integration.converter.MetaDataResolver;
+import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
+import se.inera.certificate.modules.support.api.exception.ModuleException;
 
 import com.google.common.base.Throwables;
 
@@ -55,6 +58,9 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
     private static final Logger LOGGER = LoggerFactory.getLogger(GetCertificateForCareResponderImpl.class);
 
     private static Unmarshaller unmarshaller;
+
+    @Autowired
+    private MetaDataResolver metaDataResolver;
 
     static {
         try {
@@ -79,16 +85,22 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
             return response;
         }
 
-        Certificate certificate = certificateOrResultType.getCertificate();
-        response.setMeta(ModelConverter.toClinicalProcessCertificateMetaType(ModelConverter
-                .toCertificateMetaType(certificate)));
-        attachCertificateDocument(certificate, response);
+        try {
+            Certificate certificate = certificateOrResultType.getCertificate();
+            response.setMeta(metaDataResolver.toClinicalProcessCertificateMetaType(certificate));
+            attachCertificateDocument(certificate, response);
 
-        if (certificate.isRevoked()) {
-            response.setResult(errorResult(ErrorIdType.REVOKED, "Certificate '" + request.getCertificateId()  + "' has been revoked"));
-        } else {
-            response.setResult(okResult());
+            if (certificate.isRevoked()) {
+                response.setResult(errorResult(ErrorIdType.REVOKED, "Certificate '" + request.getCertificateId()  + "' has been revoked"));
+            } else {
+                response.setResult(okResult());
+            }
+
+        } catch (ModuleNotFoundException | ModuleException e) {
+            response.setResult(errorResult(ErrorIdType.APPLICATION_ERROR, "Module error when processing certificates"));
+            LOGGER.error(e.getMessage());
         }
+
         return response;
     }
 
