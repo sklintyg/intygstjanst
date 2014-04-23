@@ -110,8 +110,15 @@ public class Intyg extends RestClientFixture {
     }
 
     protected document(typ) {
-        // slurping the FK7263 template
-        def certificate = new JsonSlurper().parse(new InputStreamReader(new ClassPathResource("${typ}_${mall}_template.json").getInputStream()))
+        def certificate
+        try {
+            // slurping the FK7263 template
+            certificate = new JsonSlurper().parse(new InputStreamReader(new ClassPathResource("${typ}_${mall}_template.json").getInputStream()))
+        } catch (IOException e) {
+            // slurping the FK7263 template
+            certificate = new JsonSlurper().parse(new InputStreamReader(new ClassPathResource("generic_template.json").getInputStream()))
+            certificate.typ.code = typ
+        }
 
         // setting the certificate ID
         certificate.'id'.root = id
@@ -131,30 +138,32 @@ public class Intyg extends RestClientFixture {
         certificate.signeringsdatum = utfärdat
         certificate.skickatdatum = utfärdat
 
-        certificate.vardkontakter.each {
-            if (it.vardkontaktstid != null) {
-                it.vardkontaktstid.from = utfärdat; it.vardkontaktstid.tom = utfärdat
+        if (typ == "fk7263") {
+            certificate.vardkontakter.each {
+                if (it.vardkontaktstid != null) {
+                    it.vardkontaktstid.from = utfärdat; it.vardkontaktstid.tom = utfärdat
+                }
             }
-        }
-//        certificate.vardkontakter.each { it.vardkontaktstid.from = utfärdat; it.vardkontaktstid.tom = utfärdat }
-        
-        certificate.referenser.each { it.datum = utfärdat }
-        def observationsperioder = []
-        certificate.observationer.each {observation ->
-            if (observation?.observationskod?.code == "302119000") {
-                observationsperioder << observation.observationsperiod
+    //        certificate.vardkontakter.each { it.vardkontaktstid.from = utfärdat; it.vardkontaktstid.tom = utfärdat }
+            
+            certificate.referenser.each { it.datum = utfärdat }
+            def observationsperioder = []
+            certificate.observationer.each {observation ->
+                if (observation?.observationskod?.code == "302119000") {
+                    observationsperioder << observation.observationsperiod
+                }
             }
-        }
-        observationsperioder.eachWithIndex {period, index ->
-            period.from = new Date().parse("yyyy-MM-dd", giltigtFrån).plus(index * 2).format("yyyy-MM-dd")
-            if (index + 1 < observationsperioder.size()) {
-                period.tom = new Date().parse("yyyy-MM-dd", giltigtFrån).plus((index * 2) + 1).format("yyyy-MM-dd")
-            } else {
-                period.tom = giltigtTill
+            observationsperioder.eachWithIndex {period, index ->
+                period.from = new Date().parse("yyyy-MM-dd", giltigtFrån).plus(index * 2).format("yyyy-MM-dd")
+                if (index + 1 < observationsperioder.size()) {
+                    period.tom = new Date().parse("yyyy-MM-dd", giltigtFrån).plus((index * 2) + 1).format("yyyy-MM-dd")
+                } else {
+                    period.tom = giltigtTill
+                }
             }
+            certificate.validFromDate = giltigtFrån
+            certificate.validToDate = giltigtTill
         }
-        certificate.validFromDate = giltigtFrån
-        certificate.validToDate = giltigtTill
         
         JsonOutput.toJson(certificate)
     }
