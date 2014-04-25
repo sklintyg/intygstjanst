@@ -116,6 +116,14 @@
                   </extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
+                    urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCitizen:1:rivtabp21=se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1
+                  </extraarg>
+                  <extraarg>-p</extraarg>
+                  <extraarg>
+                    urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCitizenResponder:1=se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1
+                  </extraarg>
+                  <extraarg>-p</extraarg>
+                  <extraarg>
                     urn:riv:clinicalprocess:healthcond:certificate:1=se.inera.certificate.clinicalprocess.healthcond.certificate.v1
                   </extraarg>
 
@@ -298,6 +306,23 @@
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
                       classpath:schemas/clinicalprocess_healthcond_certificate/interactions/ListCertificatesForCareInteraction/ListCertificatesForCareInteraction_0.9_RIVTABP21.wsdl
+                    </extraarg>
+                  </extraargs>
+                </wsdlOption>
+
+                <wsdlOption>
+                  <wsdl>
+                    ${schema.path}/clinicalprocess_healthcond_certificate/interactions/ListCertificatesForCitizenInteraction/ListCertificatesForCitizenInteraction_0.9_RIVTABP21.wsdl
+                  </wsdl>
+                  <bindingFiles>
+                    <bindingFile>
+                      ${basedir}/bindings/general-intyg-binding.xjb
+                    </bindingFile>
+                  </bindingFiles>
+                  <extraargs>
+                    <extraarg>-wsdlLocation</extraarg>
+                    <extraarg>
+                      classpath:schemas/clinicalprocess_healthcond_certificate/interactions/ListCertificatesForCitizenInteraction/ListCertificatesForCitizenInteraction_0.9_RIVTABP21.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>

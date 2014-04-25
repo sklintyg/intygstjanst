@@ -65,6 +65,15 @@
       </bean>
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
+  <jaxws:endpoint address="/list-certificates-for-citizen/v1.0"
+                  implementor="se.inera.certificate.integration.ListCertificatesForCitizenResponderImpl">
+    <jaxws:outFaultInterceptors>
+      <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+        <constructor-arg
+                value="transform/clinicalprocess-healthcond-certificate/list-certificates-for-citizen-transform.xslt"/>
+      </bean>
+    </jaxws:outFaultInterceptors>
+  </jaxws:endpoint>
 
   <jaxws:endpoint address="/get-certificate-content/v1.0"
                   implementor="se.inera.certificate.integration.GetCertificateContentResponderImpl">

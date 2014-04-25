@@ -63,7 +63,12 @@ public class ClinicalProcessCertificateMetaTypeBuilder {
         metaType.getStatus().add(certificateStatusType);
         return this;
     }
-    
+
+    public ClinicalProcessCertificateMetaTypeBuilder status(CertificateStatusType certificateStatusType) {
+        metaType.getStatus().add(certificateStatusType);
+        return this;
+    }
+
     public ClinicalProcessCertificateMetaTypeBuilder complementaryInfo(String complemenatryInfo) {
         metaType.setComplemantaryInfo(complemenatryInfo);
         return this;
