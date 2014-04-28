@@ -33,7 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
 
+import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
 import se.inera.certificate.integration.exception.ExternalWebServiceCallFailedException;
+import se.inera.certificate.integration.exception.ResultTypeErrorException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.Utlatande;
@@ -41,6 +43,7 @@ import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
 import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
+import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
@@ -70,6 +73,9 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     @Autowired
     private RegisterMedicalCertificateResponderInterface registerMedicalCertificateQuestionClient;
 
+    @Autowired
+    private se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponderInterface registerCertificateClient;
+
     @Override
     public void sendCertificate(Certificate certificate, String target) {
 
@@ -80,7 +86,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             TransportModelResponse response = module.getModuleApi().marshall(new ExternalModelHolder(certificate.getDocument()),
                     LEGACY_LAKARUTLATANDE);
 
-            invokeReceiverService(response.getTransportModel(), module.getDefaultRecieverLogicalAddress());
+            invokeReceiverService(response.getTransportModel(), module.getDefaultRecieverLogicalAddress(), LEGACY_LAKARUTLATANDE);
 
         } catch (ModuleNotFoundException e) {
             String message = String.format("The module '%s' was not found - not registered in application",
@@ -100,27 +106,41 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     static {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class,
+                    se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType.class);
             UNMARSHALLER = jaxbContext.createUnmarshaller();
         } catch (JAXBException e) {
             Throwables.propagate(e);
         }
     }
 
-    private void invokeReceiverService(String xml, String logicalAddress) {
+    private void invokeReceiverService(String xml, String logicalAddress, TransportModelVersion type) {
+        Class<?> requestType = (type == LEGACY_LAKARUTLATANDE ? RegisterMedicalCertificateType.class
+                : se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType.class);
 
         try {
-            RegisterMedicalCertificateType request = UNMARSHALLER.unmarshal(
-                    new StreamSource(new ByteArrayInputStream(xml.getBytes())), RegisterMedicalCertificateType.class)
+            Object request = UNMARSHALLER.unmarshal(
+                    new StreamSource(new ByteArrayInputStream(xml.getBytes())), requestType)
                     .getValue();
-            AttributedURIType address = new AttributedURIType();
-            address.setValue(logicalAddress);
-            RegisterMedicalCertificateResponseType response = registerMedicalCertificateQuestionClient
-                    .registerMedicalCertificate(address, request);
+            if (type == LEGACY_LAKARUTLATANDE) {
+                AttributedURIType address = new AttributedURIType();
+                address.setValue(logicalAddress);
+                RegisterMedicalCertificateResponseType response = registerMedicalCertificateQuestionClient
+                        .registerMedicalCertificate(address, (RegisterMedicalCertificateType) request);
 
-            // check whether call was successful or not
-            if (response.getResult().getResultCode() != ResultCodeEnum.OK) {
-                throw new ExternalWebServiceCallFailedException(response.getResult());
+                // check whether call was successful or not
+                if (response.getResult().getResultCode() != ResultCodeEnum.OK) {
+                    throw new ExternalWebServiceCallFailedException(response.getResult());
+                }
+
+            } else {
+                se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType response = registerCertificateClient
+                        .registerMedicalCertificate(logicalAddress, (se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType) request);
+
+                // check whether call was successful or not
+                if (response.getResult().getResultCode() != ResultCodeType.OK) {
+                    throw new ResultTypeErrorException(response.getResult());
+                }
             }
 
         } catch (JAXBException e) {
