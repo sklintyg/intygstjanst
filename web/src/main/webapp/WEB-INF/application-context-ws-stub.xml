@@ -13,7 +13,7 @@
 
   <!-- ws endpoints -->
 
-  <jaxws:endpoint address="/register-medcial-certificate-stub" implementor="se.inera.certificate.integration.stub.RegisterMedicalCertificateResponderStub" />
+  <jaxws:endpoint address="/register-medical-certificate-stub" implementor="se.inera.certificate.integration.stub.RegisterMedicalCertificateResponderStub" />
   <jaxws:endpoint address="/register-certificate-stub" implementor="se.inera.certificate.integration.stub.RegisterCertificateResponderStub" />
   <jaxws:endpoint address="/send-certificate-question-stub" implementor="se.inera.certificate.integration.stub.SendMedicalCertificateQuestionResponderStub" />
   <jaxws:endpoint address="/send-certificate-answer-stub" implementor="se.inera.certificate.integration.stub.SendMedicalCertificateAnswerResponderStub" />

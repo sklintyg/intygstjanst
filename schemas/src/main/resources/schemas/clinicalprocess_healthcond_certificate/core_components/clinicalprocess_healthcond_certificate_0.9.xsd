@@ -37,22 +37,34 @@
   </xs:complexType>
 
   <xs:complexType name="utlatandeId">
-    <xs:attribute name="root" type="nonEmptyString" use="required"/>
-    <xs:attribute name="extension" type="nonEmptyString" use="optional"/>
+    <xs:complexContent>
+      <xs:restriction base="iso:II">
+        <xs:attribute name="root" type="iso:Uid" use="required"/>
+        <xs:attribute name="extension" type="nonEmptyString" use="optional"/>
+      </xs:restriction>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="utlatandeTyp">
-    <xs:attribute name="code" type="xs:string" use="required"/>
-    <xs:attribute name="codeSystem" type="xs:string" use="required" fixed="f6fb361a-e31d-48b8-8657-99b63912dd9b"/>
+    <xs:complexContent>
+      <xs:restriction base="iso:CD">
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="codeSystem" type="iso:Uid" use="required" fixed="f6fb361a-e31d-48b8-8657-99b63912dd9b"/>
+        <xs:attribute name="codeSystemName" type="xs:string" use="required" fixed="kv_utlåtandetyp_intyg"/>
+      </xs:restriction>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="personId">
-    <xs:attribute name="root" type="patientIdRoot" use="required"/>
-    <xs:attribute name="extension" type="patientIdExtension" use="required"/>
+    <xs:complexContent>
+      <xs:restriction base="iso:II">
+        <xs:attribute name="root" type="patientIdRoot" use="required"/>
+        <xs:attribute name="extension" type="patientIdExtension" use="required"/>
+      </xs:restriction>
+    </xs:complexContent>
   </xs:complexType>
   <xs:simpleType name="patientIdRoot">
-    <xs:restriction base="xs:string">
-      <xs:minLength value="1"/>
+    <xs:restriction base="iso:Uid">
       <xs:enumeration value="1.2.752.129.2.1.3.1"/>
       <xs:enumeration value="1.2.752.129.2.1.3.3"/>
     </xs:restriction>
@@ -64,13 +76,21 @@
   </xs:simpleType>
 
   <xs:complexType name="hsaId">
-    <xs:attribute name="root" type="xs:string" use="required" fixed="1.2.752.129.2.1.4.1"/>
-    <xs:attribute name="extension" type="nonEmptyString" use="required"/>
+    <xs:complexContent>
+      <xs:restriction base="iso:II">
+        <xs:attribute name="root" type="iso:Uid" use="required" fixed="1.2.752.129.2.1.4.1"/>
+        <xs:attribute name="extension" type="nonEmptyString" use="required"/>
+      </xs:restriction>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="arbetsplatsKod">
-    <xs:attribute name="root" type="xs:string" use="required" fixed="1.2.752.29.4.71"/>
-    <xs:attribute name="extension" type="nonEmptyString" use="required"/>
+    <xs:complexContent>
+      <xs:restriction base="iso:II">
+        <xs:attribute name="root" type="iso:Uid" use="required" fixed="1.2.752.29.4.71"/>
+        <xs:attribute name="extension" type="nonEmptyString" use="required"/>
+      </xs:restriction>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="hosPersonalType">

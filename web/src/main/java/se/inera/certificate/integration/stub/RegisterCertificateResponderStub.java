@@ -19,11 +19,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.ObjectFactory;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponderInterface;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ObjectFactory;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.integration.validator.ValidationException;
@@ -52,7 +53,7 @@ public class RegisterCertificateResponderStub implements RegisterMedicalCertific
 
     @PostConstruct
     public void initializeJaxbContext() throws JAXBException, ModuleNotFoundException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
+        JAXBContext jaxbContext = JAXBContext.newInstance(UtlatandeType.class);
         marshaller = jaxbContext.createMarshaller();
         objectFactory = new ObjectFactory();
     }
@@ -89,17 +90,17 @@ public class RegisterCertificateResponderStub implements RegisterMedicalCertific
         return response;
     }
 
-    private String xmlToString(RegisterMedicalCertificateType registerMedicalCertificate) throws JAXBException {
+    private String xmlToString(UtlatandeType utlatandeType) throws JAXBException {
         StringWriter stringWriter = new StringWriter();
-        JAXBElement<RegisterMedicalCertificateType> requestElement = objectFactory
-                .createRegisterMedicalCertificate(registerMedicalCertificate);
+        JAXBElement<UtlatandeType> requestElement = objectFactory
+                .createUtlatande(utlatandeType);
         marshaller.marshal(requestElement, stringWriter);
         return stringWriter.toString();
     }
 
     protected void validate(RegisterMedicalCertificateType registerMedicalCertificate, ModuleApi module) throws JAXBException {
         try {
-            String transportXml = xmlToString(registerMedicalCertificate);
+            String transportXml = xmlToString(registerMedicalCertificate.getUtlatande());
             module.unmarshall(new TransportModelHolder(transportXml));
 
         } catch (ModuleValidationException e) {
@@ -107,7 +108,7 @@ public class RegisterCertificateResponderStub implements RegisterMedicalCertific
 
         } catch (ModuleException e) {
             String message = String.format("Failed to validate certificate for certificate type '%s'", registerMedicalCertificate.getUtlatande()
-                    .getTypAvUtlatande());
+                    .getTypAvUtlatande().getCode());
             LOGGER.error(message);
             // TODO: Throw better exception here?
             throw new RuntimeException(message, e);
