@@ -8,7 +8,7 @@ import org.springframework.util.StringUtils;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 
 public class RevokeRequestValidator {
-    RevokeType revokeRequest = null;
+    private RevokeType revokeRequest = null;
     private List<String> validationErrors = new ArrayList<>();
 
     public RevokeRequestValidator(RevokeType revokeRequest) {
@@ -28,7 +28,6 @@ public class RevokeRequestValidator {
         new LakarutlatandeEnkelTypeValidator(revokeRequest.getLakarutlatande(), validationErrors).validateAndCorrect();
         new VardAdresseringsTypeValidator(revokeRequest.getAdressVard(), validationErrors).validateAndCorrect();
 
- 
         if (!validationErrors.isEmpty()) {
             throw new ValidationException(validationErrors);
         }

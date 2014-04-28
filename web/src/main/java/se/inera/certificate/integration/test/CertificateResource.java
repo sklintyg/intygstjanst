@@ -1,7 +1,5 @@
 package se.inera.certificate.integration.test;
 
-import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.LEGACY_LAKARUTLATANDE;
-import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.UTLATANDE_V1;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -133,8 +131,8 @@ public class CertificateResource {
 
     protected String marshall(Certificate certificate) {
         String moduleName = certificate.getType();
-        TransportModelVersion transportModelVersion = moduleName.equals("fk7263") ?
-                TransportModelVersion.LEGACY_LAKARUTLATANDE : TransportModelVersion.UTLATANDE_V1;
+        TransportModelVersion transportModelVersion = moduleName.equals("fk7263")
+                ? TransportModelVersion.LEGACY_LAKARUTLATANDE : TransportModelVersion.UTLATANDE_V1;
 
         try {
             ModuleEntryPoint module = moduleApiFactory.getModuleEntryPoint(moduleName);

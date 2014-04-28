@@ -152,7 +152,7 @@ public class CertificateDaoImpl implements CertificateDao {
         }
         return result;
     }
-    
+
     private List<Certificate> filterDuplicates(List<Certificate> all) {
         Set<String> found = new HashSet<>();
         List<Certificate> filtered = new ArrayList<>(all.size());

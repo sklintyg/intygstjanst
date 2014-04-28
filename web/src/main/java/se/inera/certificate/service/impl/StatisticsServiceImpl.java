@@ -58,9 +58,9 @@ public class StatisticsServiceImpl implements StatisticsService {
                 LOG.error("Failure sending certificate '{}' type '{}' to statistics, no JmsTemplate configured", certificate.getId(), type);
                 return false;
             }
-                
+
             MessageCreator messageCreator = new MC(type, certificate);
-            jmsTemplate.send(messageCreator );
+            jmsTemplate.send(messageCreator);
             LOG.info(LogMarkers.MONITORING, "Certificate '{}' type '{}' sent to statistics", certificate.getId(), type);
             return true;
         } catch (JmsException e) {

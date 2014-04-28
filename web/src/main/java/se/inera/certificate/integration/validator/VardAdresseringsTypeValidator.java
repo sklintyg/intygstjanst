@@ -52,7 +52,6 @@ public class VardAdresseringsTypeValidator {
         }
 
         validateHosPersonalEnhet(hosPersonal.getEnhet());
-      
     }
 
     private void validateHosPersonalEnhet(EnhetType enhet) {

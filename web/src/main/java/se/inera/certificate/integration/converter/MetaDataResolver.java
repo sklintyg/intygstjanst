@@ -16,7 +16,7 @@ import se.inera.certificate.modules.support.api.exception.ModuleException;
 
 @Component
 public class MetaDataResolver {
-    
+
     @Autowired
     private ModuleApiFactory moduleApiFactory;
 

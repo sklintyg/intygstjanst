@@ -27,15 +27,14 @@ public class LakarutlatandeEnkelTypeValidator {
         if (lakarutlatandeEnkelType.getSigneringsTidpunkt() == null) {
             validationErrors.add("No signeringstidpunkt found!");
         }
-        
+
         validateAndCorrectPatient();
-       
     }
 
     private void validateAndCorrectPatient() {
         PatientType patient = lakarutlatandeEnkelType.getPatient();
         if (PatientValidator.validateAndCorrect(lakarutlatandeEnkelType.getLakarutlatandeId(), patient, validationErrors)) {
-        
+
             // Get namn for patient - mandatory
             if (patient.getFullstandigtNamn() == null || patient.getFullstandigtNamn().isEmpty()) {
                 validationErrors.add("No Patient fullstandigtNamn elements found or set!");

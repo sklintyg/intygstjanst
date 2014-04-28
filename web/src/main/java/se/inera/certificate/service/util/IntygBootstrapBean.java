@@ -9,7 +9,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -19,7 +18,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -59,8 +57,8 @@ public class IntygBootstrapBean {
     private class ResourceFilenameComparator implements Comparator<Resource> {
         @Override
         public int compare(Resource arg0, Resource arg1) {
-            String firstObjectsStrings[] = arg0.getFilename().split("-");
-            String secondObjectsStrings[] = arg1.getFilename().split("-");
+            String[] firstObjectsStrings = arg0.getFilename().split("-");
+            String[] secondObjectsStrings = arg1.getFilename().split("-");
             int first = 0, second = 0;
             for (String s : firstObjectsStrings) {
                 try {

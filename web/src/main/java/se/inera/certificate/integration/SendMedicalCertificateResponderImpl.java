@@ -33,7 +33,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
         SendMedicalCertificateResponseType response = new SendMedicalCertificateResponseType();
         try {
             new SendCertificateRequestValidator(request.getSend()).validateAndCorrect();
-            
+
             String certificateId = request.getSend().getLakarutlatande().getLakarutlatandeId();
             String civicRegistrationNumber = request.getSend().getLakarutlatande().getPatient().getPersonId()
                     .getExtension();
@@ -90,7 +90,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
 
     private String safeGetIssuedBy(SendMedicalCertificateRequestType request) {
         // Initialize log context info if available
-        if (request.getSend().getAdressVard() != null 
+        if (request.getSend().getAdressVard() != null
                 && request.getSend().getAdressVard().getHosPersonal() != null
                 && request.getSend().getAdressVard().getHosPersonal().getEnhet() != null
                 && request.getSend().getAdressVard().getHosPersonal().getEnhet().getEnhetsId() != null) {

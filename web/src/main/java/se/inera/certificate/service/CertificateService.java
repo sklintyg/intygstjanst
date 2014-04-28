@@ -36,7 +36,7 @@ public interface CertificateService {
     public enum SendStatus {
         OK, ALREADY_SENT
     }
-    
+
     /**
      * Returns the list of certificates for the patient and filter criteria.
      *
@@ -77,7 +77,7 @@ public interface CertificateService {
     Certificate getCertificate(String certificateId);
 
     /**
-     * Stores the given certificate
+     * Stores the given certificate.
      * @param xml the string representation of the incoming XML
      * @param type the certificate type
      * @return the created certificate

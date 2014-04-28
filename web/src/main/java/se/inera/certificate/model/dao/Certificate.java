@@ -48,8 +48,8 @@ import se.inera.certificate.model.util.Predicate;
 /**
  * This class represents the document part of a certificate. The document is stored as a binary large object in the
  * database. The encoding is UTF-8.
- * 
- * @author andreaskaltenbach
+ *
+ * * @author andreaskaltenbach
  */
 @Entity
 @Table(name = "CERTIFICATE")
@@ -88,7 +88,6 @@ public class Certificate {
     /**
      * Name of the doctor that signed the certificate.
      */
-    // TODO: naming? (PW)
     @Column(name = "SIGNING_DOCTOR_NAME", nullable = false)
     private String signingDoctorName;
 
@@ -141,7 +140,7 @@ public class Certificate {
 
     /**
      * Constructor that takes an id and a document.
-     * 
+     *
      * @param id
      *            the id
      * @param document
@@ -179,7 +178,7 @@ public class Certificate {
 
     /**
      * Sets the document data.
-     * 
+     *
      * @param document
      */
     public void setDocument(String document) {

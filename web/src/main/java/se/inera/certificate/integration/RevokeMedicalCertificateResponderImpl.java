@@ -46,7 +46,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
     private SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
 
     @Autowired
-    protected StatisticsService statisticsService;
+    private StatisticsService statisticsService;
 
     @Autowired
     @Value("${revokecertificate.address.fk7263}")
@@ -60,7 +60,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
 
         try {
             new RevokeRequestValidator(request.getRevoke()).validateAndCorrect();
-            
+
             String certificateId = request.getRevoke().getLakarutlatande().getLakarutlatandeId();
             String civicRegistrationNumber = request.getRevoke().getLakarutlatande().getPatient().getPersonId()
                     .getExtension();
@@ -74,7 +74,6 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
                     meddelande = "meddelande saknas";
                 }
 
-                // TODO: Vi behöver signeringstidpunkt för både fråga och intyg... /PW
                 LocalDateTime signTs = request.getRevoke().getLakarutlatande().getSigneringsTidpunkt();
                 LocalDateTime avsantTs = request.getRevoke().getAvsantTidpunkt();
                 VardAdresseringsType vardAddress = request.getRevoke().getAdressVard();
@@ -102,7 +101,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
                 }
             }
             LOGGER.info(LogMarkers.MONITORING, certificateId + " revoked");
-            statisticsService.revoked(certificate);
+            getStatisticsService().revoked(certificate);
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
             LOGGER.info(LogMarkers.MONITORING, "Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
@@ -149,7 +148,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
 
     protected String safeGetIssuedBy(RevokeMedicalCertificateRequestType request) {
         // Initialize log context info if available
-        if (request.getRevoke().getAdressVard() != null 
+        if (request.getRevoke().getAdressVard() != null
                 && request.getRevoke().getAdressVard().getHosPersonal() != null
                 && request.getRevoke().getAdressVard().getHosPersonal().getEnhet() != null
                 && request.getRevoke().getAdressVard().getHosPersonal().getEnhet().getEnhetsId() != null) {
@@ -169,5 +168,12 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
         }
         throw new RuntimeException("Informing Försäkringskassan about revoked certificate resulted in error");
     }
-}
 
+    public StatisticsService getStatisticsService() {
+        return statisticsService;
+    }
+
+    public void setStatisticsService(StatisticsService statisticsService) {
+        this.statisticsService = statisticsService;
+    }
+}

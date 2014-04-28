@@ -42,9 +42,9 @@ public abstract class AbstractGetCertificateResponderImpl {
 
     @Autowired
     private ModuleApiFactory moduleApiFactory;
-    
+
     /**
-     * 
+     *
      * @param certificateId
      * @param personnummer
      * @return
@@ -54,12 +54,12 @@ public abstract class AbstractGetCertificateResponderImpl {
             LOGGER.info(LogMarkers.VALIDATION, "Tried to get certificate with non-existing ceritificateId '.");
             return new CertificateOrResultType(errorResult(VALIDATION_ERROR, "Validation error: missing  certificateId"));
         }
-        
+
         if (personnummer == null || personnummer.length() == 0) {
             LOGGER.info(LogMarkers.VALIDATION, "Tried to get certificate with non-existing personnummer '.");
             return new CertificateOrResultType(errorResult(VALIDATION_ERROR, "Validation error: missing  personnummer"));
         }
-        
+
         try {
             return new CertificateOrResultType(certificateService.getCertificate(personnummer, certificateId));
         } catch (MissingConsentException ex) {
@@ -77,7 +77,7 @@ public abstract class AbstractGetCertificateResponderImpl {
             return new CertificateOrResultType((errorResult(REVOKED, "Certificate '" + certificateId + "' has been revoked")));
         }
     }
-    
+
     /**
      * Returns certificate matching specified certificateId.
      * Also returns revoked certificated, it's up to implemented subclass to determine behavior in that case.
@@ -107,7 +107,6 @@ public abstract class AbstractGetCertificateResponderImpl {
     private Document marshall(Certificate certificate, Utlatande utlatande) {
         try {
             ModuleEntryPoint module = moduleApiFactory.getModuleEntryPoint(utlatande.getTyp().getCode());
-            // TODO: Extend marshall with version
             TransportModelResponse response = module.getModuleApi().marshall(
                     new ExternalModelHolder(certificate.getDocument()), getMarshallVersion());
 

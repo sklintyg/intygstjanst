@@ -72,8 +72,7 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
             response.setResult(ResultOfCallUtil.infoResult("Certificate already exists"));
             String certificateId = registerMedicalCertificate.getLakarutlatande().getLakarutlatandeId();
             String issuedBy =  registerMedicalCertificate.getLakarutlatande().getSkapadAvHosPersonal().getEnhet().getEnhetsId().getExtension();
-            LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId +
-                    " issued by " + issuedBy +": Certificate already exists - ignored.");
+            LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId + " issued by " + issuedBy + ": Certificate already exists - ignored.");
         } catch (ValidationException e) {
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             LOGGER.error(LogMarkers.VALIDATION, e.getMessage());

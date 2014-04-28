@@ -86,14 +86,12 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             String message = String.format("The module '%s' was not found - not registered in application",
                     certificate.getType());
             LOGGER.error(message);
-            // TODO: Throw better exception here?
             throw new RuntimeException(message, e);
 
         } catch (ModuleException e) {
             String message = String.format("Failed to unmarshal certificate for certificate type '%s'",
                     certificate.getType());
             LOGGER.error(message);
-            // TODO: Throw better exception here?
             throw new RuntimeException(message);
         }
     }

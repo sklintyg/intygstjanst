@@ -29,60 +29,60 @@ import com.google.common.base.Throwables;
 @Transactional
 @SchemaValidation
 public class SendMedicalCertificateAnswerResponderStub implements
-		SendMedicalCertificateAnswerResponderInterface {
+        SendMedicalCertificateAnswerResponderInterface {
 
-	private Logger logger = LoggerFactory
-			.getLogger(SendMedicalCertificateQuestionResponderStub.class);
+    private Logger logger = LoggerFactory
+            .getLogger(SendMedicalCertificateQuestionResponderStub.class);
 
-	private final JAXBContext jaxbContext;
+    private final JAXBContext jaxbContext;
 
-	@Autowired
-	private FkMedicalCertificatesStore fkMedicalCertificatesStore;
+    @Autowired
+    private FkMedicalCertificatesStore fkMedicalCertificatesStore;
 
-	public SendMedicalCertificateAnswerResponderStub() {
-		try {
-			jaxbContext = JAXBContext
-					.newInstance(SendMedicalCertificateAnswerType.class);
-		} catch (JAXBException e) {
-			throw Throwables.propagate(e);
-		}
-	}
+    public SendMedicalCertificateAnswerResponderStub() {
+        try {
+            jaxbContext = JAXBContext
+                    .newInstance(SendMedicalCertificateAnswerType.class);
+        } catch (JAXBException e) {
+            throw Throwables.propagate(e);
+        }
+    }
 
-	@Override
-	public SendMedicalCertificateAnswerResponseType sendMedicalCertificateAnswer(
-			AttributedURIType logicalAddress,
-			SendMedicalCertificateAnswerType request) {
+    @Override
+    public SendMedicalCertificateAnswerResponseType sendMedicalCertificateAnswer(
+            AttributedURIType logicalAddress,
+            SendMedicalCertificateAnswerType request) {
 
-		SendMedicalCertificateAnswerResponseType response = new SendMedicalCertificateAnswerResponseType();
+        SendMedicalCertificateAnswerResponseType response = new SendMedicalCertificateAnswerResponseType();
 
-		try {
-			String id = request.getAnswer().getLakarutlatande()
-					.getLakarutlatandeId();
+        try {
+            String id = request.getAnswer().getLakarutlatande()
+                    .getLakarutlatandeId();
 
-			marshalCertificate(request);
-			logger.info("STUB Received answer concerning certificate with id: " + id);
-		} catch (JAXBException e) {
-			response.setResult(failResult("Unable to marshal certificate information"));
-			return response;
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
-		}
-		response.setResult(okResult());
-		return response;
-	}
+            marshalCertificate(request);
+            logger.info("STUB Received answer concerning certificate with id: " + id);
+        } catch (JAXBException e) {
+            response.setResult(failResult("Unable to marshal certificate information"));
+            return response;
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw t;
+        }
+        response.setResult(okResult());
+        return response;
+    }
 
-	private String marshalCertificate(SendMedicalCertificateAnswerType request)
-			throws JAXBException {
+    private String marshalCertificate(SendMedicalCertificateAnswerType request)
+            throws JAXBException {
 
-		StringWriter stringWriter = new StringWriter();
+        StringWriter stringWriter = new StringWriter();
 
-		JAXBElement<SendMedicalCertificateAnswerType> jaxbElement = new ObjectFactory()
-				.createSendMedicalCertificateAnswer(request);
+        JAXBElement<SendMedicalCertificateAnswerType> jaxbElement = new ObjectFactory()
+                .createSendMedicalCertificateAnswer(request);
 
-		jaxbContext.createMarshaller().marshal(jaxbElement, stringWriter);
+        jaxbContext.createMarshaller().marshal(jaxbElement, stringWriter);
 
-		return stringWriter.toString();
-	}
+        return stringWriter.toString();
+    }
 
 }

@@ -23,7 +23,7 @@ import org.w3c.dom.Node;
 /**
  *
  */
-public class XmlUtils {
+public final class XmlUtils {
 
     private static DocumentBuilderFactory dbf;
     private static TransformerFactory tf;
@@ -32,6 +32,9 @@ public class XmlUtils {
         dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         tf = TransformerFactory.newInstance();
+    }
+
+    private XmlUtils() {
     }
 
     public static Document documentFromSoapBody(SOAPMessage soapMessage, QName bodyName)
@@ -75,7 +78,7 @@ public class XmlUtils {
         Document document = dbf.newDocumentBuilder().newDocument();
         Node node = document.importNode(element, true);
         document.appendChild(node);
-        
+
         for (String prefix : namespaceDeclarations.keySet()) {
             String uri = namespaceDeclarations.get(prefix);
             if (node.lookupNamespaceURI(prefix) == null) {

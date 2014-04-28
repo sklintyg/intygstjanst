@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author andreaskaltenbach
  */
-public class CertificateStateHistoryEntryConverter {
+public final class CertificateStateHistoryEntryConverter {
 
     private CertificateStateHistoryEntryConverter() {
     }

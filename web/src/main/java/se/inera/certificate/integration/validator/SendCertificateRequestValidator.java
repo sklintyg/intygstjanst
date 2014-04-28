@@ -8,7 +8,7 @@ import org.springframework.util.StringUtils;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType;
 
 public class SendCertificateRequestValidator {
-    SendType sendRequest = null;
+    private SendType sendRequest = null;
     private List<String> validationErrors = new ArrayList<>();
 
     public SendCertificateRequestValidator(SendType sendRequest) {
@@ -28,7 +28,6 @@ public class SendCertificateRequestValidator {
         new LakarutlatandeEnkelTypeValidator(sendRequest.getLakarutlatande(), validationErrors).validateAndCorrect();
         new VardAdresseringsTypeValidator(sendRequest.getAdressVard(), validationErrors).validateAndCorrect();
 
- 
         if (!validationErrors.isEmpty()) {
             throw new ValidationException(validationErrors);
         }

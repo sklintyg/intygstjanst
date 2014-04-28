@@ -10,7 +10,10 @@ import java.io.InputStream;
 /**
  *
  */
-public class RestUtils {
+public final class RestUtils {
+
+    private RestUtils() {
+    }
 
     public static String entityAsString(Response response) {
         try {

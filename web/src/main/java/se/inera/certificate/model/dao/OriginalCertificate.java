@@ -3,7 +3,6 @@ package se.inera.certificate.model.dao;
 import java.io.UnsupportedEncodingException;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -28,7 +26,7 @@ import se.inera.certificate.model.ModelException;
 public class OriginalCertificate {
 
     /**
-     * Just needed for JPA compliance
+     * Just needed for JPA compliance.
      */
     @Id
     @GeneratedValue
@@ -50,12 +48,12 @@ public class OriginalCertificate {
     private byte[] document;
 
     @OneToOne(optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name="CERTIFICATE_ID")
+    @JoinColumn(name = "CERTIFICATE_ID")
     private Certificate certificate;
 
     public OriginalCertificate() {
     }
-    
+
     public OriginalCertificate(LocalDateTime received, String document, Certificate certificate) {
         this.received = received;
         this.document = toBytes(document);

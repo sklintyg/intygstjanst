@@ -107,7 +107,7 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
         } catch (ModuleException e) {
             String message = String.format("Failed to validate certificate for certificate type '%s'", FK7263);
             LOGGER.error(message);
-            // TODO: Throw better exception here?
+
             throw new RuntimeException(message, e);
         }
     }

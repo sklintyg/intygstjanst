@@ -48,13 +48,13 @@ public class GetCertificateResponderImpl extends AbstractGetCertificateResponder
 
         String certificateId = request.getCertificateId();
         String nationalIdentityNumber = request.getNationalIdentityNumber();
-        
+
         if (nationalIdentityNumber == null || nationalIdentityNumber.length() == 0) {
             LOGGER.info(LogMarkers.VALIDATION, "Tried to get certificate with non-existing nationalIdentityNumber '.");
             response.setResult(failResult("Validation error: missing  nationalIdentityNumber"));
             return response;
         }
-        
+
         CertificateOrResultType certificateOrResultType = getCertificate(certificateId, nationalIdentityNumber);
 
         if (certificateOrResultType.hasError()) {

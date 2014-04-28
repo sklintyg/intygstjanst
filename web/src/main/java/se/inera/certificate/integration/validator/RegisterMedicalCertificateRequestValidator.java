@@ -6,7 +6,7 @@ import java.util.List;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 
 public class RegisterMedicalCertificateRequestValidator {
-    RegisterMedicalCertificateType registerRequest = null;
+    private RegisterMedicalCertificateType registerRequest = null;
     private List<String> validationErrors = new ArrayList<>();
 
     public RegisterMedicalCertificateRequestValidator(RegisterMedicalCertificateType registerMedicalCertificate) {
@@ -17,7 +17,6 @@ public class RegisterMedicalCertificateRequestValidator {
         // use commmon validators for common elements
         new LakarUtlatandeTypeValidator(registerRequest.getLakarutlatande(), validationErrors).validateAndCorrect();
 
- 
         if (!validationErrors.isEmpty()) {
             throw new ValidationException(validationErrors);
         }

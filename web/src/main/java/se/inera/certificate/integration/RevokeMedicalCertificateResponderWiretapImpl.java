@@ -45,7 +45,7 @@ public class RevokeMedicalCertificateResponderWiretapImpl extends RevokeMedicalC
 
             Certificate certificate = certificateService.revokeCertificate(civicRegistrationNumber, certificateId);
             LOGGER.info(LogMarkers.MONITORING, certificateId + " revoked");
-            statisticsService.revoked(certificate);
+            getStatisticsService().revoked(certificate);
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
             LOGGER.info(LogMarkers.MONITORING, "Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"

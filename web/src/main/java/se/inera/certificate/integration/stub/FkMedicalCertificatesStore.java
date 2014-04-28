@@ -30,8 +30,8 @@ public class FkMedicalCertificatesStore {
     public void makulera(String id, String meddelande) {
         Map<String, String> m = certificates.get(id);
         if (m != null) {
-        	m.put("Makulerad", "JA");
-        	m.put("Meddelande", meddelande);
+            m.put("Makulerad", "JA");
+            m.put("Meddelande", meddelande);
             certificates.put(id, m);
         }
     }

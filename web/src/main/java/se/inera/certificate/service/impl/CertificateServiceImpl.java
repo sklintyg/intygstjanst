@@ -118,7 +118,7 @@ public class CertificateServiceImpl implements CertificateService {
     public Certificate getCertificate(String civicRegistrationNumber, String id) {
 
         assertConsent(civicRegistrationNumber);
-       
+
 
         Certificate certificate = getCertificateInternal(civicRegistrationNumber, id);
 
@@ -222,7 +222,7 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     /**
-     * 
+     *
      * @param utlatandeXml
      *            the received certificate utlatande xml
      * @param certificate
@@ -312,11 +312,11 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     private void assertConsent(String civicRegistrationNumber) {
-        
+
         if (StringUtils.isEmpty(civicRegistrationNumber)) {
             throw new IllegalArgumentException("Invalid/missing civicRegistrationNumber");
         }
-        
+
         if (!consentService.isConsent(civicRegistrationNumber)) {
             throw new MissingConsentException(civicRegistrationNumber);
         }

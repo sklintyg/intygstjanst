@@ -39,7 +39,7 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
     private CertificateService certificateService;
 
     @Autowired
-    StatisticsService statisticsService;
+    private StatisticsService statisticsService;
 
     private Marshaller marshaller;
     private ObjectFactory objectFactory;
@@ -70,8 +70,7 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
             response.setResult(ResultTypeUtil.infoResult("Certificate already exists"));
             String certificateId = registerMedicalCertificate.getUtlatande().getUtlatandeId().getRoot();
             String issuedBy =  registerMedicalCertificate.getUtlatande().getSkapadAv().getEnhet().getEnhetsId().getExtension();
-            LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId +
-                    " issued by " + issuedBy +": Certificate already exists - ignored.");
+            LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId + " issued by " + issuedBy + ": Certificate already exists - ignored.");
         } catch (ValidationException e) {
             response.setResult(ResultTypeUtil.errorResult(VALIDATION_ERROR, e.getMessage()));
             LOGGER.error(LogMarkers.VALIDATION, e.getMessage());
