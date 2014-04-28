@@ -19,6 +19,7 @@
 package se.inera.certificate.service.impl;
 
 import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.LEGACY_LAKARUTLATANDE;
+import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.UTLATANDE_V1;
 
 import java.io.ByteArrayInputStream;
 
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.integration.exception.ExternalWebServiceCallFailedException;
 import se.inera.certificate.integration.exception.ResultTypeErrorException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
@@ -83,10 +85,13 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
         try {
             ModuleEntryPoint module = moduleApiFactory.getModuleEntryPoint(utlatande);
-            TransportModelResponse response = module.getModuleApi().marshall(new ExternalModelHolder(certificate.getDocument()),
-                    LEGACY_LAKARUTLATANDE);
+            TransportModelVersion transportModelVersion = module.getModuleId().equals("fk7263") ?
+                    LEGACY_LAKARUTLATANDE : UTLATANDE_V1;
 
-            invokeReceiverService(response.getTransportModel(), module.getDefaultRecieverLogicalAddress(), LEGACY_LAKARUTLATANDE);
+            TransportModelResponse response = module.getModuleApi().marshall(new ExternalModelHolder(certificate.getDocument()),
+                    transportModelVersion);
+
+            invokeReceiverService(response.getTransportModel(), module.getDefaultRecieverLogicalAddress(), transportModelVersion);
 
         } catch (ModuleNotFoundException e) {
             String message = String.format("The module '%s' was not found - not registered in application",
@@ -115,14 +120,13 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     }
 
     private void invokeReceiverService(String xml, String logicalAddress, TransportModelVersion type) {
-        Class<?> requestType = (type == LEGACY_LAKARUTLATANDE ? RegisterMedicalCertificateType.class
-                : se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType.class);
-
         try {
+            Class<?> unmarshallType = (type.equals(LEGACY_LAKARUTLATANDE) ? RegisterMedicalCertificateType.class
+                    : UtlatandeType.class);
+
             Object request = UNMARSHALLER.unmarshal(
-                    new StreamSource(new ByteArrayInputStream(xml.getBytes())), requestType)
-                    .getValue();
-            if (type == LEGACY_LAKARUTLATANDE) {
+                    new StreamSource(new ByteArrayInputStream(xml.getBytes())), unmarshallType).getValue();
+            if (type.equals(LEGACY_LAKARUTLATANDE)) {
                 AttributedURIType address = new AttributedURIType();
                 address.setValue(logicalAddress);
                 RegisterMedicalCertificateResponseType response = registerMedicalCertificateQuestionClient
@@ -134,8 +138,13 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
                 }
 
             } else {
+                se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType req = 
+                        new  se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType();
+
+                req.setUtlatande((UtlatandeType)request);
+
                 se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType response = registerCertificateClient
-                        .registerMedicalCertificate(logicalAddress, (se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType) request);
+                        .registerMedicalCertificate(logicalAddress, req);
 
                 // check whether call was successful or not
                 if (response.getResult().getResultCode() != ResultCodeType.OK) {
@@ -147,4 +156,5 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             Throwables.propagate(e);
         }
     }
+
 }

@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.w3.wsaddressing10.AttributedURIType;
 
 import riv.insuranceprocess.healthreporting.medcertqa._1.LakarutlatandeEnkelType;
 import riv.insuranceprocess.healthreporting.medcertqa._1.VardAdresseringsType;
@@ -47,7 +48,9 @@ public class SendMedicalCertificateResponderImplTest {
     @Test
     public void testSend() {
         when(certificateService.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new CertificateBuilder(CERTIFICATE_ID).build());
-        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(null, createRequest());
+        AttributedURIType uri = new AttributedURIType();
+        uri.setValue("FK");
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(uri, createRequest());
 
         assertEquals(OK, response.getResult().getResultCode());
         verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "FK");

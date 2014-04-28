@@ -93,6 +93,7 @@ public class CertificateSenderServiceImplTest {
     public void setupModuleRestApiFactory() throws ModuleNotFoundException {
         when(moduleApiFactory.getModuleEntryPoint(any(Utlatande.class))).thenReturn(moduleEntryPoint);
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
+        when(moduleEntryPoint.getModuleId()).thenReturn("fk7263");
         when(moduleEntryPoint.getDefaultRecieverLogicalAddress()).thenReturn(LOGICAL_ADDRESS);
     }
 

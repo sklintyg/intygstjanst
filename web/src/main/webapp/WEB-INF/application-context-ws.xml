@@ -164,6 +164,11 @@
   </jaxws:client>
 
   <jaxws:client id="registerMedicalCertificateQuestionClient"
+                  serviceClass="se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponderInterface"
+                  address="${registermedicalcertificatev3.endpoint.url}">
+  </jaxws:client>
+
+  <jaxws:client id="registerMedicalCertificateClient"
                   serviceClass="se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface"
                   address="${registermedicalcertificatev3.endpoint.url}">
   </jaxws:client>
