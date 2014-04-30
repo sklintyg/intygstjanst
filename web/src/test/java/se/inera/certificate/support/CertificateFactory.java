@@ -25,6 +25,7 @@ public final class CertificateFactory {
 
     public static final String CARE_UNIT_ID = "1.2.3.4.5.6";
     public static final String CARE_UNIT_NAME = "London Bridge Hospital";
+    public static final String CARE_GIVER_ID = "5678";
 
     public static Certificate buildCertificate() {
         return buildCertificate(CERTIFICATE_ID);
@@ -51,6 +52,7 @@ public final class CertificateFactory {
                 .signingDoctorName(SIGNING_DOCTOR)
                 .careUnitId(CARE_UNIT_ID)
                 .careUnitName(CARE_UNIT_NAME)
+                .careGiverId(CARE_GIVER_ID)
                 .build();
     }
 }
