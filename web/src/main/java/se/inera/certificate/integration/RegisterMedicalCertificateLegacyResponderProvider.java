@@ -41,6 +41,8 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
     private Marshaller marshaller;
     private ObjectFactory objectFactory;
 
+    private boolean wiretapped = false;
+    
     @Autowired
     private CertificateService certificateService;
 
@@ -62,10 +64,10 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
         try {
             new RegisterMedicalCertificateRequestValidator(registerMedicalCertificate).validateAndCorrect();
             String xml = xmlToString(registerMedicalCertificate);
-            Certificate certificate = certificateService.storeCertificate(xml, FK7263);
+            Certificate certificate = certificateService.storeCertificate(xml, FK7263, isWiretapped());
             response.setResult(ResultOfCallUtil.okResult());
             String certificateId = registerMedicalCertificate.getLakarutlatande().getLakarutlatandeId();
-            LOGGER.info(LogMarkers.MONITORING, certificateId + " registered");
+            LOGGER.info(LogMarkers.MONITORING, certificateId + " registered" + (isWiretapped() ? " via Wire-tap" : ""));
             statisticsService.created(certificate);
         } catch (CertificateAlreadyExistsException e) {
             response.setResult(ResultOfCallUtil.infoResult("Certificate already exists"));
@@ -84,6 +86,15 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
             Throwables.propagate(e);
         }
         return response;
+    }
+
+
+    public boolean isWiretapped() {
+        return wiretapped;
+    }
+
+    public void setWiretapped(boolean wiretapped) {
+        this.wiretapped = wiretapped;
     }
 
     private String xmlToString(RegisterMedicalCertificateType registerMedicalCertificate) throws JAXBException {

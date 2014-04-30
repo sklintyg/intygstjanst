@@ -1,19 +1,19 @@
 package se.inera.certificate.service.impl;
 
-import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import ch.qos.logback.core.Appender;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.io.FileUtils;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
@@ -23,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
+
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
@@ -39,6 +40,9 @@ import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.ConsentService;
+import ch.qos.logback.core.Appender;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author andreaskaltenbach
@@ -153,7 +157,7 @@ public class CertificateServiceImplTest {
                 .forClass(OriginalCertificate.class);
         when(certificateDao.storeOriginalCertificate(originalCertificateCaptor.capture())).thenReturn(1L);
 
-        Certificate certificate = certificateService.storeCertificate(utlatandeXml(), "fk7263");
+        Certificate certificate = certificateService.storeCertificate(utlatandeXml(), "fk7263", false);
 
         assertEquals("1", certificate.getId());
         assertEquals("fk7263", certificate.getType());
@@ -167,6 +171,7 @@ public class CertificateServiceImplTest {
 
         assertEquals("{utlatande}", certificate.getDocument());
 
+        assertEquals(false, certificate.getWiretapped());
         assertEquals(1, certificate.getStates().size());
         assertEquals(CertificateState.RECEIVED, certificate.getStates().get(0).getState());
         assertEquals("MI", certificate.getStates().get(0).getTarget());
@@ -185,6 +190,30 @@ public class CertificateServiceImplTest {
         assertTrue(originalCertificate.getReceived().isBefore(inAMinute));
     }
 
+    @Test
+    public void testStoreWireTappedCertificate() throws IOException {
+
+        when(moduleRestApiFactory.getModuleRestService("fk7263")).thenReturn(moduleRestApi);
+        when(moduleRestApi.unmarshall(utlatandeXml())).thenReturn(response);
+        when(response.getStatus()).thenReturn(200);
+        when(response.hasEntity()).thenReturn(true);
+        when(response.getEntity()).thenReturn(new ByteArrayInputStream("{utlatande}".getBytes("UTF-8")));
+
+        when(objectMapper.readValue("{utlatande}", Utlatande.class)).thenReturn(utlatande());
+
+        when(certificateDao.storeOriginalCertificate(any(OriginalCertificate.class))).thenReturn(1L);
+
+        Certificate certificate = certificateService.storeCertificate(utlatandeXml(), "fk7263", true);
+
+        assertEquals(true, certificate.getWiretapped());
+        assertEquals(2, certificate.getStates().size());
+        assertEquals(CertificateState.RECEIVED, certificate.getStates().get(0).getState());
+        assertEquals("MI", certificate.getStates().get(0).getTarget());
+        assertEquals(CertificateState.SENT, certificate.getStates().get(1).getState());
+        assertEquals("FK", certificate.getStates().get(1).getTarget());
+        assertEquals(certificate.getStates().get(0).getTimestamp(), certificate.getStates().get(1).getTimestamp());
+    }
+    
     @Test(expected = ModuleCallFailedException.class)
     public void testModuleNotFound() throws IOException {
 
@@ -192,7 +221,7 @@ public class CertificateServiceImplTest {
         when(moduleRestApi.unmarshall(utlatandeJson())).thenReturn(response);
         when(response.getStatus()).thenReturn(404);
 
-        certificateService.storeCertificate(utlatandeJson(), "fk7263");
+        certificateService.storeCertificate(utlatandeJson(), "fk7263", false);
     }
 
     @Test(expected = ModuleCallFailedException.class)
@@ -202,7 +231,7 @@ public class CertificateServiceImplTest {
         when(moduleRestApi.unmarshall(utlatandeJson())).thenReturn(response);
         when(response.getStatus()).thenReturn(500);
 
-        certificateService.storeCertificate(utlatandeJson(), "fk7263");
+        certificateService.storeCertificate(utlatandeJson(), "fk7263", false);
     }
 
     @Test

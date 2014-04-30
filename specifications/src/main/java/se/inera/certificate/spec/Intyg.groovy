@@ -15,6 +15,7 @@ public class Intyg extends RestClientFixture {
 	String utfärdare
     String enhetsId = "1.2.3"
 	String enhet
+    String vårdgivarId = "EnVårdGivare"
     String typ
     String id
     String idTemplate
@@ -23,34 +24,33 @@ public class Intyg extends RestClientFixture {
     int to
 	private boolean skickat
 	private boolean rättat
-	
+    private boolean wiretap
+    
 	private String template
 	
 	public void setSkickat(String value) {
-		if (value != null && value.equalsIgnoreCase("ja")) {
-			skickat = true
-		} else {
-			skickat = false
-		}
+		skickat = value?.equalsIgnoreCase("ja")
 	}
 
-	public void setRättat(String value) {
-		if (value != null && value.equalsIgnoreCase("ja")) {
-			rättat = true
-		} else {
-			rättat = false
-		}
-	}
+    public void setRättat(String value) {
+        rättat = value?.equalsIgnoreCase("ja")
+    }
+
+    public void setWiretap(String value) {
+        wiretap = value?.equalsIgnoreCase("ja")
+    }
 
 	public void reset() {
 		mall = "M"
 		utfärdare = "EnUtfärdare"
 		enhet = "EnVårdEnhet"
+        vårdgivarId = "EnVårdGivare"
 		giltigtFrån = null
 		giltigtTill = null
 		template = null
 		skickat = false
 		rättat = false
+        wiretap = false
 	}
 	
     public void execute() {
@@ -77,8 +77,10 @@ public class Intyg extends RestClientFixture {
 
     private certificateJson() {
 		def stateList = [[state:"RECEIVED", target:"MI", timestamp:"2013-08-05T14:30:03.227"]]
+        if (wiretap)
+            stateList << [state:"SENT", target:"FK", timestamp:"2013-08-05T14:30:03.227"]
 		if (skickat)
-			stateList << [state:"SENT", target:"MI", timestamp:"2013-08-05T14:31:03.227"]
+			stateList << [state:"SENT", target:"FK", timestamp:"2013-08-05T14:31:03.227"]
 		if (rättat)
 			stateList << [state:"CANCELLED", target:"MI", timestamp:"2013-08-05T14:32:03.227"]
         [id:String.format(id, utfärdat),
@@ -90,6 +92,8 @@ public class Intyg extends RestClientFixture {
             validToDate:giltigtTill,
             careUnitId: (enhetsId) ? enhet : "1.2.3",
             careUnitName: enhet,
+            careGiverId : vårdgivarId,
+            wiretapped : wiretap,
 			states: stateList,
             document: document()
         ]

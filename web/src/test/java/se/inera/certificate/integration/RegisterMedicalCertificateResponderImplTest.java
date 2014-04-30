@@ -80,18 +80,20 @@ public class RegisterMedicalCertificateResponderImplTest {
         Certificate certificate = new Certificate("123", "<utlatande/>");
 
         ArgumentCaptor<String> xmlCaptor = ArgumentCaptor.forClass(String.class);
-        when(certificateService.storeCertificate(xmlCaptor.capture(), eq("fk7263"))).thenReturn(certificate);
+        ArgumentCaptor<Boolean> wiretappedCaptor = ArgumentCaptor.forClass(Boolean.class);
+        when(certificateService.storeCertificate(xmlCaptor.capture(), eq("fk7263"), wiretappedCaptor.capture())).thenReturn(certificate);
 
         RegisterMedicalCertificateResponseType response = responder.registerMedicalCertificate(null, request);
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
         compareSoapMessageWithReferenceFile(xmlCaptor.getValue());
+        assertEquals(false, wiretappedCaptor.getValue());
         Mockito.verify(statisticsService, Mockito.only()).created(certificate);
     }
 
     @Test
     public void testWithExistingCertificate() throws Exception {
-        when(certificateService.storeCertificate(any(String.class), eq("fk7263")))
+        when(certificateService.storeCertificate(any(String.class), eq("fk7263"), any(Boolean.class)))
                 .thenThrow(new CertificateAlreadyExistsException());
 
         RegisterMedicalCertificateResponseType response = responder.registerMedicalCertificate(null, request);
