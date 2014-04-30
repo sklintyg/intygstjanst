@@ -26,7 +26,7 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19121212-1212|fit-intyg-1|OK|[RECEIVED, SENT, SENT]|
+|19121212-1212|fit-intyg-1|OK|[RECEIVED, SENT]|
 
 !3 Registrering av intyg via WireTAP korrigerar person-nr utan bindestreck
 

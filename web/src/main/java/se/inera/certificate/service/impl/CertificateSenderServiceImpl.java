@@ -31,6 +31,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
 
@@ -72,7 +73,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     @Autowired
     private ModuleApiFactory moduleApiFactory;
 
-    @Autowired
+    @Autowired @Qualifier("registerMedicalCertificateClient")
     private RegisterMedicalCertificateResponderInterface registerMedicalCertificateQuestionClient;
 
     @Autowired

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -154,7 +155,7 @@ public class CertificateServiceImplTest {
                 .forClass(OriginalCertificate.class);
         when(certificateDao.storeOriginalCertificate(originalCertificateCaptor.capture())).thenReturn(1L);
 
-        Certificate certificate = certificateService.storeCertificate(utlatandeXml(), "fk7263");
+        Certificate certificate = certificateService.storeCertificate(utlatandeXml(), "fk7263", false);
 
         assertEquals("1", certificate.getId());
         assertEquals("fk7263", certificate.getType());
@@ -169,6 +170,7 @@ public class CertificateServiceImplTest {
 
         assertEquals(utlatandeJson(), certificate.getDocument());
 
+        assertEquals(false, certificate.getWiretapped());
         assertEquals(1, certificate.getStates().size());
         assertEquals(CertificateState.RECEIVED, certificate.getStates().get(0).getState());
         assertEquals("MI", certificate.getStates().get(0).getTarget());
@@ -187,13 +189,39 @@ public class CertificateServiceImplTest {
         assertTrue(originalCertificate.getReceived().isBefore(inAMinute));
     }
 
+    public void testStoreWireTappedCertificate() throws Exception {
+
+        when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenReturn(moduleEntryPoint);
+        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
+        ExternalModelResponse unmarshallResponse = new ExternalModelResponse(utlatandeJson(), utlatande());
+        when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenReturn(unmarshallResponse);
+
+        when(objectMapper.readValue(utlatandeJson(), MinimalUtlatande.class)).thenReturn(utlatande());
+
+        ArgumentCaptor<OriginalCertificate> originalCertificateCaptor = ArgumentCaptor
+                .forClass(OriginalCertificate.class);
+        when(certificateDao.storeOriginalCertificate(originalCertificateCaptor.capture())).thenReturn(1L);
+
+        when(certificateDao.storeOriginalCertificate(any(OriginalCertificate.class))).thenReturn(1L);
+
+        Certificate certificate = certificateService.storeCertificate(utlatandeXml(), "fk7263", true);
+
+        assertEquals(true, certificate.getWiretapped());
+        assertEquals(2, certificate.getStates().size());
+        assertEquals(CertificateState.RECEIVED, certificate.getStates().get(0).getState());
+        assertEquals("MI", certificate.getStates().get(0).getTarget());
+        assertEquals(CertificateState.SENT, certificate.getStates().get(1).getState());
+        assertEquals("FK", certificate.getStates().get(1).getTarget());
+        assertEquals(certificate.getStates().get(0).getTimestamp(), certificate.getStates().get(1).getTimestamp());
+    }
+    
     @Test
     public void testModuleNotFound() throws Exception {
 
         when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenThrow(new ModuleNotFoundException());
 
         try {
-            certificateService.storeCertificate(utlatandeJson(), "fk7263");
+            certificateService.storeCertificate(utlatandeJson(), "fk7263", false);
             fail("Expected RuntimeException");
         } catch (RuntimeException ignore) {
         }
@@ -207,7 +235,7 @@ public class CertificateServiceImplTest {
         when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenThrow(new ModuleSystemException());
 
         try {
-            certificateService.storeCertificate(utlatandeJson(), "fk7263");
+            certificateService.storeCertificate(utlatandeJson(), "fk7263", false);
             fail("Expected RuntimeException");
         } catch (RuntimeException ignore) {
         }
