@@ -10,6 +10,6 @@
              {"state":"SENT", "target" : "FK", "timestamp" : "2012-12-23T21:00:00.000"},
              {"state":"CANCELLED", "target" : "FK", "timestamp" : "2012-12-24T21:00:00.000"}
             ],
-  "careUnitName": "centrum-vast",
+  "careUnitName": "Centrum Väst Mott",
   "careGiverId": "vastmanland"
 }
