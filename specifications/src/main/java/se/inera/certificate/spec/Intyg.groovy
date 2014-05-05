@@ -80,13 +80,13 @@ public class Intyg extends RestClientFixture {
     }
 
     private certificateJson() {
-		def stateList = [[state:"RECEIVED", target:"MI", timestamp:"2013-08-05T14:30:03.227"]]
+		def stateList = [[state:"RECEIVED", target:"MI", timestamp:utfärdat + "T12:00:00.000"]]
         if (wiretap)
-            stateList << [state:"SENT", target:"FK", timestamp:"2013-08-05T14:30:03.227"]
-		if (skickat)
-			stateList << [state:"SENT", target:"FK", timestamp:"2013-08-05T14:31:03.227"]
+            stateList << [state:"SENT", target:"FK", timestamp:utfärdat + "T12:00:00.000"]
+        else if (skickat)
+			stateList << [state:"SENT", target:"FK", timestamp:utfärdat + "T12:00:10.000"]
 		if (rättat)
-			stateList << [state:"CANCELLED", target:"MI", timestamp:"2013-08-05T14:32:03.227"]
+			stateList << [state:"CANCELLED", target:"MI", timestamp:utfärdat + "T13:00:00.000"]
         [id:String.format(id, utfärdat),
             type:typ.toLowerCase(),
             civicRegistrationNumber:personnr,
