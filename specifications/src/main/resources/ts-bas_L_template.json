@@ -6,7 +6,7 @@
     "typ": {
         "codeSystem": "f6fb361a-e31d-48b8-8657-99b63912dd9b",
         "codeSystemName": "kv_utlåtandetyp_intyg",
-        "code": "TS-BAS"
+        "code": "ts-bas"
     },
     
     "kommentarer" : [ "Här kommer en övrig kommentar" ],
