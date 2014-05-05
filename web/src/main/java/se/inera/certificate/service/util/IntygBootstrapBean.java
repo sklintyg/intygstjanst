@@ -92,7 +92,7 @@ public class IntygBootstrapBean {
                     entityManager.persist(certificate);
                 } catch (Throwable t) {
                     status.setRollbackOnly();
-                    LOG.warn("Loading failed: " + t.getMessage());
+                    LOG.error("Loading failed: " + t.getMessage());
                 }
             }
         });
