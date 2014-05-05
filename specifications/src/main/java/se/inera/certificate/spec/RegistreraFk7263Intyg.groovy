@@ -33,7 +33,8 @@ public class RegistreraFk7263Intyg extends WsClientFixture {
     String personnummer
     String utfärdat
 	String utfärdare
-	String enhet
+	String enhetsId = "1.2.3"
+    String enhet
     String id
 	String mall = "M"
 	
@@ -42,10 +43,12 @@ public class RegistreraFk7263Intyg extends WsClientFixture {
 	public void reset() {
 		mall = "M"
 		utfärdare = "EnUtfärdare"
-		enhet = "EnVårdEnhet"
+		enhetsId = "1.2.3"
+        enhet = null
 	}
 
 	public void execute() {
+        if (!enhet) enhet = enhetsId
         // read request template from file
         JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -56,8 +59,9 @@ public class RegistreraFk7263Intyg extends WsClientFixture {
 		request.lakarutlatande.signeringsdatum = LocalDateTime.parse(utfärdat)
 		request.lakarutlatande.skickatDatum = LocalDateTime.now()
 		request.lakarutlatande.skapadAvHosPersonal.fullstandigtNamn = utfärdare
-		request.lakarutlatande.skapadAvHosPersonal.enhet.enhetsId.extension = enhet
-
+		request.lakarutlatande.skapadAvHosPersonal.enhet.enhetsId.extension = enhetsId
+        request.lakarutlatande.skapadAvHosPersonal.enhet.enhetsnamn = enhet
+        
         response = registerMedicalCertificateResponder.registerMedicalCertificate(logicalAddress, request);
     }
 

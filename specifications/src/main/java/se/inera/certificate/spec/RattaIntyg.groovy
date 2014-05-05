@@ -23,7 +23,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType
  */
 class RattaIntyg extends WsClientFixture {
 
-    private RevokeMedicalCertificateResponderInterface revokeResponder
+    protected RevokeMedicalCertificateResponderInterface revokeResponder
 
 	static String serviceUrl = System.getProperty("service.revokeCertificateUrl")
 
