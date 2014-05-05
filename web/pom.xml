@@ -226,7 +226,7 @@
                 </systemProperty>
                 <systemProperty>
                   <name>certificate.logback.file</name>
-                  <value>${project.basedir}/certificate-logback.xml</value>
+                  <value>${project.basedir}/certificate-logback-dev.xml</value>
                 </systemProperty>
                 <systemProperty>
                   <name>fk7263.logback.file</name>
