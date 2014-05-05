@@ -1,0 +1,135 @@
+{
+    "id": {
+        "root": "1.2.752.129.2.1.2.1",
+        "extension": "intyg-6"
+    },
+    "typ": {
+        "codeSystem": "f6fb361a-e31d-48b8-8657-99b63912dd9b",
+        "codeSystemName": "kv_utlåtandetyp_intyg",
+        "code": "ts-diabetes"
+    },
+    "signeringsdatum": "2013-08-12T15:57:00.000",
+    "intygAvser": [
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV12"
+        }
+    ],
+    "patient": {
+        "id": {
+            "root": "1.2.752.129.2.1.3.1",
+            "extension": "19121212-1212"
+        },
+        "fornamn": [
+            "Johnny"
+        ],
+        "efternamn": "Appleseed",
+        "postadress": "Testvägen 12",
+        "postnummer": "123456",
+        "postort": "Testort",
+        "fullstandigtNamn": "Johnny Appleseed"
+    },
+    "skapadAv": {
+        "id": {
+            "root": "1.2.752.129.2.1.4.1",
+            "extension": "SE0000000000-1333"
+        },
+        "namn": "Doktor Thompson",
+        "specialiteter" : [],
+        "befattningar" : [],
+        "vardenhet": {
+            "id": {
+                "root": "1.2.752.129.2.1.4.1",
+                "extension": "SE0000000000-1337"
+            },
+            "namn": "Vårdenhet Väst",
+            "postadress": "Enhetsvägen 12",
+            "postnummer": "54321",
+            "postort": "Tumba",
+            "telefonnummer": "08-1337",
+            "vardgivare": {
+                "id": {
+                    "root": "1.2.752.129.2.1.4.1",
+                    "extension": "SE0000000000-HAHAHHSAA"
+                },
+                "namn": "Vårdgivarnamn"
+            }
+        }
+    },
+    "vardkontakter": [
+          {
+            "vardkontakttyp": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "5880005"
+            },
+            "idkontroll": {
+                "codeSystem": "e7cc8f30-a353-4c42-b17a-a189b6876647",
+                "codeSystemName": "kv_id_kontroll",
+                "code": "IDK6"
+            }
+          }
+      ],
+    "bilaga" : {
+        "bilagetyp" : {
+            "codeSystem": "80595600-7477-4a6c-baeb-d2439e86b8bc",
+            "codeSystemName": "kv_bilaga",
+            "code": "BIL1"
+        },
+        "forekomst" : true
+    },
+    "aktiviteter": [],
+    "rekommendationer": [
+        {
+            "rekommendationskod": {
+                "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                "codeSystemName": "kv_rekommendation_intyg",
+                "code": "REK8"
+            },
+            "varde": [{
+                "@class": "se.inera.certificate.model.Kod",
+                "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                "codeSystemName": "kv_rekommendation_intyg",
+                "code": "VAR13"
+            }]
+        }
+    ],
+    "observationer": [
+         {
+            "observationskod": {
+                "codeSystem": "1.2.752.116.1.1.1.1.1",
+                "codeSystemName": "ICD-10",
+                "code": "E11"
+            },
+            "observationsperiod" : {
+            	"from" : "2012"
+            },
+            "forekomst": true
+        },
+        {
+            "observationskod": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "170745003"
+            },
+            "forekomst": true
+        },
+        {
+            "observationskod": {
+                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
+                "codeSystemName": "kv_observationer_intyg",
+                "code": "OBS19"
+            },
+            "forekomst": false
+        },
+        {
+            "observationskod": {
+                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
+                "codeSystemName": "kv_observationer_intyg",
+                "code": "OBS20"
+            },
+            "forekomst": false
+        }
+    ]
+}

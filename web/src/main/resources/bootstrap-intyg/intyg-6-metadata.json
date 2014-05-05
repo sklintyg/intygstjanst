@@ -1,0 +1,14 @@
+{"id": "intyg-6",
+  "type" : "ts-diabetes",
+  "civicRegistrationNumber" : "19121212-1212",
+  "signedDate" : "2012-12-23T21:00:00.000",
+  "signingDoctorName": "Eva Rättare",
+  "validFromDate" : "2012-12-23",
+  "validToDate" : "2013-12-23",
+  "careUnitId": "centrum-vast",
+  "careUnitName": "Kir mott",
+  "careGiverId" : "VårdgivarID",
+  "states": [],
+  "wiretapped" : false
+      
+}
