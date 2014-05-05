@@ -32,10 +32,6 @@ public class CertificateToStatisticsJMSWriter implements ItemWriter<Certificate>
     @Autowired(required = false)
     private JmsTemplate jmsTemplate;
 
-    public CertificateToStatisticsJMSWriter() {
-
-    }
-
     @Override
     public void write(List<? extends Certificate> items) throws Exception {
 
@@ -100,13 +96,9 @@ public class CertificateToStatisticsJMSWriter implements ItemWriter<Certificate>
 
     @Override
     public void beforeChunk() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void afterChunk() {
-        // TODO Auto-generated method stub
-
     }
 }
