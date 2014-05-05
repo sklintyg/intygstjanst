@@ -44,18 +44,18 @@
         "root" : "1.2.752.29.4.71",
         "extension" : "123456789011"
       },
-      "namn" : "Kir mott",
+      "namn" : "Centrum Väst Mott",
       "postadress" : "Lasarettsvägen 13",
-      "postnummer" : "85150",
-      "postort" : "Sundsvall",
-      "telefonnummer" : "060-1818000",
-      "epost" : "kirmott@vardenhet.se",
+      "postnummer" : "721 61",
+      "postort" : "Västerås",
+      "telefonnummer" : "021-1818000",
+      "epost" : "centrum-vast@vardenhet.se",
       "vardgivare" : {
         "id" : {
           "root" : "1.2.752.129.2.1.4.1",
-          "extension" : "Landstinget Norrland"
-        },
-        "namn" : "Landstinget Norrland"
+           "extension" : "vastmanland"
+          },
+        "namn" : "Landstinget Västmanland"
       }
     }
   },

@@ -44,22 +44,22 @@
                            }
                            ],
         "vardenhet": {
-            "id": {
-                "root": "1.2.752.129.2.1.4.1",
-                "extension": "SE0000000000-1337"
+          "id": {
+              "root": "1.2.752.129.2.1.4.1",
+              "extension": "centrum-vast"
+          },
+          "namn": "Vårdenhet Väst",
+          "postadress": "Enhetsvägen 12",
+          "postnummer": "54321",
+          "postort": "Tumba",
+          "telefonnummer": "08-1337",
+          "vardgivare" : {
+            "id" : {
+              "root" : "1.2.752.129.2.1.4.1",
+              "extension" : "vastmanland"
             },
-            "namn": "Vårdenhet Väst",
-            "postadress": "Enhetsvägen 12",
-            "postnummer": "54321",
-            "postort": "Tumba",
-            "telefonnummer": "08-1337",
-            "vardgivare": {
-                "id": {
-                    "root": "1.2.752.129.2.1.4.1",
-                    "extension": "SE0000000000-HAHAHHSAA"
-                },
-                "namn": "Vårdgivarnamn"
-            }
+            "namn" : "Landstinget Västmanland"
+          }
         },
         "befattningar" : []
     },
