@@ -64,7 +64,7 @@ public class RegisterCertificateResponderStub implements RegisterMedicalCertific
         RegisterMedicalCertificateResponseType response = new RegisterMedicalCertificateResponseType();
 
         try {
-            String type = logicalAddress.equals("FK") ? "fk7263" : "ts-bas";
+            String type = logicalAddress.equals("FK") ? "fk7263" : request.getUtlatande().getTypAvUtlatande().getCode();
             ModuleApi endpoint = moduleApiFactory.getModuleEntryPoint(type).getModuleApi();
 
             validate(request, endpoint);
@@ -74,7 +74,7 @@ public class RegisterCertificateResponderStub implements RegisterMedicalCertific
             props.put("Personnummer", request.getUtlatande().getPatient().getPersonId().getExtension());
             props.put("Makulerad", "NEJ");
 
-            LOGGER.info("STUB Received request");
+            LOGGER.info(request.getUtlatande().getTypAvUtlatande().getCode() + " - STUB Received request");
             fkMedicalCertificatesStore.addCertificate(id, props);
         } catch (ValidationException e) {
             response.setResult(errorResult(ErrorIdType.VALIDATION_ERROR, e.getMessage()));
