@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<beans:bean id="extractCertificateIdProcessor"
+		class="se.inera.certificate.migration.processors.ExtractCertificateIdProcessor"
+		init-method="init" />
+	<beans:bean id="convertCertificateXMLToJSONProcessor"
+		class="se.inera.certificate.migration.processors.ConvertCertificateXMLToJSONProcessor">
+	</beans:bean>
+</beans:beans>

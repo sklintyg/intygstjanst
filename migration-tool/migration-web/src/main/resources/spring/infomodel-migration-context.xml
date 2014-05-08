@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
+  xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="
+          http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+  <bean id="infoMigrStep1Reader"
+    class="org.springframework.batch.item.database.JdbcPagingItemReader"
+    scope="step">
+    <property name="dataSource" ref="certificateDataSource" />
+    <property name="queryProvider">
+      <bean
+        class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
+        <property name="dataSource" ref="certificateDataSource" />
+        <property name="selectClause"
+          value="${infomigr.step1.reader.sql.select}" />
+        <property name="fromClause"
+          value="${infomigr.step1.reader.sql.from}" />
+        <property name="whereClause"
+          value="${infomigr.step1.reader.sql.where}" />
+        <property name="sortKey"
+          value="${infomigr.step1.reader.sortkey}" />
+      </bean>
+    </property>
+    <property name="pageSize" value="200" />
+    <property name="rowMapper">
+      <bean
+        class="se.inera.certificate.migration.model.CertificateStep1RowMapper" />
+    </property>
+  </bean>
+
+  <bean id="infoMigrStep1Writer"
+    class="org.springframework.batch.item.database.JdbcBatchItemWriter"
+    scope="step">
+    <property name="dataSource" ref="certificateDataSource" />
+    <property name="sql" value="${infomigr.step1.writer.sql}" />
+    <property name="itemPreparedStatementSetter">
+      <bean
+        class="se.inera.certificate.migration.model.CertificateItemPreparedStatementSetter" />
+    </property>
+  </bean>
+  
+    <bean id="infoMigrStep2Reader"
+    class="org.springframework.batch.item.database.JdbcPagingItemReader"
+    scope="step">
+    <property name="dataSource" ref="certificateDataSource" />
+    <property name="queryProvider">
+      <bean
+        class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
+        <property name="dataSource" ref="certificateDataSource" />
+        <property name="selectClause"
+          value="${infomigr.step2.reader.sql.select}" />
+        <property name="fromClause"
+          value="${infomigr.step2.reader.sql.from}" />
+        <property name="whereClause"
+          value="${infomigr.step2.reader.sql.where}" />
+        <property name="sortKey"
+          value="${infomigr.step2.reader.sortkey}" />
+      </bean>
+    </property>
+    <property name="pageSize" value="200" />
+    <property name="rowMapper">
+      <bean
+        class="se.inera.certificate.migration.model.CertificateStep2RowMapper" />
+    </property>
+  </bean>
+  
+  <bean id="infoMigrStep2Writer" class="se.inera.certificate.migration.writers.SendCertificateWriter" />
+  
+  <bean id="sendCertificateConverter" class="se.inera.certificate.migration.converter.SendCertificateConverterImpl" />
+
+  <bean id="convertCertificateXMLToJSONProcessor"
+    class="se.inera.certificate.migration.processors.ConvertCertificateXMLToJSONProcessor"
+    scope="step">
+    <property name="converterRestServiceUrl"
+      value="#{jobParameters['CONVERTER_SERVICE_URL']}" />
+  </bean>
+  
+  <bean id="objectMapper" class="se.inera.certificate.integration.json.CustomObjectMapper"/>
+  
+</beans>

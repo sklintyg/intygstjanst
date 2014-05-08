@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
+  xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+  profile="test,qa,prod">
+
+  <description>Data source context for the Intyg database which will be
+    used in the TEST, PROD and QA environments where resources can be
+    retrieved using JNDI
+  </description>
+
+  <bean id="certificateDataSource" class="org.springframework.jndi.JndiObjectFactoryBean"
+    p:jndiName="java:comp/env/jdbc/intyg" />
+
+  <bean id="certificateTransactionManager"
+    class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+    p:dataSource-ref="certificateDataSource" />
+
+  <bean id="appProperties"
+    class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations">
+      <list>
+        <value>classpath:migration-tool.properties</value>
+      </list>
+    </property>
+    <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+    <property name="ignoreResourceNotFound" value="false" />
+    <property name="ignoreUnresolvablePlaceholders" value="true" />
+    <property name="order" value="0" />
+  </bean>
+
+</beans>
