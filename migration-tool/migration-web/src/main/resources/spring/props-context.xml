@@ -7,17 +7,4 @@
 
   <description>Load application properties from file</description>
 
-  <bean id="appProperties"
-    class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="locations">
-      <list>
-        <value>classpath:migration-tool.properties</value>
-      </list>
-    </property>
-    <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
-    <property name="ignoreResourceNotFound" value="false" />
-    <property name="ignoreUnresolvablePlaceholders" value="true" />
-    <property name="order" value="0" />
-  </bean>
-
 </beans>

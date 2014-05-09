@@ -25,7 +25,7 @@
           value="${infomigr.step1.reader.sortkey}" />
       </bean>
     </property>
-    <property name="pageSize" value="200" />
+    <property name="pageSize" value="100" />
     <property name="rowMapper">
       <bean
         class="se.inera.certificate.migration.model.CertificateStep1RowMapper" />
@@ -44,10 +44,10 @@
   </bean>
   
     <bean id="infoMigrStep2Reader"
-    class="org.springframework.batch.item.database.JdbcPagingItemReader"
+    class="org.springframework.batch.item.database.JdbcCursorItemReader"
     scope="step">
     <property name="dataSource" ref="certificateDataSource" />
-    <property name="queryProvider">
+    <!--  <property name="queryProvider">
       <bean
         class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
         <property name="dataSource" ref="certificateDataSource" />
@@ -61,7 +61,8 @@
           value="${infomigr.step2.reader.sortkey}" />
       </bean>
     </property>
-    <property name="pageSize" value="200" />
+    <property name="pageSize" value="100" /> -->
+    <property name="sql" value="${infomigr.step2.reader.sql}" />
     <property name="rowMapper">
       <bean
         class="se.inera.certificate.migration.model.CertificateStep2RowMapper" />

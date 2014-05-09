@@ -24,7 +24,7 @@
       <batch:tasklet>
         <batch:chunk reader="infoMigrStep1Reader"
           processor="convertCertificateXMLToJSONProcessor" writer="infoMigrStep1Writer"
-          commit-interval="20">
+          commit-interval="2">
         </batch:chunk>
         <batch:listeners>
           <batch:listener>
@@ -32,16 +32,6 @@
               class="se.inera.certificate.migration.listeners.CertificateProcessingItemListener" />
           </batch:listener>
         </batch:listeners>
-      </batch:tasklet>
-      <batch:next on="COMPLETED" to="reSendCertificatesToFKStep" />
-      <batch:fail on="FAILED" />
-    </batch:step>
-
-    <batch:step id="reSendCertificatesToFKStep">
-      <batch:tasklet>
-        <batch:chunk reader="infoMigrStep2Reader" writer="infoMigrStep2Writer"
-          commit-interval="20">
-        </batch:chunk>
       </batch:tasklet>
       <batch:fail on="FAILED" />
       <batch:end on="*" />

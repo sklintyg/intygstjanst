@@ -24,7 +24,7 @@ public class CertificateStep2RowMapper implements RowMapper<Certificate> {
     public Certificate mapRow(ResultSet rs, int rowNbr) throws SQLException {
 
         Certificate certificate = new Certificate();
-        certificate.setOriginalCertificateId(rs.getInt("ID"));
+        //certificate.setOriginalCertificateId(rs.getInt("ID"));
         certificate.setCertificateId(rs.getString("CERT_ID"));
         certificate.setCertificateJson(rs.getBytes("CERT_JSON"));
 

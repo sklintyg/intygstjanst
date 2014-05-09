@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
+  xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="
+          http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+  <description>Job that invokes SEND on selected certificates in
+    Intygstjänsten</description>
+
+  <batch:job id="reSendCertificatesToFKJob" incrementer="jobIncrementer"
+    restartable="false">
+
+    <batch:description>Job that invokes SEND on selected certificates in Intygstjänsten</batch:description>
+
+    <batch:step id="reSendCertificatesToFKStep">
+      <batch:tasklet>
+        <batch:chunk reader="infoMigrStep2Reader" writer="infoMigrStep2Writer"
+          commit-interval="20">
+        </batch:chunk>
+      </batch:tasklet>
+      <batch:fail on="FAILED" />
+      <batch:end on="*" />
+    </batch:step>
+
+  </batch:job>
+
+</beans>

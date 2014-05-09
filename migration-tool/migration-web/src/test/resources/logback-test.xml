@@ -10,7 +10,9 @@
 	
 	<logger name="org.springframework.core.env.PropertySourcesPropertyResolver"
 		level="WARN" />
-
+  
+    <logger name="org.springframework.batch.item" level="DEBUG" />
+  
 	<logger name="se.inera.certificate.migration" level="DEBUG"/>
 	
 	<root level="INFO">

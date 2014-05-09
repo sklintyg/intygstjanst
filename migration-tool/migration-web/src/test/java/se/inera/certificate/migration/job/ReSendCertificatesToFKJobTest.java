@@ -40,46 +40,30 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
  * 
  */
 @ContextConfiguration(locations = { "/application-context.xml",
-        "/META-INF/spring/batch/jobs/infomodel-migration-job.xml" })
+        "/META-INF/spring/batch/jobs/send-certs-to-fk-job.xml" })
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles({"dev","unit-testing"})
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @DatabaseSetup({"/data/intyg_dataset_falt9.xml"})
-public class MigrationJobTest extends AbstractDbUnitSpringTest {
+public class ReSendCertificatesToFKJobTest extends AbstractDbUnitSpringTest {
 
-	private Logger logger = LoggerFactory.getLogger(MigrationJobTest.class);
+	private Logger logger = LoggerFactory.getLogger(ReSendCertificatesToFKJobTest.class);
 	
     @Autowired
     private JobLauncher jobLauncher;
 
     @Autowired
-    @Qualifier("certificateInfoModelMigrationJob")
-    private Job migrationJob;
+    @Qualifier("reSendCertificatesToFKJob")
+    private Job reSendCertJob;
 
     @Autowired
     private CertTestDao certTestDao;
-
-    private LocalTestServer server = null;
-
-    private String serverUrl;
-
-    @Before
-    public void initTestData() throws Exception {
-
-        server = new LocalTestServer(null, null);
-        server.register("/unmarshall", new IntygHttpRequestHandler(IntygHttpRequestHandlerMode.HANDLE_POST));
-        server.register("/notfound", new IntygHttpRequestHandler(IntygHttpRequestHandlerMode.NOT_FOUND_404));
-        server.start();
-
-        serverUrl = "http:/" + server.getServiceAddress().getAddress() + ":" + server.getServiceAddress().getPort();
-    }
    
     @Test
     public void testExecuteMigrationJob() throws Exception {
         JobParametersBuilder builder = new JobParametersBuilder();
-        builder.addString("CONVERTER_SERVICE_URL", serverUrl + "/unmarshall");
 
-        final JobExecution jobExecution = jobLauncher.run(migrationJob, builder.toJobParameters());
+        final JobExecution jobExecution = jobLauncher.run(reSendCertJob, builder.toJobParameters());
 
         await().atMost(10, TimeUnit.SECONDS).until(new Callable<Boolean>() {
             @Override

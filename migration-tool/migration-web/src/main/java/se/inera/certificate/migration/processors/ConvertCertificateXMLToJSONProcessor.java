@@ -44,17 +44,17 @@ public class ConvertCertificateXMLToJSONProcessor implements InitializingBean,
 	public Certificate process(Certificate cert) throws Exception {
 
 		if (cert == null) {
-			LOG.warn("Supplied OriginalCertificate was null, returning null");
+			LOG.warn("Supplied Certificate was null, returning null");
 			return null;
 		}
 
-		LOG.debug("Converting certificate to JSON: {}", cert);
+		LOG.debug("Converting certificate to JSON: {}", cert.toString());
 
 		try {
 			return convertAndUpdateCertificate(cert);
 		} catch (IOException e) {
-			String errMsg = MessageFormat.format("A fatal error occured when processing OriginalCertificate: {0}",
-							cert.getCertificateId());
+			String errMsg = MessageFormat.format("A fatal error occured when processing Certificate: {0}",
+							cert.toString());
 			LOG.error(errMsg, e);
 			throw new FatalCertificateProcessingException(errMsg, e);
 		}
@@ -79,6 +79,7 @@ public class ConvertCertificateXMLToJSONProcessor implements InitializingBean,
 		}
 
 		String convertedJson = EntityUtils.toString(response.getEntity(), UTF8);
+		LOG.debug("Received JSON with length {}", convertedJson.length());
 		cert.setCertificateJson(convertedJson);
 
 		return cert;

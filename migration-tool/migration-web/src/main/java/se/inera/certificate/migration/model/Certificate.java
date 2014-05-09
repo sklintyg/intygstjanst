@@ -116,4 +116,10 @@ public class Certificate {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "Certificate [certificateId=" + certificateId
+				+ ", originalCertificateId=" + originalCertificateId + "]";
+	}
+
 }

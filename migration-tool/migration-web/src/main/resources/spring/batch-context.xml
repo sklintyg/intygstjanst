@@ -15,7 +15,7 @@
     <description>Initiates the infrastructure needed for unit testing
       batch jobs
     </description>
-
+    
     <jdbc:embedded-database type="HSQL" id="dataSource" />
 
     <jdbc:initialize-database data-source="dataSource">
