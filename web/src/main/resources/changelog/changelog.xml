@@ -94,22 +94,4 @@
         baseTableName="ORIGINAL_CERTIFICATE" constraintName="FK_ORIGINAL_CERTIFICATE_CERTIFICATE"
         referencedColumnNames="ID" referencedTableName="CERTIFICATE"/>
   </changeSet>
-
-  <changeSet id="6" author="me">
-    <addColumn tableName="CERTIFICATE">
-      <column name="CARE_UNIT_ID" type="varchar(255)" value="unknown">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-    <addColumn tableName="CERTIFICATE">
-      <column name="CARE_GIVER_ID" type="varchar(255)" value="unknown">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-    <addColumn tableName="CERTIFICATE">
-      <column name="WIRETAPPED" type="boolean" value="false">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-  </changeSet>
 </databaseChangeLog>
