@@ -22,6 +22,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
 
+import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.integration.exception.ExternalWebServiceCallFailedException;
 import se.inera.certificate.integration.json.CustomObjectMapper;
 import se.inera.certificate.integration.module.ModuleApiFactory;
@@ -37,6 +38,8 @@ import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.RecipientService;
+import se.inera.certificate.service.recipientservice.Recipient;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
@@ -47,7 +50,10 @@ import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificater
 @RunWith(MockitoJUnitRunner.class)
 public class CertificateSenderServiceImplTest {
 
-    private static final String LOGICAL_ADDRESS = "someLogicalAddress";
+    private static final String LOGICAL_ADDRESS = "FK";
+
+    @Mock
+    private RecipientService recipientService;
 
     @Mock
     private CertificateService certificateService;
@@ -63,24 +69,29 @@ public class CertificateSenderServiceImplTest {
 
     @Mock
     private RegisterMedicalCertificateResponderInterface registerClient;
-    
+
     private static Certificate certificate = new CertificateBuilder("123456").certificateType("fk7263").build();
     private static Utlatande utlatande;
 
     private static RegisterMedicalCertificateResponseType errorWsMessage;
     private static RegisterMedicalCertificateResponseType okWsMessage;
-    
+
     public RegisterMedicalCertificateType request() throws IOException, JAXBException {
-        Unmarshaller unmarshaller= JAXBContext.newInstance(RegisterMedicalCertificateResponseType.class).createUnmarshaller();
-        return unmarshaller.unmarshal(new StreamSource(new ClassPathResource("CertificateSenderServiceImplTest/utlatande.xml").getInputStream()), RegisterMedicalCertificateType.class).getValue();
+        Unmarshaller unmarshaller = JAXBContext.newInstance(RegisterMedicalCertificateResponseType.class).createUnmarshaller();
+        return unmarshaller.unmarshal(new StreamSource(new ClassPathResource("CertificateSenderServiceImplTest/utlatande.xml").getInputStream()),
+                RegisterMedicalCertificateType.class).getValue();
     }
 
     @BeforeClass
     public static void setupSoapMessages() throws Exception {
-        
-        Unmarshaller unmarshaller= JAXBContext.newInstance(RegisterMedicalCertificateResponseType.class).createUnmarshaller();
-        okWsMessage = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("CertificateSenderServiceImplTest/soap-message-register-ok.xml").getInputStream()), RegisterMedicalCertificateResponseType.class).getValue();
-        errorWsMessage = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("CertificateSenderServiceImplTest/soap-message-register-error.xml").getInputStream()), RegisterMedicalCertificateResponseType.class).getValue();
+
+        Unmarshaller unmarshaller = JAXBContext.newInstance(RegisterMedicalCertificateResponseType.class).createUnmarshaller();
+        okWsMessage = unmarshaller.unmarshal(
+                new StreamSource(new ClassPathResource("CertificateSenderServiceImplTest/soap-message-register-ok.xml").getInputStream()),
+                RegisterMedicalCertificateResponseType.class).getValue();
+        errorWsMessage = unmarshaller.unmarshal(
+                new StreamSource(new ClassPathResource("CertificateSenderServiceImplTest/soap-message-register-error.xml").getInputStream()),
+                RegisterMedicalCertificateResponseType.class).getValue();
     }
 
     @BeforeClass
@@ -101,6 +112,12 @@ public class CertificateSenderServiceImplTest {
     public void setupCertificateService() {
         when(certificateService.getLakarutlatande(certificate)).thenReturn(utlatande);
     }
+    
+    @Before
+    public void setupRecipientService() throws RecipientUnknownException {
+        when(recipientService.getVersion("FK", "fk7263")).thenReturn(TransportModelVersion.LEGACY_LAKARUTLATANDE);
+        when(recipientService.getRecipient("FK")).thenReturn(new Recipient("FK", "Försäkringskassan", "fk"));
+    }
 
     @InjectMocks
     private CertificateSenderServiceImpl senderService = new CertificateSenderServiceImpl();
@@ -120,7 +137,7 @@ public class CertificateSenderServiceImplTest {
         // setup captor for verifying outbound SOAP message
         when(registerClient.registerMedicalCertificate(logicalAddress(), request())).thenReturn(okWsMessage);
 
-        senderService.sendCertificate(certificate, "fk");
+        senderService.sendCertificate(certificate, "FK");
 
         verify(registerClient).registerMedicalCertificate(logicalAddress(), request());
     }
@@ -142,9 +159,10 @@ public class CertificateSenderServiceImplTest {
         okResponse();
 
         // web service call fails
-        when(registerClient.registerMedicalCertificate(any(AttributedURIType.class), any(RegisterMedicalCertificateType.class))).thenReturn(errorWsMessage);
+        when(registerClient.registerMedicalCertificate(any(AttributedURIType.class), any(RegisterMedicalCertificateType.class))).thenReturn(
+                errorWsMessage);
 
-        senderService.sendCertificate(certificate, "fk");
+        senderService.sendCertificate(certificate, "FK");
     }
 
     @Test(expected = RuntimeException.class)
@@ -152,7 +170,7 @@ public class CertificateSenderServiceImplTest {
         // Module API mock returns with error (Internal Server Error)
         errorResponse();
 
-        senderService.sendCertificate(certificate, "fk");
+        senderService.sendCertificate(certificate, "FK");
     }
 
 }

@@ -24,7 +24,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
 
 class WsClientFixture {
 
-	final static String LOGICAL_ADDRESS = "5565594230"
+	final static String LOGICAL_ADDRESS = "FK"
 
 	private CustomObjectMapper jsonMapper = new CustomObjectMapper();
 	protected AttributedURIType logicalAddress = new AttributedURIType()

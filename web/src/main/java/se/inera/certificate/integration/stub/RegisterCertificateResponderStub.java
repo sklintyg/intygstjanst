@@ -64,7 +64,7 @@ public class RegisterCertificateResponderStub implements RegisterMedicalCertific
         RegisterMedicalCertificateResponseType response = new RegisterMedicalCertificateResponseType();
 
         try {
-            String type = logicalAddress.equals("FK") ? "fk7263" : request.getUtlatande().getTypAvUtlatande().getCode();
+            String type = request.getUtlatande().getTypAvUtlatande().getCode();
             ModuleApi endpoint = moduleApiFactory.getModuleEntryPoint(type).getModuleApi();
 
             validate(request, endpoint);

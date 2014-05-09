@@ -19,7 +19,6 @@
 package se.inera.certificate.service.impl;
 
 import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.LEGACY_LAKARUTLATANDE;
-import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.UTLATANDE_V1;
 
 import java.io.ByteArrayInputStream;
 
@@ -37,6 +36,7 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
+import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.integration.exception.ExternalWebServiceCallFailedException;
 import se.inera.certificate.integration.exception.ResultTypeErrorException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
@@ -50,6 +50,8 @@ import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.RecipientService;
+import se.inera.certificate.service.recipientservice.Recipient;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
@@ -68,12 +70,16 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     private static Unmarshaller UNMARSHALLER;
 
     @Autowired
+    private RecipientService recipientService;
+
+    @Autowired
     private CertificateService certificateService;
 
     @Autowired
     private ModuleApiFactory moduleApiFactory;
 
-    @Autowired @Qualifier("registerMedicalCertificateClient")
+    @Autowired
+    @Qualifier("registerMedicalCertificateClient")
     private RegisterMedicalCertificateResponderInterface registerMedicalCertificateQuestionClient;
 
     @Autowired
@@ -86,13 +92,24 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
         try {
             ModuleEntryPoint module = moduleApiFactory.getModuleEntryPoint(utlatande);
-            TransportModelVersion transportModelVersion = module.getModuleId().equals("fk7263") ?
-                    LEGACY_LAKARUTLATANDE : UTLATANDE_V1;
+
+            // Use target from parameter if present, otherwise use the default receiver from the module's entryPoint.
+            String logicalAddress;
+
+            if (target == null) {
+                logicalAddress = module.getDefaultRecieverLogicalAddress();
+
+            } else {
+                Recipient recipient = recipientService.getRecipient(target);
+                logicalAddress = recipient.getLogicalAddress();
+            }
+
+            TransportModelVersion transportModelVersion = recipientService.getVersion(logicalAddress, module.getModuleId());
+            LOGGER.debug(String.format("Getting transport model version from recipientService, got: %s", transportModelVersion));
 
             TransportModelResponse response = module.getModuleApi().marshall(new ExternalModelHolder(certificate.getDocument()),
                     transportModelVersion);
-
-            invokeReceiverService(response.getTransportModel(), module.getDefaultRecieverLogicalAddress(), transportModelVersion);
+            invokeReceiverService(response.getTransportModel(), logicalAddress, transportModelVersion);
 
         } catch (ModuleNotFoundException e) {
             String message = String.format("The module '%s' was not found - not registered in application",
@@ -105,6 +122,10 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
                     certificate.getType());
             LOGGER.error(message);
             throw new RuntimeException(message);
+        } catch (RecipientUnknownException e) {
+            String message = String.format("Found no matching recipient for logical adress: '%s'", target);
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException(message, e);
         }
     }
 
@@ -137,10 +158,10 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
                 }
 
             } else {
-                se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType req = 
-                        new  se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType();
+                se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType req =
+                        new se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType();
 
-                req.setUtlatande((UtlatandeType)request);
+                req.setUtlatande((UtlatandeType) request);
 
                 se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType response = registerCertificateClient
                         .registerMedicalCertificate(logicalAddress, req);
