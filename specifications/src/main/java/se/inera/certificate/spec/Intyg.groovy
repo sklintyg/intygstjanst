@@ -16,6 +16,7 @@ public class Intyg extends RestClientFixture {
     String utfärdare
     String enhetsId = "1.2.3"
 	String enhet
+    String vårdgivarId = "EnVårdGivare"
     String typ
     String id
     String idTemplate
@@ -93,8 +94,9 @@ public class Intyg extends RestClientFixture {
             signingDoctorName: utfärdare,
             validFromDate:giltigtFrån,
             validToDate:giltigtTill,
-            careUnitId: (enhetsId) ? enhet : "1.2.3",
+            careUnitId: enhetsId ?: "1.2.3",
             careUnitName: enhet,
+            careGiverId : vårdgivarId,
 			states: stateList,
             document: document()
         ]
