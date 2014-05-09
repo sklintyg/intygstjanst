@@ -15,17 +15,13 @@
       <bean
         class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
         <property name="dataSource" ref="certificateDataSource" />
-        <property name="selectClause"
-          value="${infomigr.step1.reader.sql.select}" />
-        <property name="fromClause"
-          value="${infomigr.step1.reader.sql.from}" />
-        <property name="whereClause"
-          value="${infomigr.step1.reader.sql.where}" />
-        <property name="sortKey"
-          value="${infomigr.step1.reader.sortkey}" />
+        <property name="selectClause" value="${infomigr.step1.reader.sql.select}" />
+        <property name="fromClause" value="${infomigr.step1.reader.sql.from}" />
+        <property name="whereClause" value="${infomigr.step1.reader.sql.where}" />
+        <property name="sortKey" value="${infomigr.step1.reader.sortkey}" />
       </bean>
     </property>
-    <property name="pageSize" value="100" />
+    <property name="pageSize" value="${infomigr.step1.reader.pagesize}" />
     <property name="rowMapper">
       <bean
         class="se.inera.certificate.migration.model.CertificateStep1RowMapper" />
@@ -42,44 +38,31 @@
         class="se.inera.certificate.migration.model.CertificateItemPreparedStatementSetter" />
     </property>
   </bean>
-  
-    <bean id="infoMigrStep2Reader"
+
+  <bean id="infoMigrStep2Reader"
     class="org.springframework.batch.item.database.JdbcCursorItemReader"
     scope="step">
     <property name="dataSource" ref="certificateDataSource" />
-    <!--  <property name="queryProvider">
-      <bean
-        class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
-        <property name="dataSource" ref="certificateDataSource" />
-        <property name="selectClause"
-          value="${infomigr.step2.reader.sql.select}" />
-        <property name="fromClause"
-          value="${infomigr.step2.reader.sql.from}" />
-        <property name="whereClause"
-          value="${infomigr.step2.reader.sql.where}" />
-        <property name="sortKey"
-          value="${infomigr.step2.reader.sortkey}" />
-      </bean>
-    </property>
-    <property name="pageSize" value="100" /> -->
     <property name="sql" value="${infomigr.step2.reader.sql}" />
     <property name="rowMapper">
       <bean
         class="se.inera.certificate.migration.model.CertificateStep2RowMapper" />
     </property>
   </bean>
-  
-  <bean id="infoMigrStep2Writer" class="se.inera.certificate.migration.writers.SendCertificateWriter" />
-  
-  <bean id="sendCertificateConverter" class="se.inera.certificate.migration.converter.SendCertificateConverterImpl" />
+
+  <bean id="infoMigrStep2Writer"
+    class="se.inera.certificate.migration.writers.SendCertificateWriter" />
+
+  <bean id="sendCertificateConverter"
+    class="se.inera.certificate.migration.converter.SendCertificateConverterImpl" />
 
   <bean id="convertCertificateXMLToJSONProcessor"
     class="se.inera.certificate.migration.processors.ConvertCertificateXMLToJSONProcessor"
     scope="step">
-    <property name="converterRestServiceUrl"
-      value="#{jobParameters['CONVERTER_SERVICE_URL']}" />
+    <property name="converterRestServiceUrl" value="#{jobParameters['CONVERTER_SERVICE_URL']}" />
   </bean>
-  
-  <bean id="objectMapper" class="se.inera.certificate.integration.json.CustomObjectMapper"/>
-  
+
+  <bean id="objectMapper"
+    class="se.inera.certificate.integration.json.CustomObjectMapper" />
+
 </beans>
