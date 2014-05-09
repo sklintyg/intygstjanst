@@ -107,7 +107,7 @@
       </column>
     </addColumn>
     <addColumn tableName="CERTIFICATE">
-      <column name="WIRETAPPED" type="boolean" valueBoolean="false">
+      <column name="WIRETAPPED" type="boolean" value="false">
         <constraints nullable="false"/>
       </column>
     </addColumn>
