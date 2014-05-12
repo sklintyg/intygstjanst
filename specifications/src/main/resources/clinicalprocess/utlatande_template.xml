@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <utlatande xmlns="urn:riv:clinicalprocess:healthcond:certificate:1">
   <utlatande-id root="80832895-5a9c-450a-bd74-08af43750788"/>
-  <typAvUtlatande code="fk7263" codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b"/>
+  <typAvUtlatande code="fk7263" codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" codeSystemName="kv_utlåtandetyp_intyg"/>
 
   <kommentar>Prognosen för patienten är god. Han kommer att kunna återgå till sitt arbete efter genomförd behandling.</kommentar>
   <signeringsdatum>2011-01-26T00:00:00</signeringsdatum>
