@@ -45,6 +45,9 @@ public class SendCertificateConverterImplTest {
 		assertNotNull(sendRequest.getSend().getAdressVard().getHosPersonal().getEnhet());
 		assertNotNull(sendRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getEnhetsId());
 		assertNotNull(sendRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getEnhetsnamn());
+		assertNotNull(sendRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getVardgivare());
+		assertNotNull(sendRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getVardgivare().getVardgivareId());
+		assertNotNull(sendRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getVardgivare().getVardgivarnamn());
 		
 		assertNotNull(sendRequest.getSend().getLakarutlatande());
 		assertNotNull(sendRequest.getSend().getLakarutlatande().getLakarutlatandeId());
@@ -58,8 +61,8 @@ public class SendCertificateConverterImplTest {
 	public void testJoinNames() {
 		
 		Patient patient = new Patient();
-		patient.setEfternamn("Davidsson Eriksson");
-		patient.getFornamn().addAll(Arrays.asList("Arne", "Bengt", "Carl"));
+		patient.setEfternamn("Davidsson Eriksson  ");
+		patient.getFornamn().addAll(Arrays.asList("  Arne", "Bengt", "Carl"));
 		
 		String fullName = SendCertificateConverterImpl.joinNames(patient);
 		

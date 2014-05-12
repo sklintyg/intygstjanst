@@ -37,10 +37,10 @@ public class SendCertificateWriter implements ItemWriter<Certificate> {
 
 	private void send(Certificate cert) {
 		
-		LOG.debug("Performing SEND on certificate {}", cert.getCertificateId());
+		LOG.info("Performing SEND on certificate {}", cert.getCertificateId());
 		SendMedicalCertificateRequestType request = certificateConverter.convertToSendRequest(cert);
 		SendMedicalCertificateResponseType response = sendClient.sendMedicalCertificate(null, request);
 		
-		LOG.debug("Response ResultCode on SEND is {}", response.getResult().getResultCode());
+		LOG.info("Response ResultCode on SEND is {}", response.getResult().getResultCode());
 	}
 }

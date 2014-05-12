@@ -13,20 +13,4 @@
       </New>
     </Arg>
   </New>
-  <New id="ConnectionFactory" class="org.eclipse.jetty.plus.jndi.Resource">
-    <Arg>jms/ConnectionFactory</Arg>
-    <Arg>
-      <New class="org.apache.activemq.ActiveMQConnectionFactory">
-        <Arg>${broker.url}</Arg>
-      </New>
-    </Arg>
-  </New>
-  <New id="Queue" class="org.eclipse.jetty.plus.jndi.Resource">
-    <Arg>jms/Queue</Arg>
-    <Arg>
-      <New class="org.apache.activemq.command.ActiveMQQueue">
-        <Arg>statistik.utlatande.queue</Arg>
-      </New>
-    </Arg>
-  </New>
 </Configure>

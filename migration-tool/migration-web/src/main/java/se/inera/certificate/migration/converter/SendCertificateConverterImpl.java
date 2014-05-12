@@ -16,11 +16,13 @@ import se.inera.certificate.model.Id;
 import se.inera.certificate.model.Patient;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.Vardenhet;
+import se.inera.certificate.model.Vardgivare;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.EnhetType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.HosPersonalType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,7 +40,7 @@ public class SendCertificateConverterImpl implements SendCertificateConverter {
 
 		Utlatande utlatande = convertJsonToUtlatande(cert.getCertificateJsonAsString());
 
-		SendType sendType = convertUtlatandeToSendType(utlatande, cert.getSignedDate());
+		SendType sendType = convertUtlatandeToSendType(utlatande, cert);
 
 		SendMedicalCertificateRequestType requestType = new SendMedicalCertificateRequestType();
 		requestType.setSend(sendType);
@@ -46,15 +48,15 @@ public class SendCertificateConverterImpl implements SendCertificateConverter {
 		return requestType;
 	}
 
-	private SendType convertUtlatandeToSendType(Utlatande utlatande, LocalDateTime signedDate) {
+	private SendType convertUtlatandeToSendType(Utlatande utlatande, Certificate cert) {
 
 		PatientType patientType = new PatientType();
 		patientType.setFullstandigtNamn(joinNames(utlatande.getPatient()));
 		patientType.setPersonId(convertToII(utlatande.getPatient().getId()));
 
 		LakarutlatandeEnkelType utlatandeType = new LakarutlatandeEnkelType();
-		utlatandeType.setLakarutlatandeId(utlatande.getId().getExtension());
-		utlatandeType.setSigneringsTidpunkt(signedDate);
+		utlatandeType.setLakarutlatandeId(cert.getCertificateId());
+		utlatandeType.setSigneringsTidpunkt(cert.getSignedDate());
 		utlatandeType.setPatient(patientType);
 		
 		HosPersonal hosPersonal = utlatande.getSkapadAv();
@@ -84,6 +86,14 @@ public class SendCertificateConverterImpl implements SendCertificateConverter {
 		enhetType.setEnhetsId(convertToII(vardenhet.getId()));
 		enhetType.setEnhetsnamn(vardenhet.getNamn());
 		
+		Vardgivare vardgivare = vardenhet.getVardgivare();
+		
+		VardgivareType vardgivareType = new VardgivareType();
+		vardgivareType.setVardgivarnamn(vardgivare.getNamn());
+		vardgivareType.setVardgivareId(convertToII(vardgivare.getId()));
+		
+		enhetType.setVardgivare(vardgivareType);
+		
 		return enhetType;
 	}
 
@@ -91,7 +101,8 @@ public class SendCertificateConverterImpl implements SendCertificateConverter {
 		StringBuilder sb = new StringBuilder();
 		sb.append(StringUtils.join(patient.getFornamn().iterator(), " "));
 		sb.append(" ").append(patient.getEfternamn());
-		return sb.toString();
+		
+		return StringUtils.stripToEmpty(sb.toString());
 	}
 
 	private Utlatande convertJsonToUtlatande(String certificateJson) {

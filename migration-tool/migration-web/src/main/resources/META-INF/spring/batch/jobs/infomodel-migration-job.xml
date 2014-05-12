@@ -24,7 +24,7 @@
       <batch:tasklet>
         <batch:chunk reader="infoMigrStep1Reader"
           processor="convertCertificateXMLToJSONProcessor" writer="infoMigrStep1Writer"
-          commit-interval="${infomigr.step1.reader.commit.interval}">
+          commit-interval="20">
         </batch:chunk>
         <batch:listeners>
           <batch:listener>

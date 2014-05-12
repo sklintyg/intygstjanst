@@ -48,7 +48,7 @@ public class ConvertCertificateXMLToJSONProcessor implements InitializingBean,
 			return null;
 		}
 
-		LOG.debug("Converting certificate to JSON: {}", cert.toString());
+		LOG.info("Converting certificate to JSON: {}", cert.toString());
 
 		try {
 			return convertAndUpdateCertificate(cert);

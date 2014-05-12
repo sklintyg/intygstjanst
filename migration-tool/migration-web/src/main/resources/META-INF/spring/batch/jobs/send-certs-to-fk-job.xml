@@ -18,7 +18,7 @@
     <batch:step id="reSendCertificatesToFKStep">
       <batch:tasklet>
         <batch:chunk reader="infoMigrStep2Reader" writer="infoMigrStep2Writer"
-          commit-interval="${infomigr.step2.reader.commit.interval}">
+          commit-interval="20">
         </batch:chunk>
       </batch:tasklet>
       <batch:fail on="FAILED" />
