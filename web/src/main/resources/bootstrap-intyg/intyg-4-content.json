@@ -1,10 +1,11 @@
 {
   "id" : {
-    "root" : "intyg-4-revoked",  
+    "root" : "1.2.752.129.2.1.2.1",  
     "extension" : "intyg-4-revoked"
   },
   "typ" : {
     "codeSystem":"f6fb361a-e31d-48b8-8657-99b63912dd9b",
+    "codeSystemName": "kv_utlåtandetyp_intyg",
     "code" : "fk7263"
   },
   "signeringsdatum" : "2011-01-26T00:00:00.000",

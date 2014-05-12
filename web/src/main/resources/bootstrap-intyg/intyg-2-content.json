@@ -1,10 +1,11 @@
 {
   "id" : {
-    "root" : "intyg-2",  
+    "root" : "1.2.752.129.2.1.2.1",  
     "extension" : "intyg-2"
   },
   "typ" : {
     "codeSystem":"f6fb361a-e31d-48b8-8657-99b63912dd9b",
+    "codeSystemName": "kv_utlåtandetyp_intyg",
     "code" : "fk7263"
   },
   "kommentarer" : [ "Prognosen för patienten är god. Han kommer att kunna återgå till sitt arbete efter genomförd behandling." ],
