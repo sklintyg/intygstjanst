@@ -31,6 +31,8 @@
       <xs:element name="observation" type="observationType"
                   minOccurs="0" maxOccurs="unbounded"/>
 
+      <xs:element name="relaterarTill" type="utlatandeId" minOccurs="0"/>
+
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
     </xs:sequence>
@@ -109,8 +111,9 @@
       </xs:element>
       <!-- Skyddad identitet -->
       <xs:element name="forskrivarkod" type="nonEmptyString" minOccurs="0"/>
-      <xs:element name="befattning" type="xs:string" minOccurs="0"/>
+      <xs:element name="befattning" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="enhet" type="enhetType"/>
+      <xs:element name="yrkesgrupp" type="iso:CD" minOccurs="0" maxOccurs="unbounded"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
@@ -212,6 +215,7 @@
     <xs:sequence>
       <xs:element name="vardkontakttyp" type="iso:CD"/>
       <xs:element name="vardkontakttid" type="dateInterval" minOccurs="0"/>
+      <xs:element name="idKontroll" type="iso:CD" minOccurs="0"/>
 
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
@@ -230,6 +234,7 @@
 
   <xs:complexType name="aktivitetType">
     <xs:sequence>
+      <xs:element name="aktivitets-id" type="iso:II" minOccurs="0"/>
       <xs:element name="aktivitetskod" type="iso:CD"/>
       <xs:element name="aktivitetstid" type="partialDateInterval"
                   minOccurs="0"/>
@@ -239,6 +244,8 @@
                   minOccurs="0"/>
       <xs:element name="beskrivsAv" type="utforarrollType"
                   minOccurs="0" maxOccurs="unbounded"/>
+
+      <xs:element name="forekomst" type="xs:boolean" minOccurs="0"/>
 
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
@@ -260,7 +267,7 @@
     <xs:sequence>
       <xs:element name="rekommendationskod" type="iso:CD"/>
       <xs:element name="beskrivning" type="nonEmptyString" minOccurs="0"/>
-      <xs:element name="sjukdomskannedom" type="iso:CD"/>
+      <xs:element name="sjukdomskannedom" type="iso:CD" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
     </xs:sequence>
@@ -268,25 +275,18 @@
 
   <xs:complexType name="observationType">
     <xs:sequence>
+      <xs:element name="observations-id" type="iso:II" minOccurs="0"/>
       <xs:element name="observationskategori" type="iso:CD"
                   minOccurs="0"/>
       <xs:element name="observationskod" type="iso:CD"
                   minOccurs="0"/>
       <xs:element name="beskrivning" type="nonEmptyString" minOccurs="0"/>
       <xs:element name="observationsperiod" type="partialDateInterval" minOccurs="0"/>
-      <xs:element name="varde" type="iso:PQ" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="varde" type="xs:anyType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="utforsAv" type="utforarrollType"
                   minOccurs="0"/>
-      <xs:element name="prognos" type="prognosType" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:any namespace="##other" processContents="lax" minOccurs="0"
-              maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="prognosType">
-    <xs:sequence>
-      <xs:element name="prognoskod" type="iso:CD" minOccurs="0"/>
-      <xs:element name="beskrivning" type="nonEmptyString" minOccurs="0"/>
+      <xs:element name="observationstid" type="date" minOccurs="0"/>
+      <xs:element name="forekomst" type="xs:boolean" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded"/>
     </xs:sequence>
@@ -340,15 +340,15 @@
 
   <xs:complexType name="dateInterval">
     <xs:sequence>
-      <xs:element name="from" type="date"/>
-      <xs:element name="tom" type="date"/>
+      <xs:element name="from" type="date" minOccurs="0" />
+      <xs:element name="tom" type="date" minOccurs="0" />
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="partialDateInterval">
     <xs:sequence>
-      <xs:element name="from" type="partialDate"/>
-      <xs:element name="tom" type="partialDate"/>
+      <xs:element name="from" type="partialDate" minOccurs="0" />
+      <xs:element name="tom" type="partialDate" minOccurs="0" />
     </xs:sequence>
   </xs:complexType>
 
