@@ -5,7 +5,7 @@
 	<urn:utlatande>
 		<utlatande-id root="avstangning.xml" />
 		<typAvUtlatande code="fk7263"
-			codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" />
+			codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" codeSystemName="kv_utlåtandetyp_intyg" />
 
 		<kommentar>Prognosen för patienten är god. Han kommer att kunna återgå
 			till sitt arbete efter genomförd behandling.
@@ -54,7 +54,7 @@
 				<tom>2011-02-13</tom>
 			</observationsperiod>
 			<varde value="0.0" unit="percent" />
-			<prognos>
+			<p:prognos xmlns:p="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1" xmlns="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1">
 				<prognoskod code="PRO1" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 					codeSystemName="kv_prognos_intyg" />
 				<beskrivning>Arbetsförmåga: Skadan har förvärrats vid varje
@@ -66,7 +66,7 @@
 					är
 					nödvändig för att läka skadan.
 				</beskrivning>
-			</prognos>
+			</p:prognos>
 		</observation>
 	</urn:utlatande>
 </urn:RegisterMedicalCertificate>

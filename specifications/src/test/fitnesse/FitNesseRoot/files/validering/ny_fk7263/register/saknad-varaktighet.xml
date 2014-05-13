@@ -5,7 +5,7 @@
 	<urn:utlatande>
 		<utlatande-id root="b2f6d5bc-2f50-4623-9ce9-bf1ee5404347" />
 		<typAvUtlatande code="fk7263"
-			codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" />
+			codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" codeSystemName="kv_utlåtandetyp_intyg" />
 
 		<kommentar>Prognosen för patienten är god. Han kommer att kunna återgå
 			till sitt arbete efter genomförd behandling.</kommentar>
@@ -159,7 +159,7 @@
 				codeSystemName="SNOMED-CT" />
 		
 			<varde value="75.0" unit="percent" />
-			<prognos>
+			<p:prognos xmlns:p="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1" xmlns="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1">
 				<prognoskod code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 					codeSystemName="kv_prognos_intyg" />
 				<beskrivning>Arbetsförmåga: Skadan har förvärrats vid varje
@@ -169,14 +169,14 @@
 					är
 					nödvändig för att läka skadan.
 				</beskrivning>
-			</prognos>
+			</p:prognos>
 		</observation>
 		<observation>
 			<observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1"
 				codeSystemName="SNOMED-CT" />
 		
 			<varde value="50.0" unit="percent" />
-			<prognos>
+			<p:prognos xmlns:p="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1" xmlns="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1">
 				<prognoskod code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 					codeSystemName="kv_prognos_intyg" />
 				<beskrivning>Arbetsförmåga: Skadan har förvärrats vid varje
@@ -186,14 +186,14 @@
 					är
 					nödvändig för att läka skadan.
 				</beskrivning>
-			</prognos>
+			</p:prognos>
 		</observation>
 		<observation>
 			<observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1"
 				codeSystemName="SNOMED-CT" />
 			
 			<varde value="25.0" unit="percent" />
-			<prognos>
+			<p:prognos xmlns:p="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1" xmlns="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1">
 				<prognoskod code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 					codeSystemName="kv_prognos_intyg" />
 				<beskrivning>Arbetsförmåga: Skadan har förvärrats vid varje
@@ -203,14 +203,14 @@
 					är
 					nödvändig för att läka skadan.
 				</beskrivning>
-			</prognos>
+			</p:prognos>
 		</observation>
 		<observation>
 			<observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1"
 				codeSystemName="SNOMED-CT" />
 			
 			<varde value="0.0" unit="percent" />
-			<prognos>
+			<p:prognos xmlns:p="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1" xmlns="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1">
 				<prognoskod code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 					codeSystemName="kv_prognos_intyg" />
 				<beskrivning>Arbetsförmåga: Skadan har förvärrats vid varje
@@ -220,7 +220,7 @@
 					är
 					nödvändig för att läka skadan.
 				</beskrivning>
-			</prognos>
+			</p:prognos>
 		</observation>
 	</urn:utlatande>
 </urn:RegisterMedicalCertificate>

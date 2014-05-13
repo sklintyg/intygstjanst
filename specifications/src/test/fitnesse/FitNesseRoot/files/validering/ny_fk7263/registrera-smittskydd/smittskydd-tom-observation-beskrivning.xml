@@ -5,7 +5,7 @@
 	<urn:utlatande>
 		<utlatande-id root="smittskydd-tom-observation-beskrivning.xml" />
 		<typAvUtlatande code="fk7263"
-			codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" />
+			codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" codeSystemName="kv_utlåtandetyp_intyg" />
 
 		<kommentar>Prognosen för patienten är god. Han kommer att kunna återgå
 			till sitt arbete efter genomförd behandling.</kommentar>
@@ -126,7 +126,7 @@
 			<observationskategori code="439401001"
 				codeSystem="1.2.752.116.2.1.1.1" codeSystemName="SNOMED-CT" />
 			<observationskod code="S47" codeSystemName="ICD-10" />
-			<beskrivning>Medicinskttillstånd:</beskrivning>
+			<beskrivning></beskrivning>
 		</observation>
 
 		<observation>
@@ -157,11 +157,11 @@
 				<tom>2011-05-31</tom>
 			</observationsperiod>
 			<varde value="75.0" unit="percent" />
-			<prognos>
+			<p:prognos xmlns:p="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1" xmlns="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1">
 				<prognoskod code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 					codeSystemName="kv_prognos_intyg" />
 				<beskrivning>Arbetsförmåga:  </beskrivning>
-			</prognos>
+			</p:prognos>
 		</observation>
 		<observation>
 			<observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1"
@@ -171,11 +171,11 @@
 				<tom>2011-03-31</tom>
 			</observationsperiod>
 			<varde value="50.0" unit="percent" />
-			<prognos>
+			<p:prognos xmlns:p="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1" xmlns="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1">
 				<prognoskod code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 					codeSystemName="kv_prognos_intyg" />
 				<beskrivning>Arbetsförmåga: 	</beskrivning>
-			</prognos>
+			</p:prognos>
 		</observation>
 		<observation>
 			<observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1"
@@ -185,12 +185,11 @@
 				<tom>2011-03-06</tom>
 			</observationsperiod>
 			<varde value="25.0" unit="percent" />
-			<prognos>
+			<p:prognos xmlns:p="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1" xmlns="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1">
 				<prognoskod code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 					codeSystemName="kv_prognos_intyg" />
-				<beskrivning>
-				</beskrivning>
-			</prognos>
+				<beskrivning>Arbetsförmåga: 	</beskrivning>
+			</p:prognos>
 		</observation>
 		<observation>
 			<observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1"
@@ -200,11 +199,11 @@
 				<tom>2011-02-13</tom>
 			</observationsperiod>
 			<varde value="0.0" unit="percent" />
-			<prognos>
+			<p:prognos xmlns:p="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1" xmlns="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1">
 				<prognoskod code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 					codeSystemName="kv_prognos_intyg" />
-				<beskrivning></beskrivning>
-			</prognos>
+				<beskrivning>Arbetsförmåga: 	</beskrivning>
+			</p:prognos>
 		</observation>
 	</urn:utlatande>
 </urn:RegisterMedicalCertificate>
