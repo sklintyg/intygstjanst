@@ -15,15 +15,14 @@ import org.springframework.stereotype.Component;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
-import se.inera.certificate.modules.support.api.ModuleApi;
 
 /**
- * Factory which which serves {@link ModuleApi} implementations of the registered module types.
+ * Factory which which serves {@link se.inera.certificate.modules.support.api.ModuleApi} implementations of the registered module types.
  */
 @Component
 public class ModuleApiFactory {
 
-    private static Logger LOG = LoggerFactory.getLogger(ModuleApiFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ModuleApiFactory.class);
 
     @Autowired
     private List<ModuleEntryPoint> moduleEntryPoints;
@@ -40,14 +39,14 @@ public class ModuleApiFactory {
 
         LOG.info("Module registry loaded with modules {}", moduleIds);
     }
-    
+
     public List<ModuleEntryPoint> getRegisteredModules() {
         return new ArrayList<ModuleEntryPoint>(moduleApiMap.values());
     }
 
     /**
-     * Creates a {@link ModuleRestApi} for the given certificate type.
-     * 
+     * Creates a {@link ModuleEntryPoint} for the given certificate type.
+     *
      * @throws ModuleNotFoundException
      */
     public ModuleEntryPoint getModuleEntryPoint(String type) throws ModuleNotFoundException {
@@ -60,8 +59,8 @@ public class ModuleApiFactory {
     }
 
     /**
-     * Creates a {@link ModuleRestApi} for the given certificate type.
-     * 
+     * Creates a {@link ModuleEntryPoint} for the given certificate type.
+     *
      * @throws ModuleNotFoundException
      */
     public ModuleEntryPoint getModuleEntryPoint(Utlatande utlatande) throws ModuleNotFoundException {

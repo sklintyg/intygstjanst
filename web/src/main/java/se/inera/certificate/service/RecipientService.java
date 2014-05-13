@@ -11,8 +11,8 @@ import se.inera.certificate.service.recipientservice.Recipient;
 public interface RecipientService {
 
     /**
-     * Get the {@link Recipient} that corresponds to a given logical address
-     * 
+     * Get the {@link Recipient} that corresponds to a given logical address.
+     *
      * @param logicalAddress
      *            the logical address to check
      * @return {@link Recipient}
@@ -21,35 +21,34 @@ public interface RecipientService {
     Recipient getRecipient(String logicalAddress) throws RecipientUnknownException;
 
     /**
-     * List all {@link Recipient}[s] currently known
-     * 
+     * List all {@link Recipient}[s] currently known.
+     *
      * @return List of {@link Recipient}[s]
      */
     List<Recipient> listRecipients();
 
     /**
      * Get a list of registered recipients for a certain {@link CertificateType}.
-     * 
+     *
      * @return a List of {@link Recipient}
      */
     List<Recipient> listRecipients(CertificateType certificateType);
 
     /**
-     * List the {@link CertificateType}[s] the specified {@link Recipient} accepts
-     * 
-     * @param mottagare
+     * List the {@link CertificateType}[s] the specified {@link Recipient} accepts.
+     *
+     * @param recipient
      *            {@link Recipient}
      * @return a List of Strings representing the accepted types
      */
     Set<CertificateType> listCertificateTypes(Recipient recipient);
 
     /**
-     * Get the {@link TransportModelVersion} for a specific {@link Recipient} and {@link CertificateType}.
-     * 
-     * @param mottagare
-     *            {@link Recipient}
-     * @param intygstyp
-     *            {@link String}
+     * Get the {@link TransportModelVersion} for a specific logicalAddress and certificateType.
+     *
+     * @param logicalAddress String
+     * @param certificateType String
+     *
      * @return the accepted {@link TransportModelVersion}
      */
     TransportModelVersion getVersion(String logicalAddress, String certificateType) throws RecipientUnknownException;

@@ -28,7 +28,7 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
 
     /**
      * Keeps track of the TransportModelVersion supported by a certain combination of Logical Address and
-     * CertificateType
+     * CertificateType.
      */
     private Map<RecipientCertificateType, TransportModelVersion> supportedTransportModelVersion;
 

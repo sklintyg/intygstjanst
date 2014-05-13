@@ -7,7 +7,7 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType
 /**
  * @author andreaskaltenbach
  */
-public class ResultTypeUtil {
+public final class ResultTypeUtil {
 
     private ResultTypeUtil() {
     }

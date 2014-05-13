@@ -11,11 +11,11 @@ import javax.jms.JMSException;
  */
 public abstract class DestinationFixture {
 
-    protected static Map<String, Destination> destinations = new HashMap<String, Destination>();
-    
+    private static Map<String, Destination> destinations = new HashMap<>();
+
     /**
      * Get destination.
-     * 
+     *
      * @return the connection
      */
     public static Destination getDestination(String destination) {
@@ -24,6 +24,10 @@ public abstract class DestinationFixture {
         } else {
             throw new IllegalStateException("Destination not configured");
         }
+    }
+
+    void addDestination(String name, Destination destination) {
+        destinations.put(name, destination);
     }
 
     /**

@@ -13,25 +13,24 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 public class ActiveMQConnectionFixture {
 
     public static final String DEFAULT_CONNECTION_FACTORY_URL = "tcp://localhost:61616";
-    
-    protected static ConnectionFactory connectionFactory;
+
+    private static ConnectionFactory connectionFactory;
     private static String connectionFactoryUrl = DEFAULT_CONNECTION_FACTORY_URL;
-    
+
     /**
      * Get database connection.
-     * 
+     *
      * @return the connection
      */
     public static Connection getConnection() {
         try {
-            Connection conn = getConnectionFactory().createConnection();
-            return conn;
+            return getConnectionFactory().createConnection();
         } catch (JMSException e) {
             throw new RuntimeException("Could not open connection", e);
         }
     }
 
-    public static ConnectionFactory getConnectionFactory() {
+    public static synchronized ConnectionFactory getConnectionFactory() {
         if (connectionFactory == null) {
             connectionFactory = new ActiveMQConnectionFactory(connectionFactoryUrl);
         }

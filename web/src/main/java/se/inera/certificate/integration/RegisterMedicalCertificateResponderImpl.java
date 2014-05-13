@@ -87,8 +87,7 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
 
     private String xmlToString(RegisterMedicalCertificateType registerMedicalCertificate) throws JAXBException {
         StringWriter stringWriter = new StringWriter();
-        JAXBElement<UtlatandeType> utlatandeElement = objectFactory.createUtlatande(registerMedicalCertificate
-                .getUtlatande());
+        JAXBElement<UtlatandeType> utlatandeElement = objectFactory.createUtlatande(registerMedicalCertificate.getUtlatande());
         marshaller.marshal(utlatandeElement, stringWriter);
         return stringWriter.toString();
     }

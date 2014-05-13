@@ -1,10 +1,10 @@
 package se.inera.certificate.service.recipientservice;
 
 /**
- * Recipient object
- * 
+ * Recipient object.
+ *
  * @author erik
- * 
+ *
  */
 public class RecipientBuilder {
 

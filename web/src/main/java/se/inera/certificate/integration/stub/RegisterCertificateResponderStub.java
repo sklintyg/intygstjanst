@@ -110,9 +110,7 @@ public class RegisterCertificateResponderStub implements RegisterMedicalCertific
             String message = String.format("Failed to validate certificate for certificate type '%s'", registerMedicalCertificate.getUtlatande()
                     .getTypAvUtlatande().getCode());
             LOGGER.error(message);
-            // TODO: Throw better exception here?
             throw new RuntimeException(message, e);
         }
     }
-
 }

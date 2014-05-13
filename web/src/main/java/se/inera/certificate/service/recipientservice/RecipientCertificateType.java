@@ -26,31 +26,25 @@ public class RecipientCertificateType {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((certificateTypeId == null) ? 0 : certificateTypeId.hashCode());
-        result = prime * result + ((recipientId == null) ? 0 : recipientId.hashCode());
+        result = prime * result + certificateTypeId.hashCode();
+        result = prime * result + recipientId.hashCode();
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        } else if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        } else if (getClass() != obj.getClass()) {
             return false;
+        }
         RecipientCertificateType other = (RecipientCertificateType) obj;
-        if (certificateTypeId == null) {
-            if (other.certificateTypeId != null)
-                return false;
-        } else if (!certificateTypeId.equals(other.certificateTypeId))
+        if (!certificateTypeId.equals(other.certificateTypeId)) {
             return false;
-        if (recipientId == null) {
-            if (other.recipientId != null)
-                return false;
-        } else if (!recipientId.equals(other.recipientId))
-            return false;
-        return true;
+        } else {
+            return recipientId.equals(other.recipientId);
+        }
     }
-
 }

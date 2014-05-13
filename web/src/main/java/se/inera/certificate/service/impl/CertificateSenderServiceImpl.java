@@ -57,8 +57,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificater
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 
-import com.google.common.base.Throwables;
-
 /**
  * @author andreaskaltenbach
  */
@@ -67,7 +65,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateSenderServiceImpl.class);
 
-    private static Unmarshaller UNMARSHALLER;
+    private static final Unmarshaller UNMARSHALLER;
 
     @Autowired
     private RecipientService recipientService;
@@ -84,6 +82,16 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     @Autowired
     private se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponderInterface registerCertificateClient;
+
+    static {
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class,
+                    se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType.class);
+            UNMARSHALLER = jaxbContext.createUnmarshaller();
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void sendCertificate(Certificate certificate, String target) {
@@ -129,16 +137,6 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
         }
     }
 
-    static {
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class,
-                    se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType.class);
-            UNMARSHALLER = jaxbContext.createUnmarshaller();
-        } catch (JAXBException e) {
-            Throwables.propagate(e);
-        }
-    }
-
     private void invokeReceiverService(String xml, String logicalAddress, TransportModelVersion type) {
         try {
             Class<?> unmarshallType = (type.equals(LEGACY_LAKARUTLATANDE) ? RegisterMedicalCertificateType.class
@@ -173,7 +171,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             }
 
         } catch (JAXBException e) {
-            Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
     }
 

@@ -33,8 +33,7 @@ import com.google.common.base.Throwables;
  */
 public class RegisterMedicalCertificateLegacyResponderProvider implements RegisterMedicalCertificateResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(RegisterMedicalCertificateLegacyResponderProvider.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisterMedicalCertificateLegacyResponderProvider.class);
 
     private static final String FK7263 = "fk7263";
 
@@ -42,7 +41,7 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
     private ObjectFactory objectFactory;
 
     private boolean wiretapped = false;
-    
+
     @Autowired
     private CertificateService certificateService;
 

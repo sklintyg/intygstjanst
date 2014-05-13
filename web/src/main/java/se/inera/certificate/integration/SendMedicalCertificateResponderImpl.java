@@ -31,7 +31,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
     public SendMedicalCertificateResponseType sendMedicalCertificate(AttributedURIType logicalAddress,
             SendMedicalCertificateRequestType request) {
         SendMedicalCertificateResponseType response = new SendMedicalCertificateResponseType();
-        
+
         try {
             new SendCertificateRequestValidator(request.getSend()).validateAndCorrect();
 
@@ -39,9 +39,8 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             String civicRegistrationNumber = request.getSend().getLakarutlatande().getPatient().getPersonId()
                     .getExtension();
 
-            SendStatus status = certificateService.sendCertificate(civicRegistrationNumber, certificateId,
-                    logicalAddress.getValue());
-            
+            SendStatus status = certificateService.sendCertificate(civicRegistrationNumber, certificateId, logicalAddress.getValue());
+
             if (status == SendStatus.ALREADY_SENT) {
                 response.setResult(ResultOfCallUtil.infoResult("Certificate '" + certificateId + "' is already sent."));
                 LOGGER.info(LogMarkers.MONITORING, certificateId + " already sent to FK");

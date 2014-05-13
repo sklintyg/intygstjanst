@@ -20,8 +20,7 @@ public class ActiveMQDestinationFixture extends DestinationFixture {
             connection = ActiveMQConnectionFixture.getConnection();
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Queue queue = session.createQueue(name);
-            System.out.println("Queue " + queue);
-            destinations.put(lookup, queue);
+            addDestination(lookup, queue);
         } finally {
             JMSUtils.closeQuitely(connection, session);
         }
@@ -32,7 +31,7 @@ public class ActiveMQDestinationFixture extends DestinationFixture {
         Connection connection = ActiveMQConnectionFixture.getConnection();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         Topic topic = session.createTopic(name);
-        destinations.put(lookup, topic);
+        addDestination(lookup, topic);
     }
 
 }

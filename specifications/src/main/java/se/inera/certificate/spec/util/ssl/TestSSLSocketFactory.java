@@ -15,8 +15,9 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import org.apache.http.conn.ssl.SSLSocketFactory;
+
 public class TestSSLSocketFactory extends SSLSocketFactory {
-    SSLContext sslContext = SSLContext.getInstance("TLS");
+    private SSLContext sslContext = SSLContext.getInstance("TLS");
 
     public TestSSLSocketFactory(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
         super(truststore);
@@ -33,12 +34,12 @@ public class TestSSLSocketFactory extends SSLSocketFactory {
             }
         };
 
-        sslContext.init(null, new TrustManager[] { tm }, null);
+        sslContext.init(null, new TrustManager[] {tm}, null);
     }
 
     @Override
     @Deprecated
-    public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
+    public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException {
         return sslContext.getSocketFactory().createSocket(socket, host, port, autoClose);
     }
 
