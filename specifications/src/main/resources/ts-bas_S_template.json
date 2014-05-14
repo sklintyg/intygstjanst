@@ -61,7 +61,7 @@
                 "namn": "Vårdgivarnamn"
             }
         },
-        "befattningar" : []
+        "befattningar" : ["ST_LAKARE"]
     },
     "vardkontakter": [
 	      {

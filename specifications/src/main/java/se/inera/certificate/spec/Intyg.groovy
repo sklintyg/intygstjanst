@@ -119,7 +119,7 @@ public class Intyg extends RestClientFixture {
         }
 
         // setting the certificate ID
-        certificate.'id'.root = id
+        certificate.'id'.root = "1.2.752.129.2.1.2.1"
         certificate.'id'.extension = id
 
         // setting personnr in certificate XML
