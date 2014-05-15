@@ -34,6 +34,16 @@
 |id|
 |intyg-med-blanksteg|
 
+!3 Intyg utan Aktivitetsbegränsning (fält 5) ger inga fel
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/giltigt-intyg-utan-aktivitet-beskrivning.xml|OK|
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-utan-aktivitet-beskrivning|
+
 !3 Saknad nedsattningsgrad ger fel
 
 |validera register|
