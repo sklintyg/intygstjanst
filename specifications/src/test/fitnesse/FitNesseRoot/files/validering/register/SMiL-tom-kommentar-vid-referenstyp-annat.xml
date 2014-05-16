@@ -26,6 +26,9 @@
             </ns2:vardgivare>
          </ns2:enhet>
       </skapadAvHosPersonal>
+      <aktivitet>
+        <aktivitetskod>Avstangning_enligt_SmL_pga_smitta</aktivitetskod>
+      </aktivitet>
       <vardkontakt>
          <vardkontakttyp>Min_undersokning_av_patienten</vardkontakttyp>
          <vardkontaktstid>2011-01-24</vardkontaktstid>

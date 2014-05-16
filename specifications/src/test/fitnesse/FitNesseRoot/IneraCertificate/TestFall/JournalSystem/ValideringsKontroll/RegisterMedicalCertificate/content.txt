@@ -24,16 +24,6 @@
 |id|
 |intyg-med-blanksteg|
 
-!3 SMiL-Intyg utan diagnos-kod ger inga fel
-
-|validera intyg|
-|filnamn|resultat?|
-|validering/register/SMiL-intyg-utan-diagnos.xml|OK|
-
-|ta bort intyg|
-|id|
-|SMiL-intyg-utan-diagnos|
-
 !3 Intyg utan Aktivitetsbegränsning (fält 5) ger inga fel
 
 |validera intyg|
@@ -43,6 +33,16 @@
 |ta bort intyg|
 |id|
 |giltigt-intyg-utan-aktivitet-beskrivning|
+
+!3 Intyg utan Prognosangivelse (fält 10) ger inga fel
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/giltigt-intyg-utan-prognosangivelse.xml|OK|
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-utan-prognosangivelse|
 
 !3 Saknad nedsattningsgrad ger fel
 
@@ -110,29 +110,33 @@
 |filnamn|resultat?|
 |validering/register/tomt-personnr.xml|=~/.*ERROR.*Validation.*/|
 
-!3 saknat referensdatum journaluppgift ger fel
+!3 saknat referensdatum journaluppgift ger fel, även för smittskyddsintyg
 
 |validera intyg|
 |filnamn|resultat?|
 |validering/register/saknat-referensdatum-journaluppgift.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/SMiL-saknat-referensdatum-journaluppgift.xml|=~/.*ERROR.*Validation.*/|
 
-!3 saknat referensdatum vid referenstyp annat ger fel
+!3 saknat referensdatum vid referenstyp annat ger fel, även för smittskyddsintyg
 
 |validera intyg|
 |filnamn|resultat?|
 |validering/register/saknat-referensdatum-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/SMiL-saknat-referensdatum-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
 
-!3 tomt referensdatum journaluppgift ger fel
+!3 tomt referensdatum journaluppgift ger fel, även för smittskyddsintyg
 
 |validera intyg|
 |filnamn|resultat?|
 |validering/register/tomt-referensdatum-journaluppgift.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/SMiL-tomt-referensdatum-journaluppgift.xml|=~/.*ERROR.*Validation.*/|
 
-!3 tomt referensdatum vid referenstyp annat ger fel
+!3 tomt referensdatum vid referenstyp annat ger fel, även för smittskyddsintyg
 
 |validera intyg|
 |filnamn|resultat?|
 |validering/register/tomt-referensdatum-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/SMiL-tomt-referensdatum-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
 
 !3 felaktigt referensdatum journaluppgift ger fel
 
@@ -377,11 +381,16 @@
 |filnamn|resultat?|
 |validering/register/saknat-medicinskt-tillstand.xml|=~/.*ERROR.*Validation.*/|
 
-!3 Saknad diagnos-kod ger fel
+!3 Saknad diagnos-kod ger fel, om inte avstängning enligt smittskyddslagen
 
 |validera intyg|
 |filnamn|resultat?|
 |validering/register/saknad-diagnos-kod.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/SMiL-saknad-diagnos-kod.xml|OK|
+
+|ta bort intyg|
+|id|
+|SMiL-saknad-diagnos-kod|
 
 !3 Saknad diagnos-kod-system ger fel
 
@@ -395,11 +404,16 @@
 |filnamn|resultat?|
 |validering/register/felaktig-diagnos-kod-system.xml|=~/.*ERROR.*Validation.*/|
 
-!3 Saknad funktionstillstånd-kroppsfunktion ger fel
+!3 Saknad funktionstillstånd-kroppsfunktion ger fel, om inte avstängning enligt smittskyddslagen
 
 |validera intyg|
 |filnamn|resultat?|
 |validering/register/saknad-funktionstillstand-kroppsfunktion.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/SMiL-saknad-funktionstillstand-kroppsfunktion.xml|OK|
+
+|ta bort intyg|
+|id|
+|SMiL-saknad-funktionstillstand-kroppsfunktion|
 
 !3 Saknad funktionstillstånd-kroppsfunktion-beskrivning ger fel
 
@@ -407,11 +421,16 @@
 |filnamn|resultat?|
 |validering/register/saknad-funktionstillstand-kroppsfunktion-beskrivning.xml|=~/.*ERROR.*Validation.*/|
 
-!3 Saknade vårdkontakter och referenser ger fel
+!3 Saknade vårdkontakter och referenser ger fel, om inte avstängning enligt smittskyddslagen
 
 |validera intyg|
 |filnamn|resultat?|
 |validering/register/saknade-vardkontakter-referenser.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/SMiL-saknade-vardkontakter-referenser.xml|OK|
+
+|ta bort intyg|
+|id|
+|SMiL-saknade-vardkontakter-referenser|
 
 !3 Saknad vårdkontakt-tid ger fel
 
@@ -419,23 +438,50 @@
 |filnamn|resultat?|
 |validering/register/saknad-vardkontakt-tid.xml|=~/.*ERROR.*Validation.*/|
 
+!3 Saknad beskrivning vid rekommendationer - Övrigt (fält 6a) ger fel, även för smittskyddsintyg
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/saknad-beskrivning-rekommendation-ovrigt.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/SMiL-saknad-beskrivning-rekommendation-ovrigt.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad beskrivning vid behandling - vården (fält 6b) ger fel, även för smittskyddsintyg
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/saknad-beskrivning-behandling-varden.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/SMiL-saknad-beskrivning-behandling-varden.xml|=~/.*ERROR.*Validation.*/|
+
+!3 Saknad beskrivning vid behandling - övrigt (fält 6b) ger fel, även för smittskyddsintyg
+
+|validera intyg|
+|filnamn|resultat?|
+|validering/register/saknad-beskrivning-behandling-ovrigt.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/SMiL-saknad-beskrivning-behandling-ovrigt.xml|=~/.*ERROR.*Validation.*/|
+
 !3 Saknad arbetsförmåga ger fel
 
 |validera intyg|
 |filnamn|resultat?|
 |validering/register/saknad-arbetsformaga.xml|=~/.*ERROR.*Validation.*/|
 
-!3 Saknad sysselsättning ger fel
+!3 Saknad sysselsättning ger fel, om inte avstängning enligt smittskyddslagen
 
 |validera intyg|
 |filnamn|resultat?|
 |validering/register/saknad-sysselsattning.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/SMiL-saknad-sysselsattning.xml|OK|
 
-!3 Saknad arbetsuppgift ger fel
+|ta bort intyg|
+|id|
+|SMiL-saknad-sysselsattning|
+
+!3 Saknad arbetsuppgift ger fel, även för smittskyddsintyg
 
 |validera intyg|
 |filnamn|resultat?|
 |validering/register/saknad-arbetsuppgift.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/SMiL-saknad-arbetsuppgift.xml|=~/.*ERROR.*Validation.*/|
 
 !3 Tom arbetsuppgift ger fel
 
@@ -467,18 +513,19 @@
 |filnamn|resultat?|
 |validering/register/multipla-ressatt.xml|=~/.*ERROR.*Validation.*/|
 
-!3 Saknad kommentar ger fel om referens är "annat"
+!3 Saknad kommentar ger fel om referens är "annat", även för smittskyddsintyg
 
 |validera intyg|
 |filnamn|resultat?|
 |validering/register/saknad-kommentar-vid-referens-annat.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/SMiL-saknad-kommentar-vid-referens-annat.xml|=~/.*ERROR.*Validation.*/|
 
-!3 Tom kommentar vid referenstyp "annat" ger fel 
+!3 Tom kommentar vid referenstyp "annat" ger fel, även för smittskyddsintyg 
 
 |validera intyg|
 |filnamn|resultat?|
 |validering/register/tom-kommentar-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
-
+|validering/register/SMiL-tom-kommentar-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
 
 !3 Saknad kommentar ger fel om prognos är "går inte att bedömma"
 
