@@ -9,5 +9,6 @@
   "states": [{"state":"RECEIVED", "target":"MI", "timestamp":"2013-08-05T14:30:03.227"},
              {"state":"SENT", "target" : "FK", "timestamp" : "2013-08-05T14:31:03.227"}
             ],
-  "careUnitName": "Kir mott"
+  "careUnitName": "Centrum Väst Mott",
+  "careGiverId": "vastmanland"
 }

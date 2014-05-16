@@ -1,9 +1,10 @@
 {"id" : {
-    "root" : "intyg-1",
+    "root" : "1.2.752.129.2.1.2.1",
     "extension" : "intyg-1"
   },
   "typ" : {
     "codeSystem":"f6fb361a-e31d-48b8-8657-99b63912dd9b",
+    "codeSystemName": "kv_utlåtandetyp_intyg",
     "code" : "fk7263"
   },
   "kommentarer" : [ "Prognosen för patienten är god. Han kommer att kunna återgå till sitt arbete efter genomförd behandling." ],
@@ -55,18 +56,18 @@
         "root" : "1.2.752.29.4.71",
         "extension" : "123456789011"
       },
-      "namn" : "centrum-vast",
+      "namn" : "Centrum Väst Mott",
       "postadress" : "Lasarettsvägen 13",
-      "postnummer" : "85150",
-      "postort" : "Sundsvall",
-      "telefonnummer" : "060-1818000",
-      "epost" : "kirmott@vardenhet.se",
+      "postnummer" : "721 61",
+      "postort" : "Västerås",
+      "telefonnummer" : "021-1818000",
+      "epost" : "centrum-vast@vardenhet.se",
       "vardgivare" : {
         "id" : {
           "root" : "1.2.752.129.2.1.4.1",
-          "extension" : "Kir mott"
+          "extension" : "vastmanland"
         },
-        "namn" : "Landstinget Norrland"
+        "namn" : "Landstinget Västmanland"
       }
     }
   },
