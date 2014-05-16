@@ -5,11 +5,11 @@
   <xsl:include href="transform/clinicalprocess-healthcond-certificate/general-transform.xslt"/>
 
   <xsl:template name="response">
-    <lc:ListCertificatesForCareResponse>
+    <lc:ListCertificatesForCitizenResponse>
       <lc:result>
         <xsl:call-template name="result"/>
       </lc:result>
-    </lc:ListCertificatesForCareResponse>
+    </lc:ListCertificatesForCitizenResponse>
   </xsl:template>
 
 </xsl:stylesheet>
