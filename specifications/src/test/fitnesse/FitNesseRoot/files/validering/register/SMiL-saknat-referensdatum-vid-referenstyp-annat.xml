@@ -3,7 +3,7 @@
 	xmlns:ns3="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3"
 	xmlns:ns4="http://www.w3.org/2005/08/addressing">
 	<ns3:lakarutlatande>
-		<lakarutlatande-id>tomt-referensdatum-vid-referenstyp-annat</lakarutlatande-id>
+		<lakarutlatande-id>saknad-referensdatum-vid-referenstyp-annat</lakarutlatande-id>
 		<typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om allmän försäkring</typAvUtlatande>
 		<kommentar>Kommentar</kommentar>
 		<signeringsdatum>2011-01-24T00:00:00</signeringsdatum>
@@ -37,8 +37,10 @@
 		</vardkontakt>
 		<referens>
 			<referenstyp>Annat</referenstyp>
-			<datum></datum>
 		</referens>
+		<aktivitet>
+			<aktivitetskod>Avstangning_enligt_SmL_pga_smitta</aktivitetskod>
+		</aktivitet>
 		<medicinsktTillstand>
 			<tillstandskod codeSystemName="ICD-10" code="M25" />
 		</medicinsktTillstand>

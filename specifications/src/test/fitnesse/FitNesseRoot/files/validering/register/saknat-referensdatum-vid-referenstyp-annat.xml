@@ -5,6 +5,7 @@
 	<ns3:lakarutlatande>
 		<lakarutlatande-id>saknad-referensdatum-vid-referenstyp-annat</lakarutlatande-id>
 		<typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om allmän försäkring</typAvUtlatande>
+		<kommentar>Kommentar</kommentar>
 		<signeringsdatum>2011-01-24T00:00:00</signeringsdatum>
 		<skickatDatum>2011-03-23T09:28:10</skickatDatum>
 		<patient>
@@ -37,7 +38,6 @@
 		<referens>
 			<referenstyp>Annat</referenstyp>
 		</referens>
-		<kommentar>Kommentar</kommentar>
 		<medicinsktTillstand>
 			<tillstandskod codeSystemName="ICD-10" code="M25" />
 		</medicinsktTillstand>
