@@ -113,4 +113,12 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="7" author="me">
+    <addColumn tableName="CERTIFICATE">
+      <column name="DELETED_BY_CARE_GIVER" type="boolean" valueBoolean="false">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

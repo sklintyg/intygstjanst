@@ -146,6 +146,16 @@ public class Certificate {
     @Column(name = "WIRETAPPED", nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean wiretapped = Boolean.FALSE;
 
+    /**
+     * If this certificate is no longer used by the care giver.
+     * <p>
+     * This can be due to that the care giver has stopped using WebCert and have their certificates persisted elsewhere.
+     * The certificate can be deleted from the database as soon as the citizen no longer has access to the certificate
+     * (by revoking its consent or stops being a citizen).
+     */
+    @Column(name = "DELETED_BY_CARE_GIVER", nullable = false, columnDefinition = "TINYINT(1")
+    private Boolean deletedByCareGiver = Boolean.FALSE;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "CERTIFICATE_STATE", joinColumns = @JoinColumn(name = "CERTIFICATE_ID"))
     private Collection<CertificateStateHistoryEntry> states = new ArrayList<>();
@@ -287,6 +297,14 @@ public class Certificate {
 
     public void setWiretapped(Boolean wiretapped) {
         this.wiretapped = wiretapped;
+    }
+
+    public Boolean getDeletedByCareGiver() {
+        return deletedByCareGiver;
+    }
+
+    public void setDeletedByCareGiver(Boolean deletedByCareGiver) {
+        this.deletedByCareGiver = deletedByCareGiver;
     }
 
     public List<CertificateStateHistoryEntry> getStates() {
