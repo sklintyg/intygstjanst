@@ -90,7 +90,10 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
             response.setMeta(metaDataResolver.toClinicalProcessCertificateMetaType(certificate));
             attachCertificateDocument(certificate, response);
 
-            if (certificate.isRevoked()) {
+            if (certificate.isDeletedByCareGiver()) {
+                response.setResult(errorResult(ErrorIdType.APPLICATION_ERROR, "Certificate '" + request.getCertificateId()
+                    + "' has been deleted by care giver"));
+            } else if (certificate.isRevoked()) {
                 response.setResult(errorResult(ErrorIdType.REVOKED, "Certificate '" + request.getCertificateId()  + "' has been revoked"));
             } else {
                 response.setResult(okResult());

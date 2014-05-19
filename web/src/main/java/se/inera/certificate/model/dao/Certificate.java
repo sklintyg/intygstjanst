@@ -154,7 +154,7 @@ public class Certificate {
      * (by revoking its consent or stops being a citizen).
      */
     @Column(name = "DELETED_BY_CARE_GIVER", nullable = false, columnDefinition = "TINYINT(1")
-    private Boolean deletedByCareGiver = Boolean.FALSE;
+    private boolean deletedByCareGiver = false;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "CERTIFICATE_STATE", joinColumns = @JoinColumn(name = "CERTIFICATE_ID"))
@@ -299,11 +299,11 @@ public class Certificate {
         this.wiretapped = wiretapped;
     }
 
-    public Boolean getDeletedByCareGiver() {
+    public boolean isDeletedByCareGiver() {
         return deletedByCareGiver;
     }
 
-    public void setDeletedByCareGiver(Boolean deletedByCareGiver) {
+    public void setDeletedByCareGiver(boolean deletedByCareGiver) {
         this.deletedByCareGiver = deletedByCareGiver;
     }
 

@@ -41,6 +41,8 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
             List<Certificate> certificates = certificateService.listCertificates(
                     parameters.getNationalIdentityNumber(), parameters.getCertificateType(), parameters.getFromDate(), parameters.getToDate());
             for (Certificate certificate : certificates) {
+                // Note that we return certificates that are deleted by the care giver (isDeletedByCareGiver) but not
+                // revoked or archived certificates.
                 if (parameters.getCertificateType().isEmpty() || !(certificate.getDeleted() || certificate.isRevoked())) {
                     response.getMeta().add(metaDataResolver.toClinicalProcessCertificateMetaType(certificate));
                 }

@@ -42,7 +42,11 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
             List<Certificate> certificates = certificateService.listCertificatesForCare(
                     parameters.getNationalIdentityNumber(), parameters.getCareUnit());
             for (Certificate certificate : certificates) {
-                response.getMeta().add(metaDataResolver.toClinicalProcessCertificateMetaType(certificate));
+                // If the certificate is deleted by the care giver it is not returned. Note that both revoked and
+                // archived certificates are returned
+                if (!certificate.isDeletedByCareGiver()) {
+                    response.getMeta().add(metaDataResolver.toClinicalProcessCertificateMetaType(certificate));
+                }
             }
             response.setResult(ResultTypeUtil.okResult());
 
