@@ -26,6 +26,7 @@ public class Intyg extends RestClientFixture {
 	private boolean skickat
 	private boolean rättat
     private boolean wiretap
+    private boolean deletedByCareGiver
     
 	private String template
 	
@@ -41,6 +42,10 @@ public class Intyg extends RestClientFixture {
         wiretap = value?.equalsIgnoreCase("ja")
     }
 
+    public void setBorttagetAvVården(String value) {
+        deletedByCareGiver = value?.equalsIgnoreCase("ja")
+    }
+
 	public void reset() {
 		mall = "M"
 		utfärdarId = "EttUtfärdarId"
@@ -54,6 +59,7 @@ public class Intyg extends RestClientFixture {
 		skickat = false
 		rättat = false
         wiretap = false
+        deletedByCareGiver = false
 	}
 	
     public void execute() {
@@ -98,6 +104,7 @@ public class Intyg extends RestClientFixture {
             careUnitName: enhet,
             careGiverId : vårdgivarId,
             wiretapped : wiretap,
+            deletedByCareGiver : deletedByCareGiver,
 			states: stateList,
             document: document()
         ]

@@ -23,8 +23,19 @@
 |intyg|förväntatSvar|resultat?|
 |fit-intyg-1|{"utlatandeId":{"root":"fit-intyg-1"}}|[REVOKED] - Certificate 'fit-intyg-1' has been revoked|
 
+!3 Ett journalsystem försöker hämta ett intyg som är borttaget (för vården)
+
+|Intyg|
+|personnr|utfärdat|giltigtFrån|giltigtTill|typ|id|borttaget av vården|
+|19121212-1212|2013-04-01|2013-04-01|2013-04-11|FK7263|fit-intyg-2|ja|
+
+|Journalsystem hamtar intyg|
+|intyg|resultat?|
+|fit-intyg-2|[APPLICATION_ERROR] - Certificate 'fit-intyg-2' has been deleted by care giver|
+
 !3 Rensa bort test-intyg
 
 |ta bort Intyg|
 |id|
 |fit-intyg-1|
+|fit-intyg-2|
