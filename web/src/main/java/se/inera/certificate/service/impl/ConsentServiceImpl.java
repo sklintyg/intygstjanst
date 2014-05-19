@@ -18,10 +18,15 @@
  */
 package se.inera.certificate.service.impl;
 
+import javax.persistence.PersistenceException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.ConsentDao;
 import se.inera.certificate.service.ConsentService;
 
@@ -31,8 +36,13 @@ import se.inera.certificate.service.ConsentService;
 @Service
 public class ConsentServiceImpl implements ConsentService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsentServiceImpl.class);
+
     @Autowired
     private ConsentDao consentDao;
+
+    @Autowired
+    private CertificateDao certificateDao;
 
     @Override
     public boolean isConsent(String civicRegistrationNumber) {
@@ -50,7 +60,13 @@ public class ConsentServiceImpl implements ConsentService {
             consentDao.setConsent(civicRegistrationNumber);
         } else {
             consentDao.revokeConsent(civicRegistrationNumber);
+
+            // Since the consent now is revoked we can delete all intyg with deletedByCareGiver set.
+            try {
+                certificateDao.removeCertificatesDeletedByCareGiver(civicRegistrationNumber);
+            } catch (PersistenceException e) {
+                LOGGER.error("Failed to remove certificates deleted by care giver for citizen {}", civicRegistrationNumber);
+            }
         }
     }
-
 }

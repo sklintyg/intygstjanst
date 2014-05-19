@@ -18,18 +18,20 @@
  */
 package se.inera.certificate.model.dao.impl;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -38,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
 import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
@@ -143,6 +146,17 @@ public class CertificateDaoImpl implements CertificateDao {
         CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(target, state, timestamp);
 
         certificate.addState(historyEntry);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void removeCertificatesDeletedByCareGiver(String civicRegistrationNumber) {
+        List<Certificate> certificatesOfCitizen = findCertificate(civicRegistrationNumber, null, null, null, null);
+        for (Certificate certificate : certificatesOfCitizen) {
+            if (certificate.isDeletedByCareGiver()) {
+                entityManager.remove(certificate);
+            }
+        }
     }
 
     private List<String> toLowerCase(List<String> list) {
