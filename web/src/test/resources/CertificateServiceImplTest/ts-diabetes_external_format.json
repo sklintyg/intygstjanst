@@ -1,0 +1,240 @@
+{
+    "bilaga": {
+        "bilagetyp": {
+            "code": "BIL1",
+            "codeSystem": "80595600-7477-4a6c-baeb-d2439e86b8bc",
+            "codeSystemName": "kv_bilaga"
+        },
+        "forekomst": false
+    },
+    "id": {
+        "extension": "2",
+        "root": "1.2.752.129.2.1.2.1"
+    },
+    "intygAvser": [
+        {
+            "code": "IAV11",
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser"
+        }
+    ],
+    "observationAktivitetRelationer": [
+        {
+            "aktivitetsid": {
+                "extension": "1",
+                "root": "1.2.752.129.2.1.2.1"
+            },
+            "observationsid": {
+                "extension": "3",
+                "root": "1.2.752.129.2.1.2.1"
+            }
+        },
+        {
+            "aktivitetsid": {
+                "extension": "2",
+                "root": "1.2.752.129.2.1.2.1"
+            },
+            "observationsid": {
+                "extension": "4",
+                "root": "1.2.752.129.2.1.2.1"
+            }
+        }
+    ],
+    "observationer": [
+        {
+            "forekomst": true,
+            "observationskod": {
+                "code": "E10",
+                "codeSystem": "1.2.752.116.1.1.1.1.1",
+                "codeSystemName": "ICD-10"
+            },
+            "observationsperiod": {
+                "from": "2000"
+            }
+        },
+        {
+            "forekomst": true,
+            "observationskod": {
+                "code": "170747006",
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT"
+            },
+            "observationsperiod": {
+                "from": "2000"
+            }
+        },
+        {
+            "forekomst": true,
+            "observationskod": {
+                "code": "OBS19",
+                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
+                "codeSystemName": "kv_observationer_intyg"
+            }
+        },
+        {
+            "forekomst": false,
+            "observationskod": {
+                "code": "OBS20",
+                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
+                "codeSystemName": "kv_observationer_intyg"
+            }
+        },
+        {
+            "forekomst": true,
+            "observationskod": {
+                "code": "OBS21",
+                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
+                "codeSystemName": "kv_observationer_intyg"
+            }
+        },
+        {
+            "forekomst": false,
+            "id": {
+                "extension": "4",
+                "root": "1.2.752.129.2.1.2.1"
+            },
+            "observationskod": {
+                "code": "H53.2",
+                "codeSystem": "1.2.752.116.1.1.1.1.1",
+                "codeSystemName": "ICD-10"
+            }
+        },
+        {
+            "forekomst": false,
+            "id": {
+                "extension": "3",
+                "root": "1.2.752.129.2.1.2.1"
+            },
+            "observationskod": {
+                "code": "OBS25",
+                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
+                "codeSystemName": "kv_observationer_intyg"
+            }
+        },
+        {
+            "lateralitet": {
+                "code": "24028007",
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT"
+            },
+            "observationskod": {
+                "code": "420050001",
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT"
+            },
+            "varde": [
+                {
+                    "quantity": 2.0
+                }
+            ]
+        },
+        {
+            "lateralitet": {
+                "code": "7771000",
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT"
+            },
+            "observationskod": {
+                "code": "420050001",
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT"
+            },
+            "varde": [
+                {
+                    "quantity": 2.0
+                }
+            ]
+        },
+        {
+            "lateralitet": {
+                "code": "51440002",
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT"
+            },
+            "observationskod": {
+                "code": "420050001",
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT"
+            },
+            "varde": [
+                {
+                    "quantity": 2.0
+                }
+            ]
+        }
+    ],
+    "patient": {
+        "efternamn": "Testsson",
+        "fornamn": [
+            "Test"
+        ],
+        "fullstandigtNamn": "Test Testsson",
+        "id": {
+            "extension": "19001122-3344",
+            "root": "1.2.752.129.2.1.3.1"
+        }
+    },
+    "rekommendationer": [
+        {
+            "rekommendationskod": {
+                "code": "REK8",
+                "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                "codeSystemName": "kv_rekommendation_intyg"
+            },
+            "varde": [
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "code": "VAR12",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg"
+                }
+            ]
+        }
+    ],
+    "signeringsdatum": "2013-05-31T09:51:38.570",
+    "skapadAv": {
+        "id": {
+            "extension": "TST5565594230-106J",
+            "root": "1.2.752.129.2.1.4.1"
+        },
+        "namn": "Hans Rosling",
+        "vardenhet": {
+            "id": {
+                "extension": "vardenhets-id",
+                "root": "1.2.752.129.2.1.4.1"
+            },
+            "namn": "Vårdcentrum i väst",
+            "postadress": "Storgatan 12",
+            "postnummer": "12345",
+            "postort": "Ankeborg",
+            "telefonnummer": "010-12345678",
+            "vardgivare": {
+                "id": {
+                    "extension": "IFV1239877878-103F",
+                    "root": "1.2.752.129.2.1.4.1"
+                },
+                "namn": "V\u00e5rdEnhet1A"
+            }
+        }
+    },
+    "skickatdatum": "2013-06-01T16:24:44.000",
+    "typ": {
+        "code": "ts-diabetes",
+        "codeSystem": "f6fb361a-e31d-48b8-8657-99b63912dd9b",
+        "codeSystemName": "kv_utl\u00e5tandetyp_intyg"
+    },
+    "vardkontakter": [
+        {
+            "idkontroll": {
+                "code": "IDK2",
+                "codeSystem": "e7cc8f30-a353-4c42-b17a-a189b6876647",
+                "codeSystemName": "kv_id_kontroll"
+            },
+            "vardkontakttyp": {
+                "code": "5880005",
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT"
+            }
+        }
+    ]
+}

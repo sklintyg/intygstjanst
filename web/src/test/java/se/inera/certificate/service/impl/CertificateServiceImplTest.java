@@ -128,34 +128,48 @@ public class CertificateServiceImplTest {
     }
 
     private String utlatandeXml() throws IOException {
-        return FileUtils.readFileToString(new ClassPathResource("CertificateServiceImplTest/fk7263.xml").getFile());
+        return utlatandeXml("fk7263");
+    }
+    private String utlatandeXml(String name) throws IOException {
+        return FileUtils.readFileToString(new ClassPathResource("CertificateServiceImplTest/" + name + ".xml").getFile());
     }
 
     private String utlatandeJson() throws IOException {
+        return utlatandeJson("lakarutlatande_external_format");
+    }
+
+    private String utlatandeJson(String name) throws IOException {
         return FileUtils.readFileToString(new ClassPathResource(
-                "CertificateServiceImplTest/lakarutlatande_external_format.json").getFile());
+                "CertificateServiceImplTest/" + name + ".json").getFile());
     }
 
     private MinimalUtlatande utlatande() throws IOException {
+        return utlatande("lakarutlatande_external_format");
+    }
+
+    private MinimalUtlatande utlatande(String name) throws IOException {
         return new CustomObjectMapper().readValue(new ClassPathResource(
-                "CertificateServiceImplTest/lakarutlatande_external_format.json").getFile(), MinimalUtlatande.class);
+                "CertificateServiceImplTest/" + name + ".json").getFile(), MinimalUtlatande.class);
     }
 
     @Test
     public void testStoreCertificateHappyCase() throws Exception {
+        String utlatandeJson = utlatandeJson();
+        String utlatandeXml = utlatandeXml();
+        MinimalUtlatande utlatande = utlatande();
 
         when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenReturn(moduleEntryPoint);
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
-        ExternalModelResponse unmarshallResponse = new ExternalModelResponse(utlatandeJson(), utlatande());
+        ExternalModelResponse unmarshallResponse = new ExternalModelResponse(utlatandeJson, utlatande);
         when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenReturn(unmarshallResponse);
 
-        when(objectMapper.readValue(utlatandeJson(), MinimalUtlatande.class)).thenReturn(utlatande());
+        when(objectMapper.readValue(utlatandeJson, MinimalUtlatande.class)).thenReturn(utlatande);
 
         ArgumentCaptor<OriginalCertificate> originalCertificateCaptor = ArgumentCaptor
                 .forClass(OriginalCertificate.class);
         when(certificateDao.storeOriginalCertificate(originalCertificateCaptor.capture())).thenReturn(1L);
 
-        Certificate certificate = certificateService.storeCertificate(utlatandeXml(), "fk7263", false);
+        Certificate certificate = certificateService.storeCertificate(utlatandeXml, "fk7263", false);
 
         assertEquals("1", certificate.getId());
         assertEquals("fk7263", certificate.getType());
@@ -168,7 +182,7 @@ public class CertificateServiceImplTest {
         assertEquals("2013-06-01", certificate.getValidFromDate());
         assertEquals("2013-06-12", certificate.getValidToDate());
 
-        assertEquals(utlatandeJson(), certificate.getDocument());
+        assertEquals(utlatandeJson, certificate.getDocument());
 
         assertEquals(false, certificate.getWiretapped());
         assertEquals(1, certificate.getStates().size());
@@ -184,7 +198,56 @@ public class CertificateServiceImplTest {
 
         OriginalCertificate originalCertificate = originalCertificateCaptor.getValue();
         assertEquals(certificate, originalCertificate.getCertificate());
-        assertEquals(utlatandeXml(), originalCertificate.getDocument());
+        assertEquals(utlatandeXml, originalCertificate.getDocument());
+        assertTrue(originalCertificate.getReceived().isAfter(aMinuteAgo));
+        assertTrue(originalCertificate.getReceived().isBefore(inAMinute));
+    }
+
+    @Test
+    public void testStoreCertificateIdAsExtensionHappyCase() throws Exception {
+        String utlatandeJson = utlatandeJson("ts-diabetes_external_format");
+        String utlatandeXml = utlatandeXml("ts-diabetes");
+        MinimalUtlatande utlatande = utlatande("ts-diabetes_external_format");
+
+        when(moduleApiFactory.getModuleEntryPoint("ts-diabetes")).thenReturn(moduleEntryPoint);
+        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
+        ExternalModelResponse unmarshallResponse = new ExternalModelResponse(utlatandeJson, utlatande());
+        when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenReturn(unmarshallResponse);
+
+        when(objectMapper.readValue(utlatandeJson, MinimalUtlatande.class)).thenReturn(utlatande);
+
+        ArgumentCaptor<OriginalCertificate> originalCertificateCaptor = ArgumentCaptor
+                .forClass(OriginalCertificate.class);
+        when(certificateDao.storeOriginalCertificate(originalCertificateCaptor.capture())).thenReturn(1L);
+
+        Certificate certificate = certificateService.storeCertificate(utlatandeXml, "ts-diabetes", false);
+
+        assertEquals("2", certificate.getId());
+        assertEquals("ts-diabetes", certificate.getType());
+        assertNotNull(certificate.getDocument());
+        assertEquals("Hans Rosling", certificate.getSigningDoctorName());
+        assertEquals("vardenhets-id", certificate.getCareUnitId());
+        assertEquals("Vårdcentrum i väst", certificate.getCareUnitName());
+        assertEquals("19001122-3344", certificate.getCivicRegistrationNumber());
+        assertEquals(new LocalDateTime("2013-05-31T09:51:38.570"), certificate.getSignedDate());
+
+        assertEquals(utlatandeJson, certificate.getDocument());
+
+        assertEquals(false, certificate.getWiretapped());
+        assertEquals(1, certificate.getStates().size());
+        assertEquals(CertificateState.RECEIVED, certificate.getStates().get(0).getState());
+        assertEquals("MI", certificate.getStates().get(0).getTarget());
+
+        LocalDateTime aMinuteAgo = new LocalDateTime().minusMinutes(1);
+        LocalDateTime inAMinute = new LocalDateTime().plusMinutes(1);
+        assertTrue(certificate.getStates().get(0).getTimestamp().isAfter(aMinuteAgo));
+        assertTrue(certificate.getStates().get(0).getTimestamp().isBefore(inAMinute));
+
+        verify(certificateDao).store(certificate);
+
+        OriginalCertificate originalCertificate = originalCertificateCaptor.getValue();
+        assertEquals(certificate, originalCertificate.getCertificate());
+        assertEquals(utlatandeXml, originalCertificate.getDocument());
         assertTrue(originalCertificate.getReceived().isAfter(aMinuteAgo));
         assertTrue(originalCertificate.getReceived().isBefore(inAMinute));
     }
@@ -214,7 +277,7 @@ public class CertificateServiceImplTest {
         assertEquals("FK", certificate.getStates().get(1).getTarget());
         assertEquals(certificate.getStates().get(0).getTimestamp(), certificate.getStates().get(1).getTimestamp());
     }
-    
+
     @Test
     public void testModuleNotFound() throws Exception {
 
