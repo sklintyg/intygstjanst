@@ -36,7 +36,9 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
+import se.inera.certificate.exception.MissingModuleException;
 import se.inera.certificate.exception.RecipientUnknownException;
+import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.exception.ExternalWebServiceCallFailedException;
 import se.inera.certificate.integration.exception.ResultTypeErrorException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
@@ -123,17 +125,18 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             String message = String.format("The module '%s' was not found - not registered in application",
                     certificate.getType());
             LOGGER.error(message);
-            throw new RuntimeException(message, e);
+            throw new MissingModuleException(message, e);
 
         } catch (ModuleException e) {
             String message = String.format("Failed to unmarshal certificate for certificate type '%s'",
                     certificate.getType());
             LOGGER.error(message);
-            throw new RuntimeException(message);
+            throw new ServerException(message, e);
+
         } catch (RecipientUnknownException e) {
             String message = String.format("Found no matching recipient for logical adress: '%s'", target);
             LOGGER.error(e.getMessage());
-            throw new RuntimeException(message, e);
+            throw new ServerException(message, e);
         }
     }
 
@@ -171,7 +174,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             }
 
         } catch (JAXBException e) {
-            throw new RuntimeException(e);
+            throw new ServerException(e);
         }
     }
 

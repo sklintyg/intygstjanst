@@ -41,6 +41,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenResponderInterface;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenType;
+import se.inera.certificate.exception.ClientException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
@@ -58,7 +59,7 @@ public class ListCertificatesForCitizenResponderImplTest {
     private ListCertificatesForCitizenResponderInterface responder = new ListCertificatesForCitizenResponderImpl();
 
     @Test
-    public void listCertificatesWithNoCertificates() {
+    public void listCertificatesWithNoCertificates() throws ClientException {
         String civicRegistrationNumber = "19350108-1234";
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = new LocalDate(2000, 1, 1);
@@ -79,7 +80,7 @@ public class ListCertificatesForCitizenResponderImplTest {
     }
 
     @Test
-    public void listCertificatesWithoutConsent() {
+    public void listCertificatesWithoutConsent() throws ClientException {
         when(certificateService.listCertificates(anyString(), Matchers.<List<String>>any(), any(LocalDate.class), any(LocalDate.class))).thenThrow(new MissingConsentException(""));
 
         List<String> types = Collections.emptyList();

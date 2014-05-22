@@ -58,6 +58,7 @@ import org.w3c.dom.Node;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareRequestType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.ObjectFactory;
+import se.inera.certificate.exception.ClientException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.integration.converter.MetaDataResolver;
 import se.inera.certificate.integration.module.ModuleApiFactory;
@@ -167,7 +168,7 @@ public class GetCertificateForCareResponderImplTest {
     }
 
     @Test
-    public void getCertificateForCareWithUnknownCertificateId() {
+    public void getCertificateForCareWithUnknownCertificateId() throws ClientException {
 
         when(certificateService.getCertificate(CERTIFICATE_ID)).thenThrow(
                 new InvalidCertificateException("123456", null));

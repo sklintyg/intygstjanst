@@ -26,7 +26,6 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
@@ -104,7 +103,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, noRollbackFor = { InvalidCertificateIdentifierException.class })
-    public Certificate getCertificate(String civicRegistrationNumber, String certificateId) {
+    public Certificate getCertificate(String civicRegistrationNumber, String certificateId) throws InvalidCertificateIdentifierException {
         Certificate certificate = entityManager.find(Certificate.class, certificateId);
 
         if (certificate == null) {
@@ -135,7 +134,8 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     @Transactional(noRollbackFor = { InvalidCertificateIdentifierException.class })
-    public void updateStatus(String id, String civicRegistrationNumber, CertificateState state, String target, LocalDateTime timestamp) {
+    public void updateStatus(String id, String civicRegistrationNumber, CertificateState state, String target, LocalDateTime timestamp)
+            throws InvalidCertificateIdentifierException {
 
         Certificate certificate = entityManager.find(Certificate.class, id);
 

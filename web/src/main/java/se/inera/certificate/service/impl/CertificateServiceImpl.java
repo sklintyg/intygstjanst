@@ -40,13 +40,15 @@ import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.exception.MissingConsentException;
+import se.inera.certificate.exception.MissingModuleException;
+import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
-import se.inera.certificate.model.common.MinimalUtlatande;
 import se.inera.certificate.model.Vardenhet;
+import se.inera.certificate.model.common.MinimalUtlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
@@ -104,7 +106,7 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public List<Certificate> listCertificates(String civicRegistrationNumber, List<String> certificateTypes,
-            LocalDate fromDate, LocalDate toDate) {
+            LocalDate fromDate, LocalDate toDate) throws MissingConsentException {
         assertConsent(civicRegistrationNumber);
         return fixDeletedStatus(certificateDao.findCertificate(civicRegistrationNumber, certificateTypes, fromDate,
                 toDate, null));
@@ -116,10 +118,10 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public Certificate getCertificate(String civicRegistrationNumber, String id) {
+    public Certificate getCertificate(String civicRegistrationNumber, String id) throws InvalidCertificateException, CertificateRevokedException,
+            InvalidCertificateIdentifierException, MissingConsentException {
 
         assertConsent(civicRegistrationNumber);
-
 
         Certificate certificate = getCertificateInternal(civicRegistrationNumber, id);
 
@@ -135,7 +137,7 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public Certificate getCertificate(String id) {
+    public Certificate getCertificate(String id) throws InvalidCertificateException, InvalidCertificateIdentifierException {
 
         Certificate certificate = getCertificateInternal(null, id);
 
@@ -146,7 +148,7 @@ public class CertificateServiceImpl implements CertificateService {
         return certificate;
     }
 
-    private Certificate getCertificateInternal(String civicRegistrationNumber, String id) {
+    private Certificate getCertificateInternal(String civicRegistrationNumber, String id) throws InvalidCertificateIdentifierException {
         return fixDeletedStatus(certificateDao.getCertificate(civicRegistrationNumber, id));
     }
 
@@ -161,7 +163,7 @@ public class CertificateServiceImpl implements CertificateService {
         } catch (ModuleNotFoundException e) {
             String message = String.format("The module '%s' was not found - not registered in application", type);
             LOGGER.error(message);
-            throw new RuntimeException(message, e);
+            throw new MissingModuleException(message, e);
 
         } catch (ModuleValidationException e) {
             throw new ValidationException(e.getValidationEntries());
@@ -169,7 +171,7 @@ public class CertificateServiceImpl implements CertificateService {
         } catch (ModuleException e) {
             String message = String.format("Failed to validate certificate for certificate type '%s'", type);
             LOGGER.error(message);
-            throw new RuntimeException(message, e);
+            throw new ServerException(message, e);
         }
     }
 
@@ -183,7 +185,7 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     @Transactional
-    public Certificate storeCertificate(String xml, String type, boolean wiretapped) {
+    public Certificate storeCertificate(String xml, String type, boolean wiretapped) throws CertificateAlreadyExistsException, InvalidCertificateIdentifierException {
 
         String externalJson = unmarshall(type, xml);
 
@@ -222,9 +224,10 @@ public class CertificateServiceImpl implements CertificateService {
         }
     }
 
-    private void checkForExistingCertificate(String certificateId, String personnummer) {
+    private void checkForExistingCertificate(String certificateId, String personnummer) throws CertificateAlreadyExistsException,
+            InvalidCertificateIdentifierException {
         if (certificateDao.getCertificate(personnummer, certificateId) != null) {
-            throw new CertificateAlreadyExistsException();
+            throw new CertificateAlreadyExistsException(certificateId);
         }
     }
 
@@ -244,7 +247,8 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     @Transactional
-    public SendStatus sendCertificate(String civicRegistrationNumber, String certificateId, String target) {
+    public SendStatus sendCertificate(String civicRegistrationNumber, String certificateId, String target)
+            throws InvalidCertificateIdentifierException, InvalidCertificateException, CertificateRevokedException {
         Certificate certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
 
         if (certificate == null) {
@@ -292,7 +296,7 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     @Transactional(noRollbackFor = { InvalidCertificateIdentifierException.class })
     public void setCertificateState(String civicRegistrationNumber, String certificateId, String target,
-            CertificateState state, LocalDateTime timestamp) {
+            CertificateState state, LocalDateTime timestamp) throws InvalidCertificateIdentifierException {
         certificateDao.updateStatus(certificateId, civicRegistrationNumber, state, target, timestamp);
     }
 
@@ -308,7 +312,8 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = { InvalidCertificateException.class,
             CertificateRevokedException.class })
-    public Certificate revokeCertificate(String civicRegistrationNumber, String certificateId) {
+    public Certificate revokeCertificate(String civicRegistrationNumber, String certificateId) throws InvalidCertificateIdentifierException,
+            InvalidCertificateException, CertificateRevokedException {
         Certificate certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
 
         if (certificate == null) {
@@ -325,7 +330,7 @@ public class CertificateServiceImpl implements CertificateService {
         return certificate;
     }
 
-    private void assertConsent(String civicRegistrationNumber) {
+    private void assertConsent(String civicRegistrationNumber) throws MissingConsentException {
 
         if (StringUtils.isEmpty(civicRegistrationNumber)) {
             throw new IllegalArgumentException("Invalid/missing civicRegistrationNumber");

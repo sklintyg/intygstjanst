@@ -38,6 +38,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import se.inera.certificate.exception.ClientException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
@@ -58,7 +59,7 @@ public class ListCertificatesResponderImplTest {
     private ListCertificatesResponderInterface responder = new ListCertificatesResponderImpl();
 
     @Test
-    public void listCertificatesWithNoCertificates() {
+    public void listCertificatesWithNoCertificates() throws ClientException {
         String civicRegistrationNumber = "19350108-1234";
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = new LocalDate(2000, 1, 1);
@@ -79,7 +80,7 @@ public class ListCertificatesResponderImplTest {
     }
 
     @Test
-    public void listCertificatesWithoutConsent() {
+    public void listCertificatesWithoutConsent() throws ClientException {
         when(certificateService.listCertificates(anyString(), Matchers.<List<String>>any(), any(LocalDate.class), any(LocalDate.class))).thenThrow(new MissingConsentException(""));
 
         List<String> types = Collections.emptyList();

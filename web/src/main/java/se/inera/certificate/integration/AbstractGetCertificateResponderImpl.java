@@ -91,7 +91,7 @@ public abstract class AbstractGetCertificateResponderImpl {
         }
         try {
             return new CertificateOrResultType(certificateService.getCertificate(certificateId));
-        }  catch (InvalidCertificateException ex) {
+        }  catch (InvalidCertificateIdentifierException | InvalidCertificateException ex) {
             LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + certificateId + "' but no such certificate does exist.");
             return new CertificateOrResultType(errorResult(VALIDATION_ERROR, String.format("Unknown certificate ID: %s", certificateId)));
         }

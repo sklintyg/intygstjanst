@@ -51,6 +51,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import se.inera.certificate.exception.ClientException;
 import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
@@ -176,7 +177,7 @@ public class CertificateDaoImplTest {
     }
 
     @Test
-    public void testGetDocument() {
+    public void testGetDocument() throws ClientException{
 
         Certificate certificate = CertificateFactory.buildCertificate("1", "2013-04-25", "2013-05-25");
         certificate.setCivicRegistrationNumber(CIVIC_REGISTRATION_NUMBER);
@@ -197,7 +198,7 @@ public class CertificateDaoImplTest {
     }
 
     @Test
-    public void testStore() {
+    public void testStore() throws ClientException {
 
         assertNull(certificateDao.getCertificate(CIVIC_REGISTRATION_NUMBER, CERTIFICATE_ID));
 
@@ -208,25 +209,25 @@ public class CertificateDaoImplTest {
     }
 
     @Test(expected = InvalidCertificateIdentifierException.class)
-    public void testUpdateStatusForWrongCertificate() {
+    public void testUpdateStatusForWrongCertificate() throws ClientException {
         certificateDao.updateStatus("<unknownCertId>", "<unknownPersonnummer>", CertificateState.IN_PROGRESS, "fk",
                 null);
     }
 
     @Test
-    public void testGetCertificateForUnknownCertificate() {
+    public void testGetCertificateForUnknownCertificate() throws ClientException {
         certificateDao.store(buildCertificate());
         assertNull(certificateDao.getCertificate("<unknownCertId>", "<unknownPersonnummer>"));
     }
 
     @Test(expected = InvalidCertificateIdentifierException.class)
-    public void testGetCertificateForWrongCivicRegistrationNumber() {
+    public void testGetCertificateForWrongCivicRegistrationNumber() throws ClientException {
         certificateDao.store(buildCertificate());
         certificateDao.getCertificate("<another civic registration number>", CERTIFICATE_ID);
     }
 
     @Test
-    public void testUpdateStatusForDifferentPatients() {
+    public void testUpdateStatusForDifferentPatients() throws ClientException {
 
         // store a certificate for reference patient
         Certificate certificate = buildCertificate();
@@ -247,7 +248,7 @@ public class CertificateDaoImplTest {
     }
 
     @Test
-    public void testUpdateStatusStatus() {
+    public void testUpdateStatusStatus() throws ClientException {
 
         // store a certificate for patient 19101112-1314
         Certificate certificate = buildCertificate();
@@ -264,7 +265,7 @@ public class CertificateDaoImplTest {
     }
 
     @Test
-    public void testStatusOrderForGetCertificate() {
+    public void testStatusOrderForGetCertificate() throws ClientException {
 
         Certificate certificate = buildCertificate();
         entityManager.persist(certificate);

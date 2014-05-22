@@ -92,7 +92,7 @@ public class RegisterMedicalCertificateResponderImplTest {
     @Test
     public void testWithExistingCertificate() throws Exception {
         when(certificateService.storeCertificate(any(String.class), eq("fk7263"), any(Boolean.class)))
-                .thenThrow(new CertificateAlreadyExistsException());
+                .thenThrow(new CertificateAlreadyExistsException(request.getUtlatande().getUtlatandeId().toString()));
 
         RegisterMedicalCertificateResponseType response = responder.registerMedicalCertificate(null, request);
         assertEquals(ResultCodeType.INFO, response.getResult().getResultCode());

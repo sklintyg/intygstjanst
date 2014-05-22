@@ -3,13 +3,11 @@ package se.inera.certificate.exception;
 /**
  * @author andreaskaltenbach
  */
-public class CertificateAlreadyExistsException extends RuntimeException {
+public class CertificateAlreadyExistsException extends ClientException {
 
-    public CertificateAlreadyExistsException() {
-    }
+    private static final long serialVersionUID = 6746299605626528366L;
 
-    @Override
-    public String getMessage() {
-        return "Certificate already exists";
+    public CertificateAlreadyExistsException(String certificateId) {
+        super(String.format("Certificate '%s' already exists", certificateId));
     }
 }

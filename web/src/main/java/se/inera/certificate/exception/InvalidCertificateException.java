@@ -5,19 +5,11 @@ package se.inera.certificate.exception;
  *
  * @author andreaskaltenbach
  */
-public class InvalidCertificateException extends RuntimeException {
+public class InvalidCertificateException extends ClientException {
 
-    private String certificateId;
-    private String civicRegistrationNumber;
+    private static final long serialVersionUID = 9207157337550587128L;
 
     public InvalidCertificateException(String certificateId, String civicRegistrationNumber) {
-        super();
-        this.certificateId = certificateId;
-        this.civicRegistrationNumber = civicRegistrationNumber;
-    }
-
-    @Override
-    public String getMessage() {
-        return "Certificate '" + certificateId + "' does not exist for user + '" + civicRegistrationNumber + "'.";
+        super(String.format("Certificate '%s' does not exist for user + '%s'.", certificateId, civicRegistrationNumber));
     }
 }

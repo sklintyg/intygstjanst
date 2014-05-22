@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 
+import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.integration.util.ResultOfCallUtil;
@@ -108,7 +109,7 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
             String message = String.format("Failed to validate certificate for certificate type '%s'", FK7263);
             LOGGER.error(message);
 
-            throw new RuntimeException(message, e);
+            throw new ServerException(message, e);
         }
     }
 

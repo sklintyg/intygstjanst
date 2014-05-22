@@ -17,6 +17,7 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import riv.insuranceprocess.healthreporting.medcertqa._1.LakarutlatandeEnkelType;
 import riv.insuranceprocess.healthreporting.medcertqa._1.VardAdresseringsType;
+import se.inera.certificate.exception.ClientException;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.v1.rivtabp20.SendMedicalCertificateResponderInterface;
@@ -46,7 +47,7 @@ public class SendMedicalCertificateResponderImplTest {
     private SendMedicalCertificateResponderInterface responder = new SendMedicalCertificateResponderImpl();
 
     @Test
-    public void testSend() {
+    public void testSend() throws ClientException {
         when(certificateService.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new CertificateBuilder(CERTIFICATE_ID).build());
         AttributedURIType uri = new AttributedURIType();
         uri.setValue("FK");

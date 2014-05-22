@@ -6,9 +6,9 @@ package se.inera.certificate.exception;
  *
  * @author andreaskaltenbach
  */
-public class InvalidCertificateIdentifierException extends RuntimeException {
+public class InvalidCertificateIdentifierException extends ClientException {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6404197601599517806L;
 
     public InvalidCertificateIdentifierException(String certificateId, String civicRegistrationNumber) {
         super(String.format("There is no certificate '%s' for user '%s'.", certificateId, civicRegistrationNumber));

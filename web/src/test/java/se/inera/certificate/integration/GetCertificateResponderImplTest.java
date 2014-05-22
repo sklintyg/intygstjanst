@@ -40,6 +40,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 
 import se.inera.certificate.exception.CertificateRevokedException;
+import se.inera.certificate.exception.ClientException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.integration.json.CustomObjectMapper;
@@ -107,7 +108,7 @@ public class GetCertificateResponderImplTest {
     }
 
     @Test
-    public void getCertificateWithUnknownCertificateId() {
+    public void getCertificateWithUnknownCertificateId() throws ClientException {
 
         when(certificateService.getCertificate(civicRegistrationNumber, certificateId)).thenThrow(new InvalidCertificateException("123456", null));
 
@@ -124,7 +125,7 @@ public class GetCertificateResponderImplTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void getCertificateWithoutConsent() {
+    public void getCertificateWithoutConsent() throws ClientException {
 
         when(certificateService.getCertificate(civicRegistrationNumber, certificateId)).thenThrow(MissingConsentException.class);
 
@@ -139,7 +140,7 @@ public class GetCertificateResponderImplTest {
     }
 
     @Test
-    public void getRevokedCertificate() {
+    public void getRevokedCertificate() throws ClientException {
 
         when(certificateService.getCertificate(civicRegistrationNumber, certificateId)).thenThrow(new CertificateRevokedException("123456"));
 

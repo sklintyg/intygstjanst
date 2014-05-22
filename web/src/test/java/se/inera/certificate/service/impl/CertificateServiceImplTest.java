@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -24,6 +23,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 
 import se.inera.certificate.exception.CertificateRevokedException;
+import se.inera.certificate.exception.ClientException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.integration.json.CustomObjectMapper;
@@ -80,7 +80,7 @@ public class CertificateServiceImplTest {
     private CertificateServiceImpl certificateService = new CertificateServiceImpl();
 
     @Test
-    public void certificateWithDeletedStatusHasMetaDeleted() {
+    public void certificateWithDeletedStatusHasMetaDeleted() throws ClientException {
         Certificate certificate = createCertificate();
         certificate.addState(new CertificateStateHistoryEntry("", CertificateState.DELETED, new LocalDateTime(1)));
         when(consentService.isConsent(anyString())).thenReturn(Boolean.TRUE);
@@ -100,7 +100,7 @@ public class CertificateServiceImplTest {
     }
 
     @Test
-    public void certificateWithStatusRestoredNewerThanDeletedHasMetaNotDeleted() {
+    public void certificateWithStatusRestoredNewerThanDeletedHasMetaNotDeleted() throws ClientException {
         Certificate certificate = createCertificate();
         certificate.addState(new CertificateStateHistoryEntry("", CertificateState.RESTORED, new LocalDateTime(2)));
         certificate.addState(new CertificateStateHistoryEntry("", CertificateState.DELETED, new LocalDateTime(1)));
@@ -114,7 +114,7 @@ public class CertificateServiceImplTest {
     }
 
     @Test
-    public void certificateWithStatusDeletedNewerThanRestoredHasMetaDeleted() {
+    public void certificateWithStatusDeletedNewerThanRestoredHasMetaDeleted() throws ClientException {
         Certificate certificate = createCertificate();
         certificate.addState(new CertificateStateHistoryEntry("", CertificateState.DELETED, new LocalDateTime(2)));
         certificate.addState(new CertificateStateHistoryEntry("", CertificateState.RESTORED, new LocalDateTime(1)));
@@ -305,7 +305,7 @@ public class CertificateServiceImplTest {
     }
 
     @Test
-    public void sendCertificateCallsSenderAndSetsStatus() throws IOException {
+    public void sendCertificateCallsSenderAndSetsStatus() throws ClientException, IOException {
 
         Certificate certificate = new CertificateBuilder(CERTIFICATE_ID).civicRegistrationNumber(PERSONNUMMER).build();
 
@@ -319,14 +319,14 @@ public class CertificateServiceImplTest {
     }
 
     @Test(expected = InvalidCertificateException.class)
-    public void testSendCertificateWitUnknownCertificate() {
+    public void testSendCertificateWitUnknownCertificate() throws ClientException {
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(null);
 
         certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fk");
     }
 
     @Test(expected = CertificateRevokedException.class)
-    public void testSendRevokedCertificate() {
+    public void testSendRevokedCertificate() throws ClientException {
         Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID).state(CertificateState.CANCELLED, null)
                 .build();
 
@@ -336,19 +336,19 @@ public class CertificateServiceImplTest {
     }
 
     @Test(expected = MissingConsentException.class)
-    public void testGetCertificateWithoutConsent() {
+    public void testGetCertificateWithoutConsent() throws ClientException {
         when(consentService.isConsent(PERSONNUMMER)).thenReturn(false);
         certificateService.getCertificate(PERSONNUMMER, CERTIFICATE_ID);
     }
     
     @Test(expected = InvalidCertificateException.class)
-    public void testGetCertificateNotFound() {
+    public void testGetCertificateNotFound() throws ClientException {
         when(certificateDao.getCertificate(PERSONNUMMER,CERTIFICATE_ID)).thenReturn(null);
         certificateService.getCertificate(CERTIFICATE_ID);
     }
     
     @Test(expected = InvalidCertificateException.class)
-    public void testGetCertificateRevoked() {
+    public void testGetCertificateRevoked() throws ClientException {
         Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID).state(CertificateState.CANCELLED, null)
                 .build();
         when(certificateDao.getCertificate(PERSONNUMMER,CERTIFICATE_ID)).thenReturn(revokedCertificate);
@@ -356,7 +356,7 @@ public class CertificateServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetCertificateWithoutConsentCheckForEmptyPersonnummer() {
+    public void testGetCertificateWithoutConsentCheckForEmptyPersonnummer() throws ClientException {
         Certificate certificate = createCertificate();
         when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(certificate);
 

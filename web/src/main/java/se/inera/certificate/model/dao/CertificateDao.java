@@ -56,7 +56,7 @@ public interface CertificateDao {
      * @throws InvalidCertificateIdentifierException if the given civic registration number does not match with
      *  the certificate's patient civic registration number
      */
-    Certificate getCertificate(String civicRegistrationNumber, String certificateId);
+    Certificate getCertificate(String civicRegistrationNumber, String certificateId) throws InvalidCertificateIdentifierException;
 
     /**
      * Stores a {@link Certificate}.
@@ -84,7 +84,8 @@ public interface CertificateDao {
      * @throws InvalidCertificateIdentifierException if the combination of certificate ID and civic registration number
      *  does not match
      */
-    void updateStatus(String certificateId, String civicRegistrationNumber, CertificateState state, String target, LocalDateTime timestamp);
+    void updateStatus(String certificateId, String civicRegistrationNumber, CertificateState state, String target, LocalDateTime timestamp)
+            throws InvalidCertificateIdentifierException;
 
     /**
      * Removes all {@link Certificate}s belonging to specified citizen which have the flag

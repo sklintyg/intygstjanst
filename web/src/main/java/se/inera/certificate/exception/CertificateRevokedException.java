@@ -5,17 +5,11 @@ package se.inera.certificate.exception;
  *
  * @author andreaskaltenbach
  */
-public class CertificateRevokedException extends RuntimeException {
+public class CertificateRevokedException extends ClientException {
 
-    private String certificateId;
+    private static final long serialVersionUID = 6346409606829031979L;
 
     public CertificateRevokedException(String certificateId) {
-        super();
-        this.certificateId = certificateId;
-    }
-
-    @Override
-    public String getMessage() {
-        return "Certificate '" + certificateId + "' has been revoked.";
+        super(String.format("Certificate '%s' has been revoked.", certificateId));
     }
 }

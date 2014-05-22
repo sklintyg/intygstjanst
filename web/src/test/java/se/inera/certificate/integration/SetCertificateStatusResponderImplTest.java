@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import se.inera.certificate.exception.ClientException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.certificate.v1.StatusType;
@@ -29,7 +30,7 @@ public class SetCertificateStatusResponderImplTest {
     private SetCertificateStatusResponderInterface responder = new SetCertificateStatusResponderImpl();
 
     @Test
-    public void testSetCertificateStatus() {
+    public void testSetCertificateStatus() throws ClientException {
 
         LocalDateTime timestamp = new LocalDateTime(2013, 4, 26, 12, 0, 0);
 

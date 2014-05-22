@@ -39,7 +39,7 @@ public class IntygBootstrapBean {
     }
 
     @PostConstruct
-    public void initData() {
+    public void initData() throws IOException {
 
         List<Resource> metadataFiles = getResourceListing("bootstrap-intyg/*-metadata.json");
         List<Resource> contentFiles = getResourceListing("bootstrap-intyg/*-content.json");
@@ -99,13 +99,9 @@ public class IntygBootstrapBean {
 
     }
 
-    private List<Resource> getResourceListing(String classpathResourcePath) {
-        try {
-            PathMatchingResourcePatternResolver r = new PathMatchingResourcePatternResolver();
-            return Arrays.asList(r.getResources(classpathResourcePath));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    private List<Resource> getResourceListing(String classpathResourcePath) throws IOException {
+        PathMatchingResourcePatternResolver r = new PathMatchingResourcePatternResolver();
+        return Arrays.asList(r.getResources(classpathResourcePath));
     }
 
 }

@@ -25,6 +25,7 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedic
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ObjectFactory;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
+import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.integration.validator.ValidationException;
@@ -110,7 +111,7 @@ public class RegisterCertificateResponderStub implements RegisterMedicalCertific
             String message = String.format("Failed to validate certificate for certificate type '%s'", registerMedicalCertificate.getUtlatande()
                     .getTypAvUtlatande().getCode());
             LOGGER.error(message);
-            throw new RuntimeException(message, e);
+            throw new ServerException(message, e);
         }
     }
 }

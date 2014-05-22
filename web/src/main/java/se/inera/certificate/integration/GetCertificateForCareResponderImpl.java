@@ -18,8 +18,8 @@
  */
 package se.inera.certificate.integration;
 
-import static se.inera.certificate.integration.util.ResultTypeUtil.okResult;
 import static se.inera.certificate.integration.util.ResultTypeUtil.errorResult;
+import static se.inera.certificate.integration.util.ResultTypeUtil.okResult;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -39,6 +39,7 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificat
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
+import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.converter.MetaDataResolver;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.dao.Certificate;
@@ -67,7 +68,7 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
             JAXBContext jaxbContext = JAXBContext.newInstance(UtlatandeType.class);
             unmarshaller = jaxbContext.createUnmarshaller();
         } catch (JAXBException e) {
-            throw new RuntimeException("Failed to initialize JAXB context required for unmarshaller");
+            throw new ServerException("Failed to initialize JAXB context required for unmarshaller");
         }
     }
 
