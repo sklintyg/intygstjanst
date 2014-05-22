@@ -1,14 +1,23 @@
 {"id": "intyg-5",
-  "type" : "ts-bas",
-  "civicRegistrationNumber" : "19121212-1212",
-  "signedDate" : "2012-12-23T21:00:00.000",
-  "signingDoctorName": "Eva Rättare",
-  "validFromDate" : "2012-12-23",
-  "validToDate" : "2013-12-23",
-  "careUnitId": "centrum-vast",
-  "states": [{"state":"RECEIVED", "target":"MI", "timestamp":"2014-08-05T13:28:03.227"},
-             {"state":"SENT", "target" : "TS", "timestamp" : "2014-08-05T13:28:07.227"}
-            ],
-  "careUnitName": "Centrum Väst Mott",
-  "careGiverId": "vastmanland"
+    "type": "ts-bas",
+    "civicRegistrationNumber": "19121212-1212",
+    "signedDate": "2012-12-23T21:00:00.000",
+    "signingDoctorName": "Eva Rättare",
+    "validFromDate": "2012-12-23",
+    "validToDate": "2013-12-23",
+    "careUnitId": "centrum-vast",
+    "states": [
+        {
+            "state": "RECEIVED",
+            "target": "MI",
+            "timestamp": "2014-08-05T13:28:03.227"
+        },
+        {
+            "state": "SENT",
+            "target": "TS",
+            "timestamp": "2014-08-05T13:28:07.227"
+        }
+    ],
+    "careUnitName": "Centrum Väst Mott",
+    "careGiverId": "vastmanland"
 }
