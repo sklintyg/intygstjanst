@@ -4,7 +4,7 @@
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <filter class="se.inera.certificate.logging.MarkerFilter">
         <markers>Validation, Monitoring</markers>
-        <onMatch>DENY</onMatch>
+        <onMatch>ACCEPT</onMatch>
         <onMismatch>ACCEPT</onMismatch>
     </filter>
     <encoder>

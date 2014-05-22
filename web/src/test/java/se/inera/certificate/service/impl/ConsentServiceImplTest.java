@@ -1,6 +1,7 @@
 package se.inera.certificate.service.impl;
 
 import static org.junit.Assert.assertFalse;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -11,37 +12,46 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.ConsentDao;
 import se.inera.certificate.service.ConsentService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConsentServiceImplTest {
 
+    private static final String CONSENT_USER = "consentUser";
+
     @Mock
     private ConsentDao consentDao = mock(ConsentDao.class);
+
+    @Mock
+    private CertificateDao certificateDao = mock(CertificateDao.class);
 
     @InjectMocks
     private ConsentService consentService = new ConsentServiceImpl();
 
     @Test
     public void unknownUserHasNoConsent() {
-
         when(consentDao.hasConsent("unknown")).thenReturn(false);
 
         assertFalse(consentService.isConsent("unknown"));
-
-        verify(consentDao).hasConsent("unknown");
     }
 
     @Test
     public void testSettingConsent() {
-        consentService.setConsent("consentUser", true);
-        verify(consentDao).setConsent("consentUser");
+        consentService.setConsent(CONSENT_USER, true);
+        verify(consentDao).setConsent(CONSENT_USER);
     }
 
     @Test
     public void testSettingNoConsent() {
-        consentService.setConsent("consentUser", false);
-        verify(consentDao).revokeConsent("consentUser");
+        consentService.setConsent(CONSENT_USER, false);
+        verify(consentDao).revokeConsent(CONSENT_USER);
+    }
+
+    @Test
+    public void testRevokeConsentPerformsCleanup() {
+        consentService.setConsent(CONSENT_USER, false);
+        verify(certificateDao).removeCertificatesDeletedByCareGiver(eq(CONSENT_USER));
     }
 }

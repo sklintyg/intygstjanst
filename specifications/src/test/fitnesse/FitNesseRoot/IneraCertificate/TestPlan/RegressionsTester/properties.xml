@@ -13,6 +13,7 @@
 		<MinaIntyg>.IneraCertificate.TestFall.MinaIntyg</MinaIntyg>
 		<ClinicalProcessTjanstedoman>.IneraCertificate.TestFall.ClinicalProcessTjanstedoman</ClinicalProcessTjanstedoman>
 		<JournalSystem>.IneraCertificate.TestFall.JournalSystem</JournalSystem>
+		<InvanarTester>.IneraCertificate.TestFall.InvanarTester</InvanarTester>
 		<ForsakringsKassan>.IneraCertificate.TestFall.ForsakringsKassan</ForsakringsKassan>
 	</SymbolicLinks>
 	<Versions>true</Versions>

@@ -1,0 +1,34 @@
+!3 Givet följande intyg
+
+!|Registrera intyg|
+|personnummer|id|typ|resultat?|
+|19121212-0001|fit-intyg-1|FK7263|OK|
+|19121212-0001|fit-intyg-2|FK7263|OK|
+
+(följande intyg är borttaget av vården och ska även det förekomma i resultatet)
+|Intyg|
+|personnr|utfärdat|giltigtFrån|giltigtTill|typ|mall|id|borttaget av vården|
+|19121212-0001|2013-04-01|2013-04-01|2013-04-11|ts-bas|S|fit-intyg-3|ja|
+
+!3 Och följande samtycken
+!|Samtycke|
+|personnr|samtycke|
+|19121212-0001|ja|
+|19121212-0002|ja|
+
+!3 Testa att invånaren kan lista dem
+
+|Invanare hamtar lista av intyg|
+|personnummer|typ|resultat?|intyg?|
+|19121212-0001|okänt|OK|[]|
+|19121212-0002|FK7263|OK|[]|
+|19121212-0001|FK7263|OK|[fit-intyg-1, fit-intyg-2]|
+|19121212-0001|ts-bas|OK|[fit-intyg-3]|
+
+!3 Rensa bort test-intyg
+
+|ta bort Intyg|
+|id|
+|fit-intyg-1|
+|fit-intyg-2|
+|fit-intyg-3|

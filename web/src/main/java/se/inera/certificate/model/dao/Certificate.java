@@ -19,6 +19,7 @@
 package se.inera.certificate.model.dao;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -30,6 +31,7 @@ import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,8 +41,10 @@ import java.util.List;
 import static se.inera.certificate.model.util.Iterables.find;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
+
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.ModelException;
 import se.inera.certificate.model.util.Predicate;
@@ -74,9 +78,8 @@ public class Certificate {
     /**
      * The transport model (XML) that was used to generate this entity.
      */
-
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "certificate")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "certificate", cascade= CascadeType.REMOVE)
     private OriginalCertificate originalCertificate;
 
     /**

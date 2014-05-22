@@ -18,12 +18,6 @@
  */
 package se.inera.certificate.model.dao.impl;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
@@ -40,6 +34,13 @@ import static se.inera.certificate.support.CertificateFactory.CIVIC_REGISTRATION
 import static se.inera.certificate.support.CertificateFactory.FK7263;
 import static se.inera.certificate.support.CertificateFactory.buildCertificate;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
@@ -49,6 +50,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
 import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
