@@ -19,6 +19,7 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedic
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ObjectFactory;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeId;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.util.ResultTypeUtil;
@@ -63,12 +64,12 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
             String xml = xmlToString(registerMedicalCertificate);
             Certificate certificate = certificateService.storeCertificate(xml, type, false);
             response.setResult(ResultTypeUtil.okResult());
-            String certificateId = registerMedicalCertificate.getUtlatande().getUtlatandeId().getRoot();
+            String certificateId = extractId(registerMedicalCertificate);
             LOGGER.info(LogMarkers.MONITORING, certificateId + " registered");
             statisticsService.created(certificate);
         } catch (CertificateAlreadyExistsException e) {
             response.setResult(ResultTypeUtil.infoResult("Certificate already exists"));
-            String certificateId = registerMedicalCertificate.getUtlatande().getUtlatandeId().getRoot();
+            String certificateId = extractId(registerMedicalCertificate);
             String issuedBy =  registerMedicalCertificate.getUtlatande().getSkapadAv().getEnhet().getEnhetsId().getExtension();
             LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId + " issued by " + issuedBy + ": Certificate already exists - ignored.");
         } catch (ValidationException e) {
@@ -83,6 +84,11 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
         }
 
         return response;
+    }
+
+    private String extractId(RegisterMedicalCertificateType registerMedicalCertificate) {
+        UtlatandeId utlatandeId = registerMedicalCertificate.getUtlatande().getUtlatandeId();
+        return utlatandeId.getExtension() != null ? utlatandeId.getExtension() : utlatandeId.getRoot();
     }
 
     private String xmlToString(RegisterMedicalCertificateType registerMedicalCertificate) throws JAXBException {
