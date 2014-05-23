@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.exception.InvalidCertificateIdentifierException;
+import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.service.CertificateService;
@@ -37,7 +37,7 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
             certificateService.setCertificateState(request.getNationalIdentityNumber(), request.getCertificateId(), request.getTarget(), CertificateState.valueOf(request.getStatus().name()), request.getTimestamp());
             response.setResult(okResult());
             LOGGER.info(LogMarkers.MONITORING, request.getCertificateId() + " set to status " + request.getStatus().name());
-        } catch (InvalidCertificateIdentifierException e) {
+        } catch (InvalidCertificateException e) {
             response.setResult(failResult(e.getMessage()));
         }
 

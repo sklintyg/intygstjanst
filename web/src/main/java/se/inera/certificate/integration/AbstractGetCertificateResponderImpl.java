@@ -16,7 +16,6 @@ import org.xml.sax.InputSource;
 
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
-import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.logging.LogMarkers;
@@ -67,7 +66,7 @@ public abstract class AbstractGetCertificateResponderImpl {
             LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + certificateId + "' but user '" + personnummer
                     + "' has not given consent.");
             return new CertificateOrResultType(errorResult(VALIDATION_ERROR, String.format("Missing consent for patient %s", personnummer)));
-        } catch (InvalidCertificateIdentifierException | InvalidCertificateException ex) {
+        } catch (InvalidCertificateException ex) {
             LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + certificateId + "' but no such certificate does exist for user '"
                     + personnummer + "'.");
             return new CertificateOrResultType(errorResult(VALIDATION_ERROR, String.format("Unknown certificate ID: %s", certificateId)));
@@ -91,7 +90,7 @@ public abstract class AbstractGetCertificateResponderImpl {
         }
         try {
             return new CertificateOrResultType(certificateService.getCertificate(certificateId));
-        }  catch (InvalidCertificateIdentifierException | InvalidCertificateException ex) {
+        }  catch (InvalidCertificateException ex) {
             LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + certificateId + "' but no such certificate does exist.");
             return new CertificateOrResultType(errorResult(VALIDATION_ERROR, String.format("Unknown certificate ID: %s", certificateId)));
         }

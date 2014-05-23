@@ -26,7 +26,6 @@ import org.joda.time.LocalDateTime;
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
-import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
@@ -64,12 +63,11 @@ public interface CertificateService {
      * @param certificateId the certificate ID
      * @return the certificate information or null if the requested certificate does not exist
      * @throws MissingConsentException if the patient has not given consent for accessing her certificates
-     * @throws InvalidCertificateException if the certificate does not exist
+     * @throws InvalidCertificateException if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
      * @throws CertificateRevokedException if the certificate has been revoked
-     * @throws InvalidCertificateIdentifierException if the certificate id and civicRegistrationNumber didn't match
      */
     Certificate getCertificate(String civicRegistrationNumber, String certificateId) throws MissingConsentException, InvalidCertificateException,
-            CertificateRevokedException, InvalidCertificateIdentifierException;
+            CertificateRevokedException;
 
     /**
      * Returns the certificate for the given certificate ID.
@@ -78,10 +76,9 @@ public interface CertificateService {
      * @param civicRegistrationNumber the patient's civic registration number. If left empty, no consent check will be performed.
      * @param certificateId the certificate ID
      * @return the certificate information or null if the requested certificate does not exist
-     * @throws InvalidCertificateException if the certificate does not exist
-     * @throws InvalidCertificateIdentifierException if the certificate id and civicRegistrationNumber didn't match
+     * @throws InvalidCertificateException if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
      */
-    Certificate getCertificate(String certificateId) throws InvalidCertificateException, InvalidCertificateIdentifierException;
+    Certificate getCertificate(String certificateId) throws InvalidCertificateException;
 
     /**
      * Stores the given certificate.
@@ -90,33 +87,31 @@ public interface CertificateService {
      * @param wiretapped  true if the certificate is wire-tapped
      * @return the created certificate
      * @throws CertificateAlreadyExistsException when a certificate with the same identifier already exists
-     * @throws InvalidCertificateIdentifierException if the certificate id and civicRegistrationNumber didn't match
+     * @throws InvalidCertificateException if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
      */
     Certificate storeCertificate(String xml, String type, boolean wiretapped) throws CertificateAlreadyExistsException,
-            InvalidCertificateIdentifierException;
+            InvalidCertificateException;
 
     void setCertificateState(String civicRegistrationNumber, String certificateId, String target, CertificateState state, LocalDateTime timestamp)
-            throws InvalidCertificateIdentifierException;
+            throws InvalidCertificateException;
 
     /**
      * Sends the certificate to the destined target.
      * @returns SendStatus further subclassifying the outcome of a successful send
-     * @throws InvalidCertificateException if the certificate does not exist
+     * @throws InvalidCertificateException if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
      * @throws CertificateRevokedException if the certificate has been revoked
-     * @throws InvalidCertificateIdentifierException if the certificate id and civicRegistrationNumber didn't match
      */
     SendStatus sendCertificate(String civicRegistrationNumber, String certificateId, String target) throws InvalidCertificateException,
-            CertificateRevokedException, InvalidCertificateIdentifierException;
+            CertificateRevokedException;
 
     Utlatande getLakarutlatande(Certificate certificate);
 
     /**
      * Revokes the certificate.
      * @return the revoked certificate.
-     * @throws InvalidCertificateIdentifierException if the certificate id and civicRegistrationNumber didn't match
-     * @throws InvalidCertificateException if the certificate does not exist
+     * @throws InvalidCertificateException if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
      * @throws CertificateRevokedException if the certificate has been revoked
      */
-    Certificate revokeCertificate(String civicRegistrationNumber, String certificateId) throws InvalidCertificateIdentifierException,
-            InvalidCertificateException, CertificateRevokedException;
+    Certificate revokeCertificate(String civicRegistrationNumber, String certificateId) throws InvalidCertificateException,
+            CertificateRevokedException;
 }

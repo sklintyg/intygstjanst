@@ -20,7 +20,6 @@ import riv.insuranceprocess.healthreporting.medcertqa._1.InnehallType;
 import riv.insuranceprocess.healthreporting.medcertqa._1.VardAdresseringsType;
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
-import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.integration.validator.RevokeRequestValidator;
 import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.logging.LogMarkers;
@@ -103,7 +102,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
             }
             LOGGER.info(LogMarkers.MONITORING, certificateId + " revoked");
             getStatisticsService().revoked(certificate);
-        } catch (InvalidCertificateIdentifierException | InvalidCertificateException e) {
+        } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
             LOGGER.info(LogMarkers.MONITORING, "Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + safeGetCivicRegistrationNumber(request) + "' but certificate does not exist");

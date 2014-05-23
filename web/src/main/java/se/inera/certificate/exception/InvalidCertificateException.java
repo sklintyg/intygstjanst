@@ -1,8 +1,9 @@
 package se.inera.certificate.exception;
 
 /**
- * Exception thrown whenever a certificate with unknown certificate ID is tried to access.
- *
+ * Exception thrown whenever a certificate with unknown certificate ID is tried to access, or the civic registration
+ * number doesn't match the one in the certificate.
+ * 
  * @author andreaskaltenbach
  */
 public class InvalidCertificateException extends ClientException {

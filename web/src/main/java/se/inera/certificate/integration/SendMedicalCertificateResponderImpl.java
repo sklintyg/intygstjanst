@@ -10,7 +10,6 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
-import se.inera.certificate.exception.InvalidCertificateIdentifierException;
 import se.inera.certificate.integration.util.ResultOfCallUtil;
 import se.inera.certificate.integration.validator.SendCertificateRequestValidator;
 import se.inera.certificate.integration.validator.ValidationException;
@@ -50,7 +49,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
                 LOGGER.info(LogMarkers.MONITORING, certificateId + " sent to FK");
             }
             return response;
-        } catch (InvalidCertificateIdentifierException | InvalidCertificateException e) {
+        } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
             LOGGER.info(LogMarkers.MONITORING, "Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + safeGetCivicRegistrationNumber(request) + "' but certificate does not exist");

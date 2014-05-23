@@ -52,7 +52,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import se.inera.certificate.exception.ClientException;
-import se.inera.certificate.exception.InvalidCertificateIdentifierException;
+import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
@@ -208,7 +208,7 @@ public class CertificateDaoImplTest {
         assertNotNull(certificateDao.getCertificate(CIVIC_REGISTRATION_NUMBER, CERTIFICATE_ID));
     }
 
-    @Test(expected = InvalidCertificateIdentifierException.class)
+    @Test(expected = InvalidCertificateException.class)
     public void testUpdateStatusForWrongCertificate() throws ClientException {
         certificateDao.updateStatus("<unknownCertId>", "<unknownPersonnummer>", CertificateState.IN_PROGRESS, "fk",
                 null);
@@ -220,7 +220,7 @@ public class CertificateDaoImplTest {
         assertNull(certificateDao.getCertificate("<unknownCertId>", "<unknownPersonnummer>"));
     }
 
-    @Test(expected = InvalidCertificateIdentifierException.class)
+    @Test(expected = InvalidCertificateException.class)
     public void testGetCertificateForWrongCivicRegistrationNumber() throws ClientException {
         certificateDao.store(buildCertificate());
         certificateDao.getCertificate("<another civic registration number>", CERTIFICATE_ID);
@@ -238,7 +238,7 @@ public class CertificateDaoImplTest {
         try {
             certificateDao.updateStatus(CERTIFICATE_ID, "another patient", RECEIVED, "fk", null);
             fail("Exception expected.");
-        } catch (InvalidCertificateIdentifierException e) {
+        } catch (InvalidCertificateException e) {
             // Empty
         }
 
