@@ -48,7 +48,7 @@ public class SendMedicalCertificateResponderImplTest {
 
     @Test
     public void testSend() throws ClientException {
-        when(certificateService.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new CertificateBuilder(CERTIFICATE_ID).build());
+        when(certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new CertificateBuilder(CERTIFICATE_ID).build());
         AttributedURIType uri = new AttributedURIType();
         uri.setValue("FK");
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(uri, createRequest());

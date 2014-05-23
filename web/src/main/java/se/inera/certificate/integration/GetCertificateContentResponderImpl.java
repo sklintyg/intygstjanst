@@ -43,7 +43,7 @@ public class GetCertificateContentResponderImpl implements GetCertificateContent
 
         Certificate certificate;
         try {
-            certificate = certificateService.getCertificate(request.getNationalIdentityNumber(),
+            certificate = certificateService.getCertificateForCitizen(request.getNationalIdentityNumber(),
                     request.getCertificateId());
         } catch (MissingConsentException ex) {
             LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + request.getCertificateId() + "' but user '"

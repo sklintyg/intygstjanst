@@ -48,7 +48,7 @@ public class ListCertificatesResponderImpl implements ListCertificatesResponderI
         ListCertificatesResponseType response = new ListCertificatesResponseType();
 
         try {
-            List<Certificate> certificates = certificateService.listCertificates(
+            List<Certificate> certificates = certificateService.listCertificatesForCitizen(
                     parameters.getNationalIdentityNumber(), parameters.getCertificateType(), parameters.getFromDate(), parameters.getToDate());
             for (Certificate certificate : certificates) {
                 if (parameters.getCertificateType().isEmpty() || !(certificate.getDeleted() || certificate.isRevoked())) {

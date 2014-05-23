@@ -87,7 +87,7 @@ public class GetCertificateResponderImplTest {
         String document = FileUtils.readFileToString(new ClassPathResource("lakarutlatande/maximalt-fk7263.json").getFile());
         Utlatande utlatande = new CustomObjectMapper().readValue(document, MinimalUtlatande.class);
 
-        when(certificateService.getCertificate(civicRegistrationNumber, certificateId)).thenReturn(
+        when(certificateService.getCertificateForCitizen(civicRegistrationNumber, certificateId)).thenReturn(
                 new CertificateBuilder("123456", document).certificateType("fk7263").build());
 
         when(certificateService.getLakarutlatande(any(Certificate.class))).thenReturn(utlatande);
@@ -101,7 +101,7 @@ public class GetCertificateResponderImplTest {
 
         GetCertificateResponseType response = responder.getCertificate(null, parameters);
 
-        verify(certificateService).getCertificate(civicRegistrationNumber, certificateId);
+        verify(certificateService).getCertificateForCitizen(civicRegistrationNumber, certificateId);
 
         assertNotNull(response.getMeta());
         assertEquals(OK, response.getResult().getResultCode());
@@ -110,7 +110,7 @@ public class GetCertificateResponderImplTest {
     @Test
     public void getCertificateWithUnknownCertificateId() throws ClientException {
 
-        when(certificateService.getCertificate(civicRegistrationNumber, certificateId)).thenThrow(new InvalidCertificateException("123456", null));
+        when(certificateService.getCertificateForCitizen(civicRegistrationNumber, certificateId)).thenThrow(new InvalidCertificateException("123456", null));
 
         GetCertificateRequestType parameters = createGetCertificateRequest(civicRegistrationNumber, certificateId);
 
@@ -127,7 +127,7 @@ public class GetCertificateResponderImplTest {
     @SuppressWarnings("unchecked")
     public void getCertificateWithoutConsent() throws ClientException {
 
-        when(certificateService.getCertificate(civicRegistrationNumber, certificateId)).thenThrow(MissingConsentException.class);
+        when(certificateService.getCertificateForCitizen(civicRegistrationNumber, certificateId)).thenThrow(MissingConsentException.class);
 
         GetCertificateRequestType parameters = createGetCertificateRequest(civicRegistrationNumber, certificateId);
 
@@ -142,7 +142,7 @@ public class GetCertificateResponderImplTest {
     @Test
     public void getRevokedCertificate() throws ClientException {
 
-        when(certificateService.getCertificate(civicRegistrationNumber, certificateId)).thenThrow(new CertificateRevokedException("123456"));
+        when(certificateService.getCertificateForCitizen(civicRegistrationNumber, certificateId)).thenThrow(new CertificateRevokedException("123456"));
 
         GetCertificateRequestType parameters = createGetCertificateRequest(civicRegistrationNumber, certificateId);
 

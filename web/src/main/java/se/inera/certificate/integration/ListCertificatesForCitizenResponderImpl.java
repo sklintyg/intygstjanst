@@ -38,7 +38,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         ListCertificatesForCitizenResponseType response = new ListCertificatesForCitizenResponseType();
 
         try {
-            List<Certificate> certificates = certificateService.listCertificates(
+            List<Certificate> certificates = certificateService.listCertificatesForCitizen(
                     parameters.getNationalIdentityNumber(), parameters.getCertificateType(), parameters.getFromDate(), parameters.getToDate());
             for (Certificate certificate : certificates) {
                 // Note that we return certificates that are deleted by the care giver (isDeletedByCareGiver) but not

@@ -51,9 +51,16 @@ public interface CertificateService {
      * @return list of matching certificates or empty list if no such certificates can be found
      * @throws MissingConsentException if the patient has not given consent for accessing her certificates
      */
-    List<Certificate> listCertificates(String civicRegistrationNumber, List<String> certificateTypes, LocalDate fromDate, LocalDate toDate)
+    List<Certificate> listCertificatesForCitizen(String civicRegistrationNumber, List<String> certificateTypes, LocalDate fromDate, LocalDate toDate)
             throws MissingConsentException;
 
+    /**
+     * Returns a list of certificates for one or many care units.
+     * 
+     * @param civicRegistrationNumber the patient's civic registration number
+     * @param careUnits a list of care units for which the certificates must belong.
+     * @return list of matching certificates or empty list if no such certificates can be found
+     */
     List<Certificate> listCertificatesForCare(String civicRegistrationNumber, List<String> careUnits);
 
     /**
@@ -67,7 +74,7 @@ public interface CertificateService {
      * @throws InvalidCertificateException if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
      * @throws CertificateRevokedException if the certificate has been revoked
      */
-    Certificate getCertificate(String civicRegistrationNumber, String certificateId) throws MissingConsentException, InvalidCertificateException,
+    Certificate getCertificateForCitizen(String civicRegistrationNumber, String certificateId) throws MissingConsentException, InvalidCertificateException,
             CertificateRevokedException;
 
     /**
@@ -79,7 +86,7 @@ public interface CertificateService {
      * @return the certificate information or null if the requested certificate does not exist
      * @throws InvalidCertificateException if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
      */
-    Certificate getCertificate(String certificateId) throws InvalidCertificateException;
+    Certificate getCertificateForCare(String certificateId) throws InvalidCertificateException;
 
     /**
      * Stores the given certificate.

@@ -67,13 +67,13 @@ public class ListCertificatesResponderImplTest {
 
         List<Certificate> result = Collections.emptyList();
 
-        when(certificateService.listCertificates(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
+        when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
 
         ListCertificatesRequestType parameters = createListCertificatesRequest(civicRegistrationNumber, certificateTypes, fromDate, toDate);
 
         ListCertificatesResponseType response = responder.listCertificates(null, parameters);
 
-        verify(certificateService).listCertificates(civicRegistrationNumber, certificateTypes, fromDate, toDate);
+        verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
 
         assertEquals(0, response.getMeta().size());
         assertEquals(OK, response.getResult().getResultCode());
@@ -81,7 +81,7 @@ public class ListCertificatesResponderImplTest {
 
     @Test
     public void listCertificatesWithoutConsent() throws ClientException {
-        when(certificateService.listCertificates(anyString(), Matchers.<List<String>>any(), any(LocalDate.class), any(LocalDate.class))).thenThrow(new MissingConsentException(""));
+        when(certificateService.listCertificatesForCitizen(anyString(), Matchers.<List<String>>any(), any(LocalDate.class), any(LocalDate.class))).thenThrow(new MissingConsentException(""));
 
         List<String> types = Collections.emptyList();
         ListCertificatesRequestType parameters = createListCertificatesRequest("12-3", types, null, null);

@@ -48,7 +48,7 @@ public abstract class AbstractGetCertificateResponderImpl {
      * @param personnummer
      * @return
      */
-    protected CertificateOrResultType getCertificate(String certificateId, String personnummer) {
+    protected CertificateOrResultType getCertificateForCitizen(String certificateId, String personnummer) {
         if (certificateId == null || certificateId.length() == 0) {
             LOGGER.info(LogMarkers.VALIDATION, "Tried to get certificate with non-existing ceritificateId '.");
             return new CertificateOrResultType(errorResult(VALIDATION_ERROR, "Validation error: missing  certificateId"));
@@ -60,7 +60,7 @@ public abstract class AbstractGetCertificateResponderImpl {
         }
 
         try {
-            return new CertificateOrResultType(certificateService.getCertificate(personnummer, certificateId));
+            return new CertificateOrResultType(certificateService.getCertificateForCitizen(personnummer, certificateId));
         } catch (MissingConsentException ex) {
             // return ERROR if user has not given consent
             LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + certificateId + "' but user '" + personnummer
@@ -83,13 +83,13 @@ public abstract class AbstractGetCertificateResponderImpl {
      * @param certificateId
      * @return
      */
-    protected CertificateOrResultType getCertificate(String certificateId) {
+    protected CertificateOrResultType getCertificateForCare(String certificateId) {
         if (certificateId == null || certificateId.length() == 0) {
             LOGGER.info(LogMarkers.VALIDATION, "Tried to get certificate with non-existing ceritificateId '.");
             return new CertificateOrResultType(errorResult(VALIDATION_ERROR, "Validation error: missing  certificateId"));
         }
         try {
-            return new CertificateOrResultType(certificateService.getCertificate(certificateId));
+            return new CertificateOrResultType(certificateService.getCertificateForCare(certificateId));
         }  catch (InvalidCertificateException ex) {
             LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + certificateId + "' but no such certificate does exist.");
             return new CertificateOrResultType(errorResult(VALIDATION_ERROR, String.format("Unknown certificate ID: %s", certificateId)));

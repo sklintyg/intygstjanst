@@ -55,7 +55,7 @@ public class GetCertificateResponderImpl extends AbstractGetCertificateResponder
             return response;
         }
 
-        CertificateOrResultType certificateOrResultType = getCertificate(certificateId, nationalIdentityNumber);
+        CertificateOrResultType certificateOrResultType = getCertificateForCitizen(certificateId, nationalIdentityNumber);
 
         if (certificateOrResultType.hasError()) {
             ResultType result = certificateOrResultType.getResultType();

@@ -78,7 +78,7 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
 
         GetCertificateForCareResponseType response = new GetCertificateForCareResponseType();
 
-        CertificateOrResultType certificateOrResultType = getCertificate(request.getCertificateId());
+        CertificateOrResultType certificateOrResultType = getCertificateForCare(request.getCertificateId());
 
         if (certificateOrResultType.hasError()) {
             ResultType resultType = certificateOrResultType.getResultType();

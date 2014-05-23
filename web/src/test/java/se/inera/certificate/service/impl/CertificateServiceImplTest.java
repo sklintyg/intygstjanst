@@ -86,7 +86,7 @@ public class CertificateServiceImplTest {
         when(consentService.isConsent(anyString())).thenReturn(Boolean.TRUE);
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
 
-        Certificate found = certificateService.getCertificate(PERSONNUMMER, CERTIFICATE_ID);
+        Certificate found = certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
 
         assertTrue(found.getDeleted());
 
@@ -107,7 +107,7 @@ public class CertificateServiceImplTest {
         when(consentService.isConsent(anyString())).thenReturn(Boolean.TRUE);
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
 
-        Certificate found = certificateService.getCertificate(PERSONNUMMER, CERTIFICATE_ID);
+        Certificate found = certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
         assertFalse(found.getDeleted());
 
         verify(certificateDao).getCertificate(PERSONNUMMER, CERTIFICATE_ID);
@@ -121,7 +121,7 @@ public class CertificateServiceImplTest {
         when(consentService.isConsent(anyString())).thenReturn(Boolean.TRUE);
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
 
-        Certificate found = certificateService.getCertificate(PERSONNUMMER, CERTIFICATE_ID);
+        Certificate found = certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
         assertTrue(found.getDeleted());
 
         verify(certificateDao).getCertificate(PERSONNUMMER, CERTIFICATE_ID);
@@ -211,10 +211,8 @@ public class CertificateServiceImplTest {
 
         when(moduleApiFactory.getModuleEntryPoint("ts-diabetes")).thenReturn(moduleEntryPoint);
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
-        ExternalModelResponse unmarshallResponse = new ExternalModelResponse(utlatandeJson, utlatande());
+        ExternalModelResponse unmarshallResponse = new ExternalModelResponse(utlatandeJson, utlatande);
         when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenReturn(unmarshallResponse);
-
-        when(objectMapper.readValue(utlatandeJson, MinimalUtlatande.class)).thenReturn(utlatande);
 
         ArgumentCaptor<OriginalCertificate> originalCertificateCaptor = ArgumentCaptor
                 .forClass(OriginalCertificate.class);
@@ -338,13 +336,13 @@ public class CertificateServiceImplTest {
     @Test(expected = MissingConsentException.class)
     public void testGetCertificateWithoutConsent() throws ClientException {
         when(consentService.isConsent(PERSONNUMMER)).thenReturn(false);
-        certificateService.getCertificate(PERSONNUMMER, CERTIFICATE_ID);
+        certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
     }
     
     @Test(expected = InvalidCertificateException.class)
     public void testGetCertificateNotFound() throws ClientException {
         when(certificateDao.getCertificate(PERSONNUMMER,CERTIFICATE_ID)).thenReturn(null);
-        certificateService.getCertificate(CERTIFICATE_ID);
+        certificateService.getCertificateForCare(CERTIFICATE_ID);
     }
     
     @Test(expected = InvalidCertificateException.class)
@@ -352,7 +350,7 @@ public class CertificateServiceImplTest {
         Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID).state(CertificateState.CANCELLED, null)
                 .build();
         when(certificateDao.getCertificate(PERSONNUMMER,CERTIFICATE_ID)).thenReturn(revokedCertificate);
-        certificateService.getCertificate(CERTIFICATE_ID);
+        certificateService.getCertificateForCare(CERTIFICATE_ID);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -360,6 +358,6 @@ public class CertificateServiceImplTest {
         Certificate certificate = createCertificate();
         when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(certificate);
 
-        certificateService.getCertificate(null, CERTIFICATE_ID);
+        certificateService.getCertificateForCitizen(null, CERTIFICATE_ID);
     }
 }

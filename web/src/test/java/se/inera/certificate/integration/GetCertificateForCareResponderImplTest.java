@@ -109,7 +109,7 @@ public class GetCertificateForCareResponderImplTest {
         Utlatande utlatande = new MinimalUtlatande();
         utlatande.setTyp(new Kod(CERTIFICATE_TYPE));
 
-        when(certificateService.getCertificate(CERTIFICATE_ID)).thenReturn(
+        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(
                 new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DATA.getExternalModel()).certificateType(CERTIFICATE_TYPE)
                         .validity("2013-10-01", "2013-10-03").signedDate(new LocalDateTime("2013-10-03")).build());
 
@@ -125,7 +125,7 @@ public class GetCertificateForCareResponderImplTest {
         GetCertificateForCareRequestType request = createGetCertificateForCareRequest(CERTIFICATE_ID);
         GetCertificateForCareResponseType response = responder.getCertificateForCare(null, request);
 
-        verify(certificateService).getCertificate(CERTIFICATE_ID);
+        verify(certificateService).getCertificateForCare(CERTIFICATE_ID);
 
         assertNotNull(response.getMeta());
         assertEquals(OK, response.getResult().getResultCode());
@@ -170,7 +170,7 @@ public class GetCertificateForCareResponderImplTest {
     @Test
     public void getCertificateForCareWithUnknownCertificateId() throws ClientException {
 
-        when(certificateService.getCertificate(CERTIFICATE_ID)).thenThrow(
+        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenThrow(
                 new InvalidCertificateException("123456", null));
 
         GetCertificateForCareRequestType parameters = createGetCertificateForCareRequest(CERTIFICATE_ID);
@@ -189,7 +189,7 @@ public class GetCertificateForCareResponderImplTest {
         Utlatande utlatande = new MinimalUtlatande();
         utlatande.setTyp(new Kod(CERTIFICATE_TYPE));
 
-        when(certificateService.getCertificate(CERTIFICATE_ID)).thenReturn(
+        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(
                 new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DATA.getExternalModel()).certificateType(CERTIFICATE_TYPE)
                         .validity("2013-10-01", "2013-10-03").signedDate(new LocalDateTime("2013-10-03")).state(CertificateState.CANCELLED, "FK").build());
 

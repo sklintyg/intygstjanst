@@ -52,7 +52,6 @@ import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
-import se.inera.certificate.model.util.Strings;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.dto.ExternalModelResponse;
 import se.inera.certificate.modules.support.api.dto.TransportModelHolder;
@@ -61,10 +60,8 @@ import se.inera.certificate.modules.support.api.exception.ModuleValidationExcept
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
-import se.inera.certificate.validate.CommonModelValidator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
 
 /**
  * @author andreaskaltenbach
@@ -104,7 +101,7 @@ public class CertificateServiceImpl implements CertificateService {
     private Boolean shouldStoreOriginalCertificate = true;
 
     @Override
-    public List<Certificate> listCertificates(String civicRegistrationNumber, List<String> certificateTypes,
+    public List<Certificate> listCertificatesForCitizen(String civicRegistrationNumber, List<String> certificateTypes,
             LocalDate fromDate, LocalDate toDate) throws MissingConsentException {
         assertConsent(civicRegistrationNumber);
         return fixDeletedStatus(certificateDao.findCertificate(civicRegistrationNumber, certificateTypes, fromDate,
@@ -117,7 +114,7 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public Certificate getCertificate(String civicRegistrationNumber, String id) throws InvalidCertificateException, CertificateRevokedException,
+    public Certificate getCertificateForCitizen(String civicRegistrationNumber, String id) throws InvalidCertificateException, CertificateRevokedException,
             MissingConsentException {
 
         assertConsent(civicRegistrationNumber);
@@ -136,7 +133,7 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public Certificate getCertificate(String id) throws InvalidCertificateException {
+    public Certificate getCertificateForCare(String id) throws InvalidCertificateException {
 
         Certificate certificate = getCertificateInternal(null, id);
 
@@ -151,13 +148,12 @@ public class CertificateServiceImpl implements CertificateService {
         return fixDeletedStatus(certificateDao.getCertificate(civicRegistrationNumber, id));
     }
 
-    private String unmarshall(String type, String transportXml) throws CertificateValidationException {
-        ExternalModelResponse response;
+    private ExternalModelResponse unmarshallAndValidate(String type, String transportXml) throws CertificateValidationException {
         try {
             ModuleEntryPoint endpoint = moduleApiFactory.getModuleEntryPoint(type);
-            response = endpoint.getModuleApi().unmarshall(new TransportModelHolder(transportXml));
+            ExternalModelResponse response = endpoint.getModuleApi().unmarshall(new TransportModelHolder(transportXml));
 
-            return response.getExternalModelJson();
+            return response;
 
         } catch (ModuleNotFoundException e) {
             String message = String.format("The module '%s' was not found - not registered in application", type);
@@ -174,27 +170,15 @@ public class CertificateServiceImpl implements CertificateService {
         }
     }
 
-    private Utlatande convertToCommonUtlatande(String externalJson) {
-        try {
-            return objectMapper.readValue(externalJson, MinimalUtlatande.class);
-        } catch (IOException e) {
-            throw Throwables.propagate(e);
-        }
-    }
-
     @Override
     @Transactional
     public Certificate storeCertificate(String xml, String type, boolean wiretapped) throws CertificateAlreadyExistsException,
             InvalidCertificateException, CertificateValidationException {
 
-        String externalJson = unmarshall(type, xml);
-
-        Utlatande utlatande = convertToCommonUtlatande(externalJson);
-
-        validateCommonModel(utlatande);
+        ExternalModelResponse externalModel = unmarshallAndValidate(type, xml);
 
         // turn a lakarutlatande into a certificate entity
-        Certificate certificate = createCertificate(utlatande, externalJson);
+        Certificate certificate = createCertificate(externalModel);
         certificate.setWiretapped(wiretapped);
 
         // ensure that certificate does not exist yet
@@ -215,13 +199,6 @@ public class CertificateServiceImpl implements CertificateService {
         storeOriginalCertificate(xml, certificate);
 
         return certificate;
-    }
-
-    private void validateCommonModel(Utlatande utlatande) throws CertificateValidationException {
-        List<String> validationErrors = new CommonModelValidator(utlatande).validate();
-        if (!validationErrors.isEmpty()) {
-            throw new CertificateValidationException(Strings.join(",", validationErrors));
-        }
     }
 
     private void checkForExistingCertificate(String certificateId, String personnummer) throws CertificateAlreadyExistsException,
@@ -267,9 +244,10 @@ public class CertificateServiceImpl implements CertificateService {
         return sendStatus;
     }
 
-    private Certificate createCertificate(Utlatande utlatande, String externalJson) {
+    private Certificate createCertificate(ExternalModelResponse externalModel) {
+        Utlatande utlatande = externalModel.getExternalModel();
         String id = utlatande.getId().getExtension() != null ? utlatande.getId().getExtension() : utlatande.getId().getRoot();
-        Certificate certificate = new Certificate(id, externalJson);
+        Certificate certificate = new Certificate(id, externalModel.getExternalModelJson());
 
         certificate.setType(utlatande.getTyp().getCode());
         certificate.setSigningDoctorName(utlatande.getSkapadAv().getNamn());
