@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.exception.CertificateRevokedException;
+import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.integration.util.ResultOfCallUtil;
 import se.inera.certificate.integration.validator.SendCertificateRequestValidator;
-import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.CertificateService.SendStatus;
@@ -49,6 +49,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
                 LOGGER.info(LogMarkers.MONITORING, certificateId + " sent to FK");
             }
             return response;
+
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
             LOGGER.info(LogMarkers.MONITORING, "Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
@@ -56,13 +57,15 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             response.setResult(failResult("No certificate '" + safeGetCertificateId(request)
                     + "' found to send for patient '" + safeGetCivicRegistrationNumber(request) + "'."));
             return response;
+
         } catch (CertificateRevokedException e) {
             // return with INFO response if certificate was revoked before
             LOGGER.info(LogMarkers.MONITORING, "Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + safeGetCivicRegistrationNumber(request) + "' which is revoked");
             response.setResult(infoResult("Certificate '" + safeGetCertificateId(request) + "' has been revoked."));
             return response;
-        } catch (ValidationException e) {
+
+        } catch (CertificateValidationException e) {
             LOGGER.error(LogMarkers.VALIDATION, "Validation error found for send certificate '" + safeGetCertificateId(request)
                     + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + safeGetCivicRegistrationNumber(request) + ": " + e.getMessage());
             // return with ERROR response if certificate had validation errors

@@ -22,8 +22,8 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ObjectFact
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeId;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
+import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.integration.util.ResultTypeUtil;
-import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
@@ -67,17 +67,21 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
             String certificateId = extractId(registerMedicalCertificate);
             LOGGER.info(LogMarkers.MONITORING, certificateId + " registered");
             statisticsService.created(certificate);
+
         } catch (CertificateAlreadyExistsException e) {
             response.setResult(ResultTypeUtil.infoResult("Certificate already exists"));
             String certificateId = extractId(registerMedicalCertificate);
             String issuedBy =  registerMedicalCertificate.getUtlatande().getSkapadAv().getEnhet().getEnhetsId().getExtension();
             LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId + " issued by " + issuedBy + ": Certificate already exists - ignored.");
-        } catch (ValidationException e) {
+
+        } catch (CertificateValidationException e) {
             response.setResult(ResultTypeUtil.errorResult(VALIDATION_ERROR, e.getMessage()));
             LOGGER.error(LogMarkers.VALIDATION, e.getMessage());
+
         } catch (JAXBException e) {
             LOGGER.error("JAXB error in Webservice: ", e);
             Throwables.propagate(e);
+
         } catch (Exception e) {
             LOGGER.error("Error in Webservice: ", e);
             Throwables.propagate(e);

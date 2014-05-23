@@ -25,10 +25,10 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedic
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ObjectFactory;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
+import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
-import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.TransportModelHolder;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
@@ -77,7 +77,7 @@ public class RegisterCertificateResponderStub implements RegisterMedicalCertific
 
             LOGGER.info(request.getUtlatande().getTypAvUtlatande().getCode() + " - STUB Received request");
             fkMedicalCertificatesStore.addCertificate(id, props);
-        } catch (ValidationException e) {
+        } catch (CertificateValidationException e) {
             response.setResult(errorResult(ErrorIdType.VALIDATION_ERROR, e.getMessage()));
             return response;
         } catch (JAXBException e) {
@@ -99,13 +99,14 @@ public class RegisterCertificateResponderStub implements RegisterMedicalCertific
         return stringWriter.toString();
     }
 
-    protected void validate(RegisterMedicalCertificateType registerMedicalCertificate, ModuleApi module) throws JAXBException {
+    protected void validate(RegisterMedicalCertificateType registerMedicalCertificate, ModuleApi module) throws JAXBException,
+            CertificateValidationException {
         try {
             String transportXml = xmlToString(registerMedicalCertificate.getUtlatande());
             module.unmarshall(new TransportModelHolder(transportXml));
 
         } catch (ModuleValidationException e) {
-            throw new ValidationException(e.getValidationEntries());
+            throw new CertificateValidationException(e.getValidationEntries());
 
         } catch (ModuleException e) {
             String message = String.format("Failed to validate certificate for certificate type '%s'", registerMedicalCertificate.getUtlatande()

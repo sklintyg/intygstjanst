@@ -20,11 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 
+import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.integration.util.ResultOfCallUtil;
-import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.TransportModelHolder;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
@@ -78,7 +78,7 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
 
             LOGGER.info("STUB Received request");
             fkMedicalCertificatesStore.addCertificate(id, props);
-        } catch (ValidationException e) {
+        } catch (CertificateValidationException e) {
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             return response;
         } catch (JAXBException e) {
@@ -97,13 +97,13 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
         return stringWriter.toString();
     }
 
-    protected void validate(RegisterMedicalCertificateType registerMedicalCertificate) throws JAXBException {
+    protected void validate(RegisterMedicalCertificateType registerMedicalCertificate) throws JAXBException, CertificateValidationException {
         try {
             String transportXml = xmlToString(registerMedicalCertificate);
             endpoint.unmarshall(new TransportModelHolder(transportXml));
 
         } catch (ModuleValidationException e) {
-            throw new ValidationException(e.getValidationEntries());
+            throw new CertificateValidationException(e.getValidationEntries());
 
         } catch (ModuleException e) {
             String message = String.format("Failed to validate certificate for certificate type '%s'", FK7263);

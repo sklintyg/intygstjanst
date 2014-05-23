@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.util.StringUtils;
 
+import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType;
 
 public class SendCertificateRequestValidator {
@@ -15,7 +16,7 @@ public class SendCertificateRequestValidator {
         this.sendRequest = sendRequest;
     }
 
-    public void validateAndCorrect() {
+    public void validateAndCorrect() throws CertificateValidationException {
         // First, validate properties at Revoke request level
         if (StringUtils.isEmpty(sendRequest.getVardReferensId())) {
             validationErrors.add("No vardReferens found!");
@@ -29,7 +30,7 @@ public class SendCertificateRequestValidator {
         new VardAdresseringsTypeValidator(sendRequest.getAdressVard(), validationErrors).validateAndCorrect();
 
         if (!validationErrors.isEmpty()) {
-            throw new ValidationException(validationErrors);
+            throw new CertificateValidationException(validationErrors);
         }
     }
 }

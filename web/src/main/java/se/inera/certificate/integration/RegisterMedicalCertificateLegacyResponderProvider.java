@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
+import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.integration.util.ResultOfCallUtil;
 import se.inera.certificate.integration.validator.RegisterMedicalCertificateRequestValidator;
-import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
@@ -69,21 +69,26 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
             String certificateId = registerMedicalCertificate.getLakarutlatande().getLakarutlatandeId();
             LOGGER.info(LogMarkers.MONITORING, certificateId + " registered" + (isWiretapped() ? " via Wire-tap" : ""));
             statisticsService.created(certificate);
+
         } catch (CertificateAlreadyExistsException e) {
             response.setResult(ResultOfCallUtil.infoResult("Certificate already exists"));
             String certificateId = registerMedicalCertificate.getLakarutlatande().getLakarutlatandeId();
             String issuedBy =  registerMedicalCertificate.getLakarutlatande().getSkapadAvHosPersonal().getEnhet().getEnhetsId().getExtension();
             LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId + " issued by " + issuedBy + ": Certificate already exists - ignored.");
-        } catch (ValidationException e) {
+
+        } catch (CertificateValidationException e) {
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             LOGGER.error(LogMarkers.VALIDATION, e.getMessage());
+
         } catch (JAXBException e) {
             LOGGER.error("JAXB error in Webservice: ", e);
             Throwables.propagate(e);
+
         } catch (Exception e) {
             LOGGER.error("Error in Webservice: ", e);
             Throwables.propagate(e);
         }
+
         return response;
     }
 

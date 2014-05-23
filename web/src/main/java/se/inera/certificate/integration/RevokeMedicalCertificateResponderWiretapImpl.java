@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.exception.CertificateRevokedException;
+import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.integration.validator.RevokeRequestValidator;
-import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
@@ -46,6 +46,7 @@ public class RevokeMedicalCertificateResponderWiretapImpl extends RevokeMedicalC
             Certificate certificate = certificateService.revokeCertificate(civicRegistrationNumber, certificateId);
             LOGGER.info(LogMarkers.MONITORING, certificateId + " revoked");
             getStatisticsService().revoked(certificate);
+
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
             LOGGER.info(LogMarkers.MONITORING, "Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
@@ -53,13 +54,15 @@ public class RevokeMedicalCertificateResponderWiretapImpl extends RevokeMedicalC
             response.setResult(failResult("No certificate '" + safeGetCertificateId(request)
                     + "' found to revoke for patient '" + safeGetCivicRegistrationNumber(request) + "'."));
             return response;
+
         } catch (CertificateRevokedException e) {
             // return with INFO response if certificate was revoked before
             LOGGER.info(LogMarkers.MONITORING, "Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + safeGetCivicRegistrationNumber(request) + "' which already is revoked");
             response.setResult(infoResult("Certificate '" + safeGetCertificateId(request) + "' is already revoked."));
             return response;
-        } catch (ValidationException e) {
+
+        } catch (CertificateValidationException e) {
             // return with ERROR response if certificate had validation errors
             LOGGER.info(LogMarkers.VALIDATION, "Validation error found for revoke certificate '" + safeGetCertificateId(request)
                     + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + safeGetCivicRegistrationNumber(request) + ": " + e.getMessage());

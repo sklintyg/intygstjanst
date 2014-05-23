@@ -25,6 +25,7 @@ import org.joda.time.LocalDateTime;
 
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.exception.CertificateRevokedException;
+import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.model.CertificateState;
@@ -88,9 +89,10 @@ public interface CertificateService {
      * @return the created certificate
      * @throws CertificateAlreadyExistsException when a certificate with the same identifier already exists
      * @throws InvalidCertificateException if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
+     * @throws CertificateValidationException if the certificate was not valid
      */
     Certificate storeCertificate(String xml, String type, boolean wiretapped) throws CertificateAlreadyExistsException,
-            InvalidCertificateException;
+            InvalidCertificateException, CertificateValidationException;
 
     void setCertificateState(String civicRegistrationNumber, String certificateId, String target, CertificateState state, LocalDateTime timestamp)
             throws InvalidCertificateException;

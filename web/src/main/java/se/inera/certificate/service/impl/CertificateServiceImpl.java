@@ -37,13 +37,13 @@ import org.springframework.util.StringUtils;
 
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.exception.CertificateRevokedException;
+import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.exception.MissingModuleException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
-import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.Vardenhet;
@@ -151,7 +151,7 @@ public class CertificateServiceImpl implements CertificateService {
         return fixDeletedStatus(certificateDao.getCertificate(civicRegistrationNumber, id));
     }
 
-    private String unmarshall(String type, String transportXml) {
+    private String unmarshall(String type, String transportXml) throws CertificateValidationException {
         ExternalModelResponse response;
         try {
             ModuleEntryPoint endpoint = moduleApiFactory.getModuleEntryPoint(type);
@@ -165,7 +165,7 @@ public class CertificateServiceImpl implements CertificateService {
             throw new MissingModuleException(message, e);
 
         } catch (ModuleValidationException e) {
-            throw new ValidationException(e.getValidationEntries());
+            throw new CertificateValidationException(e.getValidationEntries());
 
         } catch (ModuleException e) {
             String message = String.format("Failed to validate certificate for certificate type '%s'", type);
@@ -185,7 +185,7 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     @Transactional
     public Certificate storeCertificate(String xml, String type, boolean wiretapped) throws CertificateAlreadyExistsException,
-            InvalidCertificateException {
+            InvalidCertificateException, CertificateValidationException {
 
         String externalJson = unmarshall(type, xml);
 
@@ -217,10 +217,10 @@ public class CertificateServiceImpl implements CertificateService {
         return certificate;
     }
 
-    private void validateCommonModel(Utlatande utlatande) {
+    private void validateCommonModel(Utlatande utlatande) throws CertificateValidationException {
         List<String> validationErrors = new CommonModelValidator(utlatande).validate();
         if (!validationErrors.isEmpty()) {
-            throw new ValidationException(Strings.join(",", validationErrors));
+            throw new CertificateValidationException(Strings.join(",", validationErrors));
         }
     }
 
