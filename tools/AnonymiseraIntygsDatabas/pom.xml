@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-    <groupId>se.inera.certificate</groupId>
+  <groupId>se.inera.certificate</groupId>
   <artifactId>anonymisera-intygsdatabas</artifactId>
   <version>1.0.0</version>
   <name>Anonymisering av intyg</name>
@@ -17,42 +18,9 @@
   <dependencies>
 
     <dependency>
-      <groupId>se.inera.certificate</groupId>
-      <artifactId>schemas</artifactId>
-      <version>${certificate.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-<!-- beroende via Eclipse istället, eftersom det är en war
-    <dependency>
-      <groupId>se.inera.certificate.modules</groupId>
-      <artifactId>fk7263</artifactId>
-      <version>${certificate.version}</version>
-      <scope>test</scope>
-    </dependency>
-  -->
-    <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
       <version>${groovy.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.codehaus.groovy.modules.http-builder</groupId>
-      <artifactId>http-builder</artifactId>
-      <version>${groovy.httpBuilder.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.codehaus.groovy</groupId>
-          <artifactId>groovy</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-javamail_1.4_spec</artifactId>
-      <version>1.7.1</version>
     </dependency>
 
     <dependency>
@@ -60,13 +28,13 @@
       <artifactId>h2</artifactId>
       <version>1.3.171</version>
     </dependency>
-    
+
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>5.1.26</version>
     </dependency>
-    
+
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
@@ -79,7 +47,7 @@
       <version>4.9</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
@@ -92,27 +60,35 @@
       <artifactId>jsonassert</artifactId>
       <version>1.2.0</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
-    
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.4</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>3.2.8.RELEASE</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.1</version>
-          <configuration>
-            <source>1.7</source>
-            <target>1.7</target>
-            <compilerId>groovy-eclipse-compiler</compilerId>
-            <verbose>true</verbose>
-          </configuration>
+        <version>3.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+          <compilerId>groovy-eclipse-compiler</compilerId>
+          <verbose>true</verbose>
+        </configuration>
         <dependencies>
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
@@ -148,7 +124,7 @@
           </execution>
         </executions>
       </plugin>
-   </plugins>
+    </plugins>
     <pluginManagement>
       <plugins>
         <!--This plugin's configuration is used to store Eclipse m2e settings
