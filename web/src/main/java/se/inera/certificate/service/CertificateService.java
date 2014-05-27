@@ -29,7 +29,6 @@ import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.model.CertificateState;
-import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
 
 /**
@@ -112,8 +111,6 @@ public interface CertificateService {
      */
     SendStatus sendCertificate(String civicRegistrationNumber, String certificateId, String target) throws InvalidCertificateException,
             CertificateRevokedException;
-
-    Utlatande getLakarutlatande(Certificate certificate);
 
     /**
      * Revokes the certificate.

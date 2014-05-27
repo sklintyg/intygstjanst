@@ -18,7 +18,6 @@
  */
 package se.inera.certificate.service.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,7 +46,6 @@ import se.inera.certificate.integration.module.exception.ModuleNotFoundException
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.Vardenhet;
-import se.inera.certificate.model.common.MinimalUtlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
@@ -276,15 +274,6 @@ public class CertificateServiceImpl implements CertificateService {
     public void setCertificateState(String civicRegistrationNumber, String certificateId, String target,
             CertificateState state, LocalDateTime timestamp) throws InvalidCertificateException {
         certificateDao.updateStatus(certificateId, civicRegistrationNumber, state, target, timestamp);
-    }
-
-    @Override
-    public Utlatande getLakarutlatande(Certificate certificate) {
-        try {
-            return objectMapper.readValue(certificate.getDocument(), MinimalUtlatande.class);
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not parse document for " + certificate.getId(), e);
-        }
     }
 
     @Override

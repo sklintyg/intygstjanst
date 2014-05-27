@@ -43,7 +43,6 @@ import se.inera.certificate.integration.exception.ExternalWebServiceCallFailedEx
 import se.inera.certificate.integration.exception.ResultTypeErrorException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
-import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
@@ -97,11 +96,8 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     @Override
     public void sendCertificate(Certificate certificate, String target) {
-
-        Utlatande utlatande = certificateService.getLakarutlatande(certificate);
-
         try {
-            ModuleEntryPoint module = moduleApiFactory.getModuleEntryPoint(utlatande);
+            ModuleEntryPoint module = moduleApiFactory.getModuleEntryPoint(certificate.getType());
 
             // Use target from parameter if present, otherwise use the default receiver from the module's entryPoint.
             String logicalAddress;

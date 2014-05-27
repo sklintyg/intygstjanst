@@ -28,10 +28,10 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.OK;
-import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.ERROR;
-import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType.VALIDATION_ERROR;
 import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType.REVOKED;
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType.VALIDATION_ERROR;
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.ERROR;
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.OK;
 import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.UTLATANDE_V1;
 
 import java.io.ByteArrayOutputStream;
@@ -67,7 +67,6 @@ import se.inera.certificate.model.Kod;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.common.MinimalUtlatande;
-import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
@@ -112,8 +111,6 @@ public class GetCertificateForCareResponderImplTest {
         when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(
                 new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DATA.getExternalModel()).certificateType(CERTIFICATE_TYPE)
                         .validity("2013-10-01", "2013-10-03").signedDate(new LocalDateTime("2013-10-03")).build());
-
-        when(certificateService.getLakarutlatande(any(Certificate.class))).thenReturn(utlatande);
 
         when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenReturn(moduleEntryPoint);
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleRestApi);
@@ -192,8 +189,6 @@ public class GetCertificateForCareResponderImplTest {
         when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(
                 new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DATA.getExternalModel()).certificateType(CERTIFICATE_TYPE)
                         .validity("2013-10-01", "2013-10-03").signedDate(new LocalDateTime("2013-10-03")).state(CertificateState.CANCELLED, "FK").build());
-
-        when(certificateService.getLakarutlatande(any(Certificate.class))).thenReturn(utlatande);
 
         when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenReturn(moduleEntryPoint);
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleRestApi);

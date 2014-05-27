@@ -21,17 +21,18 @@ package se.inera.certificate.integration;
 import static se.inera.certificate.integration.util.ResultTypeUtil.errorResult;
 import static se.inera.certificate.integration.util.ResultTypeUtil.okResult;
 
+import java.io.StringReader;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.w3c.dom.Document;
 
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareRequestType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponderInterface;
@@ -115,11 +116,11 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
 
     protected void attachCertificateDocument(Certificate certificate, GetCertificateForCareResponseType response) {
 
-        Document document = getCertificateDocument(certificate);
+        String transportModel = getCertificateDocument(certificate);
 
         UtlatandeType utlatande = null;
         try {
-            utlatande = unmarshaller.unmarshal(new DOMSource(document), UtlatandeType.class).getValue();
+            utlatande = unmarshaller.unmarshal(new StreamSource(new StringReader(transportModel)), UtlatandeType.class).getValue();
         } catch (JAXBException e) {
             LOGGER.error("Failed to unmarshall intyg coming from module " + certificate.getType());
             Throwables.propagate(e);

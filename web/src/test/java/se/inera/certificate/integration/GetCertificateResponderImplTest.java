@@ -43,12 +43,8 @@ import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.ClientException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
-import se.inera.certificate.integration.json.CustomObjectMapper;
 import se.inera.certificate.integration.module.ModuleApiFactory;
-import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
-import se.inera.certificate.model.common.MinimalUtlatande;
-import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
@@ -85,12 +81,9 @@ public class GetCertificateResponderImplTest {
     @Test
     public void getCertificate() throws Exception {
         String document = FileUtils.readFileToString(new ClassPathResource("lakarutlatande/maximalt-fk7263.json").getFile());
-        Utlatande utlatande = new CustomObjectMapper().readValue(document, MinimalUtlatande.class);
 
         when(certificateService.getCertificateForCitizen(civicRegistrationNumber, certificateId)).thenReturn(
                 new CertificateBuilder("123456", document).certificateType("fk7263").build());
-
-        when(certificateService.getLakarutlatande(any(Certificate.class))).thenReturn(utlatande);
 
         when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenReturn(moduleEntryPoint);
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleRestApi);

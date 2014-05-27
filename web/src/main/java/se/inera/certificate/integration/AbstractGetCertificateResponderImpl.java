@@ -4,30 +4,24 @@ import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.Err
 import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType.VALIDATION_ERROR;
 import static se.inera.certificate.integration.util.ResultTypeUtil.errorResult;
 
-import java.io.StringReader;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
+import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
+import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.logging.LogMarkers;
-import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
 import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
+import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateService;
-
-import com.google.common.base.Throwables;
 
 /**
  * @author andreaskaltenbach
@@ -98,26 +92,21 @@ public abstract class AbstractGetCertificateResponderImpl {
 
     protected abstract TransportModelVersion getMarshallVersion();
 
-    protected Document getCertificateDocument(Certificate certificate) {
-        Utlatande utlatande = certificateService.getLakarutlatande(certificate);
-        return marshall(certificate, utlatande);
+    protected String getCertificateDocument(Certificate certificate) {
+        return marshallToTransport(certificate.getDocument(), certificate.getType());
     }
 
-    private Document marshall(Certificate certificate, Utlatande utlatande) {
+    private String marshallToTransport(String externalModel, String utlatandeTyp) {
         try {
-            ModuleEntryPoint module = moduleApiFactory.getModuleEntryPoint(utlatande.getTyp().getCode());
+            ModuleEntryPoint module = moduleApiFactory.getModuleEntryPoint(utlatandeTyp);
             TransportModelResponse response = module.getModuleApi().marshall(
-                    new ExternalModelHolder(certificate.getDocument()), getMarshallVersion());
+                    new ExternalModelHolder(externalModel), getMarshallVersion());
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            return response.getTransportModel();
 
-            factory.setNamespaceAware(true);
-            InputSource source = new InputSource();
-            source.setCharacterStream(new StringReader(response.getTransportModel()));
-
-            return factory.newDocumentBuilder().parse(source);
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
+        } catch (ModuleNotFoundException | ModuleException e) {
+            throw new ServerException("Could not marshall external model to transport model", e);
         }
+
     }
 }

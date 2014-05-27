@@ -1,6 +1,7 @@
 package se.inera.certificate.service.impl;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -24,12 +25,9 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.integration.exception.ExternalWebServiceCallFailedException;
-import se.inera.certificate.integration.json.CustomObjectMapper;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
-import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.builder.CertificateBuilder;
-import se.inera.certificate.model.common.MinimalUtlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.ModuleApi;
@@ -71,7 +69,6 @@ public class CertificateSenderServiceImplTest {
     private RegisterMedicalCertificateResponderInterface registerClient;
 
     private static Certificate certificate = new CertificateBuilder("123456").certificateType("fk7263").build();
-    private static Utlatande utlatande;
 
     private static RegisterMedicalCertificateResponseType errorWsMessage;
     private static RegisterMedicalCertificateResponseType okWsMessage;
@@ -94,25 +91,14 @@ public class CertificateSenderServiceImplTest {
                 RegisterMedicalCertificateResponseType.class).getValue();
     }
 
-    @BeforeClass
-    public static void setupUtlatande() throws Exception {
-        utlatande = new CustomObjectMapper().readValue(
-                new ClassPathResource("lakarutlatande/maximalt-fk7263.json").getFile(), MinimalUtlatande.class);
-    }
-
     @Before
     public void setupModuleRestApiFactory() throws ModuleNotFoundException {
-        when(moduleApiFactory.getModuleEntryPoint(any(Utlatande.class))).thenReturn(moduleEntryPoint);
+        when(moduleApiFactory.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
         when(moduleEntryPoint.getModuleId()).thenReturn("fk7263");
         when(moduleEntryPoint.getDefaultRecieverLogicalAddress()).thenReturn(LOGICAL_ADDRESS);
     }
 
-    @Before
-    public void setupCertificateService() {
-        when(certificateService.getLakarutlatande(certificate)).thenReturn(utlatande);
-    }
-    
     @Before
     public void setupRecipientService() throws RecipientUnknownException {
         when(recipientService.getVersion("FK", "fk7263")).thenReturn(TransportModelVersion.LEGACY_LAKARUTLATANDE);

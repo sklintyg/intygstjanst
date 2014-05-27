@@ -23,8 +23,12 @@ import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 
+import java.io.StringReader;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.w3.wsaddressing10.AttributedURIType;
-import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType;
 import se.inera.certificate.integration.converter.ModelConverter;
@@ -35,6 +39,8 @@ import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.CertificateType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType;
+
+import com.google.common.base.Throwables;
 
 /**
  * @author andreaskaltenbach
@@ -92,10 +98,21 @@ public class GetCertificateResponderImpl extends AbstractGetCertificateResponder
     }
 
     protected void attachCertificateDocument(Certificate certificate, GetCertificateResponseType response) {
-        Document document = getCertificateDocument(certificate);
-        CertificateType certificateType = new CertificateType();
-        certificateType.getAny().add(document.getDocumentElement());
-        response.setCertificate(certificateType);
+        try {
+            String transportModel = getCertificateDocument(certificate);
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+            factory.setNamespaceAware(true);
+            InputSource source = new InputSource();
+            source.setCharacterStream(new StringReader(transportModel));
+
+            CertificateType certificateType = new CertificateType();
+            certificateType.getAny().add(factory.newDocumentBuilder().parse(source).getDocumentElement());
+            response.setCertificate(certificateType);
+
+        } catch (Exception e) {
+            Throwables.propagate(e);
+        }
     }
 
     @Override
