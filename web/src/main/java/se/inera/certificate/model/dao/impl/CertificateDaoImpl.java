@@ -148,6 +148,12 @@ public class CertificateDaoImpl implements CertificateDao {
         certificate.addState(historyEntry);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Implementation note: This method is executed in a new nested transaction. This ensures that any errors that might
+     * occur while removing intygs doesn't affect the other changes that are done in the parent transaction.
+     */
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void removeCertificatesDeletedByCareGiver(String civicRegistrationNumber) {
@@ -155,6 +161,7 @@ public class CertificateDaoImpl implements CertificateDao {
         for (Certificate certificate : certificatesOfCitizen) {
             if (certificate.isDeletedByCareGiver()) {
                 entityManager.remove(certificate);
+                LOG.info("Removing intyg {} from database since it's flaged as deletedByCareGiver", certificate.getId());
             }
         }
     }
