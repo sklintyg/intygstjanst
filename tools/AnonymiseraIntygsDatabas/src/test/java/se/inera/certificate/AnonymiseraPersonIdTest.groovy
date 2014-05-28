@@ -29,5 +29,14 @@ class AnonymiseraPersonIdTest {
         String anonymiseradPersonId2 = anonymiseraPersonId.anonymisera(personId2)
         assert anonymiseradPersonId1 != anonymiseradPersonId2
     }
+    
+    @Test
+    void anonymiseringAvFelaktigtPersonnr() {
+        String personId = "20110043-6904"
+        String anonymiseradPersonId1 = anonymiseraPersonId.anonymisera(personId)
+        String anonymiseradPersonId2 = anonymiseraPersonId.anonymisera(personId)
+        assert personId == anonymiseradPersonId1
+        assert anonymiseradPersonId1 == anonymiseradPersonId2
+    }
 
 }

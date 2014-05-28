@@ -31,9 +31,14 @@ public class AnonymiseraPersonId {
 
     private String getUniqueRandomPersonid(String nummer) {
         String anonymized;
-        do {
-            anonymized = newRandomPersonid(nummer);
-        } while (anonymizedSet.contains(anonymized) || nummer == anonymized);
+        try {
+            do {
+                anonymized = newRandomPersonid(nummer);
+            } while (anonymizedSet.contains(anonymized) || nummer == anonymized);
+        } catch (Exception ee) {
+            System.err.println("Unrecognized personid " + nummer);
+            anonymized = nummer;
+        }
         anonymizedSet.add(anonymized);
         actualToAnonymized.put(nummer, anonymized);
         return anonymized;
@@ -48,13 +53,8 @@ public class AnonymiseraPersonId {
         } catch (Exception e) {
             StringBuilder b = new StringBuilder(nummer.substring(0, END_OF_BIRTHDATE));
             b.setCharAt(DAY_INDEX, (char) (b.charAt(DAY_INDEX) - SAMORDNING_OFFSET));
-            try {
                 date = ISODateTimeFormat.basicDate().parseLocalDate(b.toString());
                 samordning = true;
-            } catch (Exception ee) {
-                System.err.println("Unrecognized personid " + nummer);
-                return nummer;
-            }
         }
         date = date.plusDays(random.nextInt(BIRTHDAY_RANGE) - BIRTHDAY_RANGE / 2);
         int extension = random.nextInt(9989);
