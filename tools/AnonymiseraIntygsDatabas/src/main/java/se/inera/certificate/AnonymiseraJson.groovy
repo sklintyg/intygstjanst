@@ -4,7 +4,6 @@ import groovy.json.*
 
 class AnonymiseraJson {
     
-    AnonymiseraPersonId anonymiseraPersonId;
     AnonymiseraHsaId anonymiseraHsaId;
     
     static {
@@ -20,20 +19,19 @@ class AnonymiseraJson {
         }
     }
 
-    AnonymiseraJson(AnonymiseraPersonId anonymiseraPersonId, AnonymiseraHsaId anonymiseraHsaId) {
-        this.anonymiseraPersonId = anonymiseraPersonId
+    AnonymiseraJson(AnonymiseraHsaId anonymiseraHsaId) {
         this.anonymiseraHsaId = anonymiseraHsaId
     }
     
-    String anonymiseraIntygsJson(String s) {
+    String anonymiseraIntygsJson(String s, String personId) {
         def intyg = new JsonSlurper().parseText(s)
-        anonymizeJson(intyg)
+        anonymizeJson(intyg, personId)
         JsonBuilder builder = new JsonBuilder( intyg )
         return builder.toString()
     }
     
-    void anonymizeJson(def intyg) {
-        intyg.patient.id.extension = anonymiseraPersonId.anonymisera(intyg.patient.id.extension)
+    void anonymizeJson(def intyg, String personId) {
+        intyg.patient.id.extension = personId
         intyg.patient.anonymize('fornamn')
         intyg.patient.anonymize('efternamn')
         intyg.patient.anonymize('fullstandigtNamn')

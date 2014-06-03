@@ -16,16 +16,15 @@ import org.springframework.core.io.ClassPathResource
 
 class AnonymiseraXmlTest {
 
-    AnonymiseraPersonId anonymiseraPersonId = [anonymisera:{"10101010-1010"}] as AnonymiseraPersonId
     AnonymiseraHsaId anonymiseraHsaId = [anonymisera:{"SE1010"}] as AnonymiseraHsaId
-    AnonymiseraXml anonymiseraXml = new AnonymiseraXml(anonymiseraPersonId, anonymiseraHsaId)
+    AnonymiseraXml anonymiseraXml = new AnonymiseraXml(anonymiseraHsaId)
 
     @Test
     void testaAnonymiseringAvMaximaltIntyg() {
         String xml = FileUtils.readFileToString(new ClassPathResource("/fk7263_L_template.xml").getFile(), "UTF-8")
 
         String expected = FileUtils.readFileToString(new ClassPathResource("/fk7263_L_anonymized.xml").getFile(), "UTF-8")
-        String actual = anonymiseraXml.anonymiseraIntygsXml(xml)
+        String actual = anonymiseraXml.anonymiseraIntygsXml(xml, "10101010-1010")
         XMLUnit.setIgnoreWhitespace(true);
         XMLUnit.setNormalizeWhitespace(true);
         Diff diff = new Diff(expected, actual);
