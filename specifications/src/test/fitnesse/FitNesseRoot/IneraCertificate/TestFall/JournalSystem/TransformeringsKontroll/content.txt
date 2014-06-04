@@ -14,6 +14,7 @@
 |transformering/legacy-fk7263-Motivering-utan-prognosangivelse.xml|OK|
 |transformering/legacy-fk7263-SmL-L.xml|OK|
 |transformering/legacy-fk7263-SmL-S.xml|OK|
+|validering/register/intyg-med-blanksteg.xml|OK|
 
 !3 Återta samtycken:
 
