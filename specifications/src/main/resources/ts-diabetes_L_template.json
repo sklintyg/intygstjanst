@@ -1,0 +1,571 @@
+{
+    "id": {
+        "root": "1.2.752.129.2.1.2.1",
+        "extension": "987654321"
+    },
+    "typ": {
+        "codeSystem": "f6fb361a-e31d-48b8-8657-99b63912dd9b",
+        "codeSystemName": "kv_utlåtandetyp_intyg",
+        "code": "ts-diabetes"
+    },
+    "signeringsdatum": "2013-08-12T15:57:00.000",
+    "kommentarer" : [ "Kommentarer av det viktiga slaget" ],
+    "intygAvser": [
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV1"
+        },
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV2"
+        },
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV3"
+        },
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV4"
+        },
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV5"
+        },
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV6"
+        },
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV7"
+        },
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV8"
+        },
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV9"
+        },
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV11"
+        },
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV12"
+        },
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV13"
+        },
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV14"
+        },
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV15"
+        },
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV16"
+        },
+        {
+            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
+            "codeSystemName": "kv_intyget_avser",
+            "code": "IAV17"
+        }
+    ],
+    "patient": {
+        "id": {
+            "root": "1.2.752.129.2.1.3.1",
+            "extension": "19121212-1212"
+        },
+        "fornamn": [
+            "Herr"
+        ],
+        "efternamn": "Dundersjuk",
+        "postadress": "Testvägen 12",
+        "postnummer": "123456",
+        "postort": "Testort",
+        "fullstandigtNamn": "Johnny Appleseed"
+    },
+    "skapadAv": {
+        "id": {
+            "root": "1.2.752.129.2.1.4.1",
+            "extension": "SE0000000000-1333"
+        },
+        "namn": "Doktor Thompson",
+        "specialiteter" : [],
+        "befattningar" : [],
+        "vardenhet": {
+            "id": {
+                "root": "1.2.752.129.2.1.4.1",
+                "extension": "SE0000000000-1337"
+            },
+            "namn": "Vårdenhet Väst",
+            "postadress": "Enhetsvägen 12",
+            "postnummer": "54321",
+            "postort": "Tumba",
+            "telefonnummer": "08-1337",
+            "vardgivare": {
+                "id": {
+                    "root": "1.2.752.129.2.1.4.1",
+                    "extension": "SE0000000000-HAHAHHSAA"
+                },
+                "namn": "Vårdgivarnamn"
+            }
+        }
+    },
+    "vardkontakter": [
+          {
+            "vardkontakttyp": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "5880005"
+            },
+            "idkontroll": {
+                "codeSystem": "e7cc8f30-a353-4c42-b17a-a189b6876647",
+                "codeSystemName": "kv_id_kontroll",
+                "code": "IDK6"
+            }
+          }
+      ],
+    "bilaga" : {
+        "bilagetyp" : {
+            "codeSystem": "80595600-7477-4a6c-baeb-d2439e86b8bc",
+            "codeSystemName": "kv_bilaga",
+            "code": "BIL1"
+        },
+        "forekomst" : false
+    },
+    "aktiviteter" : [
+        {
+            "aktivitetskod" : {
+                "code" : "308113006",
+                "codeSystem" : "1.2.752.116.2.1.1.1",
+                "codeSystemName" : "SNOMED-CT"
+            },
+            "forekomst" : true 
+        },
+        {
+            "aktivitetskod": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "86944008"
+            },
+            "id" : {
+                "root" : "1.2.752.129.2.1.2.1",
+                "extension" : "1"
+            },
+            "metod" : {
+                "code" : "MET1",
+                "codeSystem" : "b0c078c6-512a-42a5-ab42-a3380f369ac3",
+                "codeSystemName" : "kv_metod"
+            }
+        },
+        {
+            "aktivitetskod": {
+                "codeSystem": "8040b4d1-67dc-42e1-a938-de5374e9526a",
+                "codeSystemName": "kv_aktiviteter_intyg",
+                "code": "AKT18"
+            },
+            "id" : {
+                "root" : "1.2.752.129.2.1.2.1",
+                "extension" : "2"
+            }
+        }
+      ],  
+    "rekommendationer": [
+        {
+            "rekommendationskod": {
+                "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                "codeSystemName": "kv_rekommendation_intyg",
+                "code": "REK8"
+            },
+            "varde": [
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR1"
+                },
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR2"
+                },
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR3"
+                },
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR4"
+                },
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR5"
+                },
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR6"
+                },
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR7"
+                },
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR8"
+                },
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR9"
+                },
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR12"
+                },
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR13"
+                },
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR14"
+                },
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR15"
+                },
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR16"
+                },
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR17"
+                },
+                {
+                    "@class": "se.inera.certificate.model.Kod",
+                    "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                    "codeSystemName": "kv_rekommendation_intyg",
+                    "code": "VAR18"
+                }
+            ]
+        },
+        {
+            "rekommendationskod": {
+                "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                "codeSystemName": "kv_rekommendation_intyg",
+                "code": "REK9"
+            },
+            "beskrivning" : "Kronologisk bastuberedning"
+        },
+        {
+            "rekommendationskod": {
+                "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
+                "codeSystemName": "kv_rekommendation_intyg",
+                "code": "REK10"
+            },
+            "varde" : [
+                true
+            ]
+        }
+    ],
+    "observationer": [
+         {
+            "observationskod": {
+                "codeSystem": "1.2.752.116.1.1.1.1.1",
+                "codeSystemName": "ICD-10",
+                "code": "E11"
+            },
+            "observationsperiod" : {
+            	"from" : "2012"
+            },
+            "forekomst": true
+        },
+        {
+            "observationskod": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "170746002"
+            },
+            "forekomst": true
+        },
+        {
+            "observationskod": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "170745003"
+            },
+            "forekomst": true
+        },
+        {
+            "observationskod": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "170747006"
+            },
+            "forekomst": true,
+            "observationsperiod" : {
+            	"from" : "2012"
+            }
+        },
+        {
+            "observationskod": {
+                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
+                "codeSystemName": "kv_observationer_intyg",
+                "code": "OBS10"
+            },
+            "forekomst": true,
+            "beskrivning" : "Hypnos"
+        },
+        {
+            "observationskod": {
+                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
+                "codeSystemName": "kv_observationer_intyg",
+                "code": "OBS19"
+            },
+            "forekomst": true
+        },
+        {
+            "observationskod": {
+                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
+                "codeSystemName": "kv_observationer_intyg",
+                "code": "OBS20"
+            },
+            "forekomst": true
+        },
+        {
+            "observationskod": {
+                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
+                "codeSystemName": "kv_observationer_intyg",
+                "code": "OBS21"
+            },
+            "forekomst": true
+        },
+        {
+            "observationskod": {
+                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
+                "codeSystemName": "kv_observationer_intyg",
+                "code": "OBS22"
+            },
+            "forekomst": true,
+            "beskrivning" : "Beskrivning"
+        },
+        {
+            "observationskod": {
+                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
+                "codeSystemName": "kv_observationer_intyg",
+                "code": "OBS23"
+            },
+            "forekomst": true,
+            "beskrivning" : "Beskrivning"
+        },
+        {
+            "observationskod": {
+                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
+                "codeSystemName": "kv_observationer_intyg",
+                "code": "OBS24"
+            },
+            "forekomst": true,
+            "observationstid" : "2012-12-12T00:00:00.000"
+        },
+        {
+            "observationskod": {
+                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
+                "codeSystemName": "kv_observationer_intyg",
+                "code": "OBS25"
+            },
+            "id" : {
+                "root" : "1.2.752.129.2.1.2.1",
+                "extension" : "3"
+            },
+            "forekomst": true
+        },
+        {
+            "observationskod": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "420050001"
+            },
+            "varde": [
+                {
+                    "quantity": 0.0
+                }
+            ],
+            "lateralitet": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "24028007"
+            }
+        },
+        {
+            "observationskod": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "420050001"
+            },
+            "varde": [
+                {
+                    "quantity": 0.0
+                }
+            ],
+            "lateralitet": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "7771000"
+            }
+        },
+        {
+            "observationskod": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "420050001"
+            },
+            "varde": [
+                {
+                    "quantity": 0.0
+                }
+            ],
+            "lateralitet": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "51440002"
+            }
+        },
+        {
+            "observationskod": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "397535007"
+            },
+            "varde": [
+                {
+                    "quantity": 0.0
+                }
+            ],
+            "lateralitet": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "24028007"
+            }
+        },
+        {
+            "observationskod": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "397535007"
+            },
+            "varde": [
+                {
+                    "quantity": 0.0
+                }
+            ],
+            "lateralitet": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "7771000"
+            }
+        },
+        {
+            "observationskod": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "397535007"
+            },
+            "varde": [
+                {
+                    "quantity": 0.0
+                }
+            ],
+            "lateralitet": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "51440002"
+            }
+        },
+        {
+            "observationskod" : {
+                "codeSystem": "1.2.752.116.1.1.1.1.1",
+                "codeSystemName": "ICD-10",
+                "code": "H53.2"
+            },
+            "id" : {
+                "root" : "1.2.752.129.2.1.2.1",
+                "extension" : "4"
+            },
+            "forekomst" : true
+        }
+       
+    ],
+    "observationAktivitetRelationer" : [
+        {
+            "observationsid" : {
+                "root" : "1.2.752.129.2.1.2.1",
+                "extension" : "3"
+            },
+            "aktivitetsid" : {
+                "root" : "1.2.752.129.2.1.2.1",
+                "extension" : "1"
+            }  
+        },
+        {
+            "observationsid" : {
+                "root" : "1.2.752.129.2.1.2.1",
+                "extension" : "4"
+            },
+            "aktivitetsid" : {
+                "root" : "1.2.752.129.2.1.2.1",
+                "extension" : "2"
+            }  
+        }
+     ],
+    "tsUtgava" : "06",
+    "tsVersion" : "02"
+}
