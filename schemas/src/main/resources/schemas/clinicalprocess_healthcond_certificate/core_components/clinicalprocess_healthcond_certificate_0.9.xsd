@@ -445,8 +445,8 @@
     <xs:sequence>
       <xs:element name="certificateId" type="nonEmptyString" />
       <xs:element name="certificateType" type="nonEmptyString" />
-      <xs:element name="validFrom" type="date" />
-      <xs:element name="validTo" type="date" />
+      <xs:element name="validFrom" type="date" minOccurs="0" />
+      <xs:element name="validTo" type="date" minOccurs="0" />
       <xs:element name="issuerName" type="nonEmptyString" />
       <xs:element name="facilityName" type="nonEmptyString" />
       <xs:element name="signDate" type="dateTime" />

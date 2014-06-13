@@ -33,4 +33,25 @@ public class CertificateBuilderTest {
         assertEquals(TO_DATE, certificate.getValidToDate());
         assertFalse(certificate.getDeleted());
     }
+
+    @Test
+    public void testNullDate() {
+        Certificate certificate = new CertificateBuilder("certificateId")
+        .certificateType("certificateType")
+        .validity(null, null)
+        .signingDoctorName("signingDoctorName")
+        .careUnitName("careUnitName")
+        .signedDate(SIGNED_DATE)
+        .deleted(false)
+        .build();
+
+        assertEquals("certificateId", certificate.getId());
+        assertEquals("careUnitName", certificate.getCareUnitName());
+        assertEquals("certificateType", certificate.getType());
+        assertEquals("signingDoctorName", certificate.getSigningDoctorName());
+        assertEquals(SIGNED_DATE, certificate.getSignedDate());
+        assertEquals(null, certificate.getValidFromDate());
+        assertEquals(null, certificate.getValidToDate());
+        assertFalse(certificate.getDeleted());
+    }
 }

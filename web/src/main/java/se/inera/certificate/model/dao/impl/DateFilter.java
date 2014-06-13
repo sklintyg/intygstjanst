@@ -80,6 +80,9 @@ class DateFilter {
      * @return true if date is within interval
      */
     private boolean isWithin(Partial date, LocalDate from, LocalDate to) {
+        if (date == null) {
+            return true;
+        }
         return date.compareTo(from) >= 0 && date.compareTo(to) <= 0;
     }
 }

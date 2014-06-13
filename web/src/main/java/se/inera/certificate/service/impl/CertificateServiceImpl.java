@@ -258,8 +258,8 @@ public class CertificateServiceImpl implements CertificateService {
         }
 
         certificate.setCivicRegistrationNumber(utlatande.getPatient().getId().getExtension());
-        certificate.setValidFromDate(utlatande.getValidFromDate() != null ? utlatande.getValidFromDate().toString() : new LocalDate().toString());
-        certificate.setValidToDate(utlatande.getValidToDate() != null ? utlatande.getValidToDate().toString() : new LocalDate().toString());
+        certificate.setValidFromDate(utlatande.getValidFromDate() != null ? utlatande.getValidFromDate().toString() : null);
+        certificate.setValidToDate(utlatande.getValidToDate() != null ? utlatande.getValidToDate().toString() : null);
 
         return certificate;
     }

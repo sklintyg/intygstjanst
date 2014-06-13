@@ -128,13 +128,13 @@ public class Certificate {
     /**
      * Time from which this certificate is valid.
      */
-    @Column(name = "VALID_FROM_DATE", nullable = false)
+    @Column(name = "VALID_FROM_DATE", nullable = true)
     private String validFromDate;
 
     /**
      * Time to which this certificate is valid.
      */
-    @Column(name = "VALID_TO_DATE", nullable = false)
+    @Column(name = "VALID_TO_DATE", nullable = true)
     private String validToDate;
 
     /**

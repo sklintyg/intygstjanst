@@ -121,4 +121,9 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="8" author="me">
+    <dropNotNullConstraint tableName="CERTIFICATE" columnName="VALID_FROM_DATE" columnDataType="varchar(10)" />
+    <dropNotNullConstraint tableName="CERTIFICATE" columnName="VALID_TO_DATE" columnDataType="varchar(10)" />
+  </changeSet>
+
 </databaseChangeLog>

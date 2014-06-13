@@ -30,7 +30,7 @@ public class MetaDataResolver {
         ClinicalProcessCertificateMetaTypeBuilder builder = new ClinicalProcessCertificateMetaTypeBuilder()
                 .certificateId(source.getId())
                 .certificateType(source.getType())
-                .validity(new LocalDate(source.getValidFromDate()), new LocalDate(source.getValidToDate()))
+                .validity(toLocalDate(source.getValidFromDate()), toLocalDate(source.getValidToDate()))
                 .issuerName(source.getSigningDoctorName())
                 .facilityName(source.getCareUnitName())
                 .signDate(source.getSignedDate())
@@ -43,5 +43,12 @@ public class MetaDataResolver {
         }
 
         return builder.build();
+    }
+
+    private LocalDate toLocalDate(String date) {
+        if (date == null) {
+            return null;
+        }
+        return new LocalDate(date);
     }
 }

@@ -38,10 +38,10 @@ public final class ModelConverter {
         CertificateMetaTypeBuilder builder = new CertificateMetaTypeBuilder()
                 .certificateId(source.getId())
                 .certificateType(source.getType())
-                .validity(new LocalDate(source.getValidFromDate()), new LocalDate(source.getValidToDate()))
+                .validity(toLocalDate(source.getValidFromDate()), toLocalDate(source.getValidToDate()))
                 .issuerName(source.getSigningDoctorName())
                 .facilityName(source.getCareUnitName())
-                .signDate(new LocalDate(source.getSignedDate()))
+                .signDate(toLocalDate(source.getSignedDate()))
                 .available(source.getDeleted() ? "false" : "true");
 
         CertificateMetaType meta = builder.build();
@@ -49,4 +49,12 @@ public final class ModelConverter {
         Iterables.addAll(meta.getStatus(), CertificateStateHistoryEntryConverter.toCertificateStatusType(source.getStates()));
         return builder.build();
     }
+
+    private static LocalDate toLocalDate(Object date) {
+        if (date == null) {
+            return null;
+        }
+        return new LocalDate(date);
+    }
+
 }

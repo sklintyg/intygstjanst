@@ -18,16 +18,18 @@
  */
 package se.inera.certificate.model.dao.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+
 import org.joda.time.LocalDate;
 import org.junit.Test;
+
 import se.inera.certificate.model.dao.Certificate;
 
 public class DateFilterTest {
@@ -80,5 +82,65 @@ public class DateFilterTest {
         assertEquals(data.size(), result2.size());
         List<Certificate> result3 = dateFilter.filter(null, new LocalDate("2013-04-28"));
         assertEquals(data.size(), result3.size());
+    }
+
+    @Test
+    public void testFilterNullDatesInCertificate() throws Exception {
+        // Timeline
+        // <---+------+------+------+------+--->
+        //     A      B      C      D      E
+        //
+        //            [-------------]            certificate 1
+        //            [------------------------> certificate 2
+        // <------------------------]            certificate 3
+        // <-----------------------------------> certificate 4
+        //
+        // <---]                                 filter 1
+        // <-----------------]                   filter 2
+        //            [------]                   filter 3
+        //                   [-----------------> filter 4
+        //                                 [---> filter 5
+        // <-----------------------------------> filter 6
+
+        String dateA = "2013-01-01";
+        String dateB = "2013-02-01";
+        String dateC = "2013-03-01";
+        String dateD = "2013-04-01";
+        String dateE = "2013-05-01";
+
+        List<Certificate> data = Arrays.asList(new Certificate[] {
+                createCertificate("1", dateB, dateD),
+                createCertificate("2", null, dateD),
+                createCertificate("3", dateB, null),
+                createCertificate("4", null, null)
+        });
+        DateFilter dateFilter = new DateFilter(data);
+
+        List<Certificate> result1 = dateFilter.filter(null, new LocalDate(dateA));
+        assertCertificates(result1, "3", "4");
+
+        List<Certificate> result2 = dateFilter.filter(null, new LocalDate(dateC));
+        assertCertificates(result2, "1", "2", "3", "4");
+
+        List<Certificate> result3 = dateFilter.filter(new LocalDate(dateB), new LocalDate(dateC));
+        assertCertificates(result3, "1", "2", "3", "4");
+
+        List<Certificate> result4 = dateFilter.filter(new LocalDate(dateC), null);
+        assertCertificates(result4, "1", "2", "3", "4");
+
+        List<Certificate> result5 = dateFilter.filter(new LocalDate(dateE), null);
+        assertCertificates(result5, "2", "4");
+
+        List<Certificate> result6 = dateFilter.filter(null, null);
+        assertCertificates(result6, "1", "2", "3", "4");
+    }
+
+    private void assertCertificates(List<Certificate> certificateList, String... certificateIds) {
+        HashSet<String> certIdSet = new HashSet<>();
+        for (Certificate certificate : certificateList) {
+            certIdSet.add(certificate.getId());
+        }
+
+        assertTrue("certificateList did not contain all expected Ids", certIdSet.containsAll(Arrays.asList(certificateIds)));
     }
 }
