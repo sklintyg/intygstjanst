@@ -79,7 +79,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     @Autowired
     @Qualifier("registerMedicalCertificateClient")
-    private RegisterMedicalCertificateResponderInterface registerMedicalCertificateQuestionClient;
+    private RegisterMedicalCertificateResponderInterface registerMedicalCertificateClient;
 
     @Autowired
     private se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponderInterface registerCertificateClient;
@@ -146,7 +146,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             if (type.equals(LEGACY_LAKARUTLATANDE)) {
                 AttributedURIType address = new AttributedURIType();
                 address.setValue(logicalAddress);
-                RegisterMedicalCertificateResponseType response = registerMedicalCertificateQuestionClient
+                RegisterMedicalCertificateResponseType response = registerMedicalCertificateClient
                         .registerMedicalCertificate(address, (RegisterMedicalCertificateType) request);
 
                 // check whether call was successful or not
