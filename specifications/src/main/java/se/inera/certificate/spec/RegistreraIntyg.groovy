@@ -2,9 +2,9 @@ package se.inera.certificate.spec
 
 import org.joda.time.LocalDateTime
 import org.springframework.core.io.ClassPathResource
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponderInterface
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponderInterface
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponseType
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateType
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType
 import se.inera.certificate.spec.util.WsClientFixture
@@ -19,9 +19,9 @@ import javax.xml.transform.stream.StreamSource
  */
 public class RegistreraIntyg extends WsClientFixture {
 
-    RegisterMedicalCertificateResponderInterface registerMedicalCertificateResponder
+    RegisterCertificateResponderInterface registerCertificateResponder
 
-    static String serviceUrl = System.getProperty("service.clinicalProcess.registerMedicalCertificateUrl")
+    static String serviceUrl = System.getProperty("service.clinicalProcess.registerCertificateUrl")
 
     public RegistreraIntyg() {
         this(WsClientFixture.LOGICAL_ADDRESS)
@@ -29,8 +29,8 @@ public class RegistreraIntyg extends WsClientFixture {
 
     public RegistreraIntyg(String logiskAddress) {
         super(logiskAddress)
-        String url = serviceUrl ? serviceUrl : baseUrl + "register-medical-certificate/v1.0"
-        registerMedicalCertificateResponder = createClient(RegisterMedicalCertificateResponderInterface.class, url)
+        String url = serviceUrl ? serviceUrl : baseUrl + "register-certificate/v1.0"
+        registerCertificateResponder = createClient(RegisterCertificateResponderInterface.class, url)
     }
 
     String typ
@@ -41,7 +41,7 @@ public class RegistreraIntyg extends WsClientFixture {
     String id
     String mall = "M"
 
-    RegisterMedicalCertificateResponseType response
+    RegisterCertificateResponseType response
 
     public void reset() {
         mall = "M"
@@ -52,7 +52,7 @@ public class RegistreraIntyg extends WsClientFixture {
     public void execute() {
         // read request template from file
 
-        def request = new RegisterMedicalCertificateType()
+        def request = new RegisterCertificateType()
 
         JAXBContext jaxbContext = JAXBContext.newInstance(UtlatandeType.class)
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller()
@@ -68,7 +68,7 @@ public class RegistreraIntyg extends WsClientFixture {
 
         request.utlatande = utlatande
 
-        response = registerMedicalCertificateResponder.registerMedicalCertificate(LOGICAL_ADDRESS, request);
+        response = registerCertificateResponder.registerCertificate(LOGICAL_ADDRESS, request);
     }
 
     public String resultat() {

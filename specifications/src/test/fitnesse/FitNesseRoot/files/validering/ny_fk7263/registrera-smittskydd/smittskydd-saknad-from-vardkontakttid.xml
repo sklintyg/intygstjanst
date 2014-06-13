@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urn:RegisterMedicalCertificate
-	xmlns:urn="urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1"
+	xmlns:urn="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1"
 	xmlns="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2">
 	<urn:utlatande>
 		<utlatande-id root="smittskydd-saknad-from-vardkontakttid.xml"/>

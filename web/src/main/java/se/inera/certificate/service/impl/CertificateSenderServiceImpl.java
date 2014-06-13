@@ -34,6 +34,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
 
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponseType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.exception.MissingModuleException;
@@ -82,12 +84,11 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     private RegisterMedicalCertificateResponderInterface registerMedicalCertificateClient;
 
     @Autowired
-    private se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponderInterface registerCertificateClient;
+    private se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponderInterface registerCertificateClient;
 
     static {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class,
-                    se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class, RegisterCertificateType.class);
             UNMARSHALLER = jaxbContext.createUnmarshaller();
         } catch (JAXBException e) {
             throw new RuntimeException(e);
@@ -155,13 +156,9 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
                 }
 
             } else {
-                se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType req =
-                        new se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType();
-
+                RegisterCertificateType req = new RegisterCertificateType();
                 req.setUtlatande((UtlatandeType) request);
-
-                se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType response = registerCertificateClient
-                        .registerMedicalCertificate(logicalAddress, req);
+                RegisterCertificateResponseType response = registerCertificateClient.registerCertificate(logicalAddress, req);
 
                 // check whether call was successful or not
                 if (response.getResult().getResultCode() != ResultCodeType.OK) {

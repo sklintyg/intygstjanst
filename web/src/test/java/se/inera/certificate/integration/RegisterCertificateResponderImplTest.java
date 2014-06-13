@@ -26,8 +26,8 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.xml.sax.SAXException;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponseType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
@@ -40,9 +40,9 @@ import se.inera.certificate.service.StatisticsService;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class RegisterMedicalCertificateResponderImplTest {
+public class RegisterCertificateResponderImplTest {
 
-    private RegisterMedicalCertificateType request;
+    private RegisterCertificateType request;
     private String xml;
 
     @Mock
@@ -52,7 +52,7 @@ public class RegisterMedicalCertificateResponderImplTest {
     StatisticsService statisticsService = mock(StatisticsService.class);
 
     @InjectMocks
-    private RegisterMedicalCertificateResponderImpl responder = new RegisterMedicalCertificateResponderImpl();
+    private RegisterCertificateResponderImpl responder = new RegisterCertificateResponderImpl();
 
     @Before
     public void initializeResponder() throws JAXBException {
@@ -62,14 +62,14 @@ public class RegisterMedicalCertificateResponderImplTest {
     @Before
     public void prepareRequest() throws Exception {
 
-        ClassPathResource file = new ClassPathResource("RegisterMedicalCertificateResponderImplTest/utlatande.xml");
+        ClassPathResource file = new ClassPathResource("RegisterCertificateResponderImplTest/utlatande.xml");
 
         xml = FileUtils.readFileToString(file.getFile());
 
         JAXBContext context = JAXBContext.newInstance(UtlatandeType.class);
         JAXBElement<UtlatandeType> e = context.createUnmarshaller().unmarshal(new StreamSource(file.getInputStream()),
                 UtlatandeType.class);
-        request = new RegisterMedicalCertificateType();
+        request = new RegisterCertificateType();
         request.setUtlatande(e.getValue());
     }
 
@@ -81,7 +81,7 @@ public class RegisterMedicalCertificateResponderImplTest {
         ArgumentCaptor<Boolean> wiretappedCaptor = ArgumentCaptor.forClass(Boolean.class);
         when(certificateService.storeCertificate(xmlCaptor.capture(), eq("fk7263"), wiretappedCaptor.capture())).thenReturn(certificate);
 
-        RegisterMedicalCertificateResponseType response = responder.registerMedicalCertificate(null, request);
+        RegisterCertificateResponseType response = responder.registerCertificate(null, request);
 
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
         compareSoapMessageWithReferenceFile(xmlCaptor.getValue());
@@ -94,7 +94,7 @@ public class RegisterMedicalCertificateResponderImplTest {
         when(certificateService.storeCertificate(any(String.class), eq("fk7263"), any(Boolean.class)))
                 .thenThrow(new CertificateAlreadyExistsException(request.getUtlatande().getUtlatandeId().toString()));
 
-        RegisterMedicalCertificateResponseType response = responder.registerMedicalCertificate(null, request);
+        RegisterCertificateResponseType response = responder.registerCertificate(null, request);
         assertEquals(ResultCodeType.INFO, response.getResult().getResultCode());
         Mockito.verifyZeroInteractions(statisticsService);
     }

@@ -17,15 +17,15 @@
  specific language governing permissions and limitations
  under the License.
  -->
-<wsdl:definitions name='RegisterMedicalCertificateInteraction' xmlns:wsdl='http://schemas.xmlsoap.org/wsdl/'
+<wsdl:definitions name='RegisterCertificateInteraction' xmlns:wsdl='http://schemas.xmlsoap.org/wsdl/'
                   xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:xs='http://www.w3.org/2001/XMLSchema'
-                  xmlns:tjsr='urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1'
-                  xmlns:tns='urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificate:1:rivtabp21'
-                  targetNamespace='urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificate:1:rivtabp21'
+                  xmlns:tjsr='urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1'
+                  xmlns:tns='urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificate:1:rivtabp21'
+                  targetNamespace='urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificate:1:rivtabp21'
                   xmlns:itr='urn:riv:itintegration:registry:1'>
   <xs:annotation>
     <xs:documentation>
-      Tjänsteinteraktionens namn: RegisterMedicalCertificateInteraction
+      Tjänsteinteraktionens namn: RegisterCertificateInteraction
       Beskrivning:
       Interaction to register a medical certificate.
       Revisioner:
@@ -36,35 +36,35 @@
     </xs:documentation>
   </xs:annotation>
   <wsdl:types>
-    <xs:schema targetNamespace='urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificate:1:rivtabp21'>
-      <xs:import schemaLocation='RegisterMedicalCertificateResponder_0.9.xsd'
-                 namespace='urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1'/>
+    <xs:schema targetNamespace='urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificate:1:rivtabp21'>
+      <xs:import schemaLocation='RegisterCertificateResponder_0.9.xsd'
+                 namespace='urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1'/>
       <xs:import schemaLocation='../../core_components/itintegration_registry_1.0.xsd'
                  namespace='urn:riv:itintegration:registry:1'/>
     </xs:schema>
   </wsdl:types>
-  <wsdl:message name='RegisterMedicalCertificateRequest'>
+  <wsdl:message name='RegisterCertificateRequest'>
     <wsdl:part name='LogicalAddress' element='itr:LogicalAddress'>
     </wsdl:part>
-    <wsdl:part name='parameters' element='tjsr:RegisterMedicalCertificate'/>
+    <wsdl:part name='parameters' element='tjsr:RegisterCertificate'/>
   </wsdl:message>
-  <wsdl:message name='RegisterMedicalCertificateResponse'>
-    <wsdl:part name='parameters' element='tjsr:RegisterMedicalCertificateResponse'/>
+  <wsdl:message name='RegisterCertificateResponse'>
+    <wsdl:part name='parameters' element='tjsr:RegisterCertificateResponse'/>
   </wsdl:message>
-  <wsdl:portType name='RegisterMedicalCertificateResponderInterface'>
-    <wsdl:operation name='RegisterMedicalCertificate'>
-      <wsdl:input message='tns:RegisterMedicalCertificateRequest'/>
-      <wsdl:output message='tns:RegisterMedicalCertificateResponse'/>
+  <wsdl:portType name='RegisterCertificateResponderInterface'>
+    <wsdl:operation name='RegisterCertificate'>
+      <wsdl:input message='tns:RegisterCertificateRequest'/>
+      <wsdl:output message='tns:RegisterCertificateResponse'/>
     </wsdl:operation>
   </wsdl:portType>
-  <wsdl:binding name='RegisterMedicalCertificateResponderBinding' type='tns:RegisterMedicalCertificateResponderInterface'>
+  <wsdl:binding name='RegisterCertificateResponderBinding' type='tns:RegisterCertificateResponderInterface'>
     <soap:binding style='document' transport='http://schemas.xmlsoap.org/soap/http'/>
-    <wsdl:operation name='RegisterMedicalCertificate'>
+    <wsdl:operation name='RegisterCertificate'>
       <soap:operation
-              soapAction='urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1:RegisterMedicalCertificate'
+              soapAction='urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1:RegisterCertificate'
               style='document'/>
       <wsdl:input>
-        <soap:header use='literal' message='tns:RegisterMedicalCertificateRequest' part='LogicalAddress'/>
+        <soap:header use='literal' message='tns:RegisterCertificateRequest' part='LogicalAddress'/>
         <soap:body use='literal' parts='parameters'/>
       </wsdl:input>
       <wsdl:output>
@@ -72,8 +72,8 @@
       </wsdl:output>
     </wsdl:operation>
   </wsdl:binding>
-  <wsdl:service name='RegisterMedicalCertificateResponderService'>
-    <wsdl:port name='RegisterMedicalCertificateResponderPort' binding='tns:RegisterMedicalCertificateResponderBinding'>
+  <wsdl:service name='RegisterCertificateResponderService'>
+    <wsdl:port name='RegisterCertificateResponderPort' binding='tns:RegisterCertificateResponderBinding'>
       <soap:address location='http://tempuri.org'/>
     </wsdl:port>
   </wsdl:service>

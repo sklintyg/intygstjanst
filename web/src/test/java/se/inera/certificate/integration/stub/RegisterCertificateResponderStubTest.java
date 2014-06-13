@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateType;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.util.IdUtil;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
@@ -41,7 +41,7 @@ public class RegisterCertificateResponderStubTest {
     @InjectMocks
     RegisterCertificateResponderStub stub = new RegisterCertificateResponderStub() {
         @Override
-        protected void validate(RegisterMedicalCertificateType registerMedicalCertificate, ModuleApi module) {
+        protected void validate(RegisterCertificateType registerCertificate, ModuleApi module) {
         }
     };
 
@@ -50,16 +50,16 @@ public class RegisterCertificateResponderStubTest {
     public void testName() throws Exception {
         String logicalAddress = "ts-bas";
         // read request from file
-        JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
+        JAXBContext jaxbContext = JAXBContext.newInstance(RegisterCertificateType.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        RegisterMedicalCertificateType request = unmarshaller.unmarshal(
-                new StreamSource(new ClassPathResource("fk7263/utlatande.xml").getInputStream()), RegisterMedicalCertificateType.class).getValue();
+        RegisterCertificateType request = unmarshaller.unmarshal(
+                new StreamSource(new ClassPathResource("fk7263/utlatande.xml").getInputStream()), RegisterCertificateType.class).getValue();
 
         when(moduleApiFactory.getModuleEntryPoint(any(String.class))).thenReturn(moduleEntryPoint);
 
         request.getUtlatande().setUtlatandeId(IdUtil.generateId(UTLATANDE_ID));
 
-        stub.registerMedicalCertificate(logicalAddress, request);
+        stub.registerCertificate(logicalAddress, request);
 
         verify(store).addCertificate(eq(UTLATANDE_ID), any(Map.class));
     }

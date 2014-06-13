@@ -19,9 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponderInterface;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponderInterface;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponseType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ObjectFactory;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
@@ -39,8 +39,8 @@ import se.inera.certificate.modules.support.api.exception.ModuleValidationExcept
  * @author par.wenaker
  */
 @Transactional
-@WebServiceProvider(targetNamespace = "urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificate:1:rivtabp21", serviceName = "RegisterMedicalCertificateResponderService", wsdlLocation = "schemas/clinicalprocess_healthcond_certificate/interactions/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_0.9_RIVTABP21.wsdl")
-public class RegisterCertificateResponderStub implements RegisterMedicalCertificateResponderInterface {
+@WebServiceProvider(targetNamespace = "urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificate:1:rivtabp21", serviceName = "RegisterCertificateResponderService", wsdlLocation = "schemas/clinicalprocess_healthcond_certificate/interactions/RegisterCertificateInteraction/RegisterCertificateInteraction_0.9_RIVTABP21.wsdl")
+public class RegisterCertificateResponderStub implements RegisterCertificateResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterCertificateResponderStub.class);
 
@@ -61,9 +61,9 @@ public class RegisterCertificateResponderStub implements RegisterMedicalCertific
     }
 
     @Override
-    public RegisterMedicalCertificateResponseType registerMedicalCertificate(String logicalAddress, RegisterMedicalCertificateType request) {
+    public RegisterCertificateResponseType registerCertificate(String logicalAddress, RegisterCertificateType request) {
 
-        RegisterMedicalCertificateResponseType response = new RegisterMedicalCertificateResponseType();
+        RegisterCertificateResponseType response = new RegisterCertificateResponseType();
 
         try {
             String type = request.getUtlatande().getTypAvUtlatande().getCode();
@@ -100,17 +100,17 @@ public class RegisterCertificateResponderStub implements RegisterMedicalCertific
         return stringWriter.toString();
     }
 
-    protected void validate(RegisterMedicalCertificateType registerMedicalCertificate, ModuleApi module) throws JAXBException,
+    protected void validate(RegisterCertificateType registerCertificate, ModuleApi module) throws JAXBException,
             CertificateValidationException {
         try {
-            String transportXml = xmlToString(registerMedicalCertificate.getUtlatande());
+            String transportXml = xmlToString(registerCertificate.getUtlatande());
             module.unmarshall(new TransportModelHolder(transportXml));
 
         } catch (ModuleValidationException e) {
             throw new CertificateValidationException(e.getValidationEntries());
 
         } catch (ModuleException e) {
-            String message = String.format("Failed to validate certificate for certificate type '%s'", registerMedicalCertificate.getUtlatande()
+            String message = String.format("Failed to validate certificate for certificate type '%s'", registerCertificate.getUtlatande()
                     .getTypAvUtlatande().getCode());
             LOGGER.error(message);
             throw new ServerException(message, e);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urn:RegisterMedicalCertificate
-	xmlns:urn="urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1"
+	xmlns:urn="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1"
 	xmlns="urn:riv:clinicalprocess:healthcond:certificate:1">
 	<urn:utlatande>
 		<utlatande-id root="saknad-funktionstillstand-kroppsfunktion.xml" />

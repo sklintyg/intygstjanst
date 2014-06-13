@@ -20,8 +20,8 @@
 <xs:schema
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:cert="urn:riv:clinicalprocess:healthcond:certificate:1"
-        xmlns:tns="urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1"
-        targetNamespace="urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1"
+        xmlns:tns="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1"
+        targetNamespace="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1"
         elementFormDefault="qualified"
         attributeFormDefault="unqualified"
         version="1.0">
@@ -29,17 +29,17 @@
   <xs:import namespace="urn:riv:clinicalprocess:healthcond:certificate:1"
              schemaLocation="../../core_components/clinicalprocess_healthcond_certificate_0.9.xsd"/>
 
-  <xs:element name="RegisterMedicalCertificate" type="tns:RegisterMedicalCertificateType"/>
-  <xs:element name="RegisterMedicalCertificateResponse" type="tns:RegisterMedicalCertificateResponseType"/>
+  <xs:element name="RegisterCertificate" type="tns:RegisterCertificateType"/>
+  <xs:element name="RegisterCertificateResponse" type="tns:RegisterCertificateResponseType"/>
 
-  <xs:complexType name="RegisterMedicalCertificateType">
+  <xs:complexType name="RegisterCertificateType">
     <xs:sequence>
       <xs:element name="utlatande" type="cert:utlatandeType"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="RegisterMedicalCertificateResponseType">
+  <xs:complexType name="RegisterCertificateResponseType">
     <xs:sequence>
       <xs:element name="result" type="cert:ResultType"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>

@@ -15,9 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponderInterface;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateResponseType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponderInterface;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponseType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ObjectFactory;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeId;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
@@ -33,9 +33,9 @@ import se.inera.certificate.service.StatisticsService;
 import com.google.common.base.Throwables;
 
 @SchemaValidation
-public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalCertificateResponderInterface {
+public class RegisterCertificateResponderImpl implements RegisterCertificateResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisterMedicalCertificateResponderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisterCertificateResponderImpl.class);
 
     @Autowired
     private CertificateService certificateService;
@@ -54,25 +54,25 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
     }
 
     @Override
-    public RegisterMedicalCertificateResponseType registerMedicalCertificate(String logicalAddress,
-            RegisterMedicalCertificateType registerMedicalCertificate) {
-        RegisterMedicalCertificateResponseType response = new RegisterMedicalCertificateResponseType();
+    public RegisterCertificateResponseType registerCertificate(String logicalAddress,
+            RegisterCertificateType registerCertificate) {
+        RegisterCertificateResponseType response = new RegisterCertificateResponseType();
 
         // Extract document type and xml
-        String type = registerMedicalCertificate.getUtlatande().getTypAvUtlatande().getCode();
+        String type = registerCertificate.getUtlatande().getTypAvUtlatande().getCode();
 
         try {
-            String xml = xmlToString(registerMedicalCertificate);
+            String xml = xmlToString(registerCertificate);
             Certificate certificate = certificateService.storeCertificate(xml, type, false);
             response.setResult(ResultTypeUtil.okResult());
-            String certificateId = extractId(registerMedicalCertificate);
+            String certificateId = extractId(registerCertificate);
             LOGGER.info(LogMarkers.MONITORING, certificateId + " registered");
             statisticsService.created(certificate);
 
         } catch (CertificateAlreadyExistsException e) {
             response.setResult(ResultTypeUtil.infoResult("Certificate already exists"));
-            String certificateId = extractId(registerMedicalCertificate);
-            String issuedBy =  registerMedicalCertificate.getUtlatande().getSkapadAv().getEnhet().getEnhetsId().getExtension();
+            String certificateId = extractId(registerCertificate);
+            String issuedBy =  registerCertificate.getUtlatande().getSkapadAv().getEnhet().getEnhetsId().getExtension();
             LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId + " issued by " + issuedBy + ": Certificate already exists - ignored.");
 
         } catch (CertificateValidationException e) {
@@ -91,14 +91,14 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
         return response;
     }
 
-    private String extractId(RegisterMedicalCertificateType registerMedicalCertificate) {
-        UtlatandeId utlatandeId = registerMedicalCertificate.getUtlatande().getUtlatandeId();
+    private String extractId(RegisterCertificateType registerCertificate) {
+        UtlatandeId utlatandeId = registerCertificate.getUtlatande().getUtlatandeId();
         return IdUtil.generateStringId(utlatandeId);
     }
 
-    private String xmlToString(RegisterMedicalCertificateType registerMedicalCertificate) throws JAXBException {
+    private String xmlToString(RegisterCertificateType registerCertificate) throws JAXBException {
         StringWriter stringWriter = new StringWriter();
-        JAXBElement<UtlatandeType> utlatandeElement = objectFactory.createUtlatande(registerMedicalCertificate.getUtlatande());
+        JAXBElement<UtlatandeType> utlatandeElement = objectFactory.createUtlatande(registerCertificate.getUtlatande());
         marshaller.marshal(utlatandeElement, stringWriter);
         return stringWriter.toString();
     }

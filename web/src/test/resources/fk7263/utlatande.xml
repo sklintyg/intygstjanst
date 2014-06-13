@@ -1,6 +1,6 @@
-<ns1:RegisterMedicalCertificate
+<ns1:RegisterCertificate
 	xmlns:ns2="urn:riv:itintegration:registry:1"
-	xmlns:ns1="urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1"
+	xmlns:ns1="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1"
 	xmlns="urn:riv:clinicalprocess:healthcond:certificate:1">
 
 	<ns1:utlatande>
@@ -68,4 +68,4 @@
 		</observation>
 
 	</ns1:utlatande>
-</ns1:RegisterMedicalCertificate>
+</ns1:RegisterCertificate>

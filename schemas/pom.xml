@@ -92,11 +92,11 @@
                   <extraarg>-xjc-Xinheritance</extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
-                    urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificateResponder:1=se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1
+                    urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1=se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1
                   </extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
-                    urn:riv:clinicalprocess:healthcond:certificate:RegisterMedicalCertificate:1:rivtabp21=se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1
+                    urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificate:1:rivtabp21=se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1
                   </extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
@@ -261,7 +261,7 @@
 
                 <wsdlOption>
                   <wsdl>
-                    ${schema.path}/clinicalprocess_healthcond_certificate/interactions/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_0.9_RIVTABP21.wsdl
+                    ${schema.path}/clinicalprocess_healthcond_certificate/interactions/RegisterCertificateInteraction/RegisterCertificateInteraction_0.9_RIVTABP21.wsdl
                   </wsdl>
                   <bindingFiles>
                     <bindingFile>
@@ -271,7 +271,7 @@
                   <extraargs>
                     <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      classpath:schemas/clinicalprocess_healthcond_certificate/interactions/RegisterMedicalCertificateInteraction/RegisterMedicalCertificateInteraction_0.9_RIVTABP21.wsdl
+                      classpath:schemas/clinicalprocess_healthcond_certificate/interactions/RegisterCertificateInteraction/RegisterCertificateInteraction_0.9_RIVTABP21.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>
