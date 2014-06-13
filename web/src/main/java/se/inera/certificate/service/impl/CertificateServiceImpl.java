@@ -59,8 +59,6 @@ import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
  * @author andreaskaltenbach
  */
@@ -68,9 +66,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class CertificateServiceImpl implements CertificateService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateServiceImpl.class);
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private ModuleApiFactory moduleApiFactory;

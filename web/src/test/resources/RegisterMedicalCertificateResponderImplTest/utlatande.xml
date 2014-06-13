@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <utlatande xmlns="urn:riv:clinicalprocess:healthcond:certificate:1">
-  <utlatande-id extension="b2f6d5bc-2f50-4623-9ce9-bf1ee5404347"/>
+  <utlatande-id root="1.2.752.129.2.1.2.1" extension="b2f6d5bc-2f50-4623-9ce9-bf1ee5404347"/>
   <typAvUtlatande code="fk7263"/>
   <kommentar>Har haft mailkontakt med patienten
     Prognosen att återgå till arbete är svår att bedömma förrän utredningen är genomförd.

@@ -29,6 +29,7 @@ import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
+import se.inera.certificate.integration.util.IdUtil;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.TransportModelHolder;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
@@ -69,7 +70,7 @@ public class RegisterCertificateResponderStub implements RegisterMedicalCertific
             ModuleApi endpoint = moduleApiFactory.getModuleEntryPoint(type).getModuleApi();
 
             validate(request, endpoint);
-            String id = request.getUtlatande().getUtlatandeId().getExtension();
+            String id = IdUtil.generateStringId(request.getUtlatande().getUtlatandeId());
 
             Map<String, String> props = new HashMap<>();
             props.put("Personnummer", request.getUtlatande().getPatient().getPersonId().getExtension());

@@ -19,13 +19,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerMedicalCertificate.v1.RegisterMedicalCertificateType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeId;
 import se.inera.certificate.integration.module.ModuleApiFactory;
+import se.inera.certificate.integration.util.IdUtil;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.ModuleApi;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterCertificateResponderStubTest {
+
+    private static final String UTLATANDE_ID = "id-1234567890";
 
     @Mock
     FkMedicalCertificatesStore store;
@@ -53,15 +55,12 @@ public class RegisterCertificateResponderStubTest {
         RegisterMedicalCertificateType request = unmarshaller.unmarshal(
                 new StreamSource(new ClassPathResource("fk7263/utlatande.xml").getInputStream()), RegisterMedicalCertificateType.class).getValue();
 
-        UtlatandeId id = new UtlatandeId();
-        id.setRoot("id-1234567890");
-
         when(moduleApiFactory.getModuleEntryPoint(any(String.class))).thenReturn(moduleEntryPoint);
 
-        request.getUtlatande().setUtlatandeId(id);
+        request.getUtlatande().setUtlatandeId(IdUtil.generateId(UTLATANDE_ID));
 
         stub.registerMedicalCertificate(logicalAddress, request);
 
-        verify(store).addCertificate(eq(id.getExtension()), any(Map.class));
+        verify(store).addCertificate(eq(UTLATANDE_ID), any(Map.class));
     }
 }

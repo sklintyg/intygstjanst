@@ -23,6 +23,7 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeI
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.exception.CertificateValidationException;
+import se.inera.certificate.integration.util.IdUtil;
 import se.inera.certificate.integration.util.ResultTypeUtil;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
@@ -92,7 +93,7 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
 
     private String extractId(RegisterMedicalCertificateType registerMedicalCertificate) {
         UtlatandeId utlatandeId = registerMedicalCertificate.getUtlatande().getUtlatandeId();
-        return utlatandeId.getExtension() != null ? utlatandeId.getExtension() : utlatandeId.getRoot();
+        return IdUtil.generateStringId(utlatandeId);
     }
 
     private String xmlToString(RegisterMedicalCertificateType registerMedicalCertificate) throws JAXBException {
