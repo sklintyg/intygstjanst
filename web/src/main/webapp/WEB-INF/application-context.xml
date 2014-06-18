@@ -60,5 +60,13 @@
     <context:annotation-config/>
     <context:component-scan base-package="se.inera.certificate"/>
 
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+      <property name="basenames">
+        <list>
+          <value>version</value>
+        </list>
+      </property>
+    </bean>
+
   </beans>
 </beans>
