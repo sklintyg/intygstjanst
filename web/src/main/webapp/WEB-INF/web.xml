@@ -15,6 +15,11 @@
       <param-value>certificate.logback.file</param-value>
   </context-param>
 
+  <servlet-mapping>
+    <servlet-name>jsp</servlet-name>
+    <url-pattern>/version.jsp</url-pattern>
+  </servlet-mapping>
+
   <servlet>
     <servlet-name>cxf</servlet-name>
     <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
