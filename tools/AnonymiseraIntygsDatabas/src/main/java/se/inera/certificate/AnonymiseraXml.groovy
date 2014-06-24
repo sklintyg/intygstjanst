@@ -4,12 +4,18 @@ import groovy.xml.StreamingMarkupBuilder
 
 class AnonymiseraXml {
     
+    AnonymiseraPersonId anonymiseraPersonId;
     AnonymiseraHsaId anonymiseraHsaId;
     
-    AnonymiseraXml(AnonymiseraHsaId anonymiseraHsaId) {
+    AnonymiseraXml(AnonymiseraPersonId anonymiseraPersonId, AnonymiseraHsaId anonymiseraHsaId) {
+        this.anonymiseraPersonId = anonymiseraPersonId
         this.anonymiseraHsaId = anonymiseraHsaId
     }
-    
+
+    String anonymiseraIntygsXml(String s) {
+        anonymiseraIntygsXml(s, null)
+    }
+
     String anonymiseraIntygsXml(String s, String personId) {
         def intyg = new XmlSlurper().parseText(s)
         intyg.declareNamespace(ns1: 'urn:riv:insuranceprocess:healthreporting:mu7263:3',
@@ -20,9 +26,9 @@ class AnonymiseraXml {
         outputBuilder.encoding = 'UTF-8'
         return (s.startsWith('<?xml') ? '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' : "") + outputBuilder.bind{  mkp.yield intyg }
     }
-    
+
     private void anonymizeXml(def intyg, String personId) {
-        intyg.'ns3:lakarutlatande'.'ns1:patient'.'ns2:person-id'.@extension = personId
+        intyg.'ns3:lakarutlatande'.'ns1:patient'.'ns2:person-id'.@extension = personId ?: anonymiseraPersonId.anonymisera((String) intyg.'ns3:lakarutlatande'.'ns1:patient'.'ns2:person-id'.@extension)
         anonymizeNode intyg.'ns3:lakarutlatande'.'ns1:patient'.'ns2:fullstandigtNamn'
         String personalId = intyg.'ns3:lakarutlatande'.'ns1:skapadAvHosPersonal'.'ns2:personal-id'.@extension
         intyg.'ns3:lakarutlatande'.'ns1:skapadAvHosPersonal'.'ns2:personal-id'.@extension = anonymiseraHsaId.anonymisera(personalId)

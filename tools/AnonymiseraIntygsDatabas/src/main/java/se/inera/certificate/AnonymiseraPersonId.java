@@ -18,7 +18,7 @@ public class AnonymiseraPersonId {
     private final Random random = new Random();
     private final Map<String, String> actualToAnonymized = new HashMap<>();
 
-    AnonymiseraPersonId() {
+    public AnonymiseraPersonId() {
         BufferedReader pnr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/pnr.txt")));
         try {
             String line = null;

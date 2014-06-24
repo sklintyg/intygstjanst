@@ -16,8 +16,9 @@ import org.springframework.core.io.ClassPathResource
 
 class AnonymiseraXmlTest {
 
+    AnonymiseraPersonId anonymiseraPersonId = [anonymisera:{"10101010-1010"}] as AnonymiseraPersonId
     AnonymiseraHsaId anonymiseraHsaId = [anonymisera:{"SE1010"}] as AnonymiseraHsaId
-    AnonymiseraXml anonymiseraXml = new AnonymiseraXml(anonymiseraHsaId)
+    AnonymiseraXml anonymiseraXml = new AnonymiseraXml(anonymiseraPersonId, anonymiseraHsaId)
 
     @Test
     void testaAnonymiseringAvMaximaltIntyg() {

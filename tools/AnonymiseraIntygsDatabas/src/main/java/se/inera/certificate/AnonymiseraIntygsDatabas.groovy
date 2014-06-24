@@ -15,9 +15,10 @@ class AnonymiseraIntygsDatabas {
         AnonymiseraPersonId anonymiseraPersonId = new AnonymiseraPersonId()
         AnonymiseraHsaId anonymiseraHsaId = new AnonymiseraHsaId()
         AnonymiseraJson anonymiseraJson = new AnonymiseraJson(anonymiseraHsaId)
-        AnonymiseraXml anonymiseraXml = new AnonymiseraXml(anonymiseraHsaId)
+        AnonymiseraXml anonymiseraXml = new AnonymiseraXml(anonymiseraPersonId, anonymiseraHsaId)
         def sql = Sql.newInstance(config.datasource.url, config.dataSource.username, config.dataSource.password, config.dataSource.driver)
-        int count = 0
+        int count = 1
+        // Anonymisera alla befintliga intyg, och deras original-meddelanden
         sql.eachRow('select c.ID from CERTIFICATE c') {row ->
             print "${count++}: "
             def intyg = sql.firstRow( 'select DOCUMENT, CIVIC_REGISTRATION_NUMBER, SIGNING_DOCTOR_NAME from CERTIFICATE where ID = :id' , [id : row.ID])
@@ -31,6 +32,16 @@ class AnonymiseraIntygsDatabas {
             String xmlDoc = original?.DOCUMENT ? new String(original.DOCUMENT, 'UTF-8') : null
             String anonymiseradXml = xmlDoc ? anonymiseraXml.anonymiseraIntygsXml(xmlDoc, civicRegistrationNumber) : null
             if (anonymiseradXml) sql.executeUpdate('update ORIGINAL_CERTIFICATE set DOCUMENT = :document where CERTIFICATE_ID = :id',
+                                  [document: anonymiseradXml.getBytes('UTF-8'), id : row.ID])
+            println "${row.ID}"
+        }
+        // Anonymisera eventuella original-meddelanden som saknar motsvarande intyg
+        sql.eachRow('select oc.ID from ORIGINAL_CERTIFICATE oc where oc.CERTIFICATE_ID is null') {row ->
+            print "${count++}: "
+            def original = sql.firstRow( 'select DOCUMENT from ORIGINAL_CERTIFICATE where ID = :id' , [id : row.ID])
+            String xmlDoc = original?.DOCUMENT ? new String(original.DOCUMENT, 'UTF-8') : null
+            String anonymiseradXml = xmlDoc ? anonymiseraXml.anonymiseraIntygsXml(xmlDoc) : null
+            if (anonymiseradXml) sql.executeUpdate('update ORIGINAL_CERTIFICATE set DOCUMENT = :document where ID = :id',
                                   [document: anonymiseradXml.getBytes('UTF-8'), id : row.ID])
             println "${row.ID}"
         }
