@@ -92,8 +92,38 @@
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
 |validering/ts-bas/register/saknat-beskrivning-rorelseorganens-funktion.xml|=~/VALIDATION_ERROR/|
-!3 Återta samtycken:
 
+
+!3 Ts-bas som saknar beskrivning av varför ökad risk för stroke föreligger ger valideringsfel
+
+|validera register mot nya kontraktet|
+|filnamn|resultat?|
+|validering/ts-bas/register/saknat-beskrivning-hjart-och-karl.xml|=~/VALIDATION_ERROR/|
+
+
+!3 Ts-bas som saknar beskrivning av annan medvetandestörning ger valideringsfel
+
+|validera register mot nya kontraktet|
+|filnamn|resultat?|
+|validering/ts-bas/register/saknat-beskrivning-epilepsi.xml|=~/VALIDATION_ERROR/|
+
+
+
+!3 Ts-bas som saknar beskrivning av regelbundet läkarordinerat bruk av läkemedel ger valideringsfel
+
+|validera register mot nya kontraktet|
+|filnamn|resultat?|
+|validering/ts-bas/register/saknat-beskrivning-alkohol-narkotika.xml|=~/VALIDATION_ERROR/|
+
+
+!3 Ts-bas som saknar beskrivning av övrig medicinering ger valideringsfel
+
+|validera register mot nya kontraktet|
+|filnamn|resultat?|
+|validering/ts-bas/register/saknat-beskrivning-ovrig-medicinering.xml|=~/VALIDATION_ERROR/|
+
+
+!3 Återta samtycken:
 
 |Samtycke|
 |personnr|samtycke|
