@@ -17,5 +17,4 @@
 |service.sendMedicalCertificateAnswerUrl|${services.sendMedicalCertificateAnswerUrl}|
 |ws.certificate.file|${ws.certificate.file}|
 |ws.certificate.password|${ws.certificate.password}|
-|persondata|/grundladda/personnummer.txt|
 *****! 

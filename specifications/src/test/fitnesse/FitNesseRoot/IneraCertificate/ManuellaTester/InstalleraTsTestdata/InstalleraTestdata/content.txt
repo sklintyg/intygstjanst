@@ -3,20 +3,20 @@
 
 !3 Skapa TS-bas intyg baserat på XML-mallar för olika scenarier
 |Skapa Ts Intyg Baserat Pa Scenario|
-|typ   |mall                        |antalIntyg|resultat?|
-|ts-bas|diabetes-typ2-kost.xml      |1         |OK|
-|ts-bas|korrigerad-synskarpa.xml    |1         |OK|
-|ts-bas|maximal.xml                 |1         |OK|
-|ts-bas|minimal.xml                 |1         |OK|
-|ts-bas|persontransport.xml         |1         |OK|
-|ts-bas|rorelseorganens-funktion.xml|1         |OK|
-|ts-bas|sjukhusvard.xml             |1         |OK|
+|typ   |mall                        |personnummer |antalIntyg|resultat?|
+|ts-bas|diabetes-typ2-kost.xml      |19121212-1212|1         |OK|
+|ts-bas|korrigerad-synskarpa.xml    |19121212-1212|1         |OK|
+|ts-bas|maximal.xml                 |19121212-1212|1         |OK|
+|ts-bas|minimal.xml                 |19121212-1212|1         |OK|
+|ts-bas|persontransport.xml         |19121212-1212|1         |OK|
+|ts-bas|rorelseorganens-funktion.xml|19121212-1212|1         |OK|
+|ts-bas|sjukhusvard.xml             |19121212-1212|1         |OK|
 
 
 !3 Skapa TS-diabetes intyg baserat på XML-mallar för olika scenarier
 |Skapa Ts Intyg Baserat Pa Scenario|
-|typ        |mall                  |antalIntyg|resultat?|
-|ts-diabetes|diabetes-typ2-kost.xml|1         |OK|
-|ts-diabetes|maximal.xml                 |1         |OK|
-|ts-diabetes|minimal.xml                 |1         |OK|
-|ts-diabetes|syn.xml                     |1         |OK|
+|typ        |mall                  |personnummer |antalIntyg|resultat?|
+|ts-diabetes|diabetes-typ2-kost.xml|19121212-1212|1         |OK|
+|ts-diabetes|maximal.xml           |19121212-1212|1         |OK|
+|ts-diabetes|minimal.xml           |19121212-1212|1         |OK|
+|ts-diabetes|syn.xml               |19121212-1212|1         |OK|
