@@ -18,7 +18,17 @@ public interface RecipientService {
      * @return {@link Recipient}
      * @throws RecipientUnknownException
      */
-    Recipient getRecipient(String logicalAddress) throws RecipientUnknownException;
+    Recipient getRecipientForLogicalAddress(String logicalAddress) throws RecipientUnknownException;
+
+    /**
+     * Get the {@link Recipient} that corresponds to a given id.
+     *
+     * @param recipientId
+     *            the id to check
+     * @return {@link Recipient}
+     * @throws RecipientUnknownException
+     */
+    Recipient getRecipient(String recipientId) throws RecipientUnknownException;
 
     /**
      * List all {@link Recipient}[s] currently known.

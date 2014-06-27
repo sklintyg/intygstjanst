@@ -41,7 +41,7 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
     }
 
     @Override
-    public Recipient getRecipient(String logicalAddress) throws RecipientUnknownException {
+    public Recipient getRecipientForLogicalAddress(String logicalAddress) throws RecipientUnknownException {
         for (Recipient r : recipientList) {
             if (r.getLogicalAddress().equals(logicalAddress)) {
                 return r;
@@ -50,13 +50,14 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
         throw new RecipientUnknownException(String.format("No recipient found for logical address: %s", logicalAddress));
     }
 
-    private Recipient getRecipientForId(String recipientId) throws RecipientUnknownException {
+    @Override
+    public Recipient getRecipient(String recipientId) throws RecipientUnknownException {
         for (Recipient r : recipientList) {
-            if (r.getId().equals(recipientId)) {
+            if (r.getId().equalsIgnoreCase(recipientId)) {
                 return r;
             }
         }
-        throw new RecipientUnknownException(String.format("No recipient found for logical address: %s", recipientId));
+        throw new RecipientUnknownException(String.format("No recipient found for recipient id: %s", recipientId));
     }
 
     @Override
@@ -82,7 +83,7 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
 
     @Override
     public TransportModelVersion getVersion(String logicalAddress, String certificateType) throws RecipientUnknownException {
-        String recipientId = getRecipient(logicalAddress).getId();
+        String recipientId = getRecipientForLogicalAddress(logicalAddress).getId();
         return supportedTransportModelVersion.get((new RecipientCertificateType(recipientId, certificateType)));
     }
 
@@ -127,7 +128,7 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
         }
 
         for (RecipientCertificateType recipientCertificateType : supportedTransportModelVersion.keySet()) {
-            Recipient r = getRecipientForId(recipientCertificateType.getRecipientId());
+            Recipient r = getRecipient(recipientCertificateType.getRecipientId());
             Set<CertificateType> certificateTypes = certificateTypesForRecipient.get(r);
             if (certificateTypes == null) {
                 certificateTypes = new HashSet<>();

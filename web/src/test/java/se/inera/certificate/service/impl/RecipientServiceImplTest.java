@@ -42,7 +42,7 @@ public class RecipientServiceImplTest {
 
     @Test
     public void testListRecipientsForCerttypeTS() {
-        List<Recipient> expected = Arrays.asList(new Recipient("TS", "Transportstyrelsen", "ts"));
+        List<Recipient> expected = Arrays.asList(new Recipient("tsTestAddress", "Transportstyrelsen", "ts"));
         
         assertEquals(expected, service.listRecipients(new CertificateType("ts-bas")));
         assertEquals(expected, service.listRecipients(new CertificateType("ts-diabetes")));
@@ -55,7 +55,7 @@ public class RecipientServiceImplTest {
 
     @Test
     public void testGetTransportModelVersionForTsBas() throws RecipientUnknownException {
-        assertEquals(TransportModelVersion.UTLATANDE_V1, service.getVersion("TS", "ts-bas"));
+        assertEquals(TransportModelVersion.UTLATANDE_V1, service.getVersion("tsTestAddress", "ts-bas"));
     }
     
     @Test(expected = RecipientUnknownException.class)
