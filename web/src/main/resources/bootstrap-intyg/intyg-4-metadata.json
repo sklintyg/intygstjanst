@@ -5,7 +5,7 @@
   "signingDoctorName": "Eva Rättare",
   "validFromDate" : "2012-12-23",
   "validToDate" : "2013-12-23",
-  "careUnitId": "IFV1239877878-1042",
+  "careUnitId": "centrum-vast",
   "states": [{"state":"RECEIVED", "target":"MI", "timestamp":"2012-12-23T21:00:00.000"},
              {"state":"SENT", "target" : "FK", "timestamp" : "2012-12-23T21:00:00.000"},
              {"state":"CANCELLED", "target" : "FK", "timestamp" : "2012-12-24T21:00:00.000"}
