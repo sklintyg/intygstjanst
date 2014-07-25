@@ -20,7 +20,6 @@ package se.inera.certificate.integration;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.dom.DOMSource;
 
 import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
@@ -49,14 +48,13 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetCertificateForCareResponderImpl.class);
 
-    private static Unmarshaller unmarshaller;
+    private static final JAXBContext JAXB_CONTEXT;
 
     static {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(UtlatandeType.class);
-            unmarshaller = jaxbContext.createUnmarshaller();
+            JAXB_CONTEXT = JAXBContext.newInstance(UtlatandeType.class);
         } catch (JAXBException e) {
-            throw new RuntimeException("Failed to initialize JAXB context required for unmarshaller");
+            throw new RuntimeException("Failed to initialize JAXB context required for unmarshaller", e);
         }
     }
 
@@ -90,7 +88,7 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
 
         UtlatandeType utlatande = null;
         try {
-            utlatande = unmarshaller.unmarshal(new DOMSource(document), UtlatandeType.class).getValue();
+            utlatande = JAXB_CONTEXT.createUnmarshaller().unmarshal(new DOMSource(document), UtlatandeType.class).getValue();
         } catch (JAXBException e) {
             LOGGER.error("Failed to unmarshall intyg coming from module " + certificate.getType());
             Throwables.propagate(e);

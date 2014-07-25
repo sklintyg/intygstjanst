@@ -49,7 +49,6 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
     private static final String FK7263 = "fk7263";
 
     private JAXBContext jaxbContext;
-    private Marshaller marshaller;
     private ObjectFactory objectFactory;
     private ModuleRestApi endpoint;
 
@@ -62,7 +61,6 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
     @PostConstruct
     public void initializeJaxbContext() throws JAXBException {
         jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
-        marshaller = jaxbContext.createMarshaller();
         objectFactory = new ObjectFactory();
         endpoint = moduleRestApiFactory.getModuleRestService(FK7263);
     }
@@ -97,7 +95,7 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
         StringWriter stringWriter = new StringWriter();
         JAXBElement<RegisterMedicalCertificateType> requestElement = objectFactory
                 .createRegisterMedicalCertificate(registerMedicalCertificate);
-        marshaller.marshal(requestElement, stringWriter);
+        jaxbContext.createMarshaller().marshal(requestElement, stringWriter);
         return stringWriter.toString();
     }
 
