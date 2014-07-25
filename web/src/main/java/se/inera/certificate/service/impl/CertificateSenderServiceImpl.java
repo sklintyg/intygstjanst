@@ -21,7 +21,6 @@ package se.inera.certificate.service.impl;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 
@@ -53,7 +52,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateSenderServiceImpl.class);
 
-    private static Unmarshaller UNMARSHALLER;
+    private static final JAXBContext JAXB_CONTEXT;
 
     @Autowired
     private CertificateService certificateService;
@@ -66,6 +65,14 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     @Autowired
     private RegisterMedicalCertificateResponderInterface registerMedicalCertificateQuestionClient;
+
+    static {
+        try {
+            JAXB_CONTEXT = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
+        } catch (JAXBException e) {
+            throw new RuntimeException("Failed to initialize JAXB context required for unmarshaller", e);
+        }
+    }
 
     @Override
     public void sendCertificate(Certificate certificate, String target) {
@@ -87,19 +94,10 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
         }
     }
 
-    static {
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
-            UNMARSHALLER = jaxbContext.createUnmarshaller();
-        } catch (JAXBException e) {
-            Throwables.propagate(e);
-        }
-    }
-
     private void invokeReceiverService(String xml) {
 
         try {
-            RegisterMedicalCertificateType request = UNMARSHALLER.unmarshal(
+            RegisterMedicalCertificateType request = JAXB_CONTEXT.createUnmarshaller().unmarshal(
                     new StreamSource(new ByteArrayInputStream(xml.getBytes())), RegisterMedicalCertificateType.class)
                     .getValue();
             AttributedURIType address = new AttributedURIType();

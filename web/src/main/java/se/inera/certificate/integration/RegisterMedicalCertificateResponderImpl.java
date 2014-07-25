@@ -41,13 +41,12 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
     @Autowired
     StatisticsService statisticsService;
 
-    private Marshaller marshaller;
+    private JAXBContext jaxbContext;
     private ObjectFactory objectFactory;
 
     @PostConstruct
     public void initializeJaxbContext() throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(UtlatandeType.class);
-        marshaller = jaxbContext.createMarshaller();
+        jaxbContext = JAXBContext.newInstance(UtlatandeType.class);
         objectFactory = new ObjectFactory();
     }
 
@@ -90,7 +89,7 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
         StringWriter stringWriter = new StringWriter();
         JAXBElement<UtlatandeType> utlatandeElement = objectFactory.createUtlatande(registerMedicalCertificate
                 .getUtlatande());
-        marshaller.marshal(utlatandeElement, stringWriter);
+        jaxbContext.createMarshaller().marshal(utlatandeElement, stringWriter);
         return stringWriter.toString();
     }
 }

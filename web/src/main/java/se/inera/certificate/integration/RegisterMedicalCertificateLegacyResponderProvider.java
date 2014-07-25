@@ -38,8 +38,8 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
 
     private static final String FK7263 = "fk7263";
 
-    private Marshaller marshaller;
     private ObjectFactory objectFactory;
+    private JAXBContext jaxbContext;
 
     private boolean wiretapped = false;
     
@@ -51,8 +51,7 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
 
     @PostConstruct
     public void initializeJaxbContext() throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
-        marshaller = jaxbContext.createMarshaller();
+        jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
         objectFactory = new ObjectFactory();
     }
 
@@ -101,7 +100,7 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
         StringWriter stringWriter = new StringWriter();
         JAXBElement<RegisterMedicalCertificateType> requestElement = objectFactory
                 .createRegisterMedicalCertificate(registerMedicalCertificate);
-        marshaller.marshal(requestElement, stringWriter);
+        jaxbContext.createMarshaller().marshal(requestElement, stringWriter);
         return stringWriter.toString();
     }
 }
