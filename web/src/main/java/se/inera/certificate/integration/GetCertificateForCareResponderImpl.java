@@ -23,9 +23,9 @@ import static se.inera.certificate.integration.util.ResultTypeUtil.okResult;
 
 import java.io.StringReader;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.cxf.annotations.SchemaValidation;
@@ -40,12 +40,12 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificat
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
-import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.converter.MetaDataResolver;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 
 import com.google.common.base.Throwables;
 
@@ -59,20 +59,16 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetCertificateForCareResponderImpl.class);
 
-    private static Unmarshaller unmarshaller;
-
     @Autowired
     private MetaDataResolver metaDataResolver;
 
-    static {
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(UtlatandeType.class);
-            unmarshaller = jaxbContext.createUnmarshaller();
-        } catch (JAXBException e) {
-            throw new ServerException("Failed to initialize JAXB context required for unmarshaller");
-        }
+    private JAXBContext jaxbContext;
+    
+    @PostConstruct
+    public void initializeJaxbContext() throws JAXBException {
+        jaxbContext = JAXBContext.newInstance(UtlatandeType.class);
     }
-
+    
     @Override
     public GetCertificateForCareResponseType getCertificateForCare(String logicalAddress,
             GetCertificateForCareRequestType request) {
@@ -120,7 +116,7 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
 
         UtlatandeType utlatande = null;
         try {
-            utlatande = unmarshaller.unmarshal(new StreamSource(new StringReader(transportModel)), UtlatandeType.class).getValue();
+            utlatande = jaxbContext.createUnmarshaller().unmarshal(new StreamSource(new StringReader(transportModel)), UtlatandeType.class).getValue();
         } catch (JAXBException e) {
             LOGGER.error("Failed to unmarshall intyg coming from module " + certificate.getType());
             Throwables.propagate(e);

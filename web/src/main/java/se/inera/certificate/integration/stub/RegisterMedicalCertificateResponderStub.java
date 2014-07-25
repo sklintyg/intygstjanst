@@ -11,7 +11,6 @@ import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.ws.WebServiceProvider;
 
 import org.slf4j.Logger;
@@ -43,24 +42,25 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterMedicalCertificateResponderStub.class);
     private static final String FK7263 = "fk7263";
-
-    private Marshaller marshaller;
+    
     private ObjectFactory objectFactory;
-    private ModuleApi endpoint;
+    
+    private ModuleApi moduleApi;
 
     @Autowired
     private FkMedicalCertificatesStore fkMedicalCertificatesStore;
 
     @Autowired
     private ModuleApiFactory moduleApiFactory;
+    
+    private JAXBContext jaxbContext;
 
     @PostConstruct
-    public void initializeJaxbContext() throws JAXBException, ModuleNotFoundException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
-        marshaller = jaxbContext.createMarshaller();
+    public void initializeJaxbContextAndModuleApi() throws JAXBException, ModuleNotFoundException {
+        jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
         objectFactory = new ObjectFactory();
         // Since only FK7263 uses RegisterMedicalCertificateType we can hard code it here.
-        endpoint = moduleApiFactory.getModuleEntryPoint(FK7263).getModuleApi();
+        moduleApi = moduleApiFactory.getModuleEntryPoint(FK7263).getModuleApi();
     }
 
     @Override
@@ -93,14 +93,14 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
         StringWriter stringWriter = new StringWriter();
         JAXBElement<RegisterMedicalCertificateType> requestElement = objectFactory
                 .createRegisterMedicalCertificate(registerMedicalCertificate);
-        marshaller.marshal(requestElement, stringWriter);
+        jaxbContext.createMarshaller().marshal(requestElement, stringWriter);
         return stringWriter.toString();
     }
 
     protected void validate(RegisterMedicalCertificateType registerMedicalCertificate) throws JAXBException, CertificateValidationException {
         try {
             String transportXml = xmlToString(registerMedicalCertificate);
-            endpoint.unmarshall(new TransportModelHolder(transportXml));
+            moduleApi.unmarshall(new TransportModelHolder(transportXml));
 
         } catch (ModuleValidationException e) {
             throw new CertificateValidationException(e.getValidationEntries());

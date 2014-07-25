@@ -38,6 +38,7 @@ import java.io.ByteArrayOutputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -46,6 +47,7 @@ import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceListener;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.joda.time.LocalDateTime;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -102,6 +104,11 @@ public class GetCertificateForCareResponderImplTest {
     @Spy
     @InjectMocks
     private MetaDataResolver metaDataResolver = new MetaDataResolver();
+    
+    @Before
+    public void setup() throws JAXBException {
+        responder.initializeJaxbContext();
+    }
 
     @Test
     public void getCertificateForCare() throws Exception {

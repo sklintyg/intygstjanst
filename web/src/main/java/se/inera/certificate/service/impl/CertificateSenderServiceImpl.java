@@ -22,9 +22,9 @@ import static se.inera.certificate.modules.support.api.dto.TransportModelVersion
 
 import java.io.ByteArrayInputStream;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
 import org.slf4j.Logger;
@@ -68,8 +68,6 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateSenderServiceImpl.class);
 
-    private static final Unmarshaller UNMARSHALLER;
-
     @Autowired
     private RecipientService recipientService;
 
@@ -86,13 +84,11 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     @Autowired
     private se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponderInterface registerCertificateClient;
 
-    static {
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class, RegisterCertificateType.class);
-            UNMARSHALLER = jaxbContext.createUnmarshaller();
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
-        }
+    private JAXBContext jaxbContext;
+    
+    @PostConstruct
+    public void initializeJaxbContext() throws JAXBException {
+        jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class, RegisterCertificateType.class);
     }
 
     @Override
@@ -142,7 +138,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             Class<?> unmarshallType = (type.equals(LEGACY_LAKARUTLATANDE) ? RegisterMedicalCertificateType.class
                     : UtlatandeType.class);
 
-            Object request = UNMARSHALLER.unmarshal(
+            Object request = jaxbContext.createUnmarshaller().unmarshal(
                     new StreamSource(new ByteArrayInputStream(xml.getBytes())), unmarshallType).getValue();
             if (type.equals(LEGACY_LAKARUTLATANDE)) {
                 AttributedURIType address = new AttributedURIType();

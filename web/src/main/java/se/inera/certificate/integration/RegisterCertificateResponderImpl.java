@@ -8,7 +8,6 @@ import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
@@ -43,13 +42,13 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     @Autowired
     private StatisticsService statisticsService;
 
-    private Marshaller marshaller;
     private ObjectFactory objectFactory;
+
+    private JAXBContext jaxbContext;
 
     @PostConstruct
     public void initializeJaxbContext() throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(UtlatandeType.class);
-        marshaller = jaxbContext.createMarshaller();
+        jaxbContext = JAXBContext.newInstance(UtlatandeType.class);
         objectFactory = new ObjectFactory();
     }
 
@@ -99,7 +98,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     private String xmlToString(RegisterCertificateType registerCertificate) throws JAXBException {
         StringWriter stringWriter = new StringWriter();
         JAXBElement<UtlatandeType> utlatandeElement = objectFactory.createUtlatande(registerCertificate.getUtlatande());
-        marshaller.marshal(utlatandeElement, stringWriter);
+        jaxbContext.createMarshaller().marshal(utlatandeElement, stringWriter);
         return stringWriter.toString();
     }
 }

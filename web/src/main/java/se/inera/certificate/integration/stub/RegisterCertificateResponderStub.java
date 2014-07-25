@@ -11,7 +11,6 @@ import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.ws.WebServiceProvider;
 
 import org.slf4j.Logger;
@@ -44,7 +43,6 @@ public class RegisterCertificateResponderStub implements RegisterCertificateResp
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterCertificateResponderStub.class);
 
-    private Marshaller marshaller;
     private ObjectFactory objectFactory;
 
     @Autowired
@@ -53,10 +51,11 @@ public class RegisterCertificateResponderStub implements RegisterCertificateResp
     @Autowired
     private ModuleApiFactory moduleApiFactory;
 
+    private JAXBContext jaxbContext;
+
     @PostConstruct
-    public void initializeJaxbContext() throws JAXBException, ModuleNotFoundException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(UtlatandeType.class);
-        marshaller = jaxbContext.createMarshaller();
+    public void initializeJaxbContext() throws JAXBException {
+        jaxbContext = JAXBContext.newInstance(UtlatandeType.class);
         objectFactory = new ObjectFactory();
     }
 
@@ -96,7 +95,7 @@ public class RegisterCertificateResponderStub implements RegisterCertificateResp
         StringWriter stringWriter = new StringWriter();
         JAXBElement<UtlatandeType> requestElement = objectFactory
                 .createUtlatande(utlatandeType);
-        marshaller.marshal(requestElement, stringWriter);
+        jaxbContext.createMarshaller().marshal(requestElement, stringWriter);
         return stringWriter.toString();
     }
 

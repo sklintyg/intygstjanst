@@ -105,6 +105,11 @@ public class CertificateSenderServiceImplTest {
         when(recipientService.getRecipient("FK")).thenReturn(new Recipient("FK", "Försäkringskassan", "fk"));
     }
 
+    @Before
+    public void setupSenderService() throws JAXBException {
+        senderService.initializeJaxbContext();
+    }
+    
     @InjectMocks
     private CertificateSenderServiceImpl senderService = new CertificateSenderServiceImpl();
 
