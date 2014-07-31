@@ -246,7 +246,7 @@
                 </systemProperty>
                 <systemProperty>
                   <name>certificate.config.file</name>
-                  <value>${project.basedir}/config.properties</value>
+                  <value>${project.basedir}/certificate.properties</value>
                 </systemProperty>
                 <systemProperty>
                   <name>certificate.logback.file</name>
