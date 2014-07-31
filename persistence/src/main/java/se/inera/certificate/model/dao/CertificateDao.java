@@ -23,7 +23,7 @@ import java.util.List;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
-import se.inera.certificate.exception.InvalidCertificateException;
+import se.inera.certificate.exception.PersistenceException;
 import se.inera.certificate.model.CertificateState;
 
 /**
@@ -41,7 +41,7 @@ public interface CertificateDao {
      * @param types Type of certificate
      * @param fromDate From date when the certificate is valid
      * @param toDate To data when the certificate is valid
-     * @return
+     * @return filtered list
      */
     List<Certificate> findCertificate(String civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate, List<String> careUnits);
 
@@ -53,22 +53,22 @@ public interface CertificateDao {
      * @return the matching certificate or {@code null} if there is no certificate for the given certificate ID and
      * civic registration number
      *
-     * @throws InvalidCertificateException if the given civic registration number does not match with
+     * @throws se.inera.certificate.exception.PersistenceException if the given civic registration number does not match with
      *  the certificate's patient civic registration number
      */
-    Certificate getCertificate(String civicRegistrationNumber, String certificateId) throws InvalidCertificateException;
+    Certificate getCertificate(String civicRegistrationNumber, String certificateId) throws PersistenceException;
 
     /**
      * Stores a {@link Certificate}.
      *
-     * @param certificate
+     * @param certificate certificate
      */
     void store(Certificate certificate);
 
     /**
      * Stores the original JAXB serialization of a received certificate {@link OriginalCertificate}.
      *
-     * @param originalCertificate
+     * @param originalCertificate certificate
      *
      * @return The id that the entity got when persisted.
      */
@@ -81,20 +81,20 @@ public interface CertificateDao {
      * @param state the state of the certificate
      * @param target the target associated with the status update (e.g. Försäkringskassan)
      * @param timestamp the timestamp of the status update
-     * @throws InvalidCertificateException if the combination of certificate ID and civic registration number
+     * @throws se.inera.certificate.exception.PersistenceException if the combination of certificate ID and civic registration number
      *  does not match
      */
     void updateStatus(String certificateId, String civicRegistrationNumber, CertificateState state, String target, LocalDateTime timestamp)
-            throws InvalidCertificateException;
+            throws PersistenceException;
 
     /**
      * Removes all {@link Certificate}s belonging to specified citizen which have the flag
      * {@link Certificate#isDeletedByCareGiver()} set to <code>true</code>.
      * <p>
      * NOTE: This method should only be called for citizens WHITOUT a given consent.
-     * 
+     *
      * @param civicRegistrationNumber
      *            The citizen for which to remove certificates.
      */
-    public void removeCertificatesDeletedByCareGiver(String civicRegistrationNumber);
+    void removeCertificatesDeletedByCareGiver(String civicRegistrationNumber);
 }

@@ -79,7 +79,7 @@ public class Certificate {
      * The transport model (XML) that was used to generate this entity.
      */
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "certificate", cascade= CascadeType.REMOVE)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "certificate", cascade = CascadeType.REMOVE)
     private OriginalCertificate originalCertificate;
 
     /**

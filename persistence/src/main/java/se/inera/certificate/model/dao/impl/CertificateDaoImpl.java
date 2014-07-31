@@ -40,7 +40,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import se.inera.certificate.exception.InvalidCertificateException;
+import se.inera.certificate.exception.PersistenceException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
@@ -102,8 +102,8 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, noRollbackFor = { InvalidCertificateException.class })
-    public Certificate getCertificate(String civicRegistrationNumber, String certificateId) throws InvalidCertificateException {
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, noRollbackFor = { PersistenceException.class })
+    public Certificate getCertificate(String civicRegistrationNumber, String certificateId) throws PersistenceException {
         Certificate certificate = entityManager.find(Certificate.class, certificateId);
 
         if (certificate == null) {
@@ -115,7 +115,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
             LOG.warn(String.format("Trying to access certificate '%s' for user '%s' but certificate's user is '%s'.",
                     certificateId, civicRegistrationNumber, certificate.getCivicRegistrationNumber()));
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
+            throw new PersistenceException(certificateId, civicRegistrationNumber);
         }
 
         return certificate;
@@ -133,14 +133,14 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
-    @Transactional(noRollbackFor = { InvalidCertificateException.class })
+    @Transactional(noRollbackFor = { PersistenceException.class })
     public void updateStatus(String id, String civicRegistrationNumber, CertificateState state, String target, LocalDateTime timestamp)
-            throws InvalidCertificateException {
+            throws PersistenceException {
 
         Certificate certificate = entityManager.find(Certificate.class, id);
 
         if (certificate == null || !certificate.getCivicRegistrationNumber().equals(civicRegistrationNumber)) {
-            throw new InvalidCertificateException(id, civicRegistrationNumber);
+            throw new PersistenceException(id, civicRegistrationNumber);
         }
 
         CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(target, state, timestamp);

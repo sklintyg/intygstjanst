@@ -45,7 +45,6 @@ import se.inera.certificate.integration.module.exception.ModuleNotFoundException
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 
 import com.google.common.base.Throwables;
 
@@ -63,12 +62,12 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
     private MetaDataResolver metaDataResolver;
 
     private JAXBContext jaxbContext;
-    
+
     @PostConstruct
     public void initializeJaxbContext() throws JAXBException {
         jaxbContext = JAXBContext.newInstance(UtlatandeType.class);
     }
-    
+
     @Override
     public GetCertificateForCareResponseType getCertificateForCare(String logicalAddress,
             GetCertificateForCareRequestType request) {

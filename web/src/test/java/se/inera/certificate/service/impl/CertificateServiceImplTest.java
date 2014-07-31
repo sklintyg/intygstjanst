@@ -26,6 +26,7 @@ import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.ClientException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
+import se.inera.certificate.exception.PersistenceException;
 import se.inera.certificate.integration.json.CustomObjectMapper;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
@@ -80,7 +81,7 @@ public class CertificateServiceImplTest {
     private CertificateServiceImpl certificateService = new CertificateServiceImpl();
 
     @Test
-    public void certificateWithDeletedStatusHasMetaDeleted() throws ClientException {
+    public void certificateWithDeletedStatusHasMetaDeleted() throws ClientException, PersistenceException {
         Certificate certificate = createCertificate();
         certificate.addState(new CertificateStateHistoryEntry("", CertificateState.DELETED, new LocalDateTime(1)));
         when(consentService.isConsent(anyString())).thenReturn(Boolean.TRUE);
@@ -100,7 +101,7 @@ public class CertificateServiceImplTest {
     }
 
     @Test
-    public void certificateWithStatusRestoredNewerThanDeletedHasMetaNotDeleted() throws ClientException {
+    public void certificateWithStatusRestoredNewerThanDeletedHasMetaNotDeleted() throws ClientException, PersistenceException {
         Certificate certificate = createCertificate();
         certificate.addState(new CertificateStateHistoryEntry("", CertificateState.RESTORED, new LocalDateTime(2)));
         certificate.addState(new CertificateStateHistoryEntry("", CertificateState.DELETED, new LocalDateTime(1)));
@@ -114,7 +115,7 @@ public class CertificateServiceImplTest {
     }
 
     @Test
-    public void certificateWithStatusDeletedNewerThanRestoredHasMetaDeleted() throws ClientException {
+    public void certificateWithStatusDeletedNewerThanRestoredHasMetaDeleted() throws ClientException, PersistenceException {
         Certificate certificate = createCertificate();
         certificate.addState(new CertificateStateHistoryEntry("", CertificateState.DELETED, new LocalDateTime(2)));
         certificate.addState(new CertificateStateHistoryEntry("", CertificateState.RESTORED, new LocalDateTime(1)));
@@ -303,7 +304,7 @@ public class CertificateServiceImplTest {
     }
 
     @Test
-    public void sendCertificateCallsSenderAndSetsStatus() throws ClientException, IOException {
+    public void sendCertificateCallsSenderAndSetsStatus() throws ClientException, IOException, PersistenceException {
 
         Certificate certificate = new CertificateBuilder(CERTIFICATE_ID).civicRegistrationNumber(PERSONNUMMER).build();
 
@@ -317,14 +318,14 @@ public class CertificateServiceImplTest {
     }
 
     @Test(expected = InvalidCertificateException.class)
-    public void testSendCertificateWitUnknownCertificate() throws ClientException {
+    public void testSendCertificateWitUnknownCertificate() throws ClientException, PersistenceException {
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(null);
 
         certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fk");
     }
 
     @Test(expected = CertificateRevokedException.class)
-    public void testSendRevokedCertificate() throws ClientException {
+    public void testSendRevokedCertificate() throws ClientException, PersistenceException {
         Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID).state(CertificateState.CANCELLED, null)
                 .build();
 
@@ -340,13 +341,13 @@ public class CertificateServiceImplTest {
     }
     
     @Test(expected = InvalidCertificateException.class)
-    public void testGetCertificateNotFound() throws ClientException {
+    public void testGetCertificateNotFound() throws ClientException, PersistenceException {
         when(certificateDao.getCertificate(PERSONNUMMER,CERTIFICATE_ID)).thenReturn(null);
         certificateService.getCertificateForCare(CERTIFICATE_ID);
     }
     
     @Test(expected = InvalidCertificateException.class)
-    public void testGetCertificateRevoked() throws ClientException {
+    public void testGetCertificateRevoked() throws ClientException, PersistenceException {
         Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID).state(CertificateState.CANCELLED, null)
                 .build();
         when(certificateDao.getCertificate(PERSONNUMMER,CERTIFICATE_ID)).thenReturn(revokedCertificate);
@@ -354,7 +355,7 @@ public class CertificateServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetCertificateWithoutConsentCheckForEmptyPersonnummer() throws ClientException {
+    public void testGetCertificateWithoutConsentCheckForEmptyPersonnummer() throws ClientException, PersistenceException {
         Certificate certificate = createCertificate();
         when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(certificate);
 
