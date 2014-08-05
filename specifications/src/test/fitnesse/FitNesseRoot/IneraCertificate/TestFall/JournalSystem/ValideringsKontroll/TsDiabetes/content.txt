@@ -42,31 +42,31 @@
 !3 Felaktigt synrelaterat intyg där värdena för synskärpa är > 2.0 ger valideringsfel
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ts-diabetes/register/felaktigt-syn.xml|=~/VALIDATION-ERROR/|
+|validering/ts-diabetes/register/felaktigt-syn.xml|=~/VALIDATION_ERROR/|
 
 
 !3 Intyg gällande persontransport som saknar obligatoriska värden ger valideringsfel
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ts-diabetes/register/saknar-obligatoriska-varden-persontransport.xml|=~/VALIDATION-ERROR/|
+|validering/ts-diabetes/register/saknar-obligatoriska-varden-persontransport.xml|=~/VALIDATION_ERROR/|
 
 
 !3 Intyg som saknar antal episoder av allvarlig hypoglykemi som krävt hjälp för att hävas ger valideringsfel
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ts-diabetes/register/saknar-antal-episoder-allvarlig-hypoglykemi.xml|=~/VALIDATION-ERROR/|
+|validering/ts-diabetes/register/saknar-antal-episoder-allvarlig-hypoglykemi.xml|=~/VALIDATION_ERROR/|
 
 
 !3 Intyg som saknar antal episoder av hypoglykemi i trafiken ger valideringsfel
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ts-diabetes/register/saknar-antal-episoder-hypoglykemi-trafiken.xml|=~/VALIDATION-ERROR/|
+|validering/ts-diabetes/register/saknar-antal-episoder-hypoglykemi-trafiken.xml|=~/VALIDATION_ERROR/|
 
 
 !3 Intyg som saknar tidpunkt för allvarlig hypoglykemi under vaken tid ger valideringsfel
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ts-diabetes/register/saknar-tidpunkt-allvarlig-hypoglykemi-vaken-tid.xml|=~/VALIDATION-ERROR/|
+|validering/ts-diabetes/register/saknar-tidpunkt-allvarlig-hypoglykemi-vaken-tid.xml|=~/VALIDATION_ERROR/|
 
 |Samtycke|
 |personnr|samtycke|

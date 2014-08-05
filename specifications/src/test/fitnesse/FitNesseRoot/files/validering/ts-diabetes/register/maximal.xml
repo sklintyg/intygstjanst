@@ -233,7 +233,7 @@
     <observation>
       <observationskod code="420050001" codeSystem="1.2.752.116.2.1.1.1"
         codeSystemName="SNOMED-CT" />
-      <ns2:varde value="0.0" />
+      <varde value="0.0" />
       <ns2:lateralitet code="24028007" codeSystem="1.2.752.116.2.1.1.1"
         codeSystemName="SNOMED-CT" />
     </observation>
@@ -242,7 +242,7 @@
     <observation>
       <observationskod code="420050001" codeSystem="1.2.752.116.2.1.1.1"
         codeSystemName="SNOMED-CT" />
-      <ns2:varde value="0.0" />
+      <varde value="0.0" />
       <ns2:lateralitet code="7771000" codeSystem="1.2.752.116.2.1.1.1"
         codeSystemName="SNOMED-CT" />
     </observation>
@@ -251,7 +251,7 @@
     <observation>
       <observationskod code="420050001" codeSystem="1.2.752.116.2.1.1.1"
         codeSystemName="SNOMED-CT" />
-      <ns2:varde value="0.0" />
+      <varde value="0.0" />
       <ns2:lateralitet code="51440002" codeSystem="1.2.752.116.2.1.1.1"
         codeSystemName="SNOMED-CT" />
     </observation>
@@ -261,7 +261,7 @@
     <observation>
       <observationskod code="397535007" codeSystem="1.2.752.116.2.1.1.1"
         codeSystemName="SNOMED-CT" />
-      <ns2:varde value="0.0" />
+      <varde value="0.0" />
       <ns2:lateralitet code="24028007" codeSystem="1.2.752.116.2.1.1.1"
         codeSystemName="SNOMED-CT" />
     </observation>
@@ -270,7 +270,7 @@
     <observation>
       <observationskod code="397535007" codeSystem="1.2.752.116.2.1.1.1"
         codeSystemName="SNOMED-CT" />
-      <ns2:varde value="0.0" />
+      <varde value="0.0" />
       <ns2:lateralitet code="7771000" codeSystem="1.2.752.116.2.1.1.1"
         codeSystemName="SNOMED-CT" />
     </observation>
@@ -279,7 +279,7 @@
     <observation>
       <observationskod code="397535007" codeSystem="1.2.752.116.2.1.1.1"
         codeSystemName="SNOMED-CT" />
-      <ns2:varde value="0.0" />
+      <varde value="0.0" />
       <ns2:lateralitet code="51440002" codeSystem="1.2.752.116.2.1.1.1"
         codeSystemName="SNOMED-CT" />
     </observation>
@@ -298,15 +298,15 @@
 
     <!-- ObservationAktivitetRelation begin -->
     <ns2:observationAktivitetRelation>
-      <observations-id root="1.2.752.129.2.1.2.1"
+      <ns2:observations-id root="1.2.752.129.2.1.2.1"
         extension="4" />
-      <aktivitets-id root="1.2.752.129.2.1.2.1" extension="2" />
+      <ns2:aktivitets-id root="1.2.752.129.2.1.2.1" extension="2" />
     </ns2:observationAktivitetRelation>
 
     <ns2:observationAktivitetRelation>
-      <observations-id root="1.2.752.129.2.1.2.1"
+      <ns2:observations-id root="1.2.752.129.2.1.2.1"
         extension="3" />
-      <aktivitets-id root="1.2.752.129.2.1.2.1" extension="1" />
+      <ns2:aktivitets-id root="1.2.752.129.2.1.2.1" extension="1" />
     </ns2:observationAktivitetRelation>
     <!-- ObservationAktivitetRelation ends -->
 
@@ -347,7 +347,7 @@
     <ns2:bilaga>
       <ns2:bilagetyp code="BIL1" codeSystem="80595600-7477-4a6c-baeb-d2439e86b8bc"
         codeSystemName="kv_bilaga" />
-      <forekomst>false</forekomst>
+      <ns2:forekomst>false</ns2:forekomst>
     </ns2:bilaga>
 
     <ns2:utgava>06</ns2:utgava>
