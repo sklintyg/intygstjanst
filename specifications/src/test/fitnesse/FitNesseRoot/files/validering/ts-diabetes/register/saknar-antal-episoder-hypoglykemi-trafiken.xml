@@ -63,6 +63,13 @@
       <ns2:varde code="VAR13" codeSystem="5a931b99-bda8-4f1e-8a6d-6f8a3f40a459"
         codeSystemName="kv_rekommendation_intyg" />
     </rekommendation>
+    <!-- Lämplighet att inneha... -->
+    <rekommendation>
+      <rekommendationskod code="REK10"
+        codeSystem="5a931b99-bda8-4f1e-8a6d-6f8a3f40a459"
+        codeSystemName="kv_rekommendation_intyg" />
+      <ns2:varde>true</ns2:varde>
+    </rekommendation>
     <!-- Rekommendation end -->
 
     <!-- Observationer begins -->
