@@ -23,7 +23,7 @@
   </distributionManagement>
 
   <properties>
-     <checkstyle.basedir>${project.basedir}/..</checkstyle.basedir>
+     <checkstyle.basedir>${project.basedir}/../..</checkstyle.basedir>
   </properties>
 
   <dependencies>

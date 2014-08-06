@@ -15,7 +15,7 @@
 
   <properties>
     <certificate.runner.version>1.0-SNAPSHOT</certificate.runner.version>
-    <checkstyle.basedir>${project.basedir}/..</checkstyle.basedir>
+    <checkstyle.basedir>${project.basedir}/../..</checkstyle.basedir>
   </properties>
 
   <dependencies>
