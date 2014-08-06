@@ -237,6 +237,12 @@
     </observation>
 
     <!-- Hörsel och balanssinne (4.1 - 4.2 -->
+    <observation>
+      <observationskod code="OBS2"
+        codeSystem="335d4bed-7e1d-4f81-ae7d-b39b266ef1a3"
+        codeSystemName="kv_observationer_intyg" />
+      <forekomst>false</forekomst>
+    </observation>
 
     <observation>
       <observationskod code="OBS3"
@@ -391,16 +397,16 @@
     </observation>
 
     <ns2:observationAktivitetRelation>
-      <observationsid root="1.2.752.129.2.1.2.1"
+      <ns2:observationsid root="1.2.752.129.2.1.2.1"
         extension="3" />
-      <aktivitetsid root="1.2.752.129.2.1.2.1"
+      <ns2:aktivitetsid root="1.2.752.129.2.1.2.1"
         extension="1" />
     </ns2:observationAktivitetRelation>
 
     <ns2:observationAktivitetRelation>
-      <observationsid root="1.2.752.129.2.1.2.1"
+      <ns2:observationsid root="1.2.752.129.2.1.2.1"
         extension="4" />
-      <aktivitetsid root="1.2.752.129.2.1.2.1"
+      <ns2:aktivitetsid root="1.2.752.129.2.1.2.1"
         extension="2" />
     </ns2:observationAktivitetRelation>
 
