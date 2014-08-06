@@ -12,6 +12,10 @@
     <artifactId>persistence</artifactId>
     <name>Inera Certificate Persistence</name>
 
+    <properties>
+        <checkstyle.basedir>${project.basedir}/..</checkstyle.basedir>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
