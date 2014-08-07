@@ -48,11 +48,11 @@
 
     <!-- AKTIVITETER -->
     <!-- Egenkontroll av blodsocker -->
-    <aktivitet>
-      <aktivitetskod code="308113006" codeSystem="1.2.752.116.2.1.1.1"
-        codeSystemName="SNOMED-CT" />
-      <forekomst>true</forekomst>
-    </aktivitet>
+<!--     <aktivitet> -->
+<!--       <aktivitetskod code="308113006" codeSystem="1.2.752.116.2.1.1.1" -->
+<!--         codeSystemName="SNOMED-CT" /> -->
+<!--       <forekomst>true</forekomst> -->
+<!--     </aktivitet> -->
     <!-- Aktiviteter end -->
 
     <!-- Rekommendation begin -->
@@ -141,7 +141,7 @@
 
     <!-- Inyget avser Taxi -->
     <ns2:intygAvser code="IAV9"
-      codeSystem="24c41b8d-258a-46bf-a08a-b90738b28770" codeSystemName="kv_intyget_avser" />
+      codeSystem="24c41b8d-258a-46bf-a08a-b90738b28770" codeSystemName="kv_intyget_avser"/>
 
     <ns2:bilaga>
       <ns2:bilagetyp code="BIL1"

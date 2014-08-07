@@ -321,7 +321,7 @@
     <observation>
       <observationskod code="G40.9" codeSystem="1.2.752.116.1.1.1.1.1"
         codeSystemName="ICD-10" />
-      <forekomst>true</forekomst>
+      <forekomst>false</forekomst>
     </observation>
 
     <!-- Njursjukdomar (10) -->
@@ -393,7 +393,7 @@
       <observationskod code="OBS18"
         codeSystem="335d4bed-7e1d-4f81-ae7d-b39b266ef1a3"
         codeSystemName="kv_observationer_intyg" />
-      <forekomst>false</forekomst>
+      <forekomst>true</forekomst>
     </observation>
 
     <ns2:observationAktivitetRelation>
