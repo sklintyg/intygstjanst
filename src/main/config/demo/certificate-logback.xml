@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="30 seconds">
+  <jmxConfigurator />
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <filter class="se.inera.certificate.logging.MarkerFilter">
+        <marker>Validation</marker>
+        <onMatch>DENY</onMatch>
+        <onMismatch>ACCEPT</onMismatch>
+    </filter>
+    <encoder>
+      <pattern>%date{ISO8601} [%thread] %-5level %logger{10} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!--Daily rolling file appender -->
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="se.inera.certificate.logging.MarkerFilter">
+        <marker>Validation</marker>
+        <onMatch>DENY</onMatch>
+        <onMismatch>ACCEPT</onMismatch>
+    </filter>
+    <file>${catalina.base}/logs/certificate.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.base}/logs/certificate.%d{yyyy-MM-dd}.log</fileNamePattern>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%date{ISO8601} [%thread] %-5level %logger{10} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!--Daily rolling file appender for validation messages -->
+  <appender name="VALIDATION" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="se.inera.certificate.logging.MarkerFilter">
+        <marker>Validation</marker>
+        <onMatch>ACCEPT</onMatch>
+        <onMismatch>DENY</onMismatch>
+    </filter>
+    <file>${catalina.base}/logs/validation.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.base}/logs/validation.%d{yyyy-MM-dd}.log</fileNamePattern>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%date{ISO8601} %-5level - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="org.springframework" level="error" />
+
+  <logger name="org.hibernate" level="error" />
+  <logger name="org.hibernate.engine.jdbc.spi.SqlExceptionHelper" level="off" />
+
+  <logger name="org.apache.camel" level="WARN" />
+  <logger name="org.apache.cxf" level="error" />
+
+  <logger name="se.inera.certificate" level="debug" />
+  <logger name="se.inera.certificate.integration" level="warn" />
+  <logger name="se.inera.certificate.interceptor" level="warn" />
+  <logger name="se.inera.certificate.modules.fk7263.model.converter.TransportToExternalFk7263LegacyConverter" level="warn" />
+
+  <root>
+    <level value="error" />
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+    <appender-ref ref="VALIDATION" />
+  </root>
+
+</configuration>
+
