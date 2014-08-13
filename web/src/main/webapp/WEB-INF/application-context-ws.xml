@@ -29,6 +29,10 @@
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
 
+  <jaxws:endpoint address="/get-recipients-for-certificate/v1.0"
+                  implementor="se.inera.certificate.integration.GetRecipientsForCertificateResponderImpl">
+  </jaxws:endpoint>
+
   <jaxws:endpoint address="/get-certificate/v1.0"
                   implementor="se.inera.certificate.integration.GetCertificateResponderImpl">
     <jaxws:outFaultInterceptors>

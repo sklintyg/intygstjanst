@@ -517,6 +517,21 @@
                     ${schema.path}/itintegration_monitoring/interactions/PingForConfigurationInteraction/PingForConfigurationInteraction_1.0_RIVTABP21.wsdl
                   </wsdl>
                 </wsdlOption>
+                <wsdlOption>
+                  <wsdl>
+                    ${schema.path}/clinicalprocess_healthcond_certificate/interactions/GetRecipientsForCertificate/GetRecipientsForCertificate_1.0.wsdl
+                  </wsdl>
+                  <extraargs>
+                    <extraarg>-p</extraarg>
+                    <extraarg>
+                      urn:riv:clinicalprocess:healthcond:certificate:GetRecipientsForCertificateResponder:1=se.inera.certificate.recipientservice.getrecipientsforcertificateresponder.v1
+                    </extraarg>
+                    <extraarg>-p</extraarg>
+                    <extraarg>
+                      urn:riv:clinicalprocess:healthcond:certificate:GetRecipientsForCertificate:1=se.inera.certificate.recipientservice.getrecipientsforcertificate.v1
+                    </extraarg>
+                  </extraargs>
+                </wsdlOption>
               </wsdlOptions>
             </configuration>
           </execution>
