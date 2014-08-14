@@ -255,6 +255,14 @@
                   <extraarg>
                     urn:riv:itintegration:registry:1=se.riv.itintegration.registry.v1
                   </extraarg>
+                  <extraarg>-p</extraarg>
+                  <extraarg>
+                    urn:riv:clinicalprocess:healthcond:certificate:GetRecipientsForCertificateResponder:1=se.inera.certificate.recipientservice.getrecipientsforcertificateresponder.v1
+                  </extraarg>
+                  <extraarg>-p</extraarg>
+                  <extraarg>
+                    urn:riv:clinicalprocess:healthcond:certificate:GetRecipientsForCertificate:1=se.inera.certificate.recipientservice.getrecipientsforcertificate.v1
+                  </extraarg>
                 </extraargs>
               </defaultOptions>
               <wsdlOptions>
@@ -521,14 +529,15 @@
                   <wsdl>
                     ${schema.path}/clinicalprocess_healthcond_certificate/interactions/GetRecipientsForCertificate/GetRecipientsForCertificate_1.0.wsdl
                   </wsdl>
+                  <bindingFiles>
+                    <bindingFile>
+                      ${basedir}/bindings/general-intyg-binding.xjb
+                    </bindingFile>
+                  </bindingFiles>
                   <extraargs>
-                    <extraarg>-p</extraarg>
+                    <extraarg>-wsdlLocation</extraarg>
                     <extraarg>
-                      urn:riv:clinicalprocess:healthcond:certificate:GetRecipientsForCertificateResponder:1=se.inera.certificate.recipientservice.getrecipientsforcertificateresponder.v1
-                    </extraarg>
-                    <extraarg>-p</extraarg>
-                    <extraarg>
-                      urn:riv:clinicalprocess:healthcond:certificate:GetRecipientsForCertificate:1=se.inera.certificate.recipientservice.getrecipientsforcertificate.v1
+                      classpath:schemas/clinicalprocess_healthcond_certificate/interactions/GetRecipientsForCertificate/GetRecipientsForCertificate_1.0.wsdl
                     </extraarg>
                   </extraargs>
                 </wsdlOption>

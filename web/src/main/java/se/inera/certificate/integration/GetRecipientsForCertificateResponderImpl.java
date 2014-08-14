@@ -1,5 +1,9 @@
 package se.inera.certificate.integration;
 
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType.APPLICATION_ERROR;
+import static se.inera.certificate.integration.util.ResultTypeUtil.errorResult;
+import static se.inera.certificate.integration.util.ResultTypeUtil.okResult;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,11 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
             recipientType.setId(r.getId());
             recipientType.setName(r.getName());
             response.getRecipient().add(recipientType);
+        }
+        if (response.getRecipient().isEmpty()) {
+            response.setResult(errorResult(APPLICATION_ERROR, String.format("No recipients found for certificate type: %s", certTypeStr)));
+        } else {
+            response.setResult(okResult());
         }
         return response;
     }
