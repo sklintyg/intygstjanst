@@ -257,7 +257,7 @@
                   </extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
-                    urn:riv:clinicalprocess:healthcond:certificate:GetRecipientsForCertificateResponder:1=se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificateresponder.v1
+                    urn:riv:clinicalprocess:healthcond:certificate:GetRecipientsForCertificateResponder:1=se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1
                   </extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
