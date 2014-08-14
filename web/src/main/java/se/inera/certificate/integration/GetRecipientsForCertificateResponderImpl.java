@@ -8,10 +8,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import se.inera.certificate.recipientservice.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponseType;
-import se.inera.certificate.recipientservice.getrecipientsforcertificate.v1.GetRecipientsForCertificateType;
-import se.inera.certificate.recipientservice.getrecipientsforcertificate.v1.RecipientType;
-import se.inera.certificate.recipientservice.getrecipientsforcertificateresponder.v1.GetRecipientsForCertificateResponderInterface;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponseType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.RecipientType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificateresponder.v1.GetRecipientsForCertificateResponderInterface;
 import se.inera.certificate.service.RecipientService;
 import se.inera.certificate.service.recipientservice.CertificateType;
 import se.inera.certificate.service.recipientservice.Recipient;

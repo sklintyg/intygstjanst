@@ -257,11 +257,11 @@
                   </extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
-                    urn:riv:clinicalprocess:healthcond:certificate:GetRecipientsForCertificateResponder:1=se.inera.certificate.recipientservice.getrecipientsforcertificateresponder.v1
+                    urn:riv:clinicalprocess:healthcond:certificate:GetRecipientsForCertificateResponder:1=se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificateresponder.v1
                   </extraarg>
                   <extraarg>-p</extraarg>
                   <extraarg>
-                    urn:riv:clinicalprocess:healthcond:certificate:GetRecipientsForCertificate:1=se.inera.certificate.recipientservice.getrecipientsforcertificate.v1
+                    urn:riv:clinicalprocess:healthcond:certificate:GetRecipientsForCertificate:1=se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1
                   </extraarg>
                 </extraargs>
               </defaultOptions>
