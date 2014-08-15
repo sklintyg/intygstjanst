@@ -165,11 +165,16 @@
 |validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-enhet.xml|=~/VALIDATION_ERROR/|
 
 
-!3 Saknad enhets postnr ger fel
+!3 Saknad enhets postnr ger inte fel
 
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-enhets-postnr.xml|=~/VALIDATION_ERROR/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-enhets-postnr.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|smittskydd-saknad-enhets-postnr.xml|
+
 
 !3 Tom enhets postnr ger fel
 
@@ -178,11 +183,15 @@
 |validering/ny_fk7263/registrera-smittskydd/smittskydd-tom-enhets-postnr.xml|=~/VALIDATION_ERROR/|
 
 
-!3 Saknad enhets postort ger fel
+!3 Saknad enhets postort ger inte fel
 
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-enhets-postort.xml|=~/VALIDATION_ERROR/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-enhets-postort.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|smittskydd-saknad-enhets-postort.xml|
 
 
 !3 Tom enhets postort ger fel
@@ -192,11 +201,16 @@
 |validering/ny_fk7263/registrera-smittskydd/smittskydd-tom-enhets-postort.xml|=~/VALIDATION_ERROR/|
 
 
-!3 Saknad enhets postadress ger fel
+!3 Saknad enhets postadress ger inte fel
 
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-enhets-postadress.xml|=~/VALIDATION_ERROR/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-enhets-postadress.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|smittskydd-saknad-enhets-postadress.xml|
+
 
 !3 Tom enhets postadress ger fel
 
@@ -205,11 +219,16 @@
 |validering/ny_fk7263/registrera-smittskydd/smittskydd-tom-enhets-postadress.xml|=~/VALIDATION_ERROR/|
 
 
-!3 Saknat enhets telefonnr ger fel
+!3 Saknat enhets telefonnr ger inte fel
 
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-enhets-telefonnr.xml|=~/VALIDATION_ERROR/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-enhets-telefonnr.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|smittskydd-saknat-enhets-telefonnr.xml|
+
 
 !3 Tom enhets telefonnr ger fel
 

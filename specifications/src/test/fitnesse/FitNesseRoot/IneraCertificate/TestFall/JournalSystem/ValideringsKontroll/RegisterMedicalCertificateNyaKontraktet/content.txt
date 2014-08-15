@@ -119,11 +119,16 @@
 |validering/ny_fk7263/register/saknad-enhet.xml|=~/VALIDATION_ERROR/|
 
 
-!3 Saknad enhets postnr ger fel
+!3 Saknad enhets postnr ger inte fel
 
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ny_fk7263/register/saknad-enhets-postnr.xml|=~/VALIDATION_ERROR/|
+|validering/ny_fk7263/register/saknad-enhets-postnr.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|saknad-enhets-postnr.xml|
+
 
 !3 Tom enhets postnr ger fel
 
@@ -132,11 +137,15 @@
 |validering/ny_fk7263/register/tom-enhets-postnr.xml|=~/VALIDATION_ERROR/|
 
 
-!3 Saknad enhets postort ger fel
+!3 Saknad enhets postort ger inte fel
 
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ny_fk7263/register/saknad-enhets-postort.xml|=~/VALIDATION_ERROR/|
+|validering/ny_fk7263/register/saknad-enhets-postort.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|saknad-enhets-postort.xml|
 
 
 !3 Tom enhets postort ger fel
@@ -146,11 +155,16 @@
 |validering/ny_fk7263/register/tom-enhets-postort.xml|=~/VALIDATION_ERROR/|
 
 
-!3 Saknad enhets postadress ger fel
+!3 Saknad enhets postadress ger inte fel
 
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ny_fk7263/register/saknad-enhets-postadress.xml|=~/VALIDATION_ERROR/|
+|validering/ny_fk7263/register/saknad-enhets-postadress.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|saknad-enhets-postadress.xml|
+
 
 !3 Tom enhets postadress ger fel
 
@@ -159,11 +173,16 @@
 |validering/ny_fk7263/register/tom-enhets-postadress.xml|=~/VALIDATION_ERROR/|
 
 
-!3 Saknat enhets telefonnr ger fel
+!3 Saknat enhets telefonnr ger inte fel
 
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ny_fk7263/register/saknat-enhets-telefonnr.xml|=~/VALIDATION_ERROR/|
+|validering/ny_fk7263/register/saknat-enhets-telefonnr.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|saknat-enhets-telefonnr.xml|
+
 
 !3 Tom enhets telefonnr ger fel
 
