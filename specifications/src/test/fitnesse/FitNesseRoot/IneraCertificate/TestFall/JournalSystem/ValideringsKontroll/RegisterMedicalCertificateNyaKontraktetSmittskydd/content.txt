@@ -302,11 +302,15 @@
 |validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-kommentar-vid-referenstyp-annat.xml|=~/VALIDATION_ERROR/|
 
 
-!3 Saknat skickatdatum ger fel
+!3 Saknat skickatdatum ger inga fel
 
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-skickatdatum.xml|=~/VALIDATION_ERROR/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-skickatdatum.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|smittskydd-saknat-skickatdatum.xml|
 
 
 !3 Saknat signdatum ger fel
