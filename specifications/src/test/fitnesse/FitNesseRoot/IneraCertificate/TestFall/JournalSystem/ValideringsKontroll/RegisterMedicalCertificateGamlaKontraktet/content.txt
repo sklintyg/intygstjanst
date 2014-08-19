@@ -548,18 +548,34 @@
 |id|
 |SMiL-saknad-sysselsattning|
 
-!3 Saknad arbetsuppgift ger fel, även för smittskyddsintyg
+!3 Saknad arbetsuppgift ger fel, om inte avstängning enligt smittskyddslagen
 
 |validera register|
 |filnamn|resultat?|
 |validering/register/saknad-arbetsuppgift.xml|=~/VALIDATION_ERROR/|
-|validering/register/SMiL-saknad-arbetsuppgift.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-saknad-arbetsuppgift.xml|OK|
 
-!3 Tom arbetsuppgift ger fel
+|ta bort intyg|
+|id|
+|SMiL-saknad-arbetsuppgift|
+
+!3 Saknad arbetsuppgift-beskrivning ger fel, även för smittskyddsintyg
 
 |validera register|
 |filnamn|resultat?|
-|validering/register/tom-arbetsuppgift.xml|=~/VALIDATION_ERROR/|
+|validering/register/saknad-arbetsuppgift-beskrivning.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-saknad-arbetsuppgift-beskrivning.xml|=~/VALIDATION_ERROR/|
+
+!3 Tom arbetsuppgift-beskrivning ger fel, om inte avstängning enligt smittskyddslagen
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/tom-arbetsuppgift-beskrivning.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-tom-arbetsuppgift-beskrivning.xml|OK|
+
+|ta bort intyg|
+|id|
+|SMiL-tom-arbetsuppgift-beskrivning|
 
 !3 Saknad varaktighet ger fel
 
