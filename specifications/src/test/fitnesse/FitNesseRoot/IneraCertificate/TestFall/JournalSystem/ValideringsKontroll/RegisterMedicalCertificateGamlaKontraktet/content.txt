@@ -509,7 +509,7 @@
 
 |ta bort intyg|
 |id|
-|giltigt-intyg-med-tom-aktivitetsbegransning-beskrivning|
+|giltigt-intyg-tom-beskrivning-rekommendation-ovrigt|
 
 !3 Tom beskrivning vid behandling - vården (fält 6b) ger inga fel
 
