@@ -16,7 +16,7 @@ public class Intyg extends RestClientFixture {
     String utfärdare
     String enhetsId = "1.2.3"
 	String enhet
-    String vårdgivarId = "EnVårdGivare"
+    String vårdgivarId
     String typ
     String id
     String idTemplate
@@ -25,7 +25,6 @@ public class Intyg extends RestClientFixture {
     int to
 	private boolean skickat
 	private boolean rättat
-    private boolean wiretap
     private boolean deletedByCareGiver
     
 	private String template
@@ -38,10 +37,6 @@ public class Intyg extends RestClientFixture {
         rättat = value?.equalsIgnoreCase("ja")
     }
 
-    public void setWiretap(String value) {
-        wiretap = value?.equalsIgnoreCase("ja")
-    }
-
     public void setBorttagetAvVården(String value) {
         deletedByCareGiver = value?.equalsIgnoreCase("ja")
     }
@@ -52,13 +47,11 @@ public class Intyg extends RestClientFixture {
         utfärdare = "EnUtfärdare"
         enhetsId = "1.2.3"
 		enhet = null
-        vårdgivarId = "EnVårdGivare"
 		giltigtFrån = null
 		giltigtTill = null
 		template = null
 		skickat = false
 		rättat = false
-        wiretap = false
         deletedByCareGiver = false
 	}
 	
@@ -87,9 +80,7 @@ public class Intyg extends RestClientFixture {
 
     private certificateJson() {
 		def stateList = [[state:"RECEIVED", target:"MI", timestamp:utfärdat + "T12:00:00.000"]]
-        if (wiretap)
-            stateList << [state:"SENT", target:"FK", timestamp:utfärdat + "T12:00:00.000"]
-        else if (skickat)
+        if (skickat)
 			stateList << [state:"SENT", target:"FK", timestamp:utfärdat + "T12:00:10.000"]
 		if (rättat)
 			stateList << [state:"CANCELLED", target:"MI", timestamp:utfärdat + "T13:00:00.000"]
@@ -102,8 +93,6 @@ public class Intyg extends RestClientFixture {
             validToDate:giltigtTill,
             careUnitId: (enhetsId) ? enhetsId : "1.2.3",
             careUnitName: enhet,
-            careGiverId : vårdgivarId,
-            wiretapped : wiretap,
             deletedByCareGiver : deletedByCareGiver,
 			states: stateList,
             document: document()

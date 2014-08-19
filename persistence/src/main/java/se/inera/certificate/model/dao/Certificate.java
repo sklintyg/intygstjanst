@@ -107,12 +107,6 @@ public class Certificate {
     private String careUnitName;
 
     /**
-     * Id of care giver.
-     */
-    @Column(name = "CARE_GIVER_ID", nullable = false)
-    private String careGiverId;
-
-    /**
      * Civic registration number for patient.
      */
     @Column(name = "CIVIC_REGISTRATION_NUMBER", nullable = false)
@@ -142,12 +136,6 @@ public class Certificate {
      */
     @Column(name = "DELETED", nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean deleted = Boolean.FALSE;
-
-    /**
-     * If this certificate is wire-tapped or not.
-     */
-    @Column(name = "WIRETAPPED", nullable = false, columnDefinition = "TINYINT(1)")
-    private Boolean wiretapped = Boolean.FALSE;
 
     /**
      * If this certificate is no longer used by the care giver.
@@ -246,14 +234,6 @@ public class Certificate {
         this.careUnitName = careUnitName;
     }
 
-    public String getCareGiverId() {
-        return careGiverId;
-    }
-
-    public void setCareGiverId(String careGiverId) {
-        this.careGiverId = careGiverId;
-    }
-
     public String getCivicRegistrationNumber() {
         return civicRegistrationNumber;
     }
@@ -292,14 +272,6 @@ public class Certificate {
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public Boolean getWiretapped() {
-        return wiretapped;
-    }
-
-    public void setWiretapped(Boolean wiretapped) {
-        this.wiretapped = wiretapped;
     }
 
     public boolean isDeletedByCareGiver() {

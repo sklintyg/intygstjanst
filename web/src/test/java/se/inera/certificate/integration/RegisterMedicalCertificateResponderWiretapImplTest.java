@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +31,7 @@ import org.xml.sax.SAXException;
 
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.util.NamespacePrefixNameIgnoringListener;
+import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.StatisticsService;
@@ -38,10 +40,10 @@ import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificater
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 
 /**
- *
+ * @author andreaskaltenbach
  */
 @RunWith(MockitoJUnitRunner.class)
-public class RegisterMedicalCertificateLegacyResponderProviderTest {
+public class RegisterMedicalCertificateResponderWiretapImplTest {
 
     @Mock
     CertificateService certificateService = mock(CertificateService.class);
@@ -49,11 +51,11 @@ public class RegisterMedicalCertificateLegacyResponderProviderTest {
     @Mock
     StatisticsService statisticsService = mock(StatisticsService.class);
 
+    @InjectMocks
+    private RegisterMedicalCertificateResponderWiretapImpl responder = new RegisterMedicalCertificateResponderWiretapImpl();
+
     private RegisterMedicalCertificateType request;
     private String xml;
-
-    @InjectMocks
-    private RegisterMedicalCertificateLegacyResponderProvider responder = new RegisterMedicalCertificateLegacyResponderProvider();
 
     @Before
     public void initializeResponder() throws JAXBException {
@@ -65,7 +67,6 @@ public class RegisterMedicalCertificateLegacyResponderProviderTest {
 
         ClassPathResource file = new ClassPathResource(
                 "RegisterMedicalCertificateLegacyResponderProviderTest/fk7263.xml");
-
         JAXBContext context = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
         JAXBElement<RegisterMedicalCertificateType> e = context.createUnmarshaller().unmarshal(
                 new StreamSource(file.getInputStream()), RegisterMedicalCertificateType.class);
@@ -76,7 +77,6 @@ public class RegisterMedicalCertificateLegacyResponderProviderTest {
 
     @Test
     public void testIt() throws Exception {
-
         Certificate certificate = new Certificate("123", "<utlatande/>");
 
         ArgumentCaptor<String> xmlCaptor = ArgumentCaptor.forClass(String.class);
@@ -85,8 +85,13 @@ public class RegisterMedicalCertificateLegacyResponderProviderTest {
         RegisterMedicalCertificateResponseType response = responder.registerMedicalCertificate(null, request);
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
+
         compareSoapMessageWithReferenceFile(xmlCaptor.getValue());
+
         Mockito.verify(statisticsService, Mockito.only()).created(certificate);
+
+        Mockito.verify(certificateService).setCertificateState(eq("19121212-1212"), eq("6ea04fd0-5fef-4809-823b-efeddf8a4d55"),
+                eq("FK"), eq(CertificateState.SENT), any(LocalDateTime.class));
     }
 
     @Test
@@ -106,5 +111,4 @@ public class RegisterMedicalCertificateLegacyResponderProviderTest {
         diff.overrideDifferenceListener(new NamespacePrefixNameIgnoringListener());
         assertTrue(diff.toString(), diff.identical());
     }
-
 }

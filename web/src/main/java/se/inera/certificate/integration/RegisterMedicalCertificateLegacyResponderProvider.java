@@ -38,8 +38,6 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
 
     private ObjectFactory objectFactory;
 
-    private boolean wiretapped = false;
-
     @Autowired
     private CertificateService certificateService;
 
@@ -63,10 +61,10 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
             new RegisterMedicalCertificateRequestValidator(registerMedicalCertificate).validateAndCorrect();
             String xml = xmlToString(registerMedicalCertificate);
             // FK7263 is the only certificate using the legacy format so we can hard code the type.
-            Certificate certificate = certificateService.storeCertificate(xml, FK7263, isWiretapped());
+            Certificate certificate = certificateService.storeCertificate(xml, FK7263);
             response.setResult(ResultOfCallUtil.okResult());
             String certificateId = registerMedicalCertificate.getLakarutlatande().getLakarutlatandeId();
-            LOGGER.info(LogMarkers.MONITORING, certificateId + " registered" + (isWiretapped() ? " via Wire-tap" : ""));
+            LOGGER.info(LogMarkers.MONITORING, certificateId + " registered");
             statisticsService.created(certificate);
 
         } catch (CertificateAlreadyExistsException e) {
@@ -89,15 +87,6 @@ public class RegisterMedicalCertificateLegacyResponderProvider implements Regist
         }
 
         return response;
-    }
-
-
-    public boolean isWiretapped() {
-        return wiretapped;
-    }
-
-    public void setWiretapped(boolean wiretapped) {
-        this.wiretapped = wiretapped;
     }
 
     private String xmlToString(RegisterMedicalCertificateType registerMedicalCertificate) throws JAXBException {

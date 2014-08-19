@@ -98,17 +98,7 @@
 
   <changeSet id="6" author="me">
     <addColumn tableName="CERTIFICATE">
-      <column name="CARE_UNIT_ID" type="varchar(255)" value="unknown">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-    <addColumn tableName="CERTIFICATE">
-      <column name="CARE_GIVER_ID" type="varchar(255)" value="unknown">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-    <addColumn tableName="CERTIFICATE">
-      <column name="WIRETAPPED" type="boolean" valueBoolean="false">
+      <column name="CARE_UNIT_ID" type="varchar(255)" defaultValue="x">
         <constraints nullable="false"/>
       </column>
     </addColumn>

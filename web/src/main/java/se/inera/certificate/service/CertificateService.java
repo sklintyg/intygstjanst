@@ -92,13 +92,12 @@ public interface CertificateService {
      * Stores the given certificate.
      * @param xml the string representation of the incoming XML
      * @param type the certificate type
-     * @param wiretapped  true if the certificate is wire-tapped
      * @return the created certificate
      * @throws CertificateAlreadyExistsException when a certificate with the same identifier already exists
      * @throws InvalidCertificateException if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
      * @throws CertificateValidationException if the certificate was not valid
      */
-    Certificate storeCertificate(String xml, String type, boolean wiretapped) throws CertificateAlreadyExistsException,
+    Certificate storeCertificate(String xml, String type) throws CertificateAlreadyExistsException,
             InvalidCertificateException, CertificateValidationException;
 
     void setCertificateState(String civicRegistrationNumber, String certificateId, String target, CertificateState state, LocalDateTime timestamp)

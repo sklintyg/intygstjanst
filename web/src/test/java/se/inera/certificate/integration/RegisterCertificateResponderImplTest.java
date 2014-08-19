@@ -78,20 +78,18 @@ public class RegisterCertificateResponderImplTest {
         Certificate certificate = new Certificate("123", "<utlatande/>");
 
         ArgumentCaptor<String> xmlCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Boolean> wiretappedCaptor = ArgumentCaptor.forClass(Boolean.class);
-        when(certificateService.storeCertificate(xmlCaptor.capture(), eq("fk7263"), wiretappedCaptor.capture())).thenReturn(certificate);
+        when(certificateService.storeCertificate(xmlCaptor.capture(), eq("fk7263"))).thenReturn(certificate);
 
         RegisterCertificateResponseType response = responder.registerCertificate(null, request);
 
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
         compareSoapMessageWithReferenceFile(xmlCaptor.getValue());
-        assertEquals(false, wiretappedCaptor.getValue());
         Mockito.verify(statisticsService, Mockito.only()).created(certificate);
     }
 
     @Test
     public void testWithExistingCertificate() throws Exception {
-        when(certificateService.storeCertificate(any(String.class), eq("fk7263"), any(Boolean.class)))
+        when(certificateService.storeCertificate(any(String.class), eq("fk7263")))
                 .thenThrow(new CertificateAlreadyExistsException(request.getUtlatande().getUtlatandeId().toString()));
 
         RegisterCertificateResponseType response = responder.registerCertificate(null, request);

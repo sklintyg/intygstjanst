@@ -62,7 +62,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
 
         try {
             String xml = xmlToString(registerCertificate);
-            Certificate certificate = certificateService.storeCertificate(xml, type, false);
+            Certificate certificate = certificateService.storeCertificate(xml, type);
             response.setResult(ResultTypeUtil.okResult());
             String certificateId = extractId(registerCertificate);
             LOGGER.info(LogMarkers.MONITORING, certificateId + " registered");
