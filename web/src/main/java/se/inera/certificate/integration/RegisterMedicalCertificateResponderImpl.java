@@ -60,7 +60,7 @@ public class RegisterMedicalCertificateResponderImpl implements RegisterMedicalC
 
         try {
             String xml = xmlToString(registerMedicalCertificate);
-            Certificate certificate = certificateService.storeCertificate(xml, type, false);
+            Certificate certificate = certificateService.storeCertificate(xml, type);
             response.setResult(ResultTypeUtil.okResult());
             String certificateId = registerMedicalCertificate.getUtlatande().getUtlatandeId().getRoot();
             LOGGER.info(LogMarkers.MONITORING, certificateId + " registered");

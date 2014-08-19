@@ -49,7 +49,6 @@ import se.inera.certificate.integration.util.RestUtils;
 import se.inera.certificate.integration.validator.ValidationException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
-import se.inera.certificate.model.Vardenhet;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
@@ -190,7 +189,7 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     @Transactional
-    public Certificate storeCertificate(String xml, String type, boolean wiretapped) {
+    public Certificate storeCertificate(String xml, String type) {
 
         String externalJson = unmarshall(type, xml);
 
@@ -200,20 +199,14 @@ public class CertificateServiceImpl implements CertificateService {
 
         // turn a lakarutlatande into a certificate entity
         Certificate certificate = createCertificate(utlatande, externalJson);
-        certificate.setWiretapped(wiretapped);
 
         // ensure that certificate does not exist yet
         checkForExistingCertificate(certificate.getId(), certificate.getCivicRegistrationNumber());
 
         // add initial RECEIVED state using current time as receiving timestamp
-        LocalDateTime now = new LocalDateTime();
-        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(MI, CertificateState.RECEIVED, now);
+        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(MI, CertificateState.RECEIVED,
+                new LocalDateTime());
         certificate.addState(state);
-        // If wiretapped, also add SENT state,
-        if (wiretapped) {
-            state = new CertificateStateHistoryEntry("FK", CertificateState.SENT, now);
-            certificate.addState(state);
-        }
 
         certificateDao.store(certificate);
 
@@ -278,14 +271,8 @@ public class CertificateServiceImpl implements CertificateService {
         certificate.setSignedDate(utlatande.getSigneringsdatum());
 
         if (utlatande.getSkapadAv() != null && utlatande.getSkapadAv().getVardenhet() != null) {
-            Vardenhet vardEnhet = utlatande.getSkapadAv().getVardenhet();
-            certificate.setCareUnitName(vardEnhet.getNamn());
-            if (vardEnhet.getId() != null) {
-                certificate.setCareUnitId(vardEnhet.getId().getExtension());
-            }
-            if (vardEnhet.getVardgivare() != null && vardEnhet.getVardgivare().getId() != null) {
-                certificate.setCareGiverId(vardEnhet.getVardgivare().getId().getExtension());
-            }
+            certificate.setCareUnitId(utlatande.getSkapadAv().getVardenhet().getId().getExtension());
+            certificate.setCareUnitName(utlatande.getSkapadAv().getVardenhet().getNamn());
         }
 
         certificate.setCivicRegistrationNumber(utlatande.getPatient().getId().getExtension());
