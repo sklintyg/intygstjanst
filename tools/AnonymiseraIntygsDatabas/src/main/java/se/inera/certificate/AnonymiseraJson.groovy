@@ -9,8 +9,8 @@ class AnonymiseraJson {
     
     static {
         LazyMap.metaClass.anonymize = {key->
-            if (delegate[key]) {
-                def value = delegate[key]
+            def value = delegate[key]
+            if (value) {
                 if (value instanceof List) {
                     delegate[key] = value.collect {AnonymizeString.anonymize(it)}
                 } else {

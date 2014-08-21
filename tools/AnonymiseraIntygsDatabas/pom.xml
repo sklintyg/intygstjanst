@@ -5,13 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>se.inera.certificate.tools</groupId>
   <artifactId>anonymisera-intygsdatabas</artifactId>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
   <name>Anonymisering av intyg</name>
   <packaging>jar</packaging>
 
   <properties>
     <certificate.version>1.1.6</certificate.version>
-    <groovy.version>2.3.4</groovy.version>
+    <groovy.version>2.3.6</groovy.version>
   </properties>
   <distributionManagement>
     <repository>
@@ -112,7 +112,7 @@
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-eclipse-batch</artifactId>
-            <version>2.3.4-01</version>
+            <version>2.3.6-01</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -174,5 +174,49 @@
       </plugins>
     </pluginManagement>
   </build>
+  <repositories>
+    <repository>
+      <id>callista-release</id>
+      <url>https://repository-callistasoftware.forge.cloudbees.com/release/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>callista-snapshot</id>
+      <url>https://repository-callistasoftware.forge.cloudbees.com/snapshot/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>thirdparty</id>
+      <url>https://repository-callistasoftware.forge.cloudbees.com/3rdparty</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>thirdparty-plugin</id>
+      <url>https://repository-callistasoftware.forge.cloudbees.com/3rdparty</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
 
 </project>
