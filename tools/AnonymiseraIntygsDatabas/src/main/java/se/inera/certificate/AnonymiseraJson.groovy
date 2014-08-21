@@ -1,13 +1,14 @@
 package se.inera.certificate
 
 import groovy.json.*
+import groovy.json.internal.LazyMap
 
 class AnonymiseraJson {
     
     AnonymiseraHsaId anonymiseraHsaId;
     
     static {
-        HashMap.metaClass.anonymize = {key->
+        LazyMap.metaClass.anonymize = {key->
             if (delegate[key]) {
                 def value = delegate[key]
                 if (value instanceof List) {

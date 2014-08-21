@@ -10,8 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public class AnonymiseraPersonId {
+
+    private static final String PERSON_NUMBER_WITHOUT_DASH_REGEX = "[0-9]{12}";
 
     Set<String> testPersonNr = new HashSet<>();
     List<String> kvarvarandeTestPersonNr = new LinkedList<>();
@@ -23,7 +26,7 @@ public class AnonymiseraPersonId {
         try {
             String line = null;
             while ((line = pnr.readLine()) != null) {
-                testPersonNr.add(line);
+                testPersonNr.add(normalisera(line));
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -40,6 +43,14 @@ public class AnonymiseraPersonId {
         return anonymized;
     }
 
+    String normalisera(String personnr) {
+        if (Pattern.matches(PERSON_NUMBER_WITHOUT_DASH_REGEX, personnr)) {
+            return personnr.substring(0, 8) + "-" + personnr.substring(8);
+        } else {
+            return personnr;
+        }
+    }
+    
     private String getUniqueRandomPersonid(String nummer) {
         if (kvarvarandeTestPersonNr.isEmpty()) {
             System.out.println("Återanvänder personnr");
