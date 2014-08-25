@@ -521,7 +521,7 @@
 |id|
 |giltigt-intyg-tom-beskrivning-behandling-varden|
 
-!3 Tom beskrivning vid behandling - övrigt (fält 6b) ger inga fel
+!3 Tom beskrivning vid behandling - annan åtgärd (fält 6b) ger inga fel
 
 |validera register|
 |filnamn|resultat?|
