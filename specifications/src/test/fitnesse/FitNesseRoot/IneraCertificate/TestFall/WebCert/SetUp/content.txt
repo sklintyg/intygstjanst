@@ -1,0 +1,12 @@
+!3 Givet följande samtycken:
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|nej|
+
+!3 och följande intyg:
+
+|Intyg|
+|personnr|utfärdat|giltigtFrån|giltigtTill|utfärdare|enhet|typ|id|mall|rättat|
+|19121212-1212|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|fit-intyg-1|L|nej|
+|19121212-1212|2013-04-02|2013-04-02|2013-04-15|läkare2|enhet2|FK7263|fit-intyg-2|M|ja|

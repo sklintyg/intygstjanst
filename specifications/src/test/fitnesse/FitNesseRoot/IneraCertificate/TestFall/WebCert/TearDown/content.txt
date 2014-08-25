@@ -1,0 +1,9 @@
+|Import|
+|se.inera.certificate.spec|
+
+!3 Rensa bort test-intyg
+
+|ta bort Intyg|
+|id|
+|fit-intyg-1|
+|fit-intyg-2|
