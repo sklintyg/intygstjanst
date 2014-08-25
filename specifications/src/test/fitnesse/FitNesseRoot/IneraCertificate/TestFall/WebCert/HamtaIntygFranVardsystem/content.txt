@@ -1,5 +1,0 @@
-|Hamta intyg fran vardsystem|
-|intyg|förväntatSvar|resultat?|
-|fit-intyg-1|{"utlatandeId":{"extension":"fit-intyg-1"},"typAvUtlatande":{"code":"fk7263"}}|OK|
-|fit-intyg-2|{"utlatandeId":{"extension":"fit-intyg-2"},"typAvUtlatande":{"code":"fk7263"}}|[REVOKED] - Certificate 'fit-intyg-2' has been revoked|
-|fit-intyg-3||[VALIDATION_ERROR] - Unknown certificate ID: fit-intyg-3|
