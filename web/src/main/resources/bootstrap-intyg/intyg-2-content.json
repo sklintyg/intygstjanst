@@ -128,15 +128,8 @@
       "from" : "2012-12-27",
       "tom" : "2012-12-31"
     },
-    "prognoser" : [{
-      "prognoskod" : {
-        "codeSystem" : "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
-        "codeSystemName" : "kv_prognos_intyg",
-        "code" : "PRO1"
-      },
-      "beskrivning" : "Patienten kan inte utöva sitt yrke förrän en förbättring sker med avseende på yrseln. Det är förenat med livsfara att utföra trapetskonster och samtidigt lida av yrsel. Patientens besvär kommer dock att först minska för att därefter helt upphöra efter genomförd behandling."
-    }],
     "varde" : [ {
+      "@class": "se.inera.certificate.model.PhysicalQuantity",
       "quantity" : 50,
       "unit" : "percent"
     } ]
@@ -150,18 +143,26 @@
       "from" : "2011-12-23",
       "tom" : "2011-12-26"
     },
-    "prognoser" : [{
-      "prognoskod" : {
-        "codeSystem" : "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
-        "codeSystemName" : "kv_prognos_intyg",
-        "code" : "PRO1"
-      },
-      "beskrivning" : "Patienten kan inte utöva sitt yrke förrän en förbättring sker med avseende på yrseln. Det är förenat med livsfara att utföra trapetskonster och samtidigt lida av yrsel. Patientens besvär kommer dock att först minska för att därefter helt upphöra efter genomförd behandling."
-    }],
     "varde" : [ {
+      "@class": "se.inera.certificate.model.PhysicalQuantity",
       "quantity" : 0,
       "unit" : "percent"
     } ]
+  }, {
+    "observationskod": {
+      "codeSystem": "1.2.752.116.2.1.1.1",
+      "codeSystemName": "SNOMED-CT",
+      "code": "170967006"
+    },
+    "beskrivning": "Patienten kan inte utöva sitt yrke förrän en förbättring sker med avseende på yrseln. Det är förenat med livsfara att utföra trapetskonster och samtidigt lida av yrsel. Patientens besvär kommer dock att först minska för att därefter helt upphöra efter genomförd behandling.",
+    "varde": [
+      {
+        "@class": "se.inera.certificate.model.Kod",
+        "codeSystem": "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
+        "codeSystemName": "kv_prognos_intyg",
+        "code": "PRO1"
+      }
+    ]
   } ],
   "vardkontakter" : [ {
     "vardkontakttyp" : {

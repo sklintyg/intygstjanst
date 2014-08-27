@@ -94,6 +94,7 @@
       "tom" : "2013-12-23"
     },
     "varde" : [ {
+      "@class": "se.inera.certificate.model.PhysicalQuantity",
       "quantity" : 0,
       "unit" : "percent"
     } ]
