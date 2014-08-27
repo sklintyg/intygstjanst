@@ -1,2 +1,2 @@
 #!/bin/sh
-java -Done-jar.class.path=. -jar ./lib/${project.build.finalName}.jar
+java -cp .:lib/${project.build.finalName}.jar se.inera.certificate.liquibase.Runner
