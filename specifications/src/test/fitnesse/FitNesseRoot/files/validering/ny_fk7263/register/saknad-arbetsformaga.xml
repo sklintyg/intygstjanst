@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urn:RegisterMedicalCertificate
 	xmlns:urn="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1"
-	xmlns="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2">
+	xmlns="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:p="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2">
 	<urn:utlatande>
 		<utlatande-id root="b2f6d5bc-2f50-4623-9ce9-bf1ee5404347" />
 		<typAvUtlatande code="fk7263"
@@ -197,7 +197,7 @@
 					är
 					nödvändig för att läka skadan.
 				</beskrivning>
-			<varde code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
+			<p:varde code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 				codeSystemName="kv_prognos_intyg" />
 		</observation>
 	</urn:utlatande>

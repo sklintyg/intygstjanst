@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urn:RegisterMedicalCertificate
 	xmlns:urn="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1"
-	xmlns="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2">
+	xmlns="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:p="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2">
 	<urn:utlatande>
 		<utlatande-id root="smittskydd-tomt-arbetsplatskod.xml" />
 		<typAvUtlatande code="fk7263"
@@ -170,7 +170,7 @@
 				<from>2011-04-01</from>
 				<tom>2011-05-31</tom>
 			</observationsperiod>
-			<varde value="75.0" unit="percent" />
+			<p:varde value="75.0" unit="percent" />
 		</observation>
 		<observation>
 			<observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1"
@@ -179,7 +179,7 @@
 				<from>2011-03-07</from>
 				<tom>2011-03-31</tom>
 			</observationsperiod>
-			<varde value="50.0" unit="percent" />
+			<p:varde value="50.0" unit="percent" />
 		</observation>
 		<observation>
 			<observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1"
@@ -188,7 +188,7 @@
 				<from>2011-02-14</from>
 				<tom>2011-03-06</tom>
 			</observationsperiod>
-			<varde value="25.0" unit="percent" />
+			<p:varde value="25.0" unit="percent" />
 		</observation>
 		<observation>
 			<observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1"
@@ -197,7 +197,7 @@
 				<from>2011-01-26</from>
 				<tom>2011-02-13</tom>
 			</observationsperiod>
-			<varde value="0.0" unit="percent" />
+			<p:varde value="0.0" unit="percent" />
 		</observation>
 		<observation>
 			<observationskod code="170967006" codeSystem="1.2.752.116.2.1.1.1"
@@ -211,7 +211,7 @@
 					är
 					nödvändig för att läka skadan.
 				</beskrivning>
-			<varde code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
+			<p:varde code="PRO4" codeSystem="3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7"
 				codeSystemName="kv_prognos_intyg" />
 		</observation>
 	</urn:utlatande>

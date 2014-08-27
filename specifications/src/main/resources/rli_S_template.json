@@ -84,17 +84,24 @@
       "from" : "2011-01-26",
       "tom" : "2011-02-13"
     },
-    "prognoser" : [{
-      "prognoskod" : {
-        "codeSystem" : "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
-        "codeSystemName" : "kv_prognos_intyg",
-        "code" : "PRO1"
-      }
-    }],
     "varde" : [ {
       "quantity" : 0,
       "unit" : "percent"
-    } ]
+    } ],
+        {
+            "observationskod": {
+                "codeSystem": "1.2.752.116.2.1.1.1",
+                "codeSystemName": "SNOMED-CT",
+                "code": "170967006"
+            },,
+            "varde": [
+                {
+                    "codeSystem": "3de65a8b-ae2c-48ce-b6fe-35bdd1f60cf7",
+                    "codeSystemName": "kv_prognos_intyg",
+                    "code": "PRO1"
+                }
+            ]
+        }
   } ],
   "vardkontakter" : [ {
     "vardkontakttyp" : {
