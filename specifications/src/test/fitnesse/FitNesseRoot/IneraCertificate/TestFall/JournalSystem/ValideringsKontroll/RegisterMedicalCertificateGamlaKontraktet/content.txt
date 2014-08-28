@@ -531,6 +531,13 @@
 |id|
 |giltigt-intyg-tom-beskrivning-behandling-ovrigt|
 
+!3 Multipla värden på arbetslivsinriktad rehabilitering aktuell (fält 7) ger fel, även för smittskyddsintyg
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/multipla-varden-rehabilitering.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-multipla-varden-rehabilitering.xml|=~/VALIDATION_ERROR/|
+
 !3 Saknad arbetsförmåga ger fel
 
 |validera register|
