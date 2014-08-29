@@ -16,6 +16,17 @@
 |maximalt-fk7263.xml|
 
 
+!3 Giltigt intyg med bidiagnoser och observationssamband ger inga fel
+
+|validera register mot nya kontraktet|
+|filnamn|resultat?|
+|validering/ny_fk7263/register/maximalt-fk7263-med-bidiagnoser.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|maximalt-fk7263-med-bidiagnoser.xml|
+
+
 !3 Avstangning smittskydd ger inga fel
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
