@@ -3,7 +3,7 @@
 	xmlns:urn="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1"
 	xmlns="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:p="urn:riv:clinicalprocess:healthcond:certificate:fk7263:1" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2">
 	<urn:utlatande>
-		<utlatande-id root="smittskydd-felaktiga-datumintervall-observationsperiod.xml" />
+		<utlatande-id root="smittskydd-datumintervall-gransfall-observationsperiod.xml" />
 		<typAvUtlatande code="fk7263"
 			codeSystem="f6fb361a-e31d-48b8-8657-99b63912dd9b" codeSystemName="kv_utlåtandetyp_intyg" />
 

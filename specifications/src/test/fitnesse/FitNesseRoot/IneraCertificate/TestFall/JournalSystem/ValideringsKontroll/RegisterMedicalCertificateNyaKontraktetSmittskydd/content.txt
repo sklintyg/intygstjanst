@@ -48,12 +48,15 @@
 |id|
 |smittskydd-saknad-funktionstillstand-kroppsfunktion.xml|
 
-!3 Saknad funktionstillstand kroppsfunktion beskrivning ger fel
+!3 Saknad funktionstillstand kroppsfunktion beskrivning ger inte fel 
 
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-funktionstillstand-kroppsfunktion-beskrivning.xml|=~/VALIDATION_ERROR/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-funktionstillstand-kroppsfunktion-beskrivning.xml|=~/OK/|
 
+|ta bort intyg|
+|id|
+|smittskydd-saknad-funktionstillstand-kroppsfunktion-beskrivning.xml|
 
 !3 Tom funktionstillstand kroppsfunktion ger fel
 
@@ -68,17 +71,26 @@
 |filnamn|resultat?|
 |validering/ny_fk7263/registrera-smittskydd/smittskydd-tom-funktionstillstand-aktivitet-beskrivning.xml|=~/VALIDATION_ERROR/|
 
-!3 Överlappande datumintervall observationsperiod ger fel
+!3 Överlappande datumintervall observationsperiod ger inte fel
 
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-felaktiga-datumintervall-observationsperiod.xml|=~/VALIDATION_ERROR/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-felaktiga-datumintervall-observationsperiod.xml|=~/OK/|
 
-!3 Samma gränsvärde av datumintervall observationsperiod ger fel
+|ta bort intyg|
+|id|
+|smittskydd-felaktiga-datumintervall-observationsperiod.xml|
+
+
+!3 Samma gränsvärde av datumintervall observationsperiod ger inte fel
 
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-datumintervall-gransfall-observationsperiod.xml|=~/VALIDATION_ERROR/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-datumintervall-gransfall-observationsperiod.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|smittskydd-datumintervall-gransfall-observationsperiod.xml|
 
 
 !3 Felaktig diagnos-kod-system ger fel
@@ -438,11 +450,15 @@
 |id|
 |smittskydd-saknad-sysselsattning.xml|
 
-!3 Saknad typ av arbetsuppgift vid normalt arbete ger fel
+!3 Saknad typ av arbetsuppgift vid normalt arbete ger OK
 
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-typ-av-arbetsuppgift-vid-normalt-arbete.xml|=~/VALIDATION_ERROR/|
+|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-typ-av-arbetsuppgift-vid-normalt-arbete.xml|=~/OK/|
+
+|ta bort intyg|
+|id|
+|smittskydd-saknad-typ-av-arbetsuppgift-vid-normalt-arbete.xml|
 
 
 !3 Felaktigt vårdgivarid ger fel
