@@ -3,11 +3,7 @@ package se.inera.certificate.integration;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
-import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ERROR;
-import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
-import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import riv.insuranceprocess.healthreporting.medcertqa._1.Amnetyp;
-import riv.insuranceprocess.healthreporting.medcertqa._1.InnehallType;
-import riv.insuranceprocess.healthreporting.medcertqa._1.VardAdresseringsType;
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.exception.InvalidCertificateException;
+import se.inera.certificate.exception.SubsystemCallException;
 import se.inera.certificate.integration.validator.RevokeRequestValidator;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
@@ -30,10 +24,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.v1.rivtabp20.SendMedicalCertificateQuestionResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.QuestionToFkType;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
-import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultOfCall;
 
 public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCertificateResponderInterface {
 
@@ -64,42 +54,8 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
             String certificateId = request.getRevoke().getLakarutlatande().getLakarutlatandeId();
             String civicRegistrationNumber = request.getRevoke().getLakarutlatande().getPatient().getPersonId()
                     .getExtension();
-            Certificate certificate = certificateService.revokeCertificate(civicRegistrationNumber, certificateId);
-            // if certificate was sent to Forsakringskassan before, we have to send a MAKULERING question to notify
-            // Forsakringskassan about the revocation
-            if (certificate.wasSentToTarget("FK")) {
-                String vardref = request.getRevoke().getVardReferensId();
-                String meddelande = request.getRevoke().getMeddelande();
-                if (meddelande == null || meddelande.isEmpty()) {
-                    meddelande = "meddelande saknas";
-                }
+            Certificate certificate = certificateService.revokeCertificate(civicRegistrationNumber, certificateId, request.getRevoke());
 
-                LocalDateTime signTs = request.getRevoke().getLakarutlatande().getSigneringsTidpunkt();
-                LocalDateTime avsantTs = request.getRevoke().getAvsantTidpunkt();
-                VardAdresseringsType vardAddress = request.getRevoke().getAdressVard();
-
-                QuestionToFkType question = new QuestionToFkType();
-                question.setAmne(Amnetyp.MAKULERING_AV_LAKARINTYG);
-                question.setVardReferensId(vardref);
-                question.setAvsantTidpunkt(avsantTs);
-                question.setAdressVard(vardAddress);
-
-                question.setFraga(new InnehallType());
-                question.getFraga().setMeddelandeText(meddelande);
-                question.getFraga().setSigneringsTidpunkt(signTs);
-
-                question.setLakarutlatande(request.getRevoke().getLakarutlatande());
-                AttributedURIType sendLogicalAddress = new AttributedURIType();
-                sendLogicalAddress.setValue(sendLogicalAddressText);
-                SendMedicalCertificateQuestionType parameters = new SendMedicalCertificateQuestionType();
-                parameters.setQuestion(question);
-
-                SendMedicalCertificateQuestionResponseType sendResponse = sendMedicalCertificateQuestionResponderInterface
-                        .sendMedicalCertificateQuestion(sendLogicalAddress, parameters);
-                if (sendResponse.getResult().getResultCode() != OK) {
-                    handleForsakringskassaError(certificateId, sendResponse.getResult());
-                }
-            }
             LOGGER.info(LogMarkers.MONITORING, certificateId + " revoked");
             getStatisticsService().revoked(certificate);
 
@@ -123,6 +79,11 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
             LOGGER.info(LogMarkers.VALIDATION, "Validation error found for revoke certificate '" + safeGetCertificateId(request)
                     + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + safeGetCivicRegistrationNumber(request) + ": " + e.getMessage());
             response.setResult(failResult(e.getMessage()));
+            return response;
+
+        } catch (SubsystemCallException e) {
+            LOGGER.warn(LogMarkers.MONITORING, "Encountered an exception when sending a revocation to subsystem '" + e.getSubsystemId() + "'");
+            response.setResult(failResult("Informing subsystem '" + e.getSubsystemId() + "' about revoked certificate resulted in error"));
             return response;
         }
 
@@ -158,18 +119,6 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
             return request.getRevoke().getAdressVard().getHosPersonal().getEnhet().getEnhetsId().getExtension();
         }
         return null;
-    }
-
-    private void handleForsakringskassaError(String certificateId, ResultOfCall result) {
-        if (result.getResultCode() == INFO) {
-            LOGGER.error("Failed to send question to Försäkringskassan for revoking certificate '" + certificateId
-                    + "'. Info from forsakringskassan: " + result.getInfoText());
-        }
-        if (result.getResultCode() == ERROR) {
-            LOGGER.error("Failed to send question to Försäkringskassan for revoking certificate '" + certificateId
-                    + "'. Error from forsakringskassan: " + result.getErrorId() + " - " + result.getErrorText());
-        }
-        throw new RuntimeException("Informing Försäkringskassan about revoked certificate resulted in error");
     }
 
     public StatisticsService getStatisticsService() {

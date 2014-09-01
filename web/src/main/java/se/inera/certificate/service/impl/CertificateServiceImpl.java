@@ -21,6 +21,7 @@ package se.inera.certificate.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 import org.joda.time.LocalDate;
@@ -59,6 +60,7 @@ import se.inera.certificate.modules.support.api.exception.ModuleValidationExcept
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 
 /**
  * @author andreaskaltenbach
@@ -108,7 +110,8 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public Certificate getCertificateForCitizen(String civicRegistrationNumber, String id) throws InvalidCertificateException, CertificateRevokedException,
+    public Certificate getCertificateForCitizen(String civicRegistrationNumber, String id) throws InvalidCertificateException,
+            CertificateRevokedException,
             MissingConsentException {
 
         assertConsent(civicRegistrationNumber);
@@ -217,7 +220,7 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     /**
-     *
+     * 
      * @param utlatandeXml
      *            the received certificate utlatande xml
      * @param certificate
@@ -298,7 +301,8 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = { InvalidCertificateException.class,
             CertificateRevokedException.class })
-    public Certificate revokeCertificate(String civicRegistrationNumber, String certificateId) throws InvalidCertificateException,
+    public Certificate revokeCertificate(String civicRegistrationNumber, String certificateId, RevokeType revokeData)
+            throws InvalidCertificateException,
             CertificateRevokedException {
         Certificate certificate = null;
         try {
@@ -318,7 +322,24 @@ public class CertificateServiceImpl implements CertificateService {
         String type = certificate.getType();
         setCertificateState(civicRegistrationNumber, certificateId, type, CertificateState.CANCELLED, null);
 
+        if (revokeData != null) {
+            sendRevokeMessagesToRecipients(certificate, revokeData);
+        }
+
         return certificate;
+    }
+
+    private void sendRevokeMessagesToRecipients(Certificate certificate, RevokeType revokeData) {
+        HashSet<String> recipientsFound = new HashSet<>();
+
+        for (CertificateStateHistoryEntry event : certificate.getStates()) {
+            if (event.getState().equals(CertificateState.SENT)) {
+                String recipient = event.getTarget();
+                if (recipientsFound.add(recipient)) {
+                    senderService.sendRevokeCertificateMessage(certificate, recipient, revokeData);
+                }
+            }
+        }
     }
 
     private void assertConsent(String civicRegistrationNumber) throws MissingConsentException {

@@ -43,7 +43,7 @@ public class RevokeMedicalCertificateResponderWiretapImpl extends RevokeMedicalC
             String civicRegistrationNumber = request.getRevoke().getLakarutlatande().getPatient().getPersonId()
                     .getExtension();
 
-            Certificate certificate = certificateService.revokeCertificate(civicRegistrationNumber, certificateId);
+            Certificate certificate = certificateService.revokeCertificate(civicRegistrationNumber, certificateId, null);
             LOGGER.info(LogMarkers.MONITORING, certificateId + " revoked");
             getStatisticsService().revoked(certificate);
 

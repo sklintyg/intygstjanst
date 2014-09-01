@@ -19,6 +19,7 @@
 package se.inera.certificate.service.impl;
 
 import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.LEGACY_LAKARUTLATANDE;
+import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
 import java.io.ByteArrayInputStream;
 
@@ -27,13 +28,18 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.stream.StreamSource;
 
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
 
+import riv.insuranceprocess.healthreporting.medcertqa._1.Amnetyp;
+import riv.insuranceprocess.healthreporting.medcertqa._1.InnehallType;
+import riv.insuranceprocess.healthreporting.medcertqa._1.VardAdresseringsType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
@@ -41,10 +47,12 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeT
 import se.inera.certificate.exception.MissingModuleException;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.exception.ServerException;
+import se.inera.certificate.exception.SubsystemCallException;
 import se.inera.certificate.integration.exception.ExternalWebServiceCallFailedException;
 import se.inera.certificate.integration.exception.ResultTypeErrorException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
+import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
@@ -58,6 +66,14 @@ import se.inera.certificate.service.recipientservice.Recipient;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.v1.rivtabp20.SendMedicalCertificateQuestionResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.QuestionToFkType;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 
 /**
@@ -84,8 +100,18 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     @Autowired
     private se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponderInterface registerCertificateClient;
 
+    @Autowired
+    private SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
+
+    @Autowired
+    private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponderInterface;
+
+    @Autowired
+    @Value("${revokecertificate.address.fk7263}")
+    private String sendLogicalAddressText;
+
     private JAXBContext jaxbContext;
-    
+
     @PostConstruct
     public void initializeJaxbContext() throws JAXBException {
         jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class, RegisterCertificateType.class);
@@ -164,6 +190,70 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
         } catch (JAXBException e) {
             throw new ServerException(e);
+        }
+    }
+
+    @Override
+    public void sendRevokeCertificateMessage(Certificate certificate, String target, RevokeType revokeData) {
+        if (target.equals("FK")) {
+            useFKRevokationStrategy(certificate, revokeData);
+        } else {
+            useDefaultRevokationStrategy(certificate, target, revokeData);
+        }
+    }
+
+    private void useFKRevokationStrategy(Certificate certificate, RevokeType revokeData) {
+        String intygId = certificate.getId();
+        String vardref = revokeData.getVardReferensId();
+        String meddelande = revokeData.getMeddelande();
+        if (meddelande == null || meddelande.isEmpty()) {
+            meddelande = "meddelande saknas";
+        }
+
+        LocalDateTime signTs = revokeData.getLakarutlatande().getSigneringsTidpunkt();
+        LocalDateTime avsantTs = revokeData.getAvsantTidpunkt();
+        VardAdresseringsType vardAddress = revokeData.getAdressVard();
+
+        QuestionToFkType question = new QuestionToFkType();
+        question.setAmne(Amnetyp.MAKULERING_AV_LAKARINTYG);
+        question.setVardReferensId(vardref);
+        question.setAvsantTidpunkt(avsantTs);
+        question.setAdressVard(vardAddress);
+
+        question.setFraga(new InnehallType());
+        question.getFraga().setMeddelandeText(meddelande);
+        question.getFraga().setSigneringsTidpunkt(signTs);
+
+        question.setLakarutlatande(revokeData.getLakarutlatande());
+        AttributedURIType sendLogicalAddress = new AttributedURIType();
+        sendLogicalAddress.setValue(sendLogicalAddressText);
+        SendMedicalCertificateQuestionType parameters = new SendMedicalCertificateQuestionType();
+        parameters.setQuestion(question);
+
+        SendMedicalCertificateQuestionResponseType sendResponse = sendMedicalCertificateQuestionResponderInterface
+                .sendMedicalCertificateQuestion(sendLogicalAddress, parameters);
+        if (sendResponse.getResult().getResultCode() != OK) {
+            String message = "Failed to send question to Försäkringskassan for revoking certificate '" + intygId
+                    + "'. Info from forsakringskassan: " + sendResponse.getResult().getInfoText();
+            LOGGER.error(LogMarkers.MONITORING, message);
+            throw new SubsystemCallException("FK", message);
+        }
+    }
+
+    private void useDefaultRevokationStrategy(Certificate certificate, String target, RevokeType revokeData) {
+        RevokeMedicalCertificateRequestType request = new RevokeMedicalCertificateRequestType();
+        request.setRevoke(revokeData);
+
+        AttributedURIType sendLogicalAddress = new AttributedURIType();
+        sendLogicalAddress.setValue(target);
+
+        RevokeMedicalCertificateResponseType sendResponse = revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(sendLogicalAddress,
+                request);
+        if (sendResponse.getResult().getResultCode() != OK) {
+            String message = "Failed to send question to '" + target + "' for revoking certificate '" + certificate.getId()
+                    + "'. Info from recipient: " + sendResponse.getResult().getInfoText();
+            LOGGER.error(LogMarkers.MONITORING, message);
+            throw new SubsystemCallException(target, message);
         }
     }
 

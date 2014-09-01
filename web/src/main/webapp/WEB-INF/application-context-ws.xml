@@ -175,6 +175,11 @@
                 address="${sendmedicalcertificatequestionv1.endpoint.url}">
   </jaxws:client>
 
+  <jaxws:client id="revokeMedicalCertificateClient"
+                serviceClass="se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface"
+                address="${revokemedicalcertificatev1.endpoint.url}">
+  </jaxws:client>
+
   <jaxws:client id="registerMedicalCertificateClient"
                   serviceClass="se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface"
                   address="${registermedicalcertificatev3.endpoint.url}">

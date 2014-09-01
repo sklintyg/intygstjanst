@@ -30,6 +30,7 @@ import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 
 /**
  * @author andreaskaltenbach
@@ -114,10 +115,13 @@ public interface CertificateService {
 
     /**
      * Revokes the certificate.
+     * @param civicRegistrationNumber the patient's civic registration number.
+     * @param certificateId the certificate ID
+     * @param revokeData Data of who requested the revoke, when etc. If <code>null</code>, no revocation should be sent to earlier recipients of the intyg 
      * @return the revoked certificate.
      * @throws InvalidCertificateException if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
      * @throws CertificateRevokedException if the certificate has been revoked
      */
-    Certificate revokeCertificate(String civicRegistrationNumber, String certificateId) throws InvalidCertificateException,
+    Certificate revokeCertificate(String civicRegistrationNumber, String certificateId, RevokeType revokeData) throws InvalidCertificateException,
             CertificateRevokedException;
 }

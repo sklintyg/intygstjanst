@@ -1,11 +1,10 @@
 package se.inera.certificate.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
 import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 
 import java.util.Collections;
@@ -21,17 +20,21 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.exception.CertificateRevokedException;
-import se.inera.certificate.exception.InvalidCertificateException;
+import se.inera.certificate.exception.PersistenceException;
+import se.inera.certificate.exception.SubsystemCallException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
+import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.StatisticsService;
+import se.inera.certificate.service.impl.CertificateServiceImpl;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
@@ -45,17 +48,25 @@ public class RevokeMedicalCertificateResponderImplTest {
 
     protected static final String CERTIFICATE_ID = "intygs-id-1234567890";
     protected static final String PERSONNUMMER = "19121212-1212";
+    protected static final String TARGET = "FK";
 
     protected static final AttributedURIType ADDRESS = new AttributedURIType();
 
     @Mock
-    protected CertificateService certificateService;
+    protected CertificateSenderService certificateSenderService;
 
     @Mock
-    StatisticsService statisticsService = mock(StatisticsService.class);
+    protected CertificateDao certificateDao;
+
+    @Spy
+    @InjectMocks
+    protected CertificateService certificateService = new CertificateServiceImpl();
 
     @Mock
-    private SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
+    protected StatisticsService statisticsService = mock(StatisticsService.class);
+
+    @Mock
+    protected SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
 
     @InjectMocks
     protected RevokeMedicalCertificateResponderInterface responder = createResponder();
@@ -84,18 +95,17 @@ public class RevokeMedicalCertificateResponderImplTest {
     public void testRevokeCertificateWhichWasAlreadySentToForsakringskassan() throws Exception {
 
         Certificate certificate = new Certificate(CERTIFICATE_ID, "text");
-        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry("FK", CertificateState.SENT, new LocalDateTime());
+        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TARGET, CertificateState.SENT, new LocalDateTime());
         certificate.setStates(Collections.singletonList(historyEntry));
 
-        when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
+        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
         SendMedicalCertificateQuestionResponseType sendQuestionResponse = new SendMedicalCertificateQuestionResponseType();
         sendQuestionResponse.setResult(okResult());
         when(sendMedicalCertificateQuestionResponderInterface.sendMedicalCertificateQuestion(ADDRESS, expectedSendRequest())).thenReturn(sendQuestionResponse);
 
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
 
-        verify(certificateService).revokeCertificate(PERSONNUMMER, CERTIFICATE_ID);
-        verify(sendMedicalCertificateQuestionResponderInterface).sendMedicalCertificateQuestion(ADDRESS, expectedSendRequest());
+        verify(certificateSenderService).sendRevokeCertificateMessage(certificate, TARGET, revokeRequest().getRevoke());
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
         Mockito.verify(statisticsService, Mockito.only()).revoked(certificate);
@@ -105,20 +115,15 @@ public class RevokeMedicalCertificateResponderImplTest {
     public void testRevokeCertificateWithForsakringskassanReturningError() throws Exception {
 
         Certificate certificate = new Certificate(CERTIFICATE_ID, "text");
-        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry("FK", CertificateState.SENT, new LocalDateTime());
+        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TARGET, CertificateState.SENT, new LocalDateTime());
         certificate.setStates(Collections.singletonList(historyEntry));
 
-        when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
-        SendMedicalCertificateQuestionResponseType sendQuestionResponse = new SendMedicalCertificateQuestionResponseType();
-        sendQuestionResponse.setResult(failResult("someErrorFromFörsäkringskassan"));
-        when(sendMedicalCertificateQuestionResponderInterface.sendMedicalCertificateQuestion(ADDRESS, expectedSendRequest())).thenReturn(sendQuestionResponse);
+        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
+        doThrow(new SubsystemCallException(TARGET)).when(certificateSenderService).sendRevokeCertificateMessage(certificate, TARGET,
+                revokeRequest().getRevoke());
 
-        try {
-            responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
-            fail();
-        } catch (RuntimeException ex) {
-            assertEquals("Informing Försäkringskassan about revoked certificate resulted in error", ex.getMessage());
-        }
+        RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
+        assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         Mockito.verifyZeroInteractions(statisticsService);
     }
 
@@ -127,10 +132,8 @@ public class RevokeMedicalCertificateResponderImplTest {
 
         Certificate certificate = new Certificate(CERTIFICATE_ID, "text");
 
-        when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
+        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
-
-        verify(certificateService).revokeCertificate(PERSONNUMMER, CERTIFICATE_ID);
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
         Mockito.verify(statisticsService, Mockito.only()).revoked(certificate);
@@ -138,7 +141,7 @@ public class RevokeMedicalCertificateResponderImplTest {
 
     @Test
     public void testRevokeUnknownCertificate() throws Exception {
-        when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenThrow(new InvalidCertificateException("certificateId", "civicRegistrationNumber"));
+        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenThrow(new PersistenceException("certificateId", "civicRegistrationNumber"));
 
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
 
@@ -150,10 +153,10 @@ public class RevokeMedicalCertificateResponderImplTest {
     @Test
     public void testRevokeAlreadyRevokedCertificate() throws Exception {
         Certificate certificate = new Certificate(CERTIFICATE_ID, "text");
-        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry("FK", CertificateState.CANCELLED, new LocalDateTime());
+        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TARGET, CertificateState.CANCELLED, new LocalDateTime());
         certificate.setStates(Collections.singletonList(historyEntry));
 
-        when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenThrow(new CertificateRevokedException("id"));
+        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
 
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
 
