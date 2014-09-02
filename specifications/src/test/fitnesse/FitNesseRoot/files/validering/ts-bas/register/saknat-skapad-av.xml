@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urn:RegisterMedicalCertificate
+<urn:RegisterCertificate
   xmlns:urn="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1"
   xmlns:p="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:p1="urn:iso:21090:dt:1"
   xmlns:p2="urn:riv:clinicalprocess:healthcond:certificate:ts-bas:1">
@@ -308,4 +308,4 @@
     <p2:version>06</p2:version>
 
   </urn:utlatande>
-</urn:RegisterMedicalCertificate>
+</urn:RegisterCertificate>
