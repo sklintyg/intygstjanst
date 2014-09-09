@@ -11,25 +11,22 @@
   </parent>
 
   <artifactId>liquibase-runner-for-certificate</artifactId>
-  <name>Liquibase runner for certificate(standalone)</name>
+  <name>Liquibase runner for certificate (standalone)</name>
   <packaging>jar</packaging>
 
   <properties>
-    <certificate.runner.version>1.0-SNAPSHOT</certificate.runner.version>
-    <checkstyle.basedir>${project.basedir}/../..</checkstyle.basedir>
+      <checkstyle.basedir>${project.basedir}/../..</checkstyle.basedir>
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>se.inera.certificate</groupId>
-      <artifactId>liquibase-runner</artifactId>
-      <version>${certificate.runner.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>se.inera.certificate</groupId>
-      <artifactId>persistence</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
+      <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>liquibase-runner</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>persistence</artifactId>
+		<exclusions>
         <exclusion>
           <groupId>se.inera.certificate</groupId>
           <artifactId>*</artifactId>
@@ -75,7 +72,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>2.3</version>
         <executions>
           <execution>
             <goals>

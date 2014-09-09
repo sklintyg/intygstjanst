@@ -2,8 +2,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>certificate</artifactId>
     <groupId>se.inera.certificate</groupId>
+    <artifactId>certificate</artifactId>
     <version>1.3-SNAPSHOT</version>
   </parent>
 

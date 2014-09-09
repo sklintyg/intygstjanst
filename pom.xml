@@ -1,34 +1,34 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
   <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>se.inera.intyg</groupId>
+    <artifactId>intyg-parent</artifactId>
+    <version>1.3-SNAPSHOT</version>
+  </parent>
+
   <groupId>se.inera.certificate</groupId>
   <artifactId>certificate</artifactId>
-  <version>1.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Inera Certificate</name>
+
   <description>
-    Inera Certificate Root Project - The parent of all other
-    Inera Certificate modules.
+    Inera Certificate Root Project - The parent of all other Inera Certificate modules.
   </description>
-  <scm>
-    <connection>scm:git:https://code.google.com/p/inera-certificate/</connection>
-    <tag>HEAD</tag>
-  </scm>
-  <distributionManagement>
-    <repository>
-      <id>cloudbees-private-release-repository</id>
-      <name>Callista Software Release Respository</name>
-      <url>dav:https://repository-callistasoftware.forge.cloudbees.com/release</url>
-      <layout>default</layout>
-    </repository>
-    <snapshotRepository>
-      <uniqueVersion>true</uniqueVersion>
-      <id>cloudbees-private-snapshot-repository</id>
-      <name>Callista Software Snapshot Respository</name>
-      <url>dav:https://repository-callistasoftware.forge.cloudbees.com/snapshot</url>
-      <layout>default</layout>
-    </snapshotRepository>
-  </distributionManagement>
+  
+  <properties>
+    <!-- Project properties -->
+    <logback-util.version>1.1.2</logback-util.version>
+    <checkstyle.basedir>${project.basedir}</checkstyle.basedir>
+
+    <!-- Properties for project modules having their own versioning strategy -->
+    <fk7263.version>1.0-SNAPSHOT</fk7263.version>
+    <ts-bas.version>1.0-SNAPSHOT</ts-bas.version>
+    <ts-diabetes.version>1.0-SNAPSHOT</ts-diabetes.version>
+    <liquibase-runner.version>1.0-SNAPSHOT</liquibase-runner.version>
+  </properties>
 
   <modules>
     <module>schemas</module>
@@ -36,55 +36,40 @@
     <module>web</module>
     <module>specifications</module>
     <module>persistence</module>
+    <module>logback-util</module>
+    <module>migration-tool</module>
     <module>tools/LiquibaseRunner</module>
     <module>tools/LiquibaseRunnerForCertificate</module>
+    <!--
+    <module>tools/AnonymiseraIntygsDatabas</module>
+    -->
   </modules>
 
-  <properties>
-    <system.mode>dev</system.mode>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <cxf.version>2.7.4</cxf.version>
-    <spring.version>3.2.8.RELEASE</spring.version>
-    <hibernate.version>4.2.0.Final</hibernate.version>
-    <hibernate.jpa.version>1.0.1.Final</hibernate.jpa.version>
-    <h2database.version>1.3.171</h2database.version>
-    <joda.version>2.2</joda.version>
-    <jadira.usertype.version>3.1.0.CR2</jadira.usertype.version>
-    <commons.ui.version>2.4</commons.ui.version>
-    <checkstyle.basedir>${project.basedir}</checkstyle.basedir>
-    <liquibase.version>2.0.5</liquibase.version>
-    <jaxb.commons.version>0.6.4</jaxb.commons.version>
-    <jackson.version>2.1.1</jackson.version>
-    <logback.version>1.0.11</logback.version>
-    <guava.version>14.0.1</guava.version>
-    <aspectj.version>1.7.1</aspectj.version>
-    <xmlunit.version>1.4</xmlunit.version>
-    <activemq.version>5.8.0</activemq.version>
-  </properties>
-
+  <scm>
+    <connection>scm:git:https://${scm.host}/p/inera-certificate/</connection>
+    <tag>HEAD</tag>
+  </scm>
+  
   <dependencyManagement>
     <dependencies>
-
-      <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>${commons.ui.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>schemas</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>se.inera.certificate.modules</groupId>
-        <artifactId>integration-util</artifactId>
-        <version>${project.version}</version>
-      </dependency>
+      <!-- Project dependencies -->
+      
+      <!-- TODO: Finns den här verkligen? -->
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>model</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>liquibase-runner</artifactId>
+        <version>${liquibase-runner.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>logback-util</artifactId>
+        <version>${logback-util.version}</version>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
@@ -92,171 +77,37 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>se.inera.certificate.modules</groupId>
-        <artifactId>module-support</artifactId>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>persistence</artifactId>
         <version>${project.version}</version>
       </dependency>
-
       <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-rt-frontend-jaxws</artifactId>
-        <version>${cxf.version}</version>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>schemas</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      
+      <!-- Dependencies to Intygstjansten's modules project -->
+      <dependency>
+        <groupId>se.inera.certificate.modules</groupId>
+        <artifactId>module-support</artifactId>
+        <version>${project.parent.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        <version>${cxf.version}</version>
+        <groupId>se.inera.certificate.modules</groupId>
+        <artifactId>fk7263</artifactId>
+        <version>${fk7263.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-rt-transports-http</artifactId>
-        <version>${cxf.version}</version>
-      </dependency>
-
-
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-context</artifactId>
-        <version>${spring.version}</version>
+        <groupId>se.inera.certificate.modules</groupId>
+        <artifactId>ts-bas</artifactId>
+        <version>${ts-bas.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-context-support</artifactId>
-        <version>${spring.version}</version>
+        <groupId>se.inera.certificate.modules</groupId>
+        <artifactId>ts-diabetes</artifactId>
+        <version>${ts-diabetes.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-web</artifactId>
-        <version>${spring.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-webmvc</artifactId>
-        <version>${spring.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-test</artifactId>
-        <version>${spring.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-tx</artifactId>
-        <version>${spring.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-orm</artifactId>
-        <version>${spring.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-aop</artifactId>
-        <version>${spring.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-jms</artifactId>
-        <version>${spring.version}</version>
-      </dependency>
-
-
-      <dependency>
-        <groupId>org.hibernate.javax.persistence</groupId>
-        <artifactId>hibernate-jpa-2.0-api</artifactId>
-        <version>${hibernate.jpa.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-entitymanager</artifactId>
-        <version>${hibernate.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.h2database</groupId>
-        <artifactId>h2</artifactId>
-        <version>${h2database.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>joda-time</groupId>
-        <artifactId>joda-time</artifactId>
-        <version>${joda.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jadira.usertype</groupId>
-        <artifactId>usertype.core</artifactId>
-        <version>${jadira.usertype.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.liquibase</groupId>
-        <artifactId>liquibase-core</artifactId>
-        <version>${liquibase.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jvnet.jaxb2_commons</groupId>
-        <artifactId>jaxb2-basics-runtime</artifactId>
-        <version>${jaxb.commons.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.fasterxml.jackson.jaxrs</groupId>
-        <artifactId>jackson-jaxrs-json-provider</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.fasterxml.jackson.datatype</groupId>
-        <artifactId>jackson-datatype-joda</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.fasterxml.jackson.module</groupId>
-        <artifactId>jackson-module-jaxb-annotations</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.aspectj</groupId>
-        <artifactId>aspectjrt</artifactId>
-        <version>${aspectj.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.aspectj</groupId>
-        <artifactId>aspectjweaver</artifactId>
-        <version>${aspectj.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>${guava.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>2.5</version>
-        <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>xmlunit</groupId>
-        <artifactId>xmlunit</artifactId>
-        <version>${xmlunit.version}</version>
-        <scope>test</scope>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
 
@@ -264,158 +115,27 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>${logback.version}</version>
     </dependency>
+    
+    <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.9</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>1.9.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
   <build>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-webdav</artifactId>
-        <version>1.0-beta-2</version>
-      </extension>
-    </extensions>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.1</version>
-          <configuration>
-            <source>1.7</source>
-            <target>1.7</target>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.14.1</version>
-          <configuration>
-            <argLine>-Dcatalina.base=${project.build.directory}/catalina.base</argLine>
-            <systemProperties>
-              <property>
-                <name>java.awt.headless</name>
-                <value>true</value>
-              </property>
-            </systemProperties>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>2.4.1</version>
-          <configuration>
-            <pushChanges>false</pushChanges>
-          </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-scm-plugin</artifactId>
-              <version>1.8.1</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.0</version>
-        </plugin>
-        <plugin>
-          <groupId>com.mycila.maven-license-plugin</groupId>
-          <artifactId>maven-license-plugin</artifactId>
-          <configuration>
-            <properties>
-              <year>2013</year>
-              <project-name>Inera Certificate</project-name>
-              <project-url>http://code.google.com/p/inera-certificate</project-url>
-            </properties>
-            <strictCheck>true</strictCheck>
-            <header>header.txt</header>
-            <encoding>UTF-8</encoding>
-            <includes>
-              <include>src/main/**</include>
-              <include>src/test/**</include>
-            </includes>
-            <excludes>
-              <exclude>**/NOTICE.txt</exclude>
-              <exclude>**/LICENSE.txt</exclude>
-              <!-- Exclude .properties due to encoding issues (iso-88590-1) -->
-              <exclude>**/*.properties</exclude>
-              <exclude>**/*.xsd</exclude>
-            </excludes>
-            <mapping>
-              <tag>DYNASCRIPT_STYLE</tag>
-            </mapping>
-          </configuration>
-          <executions>
-            <execution>
-              <id>check-headers-for-license</id>
-              <goals>
-                <goal>check</goal>
-              </goals>
-              <phase>validate</phase>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <versionRange>
-                      [0.6.2,)
-                    </versionRange>
-                    <goals>
-                      <goal>prepare-agent</goal>
-                      <goal>report</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore />
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>2.5.2</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.10</version>
-        <configuration>
-          <configLocation>${checkstyle.basedir}/src/main/resources/checkstyle.xml</configLocation>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.jacoco</groupId>
+   		<groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.6.2.201302030002</version>
         <executions>
           <execution>
             <id>prepare-agent</id>
@@ -434,66 +154,6 @@
       </plugin>
     </plugins>
   </build>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>2.5.2</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.10</version>
-        <configuration>
-          <configLocation>${checkstyle.basedir}/src/main/resources/checkstyle.xml</configLocation>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-  <repositories>
-    <repository>
-      <id>callista-release</id>
-      <url>https://repository-callistasoftware.forge.cloudbees.com/release/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>callista-snapshot</id>
-      <url>https://repository-callistasoftware.forge.cloudbees.com/snapshot/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>thirdparty</id>
-      <url>https://repository-callistasoftware.forge.cloudbees.com/3rdparty</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>thirdparty-plugin</id>
-      <url>https://repository-callistasoftware.forge.cloudbees.com/3rdparty</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
+
 </project>
  
