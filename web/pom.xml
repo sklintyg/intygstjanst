@@ -226,22 +226,27 @@
               <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
+								<version>${h2db.connector.version}</version>
               </dependency>
               <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
+								<version>${mysql.connector.version}</version>
               </dependency>
               <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-broker</artifactId>
+								<version>${activemq.version}</version>
               </dependency>
               <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-kahadb-store</artifactId>
+								<version>${activemq.version}</version>
               </dependency>
               <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-jms_1.1_spec</artifactId>
+								<version>${geronimo-jms-specs.version}</version>
               </dependency>
             </dependencies>
           </plugin>
