@@ -313,24 +313,11 @@
 |validering/ny_fk7263/registrera-smittskydd/smittskydd-saknat-personnr.xml|=~/VALIDATION_ERROR/|
 
 
-!3 Saknad kommentar ger fel
-
-|validera register mot nya kontraktet|
-|filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-kommentar.xml|=~/VALIDATION_ERROR/|
-
 !3 Tom kommentar ger fel
 
 |validera register mot nya kontraktet|
 |filnamn|resultat?|
 |validering/ny_fk7263/registrera-smittskydd/smittskydd-tom-kommentar.xml|=~/VALIDATION_ERROR/|
-
-
-!3 Saknad kommentar vid resferenstyp annat ger fel
-
-|validera register mot nya kontraktet|
-|filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-saknad-kommentar-vid-referenstyp-annat.xml|=~/VALIDATION_ERROR/|
 
 
 !3 Saknat skickatdatum ger inga fel

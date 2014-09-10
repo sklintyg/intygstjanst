@@ -611,25 +611,6 @@
 |filnamn|resultat?|
 |validering/register/multipla-ressatt.xml|=~/VALIDATION_ERROR/|
 
-!3 Saknad kommentar ger fel om referens är "annat", även för smittskyddsintyg
-
-|validera register|
-|filnamn|resultat?|
-|validering/register/saknad-kommentar-vid-referens-annat.xml|=~/VALIDATION_ERROR/|
-|validering/register/SMiL-saknad-kommentar-vid-referens-annat.xml|=~/VALIDATION_ERROR/|
-
-!3 Tom kommentar vid referenstyp "annat" ger fel, även för smittskyddsintyg
-
-|validera register|
-|filnamn|resultat?|
-|validering/register/tom-kommentar-vid-referenstyp-annat.xml|=~/VALIDATION_ERROR/|
-|validering/register/SMiL-tom-kommentar-vid-referenstyp-annat.xml|=~/VALIDATION_ERROR/|
-
-!3 Saknad kommentar ger fel om prognos är "går inte att bedömma"
-
-|validera register|
-|filnamn|resultat?|
-|validering/register/saknad-kommentar-vid-prognos-gar-ej-att-bedomma.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat signeringsdatum ger fel
 
