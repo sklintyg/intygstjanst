@@ -7,6 +7,7 @@ import groovy.sql.Sql
 import groovy.xml.StreamingMarkupBuilder
 import groovyx.gpars.GParsPool
 import groovyx.net.http.HTTPBuilder
+import org.joda.time.LocalDateTime
 
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -17,7 +18,7 @@ class Omsandning {
 
         long start = System.currentTimeMillis()
 
-        println "--- Program start ---"
+        println "- Starting Fält 9 - Re-send to FK"
         
         def props = new Properties()
         new File("dataSource.properties").withInputStream { stream ->
@@ -27,6 +28,12 @@ class Omsandning {
             props.load(stream)
         }
         def config = new ConfigSlurper().parse(props)
+        
+        long delay = config.webService.send.delay.toLong()
+        
+        def theDate = LocalDateTime.parse(config.webService.enddate)
+        println "- Using date: $theDate"       
+        
         BasicDataSource dataSource =
                 new BasicDataSource(driverClassName: config.dataSource.driver, url: config.dataSource.url,
                 username: config.dataSource.username, password: config.dataSource.password,
@@ -39,9 +46,11 @@ class Omsandning {
             and oc.CERTIFICATE_ID in (
                 select cs.CERTIFICATE_ID from CERTIFICATE_STATE cs
                 where cs.STATE = 'RECEIVED'
-                and cs.TIMESTAMP < '2014-06-02 10:06:00'
-            )""")
+                and cs.TIMESTAMP < :date
+            )""", [date : theDate.toDate()])
         bootstrapSql.close()
+        
+        println "- ${certificateIds.size()} candidates found"
         
         Sql sql = new Sql(dataSource)
         int sent = 0
@@ -86,11 +95,11 @@ class Omsandning {
                         error++
                     }
                 }
-                Thread.sleep(1)
+                Thread.sleep(delay)
             }
         }
         sql.close()
-        println "$sent certificates sent to FK, $info with info messages, $error errors"
+        println "- Done! $sent certificates sent to FK, $info with info messages, $error errors"
     }
 
     static def buildSendMessage(def registerXml, def id) {

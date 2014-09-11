@@ -22,8 +22,8 @@ import org.apache.http.util.EntityUtils;
 class Migrera {
 
     static void main(String[] args) {
-        println "--- Program start ---"
-        println "- Starting Fält 9 conversion"
+
+        println "- Starting Fält 9 - Certificate migration"
         
         int numberOfThreads = args.length > 0 ? args[0] : 5
         long start = System.currentTimeMillis()
@@ -55,13 +55,15 @@ class Migrera {
         
         final AtomicInteger totalCount = new AtomicInteger(0)
         final AtomicInteger errorCount = new AtomicInteger(0)
-        def results
+        
         def converted = 0
         def error = 0
         
         def converterUrl = config.webService.convert.URL
         
-        def withPool = GParsPool.withPool(numberOfThreads) {
+        def results
+        
+        GParsPool.withPool(numberOfThreads) {
             
             results = certificateIds.collectParallel {
                 StringBuffer result = new StringBuffer()
@@ -104,17 +106,17 @@ class Migrera {
                 }
                 result.toString()
             }
-            results
         }
          
         long end = System.currentTimeMillis()
         
-        println "- ${totalCount} certificates processed with ${errorCount} errors in ${end-start % 1000} seconds"
+        println "- Done! ${totalCount} certificates processed with ${errorCount} errors in ${end-start % 1000} seconds"
         
         if (results.size() > 0) {
             println " "
-            for (err in results) {
-                println err
+            println "id;status;message"
+            results.each { line ->
+                if (line) println line
             }
         }
         
