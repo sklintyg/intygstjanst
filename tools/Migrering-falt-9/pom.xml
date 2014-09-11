@@ -107,19 +107,7 @@
       <groupId>joda-time</groupId>
       <version>2.2</version>
     </dependency>
-
-    <dependency>
-      <artifactId>cxf-rt-transports-http</artifactId>
-      <groupId>org.apache.cxf</groupId>
-      <version>${cxf.version}</version>
-    </dependency>
-
-    <dependency>
-      <artifactId>cxf-rt-frontend-jaxws</artifactId>
-      <groupId>org.apache.cxf</groupId>
-      <version>${cxf.version}</version>
-    </dependency>
-
+    
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
