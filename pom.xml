@@ -36,7 +36,6 @@
     <module>web</module>
     <module>specifications</module>
     <module>persistence</module>
-    <module>logback-util</module>
     <module>tools/LiquibaseRunner</module>
     <module>tools/LiquibaseRunnerForCertificate</module>
     <!--
