@@ -112,6 +112,8 @@ class Omsandning {
         def patientNamn = intyg.'ns1:patient'.'ns2:fullstandigtNamn'.text()
         def hosPersonalId = intyg.'ns1:skapadAvHosPersonal'.'ns2:personal-id'
         def hosPersonalNamn = intyg.'ns1:skapadAvHosPersonal'.'ns2:fullstandigtNamn'.text()
+        // Ugly fix for 2 invalid certificates, where fullstandigtNamn is the empty string
+        if (!hosPersonalNamn) hosPersonalNamn = " "
         def enhet = intyg.'ns1:skapadAvHosPersonal'.'ns2:enhet'
         def builder = new StreamingMarkupBuilder()
         builder.encoding = "UTF-8"
