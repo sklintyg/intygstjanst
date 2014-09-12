@@ -2,16 +2,12 @@ package se.inera.certificate.tools.falt9
 
 import static groovyx.net.http.ContentType.*
 import static groovyx.net.http.Method.*
-
 import groovy.sql.Sql
 import groovy.xml.StreamingMarkupBuilder
-import groovyx.gpars.GParsPool
 import groovyx.net.http.HTTPBuilder
-import org.joda.time.LocalDateTime
-
-import java.util.concurrent.atomic.AtomicInteger
 
 import org.apache.commons.dbcp2.BasicDataSource
+import org.joda.time.LocalDateTime
 
 class Omsandning {
     static void main(String[] args) {
@@ -31,7 +27,7 @@ class Omsandning {
         
         long delay = config.webService.send.delay.toLong()
         
-        def theDate = LocalDateTime.parse(config.webService.enddate)
+        def theDate = LocalDateTime.parse(config.dataSource.enddate)
         println "- Using date: $theDate"       
         
         BasicDataSource dataSource =

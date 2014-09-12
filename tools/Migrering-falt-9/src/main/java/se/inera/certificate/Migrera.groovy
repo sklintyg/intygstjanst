@@ -3,18 +3,14 @@ package se.inera.certificate
 import static groovyx.net.http.ContentType.*
 import static groovyx.net.http.Method.*
 import groovy.sql.Sql
-import groovy.xml.StreamingMarkupBuilder
 import groovyx.gpars.GParsPool
 import groovyx.net.http.HTTPBuilder
-import groovyx.net.http.RESTClient
 
 import java.util.concurrent.atomic.AtomicInteger
 
 import org.apache.commons.dbcp2.BasicDataSource
-import org.apache.http.client.HttpClient
-import org.apache.http.impl.client.AbstractHttpClient
-import org.apache.http.params.HttpParams
-import org.apache.http.util.EntityUtils;
+import org.apache.http.util.EntityUtils
+import org.joda.time.LocalDateTime
 
 /**
  * Migrering av de intyg som drabbats av fält9-problematiken
@@ -35,6 +31,10 @@ class Migrera {
             props.load(stream)
         }
         def config = new ConfigSlurper().parse(props)
+        
+        def theDate = LocalDateTime.parse(config.dataSource.enddate)
+        println "- Using date: $theDate"
+        
         BasicDataSource dataSource =
             new BasicDataSource(driverClassName: config.dataSource.driver, url: config.dataSource.url,
                                 username: config.dataSource.username, password: config.dataSource.password,
@@ -47,17 +47,14 @@ class Migrera {
             and oc.CERTIFICATE_ID in (
                 select cs.CERTIFICATE_ID from CERTIFICATE_STATE cs
                 where cs.STATE = 'RECEIVED'
-                and cs.TIMESTAMP < '2014-06-02 10:06:00'
-            )""")
+                and cs.TIMESTAMP < :date
+            )""", [date : theDate.toDate()])
         bootstrapSql.close()
                 
         println "- ${certificateIds.size()} candidates found"
         
         final AtomicInteger totalCount = new AtomicInteger(0)
         final AtomicInteger errorCount = new AtomicInteger(0)
-        
-        def converted = 0
-        def error = 0
         
         def converterUrl = config.webService.convert.URL
         
@@ -110,7 +107,7 @@ class Migrera {
          
         long end = System.currentTimeMillis()
         
-        println "- Done! ${totalCount} certificates processed with ${errorCount} errors in ${end-start % 1000} seconds"
+        println "- Done! ${totalCount} certificates processed with ${errorCount} errors in ${(end-start)/1000} seconds"
         
         if (results.size() > 0) {
             println " "
