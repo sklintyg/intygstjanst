@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -16,6 +17,7 @@
     <inera.certificates.basedir>${project.basedir}/../../inera-certificate-modules</inera.certificates.basedir>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
     <buildTimestamp>${maven.build.timestamp}</buildTimestamp>
+    <spring.profile>${system.mode}</spring.profile>
   </properties>
 
   <dependencies>
@@ -192,6 +194,12 @@
   </build>
   <profiles>
     <profile>
+      <id>local-db</id>
+      <properties>
+        <spring.profile>local</spring.profile>
+      </properties>
+    </profile>
+    <profile>
       <id>jetty</id>
       <build>
         <plugins>
@@ -213,7 +221,7 @@
               <systemProperties>
                 <systemProperty>
                   <name>spring.profiles.active</name>
-                  <value>${system.mode}</value>
+                  <value>${spring.profile}</value>
                 </systemProperty>
                 <systemProperty>
                   <name>jetty.port</name>
@@ -222,7 +230,7 @@
                 <systemProperty>
                   <name>java.awt.headless</name>
                   <value>true</value>
-                </systemProperty>            
+                </systemProperty>
                 <systemProperty>
                   <name>catalina.base</name>
                   <value>${project.build.directory}/catalina.base</value>
