@@ -27,7 +27,7 @@
     <util:properties location="file:${recipient.properties.file}" id="recipientService" />
   </beans>
 
-  <beans profile="dev,test">
+  <beans profile="dev,test,local">
     <!-- Config file could be missing in dev and test -->
     <context:property-placeholder
       location="file:${credentials.file}, file:${certificate.config.file}"

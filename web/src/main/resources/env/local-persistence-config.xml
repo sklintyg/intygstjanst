@@ -18,22 +18,13 @@
               http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
               http://www.springframework.org/schema/context
               http://www.springframework.org/schema/context/spring-context.xsd"
-  profile="dev">
+  profile="local">
 
   <context:annotation-config />
   <context:component-scan base-package="se.inera.certificate.model" />
 
-  <jdbc:embedded-database id="dataSource" type="H2" />
-
-  <bean id="org.h2.tools.Server" class="org.h2.tools.Server"
-    factory-method="createTcpServer" init-method="start" destroy-method="stop"
-    lazy-init="false">
-    <constructor-arg value="-tcp,-tcpAllowOthers,-tcpPort,9092" />
-  </bean>
-  
-  <bean id="h2WebServer" class="org.h2.tools.Server"
-    factory-method="createWebServer" init-method="start" destroy-method="stop">
-    <constructor-arg value="-web,-webAllowOthers,-webPort,8082" />
+  <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+    <property name="jndiName" value="java:comp/env/jdbc/intyg" />
   </bean>
 
   <bean id="entityManagerFactory"
@@ -41,16 +32,14 @@
     <property name="dataSource" ref="dataSource" />
     <property name="persistenceUnitName" value="IneraCertificate" />
     <property name="jpaVendorAdapter">
-      <bean
-        class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-        <property name="database" value="H2" />
+      <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="database" value="MYSQL" />
       </bean>
     </property>
     <property name="jpaProperties">
       <props>
         <prop key="hibernate.show_sql">false</prop>
         <prop key="hibernate.format_sql">true</prop>
-        <!-- prop key="hibernate.hbm2ddl.auto">create-drop</prop -->
       </props>
     </property>
   </bean>
