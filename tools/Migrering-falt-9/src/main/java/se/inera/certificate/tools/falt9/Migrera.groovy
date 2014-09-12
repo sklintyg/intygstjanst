@@ -1,7 +1,9 @@
-package se.inera.certificate
+package se.inera.certificate.tools.falt9
 
 import static groovyx.net.http.ContentType.*
 import static groovyx.net.http.Method.*
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import groovy.sql.Sql
 import groovyx.gpars.GParsPool
 import groovyx.net.http.HTTPBuilder
@@ -55,6 +57,7 @@ class Migrera {
         
         final AtomicInteger totalCount = new AtomicInteger(0)
         final AtomicInteger errorCount = new AtomicInteger(0)
+        final AtomicInteger recoverCount = new AtomicInteger(0)
         
         def converterUrl = config.webService.convert.URL
         
@@ -85,21 +88,30 @@ class Migrera {
                         def msg = EntityUtils.toString(resp.entity, 'UTF-8')
                         result << "${id};${resp.status};${msg}"
                         errorCount.incrementAndGet()
+                        result << "\nTrying alternative conversion strategy for ${id}"
+                        try {
+                            def originalJson = new String(sql.firstRow( 'select DOCUMENT from CERTIFICATE where ID = :id' , [id : id]).DOCUMENT, 'UTF-8')
+                            updatedDocument = transformJsonFromXml(originalDocument, originalJson)
+                            recoverCount.incrementAndGet()
+                            result << "\nAlternative conversion strategy successful for ${id}"
+                        } catch (Throwable t) {
+                            result << "\nAlternative conversion strategy for ${id} failed: ${t.message}"
+                        }
                     }
                 }
                 
                 http.shutdown()
                 
                 if (updatedDocument) {
-                    sql.execute('update CERTIFICATE set DOCUMENT = :document where ID = :id' , [document: updatedDocument.bytes, id : id])
+                    sql.execute('update CERTIFICATE set DOCUMENT = :document where ID = :id' , [document: updatedDocument.getBytes('UTF-8'), id : id])
                 }
                 
                 sql.close()
                 
-                int current = totalCount.addAndGet(1)
+                int current = totalCount.incrementAndGet()
                                 
                 if (current % 1000 == 0) {
-                    println "- ${current} certificates processed, ${errorCount} errors"
+                    println "- ${current} certificates processed, ${errorCount} errors, ${recoverCount} errors recovered"
                 }
                 result.toString()
             }
@@ -107,7 +119,7 @@ class Migrera {
          
         long end = System.currentTimeMillis()
         
-        println "- Done! ${totalCount} certificates processed with ${errorCount} errors in ${(end-start)/1000} seconds"
+        println "- Done! ${totalCount} certificates processed with ${errorCount} errors and ${recoverCount} errors recovered in ${(int)((end-start) / 1000)} seconds"
         
         if (results.size() > 0) {
             println " "
@@ -117,6 +129,25 @@ class Migrera {
             }
         }
         
+    }
+    
+    static def transformJsonFromXml(String xml, String json) {
+        def registerMedicalCertificate = new XmlSlurper().parseText(xml)
+        registerMedicalCertificate.declareNamespace(ns1: 'urn:riv:insuranceprocess:healthreporting:mu7263:3',
+            ns2: 'urn:riv:insuranceprocess:healthreporting:2',
+            ns3: 'urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3')
+        def motivering = registerMedicalCertificate.'ns3:lakarutlatande'
+            .'ns1:funktionstillstand'
+            .findAll {it.'ns1:typAvFunktionstillstand'.text() == 'Aktivitet' }[0]
+            .'arbetsformaga'.'ns1:motivering'.text()
+        assert motivering != null
+        def document = new JsonSlurper().parseText(json)
+        document.observationer.each {observation ->
+            if (observation.observationskod?.code == "302119000") {
+                observation.prognoser = [[beskrivning: motivering]]
+            }
+        }
+        JsonOutput.toJson(document)
     }
     
 }
