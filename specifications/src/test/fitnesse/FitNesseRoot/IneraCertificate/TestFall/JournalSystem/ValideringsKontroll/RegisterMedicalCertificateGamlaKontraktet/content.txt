@@ -435,7 +435,7 @@
 
 |validera register|
 |filnamn|resultat?|
-|validering/register/tom-kroppsfunktion-beskrivning.xml|=~/VALIDATION_ERROR/|
+|validering/register/tom-funktionstillstand-kroppsfunktion-beskrivning.xml|=~/VALIDATION_ERROR/|
 |validering/register/SMiL-tom-funktionstillstand-kroppsfunktion-beskrivning.xml|OK|
 
 |ta bort intyg|
