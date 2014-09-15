@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  
+
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <groupId>se.inera.intyg</groupId>
     <artifactId>intyg-parent</artifactId>
@@ -17,9 +17,10 @@
   <description>
     Inera Certificate Root Project - The parent of all other Inera Certificate modules.
   </description>
-  
+
   <properties>
     <!-- Project properties -->
+    <repository.host>repository-callistasoftware.forge.cloudbees.com</repository.host>
     <logback-util.version>1.1.2</logback-util.version>
     <checkstyle.basedir>${project.basedir}</checkstyle.basedir>
 
@@ -38,27 +39,25 @@
     <module>persistence</module>
     <module>tools/LiquibaseRunner</module>
     <module>tools/LiquibaseRunnerForCertificate</module>
-    <!--
-    <module>tools/AnonymiseraIntygsDatabas</module>
-    -->
+    <!-- <module>tools/AnonymiseraIntygsDatabas</module> -->
   </modules>
 
   <scm>
     <connection>scm:git:https://${scm.host}/p/inera-certificate/</connection>
     <tag>HEAD</tag>
   </scm>
-  
+
   <dependencyManagement>
     <dependencies>
       <!-- Project dependencies -->
-      
+
       <!-- TODO: Finns den här verkligen? -->
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>model</artifactId>
         <version>${project.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>liquibase-runner</artifactId>
@@ -84,7 +83,7 @@
         <artifactId>schemas</artifactId>
         <version>${project.version}</version>
       </dependency>
-      
+
       <!-- Dependencies to Intygstjansten's modules project -->
       <dependency>
         <groupId>se.inera.certificate.modules</groupId>
@@ -114,7 +113,7 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
     </dependency>
-    
+
     <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
@@ -132,7 +131,7 @@
 
     <plugins>
       <plugin>
-   		<groupId>org.jacoco</groupId>
+        <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <executions>
           <execution>
@@ -152,6 +151,39 @@
       </plugin>
     </plugins>
   </build>
+
+  <repositories>
+    <repository>
+      <id>callista-release</id>
+      <url>https://${repository.host}/release/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>callista-snapshot</id>
+      <url>https://${repository.host}/snapshot/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>thirdparty</id>
+      <url>https://${repository.host}/3rdparty</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
 </project>
  
