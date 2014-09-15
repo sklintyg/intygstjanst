@@ -494,7 +494,7 @@
 |validering/register/saknad-beskrivning-behandling-varden.xml|=~/VALIDATION_ERROR/|
 |validering/register/SMiL-saknad-beskrivning-behandling-varden.xml|=~/VALIDATION_ERROR/|
 
-!3 Saknad beskrivning vid behandling - övrigt (fält 6b) ger fel, även för smittskyddsintyg
+!3 Saknad beskrivning vid behandling - annan åtgärd (fält 6b) ger fel, även för smittskyddsintyg
 
 |validera register|
 |filnamn|resultat?|
