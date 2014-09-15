@@ -16,17 +16,17 @@ import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificater
  *
  * @author andreaskaltenbach
  */
-class ValideraIntyg extends WsClientFixture {
+class ValideraRegister extends WsClientFixture {
 
     RegisterMedicalCertificateResponderInterface registerMedicalCertificateResponder
 
     static String serviceUrl = System.getProperty("service.registerMedicalCertificateUrl")
 
-    public ValideraIntyg() {
+    public ValideraRegister() {
         this(WsClientFixture.LOGICAL_ADDRESS)
     }
     
-    public ValideraIntyg(String logiskAddress) {
+    public ValideraRegister(String logiskAddress) {
         super(logiskAddress)
         String url = serviceUrl ? serviceUrl : baseUrl + "register-certificate/v3.0"
         registerMedicalCertificateResponder = createClient(RegisterMedicalCertificateResponderInterface.class, url)

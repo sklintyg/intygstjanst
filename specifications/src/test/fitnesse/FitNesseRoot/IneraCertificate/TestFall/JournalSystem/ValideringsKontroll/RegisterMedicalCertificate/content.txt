@@ -6,7 +6,7 @@
 
 !3 Giltigt intyg ger inga fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
 |validering/register/giltigt-intyg.xml|OK|
 
@@ -16,7 +16,7 @@
 
 !3 Intyg med blanktecken i obligatoriska fält ger inga fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
 |validering/register/intyg-med-blanksteg.xml|OK|
 
@@ -24,9 +24,9 @@
 |id|
 |intyg-med-blanksteg|
 
-!3 Intyg utan Aktivitetsbegränsning (fält 5) ger inga fel
+!3 Intyg utan Aktivitetsbegränsning (fält 5) ger inga fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
 |validering/register/giltigt-intyg-utan-aktivitet-beskrivning.xml|OK|
 
@@ -36,7 +36,7 @@
 
 !3 Intyg utan Prognosangivelse (fält 10) ger inga fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
 |validering/register/giltigt-intyg-utan-prognosangivelse.xml|OK|
 
@@ -46,149 +46,149 @@
 
 !3 Saknad nedsattningsgrad ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-nedsattningsgrad.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-nedsattningsgrad.xml|=~/VALIDATION_ERROR/|
 
 !3 Tom nedsattningsgrad ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tom-nedsattningsgrad.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tom-nedsattningsgrad.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktig nedsattningsgrad ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/felaktig-nedsattningsgrad.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/felaktig-nedsattningsgrad.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktigt datum signering ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/felaktigt-datum-signering.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/felaktigt-datum-signering.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktigt datumformat signering ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/felaktigt-datumformat-signering.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/felaktigt-datumformat-signering.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktigt datum skickat ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/felaktigt-datum-skickat.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/felaktigt-datum-skickat.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktigt datumformat skickat ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/felaktigt-datumformat-skickat.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/felaktigt-datumformat-skickat.xml|=~/VALIDATION_ERROR/|
 
 !3 Tomt skickatdatum ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tomt-skickatdatum.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tomt-skickatdatum.xml|=~/VALIDATION_ERROR/|
 
 !3 Tomt signeringsdatum ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tomt-signeringsdatum.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tomt-signeringsdatum.xml|=~/VALIDATION_ERROR/|
 
 !3 saknat personnr ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknat-personnr.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknat-personnr.xml|=~/VALIDATION_ERROR/|
 
 !3 tomt personnr ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tomt-personnr.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tomt-personnr.xml|=~/VALIDATION_ERROR/|
 
 !3 saknat referensdatum journaluppgift ger fel, även för smittskyddsintyg
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknat-referensdatum-journaluppgift.xml|=~/.*ERROR.*Validation.*/|
-|validering/register/SMiL-saknat-referensdatum-journaluppgift.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknat-referensdatum-journaluppgift.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-saknat-referensdatum-journaluppgift.xml|=~/VALIDATION_ERROR/|
 
 !3 saknat referensdatum vid referenstyp annat ger fel, även för smittskyddsintyg
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknat-referensdatum-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
-|validering/register/SMiL-saknat-referensdatum-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknat-referensdatum-vid-referenstyp-annat.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-saknat-referensdatum-vid-referenstyp-annat.xml|=~/VALIDATION_ERROR/|
 
 !3 tomt referensdatum journaluppgift ger fel, även för smittskyddsintyg
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tomt-referensdatum-journaluppgift.xml|=~/.*ERROR.*Validation.*/|
-|validering/register/SMiL-tomt-referensdatum-journaluppgift.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tomt-referensdatum-journaluppgift.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-tomt-referensdatum-journaluppgift.xml|=~/VALIDATION_ERROR/|
 
 !3 tomt referensdatum vid referenstyp annat ger fel, även för smittskyddsintyg
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tomt-referensdatum-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
-|validering/register/SMiL-tomt-referensdatum-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tomt-referensdatum-vid-referenstyp-annat.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-tomt-referensdatum-vid-referenstyp-annat.xml|=~/VALIDATION_ERROR/|
 
 !3 felaktigt referensdatum journaluppgift ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/felaktigt-referensdatum-journaluppgift.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/felaktigt-referensdatum-journaluppgift.xml|=~/VALIDATION_ERROR/|
 
 !3 felaktigt referensdatum vid referenstyp annat ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/felaktigt-referensdatum-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/felaktigt-referensdatum-vid-referenstyp-annat.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat intygs-id ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknat-intygsid.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknat-intygsid.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat skickat-datum ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknat-skickat-datum.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknat-skickat-datum.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad patient ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-patient.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-patient.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktigt person-id kod ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/felaktig-patientid-kod.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/felaktig-patientid-kod.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktigt person-nr ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/felaktigt-personnr.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/felaktigt-personnr.xml|=~/VALIDATION_ERROR/|
 
 !3 Person-nr utan sekel-siffror ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/personnr-utan-sekel-siffror.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/personnr-utan-sekel-siffror.xml|=~/VALIDATION_ERROR/|
 
 !3 Person-nr utan bindestreck korrigeras
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
 |validering/register/personnr-utan-bindestreck.xml|OK|
 
@@ -202,190 +202,190 @@
 
 !3 Saknat patient-namn ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknat-patient-namn.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknat-patient-namn.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad !-HoS-!-personal ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-hos-personal.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-hos-personal.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktig personal-id-kod ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/felaktig-personal-id-kod.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/felaktig-personal-id-kod.xml|=~/VALIDATION_ERROR/|
 
 !3 Tomt personal-id ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tomt-personal-id.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tomt-personal-id.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat personal-namn ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknat-personal-namn.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknat-personal-namn.xml|=~/VALIDATION_ERROR/|
 
 !3 tomt personalnamn ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tomt-personalnamn.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tomt-personalnamn.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad enhet ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-enhet.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-enhet.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat enhets-id ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknat-enhets-id.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknat-enhets-id.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktig enhets-id-kod ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/felaktig-enhets-id-kod.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/felaktig-enhets-id-kod.xml|=~/VALIDATION_ERROR/|
 
 !3 Tomt enhets-id ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tomt-enhets-id.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tomt-enhets-id.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat enhets-namn ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknat-enhets-namn.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknat-enhets-namn.xml|=~/VALIDATION_ERROR/|
 
 !3 tomt enhetsnamn ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tomt-enhetsnamn.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tomt-enhetsnamn.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad enhets-postaddress ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-enhets-postaddress.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-enhets-postaddress.xml|=~/VALIDATION_ERROR/|
 
 
 !3 Tom enhets postaddress ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tom-enhets-postadress.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tom-enhets-postadress.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat enhets-postnummer ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknat-enhets-postnummer.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknat-enhets-postnummer.xml|=~/VALIDATION_ERROR/|
 
 !3 tom enhets-postnr ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tom-enhets-postnr.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tom-enhets-postnr.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad enhets-postort ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-enhets-postort.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-enhets-postort.xml|=~/VALIDATION_ERROR/|
 
 !3 Tom enhets-postort ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tom-enhets-postort.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tom-enhets-postort.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat enhets-telefonnr ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknat-enhets-telefonnr.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknat-enhets-telefonnr.xml|=~/VALIDATION_ERROR/|
 
 !3 tom enhets-telefonnr ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tom-enhets-telefonnr.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tom-enhets-telefonnr.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad vårdgivare ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-vardgivare.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-vardgivare.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad vårdgivare-id ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknat-vardgivare-id.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknat-vardgivare-id.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktig vårdgivare-id-kod ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/felaktig-vardgivare-id-kod.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/felaktig-vardgivare-id-kod.xml|=~/VALIDATION_ERROR/|
 
 !3 Tomt vårdgivare-id ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tomt-vardgivare-id.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tomt-vardgivare-id.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat vårdgivare-namn ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknat-vardgivare-namn.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknat-vardgivare-namn.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad arbetsplatskod ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-arbetsplatskod.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-arbetsplatskod.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktig arbetsplatskod-kod ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/felaktig-arbetsplatskod-kod.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/felaktig-arbetsplatskod-kod.xml|=~/VALIDATION_ERROR/|
 
 !3 Tom arbetsplatskod ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tom-arbetsplatskod.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tom-arbetsplatskod.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad tillstånd-Aktivitet ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-tillstand-aktivitet.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-tillstand-aktivitet.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad medicinskt tillstånd ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknat-medicinskt-tillstand.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknat-medicinskt-tillstand.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad diagnos-kod ger fel, om inte avstängning enligt smittskyddslagen
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-diagnos-kod.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-diagnos-kod.xml|=~/VALIDATION_ERROR/|
 |validering/register/SMiL-saknad-diagnos-kod.xml|OK|
 
 |ta bort intyg|
@@ -394,38 +394,70 @@
 
 !3 Saknad diagnos-kod-system ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-diagnos-kod-system.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-diagnos-kod-system.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktig diagnos-kod-system ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/felaktig-diagnos-kod-system.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/felaktig-diagnos-kod-system.xml|=~/VALIDATION_ERROR/|
 
-!3 Saknad funktionstillstånd-kroppsfunktion ger fel, om inte avstängning enligt smittskyddslagen
+!3 Intyg med tomt bedömt tillstånd beskrivning (fält 3) ger inga fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-funktionstillstand-kroppsfunktion.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/giltigt-intyg-med-tom-bedomtTillstand-beskrivning.xml|OK|
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-med-tom-bedomtTillstand-beskrivning|
+
+!3 Intyg med saknad bedömt tillstånd beskrivning (fält 3) ger fel
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/saknad-bedomtTillstand-beskrivning.xml|=~/VALIDATION_ERROR/|
+
+!3 Saknad funktionstillstånd-kroppsfunktion (fält 4) ger fel, om inte avstängning enligt smittskyddslagen
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/saknad-funktionstillstand-kroppsfunktion.xml|=~/VALIDATION_ERROR/|
 |validering/register/SMiL-saknad-funktionstillstand-kroppsfunktion.xml|OK|
 
 |ta bort intyg|
 |id|
 |SMiL-saknad-funktionstillstand-kroppsfunktion|
 
-!3 Saknad funktionstillstånd-kroppsfunktion-beskrivning ger fel
+!3 Intyg med tom funktionstillstånd-kroppsfunktion-beskrivning (fält 4) ger fel, om inte avstängning enligt smittskyddslagen
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-funktionstillstand-kroppsfunktion-beskrivning.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tom-funktionstillstand-kroppsfunktion-beskrivning.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-tom-funktionstillstand-kroppsfunktion-beskrivning.xml|OK|
 
-!3 Saknade vårdkontakter och referenser ger fel, om inte avstängning enligt smittskyddslagen
+|ta bort intyg|
+|id|
+|SMiL-tom-funktionstillstand-kroppsfunktion-beskrivning|
 
-|validera intyg|
+!3 Saknad funktionstillstånd-kroppsfunktion-beskrivning (fält 4) ger fel, om inte avstängning enligt smittskyddslagen
+
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknade-vardkontakter-referenser.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-funktionstillstand-kroppsfunktion-beskrivning.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-saknad-funktionstillstand-kroppsfunktion-beskrivning.xml|OK|
+
+|ta bort intyg|
+|id|
+|SMiL-saknad-funktionstillstand-kroppsfunktion-beskrivning|
+
+!3 Saknade vårdkontakter och referenser (fält 4 kryssrutor) ger fel, om inte avstängning enligt smittskyddslagen
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/saknade-vardkontakter-referenser.xml|=~/VALIDATION_ERROR/|
 |validering/register/SMiL-saknade-vardkontakter-referenser.xml|OK|
 
 |ta bort intyg|
@@ -434,110 +466,183 @@
 
 !3 Saknad vårdkontakt-tid ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-vardkontakt-tid.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-vardkontakt-tid.xml|=~/VALIDATION_ERROR/|
 
-!3 Saknad beskrivning vid rekommendationer - Övrigt (fält 6a) ger fel, även för smittskyddsintyg
+!3 Intyg med tom aktivitetsbegransning-beskrivning (fält 5) ger inga fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-beskrivning-rekommendation-ovrigt.xml|=~/.*ERROR.*Validation.*/|
-|validering/register/SMiL-saknad-beskrivning-rekommendation-ovrigt.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/giltigt-intyg-med-tom-aktivitetsbegransning-beskrivning.xml|OK|
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-med-tom-aktivitetsbegransning-beskrivning|
+
+!3 Saknad beskrivning vid rekommendationer - Övrigt (fält 6a) ger fel, även för smittskyddsintyg
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/saknad-beskrivning-rekommendation-ovrigt.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-saknad-beskrivning-rekommendation-ovrigt.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad beskrivning vid behandling - vården (fält 6b) ger fel, även för smittskyddsintyg
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-beskrivning-behandling-varden.xml|=~/.*ERROR.*Validation.*/|
-|validering/register/SMiL-saknad-beskrivning-behandling-varden.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-beskrivning-behandling-varden.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-saknad-beskrivning-behandling-varden.xml|=~/VALIDATION_ERROR/|
 
-!3 Saknad beskrivning vid behandling - övrigt (fält 6b) ger fel, även för smittskyddsintyg
+!3 Saknad beskrivning vid behandling - annan åtgärd (fält 6b) ger fel, även för smittskyddsintyg
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-beskrivning-behandling-ovrigt.xml|=~/.*ERROR.*Validation.*/|
-|validering/register/SMiL-saknad-beskrivning-behandling-ovrigt.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-beskrivning-behandling-ovrigt.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-saknad-beskrivning-behandling-ovrigt.xml|=~/VALIDATION_ERROR/|
+
+!3 Tom beskrivning vid rekommendationer - Övrigt (fält 6a) ger inga fel
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/giltigt-intyg-tom-beskrivning-rekommendation-ovrigt.xml|OK|
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-tom-beskrivning-rekommendation-ovrigt|
+
+!3 Tom beskrivning vid behandling - vården (fält 6b) ger inga fel
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/giltigt-intyg-tom-beskrivning-behandling-varden.xml|OK|
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-tom-beskrivning-behandling-varden|
+
+!3 Tom beskrivning vid behandling - annan åtgärd (fält 6b) ger inga fel
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/giltigt-intyg-tom-beskrivning-behandling-ovrigt.xml|OK|
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-tom-beskrivning-behandling-ovrigt|
+
+!3 Multipla värden på arbetslivsinriktad rehabilitering aktuell (fält 7) ger fel, även för smittskyddsintyg
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/multipla-varden-rehabilitering.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-multipla-varden-rehabilitering.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad arbetsförmåga ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-arbetsformaga.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-arbetsformaga.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad sysselsättning ger fel, om inte avstängning enligt smittskyddslagen
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-sysselsattning.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-sysselsattning.xml|=~/VALIDATION_ERROR/|
 |validering/register/SMiL-saknad-sysselsattning.xml|OK|
 
 |ta bort intyg|
 |id|
 |SMiL-saknad-sysselsattning|
 
-!3 Saknad arbetsuppgift ger fel, även för smittskyddsintyg
+!3 Saknad arbetsuppgift ger fel, om inte avstängning enligt smittskyddslagen
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-arbetsuppgift.xml|=~/.*ERROR.*Validation.*/|
-|validering/register/SMiL-saknad-arbetsuppgift.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-arbetsuppgift.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-saknad-arbetsuppgift.xml|OK|
 
-!3 Tom arbetsuppgift ger fel
+|ta bort intyg|
+|id|
+|SMiL-saknad-arbetsuppgift|
 
-|validera intyg|
+!3 Saknad arbetsuppgift-beskrivning ger fel, även för smittskyddsintyg
+
+|validera register|
 |filnamn|resultat?|
-|validering/register/tom-arbetsuppgift.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-arbetsuppgift-beskrivning.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-saknad-arbetsuppgift-beskrivning.xml|=~/VALIDATION_ERROR/|
+
+!3 Tom arbetsuppgift-beskrivning ger fel, om inte avstängning enligt smittskyddslagen
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/tom-arbetsuppgift-beskrivning.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-tom-arbetsuppgift-beskrivning.xml|OK|
+
+|ta bort intyg|
+|id|
+|SMiL-tom-arbetsuppgift-beskrivning|
 
 !3 Saknad varaktighet ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-varaktighet.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-varaktighet.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad varaktighet-from ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-varaktighet-from.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-varaktighet-from.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad varaktighet-tom ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-varaktighet-tom.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-varaktighet-tom.xml|=~/VALIDATION_ERROR/|
+
+!3 Intyg med överlappande varaktigheter ger inga fel
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/giltigt-intyg-med-overlappande-varaktighet.xml|OK|
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-med-overlappande-varaktighet|
 
 !3 Multipla ressätt-värden ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/multipla-ressatt.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/multipla-ressatt.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad kommentar ger fel om referens är "annat", även för smittskyddsintyg
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-kommentar-vid-referens-annat.xml|=~/.*ERROR.*Validation.*/|
-|validering/register/SMiL-saknad-kommentar-vid-referens-annat.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-kommentar-vid-referens-annat.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-saknad-kommentar-vid-referens-annat.xml|=~/VALIDATION_ERROR/|
 
-!3 Tom kommentar vid referenstyp "annat" ger fel, även för smittskyddsintyg 
+!3 Tom kommentar vid referenstyp "annat" ger fel, även för smittskyddsintyg
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/tom-kommentar-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
-|validering/register/SMiL-tom-kommentar-vid-referenstyp-annat.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/tom-kommentar-vid-referenstyp-annat.xml|=~/VALIDATION_ERROR/|
+|validering/register/SMiL-tom-kommentar-vid-referenstyp-annat.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad kommentar ger fel om prognos är "går inte att bedömma"
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknad-kommentar-vid-prognos-gar-ej-att-bedomma.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknad-kommentar-vid-prognos-gar-ej-att-bedomma.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat signeringsdatum ger fel
 
-|validera intyg|
+|validera register|
 |filnamn|resultat?|
-|validering/register/saknat-signeringsdatum.xml|=~/.*ERROR.*Validation.*/|
+|validering/register/saknat-signeringsdatum.xml|=~/VALIDATION_ERROR/|
 
 !3 Återta samtycken:
 

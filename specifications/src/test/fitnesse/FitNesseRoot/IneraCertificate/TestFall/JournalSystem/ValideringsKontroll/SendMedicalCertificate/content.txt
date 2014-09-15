@@ -44,37 +44,37 @@
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/saknat-intygsid.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/saknat-intygsid.xml|=~/VALIDATION_ERROR/|
 
 !3 Tomt intygs-id ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/tomt-intygsid.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/tomt-intygsid.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad patient ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/saknad-patient.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/saknad-patient.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktig patient-id kod ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/felaktig-patientid-kod.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/felaktig-patientid-kod.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktigt personnr ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/felaktigt-personnr.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/felaktigt-personnr.xml|=~/VALIDATION_ERROR/|
 
 !3 Personnr utan sekel-siffror ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/personnr-utan-sekel-siffror.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/personnr-utan-sekel-siffror.xml|=~/VALIDATION_ERROR/|
 
 !3 Personnr utan bindestreck korrigeras
 
@@ -103,109 +103,109 @@
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/saknat-patient-namn.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/saknat-patient-namn.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat signeringsdatum ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/saknat-signerings-datum.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/saknat-signerings-datum.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad vårdreferens ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/saknad-vardreferens.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/saknad-vardreferens.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat avsänt-datum ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/saknat-avsant-datum.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/saknat-avsant-datum.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat address-vård ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/saknad-address-vard.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/saknad-address-vard.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat hos-personal ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/saknad-hos-personal.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/saknad-hos-personal.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktig personal-id-kod ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/felaktig-personal-id-kod.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/felaktig-personal-id-kod.xml|=~/VALIDATION_ERROR/|
 
 !3 Tomt personal-id ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/tomt-personal-id.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/tomt-personal-id.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad enhet ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/saknad-enhet.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/saknad-enhet.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad enhets-id ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/saknat-enhets-id.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/saknat-enhets-id.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktig enhets-id-kod ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/felaktig-enhets-id-kod.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/felaktig-enhets-id-kod.xml|=~/VALIDATION_ERROR/|
 
 !3 Tomt enhets-id ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/tomt-enhets-id.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/tomt-enhets-id.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat enhets-namn ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/saknat-enhets-namn.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/saknat-enhets-namn.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad vårdgivare ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/saknad-vardgivare.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/saknad-vardgivare.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad vårdgivare-id ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/saknat-vardgivare-id.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/saknat-vardgivare-id.xml|=~/VALIDATION_ERROR/|
 
 !3 Felaktig vårdgivare-id-kod ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/felaktig-vardgivare-id-kod.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/felaktig-vardgivare-id-kod.xml|=~/VALIDATION_ERROR/|
 
 !3 Tomt vårdgivare-id ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/tomt-vardgivare-id.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/tomt-vardgivare-id.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknat vårdgivare-namn ger fel
 
 |validera send|
 |filnamn|resultat?|
-|validering/send/saknat-vardgivare-namn.xml|=~/.*ERROR.*Validation.*/|
+|validering/send/saknat-vardgivare-namn.xml|=~/VALIDATION_ERROR/|
 
 
 !3 Återta samtycken:

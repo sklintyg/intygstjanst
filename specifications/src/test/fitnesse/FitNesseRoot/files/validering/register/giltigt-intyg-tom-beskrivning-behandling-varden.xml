@@ -1,6 +1,6 @@
 <ns3:RegisterMedicalCertificate xmlns="urn:riv:insuranceprocess:healthreporting:mu7263:3" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2" xmlns:ns3="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3" xmlns:ns4="http://www.w3.org/2005/08/addressing">
    <ns3:lakarutlatande>
-      <lakarutlatande-id>tom-arbetsuppgift</lakarutlatande-id>
+      <lakarutlatande-id>giltigt-intyg-tom-beskrivning-behandling-varden</lakarutlatande-id>
       <typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om allmän försäkring</typAvUtlatande>
       <signeringsdatum>2011-01-24T00:00:00</signeringsdatum>
       <skickatDatum>2011-03-23T09:28:10</skickatDatum>
@@ -29,6 +29,10 @@
          <vardkontakttyp>Min_undersokning_av_patienten</vardkontakttyp>
          <vardkontaktstid>2011-01-24</vardkontaktstid>
       </vardkontakt>
+      <aktivitet>
+         <aktivitetskod>Planerad_eller_pagaende_behandling_eller_atgard_inom_sjukvarden</aktivitetskod>
+         <beskrivning/>
+      </aktivitet>
       <medicinsktTillstand>
          <tillstandskod codeSystemName="ICD-10" code="M25"/>
       </medicinsktTillstand>
@@ -42,7 +46,7 @@
          <arbetsformaga>
             <prognosangivelse>Aterstallas_helt</prognosangivelse>
             <arbetsuppgift>
-               <typAvArbetsuppgift></typAvArbetsuppgift>
+               <typAvArbetsuppgift>Arbetare</typAvArbetsuppgift>
             </arbetsuppgift>
             <arbetsformagaNedsattning>
                <varaktighetFrom>2011-01-24</varaktighetFrom>
