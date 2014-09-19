@@ -1,6 +1,5 @@
 {"id" : {
-    "root" : "1.2.752.129.2.1.2.1",
-    "extension" : "intyg-1"
+    "root" : "intyg-1"
   },
   "typ" : {
     "codeSystem":"f6fb361a-e31d-48b8-8657-99b63912dd9b",
