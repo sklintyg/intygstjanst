@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>se.inera.certificate.tools</groupId>
   <artifactId>Omsandning-falt9</artifactId>
-  <version>1.0-RC1</version>
+  <version>1.0.0</version>
   <name>Omsandning-falt9</name>
   <packaging>jar</packaging>
 

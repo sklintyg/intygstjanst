@@ -38,6 +38,7 @@ class Omsandning {
         def certificateIds = bootstrapSql.rows("""
             select oc.CERTIFICATE_ID from ORIGINAL_CERTIFICATE oc
             where oc.DOCUMENT like '%motivering>%' 
+            and oc.DOCUMENT not like '%motivering></%'
             and oc.DOCUMENT not like '%prognosangivelse>%'
             and oc.CERTIFICATE_ID in (
                 select cs.CERTIFICATE_ID from CERTIFICATE_STATE cs
