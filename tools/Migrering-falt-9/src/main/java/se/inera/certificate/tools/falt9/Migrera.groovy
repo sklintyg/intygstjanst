@@ -77,27 +77,32 @@ class Migrera {
                 
                 def http = new HTTPBuilder(converterUrl);
                 
-                http.request(POST, XML) {
-                    headers.'Accept' = 'application/json'
-                    headers.'ContentEncoding' = 'UTF-8'
-                    body = originalDocument
-                    response.success = { resp ->
-                        updatedDocument = EntityUtils.toString(resp.entity, 'UTF-8')
-                    }
-                    response.failure = { resp ->
-                        def msg = EntityUtils.toString(resp.entity, 'UTF-8')
-                        result << "${id};${resp.status};${msg}"
-                        errorCount.incrementAndGet()
-                        result << "\nTrying alternative conversion strategy for ${id}"
-                        try {
-                            def originalJson = new String(sql.firstRow( 'select DOCUMENT from CERTIFICATE where ID = :id' , [id : id]).DOCUMENT, 'UTF-8')
-                            updatedDocument = transformJsonFromXml(originalDocument, originalJson)
-                            recoverCount.incrementAndGet()
-                            result << "\nAlternative conversion strategy successful for ${id}"
-                        } catch (Throwable t) {
-                            result << "\nAlternative conversion strategy for ${id} failed: ${t.message}"
+                try {
+                    http.request(POST, XML) {
+                        headers.'Accept' = 'application/json'
+                        headers.'ContentEncoding' = 'UTF-8'
+                        body = originalDocument
+                        response.success = { resp ->
+                            updatedDocument = EntityUtils.toString(resp.entity, 'UTF-8')
+                        }
+                        response.failure = { resp ->
+                            def msg = EntityUtils.toString(resp.entity, 'UTF-8')
+                            result << "${id};${resp.status};${msg}"
+                            errorCount.incrementAndGet()
+                            result << "\nTrying alternative conversion strategy for ${id}"
+                            try {
+                                def originalJson = new String(sql.firstRow( 'select DOCUMENT from CERTIFICATE where ID = :id' , [id : id]).DOCUMENT, 'UTF-8')
+                                updatedDocument = transformJsonFromXml(originalDocument, originalJson)
+                                recoverCount.incrementAndGet()
+                                result << "\nAlternative conversion strategy successful for ${id}"
+                            } catch (Throwable t) {
+                                result << "\nAlternative conversion strategy for ${id} failed: ${t.message}"
+                            }
                         }
                     }
+                } catch (Throwable t) {
+                    result << "${id};${t}"
+                    errorCount.incrementAndGet()
                 }
                 
                 http.shutdown()
@@ -111,7 +116,7 @@ class Migrera {
                 int current = totalCount.incrementAndGet()
                                 
                 if (current % 1000 == 0) {
-                    println "- ${current} certificates processed, ${errorCount} errors, ${recoverCount} errors recovered"
+                    println "- ${current} certificates processed in ${(int)((System.currentTimeMillis()-start) / 1000)} seconds, ${errorCount} errors, ${recoverCount} errors recovered"
                 }
                 result.toString()
             }
