@@ -4,12 +4,7 @@ import org.junit.Test
 
 class AnonymiseraPersonIdTest {
 
-    AnonymiseraPersonId anonymiseraPersonId = new AnonymiseraPersonId() {
-        @Override
-        protected int getRandomIndex() {
-            return 0;
-        }
-    }
+    AnonymiseraPersonId anonymiseraPersonId = new AnonymiseraPersonId()
 
     @Test
     void anonymiseringGerInteSammaId() {
@@ -36,14 +31,12 @@ class AnonymiseraPersonIdTest {
     }
     
     @Test
-    void anonymiseringGerSammaResultatFörOlikaIdNärTestPnrTarSlut() {
-        String personId1 = "19121212-1212"
-        String personId2 = "20101010-2010"
-        String personId3 = "20111111-1111"
-        String anonymiseradPersonId1 = anonymiseraPersonId.anonymisera(personId1)
-        String anonymiseradPersonId2 = anonymiseraPersonId.anonymisera(personId2)
-        String anonymiseradPersonId3 = anonymiseraPersonId.anonymisera(personId3)
-        assert anonymiseradPersonId1 == anonymiseradPersonId3
+    void anonymiseringAvFelaktigtPersonnr() {
+        String personId = "20110043-6904"
+        String anonymiseradPersonId1 = anonymiseraPersonId.anonymisera(personId)
+        String anonymiseradPersonId2 = anonymiseraPersonId.anonymisera(personId)
+        assert personId == anonymiseradPersonId1
+        assert anonymiseradPersonId1 == anonymiseradPersonId2
     }
     
     @Test
