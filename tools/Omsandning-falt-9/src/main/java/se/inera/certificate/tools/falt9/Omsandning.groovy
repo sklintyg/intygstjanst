@@ -67,6 +67,7 @@ class Omsandning {
                     where cs3.STATE = 'CANCELLED')
                 """, [id : id])
             if (sentState) {
+                long sendStart = System.currentTimeMillis()
                 def row = sql.firstRow('select DOCUMENT from ORIGINAL_CERTIFICATE where CERTIFICATE_ID = :id' , [id : id])
                 def sendMessage = buildSendMessage(new String(row.DOCUMENT, 'UTF-8'), id)
                 def http = new HTTPBuilder( config.webService.send.URL , XML )
@@ -92,7 +93,10 @@ class Omsandning {
                         error++
                     }
                 }
-                Thread.sleep(delay)
+                long sendTime = System.currentTimeMillis() - sendStart
+                if (sendTime < delay) {
+                    Thread.sleep(delay - sendTime)
+                }
             }
         }
         sql.close()
