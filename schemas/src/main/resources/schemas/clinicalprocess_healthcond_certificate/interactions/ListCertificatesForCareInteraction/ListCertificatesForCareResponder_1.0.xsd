@@ -5,7 +5,7 @@
         elementFormDefault="qualified" version="1.0"
         xmlns:c="urn:riv:clinicalprocess:healthcond:certificate:1">
 
-  <import schemaLocation="../../core_components/clinicalprocess_healthcond_certificate_0.9.xsd"
+  <import schemaLocation="../../core_components/clinicalprocess_healthcond_certificate_1.0.xsd"
           namespace="urn:riv:clinicalprocess:healthcond:certificate:1"/>
 
   <element name="ListCertificatesForCare" type="tns:ListCertificatesForCareType"/>

@@ -1,5 +1,7 @@
 package se.inera.certificate.exception;
 
+import javax.ws.rs.client.ClientException;
+
 /**
  * @author andreaskaltenbach
  */

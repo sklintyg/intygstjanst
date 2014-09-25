@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<utlatande xmlns="urn:riv:clinicalprocess:healthcond:certificate:1">
+<utlatande xmlns="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:ns1="urn:riv:clinicalprocess:healthcond:certificate:types:1">
   <utlatande-id root="1.2.752.129.2.1.2.1" extension="b2f6d5bc-2f50-4623-9ce9-bf1ee5404347"/>
   <typAvUtlatande code="fk7263"/>
   <kommentar>Har haft mailkontakt med patienten
@@ -47,15 +47,15 @@
   <vardkontakt>
     <vardkontakttyp code="5880005" codeSystem="1.2.752.116.2.1.1.1" codeSystemName="SNOMED-CT"/>
     <vardkontakttid>
-      <from>2011-01-26</from>
-      <tom>2011-01-26</tom>
+      <ns1:from>2011-01-26</ns1:from>
+      <ns1:tom>2011-01-26</ns1:tom>
     </vardkontakttid>
   </vardkontakt>
   <vardkontakt>
     <vardkontakttyp code="185317003" codeSystem="1.2.752.116.2.1.1.1" codeSystemName="SNOMED-CT"/>
     <vardkontakttid>
-      <from>2011-01-12</from>
-      <tom>2011-01-12</tom>
+      <ns1:from>2011-01-12</ns1:from>
+      <ns1:tom>2011-01-12</ns1:tom>
     </vardkontakttid>
   </vardkontakt>
   <referens>
@@ -120,8 +120,8 @@
   <observation>
     <observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1" codeSystemName="SNOMED-CT"/>
     <observationsperiod>
-      <from>2011-04-01</from>
-      <tom>2011-05-31</tom>
+      <ns1:from>2011-04-01</ns1:from>
+      <ns1:tom>2011-05-31</ns1:tom>
     </observationsperiod>
     <varde value="75.0" unit="percent"/>
     <prognos>
@@ -135,8 +135,8 @@
   <observation>
     <observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1" codeSystemName="SNOMED-CT"/>
     <observationsperiod>
-      <from>2011-03-07</from>
-      <tom>2011-03-31</tom>
+      <ns1:from>2011-03-07</ns1:from>
+      <ns1:tom>2011-03-31</ns1:tom>
     </observationsperiod>
     <varde value="50.0" unit="percent"/>
     <prognos>
@@ -150,8 +150,8 @@
   <observation>
     <observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1" codeSystemName="SNOMED-CT"/>
     <observationsperiod>
-      <from>2011-02-14</from>
-      <tom>2011-03-06</tom>
+      <ns1:from>2011-02-14</ns1:from>
+      <ns1:tom>2011-03-06</ns1:tom>
     </observationsperiod>
     <varde value="25.0" unit="percent"/>
     <prognos>
@@ -165,8 +165,8 @@
   <observation>
     <observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1" codeSystemName="SNOMED-CT"/>
     <observationsperiod>
-      <from>2011-01-26</from>
-      <tom>2011-02-13</tom>
+      <ns1:from>2011-01-26</ns1:from>
+      <ns1:tom>2011-02-13</ns1:tom>
     </observationsperiod>
     <varde value="0.0" unit="percent"/>
     <prognos>

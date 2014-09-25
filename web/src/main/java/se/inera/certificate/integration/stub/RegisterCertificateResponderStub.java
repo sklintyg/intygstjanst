@@ -38,7 +38,7 @@ import se.inera.certificate.modules.support.api.exception.ModuleValidationExcept
  * @author par.wenaker
  */
 @Transactional
-@WebServiceProvider(targetNamespace = "urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificate:1:rivtabp21", serviceName = "RegisterCertificateResponderService", wsdlLocation = "schemas/clinicalprocess_healthcond_certificate/interactions/RegisterCertificateInteraction/RegisterCertificateInteraction_0.9_RIVTABP21.wsdl")
+@WebServiceProvider(targetNamespace = "urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificate:1:rivtabp21", serviceName = "RegisterCertificateResponderService", wsdlLocation = "schemas/clinicalprocess_healthcond_certificate/interactions/RegisterCertificateInteraction/RegisterCertificateInteraction_1.0_RIVTABP21.wsdl")
 public class RegisterCertificateResponderStub implements RegisterCertificateResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterCertificateResponderStub.class);
