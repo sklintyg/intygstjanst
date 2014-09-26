@@ -1,5 +1,5 @@
 <jaxb:bindings version="1.0" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-               xmlns:c="urn:riv:clinicalprocess:healthcond:certificate:1">
+               xmlns:c="urn:riv:clinicalprocess:healthcond:certificate:types:1">
 
   <jaxb:globalBindings>
     <jaxb:javaType name="org.joda.time.LocalDate" xmlType="c:date"

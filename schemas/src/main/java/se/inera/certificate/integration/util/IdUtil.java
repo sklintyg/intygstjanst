@@ -1,7 +1,7 @@
 package se.inera.certificate.integration.util;
 
 import iso.v21090.dt.v1.II;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeId;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.types.v1.UtlatandeId;
 
 /**
  * A valid id can have two formats:

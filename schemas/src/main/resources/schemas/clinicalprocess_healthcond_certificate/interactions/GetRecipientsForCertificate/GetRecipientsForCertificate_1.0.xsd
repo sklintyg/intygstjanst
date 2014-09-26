@@ -17,7 +17,7 @@
   version='1.0'>
 
   <xs:import namespace="urn:riv:clinicalprocess:healthcond:certificate:1"
-             schemaLocation="../../core_components/clinicalprocess_healthcond_certificate_0.9.xsd"/>
+             schemaLocation="../../core_components/clinicalprocess_healthcond_certificate_1.0.xsd"/>
 
   <xs:element name='GetRecipientsForCertificate' type='tns:GetRecipientsForCertificateType' />
   <xs:element name='GetRecipientsForCertificateResponse'

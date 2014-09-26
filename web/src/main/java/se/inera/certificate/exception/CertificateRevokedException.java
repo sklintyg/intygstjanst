@@ -1,5 +1,7 @@
 package se.inera.certificate.exception;
 
+import javax.ws.rs.client.ClientException;
+
 /**
  * Exception thrown when performing an operation on a revoked certificate.
  *

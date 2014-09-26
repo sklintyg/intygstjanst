@@ -27,7 +27,7 @@
         version="1.0">
 
   <xs:import namespace="urn:riv:clinicalprocess:healthcond:certificate:1"
-             schemaLocation="../../core_components/clinicalprocess_healthcond_certificate_0.9.xsd"/>
+             schemaLocation="../../core_components/clinicalprocess_healthcond_certificate_1.0.xsd"/>
 
   <xs:element name="RegisterCertificate" type="tns:RegisterCertificateType"/>
   <xs:element name="RegisterCertificateResponse" type="tns:RegisterCertificateResponseType"/>
