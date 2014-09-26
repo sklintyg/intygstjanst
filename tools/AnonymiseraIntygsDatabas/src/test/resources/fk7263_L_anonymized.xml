@@ -21,7 +21,7 @@ xxxxxxxxx xxx xxxxxx xxxx xxxxxx xx xxxx xxx xxxxxxx xxxxxx xxxxxxxxxxx xx xxxxx
             <ns2:enhetsnamn>Kir mott</ns2:enhetsnamn>
             <ns2:postadress>Lasarettsvägen 13</ns2:postadress>
             <ns2:postnummer>85150</ns2:postnummer>
-            <ns2:postort>Sundsvall</ns2:postort>
+            <ns2:postort> </ns2:postort>
             <ns2:telefonnummer>060-1818000</ns2:telefonnummer>
             <ns2:vardgivare>
                <ns2:vardgivare-id extension="VardgivarId" root="1.2.752.129.2.1.4.1"/>
@@ -31,19 +31,19 @@ xxxxxxxxx xxx xxxxxx xxxx xxxxxx xx xxxx xxx xxxxxxx xxxxxx xxxxxxxxxxx xx xxxxx
       </skapadAvHosPersonal>
       <vardkontakt>
          <vardkontakttyp>Min_undersokning_av_patienten</vardkontakttyp>
-         <vardkontaktstid>2011-01-26</vardkontaktstid>
+         <vardkontaktstid>2011-01-27</vardkontaktstid>
       </vardkontakt>
       <vardkontakt>
          <vardkontakttyp>Min_telefonkontakt_med_patienten</vardkontakttyp>
-         <vardkontaktstid>2011-01-12</vardkontaktstid>
+         <vardkontaktstid>2011-01-13</vardkontaktstid>
       </vardkontakt>
       <referens>
          <referenstyp>Journaluppgifter</referenstyp>
-         <datum>2010-01-14</datum>
+         <datum>2010-01-15</datum>
       </referens>
       <referens>
          <referenstyp>Annat</referenstyp>
-         <datum>2010-01-24</datum>
+         <datum>2010-01-25</datum>
       </referens>
       <aktivitet>
          <aktivitetskod>Patienten_behover_fa_kontakt_med_Arbetsformedlingen</aktivitetskod>

@@ -21,7 +21,7 @@ Prognosen att återgå till arbete är svår att bedömma förrän utredningen �
             <ns2:enhetsnamn>Kir mott</ns2:enhetsnamn>
             <ns2:postadress>Lasarettsvägen 13</ns2:postadress>
             <ns2:postnummer>85150</ns2:postnummer>
-            <ns2:postort>Sundsvall</ns2:postort>
+            <ns2:postort> </ns2:postort>
             <ns2:telefonnummer>060-1818000</ns2:telefonnummer>
             <ns2:vardgivare>
                <ns2:vardgivare-id extension="VardgivarId" root="1.2.752.129.2.1.4.1"/>

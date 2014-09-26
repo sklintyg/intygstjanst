@@ -6,6 +6,7 @@ import groovy.json.internal.LazyMap
 class AnonymiseraJson {
     
     AnonymiseraHsaId anonymiseraHsaId;
+    AnonymiseraDatum anonymiseraDatum;
     
     static {
         LazyMap.metaClass.anonymize = {key->
@@ -20,8 +21,9 @@ class AnonymiseraJson {
         }
     }
 
-    AnonymiseraJson(AnonymiseraHsaId anonymiseraHsaId) {
+    AnonymiseraJson(AnonymiseraHsaId anonymiseraHsaId, AnonymiseraDatum anonymiseraDatum) {
         this.anonymiseraHsaId = anonymiseraHsaId
+        this.anonymiseraDatum = anonymiseraDatum
     }
     
     String anonymiseraIntygsJson(String s, String personId) {
@@ -45,6 +47,13 @@ class AnonymiseraJson {
         intyg.observationer?.each {
             it.anonymize('beskrivning')
             it.prognoser?.each {prognos -> prognos.anonymize('beskrivning')} 
+        }
+        intyg.vardkontakter?.each {
+            it.vardkontaktstid.from = anonymiseraDatum.anonymiseraDatum(it.vardkontaktstid.from)
+            it.vardkontaktstid.tom = it.vardkontaktstid.from
+        }
+        intyg.referenser?.each {
+            it.datum = anonymiseraDatum.anonymiseraDatum(it.datum)
         }
     }
     

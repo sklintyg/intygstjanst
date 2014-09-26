@@ -1,15 +1,21 @@
 package se.inera.certificate
 
 import groovy.xml.StreamingMarkupBuilder
+import groovy.xml.XmlUtil
+import groovy.xml.dom.DOMCategory
+import groovy.xml.DOMBuilder
 
 class AnonymiseraXml {
     
     AnonymiseraPersonId anonymiseraPersonId;
     AnonymiseraHsaId anonymiseraHsaId;
+    AnonymiseraDatum anonymiseraDatum;
     
-    AnonymiseraXml(AnonymiseraPersonId anonymiseraPersonId, AnonymiseraHsaId anonymiseraHsaId) {
+    AnonymiseraXml(AnonymiseraPersonId anonymiseraPersonId, AnonymiseraHsaId anonymiseraHsaId,
+        AnonymiseraDatum anonymiseraDatum) {
         this.anonymiseraPersonId = anonymiseraPersonId
         this.anonymiseraHsaId = anonymiseraHsaId
+        this.anonymiseraDatum = anonymiseraDatum
     }
 
     String anonymiseraIntygsXml(String s) {
@@ -17,7 +23,9 @@ class AnonymiseraXml {
     }
 
     String anonymiseraIntygsXml(String s, String personId) {
-        def intyg = new XmlSlurper().parseText(s)
+        def slurper = new XmlSlurper()
+        slurper.keepIgnorableWhitespace = true
+        def intyg = slurper.parseText(s)
         intyg.declareNamespace(ns1: 'urn:riv:insuranceprocess:healthreporting:mu7263:3',
                                ns2: 'urn:riv:insuranceprocess:healthreporting:2',
                                ns3: 'urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3')
@@ -45,9 +53,19 @@ class AnonymiseraXml {
             anonymizeNode it.'ns1:arbetsformaga'?.'ns1:motivering'
             anonymizeNode it.'ns1:arbetsformaga'?.'ns1:arbetsuppgift'?.'ns1:typAvArbetsuppgift'
         }
+        intyg.'ns3:lakarutlatande'?.'ns1:vardkontakt'?.each {
+            anonymizeDateNode it.'ns1:vardkontaktstid'
+        }
+        intyg.'ns3:lakarutlatande'?.'ns1:referens'?.each {
+            anonymizeDateNode it.'ns1:datum'
+        }
     }
     
     private void anonymizeNode(def node) {
         node?.replaceBody AnonymizeString.anonymize(node.toString())
+    }
+    
+    private void anonymizeDateNode(def node) {
+        node?.replaceBody anonymiseraDatum.anonymiseraDatum(node.toString())
     }
 }

@@ -10,8 +10,13 @@ import org.springframework.core.io.ClassPathResource
 class AnonymiseraJsonTest {
 
     AnonymiseraHsaId anonymiseraHsaId = [anonymisera:{"SE1010"}] as AnonymiseraHsaId
-    AnonymiseraJson anonymiseraJson = new AnonymiseraJson(anonymiseraHsaId)
-
+    AnonymiseraDatum anonymiseraDatum = new AnonymiseraDatum()
+    AnonymiseraJson anonymiseraJson = new AnonymiseraJson(anonymiseraHsaId, anonymiseraDatum)
+    
+    AnonymiseraJsonTest() {
+        anonymiseraDatum.random = [nextInt: {(AnonymiseraDatum.DATE_RANGE/2)+1}] as Random
+    }
+    
     @Test
     void testaAnonymiseringAvMaximaltIntyg() {
         String json = FileUtils.readFileToString(new ClassPathResource("/fk7263_L_template.json").getFile(), "UTF-8")

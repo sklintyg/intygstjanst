@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.Collections;
 import java.util.regex.Pattern;
 
 import org.joda.time.LocalDate;
@@ -21,8 +22,8 @@ public class AnonymiseraPersonId {
     public static final int SEX_INDEX = 11;
 
     private final Random random = new Random();
-    private final Map<String, String> actualToAnonymized = new HashMap<>();
-    private final Set<String> anonymizedSet = new HashSet<>();
+    private final Map<String, String> actualToAnonymized = Collections.synchronizedMap(new HashMap<String, String>());
+    private final Set<String> anonymizedSet = Collections.synchronizedSet(new HashSet<String>());
 
     public String anonymisera(String patientId) {
         String anonymized = actualToAnonymized.get(patientId);
@@ -67,7 +68,9 @@ public class AnonymiseraPersonId {
                 date = ISODateTimeFormat.basicDate().parseLocalDate(b.toString());
                 samordning = true;
         }
-        date = date.plusDays(random.nextInt(BIRTHDAY_RANGE) - BIRTHDAY_RANGE / 2);
+        int days = random.nextInt(BIRTHDAY_RANGE) - BIRTHDAY_RANGE/2;
+        if (days == 0) days = BIRTHDAY_RANGE/2;
+        date = date.plusDays(days);
         int extension = random.nextInt(9989);
         // Fix sex if needed
         if (((nummer.charAt(SEX_INDEX) - '0') & 1) != ((extension / 10) & 1)) {

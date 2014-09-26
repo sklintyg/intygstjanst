@@ -251,8 +251,8 @@
       "codeSystemName" : "SNOMED-CT"
     },
     "vardkontaktstid" : {
-      "from"  : "2011-01-26",
-      "tom"  : "2011-01-26"
+      "from"  : "2011-01-27",
+      "tom"  : "2011-01-27"
     }
   }, {
     "vardkontakttyp" : {
@@ -261,8 +261,8 @@
       "codeSystemName" : "SNOMED-CT"
     },
     "vardkontaktstid" : {
-      "from"  : "2011-01-12",
-      "tom"  : "2011-01-12"
+      "from"  : "2011-01-13",
+      "tom"  : "2011-01-13"
     }
   } ],
   "referenser" : [ {
@@ -271,14 +271,14 @@
       "codeSystem" : "1.2.752.116.2.1.1.1",
       "codeSystemName" : "SNOMED-CT"
     },
-    "datum" : "2010-01-14"
+    "datum" : "2010-01-15"
   }, {
     "referenstyp" : {
       "code" : "74964007",
       "codeSystem" : "1.2.752.116.2.1.1.1",
       "codeSystemName" : "SNOMED-CT"
     },
-    "datum" : "2010-01-24"
+    "datum" : "2010-01-25"
   } ],
   "validFromDate" : "2011-01-26",
   "validToDate" : "2011-05-31"
