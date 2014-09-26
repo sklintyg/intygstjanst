@@ -292,7 +292,7 @@
       <xs:enumeration value="REVOKED">
         <xs:annotation>
           <xs:documentation xml:lang="sv">
-            Den efterfrågade informationen existerar men har rättats/dragits tillbaka och är ej längre giltig eller
+            Den efterfrågade informationen existerar men har makulerats/dragits tillbaka och är ej längre giltig eller
             tillgänglig. Angiven tjänst utfördes ej, och omsändning av transaktionen är inte tillämpbart.
           </xs:documentation>
         </xs:annotation>
