@@ -35,14 +35,14 @@ public class RecipientServiceImplTest {
     
     @Test
     public void testListRecipientsForCerttypeFK7263() {
-        List<Recipient> expected = Arrays.asList(new Recipient("FK", "Försäkringskassan", "fk"));
+        List<Recipient> expected = Arrays.asList(new Recipient("FK", "Försäkringskassan", "FK"));
         
         assertEquals(expected, service.listRecipients(new CertificateType("fk7263")));
     }
 
     @Test
     public void testListRecipientsForCerttypeTS() {
-        List<Recipient> expected = Arrays.asList(new Recipient("tsTestAddress", "Transportstyrelsen", "ts"));
+        List<Recipient> expected = Arrays.asList(new Recipient("tsTestAddress", "Transportstyrelsen", "TS"));
         
         assertEquals(expected, service.listRecipients(new CertificateType("ts-bas")));
         assertEquals(expected, service.listRecipients(new CertificateType("ts-diabetes")));
