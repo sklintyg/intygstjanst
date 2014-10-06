@@ -75,12 +75,12 @@
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>persistence</artifactId>
+        <artifactId>certificate-persistence</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>schemas</artifactId>
+        <artifactId>certificate-schemas</artifactId>
         <version>${project.version}</version>
       </dependency>
 

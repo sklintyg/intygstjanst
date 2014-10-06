@@ -8,7 +8,7 @@
     <version>1.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>schemas</artifactId>
+  <artifactId>certificate-schemas</artifactId>
   <name>Inera Certificate Schemas</name>
 
   <properties>

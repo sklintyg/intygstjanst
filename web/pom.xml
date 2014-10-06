@@ -26,11 +26,11 @@
     </dependency>
     <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>persistence</artifactId>
+        <artifactId>certificate-persistence</artifactId>
     </dependency>
     <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>schemas</artifactId>
+        <artifactId>certificate-schemas</artifactId>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>

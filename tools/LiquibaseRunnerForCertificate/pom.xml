@@ -25,7 +25,7 @@
       </dependency>
       <dependency>
           <groupId>${project.groupId}</groupId>
-          <artifactId>persistence</artifactId>
+          <artifactId>certificate-persistence</artifactId>
 		<exclusions>
         <exclusion>
           <groupId>se.inera.certificate</groupId>

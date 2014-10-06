@@ -35,11 +35,11 @@
     </dependency>
     <dependency>
       <groupId>se.inera.certificate</groupId>
-      <artifactId>persistence</artifactId>
+      <artifactId>certificate-persistence</artifactId>
     </dependency>
     <dependency>
       <groupId>se.inera.certificate</groupId>
-      <artifactId>schemas</artifactId>
+      <artifactId>certificate-schemas</artifactId>
     </dependency>
 
     <dependency>
