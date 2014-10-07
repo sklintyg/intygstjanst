@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -37,7 +37,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>logback-util</artifactId>
     </dependency>
-    
+
     <!-- Dependencies to Intygstjansten-modules -->
     <dependency>
       <groupId>se.inera.certificate.modules</groupId>
@@ -89,7 +89,7 @@
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
     </dependency>
-
+  
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
@@ -233,33 +233,33 @@
               <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-								<version>${h2db.connector.version}</version>
+                <version>${h2db.connector.version}</version>
               </dependency>
               <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-								<version>${mysql.connector.version}</version>
+                <version>${mysql.connector.version}</version>
               </dependency>
               <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-broker</artifactId>
-								<version>${activemq.version}</version>
+                <version>${activemq.version}</version>
               </dependency>
               <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-kahadb-store</artifactId>
-								<version>${activemq.version}</version>
+                <version>${activemq.version}</version>
               </dependency>
               <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-jms_1.1_spec</artifactId>
-								<version>${geronimo-jms-specs.version}</version>
+                <version>${geronimo-jms-specs.version}</version>
               </dependency>
             </dependencies>
           </plugin>
         </plugins>
       </build>
-      
+
       <dependencies>
         <dependency>
           <groupId>org.apache.activemq</groupId>

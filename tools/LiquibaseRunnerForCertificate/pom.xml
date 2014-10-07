@@ -15,7 +15,7 @@
   <packaging>jar</packaging>
 
   <properties>
-      <checkstyle.basedir>${project.basedir}/../..</checkstyle.basedir>
+    <checkstyle.basedir>${project.basedir}/../..</checkstyle.basedir>
   </properties>
 
   <dependencies>
@@ -64,6 +64,10 @@
           <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
     </dependency>
   </dependencies>
 
