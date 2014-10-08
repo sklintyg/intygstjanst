@@ -91,7 +91,7 @@
               </transformers>
               <artifactSet>
                 <excludes>
-                  <exclude>se.inera.certificate:schemas</exclude>
+                  <exclude>se.inera.certificate:certificate-schemas</exclude>
                   <exclude>se.inera.certificate.modules:*</exclude>
                   <exclude>org.springframework:*</exclude>
                   <exclude>org.hibernate.*:*</exclude>
