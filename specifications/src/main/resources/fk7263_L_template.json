@@ -260,13 +260,6 @@
       "codeSystemName" : "SNOMED-CT"
     },
     "datum" : "2010-01-14"
-  }, {
-    "referenstyp" : {
-      "code" : "74964007",
-      "codeSystem" : "1.2.752.116.2.1.1.1",
-      "codeSystemName" : "SNOMED-CT"
-    },
-    "datum" : "2010-01-24"
   } ],
   "validFromDate" : "2011-01-26",
   "validToDate" : "2011-05-31"
