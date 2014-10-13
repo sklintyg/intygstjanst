@@ -7,6 +7,7 @@ class AnonymiseraJson {
     
     AnonymiseraHsaId anonymiseraHsaId;
     AnonymiseraDatum anonymiseraDatum;
+    AnonymiseraPersonId anonymiseraPersonId;
     
     static {
         LazyMap.metaClass.anonymize = {key->
@@ -26,6 +27,16 @@ class AnonymiseraJson {
         this.anonymiseraDatum = anonymiseraDatum
     }
     
+    AnonymiseraJson(AnonymiseraHsaId anonymiseraHsaId, AnonymiseraDatum anonymiseraDatum, AnonymiseraPersonId anonymiseraPersonId) {
+        this.anonymiseraHsaId = anonymiseraHsaId
+        this.anonymiseraDatum = anonymiseraDatum
+        this.anonymiseraPersonId = anonymiseraPersonId
+    }
+    
+    String anonymiseraIntygsJson(String s) {
+        anonymiseraIntygsJson(s, null)
+    }
+    
     String anonymiseraIntygsJson(String s, String personId) {
         def intyg = new JsonSlurper().parseText(s)
         anonymizeJson(intyg, personId)
@@ -34,7 +45,7 @@ class AnonymiseraJson {
     }
     
     void anonymizeJson(def intyg, String personId) {
-        intyg.patient.id.extension = personId
+        intyg.patient.id.extension = personId ?: anonymiseraPersonId.anonymisera(intyg.patient.id.extension)
         intyg.patient.anonymize('fornamn')
         intyg.patient.anonymize('efternamn')
         intyg.patient.anonymize('fullstandigtNamn')
