@@ -1,4 +1,4 @@
-package se.inera.certificate
+package se.inera.certificate.tools.anonymisering
 
 import groovy.json.*
 import groovy.json.internal.LazyMap

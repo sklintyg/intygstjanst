@@ -1,8 +1,10 @@
-package se.inera.certificate
+package se.inera.certificate.tools.anonymisering
 
 import org.joda.time.LocalDate
 import org.junit.Before
 import org.junit.Test
+
+import se.inera.certificate.tools.anonymisering.AnonymiseraDatum;
 
 class AnonymiseraDatumTest {
 

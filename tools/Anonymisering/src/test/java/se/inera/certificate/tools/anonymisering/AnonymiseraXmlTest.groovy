@@ -1,7 +1,6 @@
-package se.inera.certificate
+package se.inera.certificate.tools.anonymisering
 
 import static org.custommonkey.xmlunit.DifferenceConstants.NAMESPACE_PREFIX_ID;
-
 import groovy.json.*
 
 import org.w3c.dom.Node
@@ -13,6 +12,11 @@ import org.custommonkey.xmlunit.XMLAssert
 import org.custommonkey.xmlunit.XMLUnit
 import org.junit.Test
 import org.springframework.core.io.ClassPathResource
+
+import se.inera.certificate.tools.anonymisering.AnonymiseraDatum;
+import se.inera.certificate.tools.anonymisering.AnonymiseraHsaId;
+import se.inera.certificate.tools.anonymisering.AnonymiseraPersonId;
+import se.inera.certificate.tools.anonymisering.AnonymiseraXml;
 
 class AnonymiseraXmlTest {
 

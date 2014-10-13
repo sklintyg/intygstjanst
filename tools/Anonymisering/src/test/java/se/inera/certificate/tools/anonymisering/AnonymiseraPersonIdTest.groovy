@@ -1,6 +1,8 @@
-package se.inera.certificate
+package se.inera.certificate.tools.anonymisering
 
 import org.junit.Test
+
+import se.inera.certificate.tools.anonymisering.AnonymiseraPersonId;
 
 class AnonymiseraPersonIdTest {
 

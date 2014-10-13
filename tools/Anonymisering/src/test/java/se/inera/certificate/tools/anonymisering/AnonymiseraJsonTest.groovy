@@ -1,4 +1,4 @@
-package se.inera.certificate
+package se.inera.certificate.tools.anonymisering
 
 import groovy.json.*
 
@@ -6,6 +6,10 @@ import org.apache.commons.io.FileUtils
 import org.junit.Test
 import org.skyscreamer.jsonassert.JSONAssert
 import org.springframework.core.io.ClassPathResource
+
+import se.inera.certificate.tools.anonymisering.AnonymiseraDatum;
+import se.inera.certificate.tools.anonymisering.AnonymiseraHsaId;
+import se.inera.certificate.tools.anonymisering.AnonymiseraJson;
 
 class AnonymiseraJsonTest {
 

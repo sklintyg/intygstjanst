@@ -1,4 +1,4 @@
-package se.inera.certificate
+package se.inera.certificate.tools.anonymisering
 
 class AnonymizeString {
     

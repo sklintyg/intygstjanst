@@ -1,4 +1,4 @@
-package se.inera.certificate
+package se.inera.certificate.tools
 
 import groovy.sql.Sql
 import groovyx.gpars.GParsPool
@@ -6,6 +6,13 @@ import groovyx.gpars.GParsPool
 import java.util.concurrent.atomic.AtomicInteger
 
 import org.apache.commons.dbcp2.BasicDataSource
+
+import se.inera.certificate.tools.anonymisering.AnonymiseraDatum;
+import se.inera.certificate.tools.anonymisering.AnonymiseraHsaId;
+import se.inera.certificate.tools.anonymisering.AnonymiseraJson;
+import se.inera.certificate.tools.anonymisering.AnonymiseraPersonId;
+import se.inera.certificate.tools.anonymisering.AnonymiseraXml;
+import se.inera.certificate.tools.anonymisering.AnonymizeString;
 
 class AnonymiseraIntygsDatabas {
 
