@@ -5,7 +5,6 @@
 |19121212-1212|ja|
 
 !3 Säkerställ att intyg registrerade via !-RegisterCertificate-! transformeras korrekt, så att !-GetCertificate-! ger tillbaka samma intygsinformation
-
 |transformera intyg|
 |filnamn|resultat?|
 |transformering/legacy-fk7263-L.xml|OK|
@@ -14,6 +13,13 @@
 |transformering/legacy-fk7263-Motivering-utan-prognosangivelse.xml|OK|
 |transformering/legacy-fk7263-SmL-L.xml|OK|
 |transformering/legacy-fk7263-SmL-S.xml|OK|
+
+
+!3 Säkerställ att intyg registrerade via !-RegisterMedicalCertificate-! transformeras och kan plockas upp av !-GetCertificateForCare-!
+!4 Dvs säkerställ att intyg på legacy-format kan hämtas upp i Webcert för att visas tillsammans med fråga&svar
+|transformera och jamfor intyg|
+|filnamn                                                                |forvantat                                                        |resultat?|
+|transformering/legacy-fk7263-Aktivitetsbegransning-utan-beskrivning.xml|transformering/fk7263-Aktivitetsbegransning-utan-beskrivning.xml | OK      |
 
 !3 Återta samtycken:
 
