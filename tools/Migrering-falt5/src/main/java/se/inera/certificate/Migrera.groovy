@@ -42,7 +42,8 @@ class Migrera {
                 def observationer = document.observationer
                 boolean jsonUpdated = false
                 if (observationer != null) {
-                    for (int i = 0; i < observationer.size; i++) {
+                    //count backwards in order to preserve index for following objects if one is removed
+                    for (int i = observationer.size-1; i >= 0; i--) {
                         if (observationer[i].observationskategori != null) {
                             if(observationer[i].observationskategori.code == 'd' && !observationer[i].beskrivning) {
                                 observationer.remove(observationer[i])
