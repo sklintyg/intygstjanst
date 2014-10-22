@@ -1,6 +1,7 @@
 {
     "id": {
-        "root": "23aba5ad-1bbe-47fd-b889-a1390660201b"
+        "root" : "1.2.752.129.2.1.2.1",
+    	"extension" : "23aba5ad-1bbe-47fd-b889-a1390660201b"
     },
     "typ": {
         "code": "fk7263",
