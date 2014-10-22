@@ -122,7 +122,6 @@ public class Intyg extends RestClientFixture {
 
         // setting the certificate ID
         certificate.'id'.root = id
-        certificate.'id'.extension = id
 
         // setting personnr in certificate XML
         certificate.patient.'id'.extension = personnr
