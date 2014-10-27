@@ -24,19 +24,6 @@
 |id|
 |smittskydd-avstangning.xml|
 
-!3 Flera bedömningar arbetsförmåga ger fel
-
-|validera register mot nya kontraktet|
-|filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-fler-formaga.xml|=~/VALIDATION_ERROR/|
-
-!3 Multipla rehabval ger fel
-
-|validera register mot nya kontraktet|
-|filnamn|resultat?|
-|validering/ny_fk7263/registrera-smittskydd/smittskydd-fler-rehabval.xml|=~/VALIDATION_ERROR/|
-
-
 
 !3 Saknad funktionstillstand kroppsfunktion vid smittskydd är ok
 
