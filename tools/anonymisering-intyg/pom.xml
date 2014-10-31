@@ -5,23 +5,22 @@
   <modelVersion>4.0.0</modelVersion>
   
   <parent>
-    <groupId>se.inera.intyg</groupId>
-    <artifactId>intyg-parent</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <groupId>se.inera.intyg.intygstjanst</groupId>
+    <artifactId>intygstjanst</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
-    
-  <groupId>se.inera.certificate.tools</groupId>
-  <artifactId>anonymisera-intygsdatabas</artifactId>
+
+  <groupId>se.inera.intyg.intygstjanst.tools</groupId>
+  <artifactId>anonymisering-intyg</artifactId>
   <version>1.0.6</version>
-  <packaging>jar</packaging>
   <name>Anonymisering av intyg</name>
 
   <dependencies>
-
+    <!-- Dependencies to Tools -->
     <dependency>
-      <groupId>se.inera.certificate.tools</groupId>
+      <groupId>se.inera.intyg.tools</groupId>
       <artifactId>anonymisering</artifactId>
-      <version>1.0.1</version>
     </dependency>
 
     <dependency>
