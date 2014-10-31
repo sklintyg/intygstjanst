@@ -10,7 +10,6 @@ import javax.xml.transform.stream.StreamSource
 
 import se.inera.certificate.spec.util.FitnesseHelper
 import se.inera.certificate.spec.util.WsClientFixture
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType
@@ -27,11 +26,11 @@ class ValideraRevoke extends WsClientFixture {
 
     String filnamn
     RevokeMedicalCertificateResponseType response
-    
+
     public ValideraRevoke() {
         this(WsClientFixture.LOGICAL_ADDRESS)
     }
-    
+
     public ValideraRevoke(String logiskAddress) {
         super(logiskAddress)
         String url = serviceUrl ? serviceUrl : baseUrl + "revoke-certificate/v1.0"

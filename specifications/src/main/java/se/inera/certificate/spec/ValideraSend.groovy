@@ -10,7 +10,6 @@ import javax.xml.transform.stream.StreamSource
 
 import se.inera.certificate.spec.util.FitnesseHelper
 import se.inera.certificate.spec.util.WsClientFixture
-import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.v1.rivtabp20.SendMedicalCertificateResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateResponseType
@@ -27,11 +26,11 @@ class ValideraSend extends WsClientFixture {
 
     String filnamn
     SendMedicalCertificateResponseType response
-    
+
     public ValideraSend() {
         this(WsClientFixture.LOGICAL_ADDRESS)
     }
-    
+
     public ValideraSend(String logiskAddress) {
         super(logiskAddress)
         String url = serviceUrl ? serviceUrl : baseUrl + "send-certificate/v1.0"

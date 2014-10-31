@@ -1,7 +1,5 @@
 package se.inera.certificate.spec
 
-import java.util.UUID.*
-
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
 import javax.xml.transform.stream.StreamSource
@@ -25,10 +23,10 @@ public class SkapaTsIntygBaseratPaScenario extends WsClientFixtureNyaKontraktet 
     String typ
     String personnummer
 	String antalIntyg
-	
+
 	def responses = []
-	
-	// Used to iterate through list of personnummer 
+
+	// Used to iterate through list of personnummer
 	int index = 0
 
     RegisterCertificateResponseType response
@@ -43,16 +41,16 @@ public class SkapaTsIntygBaseratPaScenario extends WsClientFixtureNyaKontraktet 
 		String url = serviceUrl ? serviceUrl : baseUrl + "register-certificate/v1.0"
         registerCertificateResponder = createClient(RegisterCertificateResponderInterface.class, url)
 	}
-	
+
 	public void execute() {
-		
+
 		for (int i = 0; i < Integer.parseInt(antalIntyg); i++) {
 			RegisterCertificateType request = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("grundladda/" + typ + "/" + mall).getInputStream()), RegisterCertificateType.class).getValue()
 
 			request.utlatande.patient.personId.extension = personnummer
 			request.utlatande.utlatandeId.extension = uid.randomUUID()
 			response = registerCertificateResponder.registerCertificate(logicalAddress.toString(), request)
-			
+
 			// Put the resultAsString in a list so we can check it all went okay
 			responses << resultAsString(response)
 		}

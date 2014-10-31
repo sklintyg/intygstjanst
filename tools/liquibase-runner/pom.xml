@@ -5,99 +5,113 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>se.inera.intyg.common</groupId>
-    <artifactId>common-pom</artifactId>
+    <groupId>se.inera.intyg.intygstjanst</groupId>
+    <artifactId>intygstjanst</artifactId>
     <version>1.3-SNAPSHOT</version>
+    <relativePath>../../</relativePath>
   </parent>
 
-  <groupId>se.inera.intyg.tools</groupId>
-  <artifactId>liquibase-runner</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <name>Liquibase Runner</name>
+  <groupId>se.inera.intyg.intygstjanst</groupId>
+  <artifactId>intygstjanst-liquibase-runner</artifactId>
+
+  <name>Intygstjänsten Liquibase Runner</name>
 
   <properties>
     <checkstyle.basedir>${project.basedir}/../..</checkstyle.basedir>
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.liquibase</groupId>
-      <artifactId>liquibase-core</artifactId>
-    </dependency>
 
     <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>intygstjanst-persistence</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>se.inera.intyg.intygstjanst</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>se.inera.intyg.common</groupId>
+          <artifactId>common-support</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.hibernate</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.hibernate.javax.persistence</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jadira.usertype</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.liquibase</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- Dependencies to Tools -->
+    <dependency>
+      <groupId>se.inera.intyg.tools</groupId>
+      <artifactId>liquibase-runner</artifactId>
     </dependency>
 
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <scope>runtime</scope>
     </dependency>
-
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>log4j-over-slf4j</artifactId>
-    </dependency>
-
-    <!-- Test dependencies -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>${compiler.source.version}</source>
-          <target>${compiler.target.version}</target>
-          <compilerId>groovy-eclipse-compiler</compilerId>
-          <verbose>true</verbose>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-eclipse-compiler</artifactId>
-            <version>${groovy-eclipse-compiler.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-eclipse-batch</artifactId>
-            <version>${groovy-eclipse-batch.version}</version>
-          </dependency>
-        </dependencies>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <transformers>
+                <transformer
+                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>se.inera.certificate.liquibase.Runner</mainClass>
+                </transformer>
+              </transformers>
+              <artifactSet>
+                <excludes>
+                  <exclude>se.inera.intyg.schemas:intygstjanst-schemas</exclude>
+                  <exclude>se.inera.intyg.intygstyper:*</exclude>
+                  <exclude>org.springframework:*</exclude>
+                  <exclude>org.hibernate.*:*</exclude>
+                  <exclude>org.jadira.usertype:*</exclude>
+                  <exclude>com.google.guava:*</exclude>
+                  <exclude>com.h2database:*</exclude>
+                </excludes>
+              </artifactSet>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <mainClass>se.inera.certificate.liquibase.Runner</mainClass>
-            </manifest>
-          </archive>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-        </configuration>
         <executions>
           <execution>
             <id>make-assembly</id>
@@ -105,10 +119,13 @@
             <goals>
               <goal>single</goal>
             </goals>
+            <configuration>
+              <descriptor>src/main/assembly/manifest.xml</descriptor>
+            </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
-
   </build>
+
 </project>

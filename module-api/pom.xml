@@ -4,12 +4,12 @@
   <parent>
     <groupId>se.inera.intyg.intygstjanst</groupId>
     <artifactId>intygstjanst</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
+    <version>1.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>module-api</artifactId>
-  <name>Inera Certificate Module API</name>
+
+  <name>Intygstjänsten Modul API</name>
 
   <properties>
     <checkstyle.basedir>${project.basedir}/..</checkstyle.basedir>
@@ -17,8 +17,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>se.inera.intyg.intygstyper</groupId>
-      <artifactId>support</artifactId>
+      <groupId>se.inera.intyg.common</groupId>
+      <artifactId>common-support</artifactId>
     </dependency>
 
     <dependency>

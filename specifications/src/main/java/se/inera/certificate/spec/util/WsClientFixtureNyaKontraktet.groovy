@@ -1,5 +1,4 @@
 package se.inera.certificate.spec.util
-import org.w3.wsaddressing10.AttributedURIType
 
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType
 
@@ -8,11 +7,11 @@ class WsClientFixtureNyaKontraktet extends WsClientFixture {
 	public WsClientFixtureNyaKontraktet() {
 		super();
 	}
-	
+
 	public WsClientFixtureNyaKontraktet(String address) {
 		logicalAddress.setValue(address)
 	}
-	
+
     @Override
 	def resultAsString(response) {
         String result = null

@@ -1,7 +1,5 @@
 package se.inera.certificate.spec
 
-import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK
-
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
 import javax.xml.transform.stream.StreamSource
@@ -15,8 +13,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswe
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.AnswerToFkType
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.SendMedicalCertificateAnswerResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.SendMedicalCertificateAnswerType
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType
-
 
 class SkickaSvar extends WsClientFixture {
 
@@ -35,11 +31,11 @@ class SkickaSvar extends WsClientFixture {
 	String namn
 
 	static String serviceUrl = System.getProperty("service.sendMedicalCertificateAnswerUrl")
-	
+
     public SkickaSvar() {
 		this(WsClientFixture.LOGICAL_ADDRESS)
 	}
-	
+
     public SkickaSvar(String logiskAddress) {
 		super(logiskAddress)
 		String url = serviceUrl ? serviceUrl : baseUrl + "send-certificate-answer-stub"

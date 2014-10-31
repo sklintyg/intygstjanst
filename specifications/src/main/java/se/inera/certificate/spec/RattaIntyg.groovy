@@ -8,7 +8,6 @@ import riv.insuranceprocess.healthreporting.medcertqa._1.LakarutlatandeEnkelType
 import riv.insuranceprocess.healthreporting.medcertqa._1.VardAdresseringsType
 import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface
-import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderService
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType
@@ -39,7 +38,7 @@ class RattaIntyg extends WsClientFixture {
     public RattaIntyg() {
         this(WsClientFixture.LOGICAL_ADDRESS)
     }
-    
+
     public RattaIntyg(String logiskAddress) {
         super(logiskAddress)
 		String url = serviceUrl ? serviceUrl : baseUrl + "revoke-certificate/v1.0"

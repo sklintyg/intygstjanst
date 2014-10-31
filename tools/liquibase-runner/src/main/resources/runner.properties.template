@@ -1,5 +1,0 @@
-# Set the following properties in a runner.properties file
-# that is available on the classpath.
-username=
-password=
-url=jdbc:mysql://localhost:3306/app

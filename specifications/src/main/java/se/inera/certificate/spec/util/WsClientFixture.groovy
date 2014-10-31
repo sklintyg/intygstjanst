@@ -19,7 +19,6 @@ import org.apache.cxf.transport.http.HTTPConduit
 import org.w3.wsaddressing10.AttributedURIType
 
 import se.inera.certificate.integration.json.CustomObjectMapper
-import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.v1.rivtabp20.ListCertificatesResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
 
 class WsClientFixture {
@@ -28,25 +27,25 @@ class WsClientFixture {
 
 	private CustomObjectMapper jsonMapper = new CustomObjectMapper();
 	protected AttributedURIType logicalAddress = new AttributedURIType()
-	
+
 	public WsClientFixture() {
 		this(LOGICAL_ADDRESS)
 	}
-	
+
 	public WsClientFixture(String address) {
 		logicalAddress.setValue(address)
 	}
-	
+
 	def asJson(def object) {
 		StringWriter sw = new StringWriter()
 		jsonMapper.writeValue(sw, object)
 		return sw.toString()
 	}
-	
+
 	def asErrorMessage(String s) {
 		throw new Exception("message:<<${s.replace(System.getProperty('line.separator'), ' ')}>>")
 	}
-	
+
     static String baseUrl = System.getProperty("certificate.baseUrl", "http://localhost:8080/inera-certificate/")
 
 	def setEndpoint(def responder, String serviceName, String url = baseUrl + serviceName) {
@@ -54,7 +53,7 @@ class WsClientFixture {
 		Client client = ClientProxy.getClient(responder)
 		client.getRequestContext().put(Message.ENDPOINT_ADDRESS, url)
 	}
-	
+
 	def createClient(def responderInterface, String url) {
 		ClientProxyFactoryBean factory = new ClientProxyFactoryBean(new JaxWsClientFactoryBean());
 		factory.setServiceClass( responderInterface );
@@ -65,7 +64,7 @@ class WsClientFixture {
 		}
 		return responder
 	}
-	
+
 	def resultAsString(response) {
         String result = null
 		if (response) {
@@ -94,14 +93,14 @@ class WsClientFixture {
         if (ntjpClientAuthentication) {
     		KeyStore trustStore = KeyStore.getInstance("JKS");
     		String trustpass = "password";//provide trust pass
-    
+
     		trustStore.load(WsClientFixture.class.getResourceAsStream("/truststore-ntjp.jks"), trustpass.toCharArray());
     		TrustManagerFactory trustFactory =
     				TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
     		trustFactory.init(trustStore);
     		TrustManager[] tm = trustFactory.getTrustManagers();
     		tlsParams.setTrustManagers(tm);
-    
+
     		KeyStore certStore = KeyStore.getInstance("PKCS12");
             String certFile = System.getProperty("ws.certificate.file");
             String certPass = System.getProperty("ws.certificate.password");

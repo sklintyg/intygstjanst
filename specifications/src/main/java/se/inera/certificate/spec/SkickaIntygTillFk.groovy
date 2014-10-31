@@ -8,7 +8,6 @@ import riv.insuranceprocess.healthreporting.medcertqa._1.LakarutlatandeEnkelType
 import riv.insuranceprocess.healthreporting.medcertqa._1.VardAdresseringsType
 import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.v1.rivtabp20.SendMedicalCertificateResponderInterface
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.v1.rivtabp20.SendMedicalCertificateResponderService
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType
@@ -31,11 +30,11 @@ class SkickaIntygTillFk extends WsClientFixture {
     SendMedicalCertificateResponseType response
 
     static String serviceUrl = System.getProperty("service.sendCertificateUrl")
-    
+
     public SkickaIntygTillFk() {
         this(WsClientFixture.LOGICAL_ADDRESS)
     }
-    
+
     public SkickaIntygTillFk(String logiskAddress) {
         super(logiskAddress)
         String url = serviceUrl ? serviceUrl : baseUrl + "send-certificate/v1.0"
@@ -48,7 +47,7 @@ class SkickaIntygTillFk extends WsClientFixture {
         sendRequestType.setSend(sendType)
         sendType.vardReferensId = 1
         sendType.avsantTidpunkt = new LocalDateTime("2013-05-01T11:00:00")
-        sendType.adressVard = new VardAdresseringsType()        
+        sendType.adressVard = new VardAdresseringsType()
         sendType.adressVard.hosPersonal = new HosPersonalType()
         sendType.adressVard.hosPersonal.personalId = new II()
         sendType.adressVard.hosPersonal.personalId.root = "1.2.752.129.2.1.4.1"
@@ -64,7 +63,7 @@ class SkickaIntygTillFk extends WsClientFixture {
         sendType.adressVard.hosPersonal.enhet.vardgivare.vardgivareId.root = "1.2.752.129.2.1.4.1"
         sendType.adressVard.hosPersonal.enhet.vardgivare.vardgivareId.extension = "1"
         sendType.adressVard.hosPersonal.enhet.vardgivare.vardgivarnamn = "Vårdgivarnamn"
-        
+
         sendType.lakarutlatande = new LakarutlatandeEnkelType()
         sendType.lakarutlatande.lakarutlatandeId = intyg
         sendType.lakarutlatande.signeringsTidpunkt = new LocalDateTime("2013-05-01T11:00:00")
@@ -73,7 +72,7 @@ class SkickaIntygTillFk extends WsClientFixture {
         sendType.lakarutlatande.patient.personId.root = "1.2.752.129.2.1.3.1"
         sendType.lakarutlatande.patient.personId.extension = personnummer
         sendType.lakarutlatande.patient.fullstandigtNamn = "Ett namn"
-        
+
         response = sendResponder.sendMedicalCertificate(logicalAddress, sendRequestType)
     }
 
