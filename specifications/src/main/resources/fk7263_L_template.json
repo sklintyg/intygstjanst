@@ -132,10 +132,46 @@
     },
     "observationskod" : {
       "codeSystemName" : "ICD-10",
-      "code" : "S47"
+      "code" : "S47",
+      "displayName" : "Klartext1"
     },
     "beskrivning" : "Klämskada på överarm"
-  }, {
+  },
+    {
+      "observationskategori" : {
+        "codeSystem" : "1.2.752.116.2.1.1.1",
+        "codeSystemName" : "SNOMED-CT",
+        "code" : "85097005"
+      },
+      "observationskod" : {
+        "codeSystem" : "1.2.752.116.1.1.1.1.1",
+        "codeSystemName" : "ICD-10",
+        "code" : "Z233",
+        "displayName" : "Klartext2"
+      },
+      "id" : {
+        "root": "1.2.752.129.2.1.2.1",
+        "extension": "2"
+      }
+    },
+    {
+      "observationskategori" : {
+        "codeSystem" : "1.2.752.116.2.1.1.1",
+        "codeSystemName" : "SNOMED-CT",
+        "code" : "85097005"
+      },
+      "observationskod" : {
+        "codeSystem" : "1.2.752.116.1.1.1.1.1",
+        "codeSystemName" : "ICD-10",
+        "code" : "Z233",
+        "displayName" : "Klartext3"
+      },
+      "id" : {
+        "root": "1.2.752.129.2.1.2.1",
+        "extension": "3"
+      }
+    }, 
+  {
     "observationskod" : {
       "code" : "288524001",
       "codeSystem" : "1.2.752.116.2.1.1.1",
