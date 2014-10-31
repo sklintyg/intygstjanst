@@ -3,14 +3,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>se.inera.certificate</groupId>
-    <artifactId>certificate</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <groupId>se.inera.intyg.intygstjanst</groupId>
+    <artifactId>intygstjanst</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>web</artifactId>
-  <name>Inera Certificate Web Application</name>
+  <artifactId>intygstjanst-web</artifactId>
   <packaging>war</packaging>
+  <name>Intygstjänsten Web Application</name>
 
   <properties>
     <checkstyle.basedir>${project.basedir}/..</checkstyle.basedir>
@@ -22,37 +23,41 @@
   <dependencies>
     <!-- Projects dependencies -->
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>module-api</artifactId>
     </dependency>
     <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>certificate-persistence</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>certificate-schemas</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>logback-util</artifactId>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>intygstjanst-persistence</artifactId>
     </dependency>
 
-    <!-- Dependencies to Intygstjansten-modules -->
+    <!-- Dependencies to Common -->
     <dependency>
-      <groupId>se.inera.certificate.modules</groupId>
-      <artifactId>module-support</artifactId>
+      <groupId>se.inera.intyg.common</groupId>
+      <artifactId>logging-util</artifactId>
+    </dependency>
+
+    <!-- Dependencies to Schemas -->
+    <dependency>
+      <groupId>se.inera.intyg.schemas</groupId>
+      <artifactId>intygstjanst-schemas</artifactId>
+    </dependency>
+
+    <!-- Dependencies to Intygstyper -->
+    <dependency>
+      <groupId>se.inera.intyg.intygstyper</groupId>
+      <artifactId>support</artifactId>
     </dependency>
     <dependency>
-      <groupId>se.inera.certificate.modules</groupId>
+      <groupId>se.inera.intyg.intygstyper</groupId>
       <artifactId>fk7263</artifactId>
     </dependency>
     <dependency>
-      <groupId>se.inera.certificate.modules</groupId>
+      <groupId>se.inera.intyg.intygstyper</groupId>
       <artifactId>ts-bas</artifactId>
     </dependency>
     <dependency>
-      <groupId>se.inera.certificate.modules</groupId>
+      <groupId>se.inera.intyg.intygstyper</groupId>
       <artifactId>ts-diabetes</artifactId>
     </dependency>
 
@@ -138,7 +143,7 @@
   </dependencies>
 
   <build>
-    <finalName>inera-certificate</finalName>
+    <finalName>intygstjanst</finalName>
     <resources>
       <resource>
         <directory>src/main/resources</directory>

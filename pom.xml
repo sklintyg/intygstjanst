@@ -4,69 +4,68 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>se.inera.intyg</groupId>
-    <artifactId>intyg-parent</artifactId>
+    <groupId>se.inera.intyg.common</groupId>
+    <artifactId>common-pom</artifactId>
     <version>1.3-SNAPSHOT</version>
   </parent>
 
-  <groupId>se.inera.certificate</groupId>
-  <artifactId>certificate</artifactId>
+  <groupId>se.inera.intyg.intygstjanst</groupId>
+  <artifactId>intygstjanst</artifactId>
+  <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Inera Certificate</name>
-
-  <description>
-    Inera Certificate Root Project - The parent of all other Inera Certificate modules.
-  </description>
+  <name>Intygstjänsten</name>
 
   <properties>
-    <!-- Project properties -->
+    <!-- Repository host url -->
     <repository.host>repository-callistasoftware.forge.cloudbees.com</repository.host>
-    <logback-util.version>1.1.2</logback-util.version>
+
+    <!-- Project properties -->
     <checkstyle.basedir>${project.basedir}</checkstyle.basedir>
 
-    <!-- Properties for project modules having their own versioning strategy -->
+    <!-- Intygstyper -->
+    <support.version>1.0-SNAPSHOT</support.version>
     <fk7263.version>1.0-SNAPSHOT</fk7263.version>
     <ts-bas.version>1.0-SNAPSHOT</ts-bas.version>
     <ts-diabetes.version>1.0-SNAPSHOT</ts-diabetes.version>
+
+    <!-- Tools -->
+    <anonymisering.version>1.0.1</anonymisering.version>
     <liquibase-runner.version>1.0-SNAPSHOT</liquibase-runner.version>
+
+    <!-- Common -->
+    <integration-util.version>1.0-SNAPSHOT</integration-util.version>
+    <logging-util.version>1.1.3-SNAPSHOT</logging-util.version>
+
+    <!-- Schemas -->
+    <schemas.version>1.0-SNAPSHOT</schemas.version>
   </properties>
 
   <modules>
+    <module>logging-util</module>
     <module>schemas</module>
     <module>module-api</module>
-    <module>web</module>
-    <module>specifications</module>
+    <module>tools/anonymisering</module>
+    <module>tools/anonymisering-intyg</module>
+    <module>tools/liquibase-runner</module>
     <module>persistence</module>
-    <module>tools/LiquibaseRunner</module>
-    <module>tools/LiquibaseRunnerForCertificate</module>
-    <!-- <module>tools/AnonymiseraIntygsDatabas</module> -->
+    <module>tools/liquibase-runner-intyg</module>
+    <module>specifications</module>
+    <module>web</module>
   </modules>
 
   <scm>
-    <connection>scm:git:https://${scm.host}/p/inera-certificate/</connection>
+    <connection>scm:git:https://${scm.host}/sklintyg/intygstjanst/</connection>
     <tag>HEAD</tag>
   </scm>
 
   <dependencyManagement>
     <dependencies>
       <!-- Project dependencies -->
-
       <!-- TODO: Finns den här verkligen? -->
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>model</artifactId>
         <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>liquibase-runner</artifactId>
-        <version>${liquibase-runner.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>logback-util</artifactId>
-        <version>${logback-util.version}</version>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
@@ -75,36 +74,62 @@
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>certificate-persistence</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>certificate-schemas</artifactId>
+        <artifactId>intygstjanst-persistence</artifactId>
         <version>${project.version}</version>
       </dependency>
 
-      <!-- Dependencies to Intygstjansten's modules project -->
+      <!-- Dependencies to Common -->
       <dependency>
-        <groupId>se.inera.certificate.modules</groupId>
-        <artifactId>module-support</artifactId>
-        <version>${project.parent.version}</version>
+        <groupId>se.inera.intyg.common</groupId>
+        <artifactId>logging-util</artifactId>
+        <version>${logging-util.version}</version>
       </dependency>
       <dependency>
-        <groupId>se.inera.certificate.modules</groupId>
+        <groupId>se.inera.intyg.common</groupId>
+        <artifactId>integration-util</artifactId>
+        <version>${integration-util.version}</version>
+      </dependency>
+
+      <!-- Dependencies to Intygstyper -->
+      <dependency>
+        <groupId>se.inera.intyg.intygstyper</groupId>
+        <artifactId>support</artifactId>
+        <version>${support.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>se.inera.intyg.intygstyper</groupId>
         <artifactId>fk7263</artifactId>
         <version>${fk7263.version}</version>
       </dependency>
       <dependency>
-        <groupId>se.inera.certificate.modules</groupId>
+        <groupId>se.inera.intyg.intygstyper</groupId>
         <artifactId>ts-bas</artifactId>
         <version>${ts-bas.version}</version>
       </dependency>
       <dependency>
-        <groupId>se.inera.certificate.modules</groupId>
+        <groupId>se.inera.intyg.intygstyper</groupId>
         <artifactId>ts-diabetes</artifactId>
         <version>${ts-diabetes.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>se.inera.intyg.schemas</groupId>
+        <artifactId>intygstjanst-schemas</artifactId>
+        <version>${schemas.version}</version>
+      </dependency>
+
+      <!-- Dependencies to Tools -->
+      <dependency>
+        <groupId>se.inera.intyg.tools</groupId>
+        <artifactId>anonymisering</artifactId>
+        <version>${anonymisering.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>se.inera.intyg.tools</groupId>
+        <artifactId>liquibase-runner</artifactId>
+        <version>${liquibase-runner.version}</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -112,6 +137,14 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
     </dependency>
 
     <!-- Test dependencies -->
@@ -125,18 +158,9 @@
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>log4j-over-slf4j</artifactId>
-    </dependency>
   </dependencies>
 
   <build>
-
     <plugins>
       <plugin>
         <groupId>org.jacoco</groupId>

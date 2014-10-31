@@ -2,9 +2,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>se.inera.certificate</groupId>
-    <artifactId>certificate</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <groupId>se.inera.intyg.intygstjanst</groupId>
+    <artifactId>intygstjanst</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>module-api</artifactId>
@@ -14,14 +15,10 @@
     <checkstyle.basedir>${project.basedir}/..</checkstyle.basedir>
   </properties>
 
-  <description>Contains API for communication between the certificate application and the different certificate
-    modules.
-  </description>
-
   <dependencies>
     <dependency>
-      <groupId>se.inera.certificate.modules</groupId>
-      <artifactId>module-support</artifactId>
+      <groupId>se.inera.intyg.intygstyper</groupId>
+      <artifactId>support</artifactId>
     </dependency>
 
     <dependency>
