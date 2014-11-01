@@ -45,7 +45,7 @@
     <module>persistence</module>
     <module>specifications</module>
     <module>web</module>
-    <module>tools/anonymisering</module>
+    <module>tools/ianonymisering</module>
     <module>tools/liquibase-runner</module>
   </modules>
 
