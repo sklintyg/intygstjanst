@@ -4,9 +4,6 @@ import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
 import javax.xml.transform.stream.StreamSource
 
-import java.util.UUID.*
-
-import org.joda.time.LocalDateTime
 import org.springframework.core.io.ClassPathResource
 
 import se.inera.certificate.spec.util.WsClientFixture
@@ -24,11 +21,11 @@ public class SkapaIntygBaseratPaScenario extends WsClientFixture {
 	String mall
 	String antalIntyg
 	File personFile
-	
+
 	def personnummer = []
 	def responses = []
-	
-	// Used to iterate through list of personnummer 
+
+	// Used to iterate through list of personnummer
 	int index = 0
 
 	RegisterMedicalCertificateResponseType response
@@ -45,11 +42,11 @@ public class SkapaIntygBaseratPaScenario extends WsClientFixture {
 		personFile = new ClassPathResource(System.getProperty("persondata")).getFile()
 		personFile.eachLine { line -> personnummer << line }
 	}
-	
+
 	/**
-	 * Go through the list of personnummer, 
+	 * Go through the list of personnummer,
 	 * when the end is reached start over from the beginning.
-	 * 
+	 *
 	 * @return a personnummer as a String
 	 */
 	private String getNextPersonnummer() {
@@ -66,14 +63,14 @@ public class SkapaIntygBaseratPaScenario extends WsClientFixture {
 	}
 
 	public void execute() {
-		
+
 		for (int i = 0; i < Integer.parseInt(antalIntyg); i++) {
 			RegisterMedicalCertificateType request = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("grundladda/templates/" + mall).getInputStream()), RegisterMedicalCertificateType.class).getValue()
 
 			request.lakarutlatande.patient.personId.extension = getNextPersonnummer()
 			request.lakarutlatande.lakarutlatandeId = uid.randomUUID()
 			response = registerMedicalCertificateResponder.registerMedicalCertificate(logicalAddress, request)
-			
+
 			// Put the resultAsString in a list so we can check it all went okay
 			responses << resultAsString(response)
 		}

@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
-    <groupId>se.inera.certificate</groupId>
-    <artifactId>certificate</artifactId>
+    <groupId>se.inera.intyg.intygstjanst</groupId>
+    <artifactId>intygstjanst</artifactId>
     <version>1.3-SNAPSHOT</version>
   </parent>
-  
-  <artifactId>certificate-specifications</artifactId>
-  <packaging>jar</packaging>
-  <name>Inera Certificate FitNesse specifications</name>
+
+  <artifactId>intygstjanst-specifications</artifactId>
+
+  <name>Intygstjänsten FitNesse Specifications</name>
 
   <properties>
     <certificate.baseUrl>http://localhost:8080/inera-certificate/</certificate.baseUrl>
@@ -30,28 +31,26 @@
   <dependencies>
 
     <dependency>
-      <groupId>se.inera.certificate</groupId>
-      <artifactId>model</artifactId>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>intygstjanst-persistence</artifactId>
     </dependency>
+
+    <!-- Schemas -->
     <dependency>
-      <groupId>se.inera.certificate</groupId>
-      <artifactId>certificate-persistence</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>se.inera.certificate</groupId>
-      <artifactId>certificate-schemas</artifactId>
+      <groupId>se.inera.intyg.schemas</groupId>
+      <artifactId>intygstjanst-schemas</artifactId>
     </dependency>
 
     <dependency>
       <groupId>javax.jms</groupId>
       <artifactId>jms-api</artifactId>
     </dependency>
-            
+
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-client</artifactId>
@@ -61,7 +60,7 @@
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.codehaus.groovy.modules.http-builder</groupId>
       <artifactId>http-builder</artifactId>
@@ -94,7 +93,7 @@
       <artifactId>xmlunit</artifactId>
       <scope>compile</scope>
     </dependency>
-    
+
   </dependencies>
 
   <build>
@@ -124,15 +123,17 @@
           <filesets>
             <fileset>
               <directory>${fitnesse.working}</directory>
+              <includes>
+                <include>${fitnesse.root}/ErrorLogs/**</include>
+                <include>${fitnesse.root}/FitNesse/**</include>
+                <include>${fitnesse.root}/PageHeader/**</include>
+                <include>${fitnesse.root}/RecentChanges/**</include>
+                <include>${fitnesse.root}/files/**</include>
+              </includes>
               <excludes>
-                 <exclude>${fitnesse.root}/${fitnesse.project.root}/**</exclude>
-                 <exclude>${fitnesse.root}/FrontPage/**</exclude>
-                 <exclude>${fitnesse.root}/PageFooter/**</exclude>
-                 <exclude>${fitnesse.root}/files/validering/**</exclude>
-                 <exclude>${fitnesse.root}/files/transformering/**</exclude>
-                 <exclude>plugins.properties</exclude>
-                 <exclude>**/.gitignore</exclude>
-               </excludes>
+                <exclude>${fitnesse.root}/files/validering/**</exclude>
+                <exclude>${fitnesse.root}/files/.gitignore</exclude>
+              </excludes>
             </fileset>
           </filesets>
         </configuration>
@@ -148,34 +149,34 @@
           <createSymLink>false</createSymLink>
           <suite>${fitnesse.suite}</suite>
           <useProjectDependencies>
-              <scope>compile</scope>
+            <scope>compile</scope>
           </useProjectDependencies>
         </configuration>
       </plugin>
     </plugins>
-    
+
   </build>
 
   <profiles>
     <profile>
       <id>test-server</id>
-        <properties>
-          <certificate.baseUrl>http://10.250.34.20:8080/inera-certificate/</certificate.baseUrl>
-        </properties>
+      <properties>
+        <certificate.baseUrl>http://10.250.34.20:8080/inera-certificate/</certificate.baseUrl>
+      </properties>
     </profile>
     <profile>
       <id>nmt</id>
-        <properties>
-          <certificate.baseUrl>https://intygstjanst.inera.nordicmedtest.se:23443/inera-certificate/</certificate.baseUrl>
-        </properties>
+      <properties>
+        <certificate.baseUrl>https://intygstjanst.inera.nordicmedtest.se:23443/inera-certificate/</certificate.baseUrl>
+      </properties>
     </profile>
     <profile>
       <id>ssh-tunnel-server</id>
-        <properties>
-          <certificate.baseUrl>http://localhost:18080/inera-certificate/</certificate.baseUrl>
-        </properties>
+      <properties>
+        <certificate.baseUrl>http://localhost:18080/inera-certificate/</certificate.baseUrl>
+      </properties>
     </profile>
-    
+
     <profile>
       <id>wiki</id>
       <!--
@@ -200,7 +201,7 @@
         </plugins>
       </build>
     </profile>
-    
+
     <profile>
       <id>auto</id>
       <!--

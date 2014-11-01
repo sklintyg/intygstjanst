@@ -1,7 +1,5 @@
 package se.inera.certificate.spec
 
-import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK
-
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
 import javax.xml.transform.stream.StreamSource
@@ -30,11 +28,11 @@ class SkickaFraga extends WsClientFixture {
 	String namn
 
 	static String serviceUrl = System.getProperty("service.sendMedicalCertificateQuestionUrl")
-	
+
 	public SkickaFraga() {
 		this(WsClientFixture.LOGICAL_ADDRESS)
 	}
-	
+
     public SkickaFraga(String logiskAddress) {
 		super(logiskAddress)
 		String url = serviceUrl ? serviceUrl : baseUrl + "send-certificate-question-stub"

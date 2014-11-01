@@ -1,9 +1,6 @@
 package se.inera.certificate.spec
-import org.apache.cxf.frontend.ClientProxyFactoryBean
-import org.apache.cxf.jaxws.JaxWsClientFactoryBean
-import org.joda.time.LocalDate
-import org.w3.wsaddressing10.AttributedURIType
 
+import org.joda.time.LocalDate
 import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.certificate.v1.CertificateMetaType
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.v1.rivtabp20.ListCertificatesResponderInterface
@@ -22,13 +19,13 @@ public class HamtaListaAvIntyg extends WsClientFixture {
 		String url = serviceUrl ? serviceUrl : baseUrl + "list-certificates/v1.0"
 		listCertificatesResponder = createClient(ListCertificatesResponderInterface.class, url)
 	}
-	
+
 	String personnr
 	private String[] typ
 	private LocalDate från
 	private LocalDate till
 	String kommentar
-	
+
 	public void setTyp(String[] array) {
 		if (isEmpty(array)) {
 			typ = []
@@ -39,14 +36,14 @@ public class HamtaListaAvIntyg extends WsClientFixture {
 	public void setFrån(String datum) {
 		this.från = LocalDate.parse(datum)
 	}
-	
+
 	public void setTill(String datum) {
 		this.till = LocalDate.parse(datum)
 	}
 
 	private String svar
 	private String intyg
-	
+
     public void execute() {
 		svar = null
 		intyg = null
@@ -55,7 +52,7 @@ public class HamtaListaAvIntyg extends WsClientFixture {
 		//GetConsentResponseType getConsentResponse = getConsentResponder.getConsent(logicalAddress, getConsentParameters)
 		//if (!getConsentResponse.consentGiven) {
 		//	svar = "samtycke saknas"
-		//	return 
+		//	return
 		//}
 		ListCertificatesRequestType parameters = new ListCertificatesRequestType();
 		parameters.nationalIdentityNumber = personnr
@@ -74,8 +71,8 @@ public class HamtaListaAvIntyg extends WsClientFixture {
 				fk_intygs_id << metaType.certificateId
 				fk_intyg << metaType.certificateId + ":" + metaType.certificateType + ":" + metaType.signDate + ":" + metaType.validFrom + ":" + metaType.validTo + ":" + metaType.issuerName + ":" + metaType.facilityName
  			}
-			svar = fk_intygs_id.sort().toString()	
-			intyg = fk_intyg.sort().toString()	
+			svar = fk_intygs_id.sort().toString()
+			intyg = fk_intyg.sort().toString()
 		} else if (result.resultCode == ResultCodeEnum.INFO) {
 			svar = result.infoText
 		} else {
@@ -86,11 +83,11 @@ public class HamtaListaAvIntyg extends WsClientFixture {
 	public String svar() {
 		svar
 	}
-	
+
 	public String intyg() {
 		intyg
 	}
-	
+
 	private boolean isEmpty(String[] array) {
 		switch (array.length) {
 			case 0: return true;

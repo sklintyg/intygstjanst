@@ -5,7 +5,6 @@ import org.skyscreamer.jsonassert.JSONAssert
 
 import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20.GetCertificateResponderInterface
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20.GetCertificateResponderService
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.CertificateType
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType
@@ -21,7 +20,7 @@ public class HamtaIntyg extends WsClientFixture {
     private GetCertificateResponderInterface getCertificateResponder
 
 	static String serviceUrl = System.getProperty("service.getCertificateUrl")
-	
+
     public HamtaIntyg() {
 		String url = serviceUrl ? serviceUrl : baseUrl + "get-certificate/v1.0"
 		getCertificateResponder = createClient(GetCertificateResponderInterface.class, url)
@@ -33,7 +32,7 @@ public class HamtaIntyg extends WsClientFixture {
 	private String faktisktSvar
 	private String resultat
     private def status
-	
+
     private GetCertificateResponseType response
 
 	public void reset() {
@@ -43,7 +42,7 @@ public class HamtaIntyg extends WsClientFixture {
 		faktisktSvar = null
         status = null
 	}
-	
+
     public void execute() {
         GetCertificateRequestType request = new GetCertificateRequestType()
         request.setNationalIdentityNumber(personnummer)
@@ -65,12 +64,12 @@ public class HamtaIntyg extends WsClientFixture {
 				break
             default:
 				resultat = "[${response.result.resultCode.toString()}] - ${response.result.errorText}"
-		} 
+		}
     }
 
     public String resultat() {
         if (response.result.resultCode == ResultCodeEnum.OK && förväntatSvar) {
-            try {  
+            try {
 				JSONAssert.assertEquals(förväntatSvar, faktisktSvar, false)
 				return "OK"
 			} catch (AssertionError e) {
