@@ -7,7 +7,7 @@
     "codeSystemName": "kv_utlåtandetyp_intyg",
     "code" : "fk7263"
   },
-  "kommentarer" : [ "Prognosen för patienten är god. Han kommer att kunna återgå till sitt arbete efter genomförd behandling." ],
+  "kommentarer" : [ "Prognosen för patienten är god.\n\n Han kommer att kunna återgå till sitt arbete efter genomförd behandling." ],
   "signeringsdatum" : "2012-12-23T21:00:00.000",
   "skickatdatum" : "2012-12-23T21:00:00.000",
   "patient" : {
@@ -71,7 +71,7 @@
       "codeSystem" : "8040b4d1-67dc-42e1-a938-de5374e9526a",
       "codeSystemName" : "kv_aktiviteter_intyg"
     },
-    "beskrivning" : "Avslappningsövningar och balansövningar, t ex promenad i ojämn terräng."
+    "beskrivning" : "Avslappningsövningar och balansövningar,\n\n t ex promenad i ojämn terräng."
   }, {
     "aktivitetskod" : {
       "code" : "AKT5",
@@ -95,28 +95,28 @@
       "codeSystemName" : "ICD-10",
       "code" : "H81"
     },
-    "beskrivning" : "Sjukdomar i örat och mastoidutskottet"
+    "beskrivning" : "Sjukdomar i örat\n\n och mastoidutskottet"
   }, {
     "observationskod" : {
       "code" : "288524001",
       "codeSystem" : "1.2.752.116.2.1.1.1",
       "codeSystemName" : "SNOMED-CT"
     },
-    "beskrivning" : "Patienten upplever svår yrsel vid häftiga rörelser och är allmänt påverkad av sjukdomen."
+    "beskrivning" : "Patienten upplever svår yrsel vid häftiga rörelser och\n\n är allmänt påverkad av sjukdomen."
   }, {
     "observationskategori" : {
       "code" : "b",
       "codeSystem" : "1.2.752.116.1.1.3.1.1",
       "codeSystemName" : "ICF"
     },
-    "beskrivning" : "Ospecifierad rubbning i balansapparatens funktion. Svårighet att utföra handlingar som kräver bra balans och kropsskontroll."
+    "beskrivning" : "Ospecifierad rubbning i balansapparatens funktion.\n\n Svårighet att utföra handlingar som kräver bra balans och kropsskontroll."
   }, {
     "observationskategori" : {
       "code" : "d",
       "codeSystem" : "1.2.752.116.1.1.3.1.1",
       "codeSystemName" : "ICF"
     },
-    "beskrivning" : "Patienten arbetar trapetsartist på Cirkus Cirkör, sjukdomen försvårar utövandet av yrket."
+    "beskrivning" : "Patienten arbetar trapetsartist på Cirkus Cirkör,\n\n sjukdomen försvårar utövandet av yrket."
   }, {
     "observationskod" : {
       "code" : "302119000",
@@ -133,7 +133,7 @@
         "codeSystemName" : "kv_prognos_intyg",
         "code" : "PRO1"
       },
-      "beskrivning" : "Patienten kan inte utöva sitt yrke förrän en förbättring sker med avseende på yrseln. Det är förenat med livsfara att utföra trapetskonster och samtidigt lida av yrsel. Patientens besvär kommer dock att först minska för att därefter helt upphöra efter genomförd behandling."
+      "beskrivning" : "Patienten kan inte utöva sitt yrke förrän en förbättring sker med avseende på yrseln.\n\n Det är förenat med livsfara att utföra trapetskonster och samtidigt lida av yrsel. Patientens besvär kommer dock att först minska för att därefter helt upphöra efter genomförd behandling."
     }],
     "varde" : [ {
       "quantity" : 50,
@@ -155,7 +155,7 @@
         "codeSystemName" : "kv_prognos_intyg",
         "code" : "PRO1"
       },
-      "beskrivning" : "Patienten kan inte utöva sitt yrke förrän en förbättring sker med avseende på yrseln. Det är förenat med livsfara att utföra trapetskonster och samtidigt lida av yrsel. Patientens besvär kommer dock att först minska för att därefter helt upphöra efter genomförd behandling."
+      "beskrivning" : "Patienten kan inte utöva sitt yrke förrän en förbättring sker med avseende på yrseln.\n\n Det är förenat med livsfara att utföra trapetskonster och samtidigt lida av yrsel. Patientens besvär kommer dock att först minska för att därefter helt upphöra efter genomförd behandling."
     }],
     "varde" : [ {
       "quantity" : 0,
