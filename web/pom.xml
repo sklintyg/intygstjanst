@@ -268,7 +268,7 @@
 
   <profiles>
     <profile>
-      <id>local-db</id>
+      <id>local</id>
       <properties>
         <spring.profile>local</spring.profile>
       </properties>
