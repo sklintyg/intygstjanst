@@ -13,7 +13,7 @@
   <artifactId>intygstjanst-web</artifactId>
   <packaging>war</packaging>
 
-  <name>Intygstjänsten Web</name>
+  <name>Intygstjänsten (Web)</name>
 
   <properties>
     <checkstyle.basedir>${project.basedir}/..</checkstyle.basedir>
@@ -46,7 +46,7 @@
     <!-- Schemas -->
     <dependency>
       <groupId>se.inera.intyg.schemas</groupId>
-      <artifactId>intygstjanst-schemas</artifactId>
+      <artifactId>schemas-intygstjanst</artifactId>
     </dependency>
 
     <!-- Intygstyper -->
@@ -142,7 +142,7 @@
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
     </dependency>
-    
+
     <!-- Provided dependencies, necessary for Jetty -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
@@ -154,7 +154,7 @@
       <artifactId>activemq-broker</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
   </dependencies>
 
   <build>

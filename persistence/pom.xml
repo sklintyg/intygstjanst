@@ -12,7 +12,7 @@
 
   <artifactId>intygstjanst-persistence</artifactId>
 
-  <name>Intygstjänsten Persistence</name>
+  <name>Intygstjänsten (Persistence)</name>
 
   <properties>
     <checkstyle.basedir>${project.basedir}/..</checkstyle.basedir>
@@ -29,7 +29,7 @@
     <!-- Schemas -->
     <dependency>
       <groupId>se.inera.intyg.schemas</groupId>
-      <artifactId>intygstjanst-schemas</artifactId>
+      <artifactId>schemas-intygstjanst</artifactId>
     </dependency>
 
     <!-- Tools -->

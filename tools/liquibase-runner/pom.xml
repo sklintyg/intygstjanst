@@ -14,7 +14,7 @@
   <groupId>se.inera.intyg.intygstjanst</groupId>
   <artifactId>intygstjanst-liquibase-runner</artifactId>
 
-  <name>Intygstjänsten Liquibase Runner</name>
+  <name>Intygstjänsten (Liquibase Runner)</name>
 
   <properties>
     <checkstyle.basedir>${project.basedir}/../..</checkstyle.basedir>
@@ -97,7 +97,7 @@
               </transformers>
               <artifactSet>
                 <excludes>
-                  <exclude>se.inera.intyg.schemas:intygstjanst-schemas</exclude>
+                  <exclude>se.inera.intyg.schemas:schemas-intygstjanst</exclude>
                   <exclude>se.inera.intyg.intygstyper:*</exclude>
                   <exclude>org.springframework:*</exclude>
                   <exclude>org.hibernate.*:*</exclude>

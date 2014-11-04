@@ -12,7 +12,7 @@
 
   <artifactId>intygstjanst-specifications</artifactId>
 
-  <name>Intygstjänsten FitNesse Specifications</name>
+  <name>Intygstjänsten (FitNesse)</name>
 
   <properties>
     <certificate.baseUrl>http://localhost:8080/inera-certificate/</certificate.baseUrl>
@@ -38,7 +38,7 @@
     <!-- Schemas -->
     <dependency>
       <groupId>se.inera.intyg.schemas</groupId>
-      <artifactId>intygstjanst-schemas</artifactId>
+      <artifactId>schemas-intygstjanst</artifactId>
     </dependency>
 
     <dependency>

@@ -15,7 +15,7 @@
   <artifactId>intygstjanst-anonymisering</artifactId>
   <version>1.0.6</version>
 
-  <name>Intygstjänsten Anonymisering</name>
+  <name>Intygstjänsten (Anonymisering)</name>
 
   <dependencies>
 

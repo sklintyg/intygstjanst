@@ -9,7 +9,7 @@
 
   <artifactId>module-api</artifactId>
 
-  <name>Intygstjänsten Modul API</name>
+  <name>Intygstjänsten (Modul API)</name>
 
   <properties>
     <checkstyle.basedir>${project.basedir}/..</checkstyle.basedir>
