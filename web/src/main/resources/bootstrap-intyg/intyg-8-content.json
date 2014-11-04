@@ -9,7 +9,7 @@
         "code": "ts-diabetes"
     },
     "signeringsdatum": "2013-08-12T15:57:00.000",
-    "kommentarer" : [ "Kommentarer av det viktiga slaget" ],
+    "kommentarer" : [ "Kommentarer av det viktiga slaget.\n\nOch minskad alkoholförbrukning." ],
     "intygAvser": [
         {
             "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
@@ -304,7 +304,7 @@
                 "codeSystemName": "kv_rekommendation_intyg",
                 "code": "REK9"
             },
-            "beskrivning" : "Kronologisk bastuberedning"
+            "beskrivning" : "Kronologisk bastuberedning.\n\nOch minskad alkoholförbrukning."
         },
         {
             "rekommendationskod": {
