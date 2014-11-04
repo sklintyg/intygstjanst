@@ -142,6 +142,19 @@
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
     </dependency>
+    
+    <!-- Provided dependencies, necessary for Jetty -->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-client</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-broker</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
   </dependencies>
 
   <build>
@@ -179,6 +192,77 @@
           <doUpdate>false</doUpdate>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <configuration>
+          <webAppConfig>
+            <contextPath>/inera-certificate</contextPath>
+          </webAppConfig>
+          <contextXml>${basedir}/src/main/webapp/WEB-INF/jetty-context.xml</contextXml>
+          <systemProperties>
+            <systemProperty>
+              <name>spring.profiles.active</name>
+              <value>${spring.profile}</value>
+            </systemProperty>
+            <systemProperty>
+              <name>jetty.port</name>
+              <value>8080</value>
+            </systemProperty>
+            <systemProperty>
+              <name>java.awt.headless</name>
+              <value>true</value>
+            </systemProperty>
+            <systemProperty>
+              <name>catalina.base</name>
+              <value>${project.build.directory}/catalina.base</value>
+            </systemProperty>
+            <systemProperty>
+              <name>credentials.file</name>
+              <value>${project.basedir}/credentials.properties</value>
+            </systemProperty>
+            <systemProperty>
+              <name>certificate.config.file</name>
+              <value>${project.basedir}/certificate.properties</value>
+            </systemProperty>
+            <systemProperty>
+              <name>certificate.logback.file</name>
+              <value>${project.basedir}/certificate-logback-dev.xml</value>
+            </systemProperty>
+            <systemProperty>
+              <name>fk7263.logback.file</name>
+              <value>classpath:fk7263-logback.xml</value>
+            </systemProperty>
+          </systemProperties>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2db.connector.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.connector.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+            <version>${activemq.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-kahadb-store</artifactId>
+            <version>${activemq.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_1.1_spec</artifactId>
+            <version>${geronimo-jms-specs.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
     </plugins>
   </build>
 
@@ -188,95 +272,6 @@
       <properties>
         <spring.profile>local</spring.profile>
       </properties>
-    </profile>
-    <profile>
-      <id>jetty</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-maven-plugin</artifactId>
-            <configuration>
-              <webAppConfig>
-                <contextPath>/inera-certificate</contextPath>
-              </webAppConfig>
-              <contextXml>${basedir}/src/main/webapp/WEB-INF/jetty-context.xml</contextXml>
-              <systemProperties>
-                <systemProperty>
-                  <name>spring.profiles.active</name>
-                  <value>${spring.profile}</value>
-                </systemProperty>
-                <systemProperty>
-                  <name>jetty.port</name>
-                  <value>8080</value>
-                </systemProperty>
-                <systemProperty>
-                  <name>java.awt.headless</name>
-                  <value>true</value>
-                </systemProperty>
-                <systemProperty>
-                  <name>catalina.base</name>
-                  <value>${project.build.directory}/catalina.base</value>
-                </systemProperty>
-                <systemProperty>
-                  <name>credentials.file</name>
-                  <value>${project.basedir}/credentials.properties</value>
-                </systemProperty>
-                <systemProperty>
-                  <name>certificate.config.file</name>
-                  <value>${project.basedir}/certificate.properties</value>
-                </systemProperty>
-                <systemProperty>
-                  <name>certificate.logback.file</name>
-                  <value>${project.basedir}/certificate-logback-dev.xml</value>
-                </systemProperty>
-                <systemProperty>
-                  <name>fk7263.logback.file</name>
-                  <value>classpath:fk7263-logback.xml</value>
-                </systemProperty>
-              </systemProperties>
-            </configuration>
-            <dependencies>
-              <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <version>${h2db.connector.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql.connector.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-broker</artifactId>
-                <version>${activemq.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-kahadb-store</artifactId>
-                <version>${activemq.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jms_1.1_spec</artifactId>
-                <version>${geronimo-jms-specs.version}</version>
-              </dependency>
-            </dependencies>
-          </plugin>
-        </plugins>
-      </build>
-
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-client</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-broker</artifactId>
-        </dependency>
-      </dependencies>
     </profile>
   </profiles>
 </project>
