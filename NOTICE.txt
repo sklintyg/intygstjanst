@@ -1,4 +1,4 @@
-Inera Certificate
+Intygstjänsten
 Copyright (C) 2012 Inera AB (http://www.inera.se)
 
 This application includes the following software:
