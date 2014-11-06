@@ -16,7 +16,6 @@
 
   <properties>
     <certificate.baseUrl>http://localhost:8080/inera-certificate/</certificate.baseUrl>
-    <checkstyle.basedir>${project.basedir}/..</checkstyle.basedir>
 
     <fitnesse.port>9123</fitnesse.port>
     <fitnesse.working>${project.basedir}/src/test/fitnesse</fitnesse.working>

@@ -11,10 +11,6 @@
 
   <name>Intygstjänsten (Modul API)</name>
 
-  <properties>
-    <checkstyle.basedir>${project.basedir}/..</checkstyle.basedir>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>se.inera.intyg.common</groupId>

@@ -16,10 +16,6 @@
 
   <name>Intygstjänsten (Liquibase Runner)</name>
 
-  <properties>
-    <checkstyle.basedir>${project.basedir}/../..</checkstyle.basedir>
-  </properties>
-
   <dependencies>
 
     <dependency>

@@ -14,10 +14,6 @@
 
   <name>Intygstjänsten (Persistence)</name>
 
-  <properties>
-    <checkstyle.basedir>${project.basedir}/..</checkstyle.basedir>
-  </properties>
-
   <dependencies>
 
     <!-- Common -->
