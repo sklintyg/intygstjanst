@@ -18,8 +18,7 @@
  */
 package se.inera.certificate.integration;
 
-import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
+
 
 import java.util.List;
 
@@ -33,6 +32,7 @@ import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.v1.rivtabp20.ListCertificatesResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 /**
  * @author andreaskaltenbach
@@ -55,10 +55,10 @@ public class ListCertificatesResponderImpl implements ListCertificatesResponderI
                     response.getMeta().add(ModelConverter.toCertificateMetaType(certificate));
                 }
             }
-            response.setResult(okResult());
+            response.setResult(ResultOfCallUtil.okResult());
 
         } catch (MissingConsentException ex) {
-            response.setResult(infoResult("NOCONSENT"));
+            response.setResult(ResultOfCallUtil.infoResult("NOCONSENT"));
         }
 
         return response;

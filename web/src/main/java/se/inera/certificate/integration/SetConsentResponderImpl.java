@@ -8,12 +8,12 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.integration.util.ResultOfCallUtil;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.service.ConsentService;
 import se.inera.ifv.insuranceprocess.healthreporting.setconsent.v1.rivtabp20.SetConsentResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.setconsentresponder.v1.SetConsentRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.setconsentresponder.v1.SetConsentResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 @SchemaValidation
 public class SetConsentResponderImpl implements SetConsentResponderInterface {

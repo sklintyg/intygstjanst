@@ -1,8 +1,5 @@
 package se.inera.certificate.integration;
 
-import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +13,7 @@ import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.v1.rivtabp20.SetCertificateStatusResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 /**
  * @author andreaskaltenbach
@@ -35,10 +33,10 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
 
         try {
             certificateService.setCertificateState(request.getNationalIdentityNumber(), request.getCertificateId(), request.getTarget(), CertificateState.valueOf(request.getStatus().name()), request.getTimestamp());
-            response.setResult(okResult());
+            response.setResult(ResultOfCallUtil.okResult());
             LOGGER.info(LogMarkers.MONITORING, request.getCertificateId() + " set to status " + request.getStatus().name());
         } catch (InvalidCertificateException e) {
-            response.setResult(failResult(e.getMessage()));
+            response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
         }
 
         return response;

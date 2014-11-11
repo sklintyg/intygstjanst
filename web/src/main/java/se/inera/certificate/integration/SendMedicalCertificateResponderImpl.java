@@ -1,7 +1,5 @@
 package se.inera.certificate.integration;
 
-import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +9,6 @@ import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.exception.InvalidCertificateException;
-import se.inera.certificate.integration.util.ResultOfCallUtil;
 import se.inera.certificate.integration.validator.SendCertificateRequestValidator;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.service.CertificateService;
@@ -19,6 +16,7 @@ import se.inera.certificate.service.CertificateService.SendStatus;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.v1.rivtabp20.SendMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 public class SendMedicalCertificateResponderImpl implements SendMedicalCertificateResponderInterface {
 
@@ -54,7 +52,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             // return with ERROR response if certificate was not found
             LOGGER.info(LogMarkers.MONITORING, "Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + safeGetCivicRegistrationNumber(request) + "' but certificate does not exist");
-            response.setResult(failResult("No certificate '" + safeGetCertificateId(request)
+            response.setResult(ResultOfCallUtil.failResult("No certificate '" + safeGetCertificateId(request)
                     + "' found to send for patient '" + safeGetCivicRegistrationNumber(request) + "'."));
             return response;
 
@@ -62,14 +60,14 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             // return with INFO response if certificate was revoked before
             LOGGER.info(LogMarkers.MONITORING, "Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + safeGetCivicRegistrationNumber(request) + "' which is revoked");
-            response.setResult(infoResult("Certificate '" + safeGetCertificateId(request) + "' has been revoked."));
+            response.setResult(ResultOfCallUtil.infoResult("Certificate '" + safeGetCertificateId(request) + "' has been revoked."));
             return response;
 
         } catch (CertificateValidationException e) {
             LOGGER.error(LogMarkers.VALIDATION, "Validation error found for send certificate '" + safeGetCertificateId(request)
                     + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + safeGetCivicRegistrationNumber(request) + ": " + e.getMessage());
             // return with ERROR response if certificate had validation errors
-            response.setResult(failResult(e.getMessage()));
+            response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             return response;
         }
 

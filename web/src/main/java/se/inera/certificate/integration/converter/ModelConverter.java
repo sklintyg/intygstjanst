@@ -20,7 +20,6 @@ package se.inera.certificate.integration.converter;
 
 import org.joda.time.LocalDate;
 
-import se.inera.certificate.integration.builder.CertificateMetaTypeBuilder;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.util.Iterables;
 import se.inera.ifv.insuranceprocess.certificate.v1.CertificateMetaType;

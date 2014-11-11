@@ -11,8 +11,8 @@ import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 
-import riv.insuranceprocess.healthreporting.medcertqa._1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
+import se.inera.webcert.medcertqa.v1.LakarutlatandeEnkelType;
 
 
 public class LakarutlatandeEnkelTypeValidatorTest {

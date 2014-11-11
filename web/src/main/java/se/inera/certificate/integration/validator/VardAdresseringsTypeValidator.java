@@ -2,10 +2,10 @@ package se.inera.certificate.integration.validator;
 
 import java.util.List;
 
-import riv.insuranceprocess.healthreporting.medcertqa._1.VardAdresseringsType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.EnhetType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.HosPersonalType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType;
+import se.inera.webcert.medcertqa.v1.VardAdresseringsType;
 
 /**
  * @author andreaskaltenbach

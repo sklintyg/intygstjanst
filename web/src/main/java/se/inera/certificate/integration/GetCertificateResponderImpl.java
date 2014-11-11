@@ -18,11 +18,6 @@
  */
 package se.inera.certificate.integration;
 
-import static se.inera.certificate.integration.util.ResultOfCallUtil.applicationErrorResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
-
 import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,6 +34,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.CertificateType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 import com.google.common.base.Throwables;
 
@@ -57,7 +53,7 @@ public class GetCertificateResponderImpl extends AbstractGetCertificateResponder
 
         if (nationalIdentityNumber == null || nationalIdentityNumber.length() == 0) {
             LOGGER.info(LogMarkers.VALIDATION, "Tried to get certificate with non-existing nationalIdentityNumber '.");
-            response.setResult(failResult("Validation error: missing  nationalIdentityNumber"));
+            response.setResult(ResultOfCallUtil.failResult("Validation error: missing  nationalIdentityNumber"));
             return response;
         }
 
@@ -68,24 +64,24 @@ public class GetCertificateResponderImpl extends AbstractGetCertificateResponder
 
             switch (result.getResultCode()) {
             case OK:
-                response.setResult(okResult());
+                response.setResult(ResultOfCallUtil.okResult());
                 break;
             case INFO:
             case ERROR:
                 switch (result.getErrorId()) {
                 case REVOKED:
-                    response.setResult(infoResult(result.getResultText()));
+                    response.setResult(ResultOfCallUtil.infoResult(result.getResultText()));
                     break;
                 case VALIDATION_ERROR:
-                    response.setResult(failResult(result.getResultText()));
+                    response.setResult(ResultOfCallUtil.failResult(result.getResultText()));
                     break;
                 default:
-                    response.setResult(failResult(result.getResultText()));
+                    response.setResult(ResultOfCallUtil.failResult(result.getResultText()));
                     break;
                 }
                 break;
             default:
-                response.setResult(applicationErrorResult(result.getResultText()));
+                response.setResult(ResultOfCallUtil.applicationErrorResult(result.getResultText()));
             }
             return response;
         }
@@ -93,7 +89,7 @@ public class GetCertificateResponderImpl extends AbstractGetCertificateResponder
         Certificate certificate = certificateOrResultType.getCertificate();
         response.setMeta(ModelConverter.toCertificateMetaType(certificate));
         attachCertificateDocument(certificate, response);
-        response.setResult(okResult());
+        response.setResult(ResultOfCallUtil.okResult());
         return response;
     }
 
