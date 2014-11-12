@@ -46,7 +46,7 @@ import se.inera.certificate.exception.MissingModuleException;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.exception.SubsystemCallException;
-import se.inera.certificate.integration.exception.ResultTypeErrorException;
+import se.inera.certificate.exception.ResultTypeErrorException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.logging.LogMarkers;

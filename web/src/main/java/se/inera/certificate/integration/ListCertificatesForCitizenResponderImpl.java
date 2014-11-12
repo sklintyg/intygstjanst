@@ -1,9 +1,5 @@
 package se.inera.certificate.integration;
 
-import static se.inera.certificate.integration.util.ResultTypeUtil.errorResult;
-import static se.inera.certificate.integration.util.ResultTypeUtil.infoResult;
-import static se.inera.certificate.integration.util.ResultTypeUtil.okResult;
-
 import java.util.List;
 
 import org.apache.cxf.annotations.SchemaValidation;
@@ -14,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenResponderInterface;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.integration.converter.MetaDataResolver;
@@ -47,14 +44,14 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
                     response.getMeta().add(metaDataResolver.toClinicalProcessCertificateMetaType(certificate));
                 }
             }
-            response.setResult(okResult());
+            response.setResult(ResultTypeUtil.okResult());
 
         } catch (ModuleNotFoundException | ModuleException e) {
-            response.setResult(errorResult(ErrorIdType.APPLICATION_ERROR, "Module error when processing certificates"));
+            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "Module error when processing certificates"));
             LOGGER.error(e.getMessage());
 
         } catch (MissingConsentException ex) {
-            response.setResult(infoResult("NOCONSENT"));
+            response.setResult(ResultTypeUtil.infoResult("NOCONSENT"));
         }
 
         return response;

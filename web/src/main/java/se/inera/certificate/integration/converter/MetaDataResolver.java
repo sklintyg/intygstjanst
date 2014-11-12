@@ -4,8 +4,8 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import se.inera.certificate.clinicalprocess.healthcond.certificate.meta.ClinicalProcessCertificateMetaTypeBuilder;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.StatusType;
-import se.inera.certificate.integration.builder.ClinicalProcessCertificateMetaTypeBuilder;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.dao.Certificate;
