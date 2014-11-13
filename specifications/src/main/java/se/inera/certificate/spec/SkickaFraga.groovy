@@ -7,7 +7,7 @@ import javax.xml.transform.stream.StreamSource
 import org.joda.time.LocalDateTime
 import org.springframework.core.io.ClassPathResource
 
-import riv.insuranceprocess.healthreporting.medcertqa._1.Amnetyp
+import se.inera.webcert.medcertqa.v1.Amnetyp
 import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.v1.rivtabp20.SendMedicalCertificateQuestionResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.QuestionToFkType
