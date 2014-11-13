@@ -139,7 +139,7 @@
               </includes>
               <excludes>
                 <exclude>${fitnesse.root}/files/validering/**</exclude>
-                <!-- <exclude>${fitnesse.root}/files/transformering/**</exclude> -->
+                <exclude>${fitnesse.root}/files/transformering/**</exclude>
                 <exclude>${fitnesse.root}/files/.gitignore</exclude>
               </excludes>
             </fileset>
