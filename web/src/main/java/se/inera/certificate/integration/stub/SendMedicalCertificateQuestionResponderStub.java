@@ -6,9 +6,6 @@ import javax.xml.bind.JAXBException;
 
 import java.io.StringWriter;
 
-import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
-
 import com.google.common.base.Throwables;
 
 import org.apache.cxf.annotations.SchemaValidation;
@@ -18,11 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import riv.insuranceprocess.healthreporting.medcertqa._1.Amnetyp;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.v1.rivtabp20.SendMedicalCertificateQuestionResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.ObjectFactory;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
+import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
+import se.inera.webcert.medcertqa.v1.Amnetyp;
 
 /**
  * @author par.wenaker
@@ -61,13 +59,13 @@ public class SendMedicalCertificateQuestionResponderStub implements SendMedicalC
                 fkMedicalCertificatesStore.makulera(id, meddelande);
             }
         } catch (JAXBException e) {
-            response.setResult(failResult("Unable to marshal certificate information"));
+            response.setResult(ResultOfCallUtil.failResult("Unable to marshal certificate information"));
             return response;
         } catch (Throwable t) {
             t.printStackTrace();
             throw t;
         }
-        response.setResult(okResult());
+        response.setResult(ResultOfCallUtil.okResult());
         return response;
     }
 

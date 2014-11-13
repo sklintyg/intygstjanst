@@ -1,8 +1,5 @@
 package se.inera.certificate.integration;
 
-import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.infoResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 
 import java.util.List;
 
@@ -23,6 +20,8 @@ import se.inera.ifv.insuranceprocess.certificate.v1.CertificateStatusType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
+
 
 /**
  * @author andreaskaltenbach
@@ -48,23 +47,23 @@ public class GetCertificateContentResponderImpl implements GetCertificateContent
         } catch (MissingConsentException ex) {
             LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + request.getCertificateId() + "' but user '"
                     + request.getNationalIdentityNumber() + "' has not given consent.");
-            response.setResult(failResult(String.format("Missing consent for patient %s",
+            response.setResult(ResultOfCallUtil.failResult(String.format("Missing consent for patient %s",
                     request.getNationalIdentityNumber())));
             return response;
         } catch (InvalidCertificateException ex) {
             // return ERROR if no such certificate does exist
             LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + request.getCertificateId() + "' but no such certificate does exist for user '" + request.getNationalIdentityNumber() + "'.");
-            response.setResult(failResult(String.format("Unknown certificate ID: %s", request.getCertificateId())));
+            response.setResult(ResultOfCallUtil.failResult(String.format("Unknown certificate ID: %s", request.getCertificateId())));
             return response;
         } catch (CertificateRevokedException ex) {
             // return INFO if certificate is revoked
             LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + request.getCertificateId() + "' but certificate has been revoked'.");
-            response.setResult(infoResult("Certificate '" + request.getCertificateId() + "' has been revoked"));
+            response.setResult(ResultOfCallUtil.infoResult("Certificate '" + request.getCertificateId() + "' has been revoked"));
             return response;
         }
 
         attachCertificateDocument(certificate, response);
-        response.setResult(okResult());
+        response.setResult(ResultOfCallUtil.okResult());
         return response;
 
     }

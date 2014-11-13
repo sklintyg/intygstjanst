@@ -1,8 +1,5 @@
 package se.inera.certificate.integration.stub;
 
-import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
-
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +20,6 @@ import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
-import se.inera.certificate.integration.util.ResultOfCallUtil;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.TransportModelHolder;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
@@ -32,6 +28,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.ObjectFactory;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
+import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 /**
  * @author par.wenaker
@@ -82,10 +79,10 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             return response;
         } catch (JAXBException e) {
-            response.setResult(failResult("Unable to marshal certificate information"));
+            response.setResult(ResultOfCallUtil.failResult("Unable to marshal certificate information"));
             return response;
         }
-        response.setResult(okResult());
+        response.setResult(ResultOfCallUtil.okResult());
         return response;
     }
 

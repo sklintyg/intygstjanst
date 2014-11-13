@@ -4,8 +4,8 @@ import iso.v21090.dt.v1.II
 
 import org.joda.time.LocalDateTime
 
-import riv.insuranceprocess.healthreporting.medcertqa._1.LakarutlatandeEnkelType
-import riv.insuranceprocess.healthreporting.medcertqa._1.VardAdresseringsType
+import se.inera.webcert.medcertqa.v1.VardAdresseringsType
+import se.inera.webcert.medcertqa.v1.LakarutlatandeEnkelType
 import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.v1.rivtabp20.SendMedicalCertificateResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType

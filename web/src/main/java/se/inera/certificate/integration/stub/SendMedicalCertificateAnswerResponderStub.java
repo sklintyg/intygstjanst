@@ -1,8 +1,5 @@
 package se.inera.certificate.integration.stub;
 
-import static se.inera.certificate.integration.util.ResultOfCallUtil.failResult;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
-
 import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
@@ -20,6 +17,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswe
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.ObjectFactory;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.SendMedicalCertificateAnswerResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.SendMedicalCertificateAnswerType;
+import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 import com.google.common.base.Throwables;
 
@@ -62,13 +60,13 @@ public class SendMedicalCertificateAnswerResponderStub implements
             marshalCertificate(request);
             logger.info("STUB Received answer concerning certificate with id: " + id);
         } catch (JAXBException e) {
-            response.setResult(failResult("Unable to marshal certificate information"));
+            response.setResult(ResultOfCallUtil.failResult("Unable to marshal certificate information"));
             return response;
         } catch (Throwable t) {
             t.printStackTrace();
             throw t;
         }
-        response.setResult(okResult());
+        response.setResult(ResultOfCallUtil.okResult());
         return response;
     }
 

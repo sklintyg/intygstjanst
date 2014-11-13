@@ -15,8 +15,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import riv.insuranceprocess.healthreporting.medcertqa._1.LakarutlatandeEnkelType;
-import riv.insuranceprocess.healthreporting.medcertqa._1.VardAdresseringsType;
 import se.inera.certificate.exception.ClientException;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.service.CertificateService;
@@ -28,6 +26,8 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.EnhetType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.HosPersonalType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType;
+import se.inera.webcert.medcertqa.v1.LakarutlatandeEnkelType;
+import se.inera.webcert.medcertqa.v1.VardAdresseringsType;
 
 @RunWith( MockitoJUnitRunner.class )
 public class SendMedicalCertificateResponderImplTest {

@@ -1,7 +1,5 @@
 package se.inera.certificate.integration.stub;
 
-import static se.inera.certificate.integration.util.ResultTypeUtil.errorResult;
-import static se.inera.certificate.integration.util.ResultTypeUtil.okResult;
 
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -21,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponderInterface;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.utils.IdUtil;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ObjectFactory;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
@@ -28,7 +28,6 @@ import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
-import se.inera.certificate.integration.util.IdUtil;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.TransportModelHolder;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
@@ -78,16 +77,16 @@ public class RegisterCertificateResponderStub implements RegisterCertificateResp
             LOGGER.info(request.getUtlatande().getTypAvUtlatande().getCode() + " - STUB Received request");
             fkMedicalCertificatesStore.addCertificate(id, props);
         } catch (CertificateValidationException e) {
-            response.setResult(errorResult(ErrorIdType.VALIDATION_ERROR, e.getMessage()));
+            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, e.getMessage()));
             return response;
         } catch (JAXBException e) {
-            response.setResult(errorResult(ErrorIdType.APPLICATION_ERROR, "Unable to marshal certificate information"));
+            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "Unable to marshal certificate information"));
             return response;
         } catch (ModuleNotFoundException e) {
-            response.setResult(errorResult(ErrorIdType.APPLICATION_ERROR, "Could not find module for certificate"));
+            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "Could not find module for certificate"));
             return response;
         }
-        response.setResult(okResult());
+        response.setResult(ResultTypeUtil.okResult());
         return response;
     }
 

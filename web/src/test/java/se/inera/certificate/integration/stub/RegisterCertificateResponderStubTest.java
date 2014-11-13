@@ -19,8 +19,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.utils.IdUtil;
 import se.inera.certificate.integration.module.ModuleApiFactory;
-import se.inera.certificate.integration.util.IdUtil;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.ModuleApi;
 

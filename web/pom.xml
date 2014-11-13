@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -44,8 +44,16 @@
 
     <!-- Schemas -->
     <dependency>
-      <groupId>se.inera.intyg.schemas</groupId>
-      <artifactId>schemas-intygstjanst</artifactId>
+      <groupId>se.inera.intyg.schemas.clinicalprocess.healthcond.certificate.v1</groupId>
+      <artifactId>clinicalprocess-healthcond-certificate-interactions</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>se.inera.intyg.schemas.insuranceprocess.healthreporting.v1</groupId>
+      <artifactId>insuranceprocess-healthreporting-interactions</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>se.riv.itintegration.monitoring</groupId>
+      <artifactId>itintegration-monitoring-interactions</artifactId>
     </dependency>
 
     <!-- Intygstyper -->

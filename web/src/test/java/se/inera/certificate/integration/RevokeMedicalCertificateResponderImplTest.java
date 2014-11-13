@@ -5,7 +5,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static se.inera.certificate.integration.util.ResultOfCallUtil.okResult;
 
 import java.util.Collections;
 
@@ -41,6 +40,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateres
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.v1.rivtabp20.SendMedicalCertificateQuestionResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
+import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -100,7 +100,7 @@ public class RevokeMedicalCertificateResponderImplTest {
 
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
         SendMedicalCertificateQuestionResponseType sendQuestionResponse = new SendMedicalCertificateQuestionResponseType();
-        sendQuestionResponse.setResult(okResult());
+        sendQuestionResponse.setResult(ResultOfCallUtil.okResult());
         when(sendMedicalCertificateQuestionResponderInterface.sendMedicalCertificateQuestion(ADDRESS, expectedSendRequest())).thenReturn(sendQuestionResponse);
 
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());

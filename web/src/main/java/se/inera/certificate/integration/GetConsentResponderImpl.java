@@ -4,11 +4,11 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.integration.util.ResultOfCallUtil;
 import se.inera.certificate.service.ConsentService;
 import se.inera.ifv.insuranceprocess.healthreporting.getconsent.v1.rivtabp20.GetConsentResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.getconsentresponder.v1.GetConsentRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.getconsentresponder.v1.GetConsentResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 @SchemaValidation
 public class GetConsentResponderImpl implements GetConsentResponderInterface {

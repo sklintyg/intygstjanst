@@ -14,7 +14,6 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.exception.CertificateValidationException;
-import se.inera.certificate.integration.util.ResultOfCallUtil;
 import se.inera.certificate.integration.validator.RegisterMedicalCertificateRequestValidator;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
@@ -24,6 +23,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.ObjectFactory;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
+import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 import com.google.common.base.Throwables;
 

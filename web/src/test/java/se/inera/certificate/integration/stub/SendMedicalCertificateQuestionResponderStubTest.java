@@ -9,11 +9,11 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import riv.insuranceprocess.healthreporting.medcertqa._1.Amnetyp;
-import riv.insuranceprocess.healthreporting.medcertqa._1.InnehallType;
-import riv.insuranceprocess.healthreporting.medcertqa._1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.QuestionToFkType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
+import se.inera.webcert.medcertqa.v1.Amnetyp;
+import se.inera.webcert.medcertqa.v1.InnehallType;
+import se.inera.webcert.medcertqa.v1.LakarutlatandeEnkelType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendMedicalCertificateQuestionResponderStubTest {

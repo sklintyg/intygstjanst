@@ -18,9 +18,6 @@
  */
 package se.inera.certificate.integration;
 
-import static se.inera.certificate.integration.util.ResultTypeUtil.errorResult;
-import static se.inera.certificate.integration.util.ResultTypeUtil.okResult;
-
 import java.io.StringReader;
 
 import javax.annotation.PostConstruct;
@@ -37,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareRequestType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponderInterface;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponseType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
@@ -88,16 +86,16 @@ public class GetCertificateForCareResponderImpl extends AbstractGetCertificateRe
             attachCertificateDocument(certificate, response);
 
             if (certificate.isDeletedByCareGiver()) {
-                response.setResult(errorResult(ErrorIdType.APPLICATION_ERROR, "Certificate '" + request.getCertificateId()
+                response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "Certificate '" + request.getCertificateId()
                     + "' has been deleted by care giver"));
             } else if (certificate.isRevoked()) {
-                response.setResult(errorResult(ErrorIdType.REVOKED, "Certificate '" + request.getCertificateId()  + "' has been revoked"));
+                response.setResult(ResultTypeUtil.errorResult(ErrorIdType.REVOKED, "Certificate '" + request.getCertificateId()  + "' has been revoked"));
             } else {
-                response.setResult(okResult());
+                response.setResult(ResultTypeUtil.okResult());
             }
 
         } catch (ModuleNotFoundException | ModuleException e) {
-            response.setResult(errorResult(ErrorIdType.APPLICATION_ERROR, "Module error when processing certificates"));
+            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "Module error when processing certificates"));
             LOGGER.error(e.getMessage());
         }
 

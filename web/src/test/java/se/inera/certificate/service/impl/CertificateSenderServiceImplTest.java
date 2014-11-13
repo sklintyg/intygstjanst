@@ -23,8 +23,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
 
+import se.inera.certificate.exception.ExternalWebServiceCallFailedException;
 import se.inera.certificate.exception.RecipientUnknownException;
-import se.inera.certificate.integration.exception.ExternalWebServiceCallFailedException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.builder.CertificateBuilder;
