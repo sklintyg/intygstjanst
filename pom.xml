@@ -39,7 +39,6 @@
   </properties>
 
   <modules>
-    <module>module-api</module>
     <module>persistence</module>
     <module>specifications</module>
     <module>web</module>
@@ -54,11 +53,6 @@
   <dependencyManagement>
     <dependencies>
 
-      <dependency>
-        <groupId>${project.parent.groupId}</groupId>
-        <artifactId>module-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
       <dependency>
         <groupId>${project.parent.groupId}</groupId>
         <artifactId>intygstjanst-persistence</artifactId>
