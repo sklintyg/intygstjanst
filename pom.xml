@@ -127,11 +127,6 @@
         <artifactId>anonymisering</artifactId>
         <version>${anonymisering.version}</version>
       </dependency>
-      <dependency>
-        <groupId>se.inera.intyg.tools</groupId>
-        <artifactId>liquibase-runner</artifactId>
-        <version>${liquibase-runner.version}</version>
-      </dependency>
 
     </dependencies>
   </dependencyManagement>

@@ -29,11 +29,6 @@
         
     <!-- Tools -->
     <dependency>
-      <groupId>se.inera.intyg.tools</groupId>
-      <artifactId>liquibase-runner</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
     </dependency>
