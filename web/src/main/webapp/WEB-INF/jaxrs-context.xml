@@ -29,17 +29,10 @@
 
     <jaxrs:server id="healthCheckService" address="/health-check">
       <jaxrs:serviceBeans>
-        <ref bean="healthcheck" />
+        <bean class="se.inera.certificate.monitoring.HealthCheckController" />
       </jaxrs:serviceBeans>
-      <jaxrs:providers>
-        <ref bean="jacksonJsonProvider" />
-      </jaxrs:providers>
-      <jaxrs:extensionMappings>
-        <entry key="json" value="application/json" />
-      </jaxrs:extensionMappings>
     </jaxrs:server>
-
-  <bean id="healthcheck" class="se.inera.certificate.overvakning.HealthCheck" />
+    
   </beans>
 
   <beans profile="dev,test,qa">
