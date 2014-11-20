@@ -32,6 +32,7 @@ import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.IN
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -43,8 +44,10 @@ import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.ClientException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
-import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.model.builder.CertificateBuilder;
+import se.inera.certificate.modules.registry.IntygModuleRegistry;
+import se.inera.certificate.modules.registry.IntygModuleRegistryImpl;
+import se.inera.certificate.modules.support.ApplicationOrigin;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
@@ -70,13 +73,16 @@ public class GetCertificateResponderImplTest {
     private GetCertificateResponderImpl responder = new GetCertificateResponderImpl();
 
     @Mock
-    private ModuleApiFactory moduleApiFactory = mock(ModuleApiFactory.class);
-
-    @Mock
-    private ModuleEntryPoint moduleEntryPoint = mock(ModuleEntryPoint.class);
+    private IntygModuleRegistryImpl moduleRegistry = mock(IntygModuleRegistryImpl.class);
 
     @Mock
     private ModuleApi moduleRestApi = mock(ModuleApi.class);
+
+    @Before
+    public void prepare() {
+        moduleRegistry.setOrigin(ApplicationOrigin.INTYGSTJANST);
+        moduleRegistry.initModulesList();
+    }
 
     @Test
     public void getCertificate() throws Exception {
@@ -85,8 +91,7 @@ public class GetCertificateResponderImplTest {
         when(certificateService.getCertificateForCitizen(civicRegistrationNumber, certificateId)).thenReturn(
                 new CertificateBuilder("123456", document).certificateType("fk7263").build());
 
-        when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenReturn(moduleEntryPoint);
-        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleRestApi);
+        when(moduleRegistry.getModuleApi("fk7263")).thenReturn(moduleRestApi);
         TransportModelResponse marshallResult = new TransportModelResponse("<someXml></someXml>");
         when(moduleRestApi.marshall(any(ExternalModelHolder.class), eq(LEGACY_LAKARUTLATANDE))).thenReturn(marshallResult);
 

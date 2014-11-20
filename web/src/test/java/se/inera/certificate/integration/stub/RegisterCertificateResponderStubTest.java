@@ -20,7 +20,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.utils.IdUtil;
-import se.inera.certificate.integration.module.ModuleApiFactory;
+import se.inera.certificate.modules.registry.IntygModuleRegistry;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.ModuleApi;
 
@@ -33,10 +33,10 @@ public class RegisterCertificateResponderStubTest {
     FkMedicalCertificatesStore store;
 
     @Mock
-    ModuleApiFactory moduleApiFactory;
+    IntygModuleRegistry moduleRegistry;
 
     @Mock
-    ModuleEntryPoint moduleEntryPoint;
+    ModuleApi moduleApi;
 
     @InjectMocks
     RegisterCertificateResponderStub stub = new RegisterCertificateResponderStub() {
@@ -55,7 +55,7 @@ public class RegisterCertificateResponderStubTest {
         RegisterCertificateType request = unmarshaller.unmarshal(
                 new StreamSource(new ClassPathResource("fk7263/utlatande.xml").getInputStream()), RegisterCertificateType.class).getValue();
 
-        when(moduleApiFactory.getModuleEntryPoint(any(String.class))).thenReturn(moduleEntryPoint);
+        when(moduleRegistry.getModuleApi(any(String.class))).thenReturn(moduleApi);
 
         request.getUtlatande().setUtlatandeId(IdUtil.generateId(UTLATANDE_ID));
 

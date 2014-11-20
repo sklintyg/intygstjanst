@@ -39,7 +39,7 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdTyp
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.integration.converter.MetaDataResolver;
-import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
+import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.modules.support.api.exception.ModuleException;

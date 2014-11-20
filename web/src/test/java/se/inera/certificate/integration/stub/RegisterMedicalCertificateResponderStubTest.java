@@ -22,9 +22,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.integration.module.ModuleApiFactory;
-import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
-import se.inera.certificate.modules.support.ModuleEntryPoint;
+import se.inera.certificate.modules.registry.IntygModuleRegistry;
+import se.inera.certificate.modules.registry.IntygModuleRegistryImpl;
+import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 
@@ -35,10 +35,7 @@ public class RegisterMedicalCertificateResponderStubTest {
     FkMedicalCertificatesStore store;
 
     @Mock
-    private ModuleApiFactory moduleApiFactory = mock(ModuleApiFactory.class);
-
-    @Mock
-    private ModuleEntryPoint moduleEntryPoint = mock(ModuleEntryPoint.class);
+    private IntygModuleRegistry moduleRegistry = mock(IntygModuleRegistryImpl.class);
 
     @Mock
     private ModuleApi moduleRestApi = mock(ModuleApi.class);
@@ -59,8 +56,7 @@ public class RegisterMedicalCertificateResponderStubTest {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         RegisterMedicalCertificateType request = unmarshaller.unmarshal(new StreamSource(new ClassPathResource("fk7263/fk7263.xml").getInputStream()), RegisterMedicalCertificateType.class).getValue();
 
-        when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenReturn(moduleEntryPoint);
-        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleRestApi);
+        when(moduleRegistry.getModuleApi("fk7263")).thenReturn(moduleRestApi);
         
         request.getLakarutlatande().setLakarutlatandeId("id-1234567890");
         

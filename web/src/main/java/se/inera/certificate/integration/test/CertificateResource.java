@@ -23,11 +23,10 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import se.inera.certificate.integration.module.ModuleApiFactory;
-import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
+import se.inera.certificate.modules.registry.IntygModuleRegistry;
+import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.OriginalCertificate;
-import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
 import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
@@ -52,7 +51,7 @@ public class CertificateResource {
     }
 
     @Autowired
-    private ModuleApiFactory moduleApiFactory;
+    private IntygModuleRegistry moduleRegistry;
 
     @GET
     @Path("/{id}")
@@ -135,8 +134,7 @@ public class CertificateResource {
                 ? TransportModelVersion.LEGACY_LAKARUTLATANDE : TransportModelVersion.UTLATANDE_V1;
 
         try {
-            ModuleEntryPoint module = moduleApiFactory.getModuleEntryPoint(moduleName);
-            TransportModelResponse response = module.getModuleApi().marshall(
+            TransportModelResponse response = moduleRegistry.getModuleApi(moduleName).marshall(
                     new ExternalModelHolder(certificate.getDocument()), transportModelVersion);
             return response.getTransportModel();
 

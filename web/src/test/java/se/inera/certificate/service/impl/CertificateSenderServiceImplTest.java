@@ -25,8 +25,8 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.exception.ExternalWebServiceCallFailedException;
 import se.inera.certificate.exception.RecipientUnknownException;
-import se.inera.certificate.integration.module.ModuleApiFactory;
-import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
+import se.inera.certificate.modules.registry.IntygModuleRegistry;
+import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
@@ -57,7 +57,7 @@ public class CertificateSenderServiceImplTest {
     private CertificateService certificateService;
 
     @Mock
-    private ModuleApiFactory moduleApiFactory;
+    private IntygModuleRegistry moduleRegistry;
 
     @Mock
     private ModuleEntryPoint moduleEntryPoint;
@@ -93,7 +93,7 @@ public class CertificateSenderServiceImplTest {
 
     @Before
     public void setupModuleRestApiFactory() throws ModuleNotFoundException {
-        when(moduleApiFactory.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
+        when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
         when(moduleEntryPoint.getModuleId()).thenReturn("fk7263");
         when(moduleEntryPoint.getDefaultRecieverLogicalAddress()).thenReturn(LOGICAL_ADDRESS);

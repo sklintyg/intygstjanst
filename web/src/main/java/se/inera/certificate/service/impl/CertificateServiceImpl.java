@@ -29,6 +29,7 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -43,8 +44,8 @@ import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.exception.MissingModuleException;
 import se.inera.certificate.exception.PersistenceException;
 import se.inera.certificate.exception.ServerException;
-import se.inera.certificate.integration.module.ModuleApiFactory;
-import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
+import se.inera.certificate.modules.registry.IntygModuleRegistry;
+import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
@@ -70,7 +71,7 @@ public class CertificateServiceImpl implements CertificateService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateServiceImpl.class);
 
     @Autowired
-    private ModuleApiFactory moduleApiFactory;
+    private IntygModuleRegistry moduleRegistry;
 
     private static final Comparator<CertificateStateHistoryEntry> SORTER = new Comparator<CertificateStateHistoryEntry>() {
 
@@ -156,8 +157,7 @@ public class CertificateServiceImpl implements CertificateService {
 
     private ExternalModelResponse unmarshallAndValidate(String type, String transportXml) throws CertificateValidationException {
         try {
-            ModuleEntryPoint endpoint = moduleApiFactory.getModuleEntryPoint(type);
-            ExternalModelResponse response = endpoint.getModuleApi().unmarshall(new TransportModelHolder(transportXml));
+            ExternalModelResponse response = moduleRegistry.getModuleApi(type).unmarshall(new TransportModelHolder(transportXml));
 
             return response;
 

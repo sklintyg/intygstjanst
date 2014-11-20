@@ -26,8 +26,8 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ObjectFact
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
 import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.exception.ServerException;
-import se.inera.certificate.integration.module.ModuleApiFactory;
-import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
+import se.inera.certificate.modules.registry.IntygModuleRegistry;
+import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.TransportModelHolder;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
@@ -48,7 +48,7 @@ public class RegisterCertificateResponderStub implements RegisterCertificateResp
     private FkMedicalCertificatesStore fkMedicalCertificatesStore;
 
     @Autowired
-    private ModuleApiFactory moduleApiFactory;
+    private IntygModuleRegistry moduleRegistry;
 
     private JAXBContext jaxbContext;
 
@@ -65,7 +65,7 @@ public class RegisterCertificateResponderStub implements RegisterCertificateResp
 
         try {
             String type = request.getUtlatande().getTypAvUtlatande().getCode();
-            ModuleApi endpoint = moduleApiFactory.getModuleEntryPoint(type).getModuleApi();
+            ModuleApi endpoint = moduleRegistry.getModuleApi(type);
 
             validate(request, endpoint);
             String id = IdUtil.generateStringId(request.getUtlatande().getUtlatandeId());

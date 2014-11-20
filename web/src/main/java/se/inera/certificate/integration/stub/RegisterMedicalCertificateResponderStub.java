@@ -18,8 +18,8 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.exception.ServerException;
-import se.inera.certificate.integration.module.ModuleApiFactory;
-import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
+import se.inera.certificate.modules.registry.IntygModuleRegistry;
+import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.modules.support.api.ModuleApi;
 import se.inera.certificate.modules.support.api.dto.TransportModelHolder;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
@@ -48,7 +48,7 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
     private FkMedicalCertificatesStore fkMedicalCertificatesStore;
 
     @Autowired
-    private ModuleApiFactory moduleApiFactory;
+    private IntygModuleRegistry moduleRegistry;
     
     private JAXBContext jaxbContext;
 
@@ -57,7 +57,7 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
         jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class);
         objectFactory = new ObjectFactory();
         // Since only FK7263 uses RegisterMedicalCertificateType we can hard code it here.
-        moduleApi = moduleApiFactory.getModuleEntryPoint(FK7263).getModuleApi();
+        moduleApi = moduleRegistry.getModuleApi(FK7263);
     }
 
     @Override

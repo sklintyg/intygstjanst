@@ -12,8 +12,8 @@ import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.exception.ServerException;
-import se.inera.certificate.integration.module.ModuleApiFactory;
-import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
+import se.inera.certificate.modules.registry.IntygModuleRegistry;
+import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
@@ -34,7 +34,7 @@ public abstract class AbstractGetCertificateResponderImpl {
     private CertificateService certificateService;
 
     @Autowired
-    private ModuleApiFactory moduleApiFactory;
+    private IntygModuleRegistry moduleRegistry;
 
     /**
      *
@@ -98,8 +98,7 @@ public abstract class AbstractGetCertificateResponderImpl {
 
     private String marshallToTransport(String externalModel, String utlatandeTyp) {
         try {
-            ModuleEntryPoint module = moduleApiFactory.getModuleEntryPoint(utlatandeTyp);
-            TransportModelResponse response = module.getModuleApi().marshall(
+            TransportModelResponse response = moduleRegistry.getModuleApi(utlatandeTyp).marshall(
                     new ExternalModelHolder(externalModel), getMarshallVersion());
 
             return response.getTransportModel();

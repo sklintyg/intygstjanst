@@ -28,8 +28,8 @@ import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.exception.PersistenceException;
 import se.inera.certificate.integration.json.CustomObjectMapper;
-import se.inera.certificate.integration.module.ModuleApiFactory;
-import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
+import se.inera.certificate.modules.registry.IntygModuleRegistry;
+import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.common.MinimalUtlatande;
@@ -69,10 +69,7 @@ public class CertificateServiceImplTest {
     private CertificateSenderService certificateSender;
 
     @Mock
-    ModuleApiFactory moduleApiFactory;
-
-    @Mock
-    ModuleEntryPoint moduleEntryPoint;
+    IntygModuleRegistry moduleRegistry;
 
     @Mock
     ModuleApi moduleApi;
@@ -159,8 +156,7 @@ public class CertificateServiceImplTest {
         String utlatandeXml = utlatandeXml();
         MinimalUtlatande utlatande = utlatande();
 
-        when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenReturn(moduleEntryPoint);
-        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
+        when(moduleRegistry.getModuleApi("fk7263")).thenReturn(moduleApi);
         ExternalModelResponse unmarshallResponse = new ExternalModelResponse(utlatandeJson, utlatande);
         when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenReturn(unmarshallResponse);
 
@@ -209,8 +205,7 @@ public class CertificateServiceImplTest {
         String utlatandeXml = utlatandeXml("ts-diabetes");
         MinimalUtlatande utlatande = utlatande("ts-diabetes_external_format");
 
-        when(moduleApiFactory.getModuleEntryPoint("ts-diabetes")).thenReturn(moduleEntryPoint);
-        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
+        when(moduleRegistry.getModuleApi("ts-diabetes")).thenReturn(moduleApi);
         ExternalModelResponse unmarshallResponse = new ExternalModelResponse(utlatandeJson, utlatande);
         when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenReturn(unmarshallResponse);
 
@@ -252,7 +247,7 @@ public class CertificateServiceImplTest {
     @Test
     public void testModuleNotFound() throws Exception {
 
-        when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenThrow(new ModuleNotFoundException());
+        when(moduleRegistry.getModuleApi("fk7263")).thenThrow(new ModuleNotFoundException());
 
         try {
             certificateService.storeCertificate(utlatandeJson(), "fk7263");
@@ -264,8 +259,7 @@ public class CertificateServiceImplTest {
     @Test
     public void testModuleError() throws Exception {
 
-        when(moduleApiFactory.getModuleEntryPoint("fk7263")).thenReturn(moduleEntryPoint);
-        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
+        when(moduleRegistry.getModuleApi("fk7263")).thenReturn(moduleApi);
         when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenThrow(new ModuleSystemException());
 
         try {
