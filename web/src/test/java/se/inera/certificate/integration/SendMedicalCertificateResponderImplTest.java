@@ -15,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.exception.ClientException;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.v1.rivtabp20.SendMedicalCertificateResponderInterface;
@@ -47,7 +46,7 @@ public class SendMedicalCertificateResponderImplTest {
     private SendMedicalCertificateResponderInterface responder = new SendMedicalCertificateResponderImpl();
 
     @Test
-    public void testSend() throws ClientException {
+    public void testSend() throws Exception {
         when(certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new CertificateBuilder(CERTIFICATE_ID).build());
         AttributedURIType uri = new AttributedURIType();
         uri.setValue("FK");

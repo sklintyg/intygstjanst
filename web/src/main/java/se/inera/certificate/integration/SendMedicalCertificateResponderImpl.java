@@ -6,13 +6,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.exception.CertificateRevokedException;
-import se.inera.certificate.exception.CertificateValidationException;
-import se.inera.certificate.exception.InvalidCertificateException;
+import se.inera.certificate.integration.module.exception.CertificateRevokedException;
+import se.inera.certificate.integration.module.exception.InvalidCertificateException;
 import se.inera.certificate.integration.validator.SendCertificateRequestValidator;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.CertificateService.SendStatus;
+import se.inera.certificate.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.v1.rivtabp20.SendMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateResponseType;

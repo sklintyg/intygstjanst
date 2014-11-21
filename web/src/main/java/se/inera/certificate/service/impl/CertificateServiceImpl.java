@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.cxf.configuration.security.CertStoreType;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -35,42 +36,34 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import se.inera.certificate.exception.CertificateAlreadyExistsException;
-import se.inera.certificate.exception.CertificateRevokedException;
-import se.inera.certificate.exception.CertificateValidationException;
-import se.inera.certificate.exception.InvalidCertificateException;
-import se.inera.certificate.exception.MissingConsentException;
-import se.inera.certificate.exception.MissingModuleException;
 import se.inera.certificate.exception.PersistenceException;
-import se.inera.certificate.exception.ServerException;
-import se.inera.certificate.integration.module.ModuleApiFactory;
-import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
+import se.inera.certificate.integration.converter.ConverterUtil;
+import se.inera.certificate.integration.module.exception.CertificateAlreadyExistsException;
+import se.inera.certificate.integration.module.exception.CertificateRevokedException;
+import se.inera.certificate.integration.module.exception.InvalidCertificateException;
+import se.inera.certificate.integration.module.exception.MissingConsentException;
+import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.CertificateState;
-import se.inera.certificate.model.Utlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
-import se.inera.certificate.modules.support.ModuleEntryPoint;
-import se.inera.certificate.modules.support.api.dto.ExternalModelResponse;
-import se.inera.certificate.modules.support.api.dto.TransportModelHolder;
-import se.inera.certificate.modules.support.api.exception.ModuleException;
-import se.inera.certificate.modules.support.api.exception.ModuleValidationException;
+import se.inera.certificate.modules.support.api.CertificateHolder;
+import se.inera.certificate.modules.support.api.CertificateStateHolder;
+import se.inera.certificate.modules.support.api.ModuleContainerApi;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
+import se.inera.certificate.service.StatisticsService;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 
 /**
  * @author andreaskaltenbach
  */
 @Service
-public class CertificateServiceImpl implements CertificateService {
+public class CertificateServiceImpl implements CertificateService, ModuleContainerApi {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateServiceImpl.class);
-
-    @Autowired
-    private ModuleApiFactory moduleApiFactory;
 
     private static final Comparator<CertificateStateHistoryEntry> SORTER = new Comparator<CertificateStateHistoryEntry>() {
 
@@ -87,6 +80,9 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Autowired
     private ConsentService consentService;
+
+    @Autowired
+    private StatisticsService statisticsService;
 
     @Autowired
     private CertificateSenderService senderService;
@@ -154,37 +150,12 @@ public class CertificateServiceImpl implements CertificateService {
         return fixDeletedStatus(certificateDao.getCertificate(civicRegistrationNumber, id));
     }
 
-    private ExternalModelResponse unmarshallAndValidate(String type, String transportXml) throws CertificateValidationException {
-        try {
-            ModuleEntryPoint endpoint = moduleApiFactory.getModuleEntryPoint(type);
-            ExternalModelResponse response = endpoint.getModuleApi().unmarshall(new TransportModelHolder(transportXml));
-
-            return response;
-
-        } catch (ModuleNotFoundException e) {
-            String message = String.format("The module '%s' was not found - not registered in application", type);
-            LOGGER.error(message);
-            throw new MissingModuleException(message, e);
-
-        } catch (ModuleValidationException e) {
-            throw new CertificateValidationException(e.getValidationEntries());
-
-        } catch (ModuleException e) {
-            String message = String.format("Failed to validate certificate for certificate type '%s'", type);
-            LOGGER.error(message);
-            throw new ServerException(message, e);
-        }
-    }
-
     @Override
     @Transactional
-    public Certificate storeCertificate(String xml, String type) throws CertificateAlreadyExistsException,
-            InvalidCertificateException, CertificateValidationException {
+    public Certificate storeCertificate(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException,
+            InvalidCertificateException {
 
-        ExternalModelResponse externalModel = unmarshallAndValidate(type, xml);
-
-        // turn a lakarutlatande into a certificate entity
-        Certificate certificate = createCertificate(externalModel);
+        Certificate certificate = ConverterUtil.toCertificate(certificateHolder);
 
         // ensure that certificate does not exist yet
         try {
@@ -200,7 +171,7 @@ public class CertificateServiceImpl implements CertificateService {
 
         certificateDao.store(certificate);
 
-        storeOriginalCertificate(xml, certificate);
+        storeOriginalCertificate(certificateHolder.getOriginalCertificate(), certificate);
 
         return certificate;
     }
@@ -251,27 +222,6 @@ public class CertificateServiceImpl implements CertificateService {
         senderService.sendCertificate(certificate, target);
         setCertificateState(civicRegistrationNumber, certificateId, target, CertificateState.SENT, null);
         return sendStatus;
-    }
-
-    private Certificate createCertificate(ExternalModelResponse externalModel) {
-        Utlatande utlatande = externalModel.getExternalModel();
-        String id = utlatande.getId().getExtension() != null ? utlatande.getId().getExtension() : utlatande.getId().getRoot();
-        Certificate certificate = new Certificate(id, externalModel.getExternalModelJson());
-
-        certificate.setType(utlatande.getTyp().getCode());
-        certificate.setSigningDoctorName(utlatande.getSkapadAv().getNamn());
-        certificate.setSignedDate(utlatande.getSigneringsdatum());
-
-        if (utlatande.getSkapadAv() != null && utlatande.getSkapadAv().getVardenhet() != null) {
-            certificate.setCareUnitId(utlatande.getSkapadAv().getVardenhet().getId().getExtension());
-            certificate.setCareUnitName(utlatande.getSkapadAv().getVardenhet().getNamn());
-        }
-
-        certificate.setCivicRegistrationNumber(utlatande.getPatient().getId().getExtension());
-        certificate.setValidFromDate(utlatande.getValidFromDate() != null ? utlatande.getValidFromDate().toString() : null);
-        certificate.setValidToDate(utlatande.getValidToDate() != null ? utlatande.getValidToDate().toString() : null);
-
-        return certificate;
     }
 
     @Override
@@ -367,5 +317,43 @@ public class CertificateServiceImpl implements CertificateService {
             }
         }
         return false;
+    }
+
+    @Override
+    public void certificateReceived(CertificateHolder certificateHolder, boolean wireTapped) throws CertificateAlreadyExistsException, InvalidCertificateException {
+        Certificate certificate = storeCertificate(certificateHolder);
+        LOGGER.info(LogMarkers.MONITORING, certificateHolder.getId() + " registered");
+        if (wireTapped) {
+            String personnummer = certificateHolder.getCivicRegistrationNumber();
+            String certificateId = certificateHolder.getId();
+            setCertificateState(personnummer, certificateId, "FK", CertificateState.SENT,
+                    new LocalDateTime());
+            LOGGER.info(LogMarkers.MONITORING, certificateId + " marked as sent");
+        }
+        statisticsService.created(certificate);
+    }
+
+    @Override
+    public CertificateHolder getCertificate(String certificateId, String personId) throws InvalidCertificateException, CertificateRevokedException {
+        Certificate certificate = null;
+        try {
+            certificate = getCertificateInternal(personId, certificateId);
+        } catch (PersistenceException e) {
+            throw new InvalidCertificateException(certificateId, personId);
+        }
+
+        if (certificate == null) {
+            throw new InvalidCertificateException(certificateId, personId);
+        }
+
+        if (personId != null && !consentService.isConsent(personId)) {
+            throw new MissingConsentException(personId);
+        }
+
+        if (certificate.isRevoked()) {
+            throw new CertificateRevokedException(certificateId);
+        }
+
+        return ConverterUtil.toCertificateHolder(certificate);
     }
 }

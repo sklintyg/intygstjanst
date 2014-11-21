@@ -2,6 +2,7 @@ package se.inera.certificate.integration.validator;
 
 import java.util.List;
 
+import se.inera.certificate.schema.validate.PatientValidator;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
 import se.inera.webcert.medcertqa.v1.LakarutlatandeEnkelType;
 

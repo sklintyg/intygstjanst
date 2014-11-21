@@ -117,4 +117,12 @@
     <dropNotNullConstraint tableName="CERTIFICATE" columnName="VALID_TO_DATE" columnDataType="varchar(10)" />
   </changeSet>
 
+  <changeSet id="9" author="bb">
+    <addColumn tableName="CERTIFICATE">
+      <column name="ADDITIONAL_INFO" type="varchar(255)">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

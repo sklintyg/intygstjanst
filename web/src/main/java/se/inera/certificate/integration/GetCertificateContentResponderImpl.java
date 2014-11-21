@@ -9,10 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.exception.CertificateRevokedException;
-import se.inera.certificate.exception.InvalidCertificateException;
-import se.inera.certificate.exception.MissingConsentException;
-import se.inera.certificate.integration.converter.CertificateStateHistoryEntryConverter;
+import se.inera.certificate.integration.module.exception.CertificateRevokedException;
+import se.inera.certificate.integration.module.exception.InvalidCertificateException;
+import se.inera.certificate.integration.module.exception.MissingConsentException;
+import se.inera.certificate.integration.util.CertificateStateHistoryEntryConverter;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
@@ -29,7 +29,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 @SchemaValidation
 public class GetCertificateContentResponderImpl implements GetCertificateContentResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GetCertificateResponderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GetCertificateContentResponderImpl.class);
 
     @Autowired
     private CertificateService certificateService;

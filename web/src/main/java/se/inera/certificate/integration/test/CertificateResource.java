@@ -23,11 +23,13 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import se.inera.certificate.integration.converter.ConverterUtil;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
+import se.inera.certificate.modules.support.api.CertificateHolder;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
 import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
@@ -109,13 +111,14 @@ public class CertificateResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/")
-    public Response insertCertificate(final Certificate certificate) {
+    public Response insertCertificate(final CertificateHolder certificateHolder) {
         return transactionTemplate.execute(new TransactionCallback<Response>() {
             public Response doInTransaction(TransactionStatus status) {
+                Certificate certificate = ConverterUtil.toCertificate(certificateHolder);
                 try {
                     OriginalCertificate originalCertificate = new OriginalCertificate();
                     originalCertificate.setReceived(new LocalDateTime());
-                    originalCertificate.setDocument(marshall(certificate));
+                    originalCertificate.setDocument(certificate.getDocument());
                     originalCertificate.setCertificate(certificate);
                     entityManager.persist(certificate);
                     entityManager.persist(originalCertificate);
@@ -129,24 +132,4 @@ public class CertificateResource {
         });
     }
 
-    protected String marshall(Certificate certificate) {
-        String moduleName = certificate.getType();
-        TransportModelVersion transportModelVersion = moduleName.equals("fk7263")
-                ? TransportModelVersion.LEGACY_LAKARUTLATANDE : TransportModelVersion.UTLATANDE_V1;
-
-        try {
-            ModuleEntryPoint module = moduleApiFactory.getModuleEntryPoint(moduleName);
-            TransportModelResponse response = module.getModuleApi().marshall(
-                    new ExternalModelHolder(certificate.getDocument()), transportModelVersion);
-            return response.getTransportModel();
-
-        } catch (ModuleNotFoundException e) {
-            LOGGER.error(String.format("The module %s was not found - not registered in application", moduleName), e);
-
-        } catch (ModuleException e) {
-            LOGGER.error(String.format("Failed to unmarshal certificate for certificate type '%s'", moduleName), e);
-        }
-
-        return "";
-    }
 }

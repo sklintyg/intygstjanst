@@ -30,7 +30,7 @@ public class SetCertificateStatusResponderImplTest {
     private SetCertificateStatusResponderInterface responder = new SetCertificateStatusResponderImpl();
 
     @Test
-    public void testSetCertificateStatus() throws ClientException {
+    public void testSetCertificateStatus() throws Exception {
 
         LocalDateTime timestamp = new LocalDateTime(2013, 4, 26, 12, 0, 0);
 

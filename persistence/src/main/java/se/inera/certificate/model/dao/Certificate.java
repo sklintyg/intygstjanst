@@ -132,6 +132,12 @@ public class Certificate {
     private String validToDate;
 
     /**
+     * Additional information.
+     */
+    @Column(name = "ADDITIONAL_INFO", nullable = true)
+    private String additionalInfo;
+
+    /**
      * If this certificate is deleted or not.
      */
     @Column(name = "DELETED", nullable = false, columnDefinition = "TINYINT(1)")
@@ -264,6 +270,14 @@ public class Certificate {
 
     public void setValidToDate(String validToDate) {
         this.validToDate = validToDate;
+    }
+
+    public String getAdditionalInfo() {
+        return additionalInfo;
+    }
+
+    public void setAdditionalInfo(String additionalInfo) {
+        this.additionalInfo = additionalInfo;
     }
 
     public Boolean getDeleted() {

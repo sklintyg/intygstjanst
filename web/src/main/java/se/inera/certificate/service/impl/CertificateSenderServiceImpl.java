@@ -18,51 +18,31 @@
  */
 package se.inera.certificate.service.impl;
 
-import static se.inera.certificate.modules.support.api.dto.TransportModelVersion.LEGACY_LAKARUTLATANDE;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
-
-import java.io.ByteArrayInputStream;
-
-import javax.annotation.PostConstruct;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.transform.stream.StreamSource;
 
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponseType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType;
-import se.inera.certificate.exception.ExternalWebServiceCallFailedException;
 import se.inera.certificate.exception.MissingModuleException;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.exception.SubsystemCallException;
-import se.inera.certificate.exception.ResultTypeErrorException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
-import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
-import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
-import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
+import se.inera.certificate.modules.support.api.dto.InternalModelHolder;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.RecipientService;
 import se.inera.certificate.service.recipientservice.Recipient;
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
@@ -71,7 +51,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequest
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.QuestionToFkType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
-import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 import se.inera.webcert.medcertqa.v1.Amnetyp;
 import se.inera.webcert.medcertqa.v1.InnehallType;
 import se.inera.webcert.medcertqa.v1.VardAdresseringsType;
@@ -94,13 +73,6 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     private ModuleApiFactory moduleApiFactory;
 
     @Autowired
-    @Qualifier("registerMedicalCertificateClient")
-    private RegisterMedicalCertificateResponderInterface registerMedicalCertificateClient;
-
-    @Autowired
-    private se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponderInterface registerCertificateClient;
-
-    @Autowired
     private SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
 
     @Autowired
@@ -109,13 +81,6 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     @Autowired
     @Value("${revokecertificate.address.fk7263}")
     private String sendLogicalAddressText;
-
-    private JAXBContext jaxbContext;
-
-    @PostConstruct
-    public void initializeJaxbContext() throws JAXBException {
-        jaxbContext = JAXBContext.newInstance(RegisterMedicalCertificateType.class, RegisterCertificateType.class);
-    }
 
     @Override
     public void sendCertificate(Certificate certificate, String target) {
@@ -133,12 +98,8 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
                 logicalAddress = recipient.getLogicalAddress();
             }
 
-            TransportModelVersion transportModelVersion = recipientService.getVersion(logicalAddress, module.getModuleId());
-            LOGGER.debug(String.format("Getting transport model version from recipientService, got: %s", transportModelVersion));
-
-            TransportModelResponse response = module.getModuleApi().marshall(new ExternalModelHolder(certificate.getDocument()),
-                    transportModelVersion);
-            invokeReceiverService(response.getTransportModel(), logicalAddress, transportModelVersion);
+            module.getModuleApi().sendCertificate(new InternalModelHolder(certificate.getDocument()),
+                    logicalAddress);
 
         } catch (ModuleNotFoundException e) {
             String message = String.format("The module '%s' was not found - not registered in application",
@@ -156,40 +117,6 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             String message = String.format("Found no matching recipient for logical adress: '%s'", target);
             LOGGER.error(e.getMessage());
             throw new ServerException(message, e);
-        }
-    }
-
-    private void invokeReceiverService(String xml, String logicalAddress, TransportModelVersion type) {
-        try {
-            Class<?> unmarshallType = (type.equals(LEGACY_LAKARUTLATANDE) ? RegisterMedicalCertificateType.class
-                    : UtlatandeType.class);
-
-            Object request = jaxbContext.createUnmarshaller().unmarshal(
-                    new StreamSource(new ByteArrayInputStream(xml.getBytes())), unmarshallType).getValue();
-            if (type.equals(LEGACY_LAKARUTLATANDE)) {
-                AttributedURIType address = new AttributedURIType();
-                address.setValue(logicalAddress);
-                RegisterMedicalCertificateResponseType response = registerMedicalCertificateClient
-                        .registerMedicalCertificate(address, (RegisterMedicalCertificateType) request);
-
-                // check whether call was successful or not
-                if (response.getResult().getResultCode() != ResultCodeEnum.OK) {
-                    throw new ExternalWebServiceCallFailedException(response.getResult());
-                }
-
-            } else {
-                RegisterCertificateType req = new RegisterCertificateType();
-                req.setUtlatande((UtlatandeType) request);
-                RegisterCertificateResponseType response = registerCertificateClient.registerCertificate(logicalAddress, req);
-
-                // check whether call was successful or not
-                if (response.getResult().getResultCode() != ResultCodeType.OK) {
-                    throw new ResultTypeErrorException(response.getResult());
-                }
-            }
-
-        } catch (JAXBException e) {
-            throw new ServerException(e);
         }
     }
 

@@ -23,7 +23,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.exception.ExternalWebServiceCallFailedException;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.integration.module.ModuleApiFactory;
 import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
@@ -35,6 +34,7 @@ import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
 import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
+import se.inera.certificate.schema.util.ExternalWebServiceCallFailedException;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.RecipientService;
 import se.inera.certificate.service.recipientservice.Recipient;
@@ -105,11 +105,6 @@ public class CertificateSenderServiceImplTest {
         when(recipientService.getRecipient("FK")).thenReturn(new Recipient("FK", "Försäkringskassan", "fk"));
     }
 
-    @Before
-    public void setupSenderService() throws JAXBException {
-        senderService.initializeJaxbContext();
-    }
-    
     @InjectMocks
     private CertificateSenderServiceImpl senderService = new CertificateSenderServiceImpl();
 
@@ -134,13 +129,9 @@ public class CertificateSenderServiceImplTest {
     }
 
     private void okResponse() throws Exception {
-        TransportModelResponse response = new TransportModelResponse(IOUtils.toString(new ClassPathResource(
-                "CertificateSenderServiceImplTest/utlatande.xml").getInputStream()));
-        when(moduleApi.marshall(any(ExternalModelHolder.class), any(TransportModelVersion.class))).thenReturn(response);
     }
 
     private void errorResponse() throws Exception {
-        when(moduleApi.marshall(any(ExternalModelHolder.class), any(TransportModelVersion.class))).thenThrow(new ModuleException());
     }
 
     @Test(expected = ExternalWebServiceCallFailedException.class)
