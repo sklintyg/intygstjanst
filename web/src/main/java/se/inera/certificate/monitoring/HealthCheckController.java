@@ -31,18 +31,8 @@ public class HealthCheckController {
     @Path("/ping")
     @Produces(MediaType.APPLICATION_XML)
     public Response getPing() {
-        boolean ok;
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        try {
-            ok = true;
-        } catch (Exception e) {
-            LOGGER.error("Ping failed with exception: " + e.getMessage());
-            ok = false;
-        }
-        stopWatch.stop();
-        String xmlResponse = buildXMLResponse(ok, stopWatch.getTime());
-        LOGGER.info("pinged Intygstjänsten, got: " + xmlResponse);
+        String xmlResponse = buildXMLResponse(true, 0);
+        LOGGER.debug("Pinged Intygstjänsten, got: " + xmlResponse);
         return Response.ok(xmlResponse).build();
     }
 
@@ -60,6 +50,15 @@ public class HealthCheckController {
     @Produces(MediaType.APPLICATION_XML)
     public Response checkJMS() {
         Status status = healthCheck.getJMSStatus();
+        String xmlResponse = buildXMLResponse(status);
+        return Response.ok(xmlResponse).build();
+    }
+    
+    @GET
+    @Path("/uptime")
+    @Produces(MediaType.APPLICATION_XML)
+    public Response checkUptime() {
+        Status status = healthCheck.getUptime();
         String xmlResponse = buildXMLResponse(status);
         return Response.ok(xmlResponse).build();
     }
