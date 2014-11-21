@@ -202,7 +202,7 @@
           <webAppConfig>
             <contextPath>/inera-certificate</contextPath>
           </webAppConfig>
-          <contextXml>${basedir}/src/main/webapp/WEB-INF/jetty-context.xml</contextXml>
+          <contextXml>${basedir}/src/main/webapp/WEB-INF/jetty-web.xml</contextXml>
           <systemProperties>
             <systemProperty>
               <name>spring.profiles.active</name>
