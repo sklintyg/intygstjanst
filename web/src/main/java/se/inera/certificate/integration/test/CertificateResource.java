@@ -24,16 +24,10 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import se.inera.certificate.integration.converter.ConverterUtil;
-import se.inera.certificate.integration.module.ModuleApiFactory;
-import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.OriginalCertificate;
-import se.inera.certificate.modules.support.ModuleEntryPoint;
+import se.inera.certificate.modules.registry.IntygModuleRegistry;
 import se.inera.certificate.modules.support.api.CertificateHolder;
-import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
-import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
-import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
-import se.inera.certificate.modules.support.api.exception.ModuleException;
 
 /**
  * @author andreaskaltenbach
@@ -54,7 +48,7 @@ public class CertificateResource {
     }
 
     @Autowired
-    private ModuleApiFactory moduleApiFactory;
+    private IntygModuleRegistry moduleRegistry;
 
     @GET
     @Path("/{id}")

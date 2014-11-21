@@ -2,8 +2,8 @@
 
 !|Registrera intyg|
 |personnummer|id|typ|resultat?|
-|19121212-0001|fit-intyg-1|FK7263|OK|
-|19121212-0001|fit-intyg-2|FK7263|OK|
+|19121212-0001|fit-intyg-1|fk7263|OK|
+|19121212-0001|fit-intyg-2|fk7263|OK|
 
 (följande intyg är borttaget av vården och ska även det förekomma i resultatet)
 |Intyg|
@@ -21,8 +21,8 @@
 |Invanare hamtar lista av intyg|
 |personnummer|typ|resultat?|intyg?|
 |19121212-0001|okänt|OK|[]|
-|19121212-0002|FK7263|OK|[]|
-|19121212-0001|FK7263|OK|[fit-intyg-1, fit-intyg-2]|
+|19121212-0002|fk7263|OK|[]|
+|19121212-0001|fk7263|OK|[fit-intyg-1, fit-intyg-2]|
 |19121212-0001|ts-bas|OK|[fit-intyg-3]|
 
 !3 Rensa bort test-intyg

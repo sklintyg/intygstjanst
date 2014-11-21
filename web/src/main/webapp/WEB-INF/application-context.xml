@@ -36,6 +36,10 @@
   </beans>
 
   <beans>
+    <bean id="moduleRegistry" class="se.inera.certificate.modules.registry.IntygModuleRegistryImpl">
+      <property name="origin" value="INTYGSTJANST"/>
+    </bean>
+
     <bean id="RecipientService"
       class="se.inera.certificate.service.impl.RecipientServiceImpl">
       <property name="recipients" ref="recipientService" />
@@ -69,7 +73,7 @@
         </list>
       </property>
     </bean>
-   
+
     <!-- In dev and demo mode we bootstrap data -->
     <beans profile="dev">
       <bean id="IntygBootstrapBean"

@@ -32,10 +32,10 @@ import se.inera.certificate.exception.MissingModuleException;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.exception.SubsystemCallException;
-import se.inera.certificate.integration.module.ModuleApiFactory;
-import se.inera.certificate.integration.module.exception.ModuleNotFoundException;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.registry.IntygModuleRegistry;
+import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.dto.InternalModelHolder;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
@@ -70,7 +70,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     private CertificateService certificateService;
 
     @Autowired
-    private ModuleApiFactory moduleApiFactory;
+    private IntygModuleRegistry moduleRegistry;
 
     @Autowired
     private SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
@@ -85,7 +85,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     @Override
     public void sendCertificate(Certificate certificate, String target) {
         try {
-            ModuleEntryPoint module = moduleApiFactory.getModuleEntryPoint(certificate.getType());
+            ModuleEntryPoint module = moduleRegistry.getModuleEntryPoint(certificate.getType());
 
             // Use target from parameter if present, otherwise use the default receiver from the module's entryPoint.
             String logicalAddress;

@@ -24,7 +24,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
-import org.apache.cxf.configuration.security.CertStoreType;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -49,7 +48,6 @@ import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.modules.support.api.CertificateHolder;
-import se.inera.certificate.modules.support.api.CertificateStateHolder;
 import se.inera.certificate.modules.support.api.ModuleContainerApi;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;

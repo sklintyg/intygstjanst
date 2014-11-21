@@ -1,4 +1,4 @@
-package se.inera.certificate.overvakning;
+package se.inera.certificate.service.impl;
 
 import java.sql.Time;
 
@@ -8,28 +8,30 @@ import javax.jms.JMSException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import se.inera.certificate.service.HealthCheckService;
 
 /**
- * RESTinterface for checking the general health status of the application
+ * Service for checking the general health status of the application
  * 
  * @author erik
  * 
  */
-public class HealthCheck {
+@Service
+public class HealthCheckServiceImpl implements HealthCheckService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheck.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckServiceImpl.class);
+    
+    private static final long systemStartTime = System.currentTimeMillis();
+        
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -39,51 +41,44 @@ public class HealthCheck {
 
     private static final String CURR_TIME_SQL = "SELECT CURRENT_TIME()";
 
-    @GET
-    @Path("/ping")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response getPing() {
+    /* (non-Javadoc)
+     * @see se.inera.certificate.service.impl.HealthCheckService#getDbStatus()
+     */
+    @Override
+    public Status getDbStatus() {
         boolean ok;
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        try {
-            ok = true;
-        } catch (Exception e) {
-            LOGGER.error("Ping failed with exception: " + e.getMessage());
-            ok = false;
-        }
+        ok = checkTimeFromDb();
         stopWatch.stop();
-        String xmlResponse = buildXMLResponse(ok, stopWatch.getTime());
-        LOGGER.info("pinged Intygstjänsten, got: " + xmlResponse);
-        return Response.ok(xmlResponse).build();
+        Status status = createStatus(ok, stopWatch);
+        logStatus("getDbStatus", status);
+        return status;
     }
 
-    @GET
-    @Path("/checkDB")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response checkDB() {
-        boolean ok;
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        ok = checkTime();
-        stopWatch.stop();
-        String xmlResponse = buildXMLResponse(ok, stopWatch.getTime());
-        LOGGER.info("checked DB connection in Intygstjänsten, got: " + xmlResponse);
-        return Response.ok(xmlResponse).build();
-    }
-
-    @GET
-    @Path("/checkJMS")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response checkJMS() {
+    /* (non-Javadoc)
+     * @see se.inera.certificate.service.impl.HealthCheckService#getJMSStatus()
+     */
+    @Override
+    public Status getJMSStatus() {
         boolean ok;
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         ok = checkJmsConnection();
         stopWatch.stop();
-        String xmlResponse = buildXMLResponse(ok, stopWatch.getTime());
-        LOGGER.info("checked JMS connection in Intygstjänsten, got: " + xmlResponse);
-        return Response.ok(xmlResponse).build();
+        Status status = createStatus(ok, stopWatch);
+        logStatus("getJMSStatus", status);
+        return status;
+    }
+    
+    /* (non-Javadoc)
+     * @see se.inera.certificate.service.impl.HealthCheckService#getUptime()
+     */
+    @Override
+    public Status getUptime() {
+        long uptime = System.currentTimeMillis() - systemStartTime;
+        LOGGER.info("Current system uptime is {}", DurationFormatUtils.formatDurationWords(uptime, true, true));
+        return new Status(uptime, true);
     }
 
     private boolean checkJmsConnection() {
@@ -98,16 +93,7 @@ public class HealthCheck {
         return true;
     }
 
-    private String buildXMLResponse(boolean ok, long time) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<pingdom_http_custom_check>");
-        sb.append("<status>" + (ok ? "OK" : "FAIL") + "</status>");
-        sb.append("<response_time>" + time + "</response_time>");
-        sb.append("</pingdom_http_custom_check>");
-        return sb.toString();
-    }
-
-    private boolean checkTime() {
+    private boolean checkTimeFromDb() {
         Time timestamp;
         try {
             Query query = entityManager.createNativeQuery(CURR_TIME_SQL);
@@ -119,7 +105,16 @@ public class HealthCheck {
         return timestamp != null;
 
     }
-
+    
+    private void logStatus(String operation, Status status) {
+        String result = status.isOk() ? "OK" : "FAIL";
+        LOGGER.info("Operation {} completed with result {} in {} ms", new Object[]{operation, result, status.getMeasurement()});
+    }
+    
+    private Status createStatus(boolean ok, StopWatch stopWatch) {
+        return new Status(stopWatch.getTime(), ok);
+    }
+    
     public final class Status {
         private final long measurement;
         private final boolean ok;
