@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.springframework.util.StringUtils;
 
-import se.inera.certificate.schema.validate.VardAdresseringsTypeValidator;
 import se.inera.certificate.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType;
+import se.inera.ifv.insuranceprocess.healthreporting.validate.VardAdresseringsTypeValidator;
 
 public class SendCertificateRequestValidator {
     private SendType sendRequest = null;
