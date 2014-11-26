@@ -61,7 +61,7 @@
 
     <!-- Import spring context of all module dependencies -->
     <import resource="classpath*:module-config.xml" />
-    <import resource="classpath*:module-cxf-servlet.xml" />
+    <import resource="classpath*:it-module-cxf-servlet.xml" />
 
     <context:annotation-config />
     <context:component-scan base-package="se.inera.certificate" />
