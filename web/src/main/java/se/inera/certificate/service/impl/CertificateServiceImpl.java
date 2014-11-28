@@ -318,6 +318,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     @Override
+    @Transactional
     public void certificateReceived(CertificateHolder certificateHolder, boolean wireTapped) throws CertificateAlreadyExistsException, InvalidCertificateException {
         Certificate certificate = storeCertificate(certificateHolder);
         LOGGER.info(LogMarkers.MONITORING, certificateHolder.getId() + " registered");
