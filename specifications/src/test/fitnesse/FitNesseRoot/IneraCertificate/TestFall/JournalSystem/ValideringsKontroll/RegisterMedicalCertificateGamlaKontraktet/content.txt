@@ -194,7 +194,7 @@
 
 |Hamta intygsinnehall|
 |personnummer|intyg|förväntatSvar|resultat?|
-|19121212-1212|personnr-utan-bindestreck|{"id":{"root":"personnr-utan-bindestreck"}}|OK|
+|19121212-1212|personnr-utan-bindestreck|{id : personnr-utan-bindestreck}|OK|
 
 |ta bort intyg|
 |id|
