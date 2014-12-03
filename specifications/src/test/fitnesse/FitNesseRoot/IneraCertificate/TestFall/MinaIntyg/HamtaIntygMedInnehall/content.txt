@@ -1,7 +1,7 @@
 |Hamta intygsinnehall|
 |personnummer|intyg|förväntatSvar|resultat?|
 |19010101-0101|fit-intyg-1||[ERROR] - Missing consent for patient 19010101-0101|
-|19121212-1212|fit-intyg-1|{"id":{"extension":"fit-intyg-1"},"typ":{"code":"fk7263"}}|OK|
+|19121212-1212|fit-intyg-1|{"id":"fit-intyg-1","typ":"fk7263"}|OK|
 |19121212-1212|fit-intyg-3||[INFO] - Certificate 'fit-intyg-3' has been revoked|
 |19121212-1212|fit-intyg-6||[ERROR] - Unknown certificate ID: fit-intyg-6|
 |19121212-1212|fit-intyg-7||[ERROR] - Unknown certificate ID: fit-intyg-7|

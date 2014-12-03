@@ -84,6 +84,9 @@ public class Intyg extends RestClientFixture {
 			stateList << [state:"SENT", target:"FK", timestamp:utfärdat + "T12:00:10.000"]
 		if (rättat)
 			stateList << [state:"CANCELLED", target:"MI", timestamp:utfärdat + "T13:00:00.000"]
+        String additionalInfo = "";
+        if (typ.equalsIgnoreCase("fk7263"))
+            additionalInfo = "${giltigtFrån} - ${giltigtTill}"
         [id:String.format(id, utfärdat),
             type:typ.toLowerCase(),
             civicRegistrationNumber:personnr,
@@ -94,7 +97,8 @@ public class Intyg extends RestClientFixture {
             careUnitId: (enhetsId) ? enhetsId : "1.2.3",
             careUnitName: enhet,
             deletedByCareGiver : deletedByCareGiver,
-			states: stateList,
+            additionalInfo : additionalInfo,
+			certificateStates: stateList,
             document: document()
         ]
     }
@@ -111,52 +115,48 @@ public class Intyg extends RestClientFixture {
         } catch (IOException e) {
             // if template for specific type cannot be loaded, use generic template
             certificate = new JsonSlurper().parse(new InputStreamReader(new ClassPathResource("generic_template.json").getInputStream()))
-            certificate.typ.code = typ
+            certificate.typ = typ
         }
 
         // setting the certificate ID
-        certificate.'id'.root = "1.2.752.129.2.1.2.1"
-        certificate.'id'.extension = id
+        certificate.'id' = id
 
         // setting personnr in certificate XML
-        certificate.patient.'id'.extension = personnr
+        certificate.grundData.patient.personId = personnr
 
-        if (utfärdarId) certificate.skapadAv.'id'.extension = utfärdarId
-		if (utfärdare) certificate.skapadAv.namn = utfärdare
-		if (enhetsId) certificate.skapadAv.vardenhet.'id'.extension = enhetsId
-		if (enhet) certificate.skapadAv.vardenhet.namn = enhet
+        if (utfärdarId) certificate.grundData.skapadAv.personId = utfärdarId
+		if (utfärdare) certificate.grundData.skapadAv.fullstandigtNamn = utfärdare
+		if (enhetsId) certificate.grundData.skapadAv.vardenhet.enhetsid = enhetsId
+		if (enhet) certificate.grundData.skapadAv.vardenhet.enhetsnamn = enhet
 
-        if (vårdgivarId) certificate.skapadAv.vardenhet.vardgivare.'id'.extension = vårdgivarId
+        if (vårdgivarId) certificate.skapadAv.vardenhet.vardgivare.vardgivarid = vårdgivarId
 		
         // setting the signing date, from date and to date
-        certificate.signeringsdatum = utfärdat
-        certificate.skickatdatum = utfärdat
+        certificate.grundData.signeringsdatum = utfärdat
 
         if (typ == "fk7263") {
-            certificate.vardkontakter.each {
-                if (it.vardkontaktstid != null) {
-                    it.vardkontaktstid.from = utfärdat; it.vardkontaktstid.tom = utfärdat
-                }
-            }
-    //        certificate.vardkontakter.each { it.vardkontaktstid.from = utfärdat; it.vardkontaktstid.tom = utfärdat }
-            
-            certificate.referenser.each { it.datum = utfärdat }
-            def observationsperioder = []
-            certificate.observationer.each {observation ->
-                if (observation?.observationskod?.code == "302119000") {
-                    observationsperioder << observation.observationsperiod
-                }
-            }
-            observationsperioder.eachWithIndex {period, index ->
-                period.from = new Date().parse("yyyy-MM-dd", giltigtFrån).plus(index * 2).format("yyyy-MM-dd")
-                if (index + 1 < observationsperioder.size()) {
-                    period.tom = new Date().parse("yyyy-MM-dd", giltigtFrån).plus((index * 2) + 1).format("yyyy-MM-dd")
-                } else {
-                    period.tom = giltigtTill
-                }
-            }
-            certificate.validFromDate = giltigtFrån
-            certificate.validToDate = giltigtTill
+            if (certificate.undersokningAvPatienten) certificate.undersokningAvPatienten = utfärdat
+            if (certificate.telefonkontaktMedPatienten) certificate.telefonkontaktMedPatienten = utfärdat
+            if (certificate.journaluppgifter) certificate.journaluppgifter = utfärdat
+            if (certificate.annanReferens) certificate.annanReferens = utfärdat
+            if (certificate.nedsattMed100) {
+                certificate.nedsattMed100.from = giltigtFrån
+                certificate.nedsattMed100.yom = giltigtTill
+            } 
+            if (certificate.nedsattMed75) {
+                certificate.nedsattMed75.from = giltigtFrån
+                certificate.nedsattMed75.yom = giltigtTill
+            } 
+            if (certificate.nedsattMed50) {
+                certificate.nedsattMed50.from = giltigtFrån
+                certificate.nedsattMed50.yom = giltigtTill
+            } 
+            if (certificate.nedsattMed25) {
+                certificate.nedsattMed25.from = giltigtFrån
+                certificate.nedsattMed25.yom = giltigtTill
+            } 
+            certificate.giltighet.from = giltigtFrån
+            certificate.giltighet.tom = giltigtTill
         }
         
         JsonOutput.toJson(certificate)
