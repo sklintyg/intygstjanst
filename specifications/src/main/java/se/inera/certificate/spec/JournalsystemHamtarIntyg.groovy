@@ -1,11 +1,13 @@
 package se.inera.certificate.spec
 import org.skyscreamer.jsonassert.JSONAssert
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareRequestType
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponderInterface
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponseType
+
+import se.inera.certificate.clinicalprocess.healthcond.certificate.getmedicalcertificateforcare.v1.GetMedicalCertificateForCareRequestType
+import se.inera.certificate.clinicalprocess.healthcond.certificate.getmedicalcertificateforcare.v1.GetMedicalCertificateForCareResponderInterface
+import se.inera.certificate.clinicalprocess.healthcond.certificate.getmedicalcertificateforcare.v1.GetMedicalCertificateForCareResponseType
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType
-import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.UtlatandeType
+import se.inera.certificate.modules.fk7263.model.converter.TransportToInternal
 import se.inera.certificate.spec.util.WsClientFixture
+import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.LakarutlatandeType
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
 /**
  *
@@ -13,13 +15,13 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
  */
 public class JournalsystemHamtarIntyg extends WsClientFixture {
 
-    private GetCertificateForCareResponderInterface responder
+    private GetMedicalCertificateForCareResponderInterface responder
 
-	static String serviceUrl = System.getProperty("service.clinicalProcess.getCertificateUrl")
+	static String serviceUrl = System.getProperty("service.clinicalProcess.getMedicalCertificateUrl")
 
     public JournalsystemHamtarIntyg() {
-		String url = serviceUrl ? serviceUrl : baseUrl + "get-certificate-for-care/v1.0"
-		responder = createClient(GetCertificateForCareResponderInterface.class, url)
+		String url = serviceUrl ? serviceUrl : baseUrl + "get-medical-certificate-for-care/v1.0"
+		responder = createClient(GetMedicalCertificateForCareResponderInterface.class, url)
     }
 
     String intyg
@@ -28,7 +30,7 @@ public class JournalsystemHamtarIntyg extends WsClientFixture {
 	private String resultat
     private def status
 	
-    private GetCertificateForCareResponseType response
+    private GetMedicalCertificateForCareResponseType response
 
 	public void reset() {
 		response = null
@@ -39,14 +41,14 @@ public class JournalsystemHamtarIntyg extends WsClientFixture {
 	}
 	
     public void execute() {
-        GetCertificateForCareRequestType request = new GetCertificateForCareRequestType()
+        GetMedicalCertificateForCareRequestType request = new GetMedicalCertificateForCareRequestType()
         request.certificateId = intyg
 
-        response = responder.getCertificateForCare(LOGICAL_ADDRESS, request)
+        response = responder.getMedicalCertificateForCare(LOGICAL_ADDRESS, request)
         switch (response.result.resultCode) {
             case ResultCodeType.OK:
-                UtlatandeType utlatande = response.certificate
-				faktisktSvar = asJson(utlatande)
+                LakarutlatandeType utlatande = response.lakarutlatande
+				faktisktSvar = asJson(TransportToInternal.convert(utlatande))
                 // Sort status by timestamp (descending), and collect the type
                 status = response.meta.status.sort{a, b -> a.timestamp < b.timestamp ? 1 : -1}.collect{it.type.toString()}
 				resultat = "OK"
