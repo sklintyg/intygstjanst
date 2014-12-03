@@ -26,12 +26,22 @@ public final class ConverterUtil {
         certificate.setValidFromDate(certificateHolder.getValidFromDate());
         certificate.setValidToDate(certificateHolder.getValidToDate());
         certificate.setAdditionalInfo(certificateHolder.getAdditionalInfo());
+        List<CertificateStateHistoryEntry> certificateStates = new ArrayList<CertificateStateHistoryEntry>(certificateHolder.getCertificateStates().size());
+        for (CertificateStateHolder certificateStateHolder : certificateHolder.getCertificateStates()) {
+            CertificateStateHistoryEntry certificateState = new CertificateStateHistoryEntry();
+            certificateState.setTarget(certificateStateHolder.getTarget());
+            certificateState.setState(certificateStateHolder.getState());
+            certificateState.setTimestamp(certificateStateHolder.getTimestamp());
+            certificateStates.add(certificateState);
+        }
+        certificate.setStates(certificateStates);
         return certificate;
     }
 
     public static CertificateHolder toCertificateHolder(Certificate certificate) {
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId(certificate.getId());
+        certificateHolder.setType(certificate.getType());
         certificateHolder.setCareUnitId(certificate.getCareUnitId());
         certificateHolder.setCareUnitName(certificate.getCareUnitName());
         certificateHolder.setSigningDoctorName(certificate.getSigningDoctorName());
@@ -40,12 +50,15 @@ public final class ConverterUtil {
         certificateHolder.setAdditionalInfo(certificate.getAdditionalInfo());
         certificateHolder.setDocument(certificate.getDocument());
         certificateHolder.setDeleted(certificate.getDeleted());
+        certificateHolder.setValidFromDate(certificate.getValidFromDate());
+        certificateHolder.setValidToDate(certificate.getValidToDate());
         List<CertificateStateHolder> certificateStates = new ArrayList<CertificateStateHolder>(certificate.getStates().size());
         for (CertificateStateHistoryEntry certificateStateEntry : certificate.getStates()) {
             CertificateStateHolder certificateStateHolder = new CertificateStateHolder();
             certificateStateHolder.setTarget(certificateStateEntry.getTarget());
             certificateStateHolder.setState(certificateStateEntry.getState());
             certificateStateHolder.setTimestamp(certificateStateEntry.getTimestamp());
+            certificateStates.add(certificateStateHolder);
         }
         certificateHolder.setCertificateStates(certificateStates);
         return certificateHolder;
