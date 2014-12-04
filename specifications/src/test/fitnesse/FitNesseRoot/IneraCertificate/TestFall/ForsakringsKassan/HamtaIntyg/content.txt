@@ -28,7 +28,7 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19020202-0202|fit-intyg-1|[ERROR] - Missing consent for patient 19020202-0202|
+|19020202-0202|fit-intyg-1|[ERROR] - Consent required from user 19020202-0202|
 
 !2 Felscenarier
 
@@ -36,28 +36,28 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19010101-0101|fit-intyg-6|[ERROR] - Unknown certificate ID: fit-intyg-6|
+|19010101-0101|fit-intyg-6|[ERROR] - Certificate 'fit-intyg-6' does not exist for user '19010101-0101'|
 
 !3 Testfall Get-Certificate-3.2: Försök hämta okänt intyg
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19010101-0101|fit-intyg-7|[ERROR] - Unknown certificate ID: fit-intyg-7|
+|19010101-0101|fit-intyg-7|[ERROR] - Certificate 'fit-intyg-7' does not exist for user '19010101-0101'|
 
 !3 Testfall Get-Certificate-3.3: Försök hämta intyg för okänd invånare
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19999999-9999|fit-intyg-6|[ERROR] - Missing consent for patient 19999999-9999|
+|19999999-9999|fit-intyg-6|[ERROR] - Consent required from user 19999999-9999|
 
 !3 Testfall Get-Certificate-3.4: Försök hämta intyg utan intygsid
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19999999-9999||[ERROR] - Validation error: missing  certificateId|
+|19999999-9999||[ERROR] - Validation error: missing certificateId|
 
 !3 Testfall Get-Certificate-3.5: Försök hämta intyg utan patient
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-||fit-intyg-1|[ERROR] - Validation error: missing  nationalIdentityNumber|
+||fit-intyg-1|[ERROR] - Validation error: missing nationalIdentityNumber|

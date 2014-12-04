@@ -1,7 +1,7 @@
 !3 Givet följande intyg
 
-!|Registrera intyg|
-|personnummer|id|enhet|resultat?|
+!|Registrera Fk7263 intyg|
+|personnummer|id|enhetsId|resultat?|
 |19121212-1212|fit-intyg-1|1.2.3.4|OK|
 |19121212-1212|fit-intyg-2|5.6.7.8|OK|
 

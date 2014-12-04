@@ -7,7 +7,7 @@
     <kommentar>Prognosen för patienten är god. Han kommer att kunna återgå till sitt arbete efter genomförd behandling.
     </kommentar>
     <signeringsdatum>2011-08-29T09:30:21</signeringsdatum>
-    <skickatDatum>2011-08-29T09:42:32</skickatDatum>
+    <skickatDatum>2011-08-29T09:30:21</skickatDatum>
     <patient>
       <ns2:person-id extension="19121212-1212" root="1.2.752.129.2.1.3.1" />
       <ns2:fullstandigtNamn>Test Testorsson</ns2:fullstandigtNamn>

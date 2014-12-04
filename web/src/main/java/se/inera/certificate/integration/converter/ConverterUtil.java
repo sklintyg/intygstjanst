@@ -25,16 +25,19 @@ public final class ConverterUtil {
         certificate.setCivicRegistrationNumber(certificateHolder.getCivicRegistrationNumber());
         certificate.setValidFromDate(certificateHolder.getValidFromDate());
         certificate.setValidToDate(certificateHolder.getValidToDate());
+        certificate.setDeletedByCareGiver(certificateHolder.isDeletedByCareGiver());
         certificate.setAdditionalInfo(certificateHolder.getAdditionalInfo());
-        List<CertificateStateHistoryEntry> certificateStates = new ArrayList<CertificateStateHistoryEntry>(certificateHolder.getCertificateStates().size());
-        for (CertificateStateHolder certificateStateHolder : certificateHolder.getCertificateStates()) {
-            CertificateStateHistoryEntry certificateState = new CertificateStateHistoryEntry();
-            certificateState.setTarget(certificateStateHolder.getTarget());
-            certificateState.setState(certificateStateHolder.getState());
-            certificateState.setTimestamp(certificateStateHolder.getTimestamp());
-            certificateStates.add(certificateState);
+        if (certificateHolder.getCertificateStates() != null) {
+            List<CertificateStateHistoryEntry> certificateStates = new ArrayList<CertificateStateHistoryEntry>(certificateHolder.getCertificateStates().size());
+            for (CertificateStateHolder certificateStateHolder : certificateHolder.getCertificateStates()) {
+                CertificateStateHistoryEntry certificateState = new CertificateStateHistoryEntry();
+                certificateState.setTarget(certificateStateHolder.getTarget());
+                certificateState.setState(certificateStateHolder.getState());
+                certificateState.setTimestamp(certificateStateHolder.getTimestamp());
+                certificateStates.add(certificateState);
+            }
+            certificate.setStates(certificateStates);
         }
-        certificate.setStates(certificateStates);
         return certificate;
     }
 
@@ -52,6 +55,7 @@ public final class ConverterUtil {
         certificateHolder.setDeleted(certificate.getDeleted());
         certificateHolder.setValidFromDate(certificate.getValidFromDate());
         certificateHolder.setValidToDate(certificate.getValidToDate());
+        certificateHolder.setDeletedByCareGiver(certificate.isDeletedByCareGiver());
         List<CertificateStateHolder> certificateStates = new ArrayList<CertificateStateHolder>(certificate.getStates().size());
         for (CertificateStateHistoryEntry certificateStateEntry : certificate.getStates()) {
             CertificateStateHolder certificateStateHolder = new CertificateStateHolder();
@@ -61,6 +65,7 @@ public final class ConverterUtil {
             certificateStates.add(certificateStateHolder);
         }
         certificateHolder.setCertificateStates(certificateStates);
+        certificateHolder.setRevoked(certificate.isRevoked());
         return certificateHolder;
     }
 }

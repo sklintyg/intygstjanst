@@ -141,19 +141,19 @@ public class Intyg extends RestClientFixture {
             if (certificate.annanReferens) certificate.annanReferens = utfärdat
             if (certificate.nedsattMed100) {
                 certificate.nedsattMed100.from = giltigtFrån
-                certificate.nedsattMed100.yom = giltigtTill
+                certificate.nedsattMed100.tom = giltigtTill
             } 
             if (certificate.nedsattMed75) {
                 certificate.nedsattMed75.from = giltigtFrån
-                certificate.nedsattMed75.yom = giltigtTill
+                certificate.nedsattMed75.tom = giltigtTill
             } 
             if (certificate.nedsattMed50) {
                 certificate.nedsattMed50.from = giltigtFrån
-                certificate.nedsattMed50.yom = giltigtTill
+                certificate.nedsattMed50.tom = giltigtTill
             } 
             if (certificate.nedsattMed25) {
                 certificate.nedsattMed25.from = giltigtFrån
-                certificate.nedsattMed25.yom = giltigtTill
+                certificate.nedsattMed25.tom = giltigtTill
             } 
             certificate.giltighet.from = giltigtFrån
             certificate.giltighet.tom = giltigtTill

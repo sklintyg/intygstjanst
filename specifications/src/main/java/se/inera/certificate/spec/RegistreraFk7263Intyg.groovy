@@ -31,7 +31,7 @@ public class RegistreraFk7263Intyg extends WsClientFixture {
     }
 
     String personnummer
-    String utfärdat
+    String utfärdat = LocalDateTime.now().toString()
 	String utfärdare
 	String enhetsId = "1.2.3"
     String enhet
@@ -45,6 +45,7 @@ public class RegistreraFk7263Intyg extends WsClientFixture {
 		utfärdare = "EnUtfärdare"
 		enhetsId = "1.2.3"
         enhet = null
+        utfärdat = LocalDateTime.now().toString()
 	}
 
 	public void execute() {

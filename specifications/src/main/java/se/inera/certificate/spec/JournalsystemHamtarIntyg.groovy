@@ -4,10 +4,12 @@ import org.skyscreamer.jsonassert.JSONAssert
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getmedicalcertificateforcare.v1.GetMedicalCertificateForCareRequestType
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getmedicalcertificateforcare.v1.GetMedicalCertificateForCareResponderInterface
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getmedicalcertificateforcare.v1.GetMedicalCertificateForCareResponseType
+import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType
 import se.inera.certificate.modules.fk7263.model.converter.TransportToInternal
 import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.LakarutlatandeType
+import se.inera.ifv.insuranceprocess.healthreporting.v2.ErrorIdEnum;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
 /**
  *
@@ -17,7 +19,7 @@ public class JournalsystemHamtarIntyg extends WsClientFixture {
 
     private GetMedicalCertificateForCareResponderInterface responder
 
-	static String serviceUrl = System.getProperty("service.clinicalProcess.getMedicalCertificateUrl")
+	static String serviceUrl = System.getProperty("service.clinicalProcess.getMedicalCertificateForCareUrl")
 
     public JournalsystemHamtarIntyg() {
 		String url = serviceUrl ? serviceUrl : baseUrl + "get-medical-certificate-for-care/v1.0"
@@ -25,6 +27,7 @@ public class JournalsystemHamtarIntyg extends WsClientFixture {
     }
 
     String intyg
+    String personnummer
 	String förväntatSvar
 	private String faktisktSvar
 	private String resultat
@@ -43,6 +46,7 @@ public class JournalsystemHamtarIntyg extends WsClientFixture {
     public void execute() {
         GetMedicalCertificateForCareRequestType request = new GetMedicalCertificateForCareRequestType()
         request.certificateId = intyg
+        request.nationalIdentityNumber = personnummer
 
         response = responder.getMedicalCertificateForCare(LOGICAL_ADDRESS, request)
         switch (response.result.resultCode) {
@@ -58,6 +62,10 @@ public class JournalsystemHamtarIntyg extends WsClientFixture {
                 break
             case ResultCodeType.ERROR:
                 resultat = "[${response.result.errorId.toString()}] - ${response.result.resultText}"
+                if (response.result.errorId == ErrorIdType.REVOKED) {
+                    LakarutlatandeType utlatande = response.lakarutlatande
+                    faktisktSvar = asJson(TransportToInternal.convert(utlatande))
+                }
                 break
 		} 
     }
@@ -71,7 +79,16 @@ public class JournalsystemHamtarIntyg extends WsClientFixture {
 				asErrorMessage(e.message)
 			}
 		} else {
-			resultat
+            if (response.result.errorId == ErrorIdType.REVOKED) {
+                try {
+                    JSONAssert.assertEquals(förväntatSvar, faktisktSvar, false)
+                    resultat
+                } catch (AssertionError e) {
+                    asErrorMessage(e.message)
+                }
+            } else {
+			    resultat
+            }
 		}
     }
 

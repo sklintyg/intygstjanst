@@ -333,7 +333,11 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     @Override
-    public CertificateHolder getCertificate(String certificateId, String personId) throws InvalidCertificateException, CertificateRevokedException {
+    public CertificateHolder getCertificate(String certificateId, String personId, boolean checkConsent) throws InvalidCertificateException {
+        if (checkConsent && personId != null && !consentService.isConsent(personId)) {
+            throw new MissingConsentException(personId);
+        }
+
         Certificate certificate = null;
         try {
             certificate = getCertificateInternal(personId, certificateId);
@@ -343,14 +347,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
         if (certificate == null) {
             throw new InvalidCertificateException(certificateId, personId);
-        }
-
-        if (personId != null && !consentService.isConsent(personId)) {
-            throw new MissingConsentException(personId);
-        }
-
-        if (certificate.isRevoked()) {
-            throw new CertificateRevokedException(certificateId);
         }
 
         return ConverterUtil.toCertificateHolder(certificate);

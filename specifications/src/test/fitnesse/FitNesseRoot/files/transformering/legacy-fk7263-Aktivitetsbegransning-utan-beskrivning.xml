@@ -5,7 +5,7 @@
     <lakarutlatande-id>aktivitetsbegransning-tom-beskrivning</lakarutlatande-id>
     <typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om allmän försäkring</typAvUtlatande>
     <signeringsdatum>2011-01-24T00:00:00</signeringsdatum>
-    <skickatDatum>2011-03-23T09:28:10</skickatDatum>
+    <skickatDatum>2011-01-24T00:00:00</skickatDatum>
     <patient>
       <ns2:person-id extension="19121212-1212" root="1.2.752.129.2.1.3.1" />
       <ns2:fullstandigtNamn>Test Testorsson</ns2:fullstandigtNamn>
