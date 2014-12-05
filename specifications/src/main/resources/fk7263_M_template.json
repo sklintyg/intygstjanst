@@ -34,6 +34,7 @@
     
     "undersokningAvPatienten" : "2011-01-24",
     "telefonkontaktMedPatienten" : "2011-01-27",
+    "kommentar" : "Prognosen för patienten är god.\nHan kommer att kunna återgå till sitt arbete efter genomförd behandling.",
 
     "rekommendationKontaktForetagshalsovarden" : true,
     "rekommendationKontaktArbetsformedlingen" : false,

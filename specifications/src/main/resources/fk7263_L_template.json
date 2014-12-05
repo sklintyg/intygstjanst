@@ -36,6 +36,7 @@
     "telefonkontaktMedPatienten" : "2011-01-12",
     "journaluppgifter" : "2010-01-14",
     "annanReferens" : "2010-01-24",
+    "kommentar" : "Har haft mailkontakt med patienten\nPrognosen att återgå till arbete är svår att bedömma förrän utredningen är genomförd.",
 
     "rekommendationKontaktForetagshalsovarden" : true,
     "rekommendationKontaktArbetsformedlingen" : true,
