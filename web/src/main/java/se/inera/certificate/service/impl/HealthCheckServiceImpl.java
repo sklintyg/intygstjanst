@@ -1,14 +1,5 @@
 package se.inera.certificate.service.impl;
 
-import java.sql.Time;
-
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
@@ -16,22 +7,29 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
 import se.inera.certificate.service.HealthCheckService;
 
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.sql.Time;
+
 /**
- * Service for checking the general health status of the application
- * 
+ * Service for checking the general health status of the application.
+ *
  * @author erik
- * 
+ *
  */
 @Service
 public class HealthCheckServiceImpl implements HealthCheckService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckServiceImpl.class);
-    
-    private static final long systemStartTime = System.currentTimeMillis();
-        
+
+    private static final long SYSTEM_START_TIME = System.currentTimeMillis();
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -41,7 +39,9 @@ public class HealthCheckServiceImpl implements HealthCheckService {
 
     private static final String CURR_TIME_SQL = "SELECT CURRENT_TIME()";
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see se.inera.certificate.service.impl.HealthCheckService#getDbStatus()
      */
     @Override
@@ -56,7 +56,9 @@ public class HealthCheckServiceImpl implements HealthCheckService {
         return status;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see se.inera.certificate.service.impl.HealthCheckService#getJMSStatus()
      */
     @Override
@@ -70,13 +72,15 @@ public class HealthCheckServiceImpl implements HealthCheckService {
         logStatus("getJMSStatus", status);
         return status;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     *
      * @see se.inera.certificate.service.impl.HealthCheckService#getUptime()
      */
     @Override
     public Status getUptime() {
-        long uptime = System.currentTimeMillis() - systemStartTime;
+        long uptime = System.currentTimeMillis() - SYSTEM_START_TIME;
         LOGGER.info("Current system uptime is {}", DurationFormatUtils.formatDurationWords(uptime, true, true));
         return new Status(uptime, true);
     }
@@ -105,16 +109,16 @@ public class HealthCheckServiceImpl implements HealthCheckService {
         return timestamp != null;
 
     }
-    
+
     private void logStatus(String operation, Status status) {
         String result = status.isOk() ? "OK" : "FAIL";
-        LOGGER.info("Operation {} completed with result {} in {} ms", new Object[]{operation, result, status.getMeasurement()});
+        LOGGER.info("Operation {} completed with result {} in {} ms", new Object[] { operation, result, status.getMeasurement() });
     }
-    
+
     private Status createStatus(boolean ok, StopWatch stopWatch) {
         return new Status(stopWatch.getTime(), ok);
     }
-    
+
     public final class Status {
         private final long measurement;
         private final boolean ok;

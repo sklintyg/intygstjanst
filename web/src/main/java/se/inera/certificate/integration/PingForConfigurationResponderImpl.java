@@ -25,18 +25,20 @@ public class PingForConfigurationResponderImpl implements PingForConfigurationRe
 
     @Value("${project.version}")
     private String projectVersion;
-    
+
     @Value("${buildNumber}")
     private String buildNumberString;
 
     @Value("${buildTime}")
     private String buildTimeString;
-    
+
     @Autowired
     private HealthCheckService healthCheck;
 
     @Override
-    public PingForConfigurationResponseType pingForConfiguration(@WebParam(partName = "LogicalAddress", name = "LogicalAddress", targetNamespace = "urn:riv:itintegration:registry:1", header = true) String logicalAddress, @WebParam(partName = "parameters", name = "PingForConfiguration", targetNamespace = "urn:riv:itintegration:monitoring:PingForConfigurationResponder:1") PingForConfigurationType parameters) {
+    public PingForConfigurationResponseType pingForConfiguration(
+            @WebParam(partName = "LogicalAddress", name = "LogicalAddress", targetNamespace = "urn:riv:itintegration:registry:1", header = true) String logicalAddress,
+            @WebParam(partName = "parameters", name = "PingForConfiguration", targetNamespace = "urn:riv:itintegration:monitoring:PingForConfigurationResponder:1") PingForConfigurationType parameters) {
         PingForConfigurationResponseType response = new PingForConfigurationResponseType();
         response.setPingDateTime(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
         response.setVersion(projectVersion);
@@ -50,7 +52,7 @@ public class PingForConfigurationResponderImpl implements PingForConfigurationRe
         addConfiguration(response, "systemUptime", DurationFormatUtils.formatDurationWords(uptime.getMeasurement(), true, true));
         addConfiguration(response, "dbStatus", db.isOk() ? "ok" : "error");
         addConfiguration(response, "jmsStatus", jms.isOk() ? "ok" : "error");
-        
+
         return response;
     }
 

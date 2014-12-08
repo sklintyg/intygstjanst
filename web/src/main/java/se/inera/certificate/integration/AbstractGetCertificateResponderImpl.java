@@ -1,27 +1,25 @@
 package se.inera.certificate.integration;
 
-import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType.REVOKED;
-import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType.VALIDATION_ERROR;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.certificate.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
 import se.inera.certificate.exception.CertificateRevokedException;
 import se.inera.certificate.exception.InvalidCertificateException;
 import se.inera.certificate.exception.MissingConsentException;
 import se.inera.certificate.exception.ServerException;
-import se.inera.certificate.modules.registry.IntygModuleRegistry;
-import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.modules.support.ModuleEntryPoint;
+import se.inera.certificate.modules.registry.IntygModuleRegistry;
+import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.modules.support.api.dto.ExternalModelHolder;
 import se.inera.certificate.modules.support.api.dto.TransportModelResponse;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateService;
+
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType.REVOKED;
+import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType.VALIDATION_ERROR;
 
 /**
  * @author andreaskaltenbach
@@ -59,11 +57,13 @@ public abstract class AbstractGetCertificateResponderImpl {
             // return ERROR if user has not given consent
             LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + certificateId + "' but user '" + personnummer
                     + "' has not given consent.");
-            return new CertificateOrResultType(ResultTypeUtil.errorResult(VALIDATION_ERROR, String.format("Missing consent for patient %s", personnummer)));
+            return new CertificateOrResultType(ResultTypeUtil.errorResult(VALIDATION_ERROR,
+                    String.format("Missing consent for patient %s", personnummer)));
         } catch (InvalidCertificateException ex) {
             LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + certificateId + "' but no such certificate does exist for user '"
                     + personnummer + "'.");
-            return new CertificateOrResultType(ResultTypeUtil.errorResult(VALIDATION_ERROR, String.format("Unknown certificate ID: %s", certificateId)));
+            return new CertificateOrResultType(ResultTypeUtil.errorResult(VALIDATION_ERROR,
+                    String.format("Unknown certificate ID: %s", certificateId)));
         } catch (CertificateRevokedException ex) {
             // return INFO if certificate is revoked
             LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + certificateId + "' but certificate has been revoked'.");
@@ -74,6 +74,7 @@ public abstract class AbstractGetCertificateResponderImpl {
     /**
      * Returns certificate matching specified certificateId.
      * Also returns revoked certificated, it's up to implemented subclass to determine behavior in that case.
+     *
      * @param certificateId
      * @return
      */
@@ -84,9 +85,10 @@ public abstract class AbstractGetCertificateResponderImpl {
         }
         try {
             return new CertificateOrResultType(certificateService.getCertificateForCare(certificateId));
-        }  catch (InvalidCertificateException ex) {
+        } catch (InvalidCertificateException ex) {
             LOGGER.info(LogMarkers.MONITORING, "Tried to get certificate '" + certificateId + "' but no such certificate does exist.");
-            return new CertificateOrResultType(ResultTypeUtil.errorResult(VALIDATION_ERROR, String.format("Unknown certificate ID: %s", certificateId)));
+            return new CertificateOrResultType(ResultTypeUtil.errorResult(VALIDATION_ERROR,
+                    String.format("Unknown certificate ID: %s", certificateId)));
         }
     }
 

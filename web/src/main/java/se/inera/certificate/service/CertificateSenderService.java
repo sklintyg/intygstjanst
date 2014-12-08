@@ -27,18 +27,25 @@ import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateres
 public interface CertificateSenderService {
     /**
      * Sends the given certificate to the destined target.
-     * @param certificate the certificate
-     * @param target the target identifier
-     * @throws javax.xml.ws.WebServiceException if the web service call does not succeed
+     *
+     * @param certificate
+     *            the certificate
+     * @param target
+     *            the target identifier
+     * @throws javax.xml.ws.WebServiceException
+     *             if the web service call does not succeed
      */
     void sendCertificate(Certificate certificate, String target);
 
     /**
      * Sends a message to a recipient of an intyg that is now has been revoked.
-     * 
-     * @param certificate The now revoked certificate
-     * @param target The id of the recipient.
-     * @param revokeData Data of who requested the revoke, when etc.
+     *
+     * @param certificate
+     *            The now revoked certificate
+     * @param target
+     *            The id of the recipient.
+     * @param revokeData
+     *            Data of who requested the revoke, when etc.
      */
     void sendRevokeCertificateMessage(Certificate certificate, String target, RevokeType revokeData);
 }

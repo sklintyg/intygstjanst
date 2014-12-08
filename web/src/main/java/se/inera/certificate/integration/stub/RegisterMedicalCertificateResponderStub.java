@@ -1,21 +1,10 @@
 package se.inera.certificate.integration.stub;
 
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.ws.WebServiceProvider;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
-
 import se.inera.certificate.exception.CertificateValidationException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.modules.registry.IntygModuleRegistry;
@@ -30,6 +19,15 @@ import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificater
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
+import javax.annotation.PostConstruct;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.ws.WebServiceProvider;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author par.wenaker
  */
@@ -39,9 +37,9 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterMedicalCertificateResponderStub.class);
     private static final String FK7263 = "fk7263";
-    
+
     private ObjectFactory objectFactory;
-    
+
     private ModuleApi moduleApi;
 
     @Autowired
@@ -49,7 +47,7 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
 
     @Autowired
     private IntygModuleRegistry moduleRegistry;
-    
+
     private JAXBContext jaxbContext;
 
     @PostConstruct
@@ -109,5 +107,4 @@ public class RegisterMedicalCertificateResponderStub implements RegisterMedicalC
             throw new ServerException(message, e);
         }
     }
-
 }
