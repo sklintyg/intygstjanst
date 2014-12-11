@@ -1,0 +1,6 @@
+---
+# file: host_vars/intygstjanst-test
+tomcat_conf: /usr/local/tomcat7/conf
+tomcat_bin: /usr/local/tomcat7/bin
+activemq_username: "nmt"
+activemq_password: "nmtpass"

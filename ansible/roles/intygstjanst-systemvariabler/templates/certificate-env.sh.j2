@@ -1,0 +1,6 @@
+ENV_CFG="-Dspring.profiles.active={{ profile }}"
+MEM_CFG="-Xms1024m -Xmx1024m -XX:PermSize=128m -XX:MaxPermSize=512m"
+CREDENTIALS_CFG="-Dcredentials.file={{ etc_folder }}/credentials.properties"
+INTYG_CFG="-Dcertificate.config.file={{ etc_folder }}/certificate.properties -Dcertificate.logback.file={{ etc_folder }}/certificate-logback.xml"
+RECIPIENT_CFG="-Drecipient.config.file={{ etc_folder }}/recipient.properties"
+export JAVA_OPTS="$JAVA_OPTS $ENV_CFG $MEM_CFG $CREDENTIALS_CFG $INTYG_CFG $RECIPIENT_CFG"

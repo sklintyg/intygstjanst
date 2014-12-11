@@ -1,0 +1,10 @@
+---
+# This playbook deploys intygstjansten 
+
+- hosts: all
+  sudo: yes 
+  vars: 
+    version: 2.1.0-b17
+
+  roles:
+    - intygstjanst

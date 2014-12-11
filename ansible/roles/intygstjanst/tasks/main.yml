@@ -12,7 +12,7 @@
       dest=/tmp/intygstjanst-liquibase-runner.jar
 
 - name: run liquibase update
-  command: java -jar /tmp/intygstjanst-liquibase-runner.jar --changeLogFile="changelog/changelog.xml" --contexts=none update chdir=/opt/inera/liquibase
+  command: java -jar /tmp/intygstjanst-liquibase-runner.jar --changeLogFile="changelog/changelog.xml" --username="{{ database_username }}" --password="{{ database_password }}" --url="{{ database_url }}" --driver="{{ database_driver }}" --contexts=none update
 
 - name: remove old version of unpacked war
   file: state=absent
@@ -30,9 +30,8 @@
   template: src=version.txt.j2 dest={{ webapps_folder }}/version.txt
 
 - name: update configuration
-  git: repo={{ config_repo }}
-    dest={{ config_folder }}
-    version=master
+  command: chdir={{ config_folder }} git checkout {{ config_version }}
+  command: chdir={{ config_folder }} git pull origin
 
 - name: start tomcat
   service: name={{ tomcat_service }} state=started pattern=org.apache.catalina.startup.Bootstrap

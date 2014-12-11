@@ -1,0 +1,9 @@
+---
+# This playbook provisions the resources needed by intygstjansten 
+
+- hosts: all
+  sudo: yes 
+  
+  roles:
+    - intygstjanst-systemvariabler
+    - intygstjanst-resurser
