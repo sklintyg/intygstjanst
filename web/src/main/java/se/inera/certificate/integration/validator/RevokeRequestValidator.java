@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.springframework.util.StringUtils;
 
-import se.inera.certificate.exception.CertificateValidationException;
+import se.inera.certificate.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
+import se.inera.ifv.insuranceprocess.healthreporting.validate.VardAdresseringsTypeValidator;
+import se.inera.webcert.medcertqa.v1.LakarutlatandeEnkelType;
 
 public class RevokeRequestValidator {
     private RevokeType revokeRequest = null;

@@ -20,13 +20,15 @@ package se.inera.certificate.service;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-import se.inera.certificate.exception.CertificateAlreadyExistsException;
-import se.inera.certificate.exception.CertificateRevokedException;
-import se.inera.certificate.exception.CertificateValidationException;
-import se.inera.certificate.exception.InvalidCertificateException;
-import se.inera.certificate.exception.MissingConsentException;
+
+import se.inera.certificate.integration.module.exception.CertificateAlreadyExistsException;
+import se.inera.certificate.integration.module.exception.CertificateRevokedException;
+import se.inera.certificate.integration.module.exception.InvalidCertificateException;
+import se.inera.certificate.integration.module.exception.MissingConsentException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.CertificateHolder;
+import se.inera.certificate.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 
 import java.util.List;
@@ -103,11 +105,15 @@ public interface CertificateService {
 
     /**
      * Stores the given certificate.
+<<<<<<< HEAD
+     * @param certificateHolder the incoming certificate information
+=======
      *
      * @param xml
      *            the string representation of the incoming XML
      * @param type
      *            the certificate type
+>>>>>>> develop
      * @return the created certificate
      * @throws CertificateAlreadyExistsException
      *             when a certificate with the same identifier already exists
@@ -116,7 +122,7 @@ public interface CertificateService {
      * @throws CertificateValidationException
      *             if the certificate was not valid
      */
-    Certificate storeCertificate(String xml, String type) throws CertificateAlreadyExistsException,
+    Certificate storeCertificate(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException,
             InvalidCertificateException, CertificateValidationException;
 
     void setCertificateState(String civicRegistrationNumber, String certificateId, String target, CertificateState state, LocalDateTime timestamp)

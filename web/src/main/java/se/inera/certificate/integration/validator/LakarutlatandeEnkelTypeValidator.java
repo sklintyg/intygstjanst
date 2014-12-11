@@ -3,6 +3,7 @@ package se.inera.certificate.integration.validator;
 import java.util.List;
 
 import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
+import se.inera.ifv.insuranceprocess.healthreporting.validate.PatientValidator;
 import se.inera.webcert.medcertqa.v1.LakarutlatandeEnkelType;
 
 /**
@@ -33,13 +34,16 @@ public class LakarutlatandeEnkelTypeValidator {
 
     private void validateAndCorrectPatient() {
         PatientType patient = lakarutlatandeEnkelType.getPatient();
-        if (PatientValidator.validateAndCorrect(lakarutlatandeEnkelType.getLakarutlatandeId(), patient, validationErrors)) {
+        if (PatientValidator.validateAndCorrect(patient).isEmpty()) {
 
             // Get namn for patient - mandatory
             if (patient.getFullstandigtNamn() == null || patient.getFullstandigtNamn().isEmpty()) {
                 validationErrors.add("No Patient fullstandigtNamn elements found or set!");
             }
+        } else {
+            validationErrors.addAll(PatientValidator.validateAndCorrect(patient));
         }
+        
     }
 
 }

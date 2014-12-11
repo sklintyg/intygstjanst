@@ -25,13 +25,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.exception.MissingConsentException;
-import se.inera.certificate.integration.converter.ModelConverter;
+import se.inera.certificate.integration.converter.ConverterUtil;
+import se.inera.certificate.integration.module.exception.MissingConsentException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.v1.rivtabp20.ListCertificatesResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.util.ModelConverter;
 import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 /**
@@ -52,7 +53,7 @@ public class ListCertificatesResponderImpl implements ListCertificatesResponderI
                     parameters.getNationalIdentityNumber(), parameters.getCertificateType(), parameters.getFromDate(), parameters.getToDate());
             for (Certificate certificate : certificates) {
                 if (parameters.getCertificateType().isEmpty() || !(certificate.getDeleted() || certificate.isRevoked())) {
-                    response.getMeta().add(ModelConverter.toCertificateMetaType(certificate));
+                    response.getMeta().add(ModelConverter.toCertificateMetaType(ConverterUtil.toCertificateHolder(certificate)));
                 }
             }
             response.setResult(ResultOfCallUtil.okResult());

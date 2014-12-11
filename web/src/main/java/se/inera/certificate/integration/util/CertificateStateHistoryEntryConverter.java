@@ -1,12 +1,12 @@
-package se.inera.certificate.integration.converter;
-
-import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
-import se.inera.ifv.insuranceprocess.certificate.v1.CertificateStatusType;
-import se.inera.ifv.insuranceprocess.certificate.v1.StatusType;
+package se.inera.certificate.integration.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
+import se.inera.ifv.insuranceprocess.certificate.v1.CertificateStatusType;
+import se.inera.ifv.insuranceprocess.certificate.v1.StatusType;
 
 /**
  * @author andreaskaltenbach

@@ -1,8 +1,10 @@
 package se.inera.certificate.support;
 
 import org.joda.time.LocalDateTime;
+
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.fk7263.model.Constants;
 
 /**
  * @author andreaskaltenbach
@@ -15,7 +17,6 @@ public final class CertificateFactory {
     public static final String CERTIFICATE_ID = "123456";
     public static final String CERTIFICATE_DOCUMENT = "{\"name\":\"Some JSON\"}";
     public static final String CIVIC_REGISTRATION_NUMBER = "19001122-3344";
-    public static final String FK7263 = "fk7263";
 
     public static final String VALID_FROM = "2000-01-01";
     public static final String VALID_TO = "2000-12-31";
@@ -39,7 +40,7 @@ public final class CertificateFactory {
     }
 
     public static Certificate buildCertificate(String certificateId, String validFrom, String validTo) {
-        return buildCertificate(certificateId, FK7263, validFrom, validTo);
+        return buildCertificate(certificateId, Constants.FK7263, validFrom, validTo);
     }
 
     public static Certificate buildCertificate(String certificateId, String certificateType, String validFrom, String validTo) {

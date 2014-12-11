@@ -17,6 +17,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import se.inera.certificate.modules.fk7263.integration.stub.FkMedicalCertificatesStore;
+
 @RunWith(MockitoJUnitRunner.class)
 public class FkStubResourceTest {
 

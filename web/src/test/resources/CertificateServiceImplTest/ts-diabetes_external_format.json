@@ -217,7 +217,6 @@
             }
         }
     },
-    "skickatdatum": "2013-06-01T16:24:44.000",
     "typ": {
         "code": "ts-diabetes",
         "codeSystem": "f6fb361a-e31d-48b8-8657-99b63912dd9b",

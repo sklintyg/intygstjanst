@@ -1,17 +1,17 @@
 !3 Ett journalsystem försöker att hämta ett intyg som inte är registrerad ännu
 |Journalsystem hamtar intyg|
-|intyg|resultat?|
-|fit-intyg-1|[VALIDATION_ERROR] - Unknown certificate ID: fit-intyg-1|
+|intyg|personnummer|resultat?|
+|fit-intyg-1|19121212-1212|[VALIDATION_ERROR] - Certificate 'fit-intyg-1' does not exist for user '19121212-1212'|
 
 !3 Efter journalsystemet har registrerat ett nytt intyg så ska det vara tillgängligt
 
-|Registrera intyg|
+|Registrera Fk7263 intyg|
 |personnummer|id|utfärdat|resultat?|
 |19121212-1212|fit-intyg-1|2013-08-01|OK|
 
 |Journalsystem hamtar intyg|
-|intyg|förväntatSvar|resultat?|status?|
-|fit-intyg-1|{"utlatandeId":{"root":"fit-intyg-1"}}|OK|[RECEIVED]|
+|intyg|personnummer|förväntatSvar|resultat?|status?|
+|fit-intyg-1|19121212-1212|{"id":"fit-intyg-1"}|OK|[RECEIVED]|
 
 !3 Journalsystemet rättar intyget och efter det skall det vara tillgängligt, men returneras med annan status
 
@@ -20,8 +20,8 @@
 |19121212-1212|fit-intyg-1|OK|
 
 |Journalsystem hamtar intyg|
-|intyg|förväntatSvar|resultat?|
-|fit-intyg-1|{"utlatandeId":{"root":"fit-intyg-1"}}|[REVOKED] - Certificate 'fit-intyg-1' has been revoked|
+|intyg|personnummer|förväntatSvar|resultat?|
+|fit-intyg-1|19121212-1212|{"id":"fit-intyg-1"}|[REVOKED] - Certificate 'fit-intyg-1' has been revoked|
 
 !3 Ett journalsystem försöker hämta ett intyg som är borttaget (för vården)
 
@@ -30,8 +30,8 @@
 |19121212-1212|2013-04-01|2013-04-01|2013-04-11|FK7263|fit-intyg-2|ja|
 
 |Journalsystem hamtar intyg|
-|intyg|resultat?|
-|fit-intyg-2|[APPLICATION_ERROR] - Certificate 'fit-intyg-2' has been deleted by care giver|
+|intyg|personnummer|resultat?|
+|fit-intyg-2|19121212-1212|[APPLICATION_ERROR] - Certificate 'fit-intyg-2' has been deleted by care giver|
 
 !3 Rensa bort test-intyg
 

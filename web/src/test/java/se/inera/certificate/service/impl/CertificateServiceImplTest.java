@@ -1,18 +1,12 @@
 package se.inera.certificate.service.impl;
 
-import static junit.framework.Assert.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-
-import org.apache.commons.io.FileUtils;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,28 +14,17 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.core.io.ClassPathResource;
 
-import se.inera.certificate.exception.CertificateRevokedException;
-import se.inera.certificate.exception.ClientException;
-import se.inera.certificate.exception.InvalidCertificateException;
-import se.inera.certificate.exception.MissingConsentException;
-import se.inera.certificate.exception.PersistenceException;
-import se.inera.certificate.integration.json.CustomObjectMapper;
-import se.inera.certificate.modules.registry.IntygModuleRegistry;
-import se.inera.certificate.modules.registry.ModuleNotFoundException;
+import se.inera.certificate.integration.module.exception.CertificateRevokedException;
+import se.inera.certificate.integration.module.exception.InvalidCertificateException;
+import se.inera.certificate.integration.module.exception.MissingConsentException;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.builder.CertificateBuilder;
-import se.inera.certificate.model.common.MinimalUtlatande;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
-import se.inera.certificate.modules.support.ModuleEntryPoint;
-import se.inera.certificate.modules.support.api.ModuleApi;
-import se.inera.certificate.modules.support.api.dto.ExternalModelResponse;
-import se.inera.certificate.modules.support.api.dto.TransportModelHolder;
-import se.inera.certificate.modules.support.api.exception.ModuleSystemException;
+import se.inera.certificate.modules.support.api.CertificateHolder;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.ConsentService;
 
@@ -68,17 +51,11 @@ public class CertificateServiceImplTest {
     @Mock
     private CertificateSenderService certificateSender;
 
-    @Mock
-    IntygModuleRegistry moduleRegistry;
-
-    @Mock
-    ModuleApi moduleApi;
-
     @InjectMocks
     private CertificateServiceImpl certificateService = new CertificateServiceImpl();
 
     @Test
-    public void certificateWithDeletedStatusHasMetaDeleted() throws ClientException, PersistenceException {
+    public void certificateWithDeletedStatusHasMetaDeleted() throws Exception {
         Certificate certificate = createCertificate();
         certificate.addState(new CertificateStateHistoryEntry("", CertificateState.DELETED, new LocalDateTime(1)));
         when(consentService.isConsent(anyString())).thenReturn(Boolean.TRUE);
@@ -98,7 +75,7 @@ public class CertificateServiceImplTest {
     }
 
     @Test
-    public void certificateWithStatusRestoredNewerThanDeletedHasMetaNotDeleted() throws ClientException, PersistenceException {
+    public void certificateWithStatusRestoredNewerThanDeletedHasMetaNotDeleted() throws Exception {
         Certificate certificate = createCertificate();
         certificate.addState(new CertificateStateHistoryEntry("", CertificateState.RESTORED, new LocalDateTime(2)));
         certificate.addState(new CertificateStateHistoryEntry("", CertificateState.DELETED, new LocalDateTime(1)));
@@ -112,7 +89,7 @@ public class CertificateServiceImplTest {
     }
 
     @Test
-    public void certificateWithStatusDeletedNewerThanRestoredHasMetaDeleted() throws ClientException, PersistenceException {
+    public void certificateWithStatusDeletedNewerThanRestoredHasMetaDeleted() throws Exception {
         Certificate certificate = createCertificate();
         certificate.addState(new CertificateStateHistoryEntry("", CertificateState.DELETED, new LocalDateTime(2)));
         certificate.addState(new CertificateStateHistoryEntry("", CertificateState.RESTORED, new LocalDateTime(1)));
@@ -125,62 +102,19 @@ public class CertificateServiceImplTest {
         verify(certificateDao).getCertificate(PERSONNUMMER, CERTIFICATE_ID);
     }
 
-    private String utlatandeXml() throws IOException {
-        return utlatandeXml("fk7263");
-    }
-    private String utlatandeXml(String name) throws IOException {
-        return FileUtils.readFileToString(new ClassPathResource("CertificateServiceImplTest/" + name + ".xml").getFile());
-    }
-
-    private String utlatandeJson() throws IOException {
-        return utlatandeJson("lakarutlatande_external_format");
-    }
-
-    private String utlatandeJson(String name) throws IOException {
-        return FileUtils.readFileToString(new ClassPathResource(
-                "CertificateServiceImplTest/" + name + ".json").getFile());
-    }
-
-    private MinimalUtlatande utlatande() throws IOException {
-        return utlatande("lakarutlatande_external_format");
-    }
-
-    private MinimalUtlatande utlatande(String name) throws IOException {
-        return new CustomObjectMapper().readValue(new ClassPathResource(
-                "CertificateServiceImplTest/" + name + ".json").getFile(), MinimalUtlatande.class);
-    }
-
     @Test
     public void testStoreCertificateHappyCase() throws Exception {
-        String utlatandeJson = utlatandeJson();
-        String utlatandeXml = utlatandeXml();
-        MinimalUtlatande utlatande = utlatande();
-
-        when(moduleRegistry.getModuleApi("fk7263")).thenReturn(moduleApi);
-        ExternalModelResponse unmarshallResponse = new ExternalModelResponse(utlatandeJson, utlatande);
-        when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenReturn(unmarshallResponse);
-
-        when(objectMapper.readValue(utlatandeJson, MinimalUtlatande.class)).thenReturn(utlatande);
+        CertificateHolder certificateHolder = new CertificateHolder();
+        certificateHolder.setId("id");
+        certificateHolder.setOriginalCertificate("original");
 
         ArgumentCaptor<OriginalCertificate> originalCertificateCaptor = ArgumentCaptor
                 .forClass(OriginalCertificate.class);
         when(certificateDao.storeOriginalCertificate(originalCertificateCaptor.capture())).thenReturn(1L);
 
-        Certificate certificate = certificateService.storeCertificate(utlatandeXml, "fk7263");
+        Certificate certificate = certificateService.storeCertificate(certificateHolder);
 
-        assertEquals("1", certificate.getId());
-        assertEquals("fk7263", certificate.getType());
-        assertNotNull(certificate.getDocument());
-        assertEquals("Hans Rosling", certificate.getSigningDoctorName());
-        assertEquals("vardenhets-id", certificate.getCareUnitId());
-        assertEquals("Vårdcentrum i väst", certificate.getCareUnitName());
-        assertEquals("19001122-3344", certificate.getCivicRegistrationNumber());
-        assertEquals(new LocalDateTime("2013-05-31T09:51:38.570"), certificate.getSignedDate());
-        assertEquals("2013-06-01", certificate.getValidFromDate());
-        assertEquals("2013-06-12", certificate.getValidToDate());
-
-        assertEquals(utlatandeJson, certificate.getDocument());
-
+        assertEquals("id", certificate.getId());
         assertEquals(1, certificate.getStates().size());
         assertEquals(CertificateState.RECEIVED, certificate.getStates().get(0).getState());
         assertEquals("MI", certificate.getStates().get(0).getTarget());
@@ -194,83 +128,13 @@ public class CertificateServiceImplTest {
 
         OriginalCertificate originalCertificate = originalCertificateCaptor.getValue();
         assertEquals(certificate, originalCertificate.getCertificate());
-        assertEquals(utlatandeXml, originalCertificate.getDocument());
+        assertEquals("original", originalCertificate.getDocument());
         assertTrue(originalCertificate.getReceived().isAfter(aMinuteAgo));
         assertTrue(originalCertificate.getReceived().isBefore(inAMinute));
     }
 
     @Test
-    public void testStoreCertificateIdAsExtensionHappyCase() throws Exception {
-        String utlatandeJson = utlatandeJson("ts-diabetes_external_format");
-        String utlatandeXml = utlatandeXml("ts-diabetes");
-        MinimalUtlatande utlatande = utlatande("ts-diabetes_external_format");
-
-        when(moduleRegistry.getModuleApi("ts-diabetes")).thenReturn(moduleApi);
-        ExternalModelResponse unmarshallResponse = new ExternalModelResponse(utlatandeJson, utlatande);
-        when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenReturn(unmarshallResponse);
-
-        ArgumentCaptor<OriginalCertificate> originalCertificateCaptor = ArgumentCaptor
-                .forClass(OriginalCertificate.class);
-        when(certificateDao.storeOriginalCertificate(originalCertificateCaptor.capture())).thenReturn(1L);
-
-        Certificate certificate = certificateService.storeCertificate(utlatandeXml, "ts-diabetes");
-
-        assertEquals("2", certificate.getId());
-        assertEquals("ts-diabetes", certificate.getType());
-        assertNotNull(certificate.getDocument());
-        assertEquals("Hans Rosling", certificate.getSigningDoctorName());
-        assertEquals("vardenhets-id", certificate.getCareUnitId());
-        assertEquals("Vårdcentrum i väst", certificate.getCareUnitName());
-        assertEquals("19001122-3344", certificate.getCivicRegistrationNumber());
-        assertEquals(new LocalDateTime("2013-05-31T09:51:38.570"), certificate.getSignedDate());
-
-        assertEquals(utlatandeJson, certificate.getDocument());
-
-        assertEquals(1, certificate.getStates().size());
-        assertEquals(CertificateState.RECEIVED, certificate.getStates().get(0).getState());
-        assertEquals("MI", certificate.getStates().get(0).getTarget());
-
-        LocalDateTime aMinuteAgo = new LocalDateTime().minusMinutes(1);
-        LocalDateTime inAMinute = new LocalDateTime().plusMinutes(1);
-        assertTrue(certificate.getStates().get(0).getTimestamp().isAfter(aMinuteAgo));
-        assertTrue(certificate.getStates().get(0).getTimestamp().isBefore(inAMinute));
-
-        verify(certificateDao).store(certificate);
-
-        OriginalCertificate originalCertificate = originalCertificateCaptor.getValue();
-        assertEquals(certificate, originalCertificate.getCertificate());
-        assertEquals(utlatandeXml, originalCertificate.getDocument());
-        assertTrue(originalCertificate.getReceived().isAfter(aMinuteAgo));
-        assertTrue(originalCertificate.getReceived().isBefore(inAMinute));
-    }
-
-    @Test
-    public void testModuleNotFound() throws Exception {
-
-        when(moduleRegistry.getModuleApi("fk7263")).thenThrow(new ModuleNotFoundException());
-
-        try {
-            certificateService.storeCertificate(utlatandeJson(), "fk7263");
-            fail("Expected RuntimeException");
-        } catch (RuntimeException ignore) {
-        }
-    }
-
-    @Test
-    public void testModuleError() throws Exception {
-
-        when(moduleRegistry.getModuleApi("fk7263")).thenReturn(moduleApi);
-        when(moduleApi.unmarshall(any(TransportModelHolder.class))).thenThrow(new ModuleSystemException());
-
-        try {
-            certificateService.storeCertificate(utlatandeJson(), "fk7263");
-            fail("Expected RuntimeException");
-        } catch (RuntimeException ignore) {
-        }
-    }
-
-    @Test
-    public void sendCertificateCallsSenderAndSetsStatus() throws ClientException, IOException, PersistenceException {
+    public void sendCertificateCallsSenderAndSetsStatus() throws Exception {
 
         Certificate certificate = new CertificateBuilder(CERTIFICATE_ID).civicRegistrationNumber(PERSONNUMMER).build();
 
@@ -284,14 +148,14 @@ public class CertificateServiceImplTest {
     }
 
     @Test(expected = InvalidCertificateException.class)
-    public void testSendCertificateWitUnknownCertificate() throws ClientException, PersistenceException {
+    public void testSendCertificateWitUnknownCertificate() throws Exception {
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(null);
 
         certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fk");
     }
 
     @Test(expected = CertificateRevokedException.class)
-    public void testSendRevokedCertificate() throws ClientException, PersistenceException {
+    public void testSendRevokedCertificate() throws Exception {
         Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID).state(CertificateState.CANCELLED, null)
                 .build();
 
@@ -301,19 +165,19 @@ public class CertificateServiceImplTest {
     }
 
     @Test(expected = MissingConsentException.class)
-    public void testGetCertificateWithoutConsent() throws ClientException {
+    public void testGetCertificateWithoutConsent() throws Exception {
         when(consentService.isConsent(PERSONNUMMER)).thenReturn(false);
         certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
     }
-    
+
     @Test(expected = InvalidCertificateException.class)
-    public void testGetCertificateNotFound() throws ClientException, PersistenceException {
+    public void testGetCertificateNotFound() throws Exception {
         when(certificateDao.getCertificate(PERSONNUMMER,CERTIFICATE_ID)).thenReturn(null);
         certificateService.getCertificateForCare(CERTIFICATE_ID);
     }
-    
+
     @Test(expected = InvalidCertificateException.class)
-    public void testGetCertificateRevoked() throws ClientException, PersistenceException {
+    public void testGetCertificateRevoked() throws Exception {
         Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID).state(CertificateState.CANCELLED, null)
                 .build();
         when(certificateDao.getCertificate(PERSONNUMMER,CERTIFICATE_ID)).thenReturn(revokedCertificate);
@@ -321,7 +185,7 @@ public class CertificateServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetCertificateWithoutConsentCheckForEmptyPersonnummer() throws ClientException, PersistenceException {
+    public void testGetCertificateWithoutConsentCheckForEmptyPersonnummer() throws Exception {
         Certificate certificate = createCertificate();
         when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(certificate);
 
