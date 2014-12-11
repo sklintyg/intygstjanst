@@ -18,8 +18,6 @@
  */
 package se.inera.certificate.service;
 
-import java.util.List;
-
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
@@ -33,6 +31,8 @@ import se.inera.certificate.modules.support.api.CertificateHolder;
 import se.inera.certificate.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 
+import java.util.List;
+
 /**
  * @author andreaskaltenbach
  */
@@ -45,21 +45,28 @@ public interface CertificateService {
     /**
      * Returns the list of certificates for the patient and filter criteria.
      *
-     * @param civicRegistrationNumber the patient's civic registration number
-     * @param certificateTypes optional certificate type filter. If empty or null, all certificate types will be returned
-     * @param fromDate optional from date filter
-     * @param toDate optional to date filter
+     * @param civicRegistrationNumber
+     *            the patient's civic registration number
+     * @param certificateTypes
+     *            optional certificate type filter. If empty or null, all certificate types will be returned
+     * @param fromDate
+     *            optional from date filter
+     * @param toDate
+     *            optional to date filter
      * @return list of matching certificates or empty list if no such certificates can be found
-     * @throws MissingConsentException if the patient has not given consent for accessing her certificates
+     * @throws MissingConsentException
+     *             if the patient has not given consent for accessing her certificates
      */
     List<Certificate> listCertificatesForCitizen(String civicRegistrationNumber, List<String> certificateTypes, LocalDate fromDate, LocalDate toDate)
             throws MissingConsentException;
 
     /**
      * Returns a list of certificates for one or many care units.
-     * 
-     * @param civicRegistrationNumber the patient's civic registration number
-     * @param careUnits a list of care units for which the certificates must belong.
+     *
+     * @param civicRegistrationNumber
+     *            the patient's civic registration number
+     * @param careUnits
+     *            a list of care units for which the certificates must belong.
      * @return list of matching certificates or empty list if no such certificates can be found
      */
     List<Certificate> listCertificatesForCare(String civicRegistrationNumber, List<String> careUnits);
@@ -68,34 +75,52 @@ public interface CertificateService {
      * Returns the certificate for the given patient and certificate ID.
      * Implementation should not return revoked certificates - but rather throw an {@link CertificateRevokedException}
      *
-     * @param civicRegistrationNumber the patient's civic registration number that must match same info on certificate
-     * @param certificateId the certificate ID
+     * @param civicRegistrationNumber
+     *            the patient's civic registration number that must match same info on certificate
+     * @param certificateId
+     *            the certificate ID
      * @return the certificate information or null if the requested certificate does not exist
-     * @throws MissingConsentException if the patient has not given consent for accessing her certificates
-     * @throws InvalidCertificateException if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
-     * @throws CertificateRevokedException if the certificate has been revoked
+     * @throws MissingConsentException
+     *             if the patient has not given consent for accessing her certificates
+     * @throws InvalidCertificateException
+     *             if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
+     * @throws CertificateRevokedException
+     *             if the certificate has been revoked
      */
-    Certificate getCertificateForCitizen(String civicRegistrationNumber, String certificateId) throws MissingConsentException, InvalidCertificateException,
+    Certificate getCertificateForCitizen(String civicRegistrationNumber, String certificateId) throws MissingConsentException,
+            InvalidCertificateException,
             CertificateRevokedException;
 
     /**
      * Returns the certificate for the given certificate ID.
      * Implementation should also return revoked certificates - but with resultCode REVOKED
      *
-     * @param civicRegistrationNumber the patient's civic registration number. If left empty, no consent check will be performed.
-     * @param certificateId the certificate ID
+     * @param certificateId
+     *            the certificate ID
      * @return the certificate information or null if the requested certificate does not exist
-     * @throws InvalidCertificateException if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
+     * @throws InvalidCertificateException
+     *             if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
      */
     Certificate getCertificateForCare(String certificateId) throws InvalidCertificateException;
 
     /**
      * Stores the given certificate.
+<<<<<<< HEAD
      * @param certificateHolder the incoming certificate information
+=======
+     *
+     * @param xml
+     *            the string representation of the incoming XML
+     * @param type
+     *            the certificate type
+>>>>>>> develop
      * @return the created certificate
-     * @throws CertificateAlreadyExistsException when a certificate with the same identifier already exists
-     * @throws InvalidCertificateException if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
-     * @throws CertificateValidationException if the certificate was not valid
+     * @throws CertificateAlreadyExistsException
+     *             when a certificate with the same identifier already exists
+     * @throws InvalidCertificateException
+     *             if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
+     * @throws CertificateValidationException
+     *             if the certificate was not valid
      */
     Certificate storeCertificate(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException,
             InvalidCertificateException, CertificateValidationException;
@@ -105,21 +130,31 @@ public interface CertificateService {
 
     /**
      * Sends the certificate to the destined target.
+     *
      * @returns SendStatus further subclassifying the outcome of a successful send
-     * @throws InvalidCertificateException if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
-     * @throws CertificateRevokedException if the certificate has been revoked
+     * @throws InvalidCertificateException
+     *             if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
+     * @throws CertificateRevokedException
+     *             if the certificate has been revoked
      */
     SendStatus sendCertificate(String civicRegistrationNumber, String certificateId, String target) throws InvalidCertificateException,
             CertificateRevokedException;
 
     /**
      * Revokes the certificate.
-     * @param civicRegistrationNumber the patient's civic registration number.
-     * @param certificateId the certificate ID
-     * @param revokeData Data of who requested the revoke, when etc. If <code>null</code>, no revocation should be sent to earlier recipients of the intyg 
+     *
+     * @param civicRegistrationNumber
+     *            the patient's civic registration number.
+     * @param certificateId
+     *            the certificate ID
+     * @param revokeData
+     *            Data of who requested the revoke, when etc. If <code>null</code>, no revocation should be sent to
+     *            earlier recipients of the intyg
      * @return the revoked certificate.
-     * @throws InvalidCertificateException if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
-     * @throws CertificateRevokedException if the certificate has been revoked
+     * @throws InvalidCertificateException
+     *             if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
+     * @throws CertificateRevokedException
+     *             if the certificate has been revoked
      */
     Certificate revokeCertificate(String civicRegistrationNumber, String certificateId, RevokeType revokeData) throws InvalidCertificateException,
             CertificateRevokedException;

@@ -1,0 +1,5 @@
+[demo]
+intygstjanst-demo ansible_ssh_host=10.250.34.20 ansible_ssh_user=miservices1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
+
+[test]
+intygstjanst-test ansible_ssh_host=intygstjanst.inera.nordicmedtest.se ansible_ssh_user=inera ansible_ssh_port=23022 ansible_ssh_private_key_file=~/.ssh/inera_rsa

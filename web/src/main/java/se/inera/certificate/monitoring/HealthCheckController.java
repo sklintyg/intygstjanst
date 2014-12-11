@@ -1,29 +1,26 @@
 package se.inera.certificate.monitoring;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import se.inera.certificate.service.HealthCheckService;
+import se.inera.certificate.service.impl.HealthCheckServiceImpl.Status;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.time.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import se.inera.certificate.service.HealthCheckService;
-import se.inera.certificate.service.impl.HealthCheckServiceImpl.Status;
-
 /**
- * RESTinterface for checking the general health status of the application
- * 
+ * RESTinterface for checking the general health status of the application.
+ *
  * @author erik
- * 
  */
 public class HealthCheckController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckController.class);
- 
+
     @Autowired
     private HealthCheckService healthCheck;
 
@@ -53,7 +50,7 @@ public class HealthCheckController {
         String xmlResponse = buildXMLResponse(status);
         return Response.ok(xmlResponse).build();
     }
-    
+
     @GET
     @Path("/uptime")
     @Produces(MediaType.APPLICATION_XML)
@@ -66,7 +63,7 @@ public class HealthCheckController {
     private String buildXMLResponse(Status status) {
         return buildXMLResponse(status.isOk(), status.getMeasurement());
     }
-    
+
     private String buildXMLResponse(boolean ok, long time) {
         StringBuilder sb = new StringBuilder();
         sb.append("<pingdom_http_custom_check>");

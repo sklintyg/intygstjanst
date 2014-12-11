@@ -120,6 +120,7 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
                 supportedTransportModelVersion.put(new RecipientCertificateType(recipientId, certType),
                         TransportModelVersion.valueOf(value));
                 break;
+            default:
             }
         }
 
