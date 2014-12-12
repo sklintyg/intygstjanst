@@ -3,16 +3,19 @@
 - name: stop tomcat
   service: name={{ tomcat_service }} state=stopped pattern=org.apache.catalina.startup.Bootstrap
 
-- name: remove old version of liquibase-runner
-  file: state=absent
-      path=/tmp/intygstjanst-liquibase-runner.jar
-
-- name: Download war
+- name: create release directory
+  file: path={{ releases_folder }} state=directory
+  
+- name: download intygstjanst-liquibase-runner-{{ version }}.jar
   get_url: url=http://repository-callistasoftware.forge.cloudbees.com/release/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/{{ version }}/intygstjanst-liquibase-runner-{{ version }}-jar-with-dependencies.jar
-      dest=/tmp/intygstjanst-liquibase-runner.jar
+      dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.jar
 
 - name: run liquibase update
-  command: java -jar /tmp/intygstjanst-liquibase-runner.jar --changeLogFile="changelog/changelog.xml" --username="{{ database_username }}" --password="{{ database_password }}" --url="{{ database_url }}" --driver="{{ database_driver }}" --contexts=none update
+  command: java -jar {{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.jar --changeLogFile="changelog/changelog.xml" --username="{{ database_username }}" --password="{{ database_password }}" --url="{{ database_url }}" --driver="{{ database_driver }}" --contexts=none update
+
+- name: Download intygstjanst-web-{{ version }}.war
+  get_url: url=http://repository-callistasoftware.forge.cloudbees.com/release/se/inera/intyg/intygstjanst/intygstjanst-web/{{ version }}/intygstjanst-web-{{ version }}.war
+           dest={{ releases_folder }}
 
 - name: remove old version of unpacked war
   file: state=absent
@@ -22,9 +25,8 @@
   file: state=absent
       path={{ webapps_folder }}/inera-certificate.war
 
-- name: Download war
-  get_url: url=http://repository-callistasoftware.forge.cloudbees.com/release/se/inera/intyg/intygstjanst/intygstjanst-web/{{ version }}/intygstjanst-web-{{ version }}.war
-           dest={{ webapps_folder }}/inera-certificate.war
+- name: Deploy intygstjanst-web-{{ version }}.war as inera-certificate.war
+  command: cp {{ releases_folder }}/intygstjanst-web-{{ version }}.war {{ webapps_folder }}/inera-certificate.war
 
 - name: Create version file
   template: src=version.txt.j2 dest={{ webapps_folder }}/version.txt
