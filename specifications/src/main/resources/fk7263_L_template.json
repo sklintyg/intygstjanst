@@ -36,7 +36,7 @@
     "telefonkontaktMedPatienten" : "2011-01-12",
     "journaluppgifter" : "2010-01-14",
     "annanReferens" : "2010-01-24",
-    "kommentar" : "Har haft mailkontakt med patienten\nPrognosen att återgå till arbete är svår att bedömma förrän utredningen är genomförd.",
+    "kommentar" : "Har haft mailkontakt med patienten Prognosen att återgå till arbete är svår att bedömma förrän utredningen är genomförd.",
 
     "rekommendationKontaktForetagshalsovarden" : true,
     "rekommendationKontaktArbetsformedlingen" : true,
@@ -49,18 +49,18 @@
     "ressattTillArbeteEjAktuellt" : true,
     "kontaktMedFk" : true,
 
-    "sjukdomsforlopp" : "Bedömttillstånd: Patienten klämde höger överarm vid olycka i hemmet.\nProblemen har pågått en längre tid.",
+    "sjukdomsforlopp" : "Patienten klämde höger överarm vid olycka i hemmet. Problemen har pågått en längre tid.",
     
     "diagnosKod" : "S47",
-    "diagnosBeskrivning": "Medicinskttillstånd: Klämskada på överarm",
+    "diagnosBeskrivning": "Klämskada på överarm",
 
     "nuvarandeArbete":true,
     "nuvarandeArbetsuppgifter":"Dirigent. Dirigerar en större orkester på deltid",
 
-    "funktionsnedsattning" : "Funktionstillstånd-Kroppsfunktion: Kraftigt nedsatt rörlighet i överarmen pga skadan.\nBöj- och sträckförmågan är mycket dålig.\nSmärtar vid rörelse vilket ger att patienten inte kan använda armen särkilt mycket.",
-    "aktivitetsbegransning" : "Funktionstillstånd-Aktivitet: Patienten bör/kan inte använda armen förrän skadan läkt.\nSkadan förvärras vid för tidigt påtvingad belastning.\nPatienten kan inte lyfta armen utan den ska hållas riktad nedåt och i fast läge så mycket som möjligt under tiden för läkning.",
+    "funktionsnedsattning" : "Kraftigt nedsatt rörlighet i överarmen pga skadan. Böj- och sträckförmågan är mycket dålig. Smärtar vid rörelse vilket ger att patienten inte kan använda armen särkilt mycket.",
+    "aktivitetsbegransning" : "Patienten bör/kan inte använda armen förrän skadan läkt. Skadan förvärras vid för tidigt påtvingad belastning. Patienten kan inte lyfta armen utan den ska hållas riktad nedåt och i fast läge så mycket som möjligt under tiden för läkning.",
     "prognosBedomning" : "arbetsformagaPrognosGarInteAttBedoma",
-    "arbetsformagaPrognos" : "Arbetsförmåga: Skadan har förvärrats vid varje tillfälle patienten använt armen. Måste hållas i total stillhet tills läkningsprocessen kommit en bit på väg. Eventuellt kan utredning visa att operation är nödvändig för att läka skadan.",
+    "arbetsformagaPrognos" : "Skadan har förvärrats vid varje tillfälle patienten använt armen. Måste hållas i total stillhet tills läkningsprocessen kommit en bit på väg. Eventuellt kan utredning visa att operation är nödvändig för att läka skadan.",
 
     "nedsattMed25":{
     	"from" :"2011-04-01",

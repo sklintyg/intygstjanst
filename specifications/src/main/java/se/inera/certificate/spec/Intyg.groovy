@@ -129,7 +129,7 @@ public class Intyg extends RestClientFixture {
 		if (enhetsId) certificate.grundData.skapadAv.vardenhet.enhetsid = enhetsId
 		if (enhet) certificate.grundData.skapadAv.vardenhet.enhetsnamn = enhet
 
-        if (vårdgivarId) certificate.skapadAv.vardenhet.vardgivare.vardgivarid = vårdgivarId
+        if (vårdgivarId) certificate.grundData.skapadAv.vardenhet.vardgivare.vardgivarid = vårdgivarId
 		
         // setting the signing date, from date and to date
         certificate.grundData.signeringsdatum = utfärdat
@@ -140,20 +140,28 @@ public class Intyg extends RestClientFixture {
             if (certificate.journaluppgifter) certificate.journaluppgifter = utfärdat
             if (certificate.annanReferens) certificate.annanReferens = utfärdat
             if (certificate.nedsattMed100) {
-                certificate.nedsattMed100.from = giltigtFrån
-                certificate.nedsattMed100.tom = giltigtTill
+                if (!certificate.nedsattMed100.from)
+                    certificate.nedsattMed100.from = giltigtFrån
+                if (!certificate.nedsattMed100.tom)
+                    certificate.nedsattMed100.tom = giltigtTill
             } 
             if (certificate.nedsattMed75) {
-                certificate.nedsattMed75.from = giltigtFrån
-                certificate.nedsattMed75.tom = giltigtTill
+                if (!certificate.nedsattMed75.from)
+                    certificate.nedsattMed75.from = giltigtFrån
+                if (!certificate.nedsattMed75.tom)
+                    certificate.nedsattMed75.tom = giltigtTill
             } 
             if (certificate.nedsattMed50) {
-                certificate.nedsattMed50.from = giltigtFrån
-                certificate.nedsattMed50.tom = giltigtTill
+                if (!certificate.nedsattMed50.from)
+                    certificate.nedsattMed50.from = giltigtFrån
+                if (!certificate.nedsattMed50.tom)
+                    certificate.nedsattMed50.tom = giltigtTill
             } 
             if (certificate.nedsattMed25) {
-                certificate.nedsattMed25.from = giltigtFrån
-                certificate.nedsattMed25.tom = giltigtTill
+                if (!certificate.nedsattMed25.from)
+                    certificate.nedsattMed25.from = giltigtFrån
+                if (!certificate.nedsattMed25.tom)
+                    certificate.nedsattMed25.tom = giltigtTill
             } 
             certificate.giltighet.from = giltigtFrån
             certificate.giltighet.tom = giltigtTill
