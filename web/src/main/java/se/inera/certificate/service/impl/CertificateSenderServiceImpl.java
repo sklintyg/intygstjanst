@@ -98,7 +98,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
                 logicalAddress = recipient.getLogicalAddress();
             }
 
-            module.getModuleApi().sendCertificate(new InternalModelHolder(certificate.getDocument()),
+            module.getModuleApi().sendCertificateToRecipient(new InternalModelHolder(certificate.getDocument()),
                     logicalAddress);
 
         } catch (ModuleNotFoundException e) {

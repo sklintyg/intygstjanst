@@ -1,16 +1,5 @@
 package se.inera.certificate.service.impl;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
-
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.model.builder.CertificateBuilder;
@@ -38,6 +26,16 @@ import se.inera.certificate.service.recipientservice.Recipient;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+import java.io.IOException;
+
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author andreaskaltenbach
@@ -110,14 +108,14 @@ public class CertificateSenderServiceImplTest {
 
         senderService.sendCertificate(certificate, "FK");
 
-        verify(moduleApi).sendCertificate(Mockito.any(InternalModelHolder.class), Mockito.eq(LOGICAL_ADDRESS));
+        verify(moduleApi).sendCertificateToRecipient(Mockito.any(InternalModelHolder.class), Mockito.eq(LOGICAL_ADDRESS));
     }
 
     @Test(expected = ServerException.class)
     public void testSendWithFailingModule() throws Exception {
 
         // web service call fails
-        Mockito.doThrow(new ModuleException("")).when(moduleApi).sendCertificate(Mockito.any(InternalModelHolder.class), Mockito.eq(LOGICAL_ADDRESS));
+        Mockito.doThrow(new ModuleException("")).when(moduleApi).sendCertificateToRecipient(Mockito.any(InternalModelHolder.class), Mockito.eq(LOGICAL_ADDRESS));
 
         senderService.sendCertificate(certificate, "FK");
     }
