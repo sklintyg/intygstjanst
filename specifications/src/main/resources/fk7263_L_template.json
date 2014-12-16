@@ -35,8 +35,7 @@
     "undersokningAvPatienten" : "2011-01-26",
     "telefonkontaktMedPatienten" : "2011-01-12",
     "journaluppgifter" : "2010-01-14",
-    "annanReferens" : "2010-01-24",
-    "kommentar" : "Har haft mailkontakt med patienten Prognosen att återgå till arbete är svår att bedömma förrän utredningen är genomförd.",
+    "kommentar" : "Bidiagnos 1: Z233 Vaccination avseende pest, Bidiagnos 2: Z233 Vaccination avseende pest\nPrognosen att återgå till arbete är svår att bedömma förrän utredningen är genomförd.",
 
     "rekommendationKontaktForetagshalsovarden" : true,
     "rekommendationKontaktArbetsformedlingen" : true,
@@ -53,6 +52,7 @@
     
     "diagnosKod" : "S47",
     "diagnosBeskrivning": "Klämskada på överarm",
+    "diagnosBeskrivning1": "Klartext1",
 
     "nuvarandeArbete":true,
     "nuvarandeArbetsuppgifter":"Dirigent. Dirigerar en större orkester på deltid",

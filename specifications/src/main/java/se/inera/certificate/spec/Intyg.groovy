@@ -138,7 +138,9 @@ public class Intyg extends RestClientFixture {
             if (certificate.undersokningAvPatienten) certificate.undersokningAvPatienten = utfärdat
             if (certificate.telefonkontaktMedPatienten) certificate.telefonkontaktMedPatienten = utfärdat
             if (certificate.journaluppgifter) certificate.journaluppgifter = utfärdat
-            if (certificate.annanReferens) certificate.annanReferens = utfärdat
+            if (certificate.annanReferens) {
+                 certificate.annanReferens = utfärdat
+            } 
             if (certificate.nedsattMed100) {
                 if (!certificate.nedsattMed100.from)
                     certificate.nedsattMed100.from = giltigtFrån
