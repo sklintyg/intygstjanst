@@ -13,7 +13,7 @@
 		<skickatdatum>2011-03-23T09:29:15</skickatdatum>
 		<patient>
 			<person-id root="1.2.752.129.2.1.3.1" extension="19121212-1212" />
-			
+
 			<efternamn>Test Testorsson</efternamn>
 			<arbetsuppgift>
 				<typAvArbetsuppgift>Dirigent. Dirigerar en större orkester på deltid
@@ -157,25 +157,25 @@
 		<observation>
 			<observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1"
 				codeSystemName="SNOMED-CT" />
-		
+
 			<p:varde value="75.0" unit="percent" />
 		</observation>
 		<observation>
 			<observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1"
 				codeSystemName="SNOMED-CT" />
-		
+
 			<p:varde value="50.0" unit="percent" />
 		</observation>
 		<observation>
 			<observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1"
 				codeSystemName="SNOMED-CT" />
-			
+
 			<p:varde value="25.0" unit="percent" />
 		</observation>
 		<observation>
 			<observationskod code="302119000" codeSystem="1.2.752.116.2.1.1.1"
 				codeSystemName="SNOMED-CT" />
-			
+
 			<p:varde value="0.0" unit="percent" />
 		</observation>
 		<observation>

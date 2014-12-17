@@ -13,7 +13,7 @@
 		<skickatdatum>2011-03-23T09:29:15</skickatdatum>
 		<patient>
 			<person-id root="1.2.752.129.2.1.3.1" extension="19121212-1212" />
-			
+
 			<efternamn>Test Testorsson</efternamn>
 			<arbetsuppgift>
 				<typAvArbetsuppgift>Dirigent. Dirigerar en större orkester på deltid
@@ -39,7 +39,7 @@
 			<enhet>
 				<enhets-id root="1.2.752.129.2.1.4.1" extension="VardenhetY" />
 				<arbetsplatskod root="1.2.752.29.4.71" extension="123456789011" />
-				
+
 				<postadress>Lasarettsvägen 13</postadress>
 				<postnummer>85150</postnummer>
 				<postort>Sundsvall</postort>

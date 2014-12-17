@@ -72,25 +72,25 @@
 			</vardkontakttid>
 		</vardkontakt>
 
-		<!-- <referens> <referenstyp code="419891008" codeSystem="1.2.752.116.2.1.1.1" 
-			codeSystemName="SNOMED-CT" /> <referensdatum>2010-01-14</referensdatum> </referens> 
-			<referens> <referenstyp code="74964007" codeSystem="1.2.752.116.2.1.1.1" 
-			codeSystemName="SNOMED-CT" /> <referensdatum>2010-01-24</referensdatum> </referens> 
-			<aktivitet> <aktivitetskod code="AKT7" codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a" 
-			codeSystemName="kv_aktiviteter_intyg" /> </aktivitet> <aktivitet> <aktivitetskod 
-			code="AKT6" codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a" codeSystemName="kv_aktiviteter_intyg" 
-			/> </aktivitet> <aktivitet> <aktivitetskod code="AKT12" codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a" 
-			codeSystemName="kv_aktiviteter_intyg" /> <beskrivning>När skadan förbättrats 
-			rekommenderas muskeluppbyggande sjukgymnastik</beskrivning> </aktivitet> 
-			<aktivitet> <aktivitetskod code="AKT1" codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a" 
-			codeSystemName="kv_aktiviteter_intyg" /> <beskrivning>Utreds om operation 
-			är nödvändig</beskrivning> </aktivitet> <aktivitet> <aktivitetskod code="AKT2" 
-			codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a" codeSystemName="kv_aktiviteter_intyg" 
-			/> <beskrivning>Patienten ansvarar för att armen hålls i stillhet </beskrivning> 
-			</aktivitet> <aktivitet> <aktivitetskod code="AKT5" codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a" 
-			codeSystemName="kv_aktiviteter_intyg" /> </aktivitet> <aktivitet> <aktivitetskod 
-			code="AKT9" codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a" codeSystemName="kv_aktiviteter_intyg" 
-			/> </aktivitet> <aktivitet> <aktivitetskod code="AKT10" codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a" 
+		<!-- <referens> <referenstyp code="419891008" codeSystem="1.2.752.116.2.1.1.1"
+			codeSystemName="SNOMED-CT" /> <referensdatum>2010-01-14</referensdatum> </referens>
+			<referens> <referenstyp code="74964007" codeSystem="1.2.752.116.2.1.1.1"
+			codeSystemName="SNOMED-CT" /> <referensdatum>2010-01-24</referensdatum> </referens>
+			<aktivitet> <aktivitetskod code="AKT7" codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a"
+			codeSystemName="kv_aktiviteter_intyg" /> </aktivitet> <aktivitet> <aktivitetskod
+			code="AKT6" codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a" codeSystemName="kv_aktiviteter_intyg"
+			/> </aktivitet> <aktivitet> <aktivitetskod code="AKT12" codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a"
+			codeSystemName="kv_aktiviteter_intyg" /> <beskrivning>När skadan förbättrats
+			rekommenderas muskeluppbyggande sjukgymnastik</beskrivning> </aktivitet>
+			<aktivitet> <aktivitetskod code="AKT1" codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a"
+			codeSystemName="kv_aktiviteter_intyg" /> <beskrivning>Utreds om operation
+			är nödvändig</beskrivning> </aktivitet> <aktivitet> <aktivitetskod code="AKT2"
+			codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a" codeSystemName="kv_aktiviteter_intyg"
+			/> <beskrivning>Patienten ansvarar för att armen hålls i stillhet </beskrivning>
+			</aktivitet> <aktivitet> <aktivitetskod code="AKT5" codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a"
+			codeSystemName="kv_aktiviteter_intyg" /> </aktivitet> <aktivitet> <aktivitetskod
+			code="AKT9" codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a" codeSystemName="kv_aktiviteter_intyg"
+			/> </aktivitet> <aktivitet> <aktivitetskod code="AKT10" codeSystem="8040b4d1-67dc-42e1-a938-de5374e9526a"
 			codeSystemName="kv_aktiviteter_intyg" /> </aktivitet> -->
 
 		<observation>

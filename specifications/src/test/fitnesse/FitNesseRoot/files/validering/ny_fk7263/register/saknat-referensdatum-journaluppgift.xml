@@ -72,7 +72,7 @@
 		<referens>
 			<referenstyp code="419891008" codeSystem="1.2.752.116.2.1.1.1"
 				codeSystemName="SNOMED-CT" />
-			
+
 		</referens>
 		<referens>
 			<referenstyp code="74964007" codeSystem="1.2.752.116.2.1.1.1"
