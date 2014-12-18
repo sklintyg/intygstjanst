@@ -21,6 +21,7 @@ package se.inera.certificate.service;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
+import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
@@ -136,9 +137,10 @@ public interface CertificateService {
      *             if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
      * @throws CertificateRevokedException
      *             if the certificate has been revoked
+     * @throws RecipientUnknownException 
      */
     SendStatus sendCertificate(String civicRegistrationNumber, String certificateId, String target) throws InvalidCertificateException,
-            CertificateRevokedException;
+            CertificateRevokedException, RecipientUnknownException;
 
     /**
      * Revokes the certificate.

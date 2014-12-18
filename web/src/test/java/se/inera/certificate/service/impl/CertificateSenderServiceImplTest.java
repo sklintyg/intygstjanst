@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class CertificateSenderServiceImplTest {
 
-    private static final String LOGICAL_ADDRESS = "FK";
+    private static final String LOGICAL_ADDRESS = "FKORG";
 
     @Mock
     private RecipientService recipientService;
@@ -97,7 +97,8 @@ public class CertificateSenderServiceImplTest {
     @Before
     public void setupRecipientService() throws RecipientUnknownException {
         when(recipientService.getVersion("FK", "fk7263")).thenReturn(TransportModelVersion.LEGACY_LAKARUTLATANDE);
-        when(recipientService.getRecipient("FK")).thenReturn(new Recipient("FK", "Försäkringskassan", "fk"));
+        when(recipientService.getRecipient("FK")).thenReturn(new Recipient("FKORG", "Försäkringskassan", "FK"));
+        when(recipientService.getRecipientForLogicalAddress("FKORG")).thenReturn(new Recipient("FKORG", "Försäkringskassan", "FK"));
     }
 
     @InjectMocks
@@ -106,7 +107,7 @@ public class CertificateSenderServiceImplTest {
     @Test
     public void testSend() throws Exception {
 
-        senderService.sendCertificate(certificate, "FK");
+        senderService.sendCertificate(certificate, "FKORG");
 
         verify(moduleApi).sendCertificateToRecipient(Mockito.any(InternalModelHolder.class), Mockito.eq(LOGICAL_ADDRESS));
     }
@@ -117,7 +118,7 @@ public class CertificateSenderServiceImplTest {
         // web service call fails
         Mockito.doThrow(new ModuleException("")).when(moduleApi).sendCertificateToRecipient(Mockito.any(InternalModelHolder.class), Mockito.eq(LOGICAL_ADDRESS));
 
-        senderService.sendCertificate(certificate, "FK");
+        senderService.sendCertificate(certificate, "FKORG");
     }
 
 }

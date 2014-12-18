@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
@@ -27,6 +28,7 @@ import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.modules.support.api.CertificateHolder;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.ConsentService;
+import se.inera.certificate.service.recipientservice.Recipient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -50,6 +52,9 @@ public class CertificateServiceImplTest {
 
     @Mock
     private CertificateSenderService certificateSender;
+
+    @Mock
+    private RecipientServiceImpl recipientService;
 
     @InjectMocks
     private CertificateServiceImpl certificateService = new CertificateServiceImpl();
@@ -139,6 +144,7 @@ public class CertificateServiceImplTest {
         Certificate certificate = new CertificateBuilder(CERTIFICATE_ID).civicRegistrationNumber(PERSONNUMMER).build();
 
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
+        when(recipientService.getRecipientForLogicalAddress(Mockito.any(String.class))).thenReturn(new Recipient("FKORG","Försäkringskassan", "fk"));
 
         certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fk");
 

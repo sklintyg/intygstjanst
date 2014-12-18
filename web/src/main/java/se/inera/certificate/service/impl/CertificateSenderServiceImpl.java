@@ -83,18 +83,18 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     private String sendLogicalAddressText;
 
     @Override
-    public void sendCertificate(Certificate certificate, String target) {
+    public void sendCertificate(Certificate certificate, String targetAddress) {
         try {
             ModuleEntryPoint module = moduleRegistry.getModuleEntryPoint(certificate.getType());
 
             // Use target from parameter if present, otherwise use the default receiver from the module's entryPoint.
             String logicalAddress;
 
-            if (target == null) {
+            if (targetAddress == null) {
                 logicalAddress = module.getDefaultRecieverLogicalAddress();
 
             } else {
-                Recipient recipient = recipientService.getRecipient(target);
+                Recipient recipient = recipientService.getRecipientForLogicalAddress(targetAddress);
                 logicalAddress = recipient.getLogicalAddress();
             }
 
@@ -114,7 +114,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             throw new ServerException(message, e);
 
         } catch (RecipientUnknownException e) {
-            String message = String.format("Found no matching recipient for logical adress: '%s'", target);
+            String message = String.format("Found no matching recipient for logical adress: '%s'", targetAddress);
             LOGGER.error(e.getMessage());
             throw new ServerException(message, e);
         }

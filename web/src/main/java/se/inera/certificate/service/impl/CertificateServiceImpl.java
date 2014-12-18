@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import se.inera.certificate.exception.PersistenceException;
+import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.integration.converter.ConverterUtil;
 import se.inera.certificate.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
@@ -53,6 +54,7 @@ import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
 import se.inera.certificate.service.StatisticsService;
+import se.inera.certificate.service.recipientservice.Recipient;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 
 /**
@@ -84,6 +86,9 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     @Autowired
     private CertificateSenderService senderService;
+
+    @Autowired
+    private RecipientServiceImpl recipientService;
 
     @Autowired
     @Value("${store.original.certificate}")
@@ -197,8 +202,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     @Override
     @Transactional
-    public SendStatus sendCertificate(String civicRegistrationNumber, String certificateId, String target)
-            throws InvalidCertificateException, CertificateRevokedException {
+    public SendStatus sendCertificate(String civicRegistrationNumber, String certificateId, String logicalAddress)
+            throws InvalidCertificateException, CertificateRevokedException, RecipientUnknownException {
         Certificate certificate = null;
         try {
             certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
@@ -214,10 +219,20 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         }
 
         SendStatus sendStatus = SendStatus.OK;
+        String target = null;
+        try {
+            Recipient recipient = recipientService.getRecipientForLogicalAddress(logicalAddress);
+            if (recipient != null) {
+                target = recipient.getId();
+            }
+        } catch (RecipientUnknownException e) {
+            throw new RecipientUnknownException(e.getMessage());
+        }
+
         if (certificate.wasSentToTarget(target)) {
             sendStatus = SendStatus.ALREADY_SENT;
         }
-        senderService.sendCertificate(certificate, target);
+        senderService.sendCertificate(certificate, logicalAddress);
         setCertificateState(civicRegistrationNumber, certificateId, target, CertificateState.SENT, null);
         return sendStatus;
     }

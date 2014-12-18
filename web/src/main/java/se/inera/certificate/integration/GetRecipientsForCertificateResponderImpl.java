@@ -30,6 +30,7 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
             RecipientType recipientType = new RecipientType();
             recipientType.setId(r.getId());
             recipientType.setName(r.getName());
+            recipientType.setLogicalAdress(r.getLogicalAddress());
             response.getRecipient().add(recipientType);
         }
         if (response.getRecipient().isEmpty()) {

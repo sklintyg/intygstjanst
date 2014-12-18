@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
 
+import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
 import se.inera.certificate.integration.validator.SendCertificateRequestValidator;
@@ -41,10 +42,10 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
 
             if (status == SendStatus.ALREADY_SENT) {
                 response.setResult(ResultOfCallUtil.infoResult("Certificate '" + certificateId + "' is already sent."));
-                LOGGER.info(LogMarkers.MONITORING, certificateId + " already sent to FK");
+                LOGGER.info(LogMarkers.MONITORING, certificateId + " already sent to" + logicalAddress.getValue());
             } else {
                 response.setResult(ResultOfCallUtil.okResult());
-                LOGGER.info(LogMarkers.MONITORING, certificateId + " sent to FK");
+                LOGGER.info(LogMarkers.MONITORING, certificateId + " sent to " + logicalAddress.getValue());
             }
             return response;
 
@@ -69,6 +70,11 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             // return with ERROR response if certificate had validation errors
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             return response;
+        } catch (RecipientUnknownException e) {
+            LOGGER.error("Unknown recipient");
+            response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
+            return response;
+
         }
 
     }
