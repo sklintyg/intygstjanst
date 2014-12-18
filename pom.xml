@@ -58,7 +58,6 @@
     <module>persistence</module>
     <module>specifications</module>
     <module>web</module>
-    <module>tools/AnonymiseraIntygsDatabas</module>
     <module>tools/liquibase-runner</module>
   </modules>
 

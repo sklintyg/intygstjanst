@@ -5,15 +5,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>se.inera.intyg.intygstjanst</groupId>
-    <artifactId>intygstjanst</artifactId>
+    <groupId>se.inera.intyg.common</groupId>
+    <artifactId>common-pom</artifactId>
     <version>0-SNAPSHOT</version>
-    <relativePath>../../</relativePath>
   </parent>
 
   <groupId>se.inera.intyg.intygstjanst</groupId>
   <artifactId>intygstjanst-anonymisering</artifactId>
-  <version>0-SNAPSHOT</version>
+  <version>1.0.0</version>
 
   <name>Intygstjänsten (Anonymisering)</name>
 
@@ -23,6 +22,7 @@
     <dependency>
       <groupId>se.inera.intyg.tools</groupId>
       <artifactId>anonymisering</artifactId>
+      <version>1.0.1</version>
     </dependency>
 
     <dependency>
