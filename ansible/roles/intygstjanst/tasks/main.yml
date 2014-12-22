@@ -7,7 +7,7 @@
   file: path={{ releases_folder }} state=directory
   
 - name: download intygstjanst-liquibase-runner-{{ version }}.jar
-  get_url: url=http://repository-callistasoftware.forge.cloudbees.com/release/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/{{ version }}/intygstjanst-liquibase-runner-{{ version }}-jar-with-dependencies.jar
+  get_url: url=http://repository-callistasoftware.forge.cloudbees.com/release/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/{{ version }}/intygstjanst-liquibase-runner-{{ version }}.jar
       dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.jar
 
 - name: run liquibase update
