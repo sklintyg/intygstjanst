@@ -1,0 +1,2 @@
+[tomcat]
+intygstjanst-demo ansible_ssh_host=10.250.34.20 ansible_ssh_user=miservices1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
