@@ -37,12 +37,12 @@ public class SetCertificateStatusResponderImplTest {
         SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
         request.setCertificateId("no5");
         request.setNationalIdentityNumber("19001122-3344");
-        request.setStatus(StatusType.DELETED);
+        request.setStatus(StatusType.CANCELLED);
         request.setTarget("försäkringskassan");
         request.setTimestamp(timestamp);
 
         responder.setCertificateStatus(null, request);
 
-        verify(certificateService).setCertificateState("19001122-3344", "no5", "försäkringskassan", CertificateState.DELETED, timestamp);
+        verify(certificateService).setCertificateState("19001122-3344", "no5", "försäkringskassan", CertificateState.CANCELLED, timestamp);
     }
 }

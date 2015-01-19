@@ -1,9 +1,7 @@
 package se.inera.certificate.service.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -23,7 +21,6 @@ import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
-import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.modules.support.api.CertificateHolder;
 import se.inera.certificate.service.CertificateSenderService;
@@ -59,52 +56,10 @@ public class CertificateServiceImplTest {
     @InjectMocks
     private CertificateServiceImpl certificateService = new CertificateServiceImpl();
 
-    @Test
-    public void certificateWithDeletedStatusHasMetaDeleted() throws Exception {
-        Certificate certificate = createCertificate();
-        certificate.addState(new CertificateStateHistoryEntry("", CertificateState.DELETED, new LocalDateTime(1)));
-        when(consentService.isConsent(anyString())).thenReturn(Boolean.TRUE);
-        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
-
-        Certificate found = certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
-
-        assertTrue(found.getDeleted());
-
-        verify(certificateDao).getCertificate(PERSONNUMMER, CERTIFICATE_ID);
-    }
-
     private Certificate createCertificate() {
         Certificate certificate = new Certificate(CERTIFICATE_ID, "document");
         certificate.setCivicRegistrationNumber(PERSONNUMMER);
         return certificate;
-    }
-
-    @Test
-    public void certificateWithStatusRestoredNewerThanDeletedHasMetaNotDeleted() throws Exception {
-        Certificate certificate = createCertificate();
-        certificate.addState(new CertificateStateHistoryEntry("", CertificateState.RESTORED, new LocalDateTime(2)));
-        certificate.addState(new CertificateStateHistoryEntry("", CertificateState.DELETED, new LocalDateTime(1)));
-        when(consentService.isConsent(anyString())).thenReturn(Boolean.TRUE);
-        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
-
-        Certificate found = certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
-        assertFalse(found.getDeleted());
-
-        verify(certificateDao).getCertificate(PERSONNUMMER, CERTIFICATE_ID);
-    }
-
-    @Test
-    public void certificateWithStatusDeletedNewerThanRestoredHasMetaDeleted() throws Exception {
-        Certificate certificate = createCertificate();
-        certificate.addState(new CertificateStateHistoryEntry("", CertificateState.DELETED, new LocalDateTime(2)));
-        certificate.addState(new CertificateStateHistoryEntry("", CertificateState.RESTORED, new LocalDateTime(1)));
-        when(consentService.isConsent(anyString())).thenReturn(Boolean.TRUE);
-        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
-
-        Certificate found = certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
-        assertTrue(found.getDeleted());
-
-        verify(certificateDao).getCertificate(PERSONNUMMER, CERTIFICATE_ID);
     }
 
     @Test

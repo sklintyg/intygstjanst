@@ -21,6 +21,7 @@ package se.inera.certificate.service;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
+import se.inera.certificate.exception.PersistenceException;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
@@ -106,15 +107,12 @@ public interface CertificateService {
 
     /**
      * Stores the given certificate.
-<<<<<<< HEAD
      * @param certificateHolder the incoming certificate information
-=======
      *
      * @param xml
      *            the string representation of the incoming XML
      * @param type
      *            the certificate type
->>>>>>> develop
      * @return the created certificate
      * @throws CertificateAlreadyExistsException
      *             when a certificate with the same identifier already exists
@@ -160,4 +158,13 @@ public interface CertificateService {
      */
     Certificate revokeCertificate(String civicRegistrationNumber, String certificateId, RevokeType revokeData) throws InvalidCertificateException,
             CertificateRevokedException;
+
+    /**
+     * 
+     * @param certificateId
+     * @param nationalIdentityNumber
+     * @param timestamp
+     * @throws InvalidCertificateException 
+     */
+    void setArchived(String certificateId, String nationalIdentityNumber, String archivedState) throws InvalidCertificateException;
 }

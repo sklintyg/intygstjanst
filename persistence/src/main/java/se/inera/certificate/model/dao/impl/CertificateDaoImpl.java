@@ -166,6 +166,20 @@ public class CertificateDaoImpl implements CertificateDao {
         }
     }
 
+    @Override
+    @Transactional(noRollbackFor = { PersistenceException.class })
+    public void setArchived(String id, String civicRegistrationNumber, String archived) throws PersistenceException {
+        Certificate certificate = entityManager.find(Certificate.class, id);
+
+        if (certificate == null || !certificate.getCivicRegistrationNumber().equals(civicRegistrationNumber)) {
+            throw new PersistenceException(id, civicRegistrationNumber);
+        }
+
+        boolean deleted = archived.equalsIgnoreCase("true") ? true : false; 
+        certificate.setDeleted(deleted);
+        store(certificate);
+    }
+
     private List<String> toLowerCase(List<String> list) {
         List<String> result = new ArrayList<>();
         for (String item: list) {

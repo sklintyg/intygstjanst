@@ -71,8 +71,14 @@ class Migrera {
                     StringWriter writer = new StringWriter();
                     objectMapper.writeValue(writer, utlatande);
                     def document = writer.toString()
-                    
-                    sql.execute('update CERTIFICATE set DOCUMENT = :document where ID = :id' , [document: document.getBytes('UTF-8'), id : id])
+
+                    // Get CERTIFICATE_STATE and check for 'ARCHIVED' and 'RESTORED' statuses
+                    def certificate_states = sql.rows( 'select STATE from CERTIFICATE_STATE inner join CERTIFICATE on CERTIFICATE_STATE.CERTIFICATE_ID = CERTIFICATE.ID where CERTIFICATE_ID = :id', [id : id])
+                    // If there are more occurances of 'ARCHIVED' than 'RESTORED', DELETED should be set to 1
+                    def deleted = certificate_states.findAll( { it.STATE == 'ARCHIVED' } ).size > certificate_states.findAll( { it.STATE == 'RESTORED' } ).size ? 1 : 0
+
+                    sql.execute('update CERTIFICATE set DOCUMENT = :document, DELETED = :deleted where ID = :id', [document: document.getBytes('UTF-8'), deleted : deleted, id : id])
+                    sql.execute('delete from CERTIFICATE_STATE where CERTIFICATE_ID = :id and (STATE = "ARCHIVED" or STATE = "RESTORED")', [id : id])
                 } catch (Exception e) {
                     result << "${id};${e.message}"
                     errorCount.incrementAndGet()

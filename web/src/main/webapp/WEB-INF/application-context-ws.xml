@@ -70,6 +70,15 @@
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
 
+  <jaxws:endpoint address="/set-certificate-archived/v1.0"
+                  implementor="se.inera.certificate.integration.SetCertificateArchivedResponderImpl">
+    <jaxws:outFaultInterceptors>
+      <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+        <constructor-arg value="transform/set-certificate-status-transform.xslt"/>
+      </bean>
+    </jaxws:outFaultInterceptors>
+  </jaxws:endpoint>
+
   <jaxws:endpoint address="/get-consent/v1.0" implementor="se.inera.certificate.integration.GetConsentResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">

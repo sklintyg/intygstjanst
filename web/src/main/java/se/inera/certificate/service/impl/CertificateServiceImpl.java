@@ -18,9 +18,6 @@
  */
 package se.inera.certificate.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
@@ -65,14 +62,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateServiceImpl.class);
 
-    private static final Comparator<CertificateStateHistoryEntry> SORTER = new Comparator<CertificateStateHistoryEntry>() {
-
-        @Override
-        public int compare(CertificateStateHistoryEntry e1, CertificateStateHistoryEntry e2) {
-            return e2.getTimestamp().compareTo(e1.getTimestamp());
-        }
-    };
-
     public static final String MI = "MI";
 
     @Autowired
@@ -98,13 +87,12 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     public List<Certificate> listCertificatesForCitizen(String civicRegistrationNumber, List<String> certificateTypes,
             LocalDate fromDate, LocalDate toDate) throws MissingConsentException {
         assertConsent(civicRegistrationNumber);
-        return fixDeletedStatus(certificateDao.findCertificate(civicRegistrationNumber, certificateTypes, fromDate,
-                toDate, null));
+        return certificateDao.findCertificate(civicRegistrationNumber, certificateTypes, fromDate, toDate, null);
     }
 
     @Override
     public List<Certificate> listCertificatesForCare(String civicRegistrationNumber, List<String> careUnits) {
-        return fixDeletedStatus(certificateDao.findCertificate(civicRegistrationNumber, null, null, null, careUnits));
+        return certificateDao.findCertificate(civicRegistrationNumber, null, null, null, careUnits);
     }
 
     @Override
@@ -150,7 +138,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     private Certificate getCertificateInternal(String civicRegistrationNumber, String id) throws PersistenceException {
-        return fixDeletedStatus(certificateDao.getCertificate(civicRegistrationNumber, id));
+//        return fixDeletedStatus(certificateDao.getCertificate(civicRegistrationNumber, id));
+        return certificateDao.getCertificate(civicRegistrationNumber, id);
     }
 
     @Override
@@ -303,33 +292,15 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         }
     }
 
-    private List<Certificate> fixDeletedStatus(List<Certificate> certificates) {
-        for (Certificate certificate : certificates) {
-            fixDeletedStatus(certificate);
-        }
-        return certificates;
-    }
 
-    private Certificate fixDeletedStatus(Certificate certificate) {
-        if (certificate != null) {
-            List<CertificateStateHistoryEntry> states = new ArrayList<>(certificate.getStates());
-            Collections.sort(states, SORTER);
-            certificate.setDeleted(isDeleted(states));
+    @Override
+    public void setArchived(String certificateId, String civicRegistrationNumber, String archivedState) throws InvalidCertificateException {
+        try {
+            certificateDao.setArchived(certificateId, civicRegistrationNumber, archivedState);
         }
-        return certificate;
-    }
-
-    private Boolean isDeleted(List<CertificateStateHistoryEntry> entries) {
-        for (CertificateStateHistoryEntry entry : entries) {
-            switch (entry.getState()) {
-            case DELETED:
-                return true;
-            case RESTORED:
-                return false;
-            default:
-            }
+        catch (PersistenceException e) {
+            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
         }
-        return false;
     }
 
     @Override
