@@ -1,5 +1,5 @@
 ---
-# This playbook provisions the mysql for Intygstjansten 
+# This playbook provisions mysql for Intygstjansten 
 
 - hosts: mysql
   sudo: yes 

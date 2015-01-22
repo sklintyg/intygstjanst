@@ -1,4 +1,5 @@
 ---
+# file: roles/intygstjanst-resurser/tasks/main.yml
 
 - name: configure jdbc resource
   lineinfile:
