@@ -1,7 +1,7 @@
 ---
 # This playbook deploys intygstjansten 
 
-- hosts: all
+- hosts: tomcat
   sudo: yes 
   vars: 
     version: 2.1.0-b22
