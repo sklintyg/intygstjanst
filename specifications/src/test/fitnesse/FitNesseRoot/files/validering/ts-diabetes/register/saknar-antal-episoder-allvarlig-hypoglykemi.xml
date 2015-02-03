@@ -75,7 +75,7 @@
     <!-- Observationer begins -->
 
     <observation>
-      <observationskod code="E11" codeSystem="1.2.752.116.1.1.1.1.1"
+      <observationskod code="E11" codeSystem="1.2.752.116.1.1.1.1.3"
         codeSystemName="ICD-10" />
       <observationsperiod>
         <from>2012</from>

@@ -137,14 +137,14 @@
     <observation>
       <observations-id root="1.2.752.129.2.1.2.1"
         extension="3" />
-      <observationskod code="H53.4" codeSystem="1.2.752.116.1.1.1.1.1"
+      <observationskod code="H53.4" codeSystem="1.2.752.116.1.1.1.1.3"
         codeSystemName="ICD-10" />
       <forekomst>false</forekomst>
     </observation>
 
     <!-- Begränsning av seende vid nedsatt belysning -->
     <observation>
-      <observationskod code="H53.6" codeSystem="1.2.752.116.1.1.1.1.1"
+      <observationskod code="H53.6" codeSystem="1.2.752.116.1.1.1.1.3"
         codeSystemName="ICD-10" />
       <forekomst>false</forekomst>
     </observation>
@@ -159,13 +159,13 @@
     <observation>
       <observations-id root="1.2.752.129.2.1.2.1"
         extension="4" />
-      <observationskod code="H53.2" codeSystem="1.2.752.116.1.1.1.1.1"
+      <observationskod code="H53.2" codeSystem="1.2.752.116.1.1.1.1.3"
         codeSystemName="ICD-10" />
       <forekomst>false</forekomst>
     </observation>
 
     <observation>
-      <observationskod code="H55.9" codeSystem="1.2.752.116.1.1.1.1.1"
+      <observationskod code="H55.9" codeSystem="1.2.752.116.1.1.1.1.3"
         codeSystemName="ICD-10" />
       <forekomst>false</forekomst>
     </observation>
@@ -296,7 +296,7 @@
     </observation>
     <!-- typ1 -->
     <observation>
-      <observationskod code="E11" codeSystem="1.2.752.116.1.1.1.1.1"
+      <observationskod code="E11" codeSystem="1.2.752.116.1.1.1.1.3"
         codeSystemName="ICD-10" />
       <forekomst>false</forekomst>
     </observation>
@@ -319,7 +319,7 @@
 
     <!-- Epilepsi etc (9.1) -->
     <observation>
-      <observationskod code="G40.9" codeSystem="1.2.752.116.1.1.1.1.1"
+      <observationskod code="G40.9" codeSystem="1.2.752.116.1.1.1.1.3"
         codeSystemName="ICD-10" />
       <forekomst>true</forekomst>
     </observation>

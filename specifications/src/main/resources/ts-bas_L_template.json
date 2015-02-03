@@ -264,7 +264,7 @@
     "observationer": [
         {
             "observationskod": {
-                "codeSystem": "1.2.752.116.1.1.1.1.1",
+                "codeSystem": "1.2.752.116.1.1.1.1.3",
                 "codeSystemName": "ICD-10",
                 "code": "H53.4"
             },
@@ -276,7 +276,7 @@
         },
         {
             "observationskod": {
-                "codeSystem": "1.2.752.116.1.1.1.1.1",
+                "codeSystem": "1.2.752.116.1.1.1.1.3",
                 "codeSystemName": "ICD-10",
                 "code": "H53.6"
             },
@@ -308,7 +308,7 @@
         },
         {
             "observationskod": {
-                "codeSystem": "1.2.752.116.1.1.1.1.1",
+                "codeSystem": "1.2.752.116.1.1.1.1.3",
                 "codeSystemName": "ICD-10",
                 "code": "H53.2"
             },
@@ -320,7 +320,7 @@
         },
         {
             "observationskod": {
-                "codeSystem": "1.2.752.116.1.1.1.1.1",
+                "codeSystem": "1.2.752.116.1.1.1.1.3",
                 "codeSystemName": "ICD-10",
                 "code": "H55.9"
             },
@@ -506,7 +506,7 @@
         },
         {
         	"observationskod" : {
-        		"codeSystem" : "1.2.752.116.1.1.1.1.1",
+        		"codeSystem" : "1.2.752.116.1.1.1.1.3",
         		"codeSystemName" : "ICD-10",
         		"code" : "E11"
         	},
@@ -531,7 +531,7 @@
         },
         {
             "observationskod": {
-                "codeSystem": "1.2.752.116.1.1.1.1.1",
+                "codeSystem": "1.2.752.116.1.1.1.1.3",
                 "codeSystemName": "ICD-10",
                 "code": "G40.9"
             },
