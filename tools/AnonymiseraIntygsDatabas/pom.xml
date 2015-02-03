@@ -7,12 +7,12 @@
   <parent>
     <groupId>se.inera.intyg.common</groupId>
     <artifactId>common-pom</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.6</version>
   </parent>
 
   <groupId>se.inera.intyg.intygstjanst</groupId>
   <artifactId>intygstjanst-anonymisering</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 
   <name>Intygstjänsten (Anonymisering)</name>
 
@@ -22,7 +22,7 @@
     <dependency>
       <groupId>se.inera.intyg.tools</groupId>
       <artifactId>anonymisering</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
     </dependency>
 
     <dependency>
@@ -136,5 +136,18 @@
       </plugin>
     </plugins>
   </build>
+
+  <repositories>
+    <repository>
+      <id>callista-release</id>
+      <url>https://repository-callistasoftware.forge.cloudbees.com/release/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
 </project>
