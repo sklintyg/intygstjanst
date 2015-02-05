@@ -207,7 +207,7 @@
 
   <profiles>
     <profile>
-      <id>test-server</id>
+      <id>demo</id>
       <properties>
         <certificate.baseUrl>http://10.250.34.20:8080/inera-certificate/</certificate.baseUrl>
       </properties>
@@ -219,7 +219,7 @@
       </properties>
     </profile>
     <profile>
-      <id>ssh-tunnel-server</id>
+      <id>ssh-tunnel</id>
       <properties>
         <certificate.baseUrl>http://localhost:18080/inera-certificate/</certificate.baseUrl>
       </properties>
