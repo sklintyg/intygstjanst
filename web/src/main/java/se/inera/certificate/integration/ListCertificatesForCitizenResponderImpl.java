@@ -36,11 +36,11 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
 
         try {
             List<Certificate> certificates = certificateService.listCertificatesForCitizen(
-                    parameters.getNationalIdentityNumber(), parameters.getCertificateType(), parameters.getFromDate(), parameters.getToDate());
+                    parameters.getPersonId(), parameters.getUtlatandeTyp(), parameters.getFranDatum(), parameters.getTillDatum());
             for (Certificate certificate : certificates) {
                 // Note that we return certificates that are deleted by the care giver (isDeletedByCareGiver) but not
                 // revoked or archived certificates.
-                if (parameters.getCertificateType().isEmpty() || !(certificate.getDeleted() || certificate.isRevoked())) {
+                if (parameters.getUtlatandeTyp().isEmpty() || !(certificate.getDeleted() || certificate.isRevoked())) {
                     response.getMeta().add(metaDataResolver.toClinicalProcessCertificateMetaType(certificate));
                 }
             }

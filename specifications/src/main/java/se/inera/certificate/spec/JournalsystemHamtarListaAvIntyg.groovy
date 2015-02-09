@@ -29,8 +29,8 @@ public class JournalsystemHamtarListaAvIntyg extends WsClientFixture {
 
     def execute() {
         def request = new ListCertificatesForCareType()
-        request.nationalIdentityNumber = personnummer
-        request.careUnit.add(enhet)
+        request.personId = personnummer
+        request.enhet.add(enhet)
 
         response = responder.listCertificatesForCare(LOGICAL_ADDRESS, request)
         switch (response.result.resultCode) {

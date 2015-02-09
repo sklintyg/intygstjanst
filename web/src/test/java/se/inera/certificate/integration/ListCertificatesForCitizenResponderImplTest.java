@@ -95,14 +95,14 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     private ListCertificatesForCitizenType createListCertificatesRequest(String civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate) {
         ListCertificatesForCitizenType parameters = new ListCertificatesForCitizenType();
-        parameters.setNationalIdentityNumber(civicRegistrationNumber);
+        parameters.setPersonId(civicRegistrationNumber);
 
         for (String type: types) {
-            parameters.getCertificateType().add(type);
+            parameters.getUtlatandeTyp().add(type);
         }
 
-        parameters.setFromDate(fromDate);
-        parameters.setToDate(toDate);
+        parameters.setFranDatum(fromDate);
+        parameters.setTillDatum(toDate);
 
         return parameters;
     }
