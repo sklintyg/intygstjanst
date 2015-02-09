@@ -26,8 +26,8 @@ public class InvanareHamtarListaAvIntyg extends WsClientFixture {
 
     def execute() {
         def request = new ListCertificatesForCitizenType()
-        request.nationalIdentityNumber = personnummer
-        request.certificateType = [typ]
+        request.personId = personnummer
+        request.utlatandeTyp = [typ]
 
         response = responder.listCertificatesForCitizen(LOGICAL_ADDRESS, request)
         switch (response.result.resultCode) {

@@ -38,7 +38,7 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
 
         try {
             List<Certificate> certificates = certificateService.listCertificatesForCare(
-                    parameters.getNationalIdentityNumber(), parameters.getCareUnit());
+                    parameters.getPersonId(), parameters.getEnhet());
             for (Certificate certificate : certificates) {
                 // If the certificate is deleted by the care giver it is not returned. Note that both revoked and
                 // archived certificates are returned
