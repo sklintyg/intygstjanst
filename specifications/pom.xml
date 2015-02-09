@@ -21,7 +21,7 @@
     <fitnesse.working>${project.basedir}/src/test/fitnesse</fitnesse.working>
     <fitnesse.root>FitNesseRoot</fitnesse.root>
     <fitnesse.project.root>IneraCertificate</fitnesse.project.root>
-    <fitnesse.suite>${fitnesse.project.root}.TestPlan.RegressionsTester</fitnesse.suite>
+    <fitnesse.suite>${fitnesse.project.root}.AllTests</fitnesse.suite>
 
     <!-- This example has no unit tests, just integration tests -->
     <skipTests>true</skipTests>
