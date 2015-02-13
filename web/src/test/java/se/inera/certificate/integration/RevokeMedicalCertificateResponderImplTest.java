@@ -105,7 +105,7 @@ public class RevokeMedicalCertificateResponderImplTest {
 
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
 
-        verify(certificateSenderService).sendRevokeCertificateMessage(certificate, TARGET, revokeRequest().getRevoke());
+        verify(certificateSenderService).sendCertificateRevocation(certificate, TARGET, revokeRequest().getRevoke());
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
         Mockito.verify(statisticsService, Mockito.only()).revoked(certificate);
@@ -119,7 +119,7 @@ public class RevokeMedicalCertificateResponderImplTest {
         certificate.setStates(Collections.singletonList(historyEntry));
 
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
-        doThrow(new SubsystemCallException(TARGET)).when(certificateSenderService).sendRevokeCertificateMessage(certificate, TARGET,
+        doThrow(new SubsystemCallException(TARGET)).when(certificateSenderService).sendCertificateRevocation(certificate, TARGET,
                 revokeRequest().getRevoke());
 
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());

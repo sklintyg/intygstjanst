@@ -1,5 +1,9 @@
 package se.inera.certificate.service.impl;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,6 +27,7 @@ import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.RecipientService;
 import se.inera.certificate.service.recipientservice.Recipient;
+import se.inera.certificate.service.recipientservice.RecipientBuilder;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
@@ -33,17 +38,20 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 /**
  * @author andreaskaltenbach
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CertificateSenderServiceImplTest {
 
-    private static final String LOGICAL_ADDRESS = "FKORG";
+    private static final String CERTIFICATE_ID = "123456";
+    private static final String CERTIFICATE_DOCUMENT = "{}";
+    private static final String CERTIFICATE_TYPE = "fk7263";
+
+    private static final String RECIPIENT_ID = "FK";
+    private static final String RECIPIENT_NAME = "Försäkringskassan";
+    private static final String RECIPIENT_LOGICALADDRESS = "FKORG";
+    private static final String RECIPIENT_CERTIFICATETYPES = "fk7263";
 
     @Mock
     private RecipientService recipientService;
@@ -63,10 +71,23 @@ public class CertificateSenderServiceImplTest {
     @Mock
     private RegisterMedicalCertificateResponderInterface registerClient;
 
-    private static Certificate certificate = new CertificateBuilder("123456", "{}").certificateType("fk7263").build();
+    @InjectMocks
+    private CertificateSenderServiceImpl senderService = new CertificateSenderServiceImpl();
+
+    private static Certificate certificate = new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DOCUMENT).certificateType(CERTIFICATE_TYPE).build();
 
     private static RegisterMedicalCertificateResponseType errorWsMessage;
     private static RegisterMedicalCertificateResponseType okWsMessage;
+
+    private static Recipient createRecipient() {
+        RecipientBuilder builder = new RecipientBuilder();
+        builder.setId(RECIPIENT_ID);
+        builder.setName(RECIPIENT_NAME);
+        builder.setLogicalAddress(RECIPIENT_LOGICALADDRESS);
+        builder.setCertificateTypes(RECIPIENT_CERTIFICATETYPES);
+
+        return builder.build();
+    }
 
     public RegisterMedicalCertificateType request() throws IOException, JAXBException {
         Unmarshaller unmarshaller = JAXBContext.newInstance(RegisterMedicalCertificateResponseType.class).createUnmarshaller();
@@ -91,34 +112,27 @@ public class CertificateSenderServiceImplTest {
         when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
         when(moduleEntryPoint.getModuleId()).thenReturn("fk7263");
-        when(moduleEntryPoint.getDefaultRecieverLogicalAddress()).thenReturn(LOGICAL_ADDRESS);
+        when(moduleEntryPoint.getDefaultRecipient()).thenReturn(RECIPIENT_LOGICALADDRESS);
     }
 
     @Before
     public void setupRecipientService() throws RecipientUnknownException {
-        when(recipientService.getVersion("FK", "fk7263")).thenReturn(TransportModelVersion.LEGACY_LAKARUTLATANDE);
-        when(recipientService.getRecipient("FK")).thenReturn(new Recipient("FKORG", "Försäkringskassan", "FK"));
-        when(recipientService.getRecipientForLogicalAddress("FKORG")).thenReturn(new Recipient("FKORG", "Försäkringskassan", "FK"));
+        when(recipientService.getVersion(RECIPIENT_LOGICALADDRESS, CERTIFICATE_TYPE)).thenReturn(TransportModelVersion.LEGACY_LAKARUTLATANDE);
+        when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(createRecipient());
+        when(recipientService.getRecipientForLogicalAddress(RECIPIENT_LOGICALADDRESS)).thenReturn(createRecipient());
     }
-
-    @InjectMocks
-    private CertificateSenderServiceImpl senderService = new CertificateSenderServiceImpl();
 
     @Test
     public void testSend() throws Exception {
-
-        senderService.sendCertificate(certificate, "FKORG");
-
-        verify(moduleApi).sendCertificateToRecipient(Mockito.any(InternalModelHolder.class), Mockito.eq(LOGICAL_ADDRESS));
+        senderService.sendCertificate(certificate, RECIPIENT_ID);
+        verify(moduleApi).sendCertificateToRecipient(Mockito.any(InternalModelHolder.class), Mockito.eq(RECIPIENT_LOGICALADDRESS));
     }
 
     @Test(expected = ServerException.class)
     public void testSendWithFailingModule() throws Exception {
-
         // web service call fails
-        Mockito.doThrow(new ModuleException("")).when(moduleApi).sendCertificateToRecipient(Mockito.any(InternalModelHolder.class), Mockito.eq(LOGICAL_ADDRESS));
-
-        senderService.sendCertificate(certificate, "FKORG");
+        Mockito.doThrow(new ModuleException("")).when(moduleApi).sendCertificateToRecipient(Mockito.any(InternalModelHolder.class), Mockito.eq(RECIPIENT_LOGICALADDRESS));
+        senderService.sendCertificate(certificate, RECIPIENT_ID);
     }
 
 }
