@@ -18,9 +18,6 @@
  */
 package se.inera.certificate.service.impl;
 
-import java.util.HashSet;
-import java.util.List;
-
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -31,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
 import se.inera.certificate.exception.PersistenceException;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.integration.converter.ConverterUtil;
@@ -51,8 +47,10 @@ import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
 import se.inera.certificate.service.StatisticsService;
-import se.inera.certificate.service.recipientservice.Recipient;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
+
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * @author andreaskaltenbach
@@ -137,9 +135,38 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         return certificate;
     }
 
-    private Certificate getCertificateInternal(String civicRegistrationNumber, String id) throws PersistenceException {
-//        return fixDeletedStatus(certificateDao.getCertificate(civicRegistrationNumber, id));
-        return certificateDao.getCertificate(civicRegistrationNumber, id);
+    @Override
+    @Transactional
+    public SendStatus sendCertificate(String civicRegistrationNumber, String certificateId, String recipientId)
+            throws InvalidCertificateException, CertificateRevokedException, RecipientUnknownException {
+
+        Certificate certificate = null;
+        try {
+            certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
+        } catch (PersistenceException e) {
+            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
+        }
+
+        if (certificate == null) {
+            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
+        }
+
+        if (certificate.isRevoked()) {
+            throw new CertificateRevokedException(certificateId);
+        }
+
+        SendStatus sendStatus = SendStatus.OK;
+        if (certificate.wasSentToTarget(recipientId)) {
+            sendStatus = SendStatus.ALREADY_SENT;
+        }
+
+        // Do send the certificate
+        senderService.sendCertificate(certificate, recipientId);
+
+        // Update the certificate
+        setCertificateState(civicRegistrationNumber, certificateId, recipientId, CertificateState.SENT, null);
+
+        return sendStatus;
     }
 
     @Override
@@ -173,57 +200,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         if (certificateDao.getCertificate(personnummer, certificateId) != null) {
             throw new CertificateAlreadyExistsException(certificateId);
         }
-    }
-
-    /**
-     *
-     * @param utlatandeXml
-     *            the received certificate utlatande xml
-     * @param certificate
-     *            the {@link Certificate} generated from the utlatandeXml, or <code>null</code> if unknown.
-     */
-    private void storeOriginalCertificate(String utlatandeXml, Certificate certificate) {
-        if (shouldStoreOriginalCertificate) {
-            OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), utlatandeXml, certificate);
-            certificateDao.storeOriginalCertificate(original);
-        }
-    }
-
-    @Override
-    @Transactional
-    public SendStatus sendCertificate(String civicRegistrationNumber, String certificateId, String logicalAddress)
-            throws InvalidCertificateException, CertificateRevokedException, RecipientUnknownException {
-        Certificate certificate = null;
-        try {
-            certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
-        } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
-        }
-
-        if (certificate == null) {
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
-        }
-        if (certificate.isRevoked()) {
-            throw new CertificateRevokedException(certificateId);
-        }
-
-        SendStatus sendStatus = SendStatus.OK;
-        String target = null;
-        try {
-            Recipient recipient = recipientService.getRecipientForLogicalAddress(logicalAddress);
-            if (recipient != null) {
-                target = recipient.getId();
-            }
-        } catch (RecipientUnknownException e) {
-            throw new RecipientUnknownException(e.getMessage());
-        }
-
-        if (certificate.wasSentToTarget(target)) {
-            sendStatus = SendStatus.ALREADY_SENT;
-        }
-        senderService.sendCertificate(certificate, logicalAddress);
-        setCertificateState(civicRegistrationNumber, certificateId, target, CertificateState.SENT, null);
-        return sendStatus;
     }
 
     @Override
@@ -268,19 +244,14 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         return certificate;
     }
 
-    private void sendRevokeMessagesToRecipients(Certificate certificate, RevokeType revokeData) {
-        HashSet<String> recipientsFound = new HashSet<>();
-
-        for (CertificateStateHistoryEntry event : certificate.getStates()) {
-            if (event.getState().equals(CertificateState.SENT)) {
-                String recipient = event.getTarget();
-                if (recipientsFound.add(recipient)) {
-                    senderService.sendRevokeCertificateMessage(certificate, recipient, revokeData);
-                }
-            }
+    @Override
+    public void setArchived(String certificateId, String civicRegistrationNumber, String archivedState) throws InvalidCertificateException {
+        try {
+            certificateDao.setArchived(certificateId, civicRegistrationNumber, archivedState);
+        } catch (PersistenceException e) {
+            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
         }
     }
-
     private void assertConsent(String civicRegistrationNumber) throws MissingConsentException {
 
         if (StringUtils.isEmpty(civicRegistrationNumber)) {
@@ -289,17 +260,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
         if (!consentService.isConsent(civicRegistrationNumber)) {
             throw new MissingConsentException(civicRegistrationNumber);
-        }
-    }
-
-
-    @Override
-    public void setArchived(String certificateId, String civicRegistrationNumber, String archivedState) throws InvalidCertificateException {
-        try {
-            certificateDao.setArchived(certificateId, civicRegistrationNumber, archivedState);
-        }
-        catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
         }
     }
 
@@ -337,4 +297,37 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
         return ConverterUtil.toCertificateHolder(certificate);
     }
+
+    private Certificate getCertificateInternal(String civicRegistrationNumber, String id) throws PersistenceException {
+//        return fixDeletedStatus(certificateDao.getCertificate(civicRegistrationNumber, id));
+        return certificateDao.getCertificate(civicRegistrationNumber, id);
+    }
+
+    private void sendRevokeMessagesToRecipients(Certificate certificate, RevokeType revokeData) {
+        HashSet<String> recipientsFound = new HashSet<>();
+
+        for (CertificateStateHistoryEntry event : certificate.getStates()) {
+            if (event.getState().equals(CertificateState.SENT)) {
+                String recipient = event.getTarget();
+                if (recipientsFound.add(recipient)) {
+                    senderService.sendCertificateRevocation(certificate, recipient, revokeData);
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @param utlatandeXml
+     *            the received certificate utlatande xml
+     * @param certificate
+     *            the {@link Certificate} generated from the utlatandeXml, or <code>null</code> if unknown.
+     */
+    private void storeOriginalCertificate(String utlatandeXml, Certificate certificate) {
+        if (shouldStoreOriginalCertificate) {
+            OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), utlatandeXml, certificate);
+            certificateDao.storeOriginalCertificate(original);
+        }
+    }
+
 }

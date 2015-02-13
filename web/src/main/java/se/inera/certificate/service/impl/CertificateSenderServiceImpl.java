@@ -24,10 +24,8 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
-
 import se.inera.certificate.exception.MissingModuleException;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.exception.ServerException;
@@ -61,6 +59,8 @@ import se.inera.webcert.medcertqa.v1.VardAdresseringsType;
 @Service
 public class CertificateSenderServiceImpl implements CertificateSenderService {
 
+    public static final String RECIPIENT_ID_FK = "FK";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateSenderServiceImpl.class);
 
     @Autowired
@@ -78,28 +78,25 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     @Autowired
     private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponderInterface;
 
-    @Autowired
-    @Value("${revokecertificate.address.fk7263}")
-    private String sendLogicalAddressText;
-
     @Override
-    public void sendCertificate(Certificate certificate, String targetAddress) {
+    public void sendCertificate(Certificate certificate, String recipientId) {
+        System.err.println("recipientId = " + recipientId);
+
         try {
             ModuleEntryPoint module = moduleRegistry.getModuleEntryPoint(certificate.getType());
 
             // Use target from parameter if present, otherwise use the default receiver from the module's entryPoint.
             String logicalAddress;
 
-            if (targetAddress == null) {
-                logicalAddress = module.getDefaultRecieverLogicalAddress();
+            if (recipientId == null) {
+                logicalAddress = module.getDefaultRecipient();
 
             } else {
-                Recipient recipient = recipientService.getRecipientForLogicalAddress(targetAddress);
+                Recipient recipient = recipientService.getRecipient(recipientId);
                 logicalAddress = recipient.getLogicalAddress();
             }
 
-            module.getModuleApi().sendCertificateToRecipient(new InternalModelHolder(certificate.getDocument()),
-                    logicalAddress);
+            module.getModuleApi().sendCertificateToRecipient(new InternalModelHolder(certificate.getDocument()), logicalAddress);
 
         } catch (ModuleNotFoundException e) {
             String message = String.format("The module '%s' was not found - not registered in application",
@@ -114,22 +111,22 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             throw new ServerException(message, e);
 
         } catch (RecipientUnknownException e) {
-            String message = String.format("Found no matching recipient for logical adress: '%s'", targetAddress);
+            String message = String.format("Found no matching recipient for logical adress: '%s'", recipientId);
             LOGGER.error(e.getMessage());
             throw new ServerException(message, e);
         }
     }
 
     @Override
-    public void sendRevokeCertificateMessage(Certificate certificate, String target, RevokeType revokeData) {
-        if (target.equals("FK")) {
-            useFKRevokationStrategy(certificate, revokeData);
+    public void sendCertificateRevocation(Certificate certificate, String recipientId, RevokeType revokeData) {
+        if (recipientId.equals(RECIPIENT_ID_FK)) {
+            useFKRevocationStrategy(certificate, revokeData);
         } else {
-            useDefaultRevokationStrategy(certificate, target, revokeData);
+            useDefaultRevocationStrategy(certificate, revokeData, recipientId);
         }
     }
 
-    private void useFKRevokationStrategy(Certificate certificate, RevokeType revokeData) {
+    private void useFKRevocationStrategy(Certificate certificate, RevokeType revokeData) {
         String intygId = certificate.getId();
         String vardref = revokeData.getVardReferensId();
         String meddelande = revokeData.getMeddelande();
@@ -146,42 +143,57 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
         question.setVardReferensId(vardref);
         question.setAvsantTidpunkt(avsantTs);
         question.setAdressVard(vardAddress);
-
         question.setFraga(new InnehallType());
         question.getFraga().setMeddelandeText(meddelande);
         question.getFraga().setSigneringsTidpunkt(signTs);
-
         question.setLakarutlatande(revokeData.getLakarutlatande());
-        AttributedURIType sendLogicalAddress = new AttributedURIType();
-        sendLogicalAddress.setValue(sendLogicalAddressText);
+
+        AttributedURIType logicalAddress = getLogicalAddress(RECIPIENT_ID_FK);
+
         SendMedicalCertificateQuestionType parameters = new SendMedicalCertificateQuestionType();
         parameters.setQuestion(question);
 
         SendMedicalCertificateQuestionResponseType sendResponse = sendMedicalCertificateQuestionResponderInterface
-                .sendMedicalCertificateQuestion(sendLogicalAddress, parameters);
+                .sendMedicalCertificateQuestion(logicalAddress, parameters);
+
         if (sendResponse.getResult().getResultCode() != OK) {
             String message = "Failed to send question to Försäkringskassan for revoking certificate '" + intygId
                     + "'. Info from forsakringskassan: " + sendResponse.getResult().getInfoText();
             LOGGER.error(LogMarkers.MONITORING, message);
-            throw new SubsystemCallException("FK", message);
+            throw new SubsystemCallException(RECIPIENT_ID_FK, message);
         }
     }
 
-    private void useDefaultRevokationStrategy(Certificate certificate, String target, RevokeType revokeData) {
+    private void useDefaultRevocationStrategy(Certificate certificate, RevokeType revokeData, String recipientId) {
         RevokeMedicalCertificateRequestType request = new RevokeMedicalCertificateRequestType();
         request.setRevoke(revokeData);
 
-        AttributedURIType sendLogicalAddress = new AttributedURIType();
-        sendLogicalAddress.setValue(target);
+        AttributedURIType logicalAddress = getLogicalAddress(recipientId);
 
-        RevokeMedicalCertificateResponseType sendResponse = revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(sendLogicalAddress,
-                request);
+        RevokeMedicalCertificateResponseType sendResponse = revokeMedicalCertificateResponderInterface.
+                revokeMedicalCertificate(logicalAddress, request);
+
         if (sendResponse.getResult().getResultCode() != OK) {
-            String message = "Failed to send question to '" + target + "' for revoking certificate '" + certificate.getId()
+            String message = "Failed to send question to '" + recipientId + "' when revoking certificate '" + certificate.getId()
                     + "'. Info from recipient: " + sendResponse.getResult().getInfoText();
             LOGGER.error(LogMarkers.MONITORING, message);
-            throw new SubsystemCallException(target, message);
+            throw new SubsystemCallException(recipientId, message);
         }
     }
 
+    private AttributedURIType getLogicalAddress(String recipientId) {
+
+        try {
+            Recipient recipient = recipientService.getRecipient(recipientId);
+
+            AttributedURIType logicalAddress = new AttributedURIType();
+            logicalAddress.setValue(recipient.getLogicalAddress());
+
+            return logicalAddress;
+
+        } catch (RecipientUnknownException rue) {
+            LOGGER.error(LogMarkers.MONITORING, rue.getMessage());
+            throw new RuntimeException(rue);
+        }
+    }
 }

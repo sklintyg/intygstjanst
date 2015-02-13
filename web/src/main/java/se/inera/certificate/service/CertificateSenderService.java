@@ -18,6 +18,9 @@
  */
 package se.inera.certificate.service;
 
+import se.inera.certificate.exception.RecipientUnknownException;
+import se.inera.certificate.integration.module.exception.CertificateRevokedException;
+import se.inera.certificate.integration.module.exception.InvalidCertificateException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 
@@ -25,27 +28,28 @@ import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateres
  * @author rogerlindsjo
  */
 public interface CertificateSenderService {
+
     /**
-     * Sends the given certificate to the destined target.
+     * Sends given certificate to the destined target.
      *
      * @param certificate
      *            the certificate
-     * @param target
-     *            the target identifier
+     * @param recipientId
+     *            The identifier of the recipient.
      * @throws javax.xml.ws.WebServiceException
      *             if the web service call does not succeed
      */
-    void sendCertificate(Certificate certificate, String target);
+    void sendCertificate(Certificate certificate, String recipientId);
 
     /**
-     * Sends a message to a recipient of an intyg that is now has been revoked.
+     * Sends a message to a recipient that a certificate has been revoked.
      *
      * @param certificate
      *            The now revoked certificate
-     * @param target
+     * @param recipientId
      *            The id of the recipient.
      * @param revokeData
      *            Data of who requested the revoke, when etc.
      */
-    void sendRevokeCertificateMessage(Certificate certificate, String target, RevokeType revokeData);
+    void sendCertificateRevocation(Certificate certificate, String recipientId, RevokeType revokeData);
 }

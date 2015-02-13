@@ -1,12 +1,9 @@
 package se.inera.certificate.integration;
 
-import java.util.List;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenResponderInterface;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenType;
@@ -18,6 +15,8 @@ import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateService;
+
+import java.util.List;
 
 @SchemaValidation
 public class ListCertificatesForCitizenResponderImpl implements ListCertificatesForCitizenResponderInterface {
@@ -36,11 +35,11 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
 
         try {
             List<Certificate> certificates = certificateService.listCertificatesForCitizen(
-                    parameters.getNationalIdentityNumber(), parameters.getCertificateType(), parameters.getFromDate(), parameters.getToDate());
+                    parameters.getPersonId(), parameters.getUtlatandeTyp(), parameters.getFranDatum(), parameters.getTillDatum());
             for (Certificate certificate : certificates) {
                 // Note that we return certificates that are deleted by the care giver (isDeletedByCareGiver) but not
                 // revoked or archived certificates.
-                if (parameters.getCertificateType().isEmpty() || !(certificate.getDeleted() || certificate.isRevoked())) {
+                if (parameters.getUtlatandeTyp().isEmpty() || !(certificate.getDeleted() || certificate.isRevoked())) {
                     response.getMeta().add(metaDataResolver.toClinicalProcessCertificateMetaType(certificate));
                 }
             }

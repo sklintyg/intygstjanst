@@ -20,8 +20,6 @@ package se.inera.certificate.service;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-
-import se.inera.certificate.exception.PersistenceException;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
@@ -41,7 +39,7 @@ import java.util.List;
 public interface CertificateService {
 
     public enum SendStatus {
-        OK, ALREADY_SENT
+        ALREADY_SENT, OK
     }
 
     /**
@@ -106,13 +104,30 @@ public interface CertificateService {
     Certificate getCertificateForCare(String certificateId) throws InvalidCertificateException;
 
     /**
+     * Sends a certificate to a destined recipient.
+     *
+     * @param civicRegistrationNumber
+     *            The identifier of a patient.
+     * @param certificateId
+     *            The identifier of the certificate.
+     * @param recipientId
+     *            The identifier of the recipient.
+     *
+     * @returns SendStatus further subclassifying the outcome of a successful send
+     *
+     * @throws se.inera.certificate.integration.module.exception.InvalidCertificateException
+     *             if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
+     * @throws se.inera.certificate.integration.module.exception.CertificateRevokedException
+     *             if the certificate has been revoked
+     * @throws se.inera.certificate.exception.RecipientUnknownException
+     */
+    SendStatus sendCertificate(String civicRegistrationNumber, String certificateId, String recipientId)
+            throws InvalidCertificateException, CertificateRevokedException, RecipientUnknownException;
+
+
+    /**
      * Stores the given certificate.
      * @param certificateHolder the incoming certificate information
-     *
-     * @param xml
-     *            the string representation of the incoming XML
-     * @param type
-     *            the certificate type
      * @return the created certificate
      * @throws CertificateAlreadyExistsException
      *             when a certificate with the same identifier already exists
@@ -126,19 +141,6 @@ public interface CertificateService {
 
     void setCertificateState(String civicRegistrationNumber, String certificateId, String target, CertificateState state, LocalDateTime timestamp)
             throws InvalidCertificateException;
-
-    /**
-     * Sends the certificate to the destined target.
-     *
-     * @returns SendStatus further subclassifying the outcome of a successful send
-     * @throws InvalidCertificateException
-     *             if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
-     * @throws CertificateRevokedException
-     *             if the certificate has been revoked
-     * @throws RecipientUnknownException 
-     */
-    SendStatus sendCertificate(String civicRegistrationNumber, String certificateId, String target) throws InvalidCertificateException,
-            CertificateRevokedException, RecipientUnknownException;
 
     /**
      * Revokes the certificate.
@@ -160,11 +162,10 @@ public interface CertificateService {
             CertificateRevokedException;
 
     /**
-     * 
      * @param certificateId
      * @param nationalIdentityNumber
-     * @param timestamp
-     * @throws InvalidCertificateException 
+     * @param archivedState
+     * @throws InvalidCertificateException
      */
     void setArchived(String certificateId, String nationalIdentityNumber, String archivedState) throws InvalidCertificateException;
 }

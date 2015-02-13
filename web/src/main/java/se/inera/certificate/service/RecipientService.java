@@ -1,12 +1,12 @@
 package se.inera.certificate.service;
 
-import java.util.List;
-import java.util.Set;
-
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.service.recipientservice.CertificateType;
 import se.inera.certificate.service.recipientservice.Recipient;
+
+import java.util.List;
+import java.util.Set;
 
 public interface RecipientService {
 
@@ -42,7 +42,7 @@ public interface RecipientService {
      *
      * @return a List of {@link Recipient}
      */
-    List<Recipient> listRecipients(CertificateType certificateType);
+    List<Recipient> listRecipients(CertificateType certificateType) throws RecipientUnknownException;
 
     /**
      * List the {@link CertificateType}[s] the specified {@link Recipient} accepts.

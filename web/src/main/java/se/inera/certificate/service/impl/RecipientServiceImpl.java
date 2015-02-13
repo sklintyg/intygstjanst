@@ -1,15 +1,6 @@
 package se.inera.certificate.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import org.springframework.beans.factory.InitializingBean;
-
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.service.RecipientService;
@@ -18,12 +9,17 @@ import se.inera.certificate.service.recipientservice.Recipient;
 import se.inera.certificate.service.recipientservice.RecipientBuilder;
 import se.inera.certificate.service.recipientservice.RecipientCertificateType;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 public class RecipientServiceImpl implements RecipientService, InitializingBean {
 
     private List<Recipient> recipientList;
-
     private Map<Recipient, Set<CertificateType>> certificateTypesForRecipient;
-
     private Properties recipients;
 
     /**
@@ -34,10 +30,16 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
 
     public RecipientServiceImpl() {
         recipientList = new ArrayList<>();
-
         certificateTypesForRecipient = new HashMap<>();
-
         supportedTransportModelVersion = new HashMap<>();
+    }
+
+    public Properties getRecipients() {
+        return recipients;
+    }
+
+    public void setRecipients(Properties recipients) {
+        this.recipients = recipients;
     }
 
     @Override
@@ -66,14 +68,20 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
     }
 
     @Override
-    public List<Recipient> listRecipients(CertificateType certificateType) {
-        List<Recipient> recipients = new ArrayList<>();
-        for (Recipient r : certificateTypesForRecipient.keySet()) {
-            if (certificateTypesForRecipient.get(r).contains(certificateType)) {
-                recipients.add(r);
+    public List<Recipient> listRecipients(CertificateType certificateType) throws RecipientUnknownException {
+        List<Recipient> list = new ArrayList<Recipient>();
+
+        try {
+            for (Recipient r : recipientList) {
+                if (r.getCertificateTypes().contains(certificateType.getId())) {
+                    list.add(r);
+                }
             }
+        } catch (Exception e) {
+            throw new RecipientUnknownException(String.format("No recipient found for certificate type: %s", certificateType.getId()));
         }
-        return recipients;
+
+        return list;
     }
 
     @Override
@@ -85,14 +93,6 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
     public TransportModelVersion getVersion(String logicalAddress, String certificateType) throws RecipientUnknownException {
         String recipientId = getRecipientForLogicalAddress(logicalAddress).getId();
         return supportedTransportModelVersion.get((new RecipientCertificateType(recipientId, certificateType)));
-    }
-
-    public Properties getRecipients() {
-        return recipients;
-    }
-
-    public void setRecipients(Properties recipients) {
-        this.recipients = recipients;
     }
 
     @Override
@@ -112,6 +112,8 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
                     recipientMap.get(id).setName(value);
                 } else if (keyParts[2].equals("logicalAddress")) {
                     recipientMap.get(id).setLogicalAddress(value);
+                } else if (keyParts[2].equals("certificateType")) {
+                    recipientMap.get(id).setCertificateTypes(value);
                 }
                 break;
             case "recipient-transport-model-version":
@@ -126,16 +128,6 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
 
         for (RecipientBuilder builder : recipientMap.values()) {
             recipientList.add(builder.build());
-        }
-
-        for (RecipientCertificateType recipientCertificateType : supportedTransportModelVersion.keySet()) {
-            Recipient r = getRecipient(recipientCertificateType.getRecipientId());
-            Set<CertificateType> certificateTypes = certificateTypesForRecipient.get(r);
-            if (certificateTypes == null) {
-                certificateTypes = new HashSet<>();
-                certificateTypesForRecipient.put(r, certificateTypes);
-            }
-            certificateTypes.add(new CertificateType(recipientCertificateType.getCertificateTypeId()));
         }
     }
 }
