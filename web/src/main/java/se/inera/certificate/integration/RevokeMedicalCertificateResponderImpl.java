@@ -4,10 +4,8 @@ package se.inera.certificate.integration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
-
 import se.inera.certificate.exception.SubsystemCallException;
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
@@ -35,10 +33,6 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
 
     @Autowired
     private StatisticsService statisticsService;
-
-    @Autowired
-    @Value("${revokecertificate.address.fk7263}")
-    private String sendLogicalAddressText;
 
     @Override
     @Transactional

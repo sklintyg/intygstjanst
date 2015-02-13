@@ -27,9 +27,6 @@ import static org.mockito.Mockito.when;
 import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.INFO;
 import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType.OK;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,14 +34,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
 import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenResponderInterface;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenType;
-import se.inera.certificate.exception.ClientException;
 import se.inera.certificate.integration.module.exception.MissingConsentException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author andreaskaltenbach

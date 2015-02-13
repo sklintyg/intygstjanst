@@ -1,5 +1,9 @@
 package se.inera.certificate.service.recipientservice;
 
+import liquibase.util.StringUtils;
+
+import java.util.List;
+
 /**
  * Recipient object.
  *
@@ -9,13 +13,12 @@ package se.inera.certificate.service.recipientservice;
 public class RecipientBuilder {
 
     private String logicalAddress;
-
     private String name;
-
     private String id;
+    private String certificateTypes;
 
     public Recipient build() {
-        return new Recipient(logicalAddress, name, id);
+        return new Recipient(logicalAddress, name, id, certificateTypes);
     }
 
     public String getLogicalAddress() {
@@ -44,4 +47,17 @@ public class RecipientBuilder {
         this.id = id;
         return this;
     }
+
+    public String getCertificateTypes() {
+        return certificateTypes;
+    }
+
+    public void setCertificateTypes(String certificateTypes) {
+        this.certificateTypes = certificateTypes;
+    }
+
+    public void setCertificateTypes(List<String> certificateTypes) {
+        this.certificateTypes = StringUtils.join(certificateTypes, Recipient.SEPARATOR);
+    }
+
 }

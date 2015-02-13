@@ -3,8 +3,8 @@ package se.inera.certificate.service.recipientservice;
 import static org.springframework.util.Assert.hasText;
 
 public class RecipientCertificateType {
-    private final String recipientId;
 
+    private final String recipientId;
     private final String certificateTypeId;
 
     public RecipientCertificateType(String recipientId, String certificateTypeId) {

@@ -38,6 +38,11 @@ public class CertificateServiceImplTest {
     private static final String PERSONNUMMER = "<civicRegistrationNumber>";
     private static final String CERTIFICATE_ID = "<certificate-id>";
 
+    private static final String RECIPIENT_ID = "FK";
+    private static final String RECIPIENT_NAME = "Försäkringskassan";
+    private static final String RECIPIENT_LOGICALADDRESS = "FKORG";
+    private static final String RECIPIENT_CERTIFICATETYPES = "fk7263";
+
     @Mock
     private CertificateDao certificateDao;
 
@@ -60,6 +65,14 @@ public class CertificateServiceImplTest {
         Certificate certificate = new Certificate(CERTIFICATE_ID, "document");
         certificate.setCivicRegistrationNumber(PERSONNUMMER);
         return certificate;
+    }
+
+    private Recipient createRecipient() {
+        return new Recipient(RECIPIENT_LOGICALADDRESS,
+                             RECIPIENT_NAME,
+                             RECIPIENT_ID,
+                             RECIPIENT_CERTIFICATETYPES);
+
     }
 
     @Test
@@ -99,29 +112,25 @@ public class CertificateServiceImplTest {
         Certificate certificate = new CertificateBuilder(CERTIFICATE_ID).civicRegistrationNumber(PERSONNUMMER).build();
 
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
-        when(recipientService.getRecipientForLogicalAddress(Mockito.any(String.class))).thenReturn(new Recipient("FKORG","Försäkringskassan", "fk"));
+        when(recipientService.getRecipientForLogicalAddress(Mockito.any(String.class))).thenReturn(createRecipient());
 
-        certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fk");
+        certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
 
         verify(certificateDao).getCertificate(PERSONNUMMER, CERTIFICATE_ID);
-        verify(certificateDao).updateStatus(CERTIFICATE_ID, PERSONNUMMER, CertificateState.SENT, "fk", null);
-        verify(certificateSender).sendCertificate(certificate, "fk");
+        verify(certificateDao).updateStatus(CERTIFICATE_ID, PERSONNUMMER, CertificateState.SENT, RECIPIENT_ID, null);
+        verify(certificateSender).sendCertificate(certificate, RECIPIENT_ID);
     }
 
     @Test(expected = InvalidCertificateException.class)
     public void testSendCertificateWitUnknownCertificate() throws Exception {
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(null);
-
         certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fk");
     }
 
     @Test(expected = CertificateRevokedException.class)
     public void testSendRevokedCertificate() throws Exception {
-        Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID).state(CertificateState.CANCELLED, null)
-                .build();
-
+        Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID).state(CertificateState.CANCELLED, null).build();
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(revokedCertificate);
-
         certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fk");
     }
 
@@ -139,8 +148,7 @@ public class CertificateServiceImplTest {
 
     @Test(expected = InvalidCertificateException.class)
     public void testGetCertificateRevoked() throws Exception {
-        Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID).state(CertificateState.CANCELLED, null)
-                .build();
+        Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID).state(CertificateState.CANCELLED, null).build();
         when(certificateDao.getCertificate(PERSONNUMMER,CERTIFICATE_ID)).thenReturn(revokedCertificate);
         certificateService.getCertificateForCare(CERTIFICATE_ID);
     }
@@ -149,7 +157,6 @@ public class CertificateServiceImplTest {
     public void testGetCertificateWithoutConsentCheckForEmptyPersonnummer() throws Exception {
         Certificate certificate = createCertificate();
         when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(certificate);
-
         certificateService.getCertificateForCitizen(null, CERTIFICATE_ID);
     }
 }
