@@ -51,12 +51,13 @@
     "sjukdomsforlopp" : "Patienten klämde höger överarm vid olycka i hemmet. Problemen har pågått en längre tid.",
 
     "diagnosKod" : "S47",
-    "diagnosBeskrivning1": "Klartext1",
+    "diagnosBeskrivning1": "Klämskada på skuldra och överarm",
     "diagnosKod2" : "Z233",
     "diagnosBeskrivning2" : "Vaccination avseende pest",
-    "diagnosKod3" : "Z233",
-    "diagnosBeskrivning3" : "Vaccination avseende pest",
-    "diagnosBeskrivning": "Klartext1. Z233 Vaccination avseende pest. Z233 Vaccination avseende pest",
+    "diagnosKod3" : "Z600",
+    "diagnosBeskrivning3" : "Problem med anpassning till övergångar i livscykeln",
+    "diagnosBeskrivning": "Här förtydligar vi våra diagnoser ytterligare och skriver litegrann för att göra saker tydligare för andra som ska läsa på tex Försäkringskassan.",
+    "samsjuklighet" : true,
 
     "nuvarandeArbete":true,
     "nuvarandeArbetsuppgifter":"Dirigent. Dirigerar en större orkester på deltid",
