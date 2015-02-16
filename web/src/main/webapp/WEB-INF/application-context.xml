@@ -32,7 +32,7 @@
     <context:property-placeholder
       location="file:${credentials.file}, file:${certificate.config.file}"
       order="1" ignore-resource-not-found="true" ignore-unresolvable="true" />
-    <util:properties location="classpath:recipient.properties" id="recipientService" />
+    <util:properties location="file:${recipient.config.file}" id="recipientService" />
   </beans>
 
   <beans>
