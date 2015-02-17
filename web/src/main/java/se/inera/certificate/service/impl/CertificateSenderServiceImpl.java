@@ -80,8 +80,6 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     @Override
     public void sendCertificate(Certificate certificate, String recipientId) {
-        System.err.println("recipientId = " + recipientId);
-
         try {
             ModuleEntryPoint module = moduleRegistry.getModuleEntryPoint(certificate.getType());
 
