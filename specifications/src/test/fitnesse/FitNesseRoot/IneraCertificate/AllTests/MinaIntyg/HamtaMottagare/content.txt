@@ -1,0 +1,6 @@
+!|HamtaMottagare|
+|intygsTyp|mottagare?|resultat?|
+|fk7263|[FK-Försäkringskassan]|OK|
+|ts-bas|[TS-Transportstyrelsen]|OK|
+|ts-diabetes|[TS-Transportstyrelsen]|OK|
+|unknown||[APPLICATION_ERROR] - No recipients found for certificate type: unknown|
