@@ -4,6 +4,11 @@
 - hosts: tomcat
   sudo: yes 
   vars: 
+    # repo - values: snapshot or release
+    repo: release
+
+    # latest release: 2.1.0-b32
+    # latest snapshot: 2.1.0-a672
     version: 2.1.0-b32
     config_version: master
 

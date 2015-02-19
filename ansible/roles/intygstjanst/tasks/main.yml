@@ -8,14 +8,14 @@
   file: path={{ releases_folder }} state=directory
   
 - name: download intygstjanst-liquibase-runner-{{ version }}.jar
-  get_url: url=http://repository-callistasoftware.forge.cloudbees.com/release/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/{{ version }}/intygstjanst-liquibase-runner-{{ version }}.jar
+  get_url: url=http://repository-callistasoftware.forge.cloudbees.com/{{ repo }}/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/{{ version }}/intygstjanst-liquibase-runner-{{ version }}.jar
       dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.jar
 
 - name: run liquibase update
   command: java -jar {{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.jar --changeLogFile="changelog/changelog.xml" --username="{{ database_username }}" --password="{{ database_password }}" --url="{{ database_url }}" --driver="{{ database_driver }}" --contexts=none update
 
 - name: Download intygstjanst-web-{{ version }}.war
-  get_url: url=http://repository-callistasoftware.forge.cloudbees.com/release/se/inera/intyg/intygstjanst/intygstjanst-web/{{ version }}/intygstjanst-web-{{ version }}.war
+  get_url: url=http://repository-callistasoftware.forge.cloudbees.com/{{ repo }}/se/inera/intyg/intygstjanst/intygstjanst-web/{{ version }}/intygstjanst-web-{{ version }}.war
            dest={{ releases_folder }}/intygstjanst-web-{{ version }}.war
 
 - name: remove old version of unpacked war
