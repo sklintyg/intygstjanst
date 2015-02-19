@@ -227,19 +227,19 @@
             </systemProperty>
             <systemProperty>
               <name>credentials.file</name>
-              <value>${project.basedir}/certificate-dummy-credentials.properties</value>
+              <value>${project.basedir}/certificate-credentials.properties</value>
             </systemProperty>
             <systemProperty>
               <name>certificate.config.file</name>
               <value>${project.basedir}/certificate-dev.properties</value>
             </systemProperty>
             <systemProperty>
-              <name>recipient.config.file</name>
-              <value>${project.basedir}/recipient-dev.properties</value>
+              <name>certificate.logback.file</name>
+              <value>${project.basedir}/certificate-logback.xml</value>
             </systemProperty>
             <systemProperty>
-              <name>certificate.logback.file</name>
-              <value>${project.basedir}/certificate-logback-dev.xml</value>
+              <name>recipient.config.file</name>
+              <value>${project.basedir}/recipient-dev.properties</value>
             </systemProperty>
           </systemProperties>
         </configuration>
