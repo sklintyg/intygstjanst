@@ -58,12 +58,15 @@ import java.util.List;
 @Service
 public class CertificateServiceImpl implements CertificateService, ModuleContainerApi {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CertificateServiceImpl.class);
-
     public static final String MI = "MI";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CertificateServiceImpl.class);
 
     @Autowired
     private CertificateDao certificateDao;
+
+    @Autowired
+    private CertificateSenderService senderService;
 
     @Autowired
     private ConsentService consentService;
@@ -71,15 +74,13 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Autowired
     private StatisticsService statisticsService;
 
-    @Autowired
-    private CertificateSenderService senderService;
-
-    @Autowired
-    private RecipientServiceImpl recipientService;
 
     @Autowired
     @Value("${store.original.certificate}")
     private Boolean shouldStoreOriginalCertificate = true;
+
+
+    // - - - - - Public methods - - - - - //
 
     @Override
     public List<Certificate> listCertificatesForCitizen(String civicRegistrationNumber, List<String> certificateTypes,
@@ -94,7 +95,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     @Override
-    public Certificate getCertificateForCitizen(String civicRegistrationNumber, String id) throws InvalidCertificateException,
+    public Certificate getCertificateForCitizen(String civicRegistrationNumber, String certificateId) throws InvalidCertificateException,
             CertificateRevokedException,
             MissingConsentException {
 
@@ -102,34 +103,34 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
         Certificate certificate = null;
         try {
-            certificate = getCertificateInternal(civicRegistrationNumber, id);
+            certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
         } catch (PersistenceException e) {
-            throw new InvalidCertificateException(id, civicRegistrationNumber);
+            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
         }
 
         if (certificate == null) {
-            throw new InvalidCertificateException(id, civicRegistrationNumber);
+            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
         }
 
         if (certificate.isRevoked()) {
-            throw new CertificateRevokedException(id);
+            throw new CertificateRevokedException(certificateId);
         }
 
         return certificate;
     }
 
     @Override
-    public Certificate getCertificateForCare(String id) throws InvalidCertificateException {
+    public Certificate getCertificateForCare(String certificateId) throws InvalidCertificateException {
 
         Certificate certificate = null;
         try {
-            certificate = getCertificateInternal(null, id);
+            certificate = getCertificateInternal(null, certificateId);
         } catch (PersistenceException e) {
-            throw new InvalidCertificateException(null, id);
+            throw new InvalidCertificateException(null, certificateId);
         }
 
         if (certificate == null) {
-            throw new InvalidCertificateException(id, null);
+            throw new InvalidCertificateException(certificateId, null);
         }
 
         return certificate;
@@ -156,7 +157,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         }
 
         SendStatus sendStatus = SendStatus.OK;
-        if (certificate.wasSentToTarget(recipientId)) {
+        if (certificate.isAlreadySent(recipientId)) {
             sendStatus = SendStatus.ALREADY_SENT;
         }
 
@@ -193,13 +194,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         storeOriginalCertificate(certificateHolder.getOriginalCertificate(), certificate);
 
         return certificate;
-    }
-
-    private void checkForExistingCertificate(String certificateId, String personnummer) throws CertificateAlreadyExistsException,
-            PersistenceException {
-        if (certificateDao.getCertificate(personnummer, certificateId) != null) {
-            throw new CertificateAlreadyExistsException(certificateId);
-        }
     }
 
     @Override
@@ -252,16 +246,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
         }
     }
-    private void assertConsent(String civicRegistrationNumber) throws MissingConsentException {
-
-        if (StringUtils.isEmpty(civicRegistrationNumber)) {
-            throw new IllegalArgumentException("Invalid/missing civicRegistrationNumber");
-        }
-
-        if (!consentService.isConsent(civicRegistrationNumber)) {
-            throw new MissingConsentException(civicRegistrationNumber);
-        }
-    }
 
     @Override
     @Transactional
@@ -298,9 +282,28 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         return ConverterUtil.toCertificateHolder(certificate);
     }
 
-    private Certificate getCertificateInternal(String civicRegistrationNumber, String id) throws PersistenceException {
-//        return fixDeletedStatus(certificateDao.getCertificate(civicRegistrationNumber, id));
-        return certificateDao.getCertificate(civicRegistrationNumber, id);
+    // - - - - - Private methods - - - - - //
+
+    private void assertConsent(String civicRegistrationNumber) throws MissingConsentException {
+
+        if (StringUtils.isEmpty(civicRegistrationNumber)) {
+            throw new IllegalArgumentException("Invalid/missing civicRegistrationNumber");
+        }
+
+        if (!consentService.isConsent(civicRegistrationNumber)) {
+            throw new MissingConsentException(civicRegistrationNumber);
+        }
+    }
+
+    private void checkForExistingCertificate(String certificateId, String personnummer) throws CertificateAlreadyExistsException,
+            PersistenceException {
+        if (certificateDao.getCertificate(personnummer, certificateId) != null) {
+            throw new CertificateAlreadyExistsException(certificateId);
+        }
+    }
+
+    private Certificate getCertificateInternal(String civicRegistrationNumber, String certificateId) throws PersistenceException {
+        return certificateDao.getCertificate(civicRegistrationNumber, certificateId);
     }
 
     private void sendRevokeMessagesToRecipients(Certificate certificate, RevokeType revokeData) {
