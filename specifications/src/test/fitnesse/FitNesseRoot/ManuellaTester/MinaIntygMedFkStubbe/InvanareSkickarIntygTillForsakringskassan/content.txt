@@ -1,0 +1,46 @@
+!3 Givet att samtycke finns och intyget finns registrerat
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|ja|
+
+|Registrera fk7263 intyg|
+|personnummer|id|utfärdat|resultat?|
+|19121212-1212|fit-intyg-1|2013-08-01|OK|
+
+!3 Så ska intyget vara tillgänglig i intygstjänsten
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|status?|
+|19121212-1212|fit-intyg-1|OK|[RECEIVED]|
+
+!3 Efter att skicka intyget till Försäkringskassan ska intyget finnas hos FK och får status SENT i intygstjänsten
+
+|Invanare Skickar Intyg Till Fk|
+|personnummer|intyg|mottagare|resultat?|
+|19121212-1212|fit-intyg-1|FK|OK|
+
+|Verifiera Intyg Hos Fk|
+|id|status?|
+|fit-intyg-1|skickat|
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|status?|
+|19121212-1212|fit-intyg-1|OK|[RECEIVED, SENT]|
+
+!3 Skicka intyget på nytt skall ge INFO-meddelande
+
+|Invanare Skickar Intyg Till Fk|
+|personnummer|intyg|mottagare|resultat?|
+|19121212-1212|fit-intyg-1|FK|[INFO] - Certificate 'fit-intyg-1' already sent to 'FK'.|
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|status?|
+|19121212-1212|fit-intyg-1|OK|[RECEIVED, SENT, SENT]|
+
+!3 Rensa bort test-intyg
+
+|ta bort Intyg|
+|id|
+|fit-intyg-1|
+

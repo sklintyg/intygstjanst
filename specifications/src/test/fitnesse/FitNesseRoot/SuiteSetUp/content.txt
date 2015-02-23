@@ -18,6 +18,7 @@
 |service.clinicalProcess.getCertificateUrl|${services.clinicalProcess.getCertificateUrl}|
 |service.clinicalProcess.listCertificatesUrl|${services.clinicalProcess.listCertificatesUrl}|
 |service.clinicalProcess.listCertificatesForCitizenUrl|${services.clinicalProcess.listCertificatesForCitizenUrl}|
+|service.clinicalProcess.sendCertificateForCitizenUrl|${services.clinicalProcess.sendCertificateForCitizenUrl}|
 |service.sendCertificateUrl|${services.sendCertificateUrl}|
 |service.sendMedicalCertificateQuestionUrl|${services.sendMedicalCertificateQuestionUrl}|
 |service.sendMedicalCertificateAnswerUrl|${services.sendMedicalCertificateAnswerUrl}|
