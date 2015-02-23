@@ -23,7 +23,15 @@
   <context:annotation-config />
   <context:component-scan base-package="se.inera.certificate.model" />
 
-  <jdbc:embedded-database id="dataSource" type="H2" />
+  <bean id="dataSource" class="org.h2.jdbcx.JdbcConnectionPool" destroy-method="dispose">
+    <constructor-arg>
+      <bean class="org.h2.jdbcx.JdbcDataSource">
+        <property name="URL" value="jdbc:h2:mem:dataSource;MVCC=TRUE" />
+        <property name="user" value="sa" />
+        <property name="password" value="" />
+      </bean>
+    </constructor-arg>
+  </bean> 
 
   <bean id="org.h2.tools.Server" class="org.h2.tools.Server"
     factory-method="createTcpServer" init-method="start" destroy-method="stop"
