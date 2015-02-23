@@ -18,6 +18,15 @@
  */
 package se.inera.certificate.model.dao;
 
+import static se.inera.certificate.model.util.Iterables.find;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDateTime;
+import se.inera.certificate.model.CertificateState;
+import se.inera.certificate.model.ModelException;
+import se.inera.certificate.model.util.Predicate;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -31,23 +40,11 @@ import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import static se.inera.certificate.model.util.Iterables.find;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
-
-import se.inera.certificate.model.CertificateState;
-import se.inera.certificate.model.ModelException;
-import se.inera.certificate.model.util.Predicate;
 
 /**
  * This class represents the document part of a certificate. The document is stored as a binary large object in the
@@ -338,11 +335,11 @@ public class Certificate {
         }, null) != null;
     }
 
-    public boolean wasSentToTarget(final String target) {
+    public boolean isAlreadySent(final String recipientId) {
         return find(getStates(), new Predicate<CertificateStateHistoryEntry>() {
             @Override
             public boolean apply(CertificateStateHistoryEntry state) {
-                return state.getState() == CertificateState.SENT && state.getTarget().equals(target);
+                return state.getState() == CertificateState.SENT && state.getTarget().equals(recipientId);
             }
         }, null) != null;
     }

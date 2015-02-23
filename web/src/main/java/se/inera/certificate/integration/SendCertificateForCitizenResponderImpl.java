@@ -3,7 +3,6 @@ package se.inera.certificate.integration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificateforcitizen.v1.SendCertificateForCitizenResponderInterface;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificateforcitizen.v1.SendCertificateForCitizenResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificateforcitizen.v1.SendCertificateForCitizenType;
@@ -33,8 +32,17 @@ public class SendCertificateForCitizenResponderImpl implements SendCertificateFo
             // 1. Skicka certifikat till mottagaren
             CertificateService.SendStatus sendStatus = certificateService.sendCertificate(request.getPersonId(), request.getUtlatandeId(), request.getMottagareId());
 
-            // 2. Returnera ett resultat
-            response.setResult(ResultTypeUtil.okResult());
+            String msg = "";
+            if (sendStatus == CertificateService.SendStatus.ALREADY_SENT) {
+                msg = String.format("Certificate '%s' already sent to '%s'.", request.getUtlatandeId(), request.getMottagareId());
+                response.setResult(ResultTypeUtil.infoResult(msg));
+                LOGGER.info(LogMarkers.MONITORING, msg);
+            } else {
+                msg = String.format("Certificate '%s' sent to '%s'.", request.getUtlatandeId(), request.getMottagareId());
+                response.setResult(ResultTypeUtil.okResult());
+                LOGGER.info(LogMarkers.MONITORING, msg);
+            }
+
 
         } catch (InvalidCertificateException ex) {
             // return ERROR if no such certificate does exist
