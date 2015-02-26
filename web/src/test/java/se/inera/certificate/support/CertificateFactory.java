@@ -1,10 +1,10 @@
 package se.inera.certificate.support;
 
-import org.joda.time.LocalDateTime;
+import static se.inera.certificate.common.enumerations.CertificateTypes.FK7263;
 
+import org.joda.time.LocalDateTime;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.modules.fk7263.model.Constants;
 
 /**
  * @author andreaskaltenbach
@@ -40,7 +40,7 @@ public final class CertificateFactory {
     }
 
     public static Certificate buildCertificate(String certificateId, String validFrom, String validTo) {
-        return buildCertificate(certificateId, Constants.FK7263, validFrom, validTo);
+        return buildCertificate(certificateId, FK7263.toString(), validFrom, validTo);
     }
 
     public static Certificate buildCertificate(String certificateId, String certificateType, String validFrom, String validTo) {

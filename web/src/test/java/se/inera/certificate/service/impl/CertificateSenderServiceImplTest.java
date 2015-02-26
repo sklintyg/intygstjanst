@@ -1,6 +1,9 @@
 package se.inera.certificate.service.impl;
 
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -10,7 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import se.inera.certificate.exception.RecipientUnknownException;
@@ -125,13 +127,13 @@ public class CertificateSenderServiceImplTest {
     @Test
     public void testSend() throws Exception {
         senderService.sendCertificate(certificate, RECIPIENT_ID);
-        verify(moduleApi).sendCertificateToRecipient(Mockito.any(InternalModelHolder.class), Mockito.eq(RECIPIENT_LOGICALADDRESS));
+        verify(moduleApi).sendCertificateToRecipient(any(InternalModelHolder.class), eq(RECIPIENT_LOGICALADDRESS), eq(RECIPIENT_ID));
     }
 
     @Test(expected = ServerException.class)
     public void testSendWithFailingModule() throws Exception {
         // web service call fails
-        Mockito.doThrow(new ModuleException("")).when(moduleApi).sendCertificateToRecipient(Mockito.any(InternalModelHolder.class), Mockito.eq(RECIPIENT_LOGICALADDRESS));
+        doThrow(new ModuleException("")).when(moduleApi).sendCertificateToRecipient(any(InternalModelHolder.class), eq(RECIPIENT_LOGICALADDRESS), eq(RECIPIENT_ID));
         senderService.sendCertificate(certificate, RECIPIENT_ID);
     }
 
