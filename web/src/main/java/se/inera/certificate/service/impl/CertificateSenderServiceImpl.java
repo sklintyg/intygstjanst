@@ -18,6 +18,7 @@
  */
 package se.inera.certificate.service.impl;
 
+import static se.inera.certificate.common.enumerations.Recipients.FK;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
 import org.joda.time.LocalDateTime;
@@ -38,7 +39,6 @@ import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.dto.InternalModelHolder;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateSenderService;
-import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.RecipientService;
 import se.inera.certificate.service.recipientservice.Recipient;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface;
@@ -59,15 +59,10 @@ import se.inera.webcert.medcertqa.v1.VardAdresseringsType;
 @Service
 public class CertificateSenderServiceImpl implements CertificateSenderService {
 
-    public static final String RECIPIENT_ID_FK = "FK";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateSenderServiceImpl.class);
 
     @Autowired
     private RecipientService recipientService;
-
-    @Autowired
-    private CertificateService certificateService;
 
     @Autowired
     private IntygModuleRegistry moduleRegistry;
@@ -94,7 +89,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
                 logicalAddress = recipient.getLogicalAddress();
             }
 
-            module.getModuleApi().sendCertificateToRecipient(new InternalModelHolder(certificate.getDocument()), logicalAddress);
+            module.getModuleApi().sendCertificateToRecipient(new InternalModelHolder(certificate.getDocument()), logicalAddress, recipientId);
 
         } catch (ModuleNotFoundException e) {
             String message = String.format("The module '%s' was not found - not registered in application",
@@ -117,7 +112,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     @Override
     public void sendCertificateRevocation(Certificate certificate, String recipientId, RevokeType revokeData) {
-        if (recipientId.equals(RECIPIENT_ID_FK)) {
+        if (recipientId.equals(FK.toString())) {
             useFKRevocationStrategy(certificate, revokeData);
         } else {
             useDefaultRevocationStrategy(certificate, revokeData, recipientId);
@@ -146,7 +141,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
         question.getFraga().setSigneringsTidpunkt(signTs);
         question.setLakarutlatande(revokeData.getLakarutlatande());
 
-        AttributedURIType logicalAddress = getLogicalAddress(RECIPIENT_ID_FK);
+        AttributedURIType logicalAddress = getLogicalAddress(FK.toString());
 
         SendMedicalCertificateQuestionType parameters = new SendMedicalCertificateQuestionType();
         parameters.setQuestion(question);
@@ -158,7 +153,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             String message = "Failed to send question to Försäkringskassan for revoking certificate '" + intygId
                     + "'. Info from forsakringskassan: " + sendResponse.getResult().getInfoText();
             LOGGER.error(LogMarkers.MONITORING, message);
-            throw new SubsystemCallException(RECIPIENT_ID_FK, message);
+            throw new SubsystemCallException(FK.toString(), message);
         }
     }
 
