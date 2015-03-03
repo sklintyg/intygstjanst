@@ -1,0 +1,4 @@
+!3 Rensa bort alla intyg
+
+|script|ta bort Intyg|
+|ta bort alla intyg|
