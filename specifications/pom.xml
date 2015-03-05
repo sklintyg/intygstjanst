@@ -34,6 +34,13 @@
       <artifactId>intygstjanst-persistence</artifactId>
     </dependency>
 
+    <!-- Tools -->
+    <dependency>
+      <groupId>se.inera.intyg.tools</groupId>
+      <artifactId>tools-specifications</artifactId>
+      <version>${tools.version}</version>
+    </dependency>
+
     <!-- Schemas -->
     <dependency>
       <groupId>se.inera.intyg.intygstyper</groupId>
