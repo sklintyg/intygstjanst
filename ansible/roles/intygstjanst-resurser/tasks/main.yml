@@ -20,4 +20,4 @@
     dest="{{ tomcat_conf }}/context.xml"
     regexp="    <Resource name='jms/Queue'"
     insertbefore="</Context>"
-    line="    <Resource name='jms/Queue' auth='Container' type='org.apache.activemq.command.ActiveMQQueue' description='Statistics certificate Queue' factory='org.apache.activemq.jndi.JNDIReferenceFactory' physicalName='statistik.utlatande.queue' />"    
+    line="    <Resource name='jms/Queue' auth='Container' type='org.apache.activemq.command.ActiveMQQueue' description='Statistics certificate Queue' factory='org.apache.activemq.jndi.JNDIReferenceFactory' physicalName='{{ environment_name }}.statistik.utlatande.queue' />"    
