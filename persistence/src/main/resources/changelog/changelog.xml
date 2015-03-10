@@ -2,7 +2,7 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd"
         logicalFilePath="classpath:changelog/changelog.xml">
 
   <changeSet id="1" author="me">
@@ -104,20 +104,29 @@
     </addColumn>
   </changeSet>
 
-  <changeSet id="7" author="me">
+  <!-- Use the following changeset in raw SQL when running on MySQL,
+       since Liquibase emits multiple ALTER TABLE statements that
+       are hightly inefficient on MySQL  -->
+  <changeSet id="7-mysql" dbms="mysql" author="bb">
+    <sql>
+      alter table CERTIFICATE
+        add DELETED_BY_CARE_GIVER boolean not null default false,
+        modify VALID_FROM_DATE varchar(10) null,
+        modify VALID_TO_DATE varchar(10) null,
+        add ADDITIONAL_INFO varchar(255) null;
+    </sql>
+  </changeSet>
+
+  <!-- Use the corresponding liquibase changeset otherwise  -->
+  <changeSet id="7-not-mysql" dbms="!mysql" author="bb" >
     <addColumn tableName="CERTIFICATE">
-      <column name="DELETED_BY_CARE_GIVER" type="boolean" valueBoolean="false">
+    <addColumn tableName="CERTIFICATE">
+      <column name="DELETED_BY_CARE_GIVER" type="boolean" defaultValueBoolean="false">
         <constraints nullable="false"/>
       </column>
     </addColumn>
-  </changeSet>
-
-  <changeSet id="8" author="me">
     <dropNotNullConstraint tableName="CERTIFICATE" columnName="VALID_FROM_DATE" columnDataType="varchar(10)" />
     <dropNotNullConstraint tableName="CERTIFICATE" columnName="VALID_TO_DATE" columnDataType="varchar(10)" />
-  </changeSet>
-
-  <changeSet id="9" author="bb">
     <addColumn tableName="CERTIFICATE">
       <column name="ADDITIONAL_INFO" type="varchar(255)">
         <constraints nullable="true"/>
