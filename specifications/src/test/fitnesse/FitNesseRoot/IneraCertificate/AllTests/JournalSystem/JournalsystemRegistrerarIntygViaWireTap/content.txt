@@ -11,12 +11,18 @@
 !3 Efter journalsystemet har registrerat ett nytt intyg via !-WireTap-! så ska det vara tillgängligt, och registrerat som skickat
 
 |Registrera fk7263 intyg via wire tap|
-|personnummer|id|utfärdat|resultat?|
-|19121212-1212|fit-intyg-1|2013-08-01|OK|
+|personnummer|id|utfärdat|enhetsId|vårdGivarId|resultat?|
+|19121212-1212|fit-intyg-1|2013-08-01|enEnhet|enVårdGivare|OK|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
 |19121212-1212|fit-intyg-1|OK|[RECEIVED, SENT]|
+
+!3 Kontrollera att intyget är flaggat som wire-tappat och har korrekt vårdenhet och vårdgivare satt
+
+|Kontrollera intyg|
+|intyg|vårdEnhet?|vårdGivare?|wiretappat?|
+|fit-intyg-1|enEnhet|enVårdGivare|true|
 
 !3 Försök att registrera ett redan registrerat intyg ger INFO: intyget finns redan
 

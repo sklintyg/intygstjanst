@@ -36,6 +36,7 @@ public class RegistreraFk7263Intyg extends WsClientFixture {
 	String enhetsId = "1.2.3"
     String enhet
     String id
+    String vårdGivarId = "4.5.6"
 	String mall = "M"
 	
     RegisterMedicalCertificateResponseType response
@@ -45,6 +46,7 @@ public class RegistreraFk7263Intyg extends WsClientFixture {
 		utfärdare = "EnUtfärdare"
 		enhetsId = "1.2.3"
         enhet = null
+        vårdGivarId = "4.5.6"
         utfärdat = LocalDateTime.now().toString()
 	}
 
@@ -62,6 +64,7 @@ public class RegistreraFk7263Intyg extends WsClientFixture {
 		request.lakarutlatande.skapadAvHosPersonal.fullstandigtNamn = utfärdare
 		request.lakarutlatande.skapadAvHosPersonal.enhet.enhetsId.extension = enhetsId
         request.lakarutlatande.skapadAvHosPersonal.enhet.enhetsnamn = enhet
+        request.lakarutlatande.skapadAvHosPersonal.enhet.vardgivare.vardgivareId.extension = vårdGivarId
         
         response = registerMedicalCertificateResponder.registerMedicalCertificate(logicalAddress, request);
     }
