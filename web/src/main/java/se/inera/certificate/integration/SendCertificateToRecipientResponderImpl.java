@@ -3,9 +3,9 @@ package se.inera.certificate.integration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificateforcitizen.v1.SendCertificateForCitizenResponderInterface;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificateforcitizen.v1.SendCertificateForCitizenResponseType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificateforcitizen.v1.SendCertificateForCitizenType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponderInterface;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponseType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType;
@@ -15,17 +15,17 @@ import se.inera.certificate.integration.module.exception.InvalidCertificateExcep
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.service.CertificateService;
 
-public class SendCertificateForCitizenResponderImpl implements SendCertificateForCitizenResponderInterface {
+public class SendCertificateToRecipientResponderImpl implements SendCertificateToRecipientResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SendCertificateForCitizenResponderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SendCertificateToRecipientResponderImpl.class);
 
     @Autowired
     private CertificateService certificateService;
 
     @Override
-    public SendCertificateForCitizenResponseType sendCertificateForCitizen(String logicalAddress, SendCertificateForCitizenType request) {
+    public SendCertificateToRecipientResponseType sendCertificateToRecipient(String logicalAddress, SendCertificateToRecipientType request) {
 
-        SendCertificateForCitizenResponseType response = new SendCertificateForCitizenResponseType();
+        SendCertificateToRecipientResponseType response = new SendCertificateToRecipientResponseType();
         ResultType resultType = new ResultType();
 
         try {

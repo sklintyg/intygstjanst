@@ -11,9 +11,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificateforcitizen.v1.SendCertificateForCitizenResponderInterface;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificateforcitizen.v1.SendCertificateForCitizenResponseType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificateforcitizen.v1.SendCertificateForCitizenType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponderInterface;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponseType;
+import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientType;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
@@ -21,7 +21,7 @@ import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 
 @RunWith( MockitoJUnitRunner.class )
-public class SendCertificateForCitizenResponderImplTest {
+public class SendCertificateToRecipientResponderImplTest {
 
     private static final String PERSONNUMMER = "19121212-1212";
     private static final String CERTIFICATE_ID = "Intygs-id-1234567890";
@@ -39,7 +39,7 @@ public class SendCertificateForCitizenResponderImplTest {
     private CertificateSenderService certificateSenderService;
 
     @InjectMocks
-    private SendCertificateForCitizenResponderInterface responder = new SendCertificateForCitizenResponderImpl();
+    private SendCertificateToRecipientResponderInterface responder = new SendCertificateToRecipientResponderImpl();
 
     @Test
     public void testSendOk() throws Exception {
@@ -49,16 +49,16 @@ public class SendCertificateForCitizenResponderImplTest {
         when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID)).thenReturn(CertificateService.SendStatus.OK);
 
         // Make the call
-        SendCertificateForCitizenResponseType response = responder.sendCertificateForCitizen(LOGICAL_ADDRESS, createRequest());
+        SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
 
         // Verify behaviour
         assertEquals(OK, response.getResult().getResultCode());
         verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
     }
 
-    private SendCertificateForCitizenType createRequest() {
+    private SendCertificateToRecipientType createRequest() {
 
-        SendCertificateForCitizenType request = new SendCertificateForCitizenType();
+        SendCertificateToRecipientType request = new SendCertificateToRecipientType();
         request.setPersonId(PERSONNUMMER);
         request.setMottagareId(RECIPIENT_ID);
         request.setUtlatandeId(CERTIFICATE_ID);
