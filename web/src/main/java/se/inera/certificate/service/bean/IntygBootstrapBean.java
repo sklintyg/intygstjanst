@@ -1,4 +1,4 @@
-package se.inera.certificate.service.util;
+package se.inera.certificate.service.bean;
 
 import java.io.IOException;
 import java.util.Arrays;

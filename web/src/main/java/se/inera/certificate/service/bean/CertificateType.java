@@ -1,29 +1,28 @@
-package se.inera.certificate.service.recipientservice;
+package se.inera.certificate.service.bean;
 
 import static org.springframework.util.Assert.hasText;
 
 public class CertificateType {
 
-    private final String id;
+    private final String certificateTypeId;
 
-    public CertificateType(String id) {
-        hasText(id, "Id must not be empty");
-
-        this.id = id;
+    public CertificateType(String certificateTypeId) {
+        hasText(certificateTypeId, "certificateTypeId must not be empty");
+        this.certificateTypeId = certificateTypeId;
     }
 
-    public String getId() {
-        return id;
+    public String getCertificateTypeId() {
+        return certificateTypeId;
     }
 
     @Override
     public String toString() {
-        return id;
+        return certificateTypeId;
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return certificateTypeId.hashCode();
     }
 
     @Override
@@ -36,6 +35,6 @@ public class CertificateType {
             return false;
         }
         CertificateType other = (CertificateType) obj;
-        return id.equals(other.id);
+        return certificateTypeId.equals(other.certificateTypeId);
     }
 }

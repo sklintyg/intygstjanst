@@ -25,7 +25,7 @@ import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.modules.support.api.CertificateHolder;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.ConsentService;
-import se.inera.certificate.service.recipientservice.Recipient;
+import se.inera.certificate.service.bean.Recipient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
