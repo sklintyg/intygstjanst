@@ -13,8 +13,8 @@ import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.CertificateService.SendStatus;
 import se.inera.certificate.service.RecipientService;
-import se.inera.certificate.service.recipientservice.CertificateType;
-import se.inera.certificate.service.recipientservice.Recipient;
+import se.inera.certificate.service.bean.CertificateType;
+import se.inera.certificate.service.bean.Recipient;
 import se.inera.certificate.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.v1.rivtabp20.SendMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType;
@@ -110,11 +110,11 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
         String errorMsg = "";
 
         if (recipients.size() == 0) {
-            errorMsg = String.format("No recipient was found for certificate of type %s. Maybe this is a missed configuration.", certificateType.getId());
+            errorMsg = String.format("No recipient was found for certificate of type %s. Maybe this is a missed configuration.", certificateType.getCertificateTypeId());
         }
 
         if (recipients.size() > 1) {
-            errorMsg = String.format("Multiple recipients were found for certificate of type %s. Unable to decide recipient. Maybe this is a missed configuration.", certificateType.getId());
+            errorMsg = String.format("Multiple recipients were found for certificate of type %s. Unable to decide recipient. Maybe this is a missed configuration.", certificateType.getCertificateTypeId());
         }
 
         LOGGER.error(LogMarkers.VALIDATION, errorMsg);

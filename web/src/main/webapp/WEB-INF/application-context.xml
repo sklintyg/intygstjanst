@@ -77,7 +77,7 @@
     <!-- In dev and demo mode we bootstrap data -->
     <beans profile="dev">
       <bean id="IntygBootstrapBean"
-        class="se.inera.certificate.service.util.IntygBootstrapBean" />
+        class="se.inera.certificate.service.bean.IntygBootstrapBean" />
     </beans>
 
   </beans>

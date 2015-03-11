@@ -1,6 +1,7 @@
-package se.inera.certificate.service.recipientservice;
+package se.inera.certificate.service.builder;
 
 import liquibase.util.StringUtils;
+import se.inera.certificate.service.bean.Recipient;
 
 import java.util.List;
 

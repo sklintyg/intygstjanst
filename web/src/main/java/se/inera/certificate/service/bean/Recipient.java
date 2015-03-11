@@ -1,4 +1,4 @@
-package se.inera.certificate.service.recipientservice;
+package se.inera.certificate.service.bean;
 
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notEmpty;

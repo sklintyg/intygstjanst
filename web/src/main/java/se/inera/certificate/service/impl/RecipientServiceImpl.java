@@ -4,10 +4,10 @@ import org.springframework.beans.factory.InitializingBean;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.service.RecipientService;
-import se.inera.certificate.service.recipientservice.CertificateType;
-import se.inera.certificate.service.recipientservice.Recipient;
-import se.inera.certificate.service.recipientservice.RecipientBuilder;
-import se.inera.certificate.service.recipientservice.RecipientCertificateType;
+import se.inera.certificate.service.bean.CertificateType;
+import se.inera.certificate.service.bean.Recipient;
+import se.inera.certificate.service.builder.RecipientBuilder;
+import se.inera.certificate.service.bean.RecipientCertificateType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,12 +73,12 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
 
         try {
             for (Recipient r : recipientList) {
-                if (r.getCertificateTypes().contains(certificateType.getId())) {
+                if (r.getCertificateTypes().contains(certificateType.getCertificateTypeId())) {
                     list.add(r);
                 }
             }
         } catch (Exception e) {
-            throw new RecipientUnknownException(String.format("No recipient found for certificate type: %s", certificateType.getId()));
+            throw new RecipientUnknownException(String.format("No recipient found for certificate type: %s", certificateType.getCertificateTypeId()));
         }
 
         return list;

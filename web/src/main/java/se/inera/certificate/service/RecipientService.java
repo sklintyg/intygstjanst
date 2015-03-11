@@ -2,8 +2,8 @@ package se.inera.certificate.service;
 
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
-import se.inera.certificate.service.recipientservice.CertificateType;
-import se.inera.certificate.service.recipientservice.Recipient;
+import se.inera.certificate.service.bean.CertificateType;
+import se.inera.certificate.service.bean.Recipient;
 
 import java.util.List;
 import java.util.Set;

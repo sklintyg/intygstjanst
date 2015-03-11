@@ -7,8 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
-import se.inera.certificate.service.recipientservice.CertificateType;
-import se.inera.certificate.service.recipientservice.Recipient;
+import se.inera.certificate.service.bean.CertificateType;
+import se.inera.certificate.service.bean.Recipient;
 
 import java.util.Arrays;
 import java.util.List;
