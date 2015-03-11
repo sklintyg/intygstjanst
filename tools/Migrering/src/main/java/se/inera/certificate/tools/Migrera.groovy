@@ -26,7 +26,7 @@ class Migrera {
 
         println "- Starting Certificate migration"
         
-        int numberOfThreads = args.length > 0 ? args[0] : 5
+        int numberOfThreads = args.length > 0 ? Integer.parseInt(args[0]) : 5
         long start = System.currentTimeMillis()
         def props = new Properties()
         new File("dataSource.properties").withInputStream { stream ->
@@ -71,13 +71,14 @@ class Migrera {
                     StringWriter writer = new StringWriter();
                     objectMapper.writeValue(writer, utlatande);
                     def document = writer.toString()
+                    String care_giver_id = utlatande.grundData.skapadAv.vardenhet.vardgivare.vardgivarid
 
                     // Get CERTIFICATE_STATE and check for 'ARCHIVED' and 'RESTORED' statuses
                     def certificate_states = sql.rows( 'select STATE from CERTIFICATE_STATE inner join CERTIFICATE on CERTIFICATE_STATE.CERTIFICATE_ID = CERTIFICATE.ID where CERTIFICATE_ID = :id', [id : id])
                     // If there are more occurances of 'ARCHIVED' than 'RESTORED', DELETED should be set to 1
                     def deleted = certificate_states.findAll( { it.STATE == 'ARCHIVED' } ).size > certificate_states.findAll( { it.STATE == 'RESTORED' } ).size ? 1 : 0
 
-                    sql.execute('update CERTIFICATE set DOCUMENT = :document, DELETED = :deleted where ID = :id', [document: document.getBytes('UTF-8'), deleted : deleted, id : id])
+                    sql.execute('update CERTIFICATE set DOCUMENT = :document, DELETED = :deleted, CARE_GIVER_ID = :care_giver_id where ID = :id', [document: document.getBytes('UTF-8'), deleted : deleted, care_giver_id: care_giver_id, id : id])
                     sql.execute('delete from CERTIFICATE_STATE where CERTIFICATE_ID = :id and (STATE = "ARCHIVED" or STATE = "RESTORED")', [id : id])
                 } catch (Exception e) {
                     result << "${id};${e.message}"
