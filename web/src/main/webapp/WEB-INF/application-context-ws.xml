@@ -101,11 +101,11 @@
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
 
-  <jaxws:endpoint address="/send-certificate-for-citizen/v1.0"
-      implementor="se.inera.certificate.integration.SendCertificateForCitizenResponderImpl">
+  <jaxws:endpoint address="/send-certificate-to-recipient/v1.0"
+      implementor="se.inera.certificate.integration.SendCertificateToRecipientResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.certificate.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
-        <constructor-arg value="transform/clinicalprocess-healthcond-certificate/send-certificate-for-citizen-transform.xslt"/>
+        <constructor-arg value="transform/clinicalprocess-healthcond-certificate/send-certificate-to-recipient-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>

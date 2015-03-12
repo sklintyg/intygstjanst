@@ -104,6 +104,12 @@ public class Certificate {
     private String careUnitName;
 
     /**
+     * Id of care giver.
+     */
+    @Column(name = "CARE_GIVER_ID", nullable = false)
+    private String careGiverId;
+
+    /**
      * Civic registration number for patient.
      */
     @Column(name = "CIVIC_REGISTRATION_NUMBER", nullable = false)
@@ -149,6 +155,12 @@ public class Certificate {
      */
     @Column(name = "DELETED_BY_CARE_GIVER", nullable = false, columnDefinition = "TINYINT(1")
     private boolean deletedByCareGiver = false;
+
+    /**
+     * If this certificate was wireTapped.
+     */
+    @Column(name = "WIRETAPPED", nullable = false, columnDefinition = "TINYINT(1")
+    private boolean wireTapped = false;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "CERTIFICATE_STATE", joinColumns = @JoinColumn(name = "CERTIFICATE_ID"))
@@ -237,6 +249,14 @@ public class Certificate {
         this.careUnitName = careUnitName;
     }
 
+    public String getCareGiverId() {
+        return careGiverId;
+    }
+
+    public void setCareGiverId(String careGiverId) {
+        this.careGiverId = careGiverId;
+    }
+
     public String getCivicRegistrationNumber() {
         return civicRegistrationNumber;
     }
@@ -291,6 +311,14 @@ public class Certificate {
 
     public void setDeletedByCareGiver(boolean deletedByCareGiver) {
         this.deletedByCareGiver = deletedByCareGiver;
+    }
+
+    public boolean isWireTapped() {
+        return wireTapped;
+    }
+
+    public void setWireTapped(boolean wireTapped) {
+        this.wireTapped = wireTapped;
     }
 
     public List<CertificateStateHistoryEntry> getStates() {

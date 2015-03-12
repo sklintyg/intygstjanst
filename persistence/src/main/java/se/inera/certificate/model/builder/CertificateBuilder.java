@@ -46,6 +46,11 @@ public class CertificateBuilder {
             return this;
         }
 
+    public CertificateBuilder careGiverId(String careGiverId) {
+        certificate.setCareGiverId(careGiverId);
+        return this;
+    }
+
     public CertificateBuilder signingDoctorName(String signingDoctorName) {
         certificate.setSigningDoctorName(signingDoctorName);
         return this;
@@ -58,6 +63,11 @@ public class CertificateBuilder {
 
     public CertificateBuilder deleted(boolean deleted) {
         certificate.setDeleted(deleted);
+        return this;
+    }
+
+    public CertificateBuilder wireTapped(boolean wireTapped) {
+        certificate.setWireTapped(wireTapped);
         return this;
     }
 

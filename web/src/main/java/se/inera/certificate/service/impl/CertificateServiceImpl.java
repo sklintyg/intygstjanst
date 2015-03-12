@@ -249,10 +249,10 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     @Override
     @Transactional
-    public void certificateReceived(CertificateHolder certificateHolder, boolean wireTapped) throws CertificateAlreadyExistsException, InvalidCertificateException {
+    public void certificateReceived(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException, InvalidCertificateException {
         Certificate certificate = storeCertificate(certificateHolder);
         LOGGER.info(LogMarkers.MONITORING, certificateHolder.getId() + " registered");
-        if (wireTapped) {
+        if (certificateHolder.isWireTapped()) {
             String personnummer = certificateHolder.getCivicRegistrationNumber();
             String certificateId = certificateHolder.getId();
             setCertificateState(personnummer, certificateId, "FK", CertificateState.SENT,

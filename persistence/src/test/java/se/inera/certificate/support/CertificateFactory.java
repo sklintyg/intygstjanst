@@ -52,6 +52,7 @@ public final class CertificateFactory {
                 .signingDoctorName(SIGNING_DOCTOR)
                 .careUnitId(CARE_UNIT_ID)
                 .careUnitName(CARE_UNIT_NAME)
+                .careGiverId(CARE_GIVER_ID)
                 .build();
     }
 }
