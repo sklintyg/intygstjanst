@@ -7,9 +7,9 @@
     # repo - values: snapshot or release
     repo: release
 
-    # latest release: 2.1.0-b37
+    # latest release: 2.1.0-b38
     # latest snapshot: 2.1.0-a672
-    version: 2.1.0-b37
+    version: 2.1.0-b38
     config_version: master
 
   roles:
