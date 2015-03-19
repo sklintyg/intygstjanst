@@ -25,6 +25,7 @@
 
     <!-- Tools -->
     <tools.version>0-SNAPSHOT</tools.version>
+    <tools.version.range>(,2.1.0]</tools.version.range>
 
     <!-- Intygstyper -->
     <intygstyper.version>0-SNAPSHOT</intygstyper.version>
@@ -169,16 +170,12 @@
         <configuration>
           <includeProperties>
             common.version, intygstyper.version, clinicalprocess-healthcond-certificate.version,
-            insuranceprocess-healthreporting.version, itintegration-monitoring.version
+            insuranceprocess-healthreporting.version, itintegration-monitoring.version, tools.version
           </includeProperties>
           <properties>
             <property>
               <name>common.version</name>
               <version>${common.version.range}</version>
-            </property>
-            <property>
-              <name>intygstyper.version</name>
-              <version>${intygstyper.version.range}</version>
             </property>
             <property>
               <name>clinicalprocess-healthcond-certificate.version</name>
@@ -191,6 +188,14 @@
             <property>
               <name>itintegration-monitoring.version</name>
               <version>${itintegration-monitoring.version.range}</version>
+            </property>
+            <property>
+              <name>tools.version</name>
+              <version>${tools.version.range}</version>
+            </property>
+            <property>
+              <name>intygstyper.version</name>
+              <version>${intygstyper.version.range}</version>
             </property>
           </properties>
         </configuration>
