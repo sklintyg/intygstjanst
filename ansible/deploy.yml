@@ -10,7 +10,7 @@
     # latest release: 2.1.0-b38
     # latest snapshot: 2.1.0-a672
     version: 2.1.0-RC1
-    config_version: original/release/v2.1.0
+    config_version: origin/release/v2.1.0
 
   roles:
     - intygstjanst
