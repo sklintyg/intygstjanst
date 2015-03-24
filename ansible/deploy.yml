@@ -7,10 +7,10 @@
     # repo - values: snapshot or release
     repo: release
 
-    # latest release: 2.1.0-b38
+    # latest release: 2.1.0-RC1
     # latest snapshot: 2.1.0-a672
-    version: 2.1.0-b38
-    config_version: master
+    version: 2.1.0-RC1
+    config_version: origin/release/v2.1.0
 
   roles:
     - intygstjanst
