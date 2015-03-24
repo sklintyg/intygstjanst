@@ -40,7 +40,7 @@
       <artifactId>tools-specifications</artifactId>
     </dependency>
 
-    <!-- Schemas -->
+    <!-- Intygstyper -->
     <dependency>
       <groupId>se.inera.intyg.intygstyper</groupId>
       <artifactId>fk7263</artifactId>
