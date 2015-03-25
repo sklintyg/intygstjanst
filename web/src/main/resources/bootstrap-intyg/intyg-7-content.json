@@ -1,432 +1,170 @@
 {
-  "id" : {
-    "root" : "1.2.752.129.2.1.2.1",  
-    "extension" : "intyg-7"
-  },
-    "typ": {
-        "codeSystem": "f6fb361a-e31d-48b8-8657-99b63912dd9b",
-        "codeSystemName": "kv_utlåtandetyp_intyg",
-        "code": "ts-bas"
-    },
-    "signeringsdatum": "2013-08-12T15:57:00.000",
-    "intygAvser": [
-        {
-            "codeSystem": "24c41b8d-258a-46bf-a08a-b90738b28770",
-            "codeSystemName": "kv_intyget_avser",
-            "code": "IAV3"
-        }
-    ],
-    "patient": {
-        "id": {
-            "root": "1.2.752.129.2.1.3.1",
-            "extension": "19121212-1212"
+    "id": "intyg-7",
+    "typ": "TS_BAS_U06_V06",
+    "grundData": {
+        "signeringsdatum": "2013-08-12T15:57:00.000",
+        "skapadAv": {
+            "personId": "SE0000000000-1333",
+            "fullstandigtNamn": "Doktor Thompson",
+            "vardenhet": {
+                "enhetsid": "SE0000000000-1337",
+                "enhetsnamn": "Vårdenhet Väst",
+                "postadress": "Enhetsvägen 12",
+                "postnummer": "54321",
+                "postort": "Tumba",
+                "telefonnummer": "08-1337",
+                "vardgivare": {
+                    "vardgivarid": "SE0000000000-HAHAHHSAA",
+                    "vardgivarnamn": "Vårdgivarnamn"
+                }
+            },
+            "befattningar": ["ST_LAKARE"],
+            "specialiteter" : ["SPECIALITET"]
         },
-        "fornamn": [
-            "Johnny"
+        "patient": {
+            "personId": "19121212-1212",
+            "fullstandigtNamn": "Herr Dundersjuk",
+            "fornamn": "Herr",
+            "efternamn": "Dundersjuk",
+            "postadress": "Testvägen 12",
+            "postnummer": "123456",
+            "postort": "Testort"
+        }
+    },
+    "kommentar" : "Här kommer en övrig kommentar",
+    "vardkontakt" : {
+    	"typ" : "5880005", 
+    	"idkontroll" : "PASS"
+    },
+    "intygAvser" : {
+        "korkortstyp" : [
+            {"type": "C1", "selected": true},
+            {"type": "C1E", "selected": true},
+            {"type": "C", "selected": true},
+            {"type": "CE", "selected": true},
+            {"type": "D1", "selected": true},
+            {"type": "D1E", "selected": true},
+            {"type": "D", "selected": true},
+            {"type": "DE", "selected": true},
+            {"type": "TAXI", "selected": true},
+            {"type": "ANNAT", "selected": true}
+        ]
+    },
+    "syn" : {
+        "synfaltsdefekter" :  true,
+        "nattblindhet" : true,
+        "progressivOgonsjukdom" : true,
+        "diplopi" : true,
+        "nystagmus" : true,
+        "hogerOga" : {
+        	"utanKorrektion" : 0.0,
+        	"medKorrektion" : 0.0,
+        	"kontaktlins" : true
+        },
+        
+        "vansterOga" : {
+        	"utanKorrektion" : 0.0,
+        	"medKorrektion" : 0.0,
+        	"kontaktlins" : true
+        },
+
+        "binokulart" : {
+        	"utanKorrektion" : 0.0,
+        	"medKorrektion" : 0.0
+        },
+        "korrektionsglasensStyrka" : true
+    },
+    
+    "horselBalans" : {
+    	"balansrubbningar" : true,
+    	"svartUppfattaSamtal4Meter" : true
+    },
+    
+    "funktionsnedsattning" : {
+    	"funktionsnedsattning" : true,
+    	"otillrackligRorelseformaga" : true,
+    	"beskrivning" : "Spik i foten"
+    	
+    },
+    
+    "hjartKarl" : {
+    	"hjartKarlSjukdom" : true,
+    	"hjarnskadaEfterTrauma" : true,
+    	"riskfaktorerStroke" : true,
+    	"beskrivningRiskfaktorer" : "Förkärlek för Elvismackor"
+    },
+    
+    "diabetes" : {
+    	"harDiabetes" : true,
+    	"diabetesTyp" : "DIABETES_TYP_2",
+    	"kost" : true
+    },
+    
+    "neurologi" : {
+    	"neurologiskSjukdom" : true
+    },
+    
+    "medvetandestorning" : {
+    	"medvetandestorning" : true,
+    	"beskrivning" : "Beskrivning"
+    },
+    
+    "njurar" : {
+    	"nedsattNjurfunktion" : true
+    },
+    
+    "kognitivt" : {
+    	"sviktandeKognitivFunktion" : true
+    },
+    
+    "somnVakenhet" : {
+    	"teckenSomnstorningar" : true
+    },
+    
+    "narkotikaLakemedel" : {
+        "teckenMissbruk" : true,
+        "foremalForVardinsats" : true, 
+        "lakarordineratLakemedelsbruk" : true,
+        "lakemedelOchDos" : "Läkemedel och dos",
+        "provtagningBehovs" : true
+    },
+    
+    "psykiskt" : {
+    	"psykiskSjukdom" : true
+    },
+    
+    "utvecklingsstorning" : {
+    	"psykiskUtvecklingsstorning" : true,
+    	"harSyndrom" : true
+    },
+    
+    "sjukhusvard" : {
+    	"sjukhusEllerLakarkontakt" : true,
+    	"tidpunkt" : "20 Januari",
+    	"vardinrattning" : "Vårdcentralen",
+    	"anledning" : "Akut lungsot"
+    },
+    
+    "medicinering" : {
+    	"stadigvarandeMedicinering" : true,
+    	"beskrivning" : "Alvedon"
+    },
+    
+    "bedomning" : {
+        "korkortstyp" : [
+            {"type": "C1", "selected": true},
+            {"type": "C1E", "selected": true},
+            {"type": "C", "selected": true},
+            {"type": "CE", "selected": true},
+            {"type": "D1", "selected": true},
+            {"type": "D1E", "selected": true},
+            {"type": "D", "selected": true},
+            {"type": "DE", "selected": true},
+            {"type": "TAXI", "selected": true},
+            {"type": "ANNAT", "selected": true}
         ],
-        "efternamn": "Appleseed",
-        "postadress": "Testvägen 12",
-        "postnummer": "123456",
-        "postort": "Testort",
-        "fullstandigtNamn": "Johnny Appleseed"
-    },
-    "skapadAv": {
-        "id": {
-            "root": "1.2.752.129.2.1.4.1",
-            "extension": "SE0000000000-1333"
-        },
-        "namn": "Doktor Thompson",
-        "specialiteter" : [ 
-                           {
-                         	  "code" : "SPEC",
-                         	  "codeSystem" : "coming_soon",
-                         	  "codeSystemName" : "kv_intyg_specialitet"
-                           }
-                           ],
-        "vardenhet": {
-          "id": {
-              "root": "1.2.752.129.2.1.4.1",
-              "extension": "centrum-vast"
-          },
-          "namn": "Vårdenhet Väst",
-          "postadress": "Enhetsvägen 12",
-          "postnummer": "54321",
-          "postort": "Tumba",
-          "telefonnummer": "08-1337",
-          "vardgivare" : {
-            "id" : {
-              "root" : "1.2.752.129.2.1.4.1",
-              "extension" : "vastmanland"
-            },
-            "namn" : "Landstinget Västmanland"
-          }
-        },
-        "befattningar" : ["203010"]
-    },
-    "vardkontakter": [
-	      {
-	        "vardkontakttyp": {
-	            "codeSystem": "1.2.752.116.2.1.1.1",
-	            "codeSystemName": "SNOMED-CT",
-	            "code": "5880005"
-	        },
-	        "idkontroll": {
-	            "codeSystem": "e7cc8f30-a353-4c42-b17a-a189b6876647",
-	            "codeSystemName": "kv_id_kontroll",
-	            "code": "IDK6"
-	        }
-	      }
-      ],
-    "aktiviteter": [
-        {
-            "aktivitetskod": {
-                "codeSystem": "8040b4d1-67dc-42e1-a938-de5374e9526a",
-                "codeSystemName": "kv_aktiviteter_intyg",
-                "code": "AKT19"
-            },
-            "forekomst" : false
-        },
-        {
-            "aktivitetskod": {
-                "codeSystem": "8040b4d1-67dc-42e1-a938-de5374e9526a",
-                "codeSystemName": "kv_aktiviteter_intyg",
-                "code": "AKT15"
-            },
-            "forekomst" : false
-        },
-        {
-        	"id" : {
-        		"root" : "1.2.752.129.2.1.2.1",
-        		"extension" : "1"
-        	},
-            "aktivitetskod": {
-                "codeSystem": "1.2.752.116.2.1.1.1",
-                "codeSystemName": "SNOMED-CT",
-                "code": "86944008"
-            },
-            "metod" : {
-            	"code" : "MET1",
-            	"codeSystem" : "b0c078c6-512a-42a5-ab42-a3380f369ac3",
-            	"codeSystemName" : "kv_metod"
-            }
-        },
-        {
-           	"id" : {
-        		"root" : "1.2.752.129.2.1.2.1",
-        		"extension" : "2"
-        	},
-            "aktivitetskod": {
-                "codeSystem": "8040b4d1-67dc-42e1-a938-de5374e9526a",
-                "codeSystemName": "kv_aktiviteter_intyg",
-                "code": "AKT18"
-            }
-        }
-        
-    ],
-    "rekommendationer": [
-        {
-            "rekommendationskod": {
-                "codeSystem": "5a931b99-bda8-4f1e-8a6d-6f8a3f40a459",
-                "codeSystemName": "kv_rekommendation_intyg",
-                "code": "REK8"
-            },
-            "varde": [{
-                "codeSystem": "e889fa20-1dee-4f79-8b37-03853e75a9f8",
-                "codeSystemName": "kv_värde",
-                "code": "VAR3"
-            }]
-        }
-    ],
-    "observationer": [
-        {
-            "observationskod": {
-                "codeSystem": "1.2.752.116.1.1.1.1.3",
-                "codeSystemName": "ICD-10",
-                "code": "H53.4"
-            },
-            "id": {
-                "root": "1.2.752.129.2.1.2.1",
-                "extension": "3"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "1.2.752.116.1.1.1.1.3",
-                "codeSystemName": "ICD-10",
-                "code": "H53.6"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
-                "codeSystemName": "kv_observationer_intyg",
-                "code": "OBS1"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
-                "codeSystemName": "kv_observationer_intyg",
-                "code": "OBS2"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "1.2.752.116.1.1.1.1.3",
-                "codeSystemName": "ICD-10",
-                "code": "H53.2"
-            },
-            "id": {
-                "root": "1.2.752.129.2.1.2.1",
-                "extension": "4"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "1.2.752.116.1.1.1.1.3",
-                "codeSystemName": "ICD-10",
-                "code": "H55.9"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "1.2.752.116.2.1.1.1",
-                "codeSystemName": "SNOMED-CT",
-                "code": "420050001"
-            },
-            "varde": [
-                {
-                    "quantity": 0.0
-                }
-            ],
-            "lateralitet": {
-                "codeSystem": "1.2.752.116.2.1.1.1",
-                "codeSystemName": "SNOMED-CT",
-                "code": "24028007"
-            }
-        },
-        {
-            "observationskod": {
-                "codeSystem": "1.2.752.116.2.1.1.1",
-                "codeSystemName": "SNOMED-CT",
-                "code": "420050001"
-            },
-            "varde": [
-                {
-                    "quantity": 0.0
-                }
-            ],
-            "lateralitet": {
-                "codeSystem": "1.2.752.116.2.1.1.1",
-                "codeSystemName": "SNOMED-CT",
-                "code": "7771000"
-            }
-        },
-        {
-            "observationskod": {
-                "codeSystem": "1.2.752.116.2.1.1.1",
-                "codeSystemName": "SNOMED-CT",
-                "code": "420050001"
-            },
-            "varde": [
-                {
-                    "quantity": 0.0
-                }
-            ],
-            "lateralitet": {
-            	"codeSystem": "1.2.752.116.2.1.1.1",
-                "codeSystemName": "SNOMED-CT",
-            	"code": "51440002"
-            }
-        },
-        {
-            "observationskod": {
-                "codeSystem": "1.2.752.116.2.1.1.1",
-                "codeSystemName": "SNOMED-CT",
-                "code": "285049007"
-            },
-            "forekomst" : false,
-            "lateralitet": {
-                "codeSystem": "1.2.752.116.2.1.1.1",
-                "codeSystemName": "SNOMED-CT",
-                "code": "24028007"
-            }
-        },
-        {
-        	"observationskod": {
-        		"codeSystem": "1.2.752.116.2.1.1.1",
-        		"codeSystemName": "SNOMED-CT",
-        		"code": "285049007"
-        	},
-        	"forekomst" : false,
-        	"lateralitet": {
-        		"codeSystem": "1.2.752.116.2.1.1.1",
-        		"codeSystemName": "SNOMED-CT",
-        		"code": "7771000"
-        	}
-        },
-
-        {
-            "observationskod": {
-                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
-                "codeSystemName": "kv_observationer_intyg",
-                "code": "OBS4"
-            },
-            "forekomst": false
-        },
-
-        {
-            "observationskod": {
-                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
-                "codeSystemName": "kv_observationer_intyg",
-                "code": "OBS6"
-            },
-            "forekomst": false
-        },
-
-        {
-            "observationskod": {
-                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
-                "codeSystemName": "kv_observationer_intyg",
-                "code": "OBS7"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
-                "codeSystemName": "kv_observationer_intyg",
-                "code": "OBS8"
-            },
-            "forekomst": false
-        },
-        {
-        	"observationskod" : {
-        		"codeSystem" : "1.2.752.116.2.1.1.1",
-        		"codeSystemName" : "SNOMED-CT",
-        		"code" : "73211009"
-        	},
-        	"forekomst" : false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "1.2.752.116.2.1.1.1",
-                "codeSystemName": "SNOMED-CT",
-                "code": "407624006"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "1.2.752.116.1.1.1.1.3",
-                "codeSystemName": "ICD-10",
-                "code": "G40.9"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
-                "codeSystemName": "kv_observationer_intyg",
-                "code": "OBS11"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
-                "codeSystemName": "kv_observationer_intyg",
-                "code": "OBS12"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
-                "codeSystemName": "kv_observationer_intyg",
-                "code": "OBS13"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
-                "codeSystemName": "kv_observationer_intyg",
-                "code": "OBS14"
-            },
-            "forekomst": false
-        },
-        
-        {
-            "observationskod": {
-                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
-                "codeSystemName": "kv_observationer_intyg",
-                "code": "OBS15"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
-                "codeSystemName": "kv_observationer_intyg",
-                "code": "OBS16"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "1.2.752.116.2.1.1.1",
-                "codeSystemName": "SNOMED-CT",
-                "code": "129104009"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
-                "codeSystemName": "kv_observationer_intyg",
-                "code": "OBS17"
-            },
-            "forekomst": false
-        },
-        {
-            "observationskod": {
-                "codeSystem": "335d4bed-7e1d-4f81-ae7d-b39b266ef1a3",
-                "codeSystemName": "kv_observationer_intyg",
-                "code": "OBS18"
-            },
-            "forekomst": false
-        }
-    ],
-    "observationAktivitetRelationer" : [
-        {
-	    	"observationsid" : {
-	    		"root" : "1.2.752.129.2.1.2.1",
-	            "extension" : "3"
-            },
-	        "aktivitetsid" : {
-	        	"root" : "1.2.752.129.2.1.2.1",
-	            "extension" : "1"
-        	}  
-      	},
-      	{
-      		"observationsid" : {
-	    		"root" : "1.2.752.129.2.1.2.1",
-	            "extension" : "4"
-            },
-	        "aktivitetsid" : {
-	        	"root" : "1.2.752.129.2.1.2.1",
-	            "extension" : "2"
-        	}  
-      	}
-    ],
-    "tsUtgava" : "06",
-    "tsVersion" : "06"
+        "kanInteTaStallning" : false,
+        "lakareSpecialKompetens" : "Spektralanalys"
+    }
+    
 }
-

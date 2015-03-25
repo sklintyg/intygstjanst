@@ -41,6 +41,9 @@
     <itintegration-monitoring.version>0-SNAPSHOT</itintegration-monitoring.version>
     <itintegration-monitoring.version.range>(,1.0.0]</itintegration-monitoring.version.range>
 
+    <se-intygstjanster-ts-services.version>0-SNAPSHOT</se-intygstjanster-ts-services.version>
+    <se-intygstjanster-ts-services.version.range>(,1.0.0]</se-intygstjanster-ts-services.version.range>
+
   </properties>
 
   <modules>
@@ -91,15 +94,16 @@
         <artifactId>fk7263</artifactId>
         <version>${intygstyper.version}</version>
       </dependency>
-      <!--<dependency>
+      <dependency>
         <groupId>se.inera.intyg.intygstyper</groupId>
         <artifactId>ts-bas</artifactId>
         <version>${intygstyper.version}</version>
-      </dependency>--><!--<dependency>
+      </dependency>
+      <dependency>
         <groupId>se.inera.intyg.intygstyper</groupId>
         <artifactId>ts-diabetes</artifactId>
         <version>${intygstyper.version}</version>
-      </dependency>-->
+      </dependency>
 
       <!-- Schemas -->
       <dependency>
@@ -117,6 +121,18 @@
         <artifactId>itintegration-monitoring-interactions</artifactId>
         <version>${itintegration-monitoring.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>se.inera.intyg.schemas.intygstjanster.ts.services.v1</groupId>
+        <artifactId>se-intygstjanster-ts-services-core</artifactId>
+        <version>${se-intygstjanster-ts-services.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>se.inera.intyg.schemas.intygstjanster.ts.services.v1</groupId>
+        <artifactId>se-intygstjanster-ts-services-interactions</artifactId>
+        <version>${se-intygstjanster-ts-services.version}</version>
+      </dependency> 
 
       <!-- Tools -->
       <dependency>
