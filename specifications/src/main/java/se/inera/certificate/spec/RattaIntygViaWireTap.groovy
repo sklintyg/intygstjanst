@@ -10,11 +10,15 @@ import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1
 class RattaIntygViaWireTap extends RattaIntyg {
 
     public RattaIntygViaWireTap() {
-        this(WsClientFixture.LOGICAL_ADDRESS)
+        super()
     }
 
     public RattaIntygViaWireTap(String logiskAddress) {
         super(logiskAddress)
+    }
+
+    @Override
+    public void init() {
 		String url = serviceUrl ? serviceUrl : baseUrl + "revoke-certificate-wiretap/v1.0"
 		revokeResponder = createClient(RevokeMedicalCertificateResponderInterface.class, url)
     }

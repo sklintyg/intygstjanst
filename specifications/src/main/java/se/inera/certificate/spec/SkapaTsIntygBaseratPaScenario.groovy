@@ -33,11 +33,15 @@ public class SkapaTsIntygBaseratPaScenario extends WsClientFixtureNyaKontraktet 
     RegisterCertificateResponderInterface registerCertificateResponder
 
 	public SkapaTsIntygBaseratPaScenario() {
-		this(WsClientFixture.LOGICAL_ADDRESS)
+		super()
 	}
 
 	public SkapaTsIntygBaseratPaScenario(String logiskAddress) {
 		super(logiskAddress)
+    }
+
+    @Override
+    public void init() {
 		String url = serviceUrl ? serviceUrl : baseUrl + "register-certificate/v1.0"
         registerCertificateResponder = createClient(RegisterCertificateResponderInterface.class, url)
 	}

@@ -29,7 +29,7 @@ public class InvanareHamtarListaAvIntyg extends WsClientFixture {
         request.personId = personnummer
         request.utlatandeTyp = [typ]
 
-        response = responder.listCertificatesForCitizen(LOGICAL_ADDRESS, request)
+        response = responder.listCertificatesForCitizen(logicalAddress.value, request)
         switch (response.result.resultCode) {
             case ResultCodeType.OK:
                 intygMeta = response.meta

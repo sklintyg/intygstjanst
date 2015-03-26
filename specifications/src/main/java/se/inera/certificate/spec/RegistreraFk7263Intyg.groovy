@@ -21,11 +21,15 @@ public class RegistreraFk7263Intyg extends WsClientFixture {
     static String serviceUrl = System.getProperty("service.registerMedicalCertificateUrl")
 
     public RegistreraFk7263Intyg() {
-		this(WsClientFixture.LOGICAL_ADDRESS)
+		super()
 	}
 	
     public RegistreraFk7263Intyg(String logiskAddress) {
         super(logiskAddress)
+    }
+
+    @Override
+    public void init() {
 		String url = serviceUrl ? serviceUrl : baseUrl + "register-certificate/v3.0"
 		registerMedicalCertificateResponder = createClient(RegisterMedicalCertificateResponderInterface.class, url)
     }
