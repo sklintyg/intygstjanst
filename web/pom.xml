@@ -52,21 +52,26 @@
       <artifactId>itintegration-monitoring-interactions</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>se.inera.intyg.schemas.intygstjanster.ts.services.v1</groupId>
+      <artifactId>se-intygstjanster-ts-services-interactions</artifactId>
+    </dependency>
+
     <!-- Intygstyper -->
     <dependency>
       <groupId>se.inera.intyg.intygstyper</groupId>
       <artifactId>fk7263</artifactId>
     </dependency>
-    <!--
     <dependency>
       <groupId>se.inera.intyg.intygstyper</groupId>
       <artifactId>ts-bas</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>se.inera.intyg.intygstyper</groupId>
       <artifactId>ts-diabetes</artifactId>
     </dependency>
-    -->
+    
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>

@@ -15,6 +15,8 @@
   <name>Intygstjänsten (FitNesse)</name>
 
   <properties>
+    <groovy.httpBuilder.version>0.7.1</groovy.httpBuilder.version>
+  
     <certificate.baseUrl>http://localhost:8080/inera-certificate/</certificate.baseUrl>
 
     <fitnesse.port>9123</fitnesse.port>
@@ -40,7 +42,7 @@
       <artifactId>tools-specifications</artifactId>
     </dependency>
 
-    <!-- Schemas -->
+    <!-- Intygstyper -->
     <dependency>
       <groupId>se.inera.intyg.intygstyper</groupId>
       <artifactId>fk7263</artifactId>
@@ -78,17 +80,6 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.codehaus.groovy.modules.http-builder</groupId>
-      <artifactId>http-builder</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.codehaus.groovy</groupId>
-          <artifactId>groovy</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
