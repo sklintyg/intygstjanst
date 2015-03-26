@@ -32,11 +32,15 @@ public class SkapaIntygBaseratPaScenario extends WsClientFixture {
 	RegisterMedicalCertificateResponderInterface registerMedicalCertificateResponder
 
 	public SkapaIntygBaseratPaScenario() {
-		this(WsClientFixture.LOGICAL_ADDRESS)
+		super()
 	}
 
 	public SkapaIntygBaseratPaScenario(String logiskAddress) {
 		super(logiskAddress)
+    }
+
+    @Override
+    public void init() {
 		String url = serviceUrl ? serviceUrl : baseUrl + "register-certificate/v3.0"
 		registerMedicalCertificateResponder = createClient(RegisterMedicalCertificateResponderInterface.class, url)
 		personFile = new ClassPathResource(System.getProperty("persondata")).getFile()

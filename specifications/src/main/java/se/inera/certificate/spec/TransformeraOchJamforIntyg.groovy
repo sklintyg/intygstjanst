@@ -9,6 +9,7 @@ import javax.xml.bind.Unmarshaller
 import javax.xml.transform.stream.StreamSource
 
 import net.sf.json.JSON
+
 import org.custommonkey.xmlunit.XMLUnit
 
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareRequestType;
@@ -22,7 +23,6 @@ import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType
-
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
 
 /**
@@ -40,16 +40,20 @@ class TransformeraOchJamforIntyg extends WsClientFixture {
     static String getServiceUrl = System.getProperty("service.getCertificateUrl")
 
     public TransformeraOchJamforIntyg() {
-        this(WsClientFixture.LOGICAL_ADDRESS)
+        super()
     }
 
     public TransformeraOchJamforIntyg(String logiskAddress) {
         super(logiskAddress)
+    }
+
+    @Override
+    public void init() {
         String registerUrl = registerServiceUrl ? registerServiceUrl : baseUrl + "register-certificate/v3.0"
         String getUrl = getServiceUrl ? getServiceUrl : baseUrl + "get-certificate-for-care/v1.0"
         registerMedicalCertificateResponder = createClient(RegisterMedicalCertificateResponderInterface.class, registerUrl)
         getCertificateResponder = createClient(GetCertificateForCareResponderInterface.class, getUrl)
-        restClient = RestClientFixture.createRestClient()
+        restClient = RestClientFixture.createRestClient("${baseUrl}resources/")
         XMLUnit.setIgnoreWhitespace(true)
     }
 

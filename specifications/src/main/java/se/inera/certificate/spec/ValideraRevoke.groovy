@@ -28,11 +28,15 @@ class ValideraRevoke extends WsClientFixture {
     RevokeMedicalCertificateResponseType response
 
     public ValideraRevoke() {
-        this(WsClientFixture.LOGICAL_ADDRESS)
+        super()
     }
 
     public ValideraRevoke(String logiskAddress) {
         super(logiskAddress)
+    }
+
+    @Override
+    public void init() {
         String url = serviceUrl ? serviceUrl : baseUrl + "revoke-certificate/v1.0"
         revokeResponder = createClient(RevokeMedicalCertificateResponderInterface.class, url)
     }

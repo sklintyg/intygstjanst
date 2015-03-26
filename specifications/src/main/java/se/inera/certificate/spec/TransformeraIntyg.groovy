@@ -43,16 +43,20 @@ class TransformeraIntyg extends WsClientFixture {
     static String getServiceUrl = System.getProperty("service.getCertificateUrl")
     
     public TransformeraIntyg() {
-        this(WsClientFixture.LOGICAL_ADDRESS)
+        super()
     }
     
     public TransformeraIntyg(String logiskAddress) {
         super(logiskAddress)
+    }
+
+    @Override
+    public void init() {
         String registerUrl = registerServiceUrl ? registerServiceUrl : baseUrl + "register-certificate/v3.0"
         String getUrl = getServiceUrl ? getServiceUrl : baseUrl + "get-certificate/v1.0"
         registerMedicalCertificateResponder = createClient(RegisterMedicalCertificateResponderInterface.class, registerUrl)
         getCertificateResponder = createClient(GetCertificateResponderInterface.class, getUrl)
-        restClient = RestClientFixture.createRestClient()
+        restClient = RestClientFixture.createRestClient("${baseUrl}resources/")
         XMLUnit.setIgnoreWhitespace(true)
     }
 

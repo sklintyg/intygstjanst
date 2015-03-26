@@ -23,11 +23,15 @@ class ValideraRegister extends WsClientFixture {
     static String serviceUrl = System.getProperty("service.registerMedicalCertificateUrl")
 
     public ValideraRegister() {
-        this(WsClientFixture.LOGICAL_ADDRESS)
+        super()
     }
     
     public ValideraRegister(String logiskAddress) {
         super(logiskAddress)
+    }
+
+    @Override
+    public void init() {
         String url = serviceUrl ? serviceUrl : baseUrl + "register-certificate/v3.0"
         registerMedicalCertificateResponder = createClient(RegisterMedicalCertificateResponderInterface.class, url)
     }

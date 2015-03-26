@@ -32,11 +32,15 @@ class SkickaIntygTillFk extends WsClientFixture {
     static String serviceUrl = System.getProperty("service.sendCertificateUrl")
 
     public SkickaIntygTillFk() {
-        this(WsClientFixture.LOGICAL_ADDRESS)
+        super()
     }
 
     public SkickaIntygTillFk(String logiskAddress) {
         super(logiskAddress)
+    }
+
+    @Override
+    public void init() {
         String url = serviceUrl ? serviceUrl : baseUrl + "send-certificate/v1.0"
         sendResponder = createClient(SendMedicalCertificateResponderInterface.class, url)
     }
