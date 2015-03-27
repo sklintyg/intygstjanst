@@ -4,3 +4,6 @@
 # ActiveMQ configuration
 activemq_username: "nmt"
 activemq_password: "nmtpass"
+
+# Spring profiles
+profiles: test,it-fk-stub,testability-api
