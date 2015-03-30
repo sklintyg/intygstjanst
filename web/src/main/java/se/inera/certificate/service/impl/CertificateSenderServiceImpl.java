@@ -89,7 +89,9 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
                 logicalAddress = recipient.getLogicalAddress();
             }
 
-            module.getModuleApi().sendCertificateToRecipient(new InternalModelHolder(certificate.getDocument()), logicalAddress, recipientId);
+            module.getModuleApi().sendCertificateToRecipient(new InternalModelHolder(certificate.getDocument(),
+                            certificate.getOriginalCertificate().getDocument()),
+                    logicalAddress, recipientId);
 
         } catch (ModuleNotFoundException e) {
             String message = String.format("The module '%s' was not found - not registered in application",
