@@ -217,6 +217,10 @@ public class Certificate {
         return originalCertificate;
     }
 
+    public void setOriginalCertificate(OriginalCertificate originalCertificate) {
+        this.originalCertificate = originalCertificate;
+    }
+
     public String getType() {
         return type;
     }

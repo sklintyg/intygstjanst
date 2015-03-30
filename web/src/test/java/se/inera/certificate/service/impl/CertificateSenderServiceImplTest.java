@@ -76,7 +76,7 @@ public class CertificateSenderServiceImplTest {
     @InjectMocks
     private CertificateSenderServiceImpl senderService = new CertificateSenderServiceImpl();
 
-    private static Certificate certificate = new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DOCUMENT).certificateType(CERTIFICATE_TYPE).build();
+    private static Certificate certificate = new CertificateBuilder(CERTIFICATE_ID, CERTIFICATE_DOCUMENT).certificateType(CERTIFICATE_TYPE).originalCertificate("").build();
 
     private static RegisterMedicalCertificateResponseType errorWsMessage;
     private static RegisterMedicalCertificateResponseType okWsMessage;
