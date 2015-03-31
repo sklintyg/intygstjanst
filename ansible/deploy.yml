@@ -8,9 +8,9 @@
     repo: release
 
     # latest release: 2.2.0-b40
-    # latest snapshot: 2.1.0-a672
+    # latest snapshot: 2.2.0-aNNN
     version: 2.2.0-b40
-    config_version: origin/develop
+    config_version: master
 
   roles:
     - intygstjanst
