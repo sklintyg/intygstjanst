@@ -23,7 +23,7 @@ public class MetaDataResolver {
                 .facilityName(source.getCareUnitName())
                 .signDate(source.getSignedDate())
                 .available(source.getDeleted() ? "false" : "true")
-                .additionalInfo(source.getAdditionalInfo());
+                .complemantaryInfo(source.getAdditionalInfo());
 
         for (CertificateStateHistoryEntry stateEntry : source.getStates()) {
             StatusType status = StatusType.valueOf(stateEntry.getState().name());
