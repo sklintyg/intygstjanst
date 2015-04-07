@@ -10,11 +10,15 @@ import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.
 public class RegistreraFk7263IntygViaWireTap extends RegistreraFk7263Intyg {
 
     public RegistreraFk7263IntygViaWireTap() {
-		this(WsClientFixture.LOGICAL_ADDRESS)
+		super()
 	}
 
     public RegistreraFk7263IntygViaWireTap(String logiskAddress) {
         super(logiskAddress)
+    }
+
+    @Override
+    public void init() {
 		String url = serviceUrl ? serviceUrl : baseUrl + "register-certificate-wiretap/v3.0"
 		registerMedicalCertificateResponder = createClient(RegisterMedicalCertificateResponderInterface.class, url)
     }

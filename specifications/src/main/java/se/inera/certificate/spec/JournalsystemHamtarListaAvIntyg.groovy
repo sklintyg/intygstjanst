@@ -32,7 +32,7 @@ public class JournalsystemHamtarListaAvIntyg extends WsClientFixture {
         request.personId = personnummer
         request.enhet.add(enhet)
 
-        response = responder.listCertificatesForCare(LOGICAL_ADDRESS, request)
+        response = responder.listCertificatesForCare(logicalAddress.value, request)
         switch (response.result.resultCode) {
             case ResultCodeType.OK:
                 intygMeta = response.meta

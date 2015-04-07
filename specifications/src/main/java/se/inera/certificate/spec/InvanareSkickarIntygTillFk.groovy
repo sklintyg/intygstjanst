@@ -29,7 +29,7 @@ public class InvanareSkickarIntygTillFk extends WsClientFixture {
         request.personId = personnummer
         request.utlatandeId = intyg
 
-        response = responder.sendCertificateForCitizen(LOGICAL_ADDRESS, request)
+        response = responder.sendCertificateForCitizen(logicalAddress.value, request)
 
         switch (response.result.resultCode) {
             case ResultCodeType.OK:
