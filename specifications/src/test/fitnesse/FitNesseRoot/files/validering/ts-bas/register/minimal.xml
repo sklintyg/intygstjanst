@@ -12,7 +12,7 @@
     <p:signeringsdatum>2013-08-12T15:57:00</p:signeringsdatum>
 
     <p:patient>
-      <p:person-id extension="19121212-1212" root="1.2.752.129.2.1.3.1" />
+      <p:person-id extension="19010101-0101" root="1.2.752.129.2.1.3.1" />
       <p:fornamn>Johnny</p:fornamn>
       <p:efternamn>Appleseed</p:efternamn>
       <p:postadress>Testvägen 12</p:postadress>

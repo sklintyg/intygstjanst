@@ -2,7 +2,7 @@
 
 |Samtycke|
 |personnr|samtycke|
-|19121212-1212|ja|
+|19010101-0101|ja|
 
 !3 Giltigt intyg ger inga fel
 
@@ -194,7 +194,7 @@
 
 |Hamta intygsinnehall|
 |personnummer|intyg|förväntatSvar|resultat?|
-|19121212-1212|personnr-utan-bindestreck|{id : personnr-utan-bindestreck}|OK|
+|19010101-0101|personnr-utan-bindestreck|{id : personnr-utan-bindestreck}|OK|
 
 |ta bort intyg|
 |id|
@@ -622,4 +622,4 @@
 
 |Samtycke|
 |personnr|samtycke|
-|19121212-1212|nej|
+|19010101-0101|nej|

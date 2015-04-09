@@ -2,7 +2,7 @@
 
 |Samtycke|
 |personnr|samtycke|
-|19121212-1212|ja|
+|19010101-0101|ja|
 
 !3 Giltigt meddelande ger inga fel
 
@@ -10,7 +10,7 @@
 
 |Intyg|
 |personnr|utfärdat|giltigtFrån|giltigtTill|utfärdare|enhet|typ|id|mall|
-|19121212-1212|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intygs-id-1234567890|M|
+|19010101-0101|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intygs-id-1234567890|M|
 
 |validera send|
 |filnamn|resultat?|
@@ -28,7 +28,7 @@
 
 |Intyg|
 |personnr|utfärdat|giltigtFrån|giltigtTill|utfärdare|enhet|typ|id|mall|
-|19121212-1212|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intygs-id-1234567890|M|
+|19010101-0101|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intygs-id-1234567890|M|
 
 |validera send|
 |filnamn|resultat?|
@@ -82,7 +82,7 @@
 
 |Intyg|
 |personnr|utfärdat|giltigtFrån|giltigtTill|utfärdare|enhet|typ|id|mall|
-|19121212-1212|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intygs-id-1234567890|M|
+|19010101-0101|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intygs-id-1234567890|M|
 
 |validera send|
 |filnamn|resultat?|
@@ -91,7 +91,7 @@
 !4 Intygstjänsten rapporterar rätt status efter skicka
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19121212-1212|intygs-id-1234567890|OK|[RECEIVED, SENT]|
+|19010101-0101|intygs-id-1234567890|OK|[RECEIVED, SENT]|
 
 !4 Rensa bort intyget
 
@@ -212,4 +212,4 @@
 
 |Samtycke|
 |personnr|samtycke|
-|19121212-1212|nej|
+|19010101-0101|nej|

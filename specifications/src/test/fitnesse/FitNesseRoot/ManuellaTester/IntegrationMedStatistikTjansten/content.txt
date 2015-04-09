@@ -11,17 +11,17 @@
 |clear queue|
 |check|queue depth|0|
 
-!3 Give samtycke för 19121212-1212
+!3 Give samtycke för 19010101-0101
 
 |Samtycke|
 |personnr|samtycke|
-|19121212-1212|ja|
+|19010101-0101|ja|
 
 !3 När ett nytt intyg har registrerats, så skall ett meddelande ha lagts på kö
 
 |Registrera fk7263 intyg|
 |personnummer|id|utfärdat|resultat?|
-|19121212-1212|fit-intyg-1|2013-08-01|OK|
+|19010101-0101|fit-intyg-1|2013-08-01|OK|
 
 |script|Consumer|queue|
 |check|queue depth|1|
@@ -33,7 +33,7 @@
 
 |Samtycke|
 |personnr|samtycke|
-|19121212-1212|nej|
+|19010101-0101|nej|
 
 !3 Rensa bort test-intyg
 
