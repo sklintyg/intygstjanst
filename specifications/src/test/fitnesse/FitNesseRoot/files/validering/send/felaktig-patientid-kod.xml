@@ -23,7 +23,7 @@
       <qa:lakarutlatande-id>intygs-id-1234567890</qa:lakarutlatande-id>
       <qa:signeringsTidpunkt>2011-01-26T00:00:00</qa:signeringsTidpunkt>
       <qa:patient xmlns="urn:riv:insuranceprocess:healthreporting:2">
-        <person-id root="invalid" extension="19121212-1212"/>
+        <person-id root="invalid" extension="19010101-0101"/>
         <fullstandigtNamn>Test Testorsson</fullstandigtNamn>
       </qa:patient>
     </lakarutlatande>

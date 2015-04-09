@@ -1,22 +1,22 @@
-!3 Givet att samtycke finns för 19121212-1212 så ska det inte finnas några intyg invånaren än
+!3 Givet att samtycke finns för 19010101-0101 så ska det inte finnas några intyg invånaren än
 
 |Samtycke|
 |personnr|samtycke|
-|19121212-1212|ja|
+|19010101-0101|ja|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19121212-1212|fit-intyg-1|[ERROR] - Certificate 'fit-intyg-1' does not exist for user '19121212-1212'|
+|19010101-0101|fit-intyg-1|[ERROR] - Certificate 'fit-intyg-1' does not exist for user '19010101-0101'|
 
 !3 Efter journalsystemet har registrerat ett nytt intyg via !-WireTap-! så ska det vara tillgängligt, och registrerat som skickat
 
 |Registrera fk7263 intyg via wire tap|
 |personnummer|id|utfärdat|enhetsId|vårdGivarId|resultat?|
-|19121212-1212|fit-intyg-1|2013-08-01|enEnhet|enVårdGivare|OK|
+|19010101-0101|fit-intyg-1|2013-08-01|enEnhet|enVårdGivare|OK|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19121212-1212|fit-intyg-1|OK|[RECEIVED, SENT]|
+|19010101-0101|fit-intyg-1|OK|[RECEIVED, SENT]|
 
 !3 Kontrollera att intyget är flaggat som wire-tappat och har korrekt vårdenhet och vårdgivare satt
 
@@ -28,33 +28,33 @@
 
 |Registrera fk7263 intyg via wire tap|
 |personnummer|id|utfärdat|resultat?|
-|19121212-1212|fit-intyg-1|2013-08-01|[INFO] - Certificate already exists|
+|19010101-0101|fit-intyg-1|2013-08-01|[INFO] - Certificate already exists|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19121212-1212|fit-intyg-1|OK|[RECEIVED, SENT]|
+|19010101-0101|fit-intyg-1|OK|[RECEIVED, SENT]|
 
 !3 Registrering av intyg via WireTAP korrigerar person-nr utan bindestreck
 
 |Registrera fk7263 intyg via wire tap|
 |personnummer|id|utfärdat|resultat?|
-|191212121212|fit-intyg-2|2013-08-01|OK|
+|190101010101|fit-intyg-2|2013-08-01|OK|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19121212-1212|fit-intyg-2|OK|[RECEIVED, SENT]|
+|19010101-0101|fit-intyg-2|OK|[RECEIVED, SENT]|
 
 !3 Försök att registrera intyg med felaktigt person-nr via WireTAP ger fel
 
 |Registrera fk7263 intyg via wire tap|
 |personnummer|id|utfärdat|resultat?|
-|121212-1212|fit-intyg-3|2013-08-01|=~/VALIDATION_ERROR.*Wrong format for person-id/|
+|010101-0101|fit-intyg-3|2013-08-01|=~/VALIDATION_ERROR.*Wrong format for person-id/|
 
 !3 Ta bort samtycke
 
 |Samtycke|
 |personnr|samtycke|
-|19121212-1212|nej|
+|19010101-0101|nej|
 
 !3 Rensa bort test-intyg
 

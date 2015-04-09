@@ -2,7 +2,7 @@
 
 |Samtycke|
 |personnr|samtycke|
-|19121212-1212|ja|
+|19010101-0101|ja|
 
 !3 Säkerställ att intyg registrerade via !-RegisterCertificate-! transformeras korrekt, så att !-GetCertificate-! ger tillbaka samma intygsinformation
 |transformera intyg|
@@ -21,4 +21,4 @@
 
 |Samtycke|
 |personnr|samtycke|
-|19121212-1212|nej|
+|19010101-0101|nej|

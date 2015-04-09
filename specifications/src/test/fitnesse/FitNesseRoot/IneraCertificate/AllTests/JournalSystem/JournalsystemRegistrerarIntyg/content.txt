@@ -1,22 +1,22 @@
-!3 Givet att samtycke finns för 19121212-1212 så ska det inte finnas några intyg invånaren än
+!3 Givet att samtycke finns för 19010101-0101 så ska det inte finnas några intyg invånaren än
 
 |Samtycke|
 |personnr|samtycke|
-|19121212-1212|ja|
+|19010101-0101|ja|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19121212-1212|fit-intyg-1|[ERROR] - Certificate 'fit-intyg-1' does not exist for user '19121212-1212'|
+|19010101-0101|fit-intyg-1|[ERROR] - Certificate 'fit-intyg-1' does not exist for user '19010101-0101'|
 
 !3 Efter journalsystemet har registrerat ett nytt intyg så ska det vara tillgängligt
 
 |Registrera fk7263 intyg|
 |personnummer|id|utfärdat|enhetsId|vårdGivarId|resultat?|
-|19121212-1212|fit-intyg-1|2013-08-01|enEnhet|enVårdGivare|OK|
+|19010101-0101|fit-intyg-1|2013-08-01|enEnhet|enVårdGivare|OK|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19121212-1212|fit-intyg-1|OK|[RECEIVED]|
+|19010101-0101|fit-intyg-1|OK|[RECEIVED]|
 
 !3 Kontrollera att intyget har korrekt vårdenhet och vårdgivare satt, och inte är flaggat som wire-tappat
 
@@ -28,13 +28,13 @@
 
 |Registrera fk7263 intyg|
 |personnummer|id|utfärdat|resultat?|
-|19121212-1212|fit-intyg-1|2013-08-01|[INFO] - Certificate already exists|
+|19010101-0101|fit-intyg-1|2013-08-01|[INFO] - Certificate already exists|
 
 !3 Ta bort samtycke
 
 |Samtycke|
 |personnr|samtycke|
-|19121212-1212|nej|
+|19010101-0101|nej|
 
 !3 Rensa bort test-intyg
 

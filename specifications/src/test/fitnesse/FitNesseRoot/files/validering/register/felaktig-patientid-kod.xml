@@ -5,7 +5,7 @@
       <signeringsdatum>2011-01-24T00:00:00</signeringsdatum>
       <skickatDatum>2011-03-23T09:28:10</skickatDatum>
       <patient>
-         <ns2:person-id extension="19121212-1212" root="felaktig"/>
+         <ns2:person-id extension="19010101-0101" root="felaktig"/>
          <ns2:fullstandigtNamn>Test Testorsson</ns2:fullstandigtNamn>
       </patient>
       <skapadAvHosPersonal>
