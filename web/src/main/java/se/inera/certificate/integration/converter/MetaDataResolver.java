@@ -2,12 +2,14 @@ package se.inera.certificate.integration.converter;
 
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
+
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.StatusType;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
-import se.inera.certificate.schema.util.ClinicalProcessCertificateMetaTypeBuilder;
+import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.builder.ClinicalProcessCertificateMetaTypeBuilder;
+
 
 @Component
 public class MetaDataResolver {

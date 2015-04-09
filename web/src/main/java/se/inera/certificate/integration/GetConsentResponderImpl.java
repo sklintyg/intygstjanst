@@ -8,7 +8,7 @@ import se.inera.certificate.service.ConsentService;
 import se.inera.ifv.insuranceprocess.healthreporting.getconsent.v1.rivtabp20.GetConsentResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.getconsentresponder.v1.GetConsentRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.getconsentresponder.v1.GetConsentResponseType;
-import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
+import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 @SchemaValidation
 public class GetConsentResponderImpl implements GetConsentResponderInterface {

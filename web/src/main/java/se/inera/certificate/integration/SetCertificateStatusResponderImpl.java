@@ -13,7 +13,7 @@ import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.v1.rivtabp20.SetCertificateStatusResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusResponseType;
-import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
+import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 /**
  * @author andreaskaltenbach

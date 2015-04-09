@@ -11,7 +11,7 @@ import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatearchived.v1.rivtabp20.SetCertificateArchivedResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatearchivedresponder.v1.SetCertificateArchivedRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatearchivedresponder.v1.SetCertificateArchivedResponseType;
-import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
+import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 /**
  * @author andreaskaltenbach

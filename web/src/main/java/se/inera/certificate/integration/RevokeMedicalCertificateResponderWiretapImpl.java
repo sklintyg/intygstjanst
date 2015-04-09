@@ -16,7 +16,7 @@ import se.inera.certificate.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
-import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
+import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 @Transactional
 public class RevokeMedicalCertificateResponderWiretapImpl extends RevokeMedicalCertificateResponderImpl implements

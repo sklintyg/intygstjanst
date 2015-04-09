@@ -87,6 +87,11 @@
         <artifactId>logging-util</artifactId>
         <version>${common.version}</version>
       </dependency>
+      <dependency>
+        <groupId>se.inera.intyg.common</groupId>
+        <artifactId>common-schemas</artifactId>
+        <version>${common.version}</version>
+      </dependency>
 
       <!-- Intygstyper -->
       <dependency>

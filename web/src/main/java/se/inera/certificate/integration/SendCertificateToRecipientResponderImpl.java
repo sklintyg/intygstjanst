@@ -3,10 +3,10 @@ package se.inera.certificate.integration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponderInterface;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType;
 import se.inera.certificate.exception.RecipientUnknownException;
@@ -14,6 +14,7 @@ import se.inera.certificate.integration.module.exception.CertificateRevokedExcep
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.service.CertificateService;
+import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
 
 public class SendCertificateToRecipientResponderImpl implements SendCertificateToRecipientResponderInterface {
 

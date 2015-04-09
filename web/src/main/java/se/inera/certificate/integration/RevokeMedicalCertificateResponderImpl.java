@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
+
 import se.inera.certificate.exception.SubsystemCallException;
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
@@ -19,7 +20,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.v1.rivtabp20.SendMedicalCertificateQuestionResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
+import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCertificateResponderInterface {
 

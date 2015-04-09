@@ -9,11 +9,11 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipients
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponseType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.RecipientType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.service.RecipientService;
 import se.inera.certificate.service.bean.CertificateType;
 import se.inera.certificate.service.bean.Recipient;
+import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
