@@ -79,7 +79,7 @@
     </bedomtTillstand>
     <medicinsktTillstand>
       <beskrivning>Klämskada på överarm</beskrivning>
-      <tillstandskod codeSystemName="ICD-10" code="S47" />
+      <tillstandskod codeSystem="1.2.752.116.1.1.1.1.3" codeSystemName="ICD-10" code="S47" />
     </medicinsktTillstand>
     <funktionstillstand>
       <beskrivning>Kraftigt nedsatt rörlighet i överarmen pga skadan. Böj- och sträckförmågan är mycket dålig. Smärtar
