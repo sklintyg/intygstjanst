@@ -6,7 +6,7 @@
 
 Vissa landsting skickar en obsolet <arbetsuppgift /> tagg utan <typAvArbetsuppgift>.
 Detta är inte korrekt enligt schemat, men valideras bara om typAvSysselsattning är Nuvarande_arbete.
-Detta gav upphov till bug INTYG-1414, då det ledde till att typAvSysselsattning felaktigt även sattes till Nuvarande_arbete,
+Detta gav upphov till bug INTYG-1413, då det ledde till att typAvSysselsattning felaktigt även sattes till Nuvarande_arbete,
 trots att intyget angav typAvSysselsättning till Arbetsloshet.
 
 Detta test säkerställer att dessa intyg korrekt kan registreras och skickas vidare till FK.
