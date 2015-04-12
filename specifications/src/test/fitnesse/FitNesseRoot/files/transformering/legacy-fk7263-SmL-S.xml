@@ -2,7 +2,7 @@
   xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2" xmlns:ns3="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3"
   xmlns:ns4="http://www.w3.org/2005/08/addressing">
   <ns3:lakarutlatande>
-    <lakarutlatande-id>09a9f186-ba33-4a6b-9014-0564e6868387</lakarutlatande-id>
+    <lakarutlatande-id>legacy-fk7263-SmL-S</lakarutlatande-id>
     <typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om allmän försäkring</typAvUtlatande>
     <signeringsdatum>2011-01-24T00:00:00</signeringsdatum>
     <skickatDatum>2011-01-24T00:00:00</skickatDatum>

@@ -2,7 +2,7 @@
   xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2" xmlns:ns3="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3"
   xmlns:ns4="http://www.w3.org/2005/08/addressing">
   <ns3:lakarutlatande>
-    <lakarutlatande-id>legacy-fk7263-SmL-L</lakarutlatande-id>
+    <lakarutlatande-id>legacy-fk7263-Arbetsloshet</lakarutlatande-id>
     <typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om allmän försäkring</typAvUtlatande>
     <kommentar>Har haft mailkontakt med patienten
       Prognosen att återgå till arbete är svår att bedömma förrän utredningen är genomförd.
@@ -47,9 +47,6 @@
       <referenstyp>Annat</referenstyp>
       <datum>2010-01-24</datum>
     </referens>
-    <aktivitet>
-      <aktivitetskod>Avstangning_enligt_SmL_pga_smitta</aktivitetskod>
-    </aktivitet>
     <aktivitet>
       <aktivitetskod>Patienten_behover_fa_kontakt_med_Arbetsformedlingen</aktivitetskod>
     </aktivitet>
@@ -100,11 +97,6 @@
           Eventuellt kan utredning visa att operation är nödvändig för att läka skadan.
         </motivering>
         <prognosangivelse>Det_gar_inte_att_bedomma</prognosangivelse>
-        <arbetsuppgift>
-          <typAvArbetsuppgift>Dirigent.
-            Dirigerar en större orkester på deltid
-          </typAvArbetsuppgift>
-        </arbetsuppgift>
         <arbetsformagaNedsattning>
           <varaktighetFrom>2011-04-01</varaktighetFrom>
           <varaktighetTom>2011-05-31</varaktighetTom>
@@ -126,13 +118,7 @@
           <nedsattningsgrad>Helt_nedsatt</nedsattningsgrad>
         </arbetsformagaNedsattning>
         <sysselsattning>
-          <typAvSysselsattning>Nuvarande_arbete</typAvSysselsattning>
-        </sysselsattning>
-        <sysselsattning>
           <typAvSysselsattning>Arbetsloshet</typAvSysselsattning>
-        </sysselsattning>
-        <sysselsattning>
-          <typAvSysselsattning>Foraldraledighet</typAvSysselsattning>
         </sysselsattning>
       </arbetsformaga>
     </funktionstillstand>
