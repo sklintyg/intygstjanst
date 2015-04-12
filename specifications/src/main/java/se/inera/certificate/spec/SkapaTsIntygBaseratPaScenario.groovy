@@ -9,7 +9,6 @@ import org.springframework.core.io.ClassPathResource
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponderInterface
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponseType
 import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateType
-import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.certificate.spec.util.WsClientFixtureNyaKontraktet
 
 public class SkapaTsIntygBaseratPaScenario extends WsClientFixtureNyaKontraktet {
