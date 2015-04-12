@@ -8,6 +8,12 @@
 |transformera intyg|
 |filnamn|resultat?|
 |validering/register/intyg-med-blanksteg.xml|OK|
+|transformering/legacy-fk7263-L.xml|OK|
+|transformering/legacy-fk7263-M.xml|OK|
+|transformering/legacy-fk7263-Motivering-utan-prognosangivelse.xml|OK|
+|transformering/legacy-fk7263-S.xml|OK|
+|transformering/legacy-fk7263-SmL-L.xml|OK|
+|transformering/legacy-fk7263-SmL-S.xml|OK|
 
 !3 Återta samtycken:
 
