@@ -1,0 +1,30 @@
+!3 Givet följande samtycken:
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|ja|
+
+Vissa landsting skickar en obsolet <arbetsuppgift /> tagg utan <typAvArbetsuppgift>.
+Detta är inte korrekt enligt schemat, men valideras bara om typAvSysselsattning är Nuvarande_arbete.
+Detta gav upphov till bug INTYG-1414, då det ledde till att typAvSysselsattning felaktigt även sattes till Nuvarande_arbete,
+trots att intyget angav typAvSysselsättning till Arbetsloshet.
+
+Detta test säkerställer att dessa intyg korrekt kan registreras och skickas vidare till FK.
+
+|validera register|
+|filnamn|resultat?|
+|validering/giltigt-intyg-arbetsloshet-med-obsolet-arbetsuppgift.xml|OK|
+
+|skicka intyg till fk|
+|intyg|personnummer|resultat?|
+|giltigt-intyg-arbetsloshet-med-obsolet-arbetsuppgift|19121212-1212|OK|
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-arbetsloshet-med-obsolet-arbetsuppgift|
+
+!3 Återta samtycken:
+
+|Samtycke|
+|personnr|samtycke|
+|19121212-1212|nej|
