@@ -6,4 +6,4 @@ activemq_username: "nmt"
 activemq_password: "nmtpass"
 
 # Spring profiles
-profiles: test,it-fk-stub,testability-api
+profiles: test,it-fk-stub,it-ts-stub,testability-api
