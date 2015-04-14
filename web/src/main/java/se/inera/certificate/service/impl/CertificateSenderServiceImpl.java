@@ -21,12 +21,15 @@ package se.inera.certificate.service.impl;
 import static se.inera.certificate.common.enumerations.Recipients.FK;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
+import javax.xml.ws.soap.SOAPFaultException;
+
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
+
 import se.inera.certificate.exception.MissingModuleException;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.exception.ServerException;
@@ -98,9 +101,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             throw new MissingModuleException(message, e);
 
         } catch (ModuleException e) {
-            String message = String.format("Failed to unmarshal certificate for certificate type '%s'",
-                    certificate.getType());
-            LOGGER.error(message);
+            String message = String.format("Failed to send certificate '%s' of type '%s' to recipient '%s'", certificate.getId(), certificate.getType(), recipientId);
             throw new ServerException(message, e);
 
         } catch (RecipientUnknownException e) {
