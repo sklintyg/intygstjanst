@@ -74,6 +74,16 @@
 |id|
 |giltigt-intyg-utan-prognosangivelse|
 
+!3 Intyg med orimliga datum ger inga fel
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/giltigt-intyg-med-orimligt-datum.xml|OK|
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-med-orimligt-datum|
+
 !3 Saknad nedsattningsgrad ger fel
 
 |validera register|
