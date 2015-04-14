@@ -14,6 +14,36 @@
 |id|
 |giltigt-intyg|
 
+!3 Giltigt intyg med tomt typ av utlatande ger inga fel
+
+| validera register   |
+| filnamn | resultat? |
+| validering/register/giltigt-intyg-med-tomt-typAvUtlatande.xml| OK |
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-med-tomt-typAvUtlatande|
+
+!3 Giltigt intyg som saknar elementet typAvUtlatande ger inga fel
+
+| validera register   |
+| filnamn | resultat? |
+| validering/register/giltigt-intyg-typAvUtlatande-saknas.xml| OK |
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-typAvUtlatande-saknas.xml|
+
+!3 Giltigt intyg med godtycklig string som typ av utlatande ger inga fel
+
+| validera register   |
+| filnamn | resultat? |
+| validering/register/giltigt-intyg-med-godtycklig-string-som-typAvUtlatande.xml| OK |
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-med-godtycklig-string-som-typAvUtlatande|
+
 !3 Intyg med blanktecken i obligatoriska fält ger inga fel
 
 |validera register|
