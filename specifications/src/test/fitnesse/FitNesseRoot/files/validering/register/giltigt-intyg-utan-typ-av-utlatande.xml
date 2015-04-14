@@ -1,11 +1,11 @@
 <ns3:RegisterMedicalCertificate xmlns="urn:riv:insuranceprocess:healthreporting:mu7263:3" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2" xmlns:ns3="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3" xmlns:ns4="http://www.w3.org/2005/08/addressing">
    <ns3:lakarutlatande>
-      <lakarutlatande-id>saknad-kommentar-vid-prognos-gar-ej-att-bedomma</lakarutlatande-id>
+      <lakarutlatande-id>giltigt-intyg</lakarutlatande-id>
       <typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om allmän försäkring</typAvUtlatande>
       <signeringsdatum>2011-01-24T00:00:00</signeringsdatum>
       <skickatDatum>2011-03-23T09:28:10</skickatDatum>
       <patient>
-         <ns2:person-id extension="19121212-1212" root="1.2.752.129.2.1.3.1"/>
+         <ns2:person-id extension="19010101-0101" root="1.2.752.129.2.1.3.1"/>
          <ns2:fullstandigtNamn>Test Testorsson</ns2:fullstandigtNamn>
       </patient>
       <skapadAvHosPersonal>
@@ -40,7 +40,7 @@
          <beskrivning>Sjukdomen omöjliggör arbete.</beskrivning>
          <typAvFunktionstillstand>Aktivitet</typAvFunktionstillstand>
          <arbetsformaga>
-            <prognosangivelse>Det_gar_inte_att_bedomma</prognosangivelse>
+            <prognosangivelse>Aterstallas_helt</prognosangivelse>
             <arbetsuppgift>
                <typAvArbetsuppgift>Arbetare</typAvArbetsuppgift>
             </arbetsuppgift>

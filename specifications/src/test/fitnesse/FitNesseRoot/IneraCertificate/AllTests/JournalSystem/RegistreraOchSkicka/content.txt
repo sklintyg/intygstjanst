@@ -23,6 +23,21 @@ Detta test säkerställer att dessa intyg korrekt kan registreras och skickas vi
 |id|
 |giltigt-intyg-arbetsloshet-med-obsolet-arbetsuppgift|
 
+
+INTYG-1420: Intyg med orimliga datum skall kunna registreras och skickas vidare till FK.
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/giltigt-intyg-med-orimligt-datum.xml|OK|
+
+|skicka intyg till fk|
+|intyg|personnummer|resultat?|
+|giltigt-intyg-med-orimligt-datum|19121212-1212|OK|
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-med-orimligt-datum|
+
 !3 Återta samtycken:
 
 |Samtycke|
