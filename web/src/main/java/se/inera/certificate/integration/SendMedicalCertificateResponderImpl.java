@@ -57,10 +57,10 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
 
             if (status == SendStatus.ALREADY_SENT) {
                 response.setResult(ResultOfCallUtil.infoResult("Certificate '" + certificateId + "' is already sent."));
-                LOGGER.info(LogMarkers.MONITORING, certificateId + " already sent to" + logicalAddress.getValue());
+                LOGGER.info(LogMarkers.MONITORING, certificateId + " already sent to" + recipient.getId());
             } else {
                 response.setResult(ResultOfCallUtil.okResult());
-                LOGGER.info(LogMarkers.MONITORING, certificateId + " sent to " + logicalAddress.getValue());
+                LOGGER.info(LogMarkers.MONITORING, certificateId + " sent to " + recipient.getId());
             }
 
             return response;
