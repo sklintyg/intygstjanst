@@ -1,0 +1,12 @@
+---
+# file: host_vars/intygstjanst-dev
+
+# Configuration repository
+environment_name: "dev"
+
+# ActiveMQ configuration
+activemq_username: "nmt"
+activemq_password: "nmtpass"
+
+# Spring profiles
+profiles: dev
