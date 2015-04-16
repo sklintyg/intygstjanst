@@ -9,7 +9,7 @@
 
     # latest release: 2.2.0-b42
     # latest snapshot: 2.2.0-aNNN
-    version: 2.2.0-b42
+    version: 2.2.0-b45
     config_version: master
 
   roles:
