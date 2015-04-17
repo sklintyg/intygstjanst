@@ -2,7 +2,7 @@
 
 |Samtycke|
 |personnr|samtycke|
-|19121212-1212|ja|
+|19010101-0101|ja|
 
 Vissa landsting skickar en obsolet <arbetsuppgift /> tagg utan <typAvArbetsuppgift>.
 Detta är inte korrekt enligt schemat, men valideras bara om typAvSysselsattning är Nuvarande_arbete.
@@ -17,14 +17,29 @@ Detta test säkerställer att dessa intyg korrekt kan registreras och skickas vi
 
 |skicka intyg till fk|
 |intyg|personnummer|resultat?|
-|giltigt-intyg-arbetsloshet-med-obsolet-arbetsuppgift|19121212-1212|OK|
+|giltigt-intyg-arbetsloshet-med-obsolet-arbetsuppgift|19010101-0101|OK|
 
 |ta bort intyg|
 |id|
 |giltigt-intyg-arbetsloshet-med-obsolet-arbetsuppgift|
 
+
+INTYG-1420: Intyg med orimliga datum skall kunna registreras och skickas vidare till FK.
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/giltigt-intyg-med-orimligt-datum.xml|OK|
+
+|skicka intyg till fk|
+|intyg|personnummer|resultat?|
+|giltigt-intyg-med-orimligt-datum|19010101-0101|OK|
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-med-orimligt-datum|
+
 !3 Återta samtycken:
 
 |Samtycke|
 |personnr|samtycke|
-|19121212-1212|nej|
+|19010101-0101|nej|

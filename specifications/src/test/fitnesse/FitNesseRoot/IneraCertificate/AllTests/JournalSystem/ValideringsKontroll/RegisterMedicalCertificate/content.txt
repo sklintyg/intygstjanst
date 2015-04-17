@@ -74,6 +74,16 @@
 |id|
 |giltigt-intyg-utan-prognosangivelse|
 
+!3 Intyg med orimliga datum ger inga fel
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/giltigt-intyg-med-orimligt-datum.xml|OK|
+
+|ta bort intyg|
+|id|
+|giltigt-intyg-med-orimligt-datum|
+
 !3 Saknad nedsattningsgrad ger fel
 
 |validera register|
@@ -560,6 +570,13 @@
 |ta bort intyg|
 |id|
 |giltigt-intyg-tom-beskrivning-behandling-ovrigt|
+
+!3 Saknad kommentar (fält 13) om referens är annat eller om prognos är garEjAttBedomma  ger fel
+
+|validera register|
+|filnamn|resultat?|
+|validering/register/saknad-kommentar-vid-referens-annat.xml|=~/VALIDATION_ERROR/|
+|validering/register/saknad-kommentar-vid-prognos-gar-ej-att-bedomma.xml|=~/VALIDATION_ERROR/|
 
 !3 Saknad arbetsförmåga ger fel
 

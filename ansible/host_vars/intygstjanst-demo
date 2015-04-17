@@ -6,4 +6,4 @@ environment_name: "demo"
 config_etc_folder: "{{ config_folder }}/{{ environment_name }}"
 
 # Spring profiles
-profiles: test,it-fk-stub,it-ts-stub, testability-api
+profiles: test,it-fk-stub,it-ts-stub,testability-api

@@ -17,7 +17,8 @@
                 "vardgivare" : {
                     "vardgivarid" : "vastmanland",
                     "vardgivarnamn": "Landstinget Västmanland"
-                }
+                },
+                "arbetsplatsKod":"123456789011"
             }
         },
         "patient": {

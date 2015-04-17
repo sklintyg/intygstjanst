@@ -1,6 +1,6 @@
 <ns3:RegisterMedicalCertificate xmlns="urn:riv:insuranceprocess:healthreporting:mu7263:3" xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2" xmlns:ns3="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3" xmlns:ns4="http://www.w3.org/2005/08/addressing">
    <ns3:lakarutlatande>
-      <lakarutlatande-id>saknad-kommentar-vid-referens-annat</lakarutlatande-id>
+      <lakarutlatande-id>giltigt-intyg-med-orimligt-datum</lakarutlatande-id>
       <typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om allmän försäkring</typAvUtlatande>
       <signeringsdatum>2011-01-24T00:00:00</signeringsdatum>
       <skickatDatum>2011-03-23T09:28:10</skickatDatum>
@@ -25,10 +25,10 @@
             </ns2:vardgivare>
          </ns2:enhet>
       </skapadAvHosPersonal>
-      <referens>
-         <referenstyp>Annat</referenstyp>
-         <datum>2010-01-24</datum>
-      </referens>
+      <vardkontakt>
+         <vardkontakttyp>Min_undersokning_av_patienten</vardkontakttyp>
+         <vardkontaktstid>2011-01-24</vardkontaktstid>
+      </vardkontakt>
       <medicinsktTillstand>
          <tillstandskod codeSystemName="ICD-10" code="M25"/>
       </medicinsktTillstand>
@@ -46,7 +46,7 @@
             </arbetsuppgift>
             <arbetsformagaNedsattning>
                <varaktighetFrom>2011-01-24</varaktighetFrom>
-               <varaktighetTom>2011-02-20</varaktighetTom>
+               <varaktighetTom>5011-02-20</varaktighetTom>
                <nedsattningsgrad>Helt_nedsatt</nedsattningsgrad>
             </arbetsformagaNedsattning>
             <sysselsattning>
