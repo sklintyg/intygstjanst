@@ -5,8 +5,8 @@
 environment_name: "dev"
 
 # ActiveMQ configuration
-activemq_username: "nmt"
-activemq_password: "nmtpass"
+activemq_username: ""
+activemq_password: ""
 
 # Spring profiles
 profiles: dev
