@@ -27,7 +27,9 @@ import se.inera.certificate.integration.converter.ConverterUtil;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.modules.registry.IntygModuleRegistry;
+import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.modules.support.api.CertificateHolder;
+import se.inera.certificate.modules.support.api.ModuleApi;
 
 /**
  * @author andreaskaltenbach
@@ -112,7 +114,21 @@ public class CertificateResource {
                 try {
                     OriginalCertificate originalCertificate = new OriginalCertificate();
                     originalCertificate.setReceived(new LocalDateTime());
-                    originalCertificate.setDocument(certificate.getDocument());
+
+                    // Call marshall from the modules ModuleApi to create XML for originalCertificate
+                    ModuleApi moduleApi = null;
+                    try {
+                        moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
+                    } catch (ModuleNotFoundException e) {
+                        LOGGER.error("Module {} not found ", certificateHolder.getType());
+                    }
+                    if (moduleApi != null && moduleApi.marshall(certificate.getDocument()) != null) {
+                        originalCertificate.setDocument(moduleApi.marshall(certificate.getDocument()));
+                    } else {
+                        LOGGER.debug("Got null while populating with original_certificate");
+                        originalCertificate.setDocument(certificate.getDocument());
+                    }
+
                     originalCertificate.setCertificate(certificate);
                     entityManager.persist(certificate);
                     entityManager.persist(originalCertificate);
