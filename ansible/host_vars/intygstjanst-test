@@ -1,6 +1,10 @@
 ---
 # file: host_vars/intygstjanst-test
 
+# Configuration repository
+environment_name: "test"
+config_etc_folder: "{{ config_folder }}/{{ environment_name }}"
+
 # ActiveMQ configuration
 activemq_username: "nmt"
 activemq_password: "nmtpass"
