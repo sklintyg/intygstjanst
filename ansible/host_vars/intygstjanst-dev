@@ -3,6 +3,7 @@
 
 # Configuration repository
 environment_name: "dev"
+config_etc_folder: "{{ config_folder }}/{{ environment_name }}"
 
 # ActiveMQ configuration
 activemq_username: ""
