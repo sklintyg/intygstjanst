@@ -1,15 +1,15 @@
 package se.inera.certificate.spec
-import javax.xml.bind.JAXBContext
 
 import org.skyscreamer.jsonassert.JSONAssert
-
 import se.inera.certificate.spec.util.WsClientFixture
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20.GetCertificateResponderInterface
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.rivtab20.v1.GetCertificateResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.CertificateType
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
+
+import javax.xml.bind.JAXBContext
 
 /**
  *

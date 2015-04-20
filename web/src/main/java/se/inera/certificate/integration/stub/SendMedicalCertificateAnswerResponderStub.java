@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.certificate.modules.fk7263.integration.stub.FkMedicalCertificatesStore;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswer.v1.rivtabp20.SendMedicalCertificateAnswerResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswer.rivtab20.v1.SendMedicalCertificateAnswerResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.ObjectFactory;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.SendMedicalCertificateAnswerResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.SendMedicalCertificateAnswerType;
@@ -18,6 +18,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import java.io.StringWriter;
+
 
 /**
  * @author par.wenaker

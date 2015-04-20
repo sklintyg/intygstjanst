@@ -1,9 +1,10 @@
 package se.inera.certificate.spec
-import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1.ListCertificatesForCareResponderInterface
-import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1.ListCertificatesForCareResponseType
-import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1.ListCertificatesForCareType
-import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType
 import se.inera.certificate.spec.util.WsClientFixture
+import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1.ListCertificatesForCareResponderInterface
+import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1.ListCertificatesForCareResponseType
+import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1.ListCertificatesForCareType
+import se.riv.clinicalprocess.healthcond.certificate.v1.ResultCodeType
+
 /**
  *
  * @author andreaskaltenbach

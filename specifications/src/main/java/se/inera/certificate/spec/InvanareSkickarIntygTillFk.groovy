@@ -1,9 +1,10 @@
 package se.inera.certificate.spec
-import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponderInterface
-import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponseType
-import se.inera.certificate.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientType
-import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType
 import se.inera.certificate.spec.util.WsClientFixture
+import se.inera.intyg.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponderInterface
+import se.inera.intyg.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponseType
+import se.inera.intyg.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientType
+import se.riv.clinicalprocess.healthcond.certificate.v1.ResultCodeType
+
 
 public class InvanareSkickarIntygTillFk extends WsClientFixture {
 

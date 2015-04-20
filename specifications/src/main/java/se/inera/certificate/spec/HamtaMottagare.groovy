@@ -1,10 +1,10 @@
 package se.inera.certificate.spec
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponderInterface
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponseType
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateType
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.RecipientType
-import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType
 import se.inera.certificate.spec.util.WsClientFixtureNyaKontraktet
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponderInterface
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponseType
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateType
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.RecipientType
+import se.riv.clinicalprocess.healthcond.certificate.v1.ResultCodeType
 
 public class HamtaMottagare extends WsClientFixtureNyaKontraktet {
 

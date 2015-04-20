@@ -2,28 +2,26 @@
 
 package se.inera.certificate.spec
 
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller
-import javax.xml.bind.Unmarshaller
-import javax.xml.transform.stream.StreamSource
-
 import net.sf.json.JSON
-
 import org.custommonkey.xmlunit.XMLUnit
-
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareRequestType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponderInterface
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponseType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.ObjectFactory
-import se.inera.certificate.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateType
 import se.inera.certificate.spec.util.FitnesseHelper
 import se.inera.certificate.spec.util.RestClientFixture
 import se.inera.certificate.spec.util.WsClientFixture
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.rivtab20.v3.RegisterMedicalCertificateResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareRequestType
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponderInterface
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificateforcare.v1.GetCertificateForCareResponseType
+import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v1.ObjectFactory
+import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateType
+
+import javax.xml.bind.JAXBContext
+import javax.xml.bind.JAXBElement
+import javax.xml.bind.Marshaller
+import javax.xml.bind.Unmarshaller
+import javax.xml.transform.stream.StreamSource
 
 /**
  *

@@ -1,18 +1,18 @@
 package se.inera.certificate.spec
 
+import org.joda.time.LocalDateTime
+import org.springframework.core.io.ClassPathResource
+import se.inera.certificate.spec.util.WsClientFixture
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswer.rivtab20.v1.SendMedicalCertificateAnswerResponderInterface
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.AnswerToFkType
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.SendMedicalCertificateAnswerResponseType
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.SendMedicalCertificateAnswerType
+
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
 import javax.xml.transform.stream.StreamSource
 
-import org.joda.time.LocalDateTime
-import org.springframework.core.io.ClassPathResource
-
-import se.inera.webcert.medcertqa.v1.Amnetyp
-import se.inera.certificate.spec.util.WsClientFixture
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswer.v1.rivtabp20.SendMedicalCertificateAnswerResponderInterface
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.AnswerToFkType
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.SendMedicalCertificateAnswerResponseType
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.SendMedicalCertificateAnswerType
 
 class SkickaSvar extends WsClientFixture {
 
@@ -55,8 +55,6 @@ class SkickaSvar extends WsClientFixture {
 		if (ämne) answer.setAmne(Amnetyp.fromValue(ämne))
         if (vårdReferens) answer.setVardReferensId(vårdReferens);
         if (fkReferens) answer.setFkReferensId(fkReferens);
-		// if (fråga) answer.getFraga().setMeddelandeText(fråga);
-		// if (frågeTidpunkt) answer.getFraga().setSigneringsTidpunkt(LocalDateTime.parse(frågeTidpunkt));
 		if (svar) answer.getSvar().setMeddelandeText(svar)
 		if (svarsTidpunkt) answer.getSvar().setSigneringsTidpunkt(LocalDateTime.parse(svarsTidpunkt))
 		if (lakarutlatandeId) answer.getLakarutlatande().setLakarutlatandeId(lakarutlatandeId)

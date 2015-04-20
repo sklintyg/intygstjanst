@@ -4,18 +4,19 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1.ListCertificatesForCareResponderInterface;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1.ListCertificatesForCareResponseType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1.ListCertificatesForCareType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.certificate.integration.converter.MetaDataResolver;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateService;
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
+import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1.ListCertificatesForCareResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1.ListCertificatesForCareResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1.ListCertificatesForCareType;
+import se.riv.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 
 import java.util.List;
+
 
 /**
  * @author andreaskaltenbach

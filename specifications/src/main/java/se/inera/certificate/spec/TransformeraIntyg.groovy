@@ -2,6 +2,21 @@
 
 package se.inera.certificate.spec
 
+import net.sf.json.JSON
+import org.custommonkey.xmlunit.Diff
+import org.custommonkey.xmlunit.XMLUnit
+import se.inera.certificate.spec.util.FitnesseHelper
+import se.inera.certificate.spec.util.RestClientFixture
+import se.inera.certificate.spec.util.WsClientFixture
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.rivtab20.v1.GetCertificateResponderInterface
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.CertificateType
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType
+import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.rivtab20.v3.RegisterMedicalCertificateResponderInterface
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType
+import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
+
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Marshaller
 import javax.xml.bind.Unmarshaller
@@ -11,22 +26,6 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
 
-import net.sf.json.JSON
-
-import org.custommonkey.xmlunit.Diff
-import org.custommonkey.xmlunit.XMLUnit
-
-import se.inera.certificate.spec.util.FitnesseHelper
-import se.inera.certificate.spec.util.RestClientFixture
-import se.inera.certificate.spec.util.WsClientFixture
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.v1.rivtabp20.GetCertificateResponderInterface
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.CertificateType
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType
-import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateResponseType
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.v3.rivtabp20.RegisterMedicalCertificateResponderInterface
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType
-import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
 
 /**
  *

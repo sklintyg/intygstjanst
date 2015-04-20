@@ -21,8 +21,6 @@ package se.inera.certificate.service.impl;
 import static se.inera.certificate.common.enumerations.Recipients.FK;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
-import javax.xml.ws.soap.SOAPFaultException;
-
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,17 +42,18 @@ import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.RecipientService;
 import se.inera.certificate.service.bean.Recipient;
-import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.InnehallType;
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtab20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.v1.rivtabp20.SendMedicalCertificateQuestionResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.rivtab20.v1.SendMedicalCertificateQuestionResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.QuestionToFkType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
-import se.inera.webcert.medcertqa.v1.Amnetyp;
-import se.inera.webcert.medcertqa.v1.InnehallType;
-import se.inera.webcert.medcertqa.v1.VardAdresseringsType;
+
 
 /**
  * @author andreaskaltenbach

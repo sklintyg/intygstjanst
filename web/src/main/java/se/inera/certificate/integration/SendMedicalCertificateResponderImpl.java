@@ -16,12 +16,13 @@ import se.inera.certificate.service.RecipientService;
 import se.inera.certificate.service.bean.CertificateType;
 import se.inera.certificate.service.bean.Recipient;
 import se.inera.certificate.validate.CertificateValidationException;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.v1.rivtabp20.SendMedicalCertificateResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.rivtab20.v1.SendMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateResponseType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 import java.util.List;
+
 
 public class SendMedicalCertificateResponderImpl implements SendMedicalCertificateResponderInterface {
 

@@ -1,18 +1,17 @@
 package se.inera.certificate.spec
 
+import org.joda.time.LocalDateTime
+import org.springframework.core.io.ClassPathResource
+import se.inera.certificate.spec.util.WsClientFixture
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.rivtab20.v1.SendMedicalCertificateQuestionResponderInterface
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.QuestionToFkType
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType
+
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
 import javax.xml.transform.stream.StreamSource
 
-import org.joda.time.LocalDateTime
-import org.springframework.core.io.ClassPathResource
-
-import se.inera.webcert.medcertqa.v1.Amnetyp
-import se.inera.certificate.spec.util.WsClientFixture
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.v1.rivtabp20.SendMedicalCertificateQuestionResponderInterface
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.QuestionToFkType
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType
 
 class SkickaFraga extends WsClientFixture {
 

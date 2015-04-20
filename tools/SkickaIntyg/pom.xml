@@ -16,11 +16,11 @@
   <version>2.1.3</version>
 
   <dependencies>
-    
+
+    <!-- RIVTA Schemas -->
     <dependency>
-      <groupId>se.inera.intyg.schemas.insuranceprocess.healthreporting.v1</groupId>
-      <artifactId>insuranceprocess-healthreporting-interactions</artifactId>
-      <version>1.0.0</version>
+      <groupId>se.riv.insuranceprocess.healthreporting</groupId>
+      <artifactId>insuranceprocess-healthreporting-schemas</artifactId>
     </dependency>
 
     <dependency>
