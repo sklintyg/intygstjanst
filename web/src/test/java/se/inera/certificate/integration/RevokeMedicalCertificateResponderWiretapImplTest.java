@@ -11,7 +11,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
-import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtab20.v1.RevokeMedicalCertificateResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 

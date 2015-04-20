@@ -6,7 +6,7 @@ package se.inera.certificate.spec
 
 import se.inera.certificate.spec.util.FitnesseHelper
 import se.inera.certificate.spec.util.WsClientFixture
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.rivtab20.v1.SendMedicalCertificateResponderInterface
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.rivtabp20.v1.SendMedicalCertificateResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateResponseType
 

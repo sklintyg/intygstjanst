@@ -9,7 +9,7 @@ import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.certificate.integration.validator.RevokeRequestValidator;
 import se.inera.certificate.modules.fk7263.integration.stub.FkMedicalCertificatesStore;
 import se.inera.certificate.validate.CertificateValidationException;
-import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtab20.v1.RevokeMedicalCertificateResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;

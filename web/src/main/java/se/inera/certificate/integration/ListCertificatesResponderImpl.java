@@ -25,7 +25,7 @@ import se.inera.certificate.integration.converter.ConverterUtil;
 import se.inera.certificate.integration.module.exception.MissingConsentException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
-import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.rivtab20.v1.ListCertificatesResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.rivtabp20.v1.ListCertificatesResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesResponseType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.converter.ModelConverter;

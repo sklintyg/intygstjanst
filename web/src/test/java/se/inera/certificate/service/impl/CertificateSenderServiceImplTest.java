@@ -30,7 +30,7 @@ import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.RecipientService;
 import se.inera.certificate.service.bean.Recipient;
 import se.inera.certificate.service.builder.RecipientBuilder;
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.rivtab20.v3.RegisterMedicalCertificateResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.rivtabp20.v3.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 

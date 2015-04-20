@@ -10,7 +10,7 @@ import se.inera.certificate.integration.module.exception.InvalidCertificateExcep
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.service.CertificateService;
-import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtab20.v1.SetCertificateStatusResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtabp20.v1.SetCertificateStatusResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusResponseType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;

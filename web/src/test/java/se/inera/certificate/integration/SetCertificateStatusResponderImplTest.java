@@ -13,7 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.certificate.v1.StatusType;
-import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtab20.v1.SetCertificateStatusResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtabp20.v1.SetCertificateStatusResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusRequestType;
 
 
