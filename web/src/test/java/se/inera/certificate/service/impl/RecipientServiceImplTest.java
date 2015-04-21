@@ -77,7 +77,7 @@ public class RecipientServiceImplTest {
         assertEquals(expected, service.listRecipients(new CertificateType(TS_CERTIFICATE_TYPE_BAS)));
         assertEquals(expected, service.listRecipients(new CertificateType(TS_CERTIFICATE_TYPE_DIABETES)));
     }
-    
+
     @Test
     public void testGetTransportModelVersionForFK7263() throws RecipientUnknownException {
         assertEquals(TransportModelVersion.LEGACY_LAKARUTLATANDE, service.getVersion("FKORG", "fk7263"));

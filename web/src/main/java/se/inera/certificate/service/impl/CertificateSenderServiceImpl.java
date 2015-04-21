@@ -41,6 +41,7 @@ import se.inera.certificate.modules.support.api.dto.InternalModelHolder;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.RecipientService;
+import se.inera.certificate.service.bean.CertificateType;
 import se.inera.certificate.service.bean.Recipient;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.InnehallType;
@@ -79,7 +80,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     public void sendCertificate(Certificate certificate, String recipientId) {
         try {
             ModuleEntryPoint module = moduleRegistry.getModuleEntryPoint(certificate.getType());
-
+            CertificateType certType = new CertificateType(certificate.getType());
             // Use target from parameter if present, otherwise use the default receiver from the module's entryPoint.
             String logicalAddress;
 
@@ -88,11 +89,17 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
             } else {
                 Recipient recipient = recipientService.getRecipient(recipientId);
-                logicalAddress = recipient.getLogicalAddress();
+                //Check that the recipient is valid for certType
+                if (recipientService.listRecipients(certType).contains(recipient)) {
+                    logicalAddress = recipient.getLogicalAddress();
+                }
+                else {
+                    LOGGER.error("Recipient {} is not available for certificate type {}", recipientId, certType.toString());
+                    throw new ServerException(String.format("Recipient %s is not available for certificate type %s", recipientId, certType.toString()));
+                }
             }
-
             module.getModuleApi().sendCertificateToRecipient(new InternalModelHolder(certificate.getDocument(),
-                            certificate.getOriginalCertificate().getDocument()),
+                    certificate.getOriginalCertificate().getDocument()),
                     logicalAddress, recipientId);
 
         } catch (ModuleNotFoundException e) {

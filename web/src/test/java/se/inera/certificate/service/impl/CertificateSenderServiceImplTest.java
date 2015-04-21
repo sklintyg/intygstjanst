@@ -1,11 +1,19 @@
 package se.inera.certificate.service.impl;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -13,8 +21,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
+
+import se.inera.certificate.exception.MissingModuleException;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.model.builder.CertificateBuilder;
@@ -28,18 +39,12 @@ import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.RecipientService;
+import se.inera.certificate.service.bean.CertificateType;
 import se.inera.certificate.service.bean.Recipient;
 import se.inera.certificate.service.builder.RecipientBuilder;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.rivtabp20.v3.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import java.io.IOException;
-
 
 /**
  * @author andreaskaltenbach
@@ -54,6 +59,7 @@ public class CertificateSenderServiceImplTest {
     private static final String RECIPIENT_ID = "FK";
     private static final String RECIPIENT_NAME = "Försäkringskassan";
     private static final String RECIPIENT_LOGICALADDRESS = "FKORG";
+    private static final String RECIPIENT_DEFAULT_LOGICALADDRESS = "FKORG-DEFAULT";
     private static final String RECIPIENT_CERTIFICATETYPES = "fk7263";
 
     @Mock
@@ -115,7 +121,7 @@ public class CertificateSenderServiceImplTest {
         when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
         when(moduleEntryPoint.getModuleId()).thenReturn("fk7263");
-        when(moduleEntryPoint.getDefaultRecipient()).thenReturn(RECIPIENT_LOGICALADDRESS);
+        when(moduleEntryPoint.getDefaultRecipient()).thenReturn(RECIPIENT_DEFAULT_LOGICALADDRESS);
     }
 
     @Before
@@ -123,12 +129,19 @@ public class CertificateSenderServiceImplTest {
         when(recipientService.getVersion(RECIPIENT_LOGICALADDRESS, CERTIFICATE_TYPE)).thenReturn(TransportModelVersion.LEGACY_LAKARUTLATANDE);
         when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(createRecipient());
         when(recipientService.getRecipientForLogicalAddress(RECIPIENT_LOGICALADDRESS)).thenReturn(createRecipient());
+        when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(Arrays.asList(createRecipient()));
     }
 
     @Test
     public void testSend() throws Exception {
         senderService.sendCertificate(certificate, RECIPIENT_ID);
         verify(moduleApi).sendCertificateToRecipient(any(InternalModelHolder.class), eq(RECIPIENT_LOGICALADDRESS), eq(RECIPIENT_ID));
+    }
+    
+    @Test
+    public void testSendWithDefaultRecipient() throws ModuleException {
+        senderService.sendCertificate(certificate, null);
+        verify(moduleApi).sendCertificateToRecipient(any(InternalModelHolder.class), eq(RECIPIENT_DEFAULT_LOGICALADDRESS), Mockito.isNull(String.class));
     }
 
     @Test(expected = ServerException.class)
@@ -138,4 +151,8 @@ public class CertificateSenderServiceImplTest {
         senderService.sendCertificate(certificate, RECIPIENT_ID);
     }
 
+    @Test(expected = ServerException.class)
+    public void testSendWithNoMatchingRecipient() {
+        senderService.sendCertificate(certificate, "TS");
+    }
 }
