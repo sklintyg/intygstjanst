@@ -21,8 +21,6 @@ package se.inera.certificate.service.impl;
 import static se.inera.certificate.common.enumerations.Recipients.FK;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
-import javax.xml.ws.soap.SOAPFaultException;
-
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,18 +41,20 @@ import se.inera.certificate.modules.support.api.dto.InternalModelHolder;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.RecipientService;
+import se.inera.certificate.service.bean.CertificateType;
 import se.inera.certificate.service.bean.Recipient;
-import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.v1.rivtabp20.RevokeMedicalCertificateResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.InnehallType;
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.v1.rivtabp20.SendMedicalCertificateQuestionResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.rivtabp20.v1.SendMedicalCertificateQuestionResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.QuestionToFkType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
-import se.inera.webcert.medcertqa.v1.Amnetyp;
-import se.inera.webcert.medcertqa.v1.InnehallType;
-import se.inera.webcert.medcertqa.v1.VardAdresseringsType;
+
 
 /**
  * @author andreaskaltenbach
@@ -80,7 +80,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     public void sendCertificate(Certificate certificate, String recipientId) {
         try {
             ModuleEntryPoint module = moduleRegistry.getModuleEntryPoint(certificate.getType());
-
+            CertificateType certType = new CertificateType(certificate.getType());
             // Use target from parameter if present, otherwise use the default receiver from the module's entryPoint.
             String logicalAddress;
 
@@ -89,11 +89,17 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
             } else {
                 Recipient recipient = recipientService.getRecipient(recipientId);
-                logicalAddress = recipient.getLogicalAddress();
+                //Check that the recipient is valid for certType
+                if (recipientService.listRecipients(certType).contains(recipient)) {
+                    logicalAddress = recipient.getLogicalAddress();
+                }
+                else {
+                    LOGGER.error("Recipient {} is not available for certificate type {}", recipientId, certType.toString());
+                    throw new ServerException(String.format("Recipient %s is not available for certificate type %s", recipientId, certType.toString()));
+                }
             }
-
             module.getModuleApi().sendCertificateToRecipient(new InternalModelHolder(certificate.getDocument(),
-                            certificate.getOriginalCertificate().getDocument()),
+                    certificate.getOriginalCertificate().getDocument()),
                     logicalAddress, recipientId);
 
         } catch (ModuleNotFoundException e) {

@@ -3,7 +3,7 @@ package se.inera.certificate.spec
 import org.joda.time.LocalDate
 import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.certificate.v1.CertificateMetaType
-import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.v1.rivtabp20.ListCertificatesResponderInterface
+import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.rivtabp20.v1.ListCertificatesResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesRequestType
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum

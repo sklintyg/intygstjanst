@@ -1,13 +1,11 @@
 package se.inera.certificate.spec
 
 import iso.v21090.dt.v1.II
-
 import org.joda.time.LocalDateTime
-
-import se.inera.webcert.medcertqa.v1.VardAdresseringsType
-import se.inera.webcert.medcertqa.v1.LakarutlatandeEnkelType
 import se.inera.certificate.spec.util.WsClientFixture
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.v1.rivtabp20.SendMedicalCertificateResponderInterface
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.rivtabp20.v1.SendMedicalCertificateResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType
@@ -51,6 +49,7 @@ class SkickaIntygTillFk extends WsClientFixture {
         sendRequestType.setSend(sendType)
         sendType.vardReferensId = 1
         sendType.avsantTidpunkt = new LocalDateTime("2013-05-01T11:00:00")
+
         sendType.adressVard = new VardAdresseringsType()
         sendType.adressVard.hosPersonal = new HosPersonalType()
         sendType.adressVard.hosPersonal.personalId = new II()

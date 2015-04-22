@@ -1,15 +1,16 @@
 package se.inera.certificate.spec
-import org.skyscreamer.jsonassert.JSONAssert
 
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getmedicalcertificateforcare.v1.GetMedicalCertificateForCareRequestType
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getmedicalcertificateforcare.v1.GetMedicalCertificateForCareResponderInterface
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getmedicalcertificateforcare.v1.GetMedicalCertificateForCareResponseType
-import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType
-import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType
+import org.skyscreamer.jsonassert.JSONAssert
 import se.inera.certificate.modules.fk7263.model.converter.TransportToInternal
 import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.LakarutlatandeType
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getmedicalcertificateforcare.v1.GetMedicalCertificateForCareRequestType
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getmedicalcertificateforcare.v1.GetMedicalCertificateForCareResponderInterface
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getmedicalcertificateforcare.v1.GetMedicalCertificateForCareResponseType
+import se.riv.clinicalprocess.healthcond.certificate.v1.ErrorIdType
+import se.riv.clinicalprocess.healthcond.certificate.v1.ResultCodeType
+
 /**
  *
  * @author andreaskaltenbach
