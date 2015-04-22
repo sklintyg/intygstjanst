@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.io.IOUtils;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import se.inera.certificate.integration.json.CustomObjectMapper;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.model.dao.OriginalCertificate;
+import se.inera.certificate.modules.registry.IntygModuleRegistry;
+import se.inera.certificate.modules.registry.ModuleNotFoundException;
+import se.inera.certificate.modules.support.api.ModuleApi;
 
 public class IntygBootstrapBean {
 
@@ -37,6 +42,9 @@ public class IntygBootstrapBean {
     public void setTxManager(PlatformTransactionManager txManager) {
         this.transactionTemplate = new TransactionTemplate(txManager);
     }
+
+    @Autowired
+    private IntygModuleRegistry moduleRegistry;
 
     @PostConstruct
     public void initData() throws IOException {
@@ -89,7 +97,23 @@ public class IntygBootstrapBean {
                 try {
                     Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
                     certificate.setDocument(IOUtils.toString(content.getInputStream(), "UTF-8"));
+                    ModuleApi moduleApi = null;
+                    OriginalCertificate originalCertificate = new OriginalCertificate();
+                    try {
+                        moduleApi = moduleRegistry.getModuleApi(certificate.getType());
+                    } catch (ModuleNotFoundException e) {
+                        LOG.error("Module {} not found ", certificate.getType());
+                    }
+                    if (moduleApi != null && moduleApi.marshall(certificate.getDocument()) != null) {
+                        originalCertificate.setReceived(new LocalDateTime());
+                        originalCertificate.setDocument(moduleApi.marshall(certificate.getDocument()));
+                        certificate.setOriginalCertificate(originalCertificate);
+                    } else {
+                        LOG.debug("Got null while populating with original_certificate");
+                        originalCertificate.setDocument(certificate.getDocument());
+                    }
                     entityManager.persist(certificate);
+                    entityManager.persist(originalCertificate);
                 } catch (Throwable t) {
                     status.setRollbackOnly();
                     LOG.error("Loading failed of {}: {}", metadata.getFilename(), t.getMessage());
