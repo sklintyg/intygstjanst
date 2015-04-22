@@ -1,6 +1,6 @@
 {
     "id": "intyg-5",
-	"typ": "TS_BAS_U06_V06",
+	"typ": "ts-bas",
     "grundData": {
         "signeringsdatum": "2013-08-12T15:57:00.000",
         "skapadAv": {

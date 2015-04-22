@@ -207,7 +207,7 @@
       "utanKorrektion": 0
     }
   },
-  "typ": "TS_DIABETES_U06_V02",
+  "typ": "ts-diabetes",
   "vardkontakt": {
     "idkontroll": "PASS",
     "typ": "5880005"
