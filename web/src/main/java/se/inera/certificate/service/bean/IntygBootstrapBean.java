@@ -108,12 +108,13 @@ public class IntygBootstrapBean {
                         originalCertificate.setReceived(new LocalDateTime());
                         originalCertificate.setDocument(moduleApi.marshall(certificate.getDocument()));
                         certificate.setOriginalCertificate(originalCertificate);
+                        originalCertificate.setCertificate(certificate);
                     } else {
                         LOG.debug("Got null while populating with original_certificate");
                         originalCertificate.setDocument(certificate.getDocument());
                     }
-                    entityManager.persist(certificate);
                     entityManager.persist(originalCertificate);
+                    entityManager.persist(certificate);
                 } catch (Throwable t) {
                     status.setRollbackOnly();
                     LOG.error("Loading failed of {}: {}", metadata.getFilename(), t.getMessage());
