@@ -65,11 +65,11 @@
     <!-- Intyg Schemas -->
     <dependency>
       <groupId>se.inera.intyg.clinicalprocess.healthcond.certificate</groupId>
-      <artifactId>clinicalprocess-healthcond-certificate-schemas</artifactId>
+      <artifactId>intyg-clinicalprocess-healthcond-certificate-schemas</artifactId>
     </dependency>
     <dependency>
       <groupId>se.inera.intyg.insuranceprocess.healthreporting</groupId>
-      <artifactId>insuranceprocess-healthreporting-schemas</artifactId>
+      <artifactId>intyg-insuranceprocess-healthreporting-schemas</artifactId>
     </dependency>
 
 
