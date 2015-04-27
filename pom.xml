@@ -37,10 +37,10 @@
     <rivta-itintegration-monitoring.version>1.0.0.0</rivta-itintegration-monitoring.version>
 
     <intyg-clinicalprocess.version>0-SNAPSHOT</intyg-clinicalprocess.version>
-    <intyg-clinicalprocess.version.range>(,1.1.0]</intyg-clinicalprocess.version.range>
+    <intyg-clinicalprocess.version.range>(,1.0.0]</intyg-clinicalprocess.version.range>
 
     <intyg-insuranceprocess.version>0-SNAPSHOT</intyg-insuranceprocess.version>
-    <intyg-insuranceprocess.version.range>(,1.1.0]</intyg-insuranceprocess.version.range>
+    <intyg-insuranceprocess.version.range>(,1.0.0]</intyg-insuranceprocess.version.range>
 
     <intyg-transportstyrelsen.version>0-SNAPSHOT</intyg-transportstyrelsen.version>
     <intyg-transportstyrelsen.version.range>(,1.0.0]</intyg-transportstyrelsen.version.range>
@@ -91,6 +91,11 @@
       <dependency>
         <groupId>se.inera.intyg.common</groupId>
         <artifactId>common-schemas</artifactId>
+        <version>${common.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>se.inera.intyg.common</groupId>
+        <artifactId>common-specifications</artifactId>
         <version>${common.version}</version>
       </dependency>
 
@@ -155,11 +160,6 @@
         <groupId>se.inera.intyg.tools</groupId>
         <artifactId>anonymisering</artifactId>
         <version>${anonymisering.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>se.inera.intyg.tools</groupId>
-        <artifactId>tools-specifications</artifactId>
-        <version>${tools.version}</version>
       </dependency>
 
     </dependencies>
