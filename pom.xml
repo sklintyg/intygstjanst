@@ -18,7 +18,6 @@
   <name>Intygstjänsten</name>
 
   <properties>
-
     <!-- Common -->
     <common.version>0-SNAPSHOT</common.version>
     <common.version.range>(,2.2.0]</common.version.range>
@@ -70,16 +69,6 @@
       <!-- Common -->
       <dependency>
         <groupId>se.inera.intyg.common</groupId>
-        <artifactId>common-support</artifactId>
-        <version>${common.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>se.inera.intyg.common</groupId>
-        <artifactId>common-web</artifactId>
-        <version>${common.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>se.inera.intyg.common</groupId>
         <artifactId>integration-util</artifactId>
         <version>${common.version}</version>
       </dependency>
@@ -96,6 +85,16 @@
       <dependency>
         <groupId>se.inera.intyg.common</groupId>
         <artifactId>common-specifications</artifactId>
+        <version>${common.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>se.inera.intyg.common</groupId>
+        <artifactId>common-support</artifactId>
+        <version>${common.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>se.inera.intyg.common</groupId>
+        <artifactId>common-web</artifactId>
         <version>${common.version}</version>
       </dependency>
 

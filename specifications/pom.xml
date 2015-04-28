@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
@@ -36,10 +38,10 @@
       <artifactId>intygstjanst-persistence</artifactId>
     </dependency>
 
-    <!-- Tools -->
+    <!-- Common -->
     <dependency>
-      <groupId>se.inera.intyg.tools</groupId>
-      <artifactId>tools-specifications</artifactId>
+      <groupId>se.inera.intyg.common</groupId>
+      <artifactId>common-specifications</artifactId>
     </dependency>
 
     <!-- Intygstyper -->
@@ -72,7 +74,7 @@
       <artifactId>intyg-insuranceprocess-healthreporting-schemas</artifactId>
     </dependency>
 
-
+    <!-- Misc -->
     <dependency>
       <groupId>javax.jms</groupId>
       <artifactId>jms-api</artifactId>
