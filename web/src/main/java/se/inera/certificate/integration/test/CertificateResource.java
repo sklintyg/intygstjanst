@@ -67,8 +67,10 @@ public class CertificateResource {
             public Response doInTransaction(TransactionStatus status) {
                 try {
                     Certificate certificate = entityManager.find(Certificate.class, id);
-                    entityManager.remove(certificate.getOriginalCertificate());
-                    entityManager.remove(certificate);
+                    if (certificate != null) {
+                        entityManager.remove(certificate.getOriginalCertificate());
+                        entityManager.remove(certificate);
+                    }
                     return Response.ok().build();
                 } catch (Throwable t) {
                     status.setRollbackOnly();
