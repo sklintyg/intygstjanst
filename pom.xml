@@ -154,13 +154,6 @@
         <version>${intyg-transportstyrelsen.version}</version>
       </dependency>
 
-      <!-- Tools -->
-      <dependency>
-        <groupId>se.inera.intyg.tools</groupId>
-        <artifactId>anonymisering</artifactId>
-        <version>${anonymisering.version}</version>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
 
