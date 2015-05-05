@@ -10,9 +10,11 @@ import se.inera.certificate.clinicalprocess.healthcond.certificate.utils.ResultT
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultType;
 import se.inera.certificate.exception.RecipientUnknownException;
+import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
 import se.inera.certificate.logging.LogMarkers;
+import se.inera.certificate.modules.support.api.exception.ExternalServiceCallException;
 import se.inera.certificate.service.CertificateService;
 
 public class SendCertificateForCitizenResponderImpl implements SendCertificateForCitizenResponderInterface {
@@ -53,11 +55,17 @@ public class SendCertificateForCitizenResponderImpl implements SendCertificateFo
             String msg = String.format("Certificate '%s' has been revoked.", request.getUtlatandeId());
             LOGGER.info(LogMarkers.MONITORING, msg);
             response.setResult(ResultTypeUtil.infoResult(msg));
-        } catch (RecipientUnknownException e) {
+        } catch (RecipientUnknownException ex) {
             // return ERROR if recipient is unknwon
             String msg = String.format("Unknown recipient ID: %s", request.getMottagareId());
             LOGGER.error(LogMarkers.MONITORING, msg);
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, msg));
+        } catch (ServerException ex) {
+            Throwable cause = ex.getCause();
+            String message = (cause instanceof ExternalServiceCallException) ? cause.getMessage() : ex.getMessage();
+            // return ERROR if certificate couldn't be sent
+            LOGGER.error(LogMarkers.MONITORING, String.format("Certificate '%s' couldn't be sent to '%s': %s", new Object[] { request.getUtlatandeId(), request.getMottagareId(), message }));
+            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.TECHNICAL_ERROR, String.format("Certificate couldn't be sent to recipient", request.getUtlatandeId())));
         }
 
         return response;
