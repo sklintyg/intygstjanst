@@ -5,11 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.certificate.exception.RecipientUnknownException;
+import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
 import se.inera.certificate.integration.validator.SendCertificateRequestValidator;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.exception.ExternalServiceCallException;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.CertificateService.SendStatus;
 import se.inera.certificate.service.RecipientService;
@@ -92,6 +94,13 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             return response;
 
+        } catch (ServerException ex) {
+            Throwable cause = ex.getCause();
+            String message = (cause instanceof ExternalServiceCallException) ? cause.getMessage() : ex.getMessage();
+            // return ERROR if certificate couldn't be sent
+            LOGGER.error(LogMarkers.MONITORING, String.format("Certificate '%s' couldn't be sent: %s", new Object[] { safeGetCertificateId(request), message }));
+            response.setResult(ResultOfCallUtil.applicationErrorResult("Certificate couldn't be sent to recipient"));
+            return response;
         }
 
     }
