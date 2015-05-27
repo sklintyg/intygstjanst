@@ -1,7 +1,7 @@
 ---
 # This playbook deploys intygstjansten 
 
-- hosts: tomcat
+- hosts: intygstjanst-tomcat
   sudo: yes 
   vars: 
     # repo - values: snapshot or release
