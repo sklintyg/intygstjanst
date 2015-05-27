@@ -1,7 +1,7 @@
-!3 Ett journalsystem försöker att hämta ett intyg som inte är registrerad ännu
+!3 Ett journalsystem försöker att hämta ett intyg som inte är registrerat
 |Journalsystem hamtar intyg|
 |intyg|personnummer|resultat?|
-|fit-intyg-1|19010101-0101|[VALIDATION_ERROR] - Certificate 'fit-intyg-1' does not exist for user '19010101-0101'|
+|fit-intyg-finnsinte|19010101-0101|[VALIDATION_ERROR] - Certificate 'fit-intyg-finnsinte' does not exist for user '19010101-0101'|
 
 !3 Efter journalsystemet har registrerat ett nytt intyg så ska det vara tillgängligt
 
