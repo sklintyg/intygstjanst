@@ -62,4 +62,4 @@
 
 |Markera intyg som hamtat|
 |personnr|intyg|resultat?|
-|19999999-9999|fit-intyg-6|=~/ERROR.*Certificate 'fit-intyg-6' does not exist for user '19999999-9999'/|
+|${person4.personnummer}|fit-intyg-6|=~/ERROR.*Certificate 'fit-intyg-6' does not exist for user '${person4.personnummer}'/|

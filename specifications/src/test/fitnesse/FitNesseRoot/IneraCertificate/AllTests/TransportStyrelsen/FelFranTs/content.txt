@@ -1,7 +1,7 @@
 !3 Givet att samtycke finns
 !| Samtycke |
 | personnr | samtycke |
-| 19121212-1212 | ja |
+| ${person6.personnummer} | ja |
 
 !3 Och ett simulerat fel hos TS
 | Simulera fel hos ts |
@@ -11,7 +11,7 @@
 !3 Bör ett försök att skicka ett intyg ge ett fel
 | Skicka intyg till mottagare |
 | personnummer | intyg | mottagare | resultat? |
-| 19121212-1212 | intyg-5 | TS | ERROR |
+| ${person6.personnummer} | intyg-5 | TS | ERROR |
 
 | Simulera fel hos ts |
 | fel |

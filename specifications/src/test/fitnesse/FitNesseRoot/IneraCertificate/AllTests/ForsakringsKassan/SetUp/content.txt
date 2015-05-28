@@ -3,8 +3,8 @@
 |Samtycke|
 |personnr|samtycke|
 |${person1.personnummer}|ja|
-|19020202-0202|nej|
-|19030303-0303|nej|
+|${person3.personnummer}|nej|
+|${person5.personnummer}|nej|
 
 !3 och följande intyg:
 
@@ -18,4 +18,4 @@
 |${person1.personnummer}|2013-04-04|2013-04-04|2013-04-11|läkare4|enhet4|FK7263|fit-intyg-4|M|nej|
 |${person1.personnummer}|2013-05-01|2013-05-01|2013-05-05|läkare1|enhet1|FK7263|fit-intyg-SmL|!-SmL-!|nej|
 |${person1.personnummer}|2013-04-05|2013-04-05|2013-04-10|läkare5|enhet5|FK7263|fit-intyg-5|M|nej|
-|19030303-0303|2013-04-01|2013-04-01|2013-04-05|läkare6|enhet6|FK7263|fit-intyg-6|M|nej|
+|${person5.personnummer}|2013-04-01|2013-04-01|2013-04-05|läkare6|enhet6|FK7263|fit-intyg-6|M|nej|

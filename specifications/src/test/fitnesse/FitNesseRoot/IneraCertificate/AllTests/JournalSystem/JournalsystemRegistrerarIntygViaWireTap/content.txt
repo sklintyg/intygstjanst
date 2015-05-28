@@ -38,7 +38,7 @@
 
 |Registrera fk7263 intyg via wire tap|
 |personnummer|id|utfärdat|resultat?|
-|190101010101|fit-intyg-2|2013-08-01|OK|
+|${person1.personnummer}|fit-intyg-2|2013-08-01|OK|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|

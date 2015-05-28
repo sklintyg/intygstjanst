@@ -67,16 +67,16 @@ I frågan anges ett datum-intervall för utfärdande. Endast intyg inom detta in
 
 |Hamta lista av intyg|
 |personnr|från|till|typ|svar?|
-|19020202-0202|2013-04-01|2013-04-01|[FK7263]|NOCONSENT|
+|${person3.personnummer}|2013-04-01|2013-04-01|[FK7263]|NOCONSENT|
 
 !3 Testfall List-Certificates-4.2: Hämta intygslista för person-nr som har intyg men saknar samtycke
 
 |Hamta lista av intyg|
 |personnr|från|till|typ|svar?|
-|19030303-0303|2013-04-01|2013-04-01|[FK7263]|NOCONSENT|
+|${person5.personnummer}|2013-04-01|2013-04-01|[FK7263]|NOCONSENT|
 
 !3 Testfall List-Certificates-4.3: Hämta intygslista för person om vilken information saknas
 
 |Hamta lista av intyg|
 |personnr|från|till|typ|svar?|
-|19999999-9999|2013-04-01|2013-04-01|[FK7263]|NOCONSENT|
+|${person4.personnummer}|2013-04-01|2013-04-01|[FK7263]|NOCONSENT|

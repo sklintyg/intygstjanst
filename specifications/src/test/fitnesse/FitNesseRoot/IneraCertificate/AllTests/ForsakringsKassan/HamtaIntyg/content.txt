@@ -28,7 +28,7 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19020202-0202|fit-intyg-1|[ERROR] - Consent required from user 19020202-0202|
+|${person3.personnummer}|fit-intyg-1|[ERROR] - Consent required from user ${person3.personnummer}|
 
 !2 Felscenarier
 
@@ -48,13 +48,13 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19999999-9999|fit-intyg-6|[ERROR] - Consent required from user 19999999-9999|
+|${person4.personnummer}|fit-intyg-6|[ERROR] - Consent required from user ${person4.personnummer}|
 
 !3 Testfall Get-Certificate-3.4: Försök hämta intyg utan intygsid
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19999999-9999||[ERROR] - Validation error: missing certificateId|
+|${person4.personnummer}||[ERROR] - Validation error: missing certificateId|
 
 !3 Testfall Get-Certificate-3.5: Försök hämta intyg utan patient
 

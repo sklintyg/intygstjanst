@@ -3,6 +3,11 @@
 !*> '''Testdata'''
 !define person1.personnummer {19010101-0101}
 !define person2.personnummer {19121212-0001}
+!define person3.personnummer {19020202-0202}
+!define person4.personnummer {19999999-9999}
+!define person5.personnummer {19030303-0303}
+!define person6.personnummer {19121212-1212}
+!define person7.personnummer {19121212-0002}
 *!
 
 !contents -R4
