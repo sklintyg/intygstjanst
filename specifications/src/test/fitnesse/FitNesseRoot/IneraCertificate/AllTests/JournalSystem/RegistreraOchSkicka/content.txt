@@ -2,7 +2,7 @@
 
 |Samtycke|
 |personnr|samtycke|
-|19010101-0101|ja|
+|${person1.personnummer}|ja|
 
 Vissa landsting skickar en obsolet <arbetsuppgift /> tagg utan <typAvArbetsuppgift>.
 Detta är inte korrekt enligt schemat, men valideras bara om typAvSysselsattning är Nuvarande_arbete.
@@ -17,7 +17,7 @@ Detta test säkerställer att dessa intyg korrekt kan registreras och skickas vi
 
 |skicka intyg till fk|
 |intyg|personnummer|resultat?|
-|giltigt-intyg-arbetsloshet-med-obsolet-arbetsuppgift|19010101-0101|OK|
+|giltigt-intyg-arbetsloshet-med-obsolet-arbetsuppgift|${person1.personnummer}|OK|
 
 |ta bort intyg|
 |id|
@@ -32,7 +32,7 @@ INTYG-1420: Intyg med orimliga datum skall kunna registreras och skickas vidare 
 
 |skicka intyg till fk|
 |intyg|personnummer|resultat?|
-|giltigt-intyg-med-orimligt-datum|19010101-0101|OK|
+|giltigt-intyg-med-orimligt-datum|${person1.personnummer}|OK|
 
 |ta bort intyg|
 |id|
@@ -42,4 +42,4 @@ INTYG-1420: Intyg med orimliga datum skall kunna registreras och skickas vidare 
 
 |Samtycke|
 |personnr|samtycke|
-|19010101-0101|nej|
+|${person1.personnummer}|nej|

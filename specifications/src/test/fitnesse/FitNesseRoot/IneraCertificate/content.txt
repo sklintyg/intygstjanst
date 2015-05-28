@@ -1,5 +1,9 @@
 !-FitNesse-!-baserade specifikationer för Intygstjänsten.
 
+!*> '''Testdata'''
+!define person1.personnummer {19010101-0101}
+*!
+
 !contents -R4
 
 !*> '''Variables Defined'''

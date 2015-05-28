@@ -1,22 +1,22 @@
-!3 Givet att samtycke finns för 19010101-0101 så ska det inte finnas några intyg invånaren än
+!3 Givet att samtycke finns för ${person1.personnummer} så ska det inte finnas några intyg invånaren än
 
 |Samtycke|
 |personnr|samtycke|
-|19010101-0101|ja|
+|${person1.personnummer}|ja|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19010101-0101|fit-intyg-1|[ERROR] - Certificate 'fit-intyg-1' does not exist for user '19010101-0101'|
+|${person1.personnummer}|fit-intyg-1|[ERROR] - Certificate 'fit-intyg-1' does not exist for user '${person1.personnummer}'|
 
 !3 Efter journalsystemet har registrerat ett nytt intyg via !-WireTap-! så ska det vara tillgängligt, och registrerat som skickat
 
 |Registrera fk7263 intyg via wire tap|
 |personnummer|id|utfärdat|enhetsId|vårdGivarId|resultat?|
-|19010101-0101|fit-intyg-1|2013-08-01|enEnhet|enVårdGivare|OK|
+|${person1.personnummer}|fit-intyg-1|2013-08-01|enEnhet|enVårdGivare|OK|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19010101-0101|fit-intyg-1|OK|[RECEIVED, SENT]|
+|${person1.personnummer}|fit-intyg-1|OK|[RECEIVED, SENT]|
 
 !3 Kontrollera att intyget är flaggat som wire-tappat och har korrekt vårdenhet och vårdgivare satt
 
@@ -28,11 +28,11 @@
 
 |Registrera fk7263 intyg via wire tap|
 |personnummer|id|utfärdat|resultat?|
-|19010101-0101|fit-intyg-1|2013-08-01|[INFO] - Certificate already exists|
+|${person1.personnummer}|fit-intyg-1|2013-08-01|[INFO] - Certificate already exists|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19010101-0101|fit-intyg-1|OK|[RECEIVED, SENT]|
+|${person1.personnummer}|fit-intyg-1|OK|[RECEIVED, SENT]|
 
 !3 Registrering av intyg via WireTAP korrigerar person-nr utan bindestreck
 
@@ -42,7 +42,7 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19010101-0101|fit-intyg-2|OK|[RECEIVED, SENT]|
+|${person1.personnummer}|fit-intyg-2|OK|[RECEIVED, SENT]|
 
 !3 Försök att registrera intyg med felaktigt person-nr via WireTAP ger fel
 
@@ -54,7 +54,7 @@
 
 |Samtycke|
 |personnr|samtycke|
-|19010101-0101|nej|
+|${person1.personnummer}|nej|
 
 !3 Rensa bort test-intyg
 

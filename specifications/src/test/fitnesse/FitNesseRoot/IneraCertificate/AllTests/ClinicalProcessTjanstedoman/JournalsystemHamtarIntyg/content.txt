@@ -1,37 +1,37 @@
 !3 Ett journalsystem försöker att hämta ett intyg som inte är registrerat
 |Journalsystem hamtar intyg|
 |intyg|personnummer|resultat?|
-|fit-intyg-finnsinte|19010101-0101|[VALIDATION_ERROR] - Certificate 'fit-intyg-finnsinte' does not exist for user '19010101-0101'|
+|fit-intyg-finnsinte|${person1.personnummer}|[VALIDATION_ERROR] - Certificate 'fit-intyg-finnsinte' does not exist for user '${person1.personnummer}'|
 
 !3 Efter journalsystemet har registrerat ett nytt intyg så ska det vara tillgängligt
 
 |Registrera Fk7263 intyg|
 |personnummer|id|utfärdat|resultat?|
-|19010101-0101|fit-intyg-1|2013-08-01|OK|
+|${person1.personnummer}|fit-intyg-1|2013-08-01|OK|
 
 |Journalsystem hamtar intyg|
 |intyg|personnummer|förväntatSvar|resultat?|status?|
-|fit-intyg-1|19010101-0101|{"id":"fit-intyg-1"}|OK|[RECEIVED]|
+|fit-intyg-1|${person1.personnummer}|{"id":"fit-intyg-1"}|OK|[RECEIVED]|
 
 !3 Journalsystemet rättar intyget och efter det skall det vara tillgängligt, men returneras med annan status
 
 |Ratta intyg|
 |personnummer|intyg|resultat?|
-|19010101-0101|fit-intyg-1|OK|
+|${person1.personnummer}|fit-intyg-1|OK|
 
 |Journalsystem hamtar intyg|
 |intyg|personnummer|förväntatSvar|resultat?|
-|fit-intyg-1|19010101-0101|{"id":"fit-intyg-1"}|[REVOKED] - Certificate 'fit-intyg-1' has been revoked|
+|fit-intyg-1|${person1.personnummer}|{"id":"fit-intyg-1"}|[REVOKED] - Certificate 'fit-intyg-1' has been revoked|
 
 !3 Ett journalsystem försöker hämta ett intyg som är borttaget (för vården)
 
 |Intyg|
 |personnr|utfärdat|giltigtFrån|giltigtTill|typ|id|borttaget av vården|
-|19010101-0101|2013-04-01|2013-04-01|2013-04-11|FK7263|fit-intyg-2|ja|
+|${person1.personnummer}|2013-04-01|2013-04-01|2013-04-11|FK7263|fit-intyg-2|ja|
 
 |Journalsystem hamtar intyg|
 |intyg|personnummer|resultat?|
-|fit-intyg-2|19010101-0101|[APPLICATION_ERROR] - Certificate 'fit-intyg-2' has been deleted by care giver|
+|fit-intyg-2|${person1.personnummer}|[APPLICATION_ERROR] - Certificate 'fit-intyg-2' has been deleted by care giver|
 
 !3 Rensa bort test-intyg
 

@@ -2,7 +2,7 @@
 
 |Samtycke|
 |personnr|samtycke|
-|19010101-0101|ja|
+|${person1.personnummer}|ja|
 
 !3 Säkerställ att intyg registrerade via !-RegisterCertificate-! transformeras korrekt, så att !-GetCertificate-! ger tillbaka samma intygsinformation
 |transformera intyg|
@@ -21,4 +21,4 @@
 
 |Samtycke|
 |personnr|samtycke|
-|19010101-0101|nej|
+|${person1.personnummer}|nej|

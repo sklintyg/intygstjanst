@@ -2,7 +2,7 @@
 
 |Samtycke|
 |personnr|samtycke|
-|19010101-0101|ja|
+|${person1.personnummer}|ja|
 
 !3 Korrekt meddelande ger inga fel
 
@@ -10,7 +10,7 @@
 
 |Intyg|
 |personnr|utfärdat|giltigtFrån|giltigtTill|utfärdare|enhet|typ|id|mall|
-|19010101-0101|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intygs-id-1234567890|M|
+|${person1.personnummer}|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intygs-id-1234567890|M|
 
 |validera revoke|
 |filnamn|resultat?|
@@ -28,7 +28,7 @@
 
 |Intyg|
 |personnr|utfärdat|giltigtFrån|giltigtTill|utfärdare|enhet|typ|id|mall|
-|19010101-0101|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intygs-id-1234567890|M|
+|${person1.personnummer}|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intygs-id-1234567890|M|
 
 |validera revoke|
 |filnamn|resultat?|
@@ -82,7 +82,7 @@
 
 |Intyg|
 |personnr|utfärdat|giltigtFrån|giltigtTill|utfärdare|enhet|typ|id|mall|
-|19010101-0101|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intygs-id-1234567890|M|
+|${person1.personnummer}|2013-04-01|2013-04-01|2013-04-11|läkare1|enhet1|FK7263|intygs-id-1234567890|M|
 
 |validera revoke|
 |filnamn|resultat?|
@@ -91,7 +91,7 @@
 !4 Intygstjänsten tillåter ej att hämta ett rättat intyg
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|19010101-0101|intygs-id-1234567890|[INFO] - Certificate 'intygs-id-1234567890' has been revoked|
+|${person1.personnummer}|intygs-id-1234567890|[INFO] - Certificate 'intygs-id-1234567890' has been revoked|
 
 !4 Rensa bort intyget
 
@@ -211,4 +211,4 @@
 
 |Samtycke|
 |personnr|samtycke|
-|19010101-0101|nej|
+|${person1.personnummer}|nej|
