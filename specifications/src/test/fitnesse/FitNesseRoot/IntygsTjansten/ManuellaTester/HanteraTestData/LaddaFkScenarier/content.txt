@@ -1,5 +1,3 @@
-!contents -R2 -g -p -f -h
-
 !3 Skapa intyg baserat på XML-mallar för olika scenarier (1 - 13)
 |Skapa Intyg Baserat Pa Scenario|
 |mall|antalIntyg|resultat?|
