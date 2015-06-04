@@ -4,14 +4,19 @@ import se.inera.certificate.spec.util.RestClientFixture
 
 import static groovyx.net.http.ContentType.JSON
 
-public class SimuleraFelHosTs extends RestClientFixture {
+public class KonfigureraFelsvarForTSStubbe extends RestClientFixture {
 
-    Boolean fel
+    Boolean aktiv
     private String url = System.getProperty("certificate.baseUrl");
     
+	def respons
+	public String respons() {
+		respons
+	}
+
     public void execute(){
         def restClient = createRestClient("${url}")
-        def response = restClient.post(path: 'ts-certificate-stub/certificates', query: [fakeException: fel])
-        assert response.status == 204
+        def response = restClient.post(path: 'ts-certificate-stub/certificates', query: [fakeException: aktiv])
+        respons = response.status
     }
 }

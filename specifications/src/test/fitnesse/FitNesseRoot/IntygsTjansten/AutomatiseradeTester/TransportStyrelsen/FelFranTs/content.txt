@@ -3,16 +3,17 @@
 | personnr | samtycke |
 | ${person6.personnummer} | ja |
 
-!3 Och ett simulerat fel hos TS
-| Simulera fel hos ts |
-| fel |
-| true |
+!3 Och att TS returnerar felsvar
+| Konfigurera felsvar for TS Stubbe|
+| aktiv | respons? |
+| true | 204 |
 
-!3 Bör ett försök att skicka ett intyg ge ett fel
+
+!3 Så ska jag få ett fel när jag skickar ett intyg
 | Skicka intyg till mottagare |
 | personnummer | intyg | mottagare | resultat? |
 | ${person6.personnummer} | intyg-5 | TS | ERROR |
 
-| Simulera fel hos ts |
-| fel |
-| false |
+| Konfigurera felsvar for TS Stubbe|
+| aktiv | respons? |
+| false | 204 |
