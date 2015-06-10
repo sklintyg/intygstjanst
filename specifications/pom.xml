@@ -24,8 +24,8 @@
     <fitnesse.port>9123</fitnesse.port>
     <fitnesse.working>${project.basedir}/src/test/fitnesse</fitnesse.working>
     <fitnesse.root>FitNesseRoot</fitnesse.root>
-    <fitnesse.project.root>IneraCertificate</fitnesse.project.root>
-    <fitnesse.suite>${fitnesse.project.root}.AllTests</fitnesse.suite>
+    <fitnesse.project.root>IntygsTjansten</fitnesse.project.root>
+    <fitnesse.suite>${fitnesse.project.root}.AutomatiseradeTester</fitnesse.suite>
 
     <!-- This example has no unit tests, just integration tests -->
     <skipTests>true</skipTests>
