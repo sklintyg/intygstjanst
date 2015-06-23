@@ -1,13 +1,12 @@
 package se.inera.certificate.integration.validator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.util.StringUtils;
-
 import se.inera.certificate.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType;
-import se.inera.ifv.insuranceprocess.healthreporting.validate.VardAdresseringsTypeValidator;
+import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.validator.VardAdresseringsTypeValidator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SendCertificateRequestValidator {
     private SendType sendRequest = null;

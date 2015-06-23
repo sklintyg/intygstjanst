@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
@@ -22,8 +24,8 @@
     <fitnesse.port>9123</fitnesse.port>
     <fitnesse.working>${project.basedir}/src/test/fitnesse</fitnesse.working>
     <fitnesse.root>FitNesseRoot</fitnesse.root>
-    <fitnesse.project.root>IneraCertificate</fitnesse.project.root>
-    <fitnesse.suite>${fitnesse.project.root}.AllTests</fitnesse.suite>
+    <fitnesse.project.root>IntygsTjansten</fitnesse.project.root>
+    <fitnesse.suite>${fitnesse.project.root}.AutomatiseradeTester</fitnesse.suite>
 
     <!-- This example has no unit tests, just integration tests -->
     <skipTests>true</skipTests>
@@ -36,32 +38,43 @@
       <artifactId>intygstjanst-persistence</artifactId>
     </dependency>
 
-    <!-- Tools -->
+    <!-- Common -->
     <dependency>
-      <groupId>se.inera.intyg.tools</groupId>
-      <artifactId>tools-specifications</artifactId>
+      <groupId>se.inera.intyg.common</groupId>
+      <artifactId>common-specifications</artifactId>
     </dependency>
 
-    <!-- Schemas -->
+    <!-- Intygstyper -->
     <dependency>
       <groupId>se.inera.intyg.intygstyper</groupId>
       <artifactId>fk7263</artifactId>
     </dependency>
 
-    <!-- Schemas -->
+    <!-- RIVTA Schemas -->
     <dependency>
-      <groupId>se.inera.intyg.schemas.clinicalprocess.healthcond.certificate.v1</groupId>
-      <artifactId>clinicalprocess-healthcond-certificate-interactions</artifactId>
+      <groupId>se.riv.clinicalprocess.healthcond.certificate</groupId>
+      <artifactId>clinicalprocess-healthcond-certificate-schemas</artifactId>
     </dependency>
     <dependency>
-      <groupId>se.inera.intyg.schemas.insuranceprocess.healthreporting.v1</groupId>
-      <artifactId>insuranceprocess-healthreporting-interactions</artifactId>
+      <groupId>se.riv.insuranceprocess.healthreporting</groupId>
+      <artifactId>insuranceprocess-healthreporting-schemas</artifactId>
     </dependency>
     <dependency>
       <groupId>se.riv.itintegration.monitoring</groupId>
-      <artifactId>itintegration-monitoring-interactions</artifactId>
+      <artifactId>itintegration-monitoring-schemas</artifactId>
     </dependency>
 
+    <!-- Intyg Schemas -->
+    <dependency>
+      <groupId>se.inera.intyg.clinicalprocess.healthcond.certificate</groupId>
+      <artifactId>intyg-clinicalprocess-healthcond-certificate-schemas</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>se.inera.intyg.insuranceprocess.healthreporting</groupId>
+      <artifactId>intyg-insuranceprocess-healthreporting-schemas</artifactId>
+    </dependency>
+
+    <!-- Misc -->
     <dependency>
       <groupId>javax.jms</groupId>
       <artifactId>jms-api</artifactId>
@@ -213,6 +226,24 @@
       <id>nmt</id>
       <properties>
         <certificate.baseUrl>https://intygstjanst.inera.nordicmedtest.se:23443/inera-certificate/</certificate.baseUrl>
+      </properties>
+    </profile>
+    <profile>
+      <id>ip20</id>
+      <properties>
+        <certificate.baseUrl>https://intyg.ip20.nordicmedtest.sjunet.org/inera-certificate/</certificate.baseUrl>
+      </properties>
+    </profile>
+    <profile>
+      <id>ip30</id>
+      <properties>
+        <certificate.baseUrl>https://intyg.ip20.nordicmedtest.sjunet.org/inera-certificate/</certificate.baseUrl>
+      </properties>
+    </profile>
+    <profile>
+      <id>ip40</id>
+      <properties>
+        <certificate.baseUrl>https://intygstjanst.ip40.nordicmedtest.sjunet.org/inera-certificate/</certificate.baseUrl>
       </properties>
     </profile>
     <profile>

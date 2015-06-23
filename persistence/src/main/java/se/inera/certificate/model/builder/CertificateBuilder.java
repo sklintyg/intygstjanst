@@ -4,6 +4,7 @@ import org.joda.time.LocalDateTime;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
+import se.inera.certificate.model.dao.OriginalCertificate;
 
 /**
  * @author andreaskaltenbach
@@ -77,6 +78,13 @@ public class CertificateBuilder {
 
     public CertificateBuilder state(CertificateState state, String target, LocalDateTime timestamp) {
         certificate.addState(new CertificateStateHistoryEntry(target, state, timestamp));
+        return this;
+    }
+
+    public CertificateBuilder originalCertificate(String certificateXML) {
+        OriginalCertificate originalCertificate = new OriginalCertificate();
+        originalCertificate.setDocument(certificateXML);
+        certificate.setOriginalCertificate(originalCertificate);
         return this;
     }
 

@@ -1,0 +1,7 @@
+!4 Hjälp-sida för bort-tagning av enskilda intyg.
+
+!3 Rensa bort test-intyg
+
+|ta bort Intyg|
+|id|
+|intyg-fit-annan-enhet|

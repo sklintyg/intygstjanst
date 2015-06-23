@@ -1,0 +1,43 @@
+!3 Givet att samtycke finns för ${person1.personnummer} så ska det inte finnas några intyg invånaren än
+
+|Samtycke|
+|personnr|samtycke|
+|${person1.personnummer}|ja|
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|
+|${person1.personnummer}|fit-intyg-1|[ERROR] - Certificate 'fit-intyg-1' does not exist for user '${person1.personnummer}'|
+
+!3 Journalsystem registrerar ett nytt intyg 
+
+|Registrera fk7263 intyg|
+|personnummer|id|utfärdat|resultat?|
+|${person1.personnummer}|fit-intyg-1|2013-08-01|OK|
+
+!4 Vänta 1 sekund, för att säkerställa att registrering och hämtning får olika tids-stämplar
+|script|Vanta|1|sekund|
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|status?|
+|${person1.personnummer}|fit-intyg-1|OK|[RECEIVED]|
+
+!3 Föräkringskassan hämtar intyget och markerar det som hämtat. Intyg får en ny status SENT
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|
+|${person1.personnummer}|fit-intyg-1|OK|
+
+|Markera intyg som hamtat|
+|personnr|intyg|resultat?|
+|${person1.personnummer}|fit-intyg-1|OK|
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|status?|
+|${person1.personnummer}|fit-intyg-1|OK|[RECEIVED, SENT]|
+
+
+!3 Rensa bort test-intyg
+
+|ta bort Intyg|
+|id|
+|fit-intyg-1|

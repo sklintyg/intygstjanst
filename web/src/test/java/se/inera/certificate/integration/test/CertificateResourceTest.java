@@ -26,6 +26,8 @@ import org.springframework.transaction.TransactionStatus;
 import se.inera.certificate.integration.converter.ConverterUtil;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.OriginalCertificate;
+import se.inera.certificate.modules.registry.IntygModuleRegistry;
+import se.inera.certificate.modules.support.api.ModuleApi;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CertificateResourceTest {
@@ -38,6 +40,12 @@ public class CertificateResourceTest {
 
     @Mock
     private TransactionStatus txStatus = mock(TransactionStatus.class);
+
+    @Mock
+    private IntygModuleRegistry moduleRegistry = mock(IntygModuleRegistry.class);
+    
+    @Mock
+    private ModuleApi moduleApi = mock(ModuleApi.class);
 
     @InjectMocks
     private CertificateResource certificateResource = new CertificateResource();
@@ -86,6 +94,7 @@ public class CertificateResourceTest {
         OriginalCertificate originalCertificate = new OriginalCertificate();
         originalCertificate.setCertificate(certificate);
         when(txManager.getTransaction((TransactionDefinition) anyObject())).thenReturn(txStatus);
+        when(moduleRegistry.getModuleApi(Mockito.anyString())).thenReturn(moduleApi);
         certificateResource.insertCertificate(ConverterUtil.toCertificateHolder(certificate));
 
         ArgumentCaptor<Object> argument = ArgumentCaptor.forClass(Object.class);

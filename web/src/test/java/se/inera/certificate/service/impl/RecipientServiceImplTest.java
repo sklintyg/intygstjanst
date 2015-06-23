@@ -7,8 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
-import se.inera.certificate.service.recipientservice.CertificateType;
-import se.inera.certificate.service.recipientservice.Recipient;
+import se.inera.certificate.service.bean.CertificateType;
+import se.inera.certificate.service.bean.Recipient;
 
 import java.util.Arrays;
 import java.util.List;
@@ -77,7 +77,7 @@ public class RecipientServiceImplTest {
         assertEquals(expected, service.listRecipients(new CertificateType(TS_CERTIFICATE_TYPE_BAS)));
         assertEquals(expected, service.listRecipients(new CertificateType(TS_CERTIFICATE_TYPE_DIABETES)));
     }
-    
+
     @Test
     public void testGetTransportModelVersionForFK7263() throws RecipientUnknownException {
         assertEquals(TransportModelVersion.LEGACY_LAKARUTLATANDE, service.getVersion("FKORG", "fk7263"));

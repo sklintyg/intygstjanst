@@ -1,0 +1,65 @@
+!1 Integration med Försäkringskassan: Markera intyg som hämtat.
+
+!2 Markera befintligt intyg som hämtat
+
+!3 Testfall Set-Certificate-Status-1.1: Markera befintligt intyg som hämtat
+
+!4 Förvillkor: befintligt intyg har status "RECEIVED"
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|status?|
+|${person1.personnummer}|fit-intyg-2|OK|[RECEIVED]|
+
+!4 Ändra status
+
+|Markera intyg som hamtat|
+|personnr|intyg|resultat?|
+|${person1.personnummer}|fit-intyg-2|OK|
+
+!4 Resultat: befintligt intyg har nu status "SENT"
+
+|Hamta intyg|
+|personnummer|intyg|status?|
+|${person1.personnummer}|fit-intyg-2|[RECEIVED, SENT]|
+
+!3 Testfall Set-Certificate-Status-1.2: Multipel markering av befintligt intyg som hämtat
+
+!4 Förvillkor: befintligt intyg har redan status "SENT"
+
+|Hamta intyg|
+|personnummer|intyg|status?|
+|${person1.personnummer}|fit-intyg-1|[RECEIVED, SENT]|
+
+!4 Ändra status
+
+|Markera intyg som hamtat|
+|personnr|intyg|resultat?|
+|${person1.personnummer}|fit-intyg-1|OK|
+
+!4 Resultat: befintligt intyg har nu två förekomster av status "SENT"
+
+|Hamta intyg|
+|personnummer|intyg|status?|
+|${person1.personnummer}|fit-intyg-1|[RECEIVED, SENT, SENT]|
+
+
+!2 Felhantering
+
+!3 Testfall Set-Certificate-Status-2.1: Försök markera ett intyg för fel invånare
+
+|Markera intyg som hamtat|
+|personnr|intyg|resultat?|
+|${person1.personnummer}|fit-intyg-6|=~/ERROR.*Certificate 'fit-intyg-6' does not exist for user '${person1.personnummer}'/|
+
+!3 Testfall Set-Certificate-Status-2.2: Försök markera ett okänt intyg
+
+|Markera intyg som hamtat|
+|personnr|intyg|resultat?|
+|${person1.personnummer}|fit-intyg-999|=~/ERROR.*Certificate 'fit-intyg-999' does not exist for user '${person1.personnummer}'/|
+
+
+!3 Testfall Set-Certificate-Status-2.3: Försök markera ett intyg för en okänd invånare
+
+|Markera intyg som hamtat|
+|personnr|intyg|resultat?|
+|${person4.personnummer}|fit-intyg-6|=~/ERROR.*Certificate 'fit-intyg-6' does not exist for user '${person4.personnummer}'/|

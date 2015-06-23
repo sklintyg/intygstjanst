@@ -1,0 +1,53 @@
+!3 Givet att samtycke finns och intyget finns registrerat
+
+|Samtycke|
+|personnr|samtycke|
+|${person1.personnummer}|ja|
+
+|Registrera fk7263 intyg|
+|personnummer|id|utfärdat|mall|resultat?|
+|${person1.personnummer}|fit-intyg-1|2013-08-01|S|OK|
+
+!4 Vänta 1 sekund, för att säkerställa att registrering och hämtning får olika tids-stämplar
+|script|Vanta|1|sekund|
+
+!3 Så ska intyget vara tillgänglig i intygstjänsten
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|status?|
+|${person1.personnummer}|fit-intyg-1|OK|[RECEIVED]|
+
+!3 Efter att skicka intyget till Försäkringskassan ska intyget få status SENT i intygstjänsten
+
+|Skicka Intyg Till Fk|
+|personnummer|intyg|resultat?|
+|${person1.personnummer}|fit-intyg-1|OK|
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|status?|
+|${person1.personnummer}|fit-intyg-1|OK|[RECEIVED, SENT]|
+
+!3 Ett intyg med blanktecken för obligatoriska värden skall gå att registrera och skicka till FK
+
+|Registrera fk7263 intyg|
+|personnummer|id|utfärdat|mall|resultat?|
+|${person1.personnummer}|fit-intyg-blanksteg|2013-08-01|blanksteg|OK|
+
+|Skicka Intyg Till Fk|
+|personnummer|intyg|resultat?|
+|${person1.personnummer}|fit-intyg-blanksteg|OK|
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|status?|
+|${person1.personnummer}|fit-intyg-blanksteg|OK|[RECEIVED, SENT]|
+
+!3 Rensa bort test-intyg och samtycket
+
+|ta bort Intyg|
+|id|
+|fit-intyg-1|
+|fit-intyg-blanksteg|
+
+|Samtycke|
+|personnr|samtycke|
+|${person1.personnummer}|nej|

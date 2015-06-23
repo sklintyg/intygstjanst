@@ -1,22 +1,22 @@
 package se.inera.certificate.integration;
 
-import static se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ErrorIdType.APPLICATION_ERROR;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponderInterface;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponseType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.RecipientType;
-import se.inera.certificate.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.service.RecipientService;
-import se.inera.certificate.service.recipientservice.CertificateType;
-import se.inera.certificate.service.recipientservice.Recipient;
+import se.inera.certificate.service.bean.CertificateType;
+import se.inera.certificate.service.bean.Recipient;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponderInterface;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponseType;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateType;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.RecipientType;
+import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
+import se.riv.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class GetRecipientsForCertificateResponderImpl implements GetRecipientsForCertificateResponderInterface {
 
@@ -46,7 +46,7 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
         }
 
         if (response.getRecipient().isEmpty()) {
-            response.setResult(ResultTypeUtil.errorResult(APPLICATION_ERROR, String.format("No recipients found for certificate type: %s", certTypeStr)));
+            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, String.format("No recipients found for certificate type: %s", certTypeStr)));
         } else {
             response.setResult(ResultTypeUtil.okResult());
         }

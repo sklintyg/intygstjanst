@@ -1,0 +1,63 @@
+!1 Integration med Försäkringskassan: Hämta intyg.
+
+!2 Hämtning av intyg
+
+!3 Testfall Get-Certificate-1.1: Hämta specifikt intyg
+
+|Hamta intyg|
+|personnummer|intyg|förväntat svar|resultat?|
+|${person1.personnummer}|fit-intyg-1|{"lakarutlatande":{"lakarutlatandeId":"fit-intyg-1","patient":{"personId":{"extension":"${person1.personnummer}"}}}}|OK|
+|${person1.personnummer}|fit-intyg-2|{"lakarutlatande":{"lakarutlatandeId":"fit-intyg-2","patient":{"personId":{"extension":"${person1.personnummer}"}}}}|OK|
+|${person1.personnummer}|fit-intyg-3|{"lakarutlatande":{"lakarutlatandeId":"fit-intyg-3","patient":{"personId":{"extension":"${person1.personnummer}"}}}}|OK|
+
+!3 Testfall Get-Certificate-1.2: Verifiera !-HoS-!-informationen hos intyget
+
+|Hamta intyg|
+|personnummer|intyg|förväntat svar|resultat?|
+|${person1.personnummer}|fit-intyg-1|{"lakarutlatande":{"lakarutlatandeId":"fit-intyg-1","skapadAvHosPersonal":{"personalId":{"extension":"EttUtfärdarId"},"fullstandigtNamn":"läkare1"}}}|OK|
+
+!3 Testfall Get-Certificate-1.3: Hämta intyg enligt !-SmL-!
+
+|Hamta intyg|
+|personnummer|intyg|förväntat svar|resultat?|
+|${person1.personnummer}|fit-intyg-SmL|{"lakarutlatande":{"lakarutlatandeId":"fit-intyg-SmL"}}|OK|
+
+!2 Hantering av samtycke
+
+!3 Testfall Get-Certificate-2: Försök hämta specifikt intyg för person som saknar samtycke
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|
+|${person3.personnummer}|fit-intyg-1|[ERROR] - Consent required from user ${person3.personnummer}|
+
+!2 Felscenarier
+
+!3 Testfall Get-Certificate-3.1: Försök hämta specifikt intyg för fel person
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|
+|${person1.personnummer}|fit-intyg-6|[ERROR] - Certificate 'fit-intyg-6' does not exist for user '${person1.personnummer}'|
+
+!3 Testfall Get-Certificate-3.2: Försök hämta okänt intyg
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|
+|${person1.personnummer}|fit-intyg-7|[ERROR] - Certificate 'fit-intyg-7' does not exist for user '${person1.personnummer}'|
+
+!3 Testfall Get-Certificate-3.3: Försök hämta intyg för okänd invånare
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|
+|${person4.personnummer}|fit-intyg-6|[ERROR] - Consent required from user ${person4.personnummer}|
+
+!3 Testfall Get-Certificate-3.4: Försök hämta intyg utan intygsid
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|
+|${person4.personnummer}||[ERROR] - Validation error: missing certificateId|
+
+!3 Testfall Get-Certificate-3.5: Försök hämta intyg utan patient
+
+|Hamta intyg|
+|personnummer|intyg|resultat?|
+||fit-intyg-1|[ERROR] - Validation error: missing nationalIdentityNumber|

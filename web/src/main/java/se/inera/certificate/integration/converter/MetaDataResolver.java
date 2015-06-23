@@ -1,24 +1,21 @@
 package se.inera.certificate.integration.converter;
 
 import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.StatusType;
-import se.inera.certificate.modules.registry.IntygModuleRegistry;
-import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
+import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
-import se.inera.certificate.schema.util.ClinicalProcessCertificateMetaTypeBuilder;
+import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.builder.ClinicalProcessCertificateMetaTypeBuilder;
+import se.riv.clinicalprocess.healthcond.certificate.v1.CertificateMetaType;
+import se.riv.clinicalprocess.healthcond.certificate.v1.StatusType;
+
 
 @Component
 public class MetaDataResolver {
 
-    @Autowired
-    private IntygModuleRegistry moduleRegistry;
-
-    public se.inera.certificate.clinicalprocess.healthcond.certificate.v1.CertificateMetaType toClinicalProcessCertificateMetaType(
+    public CertificateMetaType toClinicalProcessCertificateMetaType(
             Certificate source) throws ModuleNotFoundException, ModuleException {
 
         ClinicalProcessCertificateMetaTypeBuilder builder = new ClinicalProcessCertificateMetaTypeBuilder()
@@ -29,7 +26,7 @@ public class MetaDataResolver {
                 .facilityName(source.getCareUnitName())
                 .signDate(source.getSignedDate())
                 .available(source.getDeleted() ? "false" : "true")
-                .additionalInfo(source.getAdditionalInfo());
+                .complemantaryInfo(source.getAdditionalInfo());
 
         for (CertificateStateHistoryEntry stateEntry : source.getStates()) {
             StatusType status = StatusType.valueOf(stateEntry.getState().name());
