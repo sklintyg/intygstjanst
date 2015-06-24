@@ -69,6 +69,10 @@
       <groupId>se.inera.intyg.transportstyrelsen</groupId>
       <artifactId>intyg-transportstyrelsen-schemas</artifactId>
     </dependency>
+    <dependency>
+      <groupId>se.inera.intyg.fk</groupId>
+      <artifactId>intyg-forsakringskassan-schemas</artifactId>
+    </dependency>
 
     <!-- Intygstyper -->
     <dependency>
@@ -86,6 +90,10 @@
     <dependency>
       <groupId>se.inera.intyg.intygstyper</groupId>
       <artifactId>ts-parent</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>se.inera.intyg.intygstyper</groupId>
+      <artifactId>sjukpenning</artifactId>
     </dependency>
     
     <dependency>

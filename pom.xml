@@ -40,6 +40,9 @@
     <intyg-transportstyrelsen.version>0-SNAPSHOT</intyg-transportstyrelsen.version>
     <intyg-transportstyrelsen.version.range>(,1.0.0]</intyg-transportstyrelsen.version.range>
 
+    <intyg-fk.version>0-SNAPSHOT</intyg-fk.version>
+    <intyg-fk.version.range>(,1.0.0]</intyg-fk.version.range>
+
   </properties>
 
   <modules>
@@ -115,6 +118,11 @@
         <artifactId>ts-parent</artifactId>
         <version>${intygstyper.version}</version>
       </dependency>
+      <dependency>
+        <groupId>se.inera.intyg.intygstyper</groupId>
+        <artifactId>sjukpenning</artifactId>
+        <version>${intygstyper.version}</version>
+      </dependency>
 
       <!-- RIVTA Schemas -->
       <dependency>
@@ -148,6 +156,11 @@
         <groupId>se.inera.intyg.transportstyrelsen</groupId>
         <artifactId>intyg-transportstyrelsen-schemas</artifactId>
         <version>${intyg-transportstyrelsen.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>se.inera.intyg.fk</groupId>
+        <artifactId>intyg-forsakringskassan-schemas</artifactId>
+        <version>${intyg-fk.version}</version>
       </dependency>
 
     </dependencies>
