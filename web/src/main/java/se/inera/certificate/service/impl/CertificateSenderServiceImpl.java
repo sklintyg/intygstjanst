@@ -21,8 +21,6 @@ package se.inera.certificate.service.impl;
 import static se.inera.certificate.common.enumerations.Recipients.FK;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
-import javax.xml.ws.soap.SOAPFaultException;
-
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -214,14 +214,6 @@
               <name>intyg-transportstyrelsen.version</name>
               <version>${intyg-transportstyrelsen.version.range}</version>
             </property>
-            <property>
-              <name>tools.version</name>
-              <version>${tools.version.range}</version>
-            </property>
-            <property>
-              <name>intygstyper.version</name>
-              <version>${intygstyper.version.range}</version>
-            </property>
           </properties>
         </configuration>
       </plugin>

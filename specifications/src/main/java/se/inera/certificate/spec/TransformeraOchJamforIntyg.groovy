@@ -3,7 +3,6 @@
 package se.inera.certificate.spec
 
 import net.sf.json.JSON
-
 import org.custommonkey.xmlunit.XMLUnit
 import se.inera.certificate.spec.util.FitnesseHelper
 import se.inera.certificate.spec.util.RestClientFixture
