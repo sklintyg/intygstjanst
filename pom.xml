@@ -12,7 +12,7 @@
 
   <groupId>se.inera.intyg.intygstjanst</groupId>
   <artifactId>intygstjanst</artifactId>
-  <version>2.2.0</version>
+  <version>2.2.1</version>
   <packaging>pom</packaging>
 
   <name>Intygstjänsten</name>
@@ -27,8 +27,8 @@
     <tools.version.range>(,2.2.0]</tools.version.range>
 
     <!-- Intygstyper -->
-    <intygstyper.version>2.2.0</intygstyper.version>
-    <intygstyper.version.range>(,2.2.0]</intygstyper.version.range>
+    <intygstyper.version>2.2.1</intygstyper.version>
+    <intygstyper.version.range>(,2.2.1]</intygstyper.version.range>
 
     <!-- Schemas -->
     <rivta-clinicalprocess.version>1.0.RC3.0</rivta-clinicalprocess.version>
