@@ -4,11 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
+
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
 import se.inera.certificate.integration.validator.SendCertificateRequestValidator;
+import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.api.exception.ExternalServiceCallException;
@@ -71,21 +73,21 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
             LOGGER.info(LogMarkers.MONITORING, "Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
-                    + safeGetCivicRegistrationNumber(request) + "' but certificate does not exist");
+                    + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + "' but certificate does not exist");
             response.setResult(ResultOfCallUtil.failResult("No certificate '" + safeGetCertificateId(request)
-                    + "' found to send for patient '" + safeGetCivicRegistrationNumber(request) + "'."));
+                    + "' found to send for patient '" + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + "'."));
             return response;
 
         } catch (CertificateRevokedException e) {
             // return with INFO response if certificate was revoked before
             LOGGER.info(LogMarkers.MONITORING, "Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
-                    + safeGetCivicRegistrationNumber(request) + "' which is revoked");
+                    + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + "' which is revoked");
             response.setResult(ResultOfCallUtil.infoResult("Certificate '" + safeGetCertificateId(request) + "' has been revoked."));
             return response;
 
         } catch (CertificateValidationException e) {
             LOGGER.error(LogMarkers.VALIDATION, "Validation error found for send certificate '" + safeGetCertificateId(request)
-                    + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + safeGetCivicRegistrationNumber(request) + ": " + e.getMessage());
+                    + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + ": " + e.getMessage());
             // return with ERROR response if certificate had validation errors
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             return response;

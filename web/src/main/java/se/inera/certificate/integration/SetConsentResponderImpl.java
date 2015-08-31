@@ -8,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.w3.wsaddressing10.AttributedURIType;
 
+import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.service.ConsentService;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
@@ -30,7 +31,7 @@ public class SetConsentResponderImpl implements SetConsentResponderInterface {
         try {
             consentService.setConsent(parameters.getPersonnummer(), parameters.isConsentGiven());
             response.setResult(ResultOfCallUtil.okResult());
-            LOGGER.info(LogMarkers.MONITORING, "Consent " + (parameters.isConsentGiven() ? "given" : "revoked") + " for " + parameters.getPersonnummer());
+            LOGGER.info(LogMarkers.MONITORING, "Consent " + (parameters.isConsentGiven() ? "given" : "revoked") + " for " + HashUtility.hash(parameters.getPersonnummer()));
         } catch (DataIntegrityViolationException e) {
             // INTYG-886 GeSamtycke anropas ibland flera gånger i rask takt av klienter, vilket leder till ett
             // race condition som ger DataIntegrityViolationException.
