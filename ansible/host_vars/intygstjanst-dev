@@ -1,13 +1,12 @@
----
-# file: host_vars/intygstjanst-dev
-
 # Configuration repository
 environment_name: "dev"
 config_etc_folder: "{{ config_folder }}/{{ environment_name }}"
 
-# ActiveMQ configuration
-activemq_username: ""
-activemq_password: ""
-
 # Spring profiles
-profiles: dev
+profiles: test,it-fk-stub,it-ts-stub
+
+# Tomcat
+tomcat_service: it-tomcat
+tomcat_home: "{{ inera_root }}/{{ tomcat_service }}"
+inera_tomcat_folder: "/var/lib/{{ tomcat_service }}"
+webapps_folder: "{{ inera_tomcat_folder }}/webapps"

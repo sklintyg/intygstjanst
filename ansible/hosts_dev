@@ -1,8 +1,8 @@
 [intygstjanst-tomcat]
-intygstjanst-dev ansible_ssh_host={{intygstjanstUrl}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/id_rsa
+intygstjanst-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file={{keyFile}}
 
 [intygstjanst-mysql]
-intygstjanst-dev ansible_ssh_host={{intygstjanstUrl}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/id_rsa
+intygstjanst-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file={{keyFile}}
 
 [tomcat:children]
 intygstjanst-tomcat

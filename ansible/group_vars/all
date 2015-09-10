@@ -17,9 +17,10 @@ gitcrypt_key_file: "./{{ gitcrypt_key_name }}"
 config_etc_folder: "{{ config_folder }}/{{ environment_name }}"
 
 # Tomcat installation
-tomcat_conf: "{{ inera_root }}/tomcat7/conf"
-tomcat_bin: "{{ inera_root }}/tomcat7/bin"
-tomcat_lib: "{{ inera_root }}/tomcat7/lib"
+tomcat_home: "{{ inera_root }}/tomcat7"
+tomcat_conf: "{{ tomcat_home }}/conf"
+tomcat_bin:  "{{ tomcat_home }}/bin"
+tomcat_lib:  "{{ tomcat_home }}/lib"
 tomcat_service: inera-tomcat
 inera_tomcat_folder: "/var/lib/{{ tomcat_service }}"
 webapps_folder: "{{ inera_tomcat_folder }}/webapps"
