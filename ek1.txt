@@ -1,0 +1,58 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for se.inera.intyg.intygstjanst:intygstjanst-persistence:jar:0-SNAPSHOT
+[WARNING] 'reporting.plugins.plugin.version' for org.codehaus.mojo:findbugs-maven-plugin is missing. @ se.inera.intyg.common:common-pom:1.0.11, C:\Users\ekklot1\.m2\repository\se\inera\intyg\common\common-pom\1.0.11\common-pom-1.0.11.pom, line 1143, column 15
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for se.inera.intyg.intygstjanst:intygstjanst-specifications:jar:0-SNAPSHOT
+[WARNING] 'reporting.plugins.plugin.version' for org.codehaus.mojo:findbugs-maven-plugin is missing. @ se.inera.intyg.common:common-pom:1.0.11, C:\Users\ekklot1\.m2\repository\se\inera\intyg\common\common-pom\1.0.11\common-pom-1.0.11.pom, line 1143, column 15
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for se.inera.intyg.intygstjanst:intygstjanst-web:war:0-SNAPSHOT
+[WARNING] 'reporting.plugins.plugin.version' for org.codehaus.mojo:findbugs-maven-plugin is missing. @ se.inera.intyg.common:common-pom:1.0.11, C:\Users\ekklot1\.m2\repository\se\inera\intyg\common\common-pom\1.0.11\common-pom-1.0.11.pom, line 1143, column 15
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for se.inera.intyg.intygstjanst:intygstjanst-liquibase-runner:jar:0-SNAPSHOT
+[WARNING] 'reporting.plugins.plugin.version' for org.codehaus.mojo:findbugs-maven-plugin is missing. @ se.inera.intyg.common:common-pom:1.0.11, C:\Users\ekklot1\.m2\repository\se\inera\intyg\common\common-pom\1.0.11\common-pom-1.0.11.pom, line 1143, column 15
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for se.inera.intyg.intygstjanst:intygstjanst:pom:0-SNAPSHOT
+[WARNING] 'reporting.plugins.plugin.version' for org.codehaus.mojo:findbugs-maven-plugin is missing. @ se.inera.intyg.common:common-pom:1.0.11, C:\Users\ekklot1\.m2\repository\se\inera\intyg\common\common-pom\1.0.11\common-pom-1.0.11.pom, line 1143, column 15
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Intygstjänsten
+[INFO] Intygstjänsten (Persistence)
+[INFO] Intygstjänsten (FitNesse)
+[INFO] Intygstjänsten (Web)
+[INFO] Intygstjänsten (Liquibase Runner)
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Intygstjänsten 0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ intygstjanst ---
+[INFO] Deleting C:\Users\ekklot1\eclipse\sklintyg\intygstjanst\target
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] Intygstjänsten .................................... FAILURE [2.082s]
+[INFO] Intygstjänsten (Persistence) ...................... SKIPPED
+[INFO] Intygstjänsten (FitNesse) ......................... SKIPPED
+[INFO] Intygstjänsten (Web) .............................. SKIPPED
+[INFO] Intygstjänsten (Liquibase Runner) ................. SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 3.605s
+[INFO] Finished at: Wed Sep 16 08:35:12 CEST 2015
+[INFO] Final Memory: 6M/120M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-clean-plugin:2.5:clean (default-clean) on project intygstjanst: Failed to clean project: Failed to delete C:\Users\ekklot1\eclipse\sklintyg\intygstjanst\target\dependency-maven-plugin-markers\se.inera.intyg.common-common-build-tools-jar-0-SNAPSHOT.marker -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

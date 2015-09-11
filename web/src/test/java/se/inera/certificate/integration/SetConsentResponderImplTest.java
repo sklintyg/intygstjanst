@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import se.inera.certificate.service.ConsentService;
+import se.inera.certificate.service.MonitoringLogService;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 import se.inera.intyg.insuranceprocess.healthreporting.setconsent.rivtabp20.v1.SetConsentResponderInterface;
 import se.inera.intyg.insuranceprocess.healthreporting.setconsentresponder.v1.SetConsentRequestType;
@@ -22,6 +23,9 @@ public class SetConsentResponderImplTest {
 
     @Mock
     private ConsentService consentService = mock(ConsentService.class);
+
+    @Mock
+    private MonitoringLogService monitoringLogService;
 
     @InjectMocks
     private SetConsentResponderInterface responder = new SetConsentResponderImpl();

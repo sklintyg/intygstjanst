@@ -38,6 +38,7 @@ import se.inera.certificate.modules.support.api.dto.InternalModelHolder;
 import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.MonitoringLogService;
 import se.inera.certificate.service.RecipientService;
 import se.inera.certificate.service.bean.CertificateType;
 import se.inera.certificate.service.bean.Recipient;
@@ -79,6 +80,9 @@ public class CertificateSenderServiceImplTest {
 
     @Mock
     private RegisterMedicalCertificateResponderInterface registerClient;
+
+    @Mock
+    private MonitoringLogService monitoringLogService;
 
     @InjectMocks
     private CertificateSenderServiceImpl senderService = new CertificateSenderServiceImpl();

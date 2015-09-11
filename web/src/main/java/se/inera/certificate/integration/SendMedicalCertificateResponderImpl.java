@@ -62,17 +62,17 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
 
             if (status == SendStatus.ALREADY_SENT) {
                 response.setResult(ResultOfCallUtil.infoResult("Certificate '" + certificateId + "' is already sent."));
-                LOGGER.info(LogMarkers.MONITORING, certificateId + " already sent to" + recipient.getId());
+                LOGGER.info(certificateId + " already sent to" + recipient.getId());
             } else {
                 response.setResult(ResultOfCallUtil.okResult());
-                LOGGER.info(LogMarkers.MONITORING, certificateId + " sent to " + recipient.getId());
+                LOGGER.info(certificateId + " sent to " + recipient.getId());
             }
 
             return response;
 
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
-            LOGGER.info(LogMarkers.MONITORING, "Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
+            LOGGER.info("Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + "' but certificate does not exist");
             response.setResult(ResultOfCallUtil.failResult("No certificate '" + safeGetCertificateId(request)
                     + "' found to send for patient '" + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + "'."));
@@ -80,7 +80,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
 
         } catch (CertificateRevokedException e) {
             // return with INFO response if certificate was revoked before
-            LOGGER.info(LogMarkers.MONITORING, "Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
+            LOGGER.info("Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + "' which is revoked");
             response.setResult(ResultOfCallUtil.infoResult("Certificate '" + safeGetCertificateId(request) + "' has been revoked."));
             return response;
@@ -100,7 +100,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             Throwable cause = ex.getCause();
             String message = (cause instanceof ExternalServiceCallException) ? cause.getMessage() : ex.getMessage();
             // return ERROR if certificate couldn't be sent
-            LOGGER.error(LogMarkers.MONITORING, String.format("Certificate '%s' couldn't be sent: %s", new Object[] { safeGetCertificateId(request), message }));
+            LOGGER.error(String.format("Certificate '%s' couldn't be sent: %s", new Object[] { safeGetCertificateId(request), message }));
             response.setResult(ResultOfCallUtil.applicationErrorResult("Certificate couldn't be sent to recipient"));
             return response;
         }

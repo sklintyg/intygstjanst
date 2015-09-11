@@ -1,0 +1,296 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for se.inera.intyg.intygstjanst:intygstjanst-web:war:0-SNAPSHOT
+[WARNING] 'reporting.plugins.plugin.version' for org.codehaus.mojo:findbugs-maven-plugin is missing. @ se.inera.intyg.common:common-pom:1.0.11, C:\Users\ekklot1\.m2\repository\se\inera\intyg\common\common-pom\1.0.11\common-pom-1.0.11.pom, line 1143, column 15
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Intygstjänsten (Web) 0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/intygstjanst/intygstjanst-persistence/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/intygstjanst/intygstjanst-persistence/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/intygstjanst/intygstjanst-persistence/0-SNAPSHOT/maven-metadata.xml
+792/792 B               Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/intygstjanst/intygstjanst-persistence/0-SNAPSHOT/maven-metadata.xml (792 B at 0.5 KB/sec)
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/intygstjanst/intygstjanst/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/intygstjanst/intygstjanst/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/intygstjanst/intygstjanst/0-SNAPSHOT/maven-metadata.xml
+610/610 B                                       Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/intygstjanst/intygstjanst/0-SNAPSHOT/maven-metadata.xml (610 B at 6.0 KB/sec)
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/common/common-support/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/common/common-support/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/common/common-support/0-SNAPSHOT/maven-metadata.xml
+                        776/776 B               Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/common/common-support/0-SNAPSHOT/maven-metadata.xml (776 B at 2.7 KB/sec)
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/common/common/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/common/common/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/common/common/0-SNAPSHOT/maven-metadata.xml
+                        598/598 B               Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/common/common/0-SNAPSHOT/maven-metadata.xml (598 B at 3.1 KB/sec)
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/common/integration-util/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/common/integration-util/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/common/integration-util/0-SNAPSHOT/maven-metadata.xml
+                        778/778 B               Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/common/integration-util/0-SNAPSHOT/maven-metadata.xml (778 B at 1.0 KB/sec)
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/common/logging-util/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/common/logging-util/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/common/logging-util/0-SNAPSHOT/maven-metadata.xml
+774/774 B               Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/common/logging-util/0-SNAPSHOT/maven-metadata.xml (774 B at 1.4 KB/sec)
+                        Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/common/common-schemas/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/common/common-schemas/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/common/common-schemas/0-SNAPSHOT/maven-metadata.xml
+                        776/776 B               Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/common/common-schemas/0-SNAPSHOT/maven-metadata.xml (776 B at 2.3 KB/sec)
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/infrastructure/directory/privatepractitioner/intyg-infrastructure-directory-privatepractitioner-schemas/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/infrastructure/directory/privatepractitioner/intyg-infrastructure-directory-privatepractitioner-schemas/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/infrastructure/directory/privatepractitioner/intyg-infrastructure-directory-privatepractitioner-schemas/0-SNAPSHOT/maven-metadata.xml
+            858/858 B                           Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/infrastructure/directory/privatepractitioner/intyg-infrastructure-directory-privatepractitioner-schemas/0-SNAPSHOT/maven-metadata.xml (858 B at 2.9 KB/sec)
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/clinicalprocess/healthcond/certificate/intyg-clinicalprocess-healthcond-certificate-schemas/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/clinicalprocess/healthcond/certificate/intyg-clinicalprocess-healthcond-certificate-schemas/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/clinicalprocess/healthcond/certificate/intyg-clinicalprocess-healthcond-certificate-schemas/0-SNAPSHOT/maven-metadata.xml
+                        846/846 B               Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/clinicalprocess/healthcond/certificate/intyg-clinicalprocess-healthcond-certificate-schemas/0-SNAPSHOT/maven-metadata.xml (846 B at 1.3 KB/sec)
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/insuranceprocess/healthreporting/intyg-insuranceprocess-healthreporting-schemas/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/insuranceprocess/healthreporting/intyg-insuranceprocess-healthreporting-schemas/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/insuranceprocess/healthreporting/intyg-insuranceprocess-healthreporting-schemas/0-SNAPSHOT/maven-metadata.xml
+                        834/834 B               Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/insuranceprocess/healthreporting/intyg-insuranceprocess-healthreporting-schemas/0-SNAPSHOT/maven-metadata.xml (834 B at 1.4 KB/sec)
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/transportstyrelsen/intyg-transportstyrelsen-schemas/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/transportstyrelsen/intyg-transportstyrelsen-schemas/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/transportstyrelsen/intyg-transportstyrelsen-schemas/0-SNAPSHOT/maven-metadata.xml
+806/806 B               Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/transportstyrelsen/intyg-transportstyrelsen-schemas/0-SNAPSHOT/maven-metadata.xml (806 B at 12.1 KB/sec)
+                        Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/intygstyper/fk7263/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/intygstyper/fk7263/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/intygstyper/fk7263/0-SNAPSHOT/maven-metadata.xml
+                        982/982 B               Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/intygstyper/fk7263/0-SNAPSHOT/maven-metadata.xml (982 B at 11.7 KB/sec)
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/intygstyper/intygstyper/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/intygstyper/intygstyper/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/intygstyper/intygstyper/0-SNAPSHOT/maven-metadata.xml
+608/608 B                                       Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/intygstyper/intygstyper/0-SNAPSHOT/maven-metadata.xml (608 B at 12.6 KB/sec)
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/common/common-web/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/common/common-web/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/common/common-web/0-SNAPSHOT/maven-metadata.xml
+Downloading: http://repository-callistasoftware.forge.cloudbees.com/release/se/inera/intyg/common/common-web/0-SNAPSHOT/maven-metadata.xml
+772/772 B               Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/common/common-web/0-SNAPSHOT/maven-metadata.xml (772 B at 20.4 KB/sec)
+                                    Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/intygstyper/ts-bas/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/intygstyper/ts-bas/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/intygstyper/ts-bas/0-SNAPSHOT/maven-metadata.xml
+982/982 B                                       Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/intygstyper/ts-bas/0-SNAPSHOT/maven-metadata.xml (982 B at 11.7 KB/sec)
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/intygstyper/ts-parent/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/intygstyper/ts-parent/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/intygstyper/ts-parent/0-SNAPSHOT/maven-metadata.xml
+Downloading: http://repository-callistasoftware.forge.cloudbees.com/release/se/inera/intyg/intygstyper/ts-parent/0-SNAPSHOT/maven-metadata.xml
+985/985 B                           Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/intygstyper/ts-parent/0-SNAPSHOT/maven-metadata.xml (985 B at 21.9 KB/sec)
+                        Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/intygstyper/ts-diabetes/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/intygstyper/ts-diabetes/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/intygstyper/ts-diabetes/0-SNAPSHOT/maven-metadata.xml
+987/987 B                                       Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/intygstyper/ts-diabetes/0-SNAPSHOT/maven-metadata.xml (987 B at 19.7 KB/sec)
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ intygstjanst-web ---
+[INFO] 
+[INFO] --- buildnumber-maven-plugin:1.2:create (default) @ intygstjanst-web ---
+[INFO] Checking for local modifications: skipped.
+[INFO] Updating project files from SCM: skipped.
+[INFO] Executing: cmd.exe /X /C "git rev-parse --verify HEAD"
+[INFO] Working directory: C:\Users\ekklot1\eclipse\sklintyg\intygstjanst\web
+[INFO] Storing buildNumber: a48a5bbd54b6feaca898754f526da4265329b907 at timestamp: 1442385478549
+[INFO] Executing: cmd.exe /X /C "git rev-parse --verify HEAD"
+[INFO] Working directory: C:\Users\ekklot1\eclipse\sklintyg\intygstjanst\web
+[INFO] Storing buildScmBranch: UNKNOWN
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:unpack (unpack-build-tools) @ intygstjanst-web ---
+[INFO] Configured Artifact: se.inera.intyg.common:common-build-tools:?:jar
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/common/common-build-tools/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/se/inera/intyg/common/common-build-tools/0-SNAPSHOT/maven-metadata.xml
+Downloading: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/common/common-build-tools/0-SNAPSHOT/maven-metadata.xml
+                        780/780 B               Downloaded: https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/se/inera/intyg/common/common-build-tools/0-SNAPSHOT/maven-metadata.xml (780 B at 10.2 KB/sec)
+[INFO] Unpacking C:\Users\ekklot1\.m2\repository\se\inera\intyg\common\common-build-tools\0-SNAPSHOT\common-build-tools-0-SNAPSHOT.jar to C:\Users\ekklot1\eclipse\sklintyg\intygstjanst\web\target\build-tools with includes "" and excludes ""
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.6.2.201302030002:prepare-agent (prepare-agent) @ intygstjanst-web ---
+[INFO] argLine set to -javaagent:C:\Users\ekklot1\.m2\repository\org\jacoco\org.jacoco.agent\0.6.2.201302030002\org.jacoco.agent-0.6.2.201302030002-runtime.jar=destfile=C:\Users\ekklot1\eclipse\sklintyg\intygstjanst\web\target\jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:resources (default-resources) @ intygstjanst-web ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource
+[INFO] Copying 20 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ intygstjanst-web ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 54 source files to C:\Users\ekklot1\eclipse\sklintyg\intygstjanst\web\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:testResources (default-testResources) @ intygstjanst-web ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 10 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ intygstjanst-web ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 23 source files to C:\Users\ekklot1\eclipse\sklintyg\intygstjanst\web\target\test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.15:test (default-test) @ intygstjanst-web ---
+[INFO] Surefire report directory: C:\Users\ekklot1\eclipse\sklintyg\intygstjanst\web\target\surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running se.inera.certificate.integration.GetConsentResponderImplTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.518 sec - in se.inera.certificate.integration.GetConsentResponderImplTest
+Running se.inera.certificate.integration.ListCertificatesForCitizenResponderImplTest
+Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.389 sec <<< FAILURE! - in se.inera.certificate.integration.ListCertificatesForCitizenResponderImplTest
+listCertificatesWithNoCertificates(se.inera.certificate.integration.ListCertificatesForCitizenResponderImplTest)  Time elapsed: 0.171 sec  <<< ERROR!
+java.lang.NullPointerException: null
+	at se.inera.certificate.integration.ListCertificatesForCitizenResponderImpl.listCertificatesForCitizen(ListCertificatesForCitizenResponderImpl.java:54)
+	at se.inera.certificate.integration.ListCertificatesForCitizenResponderImplTest.listCertificatesWithNoCertificates(ListCertificatesForCitizenResponderImplTest.java:73)
+
+Running se.inera.certificate.integration.ListCertificatesResponderImplTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 sec - in se.inera.certificate.integration.ListCertificatesResponderImplTest
+Running se.inera.certificate.integration.RevokeMedicalCertificateResponderImplTest
+08:38:09.846 [main] WARN  s.i.c.i.RevokeMedicalCertificateResponderImpl - Encountered an exception when sending a revocation to subsystem 'FK'
+08:38:10.031 [main] INFO  s.i.c.i.RevokeMedicalCertificateResponderImpl - Tried to revoke certificate 'intygs-id-1234567890' for patient 'c57913dd217a462baf479ec80c0f4ce93494dbc71df41ee1b6e746393cfced7a' but certificate does not exist
+08:38:10.110 [main] INFO  s.i.c.i.RevokeMedicalCertificateResponderImpl - Tried to revoke certificate 'intygs-id-1234567890' for patient 'c57913dd217a462baf479ec80c0f4ce93494dbc71df41ee1b6e746393cfced7a' which already is revoked
+Tests run: 5, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 1.146 sec <<< FAILURE! - in se.inera.certificate.integration.RevokeMedicalCertificateResponderImplTest
+testRevokeCertificateWhichWasNotSentToForsakringskassan(se.inera.certificate.integration.RevokeMedicalCertificateResponderImplTest)  Time elapsed: 0.692 sec  <<< ERROR!
+java.lang.NullPointerException: null
+	at se.inera.certificate.integration.RevokeMedicalCertificateResponderImpl.revokeMedicalCertificate(RevokeMedicalCertificateResponderImpl.java:58)
+	at se.inera.certificate.integration.RevokeMedicalCertificateResponderImplTest.testRevokeCertificateWhichWasNotSentToForsakringskassan(RevokeMedicalCertificateResponderImplTest.java:135)
+
+testRevokeCertificateWhichWasAlreadySentToForsakringskassan(se.inera.certificate.integration.RevokeMedicalCertificateResponderImplTest)  Time elapsed: 0.129 sec  <<< ERROR!
+java.lang.NullPointerException: null
+	at se.inera.certificate.integration.RevokeMedicalCertificateResponderImpl.revokeMedicalCertificate(RevokeMedicalCertificateResponderImpl.java:58)
+	at se.inera.certificate.integration.RevokeMedicalCertificateResponderImplTest.testRevokeCertificateWhichWasAlreadySentToForsakringskassan(RevokeMedicalCertificateResponderImplTest.java:105)
+
+Running se.inera.certificate.integration.RevokeMedicalCertificateResponderWiretapImplTest
+08:38:10.225 [main] INFO  s.i.c.i.RevokeMedicalCertificateResponderWiretapImpl - intygs-id-1234567890 revoked
+08:38:10.356 [main] INFO  s.i.c.i.RevokeMedicalCertificateResponderWiretapImpl - intygs-id-1234567890 revoked
+08:38:10.462 [main] INFO  s.i.c.i.RevokeMedicalCertificateResponderWiretapImpl - Tried to revoke certificate 'intygs-id-1234567890' for patient 'c57913dd217a462baf479ec80c0f4ce93494dbc71df41ee1b6e746393cfced7a' but certificate does not exist
+08:38:10.585 [main] INFO  s.i.c.i.RevokeMedicalCertificateResponderWiretapImpl - Tried to revoke certificate 'intygs-id-1234567890' for patient 'c57913dd217a462baf479ec80c0f4ce93494dbc71df41ee1b6e746393cfced7a' which already is revoked
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.471 sec - in se.inera.certificate.integration.RevokeMedicalCertificateResponderWiretapImplTest
+Running se.inera.certificate.integration.SendCertificateToRecipientResponderImplTest
+08:38:10.597 [main] INFO  s.i.c.i.SendCertificateToRecipientResponderImpl - Certificate 'Intygs-id-1234567890' sent to 'FK'.
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 sec - in se.inera.certificate.integration.SendCertificateToRecipientResponderImplTest
+Running se.inera.certificate.integration.SendMedicalCertificateResponderImplTest
+08:38:10.635 [main] INFO  s.i.c.i.SendMedicalCertificateResponderImpl - Intygs-id-1234567890 sent to FK
+08:38:10.647 [main] ERROR s.i.c.i.SendMedicalCertificateResponderImpl - No recipient was found for certificate of type fk7263. Maybe this is a missed configuration.
+08:38:10.647 [main] ERROR s.i.c.i.SendMedicalCertificateResponderImpl - Unknown recipient
+08:38:10.651 [main] ERROR s.i.c.i.SendMedicalCertificateResponderImpl - Multiple recipients were found for certificate of type fk7263. Unable to decide recipient. Maybe this is a missed configuration.
+08:38:10.651 [main] ERROR s.i.c.i.SendMedicalCertificateResponderImpl - Unknown recipient
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.046 sec - in se.inera.certificate.integration.SendMedicalCertificateResponderImplTest
+Running se.inera.certificate.integration.SetCertificateArchivedResponderImplTest
+08:38:10.664 [main] DEBUG s.i.c.i.SendMedicalCertificateResponderImpl - Attempting to set 'Deleted' to true for intyg no5
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 sec - in se.inera.certificate.integration.SetCertificateArchivedResponderImplTest
+Running se.inera.certificate.integration.SetCertificateStatusResponderImplTest
+08:38:10.681 [main] INFO  s.i.c.i.SendMedicalCertificateResponderImpl - no5 set to status CANCELLED
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.017 sec <<< FAILURE! - in se.inera.certificate.integration.SetCertificateStatusResponderImplTest
+testSetCertificateStatus(se.inera.certificate.integration.SetCertificateStatusResponderImplTest)  Time elapsed: 0.002 sec  <<< ERROR!
+java.lang.NullPointerException: null
+	at se.inera.certificate.integration.SetCertificateStatusResponderImpl.setCertificateStatus(SetCertificateStatusResponderImpl.java:43)
+	at se.inera.certificate.integration.SetCertificateStatusResponderImplTest.testSetCertificateStatus(SetCertificateStatusResponderImplTest.java:44)
+
+Running se.inera.certificate.integration.SetConsentResponderImplTest
+Tests run: 2, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 0.012 sec <<< FAILURE! - in se.inera.certificate.integration.SetConsentResponderImplTest
+consentServiceIsCalledWithPersonnummerAndConsentGiven(se.inera.certificate.integration.SetConsentResponderImplTest)  Time elapsed: 0 sec  <<< ERROR!
+java.lang.NullPointerException: null
+	at se.inera.certificate.integration.SetConsentResponderImpl.setConsent(SetConsentResponderImpl.java:40)
+	at se.inera.certificate.integration.SetConsentResponderImplTest.consentServiceIsCalledWithPersonnummerAndConsentGiven(SetConsentResponderImplTest.java:31)
+
+consentServiceReturnsOK(se.inera.certificate.integration.SetConsentResponderImplTest)  Time elapsed: 0 sec  <<< ERROR!
+java.lang.NullPointerException: null
+	at se.inera.certificate.integration.SetConsentResponderImpl.setConsent(SetConsentResponderImpl.java:40)
+	at se.inera.certificate.integration.SetConsentResponderImplTest.consentServiceReturnsOK(SetConsentResponderImplTest.java:39)
+
+Running se.inera.certificate.integration.stub.FkStubResourceTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.088 sec - in se.inera.certificate.integration.stub.FkStubResourceTest
+Running se.inera.certificate.integration.stub.RevokeMedicalCertificateResponderStubTest
+08:38:10.942 [main] INFO  s.i.c.i.s.RevokeMedicalCertificateResponderStub - STUB Received revocation concerning certificate with id: intygs-id-1234567890
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.137 sec - in se.inera.certificate.integration.stub.RevokeMedicalCertificateResponderStubTest
+Running se.inera.certificate.integration.stub.SendMedicalCertificateQuestionResponderStubTest
+08:38:11.061 [main] INFO  s.i.c.i.s.SendMedicalCertificateQuestionResponderStub - STUB Received question concerning certificate with id: id-1234567890
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.115 sec - in se.inera.certificate.integration.stub.SendMedicalCertificateQuestionResponderStubTest
+Running se.inera.certificate.integration.test.CertificateResourceTest
+08:38:11.423 [main] DEBUG o.apache.cxf.common.logging.LogUtils - Using org.apache.cxf.common.logging.Slf4jLogger for logging.
+08:38:11.447 [main] DEBUG s.i.c.i.test.CertificateResource - Got null while populating with original_certificate
+08:38:11.447 [main] WARN  s.i.c.i.test.CertificateResource - delete certificate with id 1 failed: 
+08:38:11.447 [main] DEBUG s.i.c.i.test.CertificateResource - Got null while populating with original_certificate
+08:38:11.447 [main] WARN  s.i.c.i.test.CertificateResource - insert certificate with id 1 failed: 
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.386 sec - in se.inera.certificate.integration.test.CertificateResourceTest
+Running se.inera.certificate.integration.validator.LakarutlatandeEnkelTypeValidatorTest
+08:38:11.465 [main] WARN  s.i.i.c.s.i.h.v.PatientValidator - Validation warning: Person-id 191212121212 is lacking a separating dash - corrected.
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 sec - in se.inera.certificate.integration.validator.LakarutlatandeEnkelTypeValidatorTest
+Running se.inera.certificate.service.impl.CertificateSenderServiceImplTest
+08:38:11.728 [main] ERROR s.i.c.s.i.CertificateSenderServiceImpl - Recipient TS is not available for certificate type fk7263
+Tests run: 4, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 0.255 sec <<< FAILURE! - in se.inera.certificate.service.impl.CertificateSenderServiceImplTest
+testSend(se.inera.certificate.service.impl.CertificateSenderServiceImplTest)  Time elapsed: 0.008 sec  <<< ERROR!
+java.lang.NullPointerException: null
+	at se.inera.certificate.service.impl.CertificateSenderServiceImpl.sendCertificate(CertificateSenderServiceImpl.java:108)
+	at se.inera.certificate.service.impl.CertificateSenderServiceImplTest.testSend(CertificateSenderServiceImplTest.java:137)
+
+testSendWithDefaultRecipient(se.inera.certificate.service.impl.CertificateSenderServiceImplTest)  Time elapsed: 0 sec  <<< ERROR!
+java.lang.NullPointerException: null
+	at se.inera.certificate.service.impl.CertificateSenderServiceImpl.sendCertificate(CertificateSenderServiceImpl.java:108)
+	at se.inera.certificate.service.impl.CertificateSenderServiceImplTest.testSendWithDefaultRecipient(CertificateSenderServiceImplTest.java:143)
+
+Running se.inera.certificate.service.impl.CertificateServiceImplTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.229 sec - in se.inera.certificate.service.impl.CertificateServiceImplTest
+Running se.inera.certificate.service.impl.ConsentServiceImplTest
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.02 sec - in se.inera.certificate.service.impl.ConsentServiceImplTest
+Running se.inera.certificate.service.impl.MonitoringLogServiceImplTest
+08:38:12.018 [main] INFO  s.i.c.service.MonitoringLogService - CERTIFICATE_REGISTERED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - registered
+08:38:12.026 [main] INFO  s.i.c.service.MonitoringLogService - CERTIFICATE_REVOKED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - revoked
+08:38:12.030 [main] INFO  s.i.c.service.MonitoringLogService - CONSENT_GIVEN Consent given by citizen 'CITIZEN'
+08:38:12.030 [main] INFO  s.i.c.service.MonitoringLogService - CERTIFICATE_SENT Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - sent to 'RECIPIENT'
+08:38:12.035 [main] INFO  s.i.c.service.MonitoringLogService - STATISTICS_REVOKED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - revoke sent to statistics
+08:38:12.035 [main] INFO  s.i.c.service.MonitoringLogService - STATISTICS_SENT Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - sent to statistics
+08:38:12.035 [main] INFO  s.i.c.service.MonitoringLogService - CONSENT_REVOKED Consent revoked from citizen 'CITIZEN'
+08:38:12.038 [main] INFO  s.i.c.service.MonitoringLogService - CERTIFICATE_STATUS_CHANGED Certificate 'CERTIFICATE_ID' - changed to status 'STATUS'
+08:38:12.038 [main] INFO  s.i.c.service.MonitoringLogService - CERTIFICATE_LISTED_BY_CARE Certificates for citizen 'CITIZEN' - listed by care
+08:38:12.043 [main] INFO  s.i.c.service.MonitoringLogService - CERTIFICATE_REVOKE_SENT Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - revoke sent to 'RECIPIENT'
+08:38:12.043 [main] INFO  s.i.c.service.MonitoringLogService - CERTIFICATE_LISTED_BY_CITIZEN Certificates for citizen 'CITIZEN' - listed by citizen
+08:38:12.047 [main] INFO  s.i.c.service.MonitoringLogService - CERTIFICATE_SENT_AND_NOTIFIED_BY_WIRETAPPING Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - sent to 'RECIPIENT' (notification received by wiretapping)
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.05 sec - in se.inera.certificate.service.impl.MonitoringLogServiceImplTest
+Running se.inera.certificate.service.impl.RecipientServiceImplTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 sec - in se.inera.certificate.service.impl.RecipientServiceImplTest
+Running se.inera.certificate.service.impl.StatisticsServiceImplTest
+08:38:12.138 [main] DEBUG o.s.test.util.ReflectionTestUtils - Setting field [enabled] of type [null] on target [se.inera.certificate.service.impl.StatisticsServiceImpl@214789ac] to value [true]
+08:38:12.192 [main] DEBUG o.s.test.util.ReflectionTestUtils - Setting field [enabled] of type [null] on target [se.inera.certificate.service.impl.StatisticsServiceImpl@7c1f7480] to value [true]
+Tests run: 4, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 0.128 sec <<< FAILURE! - in se.inera.certificate.service.impl.StatisticsServiceImplTest
+serviceSendsDocumentAndIdForCreate(se.inera.certificate.service.impl.StatisticsServiceImplTest)  Time elapsed: 0.054 sec  <<< ERROR!
+java.lang.NullPointerException: null
+	at se.inera.certificate.service.impl.StatisticsServiceImpl.created(StatisticsServiceImpl.java:46)
+	at se.inera.certificate.service.impl.StatisticsServiceImplTest.serviceSendsDocumentAndIdForCreate(StatisticsServiceImplTest.java:59)
+
+serviceSendsDocumentAndIdForRevoke(se.inera.certificate.service.impl.StatisticsServiceImplTest)  Time elapsed: 0 sec  <<< ERROR!
+java.lang.NullPointerException: null
+	at se.inera.certificate.service.impl.StatisticsServiceImpl.revoked(StatisticsServiceImpl.java:58)
+	at se.inera.certificate.service.impl.StatisticsServiceImplTest.serviceSendsDocumentAndIdForRevoke(StatisticsServiceImplTest.java:80)
+
+
+Results :
+
+Tests in error: 
+  ListCertificatesForCitizenResponderImplTest.listCertificatesWithNoCertificates:73 » NullPointer
+  RevokeMedicalCertificateResponderImplTest.testRevokeCertificateWhichWasNotSentToForsakringskassan:135 » NullPointer
+  RevokeMedicalCertificateResponderImplTest.testRevokeCertificateWhichWasAlreadySentToForsakringskassan:105 » NullPointer
+  SetCertificateStatusResponderImplTest.testSetCertificateStatus:44 » NullPointer
+  SetConsentResponderImplTest.consentServiceIsCalledWithPersonnummerAndConsentGiven:31 » NullPointer
+  SetConsentResponderImplTest.consentServiceReturnsOK:39 » NullPointer
+  CertificateSenderServiceImplTest.testSend:137 » NullPointer
+  CertificateSenderServiceImplTest.testSendWithDefaultRecipient:143 » NullPointer
+  StatisticsServiceImplTest.serviceSendsDocumentAndIdForCreate:59 » NullPointer
+  StatisticsServiceImplTest.serviceSendsDocumentAndIdForRevoke:80 » NullPointer
+
+Tests run: 79, Failures: 0, Errors: 10, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 25.569s
+[INFO] Finished at: Wed Sep 16 08:38:12 CEST 2015
+[INFO] Final Memory: 34M/262M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.15:test (default-test) on project intygstjanst-web: There are test failures.
+[ERROR] 
+[ERROR] Please refer to C:\Users\ekklot1\eclipse\sklintyg\intygstjanst\web\target\surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

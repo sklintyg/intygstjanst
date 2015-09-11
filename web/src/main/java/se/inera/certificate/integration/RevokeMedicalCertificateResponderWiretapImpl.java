@@ -43,12 +43,12 @@ public class RevokeMedicalCertificateResponderWiretapImpl extends RevokeMedicalC
                     .getExtension();
 
             Certificate certificate = certificateService.revokeCertificate(civicRegistrationNumber, certificateId, null);
-            LOGGER.info(LogMarkers.MONITORING, certificateId + " revoked");
+            LOGGER.info(certificateId + " revoked");
             getStatisticsService().revoked(certificate);
 
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
-            LOGGER.info(LogMarkers.MONITORING, "Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
+            LOGGER.info("Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + "' but certificate does not exist");
             response.setResult(ResultOfCallUtil.failResult("No certificate '" + safeGetCertificateId(request)
                     + "' found to revoke for patient '" + safeGetCivicRegistrationNumber(request) + "'."));
@@ -56,7 +56,7 @@ public class RevokeMedicalCertificateResponderWiretapImpl extends RevokeMedicalC
 
         } catch (CertificateRevokedException e) {
             // return with INFO response if certificate was revoked before
-            LOGGER.info(LogMarkers.MONITORING, "Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
+            LOGGER.info("Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
                     + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + "' which already is revoked");
             response.setResult(ResultOfCallUtil.infoResult("Certificate '" + safeGetCertificateId(request) + "' is already revoked."));
             return response;
