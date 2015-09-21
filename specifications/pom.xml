@@ -199,7 +199,6 @@
       <plugin>
         <groupId>uk.co.javahelp.fitnesse</groupId>
         <artifactId>fitnesse-launcher-maven-plugin</artifactId>
-        <version>${fitnesse-launcher-maven-plugin.version}</version>
         <configuration>
           <port>${fitnesse.port}</port>
           <workingDir>${fitnesse.working}</workingDir>
@@ -226,6 +225,12 @@
       <id>nmt</id>
       <properties>
         <certificate.baseUrl>https://intygstjanst.inera.nordicmedtest.se:23443/inera-certificate/</certificate.baseUrl>
+      </properties>
+    </profile>
+    <profile>
+      <id>build-server</id>
+      <properties>
+        <certificate.baseUrl>https://intygstjanst.inera.nordicmedtest.se/inera-certificate/</certificate.baseUrl>
       </properties>
     </profile>
     <profile>

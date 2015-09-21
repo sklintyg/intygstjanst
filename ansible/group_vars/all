@@ -1,6 +1,3 @@
----
-# file: group_vars/all
-
 # General
 inera_root: /opt/inera
 releases_folder: "{{ inera_root }}/releases"

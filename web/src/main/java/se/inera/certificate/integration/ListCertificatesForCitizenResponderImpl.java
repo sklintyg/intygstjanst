@@ -4,12 +4,15 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.certificate.integration.converter.MetaDataResolver;
 import se.inera.certificate.integration.module.exception.MissingConsentException;
+import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.MonitoringLogService;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenType;
@@ -30,6 +33,9 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
     @Autowired
     private MetaDataResolver metaDataResolver;
 
+    @Autowired
+    private MonitoringLogService monitoringLogService;
+
     @Override
     public ListCertificatesForCitizenResponseType listCertificatesForCitizen(String logicalAddress, ListCertificatesForCitizenType parameters) {
         ListCertificatesForCitizenResponseType response = new ListCertificatesForCitizenResponseType();
@@ -45,7 +51,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
                 }
             }
             response.setResult(ResultTypeUtil.okResult());
-
+            monitoringLogService.logCertificateListedByCitizen(HashUtility.hash(parameters.getPersonId()));
         } catch (ModuleNotFoundException | ModuleException e) {
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "Module error when processing certificates"));
             LOGGER.error(e.getMessage());

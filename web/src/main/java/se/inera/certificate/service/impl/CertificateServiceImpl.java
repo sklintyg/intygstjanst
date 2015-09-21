@@ -20,14 +20,13 @@ package se.inera.certificate.service.impl;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
 import se.inera.certificate.exception.PersistenceException;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.integration.converter.ConverterUtil;
@@ -35,7 +34,6 @@ import se.inera.certificate.integration.module.exception.CertificateAlreadyExist
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
 import se.inera.certificate.integration.module.exception.MissingConsentException;
-import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
@@ -46,6 +44,7 @@ import se.inera.certificate.modules.support.api.ModuleContainerApi;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.ConsentService;
+import se.inera.certificate.service.MonitoringLogService;
 import se.inera.certificate.service.StatisticsService;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 
@@ -60,8 +59,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     public static final String MI = "MI";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CertificateServiceImpl.class);
-
     @Autowired
     private CertificateDao certificateDao;
 
@@ -74,6 +71,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Autowired
     private StatisticsService statisticsService;
 
+    @Autowired
+    private MonitoringLogService monitoringLogService;
 
     @Autowired
     @Value("${store.original.certificate}")
@@ -251,13 +250,15 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Transactional
     public void certificateReceived(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException, InvalidCertificateException {
         Certificate certificate = storeCertificate(certificateHolder);
-        LOGGER.info(LogMarkers.MONITORING, certificateHolder.getId() + " registered");
+        monitoringLogService.logCertificateRegistered(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
+        
         if (certificateHolder.isWireTapped()) {
             String personnummer = certificateHolder.getCivicRegistrationNumber();
             String certificateId = certificateHolder.getId();
-            setCertificateState(personnummer, certificateId, "FK", CertificateState.SENT,
+            final String recipient = "FK";
+            setCertificateState(personnummer, certificateId, recipient, CertificateState.SENT,
                     new LocalDateTime());
-            LOGGER.info(LogMarkers.MONITORING, certificateId + " marked as sent");
+            monitoringLogService.logCertificateSentAndNotifiedByWiretapping(certificate.getId(), certificate.getType(), certificate.getCareUnitId(), recipient);
         }
         statisticsService.created(certificate);
     }

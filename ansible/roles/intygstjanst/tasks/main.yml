@@ -6,10 +6,10 @@
 
 - name: create release directory
   file: path={{ releases_folder }} state=directory
-  
+
 - name: download intygstjanst-liquibase-runner-{{ version }}.jar
-  get_url: url=http://repository-callistasoftware.forge.cloudbees.com/{{ repo }}/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/{{ version }}/intygstjanst-liquibase-runner-{{ version }}.jar
-      dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.jar
+  get_url: url=https://build-inera.nordicmedtest.se/nexus/content/repositories/{{ repo }}/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/{{ version }}/intygstjanst-liquibase-runner-{{ version }}.jar
+           dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.jar
   when: deploy_from_repo
 
 - name: copy intygstjanst-liquibase-runner-{{ version }}.jar
@@ -20,7 +20,7 @@
   command: java -jar {{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.jar --changeLogFile="changelog/changelog.xml" --username="{{ database_username }}" --password="{{ database_password }}" --url="{{ database_url }}" --driver="{{ database_driver }}" --contexts=none update
 
 - name: download intygstjanst-web-{{ version }}.war
-  get_url: url=http://repository-callistasoftware.forge.cloudbees.com/{{ repo }}/se/inera/intyg/intygstjanst/intygstjanst-web/{{ version }}/intygstjanst-web-{{ version }}.war
+  get_url: url=https://build-inera.nordicmedtest.se/nexus/content/repositories/{{ repo }}/se/inera/intyg/intygstjanst/intygstjanst-web/{{ version }}/intygstjanst-web-{{ version }}.war
            dest={{ releases_folder }}/intygstjanst-web-{{ version }}.war
   when: deploy_from_repo
 

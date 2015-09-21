@@ -10,6 +10,7 @@ import se.inera.certificate.integration.module.exception.InvalidCertificateExcep
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.MonitoringLogService;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtabp20.v1.SetCertificateStatusResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusResponseType;
@@ -27,6 +28,9 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
     @Autowired
     private CertificateService certificateService;
 
+    @Autowired
+    private MonitoringLogService monitoringLogService;
+
     @Override
     public SetCertificateStatusResponseType setCertificateStatus(AttributedURIType logicalAddress, SetCertificateStatusRequestType request) {
 
@@ -36,6 +40,7 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
             certificateService.setCertificateState(request.getNationalIdentityNumber(), request.getCertificateId(), request.getTarget(), CertificateState.valueOf(request.getStatus().name()), request.getTimestamp());
             response.setResult(ResultOfCallUtil.okResult());
             LOGGER.info(LogMarkers.MONITORING, request.getCertificateId() + " set to status " + request.getStatus().name());
+            monitoringLogService.logCertificateStatusChanged(request.getCertificateId(), request.getStatus().name());
         } catch (InvalidCertificateException e) {
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
         }

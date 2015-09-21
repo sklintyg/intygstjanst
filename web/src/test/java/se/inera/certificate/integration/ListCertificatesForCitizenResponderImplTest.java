@@ -34,9 +34,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.certificate.integration.module.exception.MissingConsentException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.MonitoringLogService;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenType;
@@ -53,6 +56,9 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     @Mock
     private CertificateService certificateService = mock(CertificateService.class);
+
+    @Mock
+    private MonitoringLogService monitoringLogService;
 
     @InjectMocks
     private ListCertificatesForCitizenResponderInterface responder = new ListCertificatesForCitizenResponderImpl();

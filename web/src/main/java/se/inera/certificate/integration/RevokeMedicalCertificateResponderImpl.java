@@ -11,9 +11,11 @@ import se.inera.certificate.exception.SubsystemCallException;
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
 import se.inera.certificate.integration.validator.RevokeRequestValidator;
+import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.MonitoringLogService;
 import se.inera.certificate.service.StatisticsService;
 import se.inera.certificate.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
@@ -34,6 +36,9 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
     private SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
 
     @Autowired
+    private MonitoringLogService monitoringLogService;
+
+    @Autowired
     private StatisticsService statisticsService;
 
     @Override
@@ -48,35 +53,36 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
             String certificateId = request.getRevoke().getLakarutlatande().getLakarutlatandeId();
             String civicRegistrationNumber = request.getRevoke().getLakarutlatande().getPatient().getPersonId()
                     .getExtension();
-            Certificate certificate = certificateService.revokeCertificate(civicRegistrationNumber, certificateId, request.getRevoke());
 
-            LOGGER.info(LogMarkers.MONITORING, certificateId + " revoked");
+            Certificate certificate = certificateService.revokeCertificate(civicRegistrationNumber, certificateId, request.getRevoke());
+            monitoringLogService.logCertificateRevoked(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
+
             getStatisticsService().revoked(certificate);
 
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
-            LOGGER.info(LogMarkers.MONITORING, "Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
-                    + safeGetCivicRegistrationNumber(request) + "' but certificate does not exist");
+            LOGGER.info("Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
+                    + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + "' but certificate does not exist");
             response.setResult(ResultOfCallUtil.failResult("No certificate '" + safeGetCertificateId(request)
                     + "' found to revoke for patient '" + safeGetCivicRegistrationNumber(request) + "'."));
             return response;
 
         } catch (CertificateRevokedException e) {
             // return with INFO response if certificate was revoked before
-            LOGGER.info(LogMarkers.MONITORING, "Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
-                    + safeGetCivicRegistrationNumber(request) + "' which already is revoked");
+            LOGGER.info("Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
+                    + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + "' which already is revoked");
             response.setResult(ResultOfCallUtil.infoResult("Certificate '" + safeGetCertificateId(request) + "' is already revoked."));
             return response;
 
         } catch (CertificateValidationException e) {
             // return with ERROR response if certificate had validation errors
             LOGGER.info(LogMarkers.VALIDATION, "Validation error found for revoke certificate '" + safeGetCertificateId(request)
-                    + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + safeGetCivicRegistrationNumber(request) + ": " + e.getMessage());
+                    + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + ": " + e.getMessage());
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             return response;
 
         } catch (SubsystemCallException e) {
-            LOGGER.warn(LogMarkers.MONITORING, "Encountered an exception when sending a revocation to subsystem '" + e.getSubsystemId() + "'");
+            LOGGER.warn("Encountered an exception when sending a revocation to subsystem '" + e.getSubsystemId() + "'");
             response.setResult(ResultOfCallUtil.failResult("Informing subsystem '" + e.getSubsystemId() + "' about revoked certificate resulted in error"));
             return response;
         }

@@ -41,6 +41,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import se.inera.certificate.exception.PersistenceException;
+import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
@@ -114,7 +115,7 @@ public class CertificateDaoImpl implements CertificateDao {
         if (civicRegistrationNumber != null && !certificate.getCivicRegistrationNumber().equals(civicRegistrationNumber)) {
 
             LOG.warn(String.format("Trying to access certificate '%s' for user '%s' but certificate's user is '%s'.",
-                    certificateId, civicRegistrationNumber, certificate.getCivicRegistrationNumber()));
+                    certificateId, HashUtility.hash(civicRegistrationNumber), HashUtility.hash(certificate.getCivicRegistrationNumber())));
             throw new PersistenceException(certificateId, civicRegistrationNumber);
         }
 

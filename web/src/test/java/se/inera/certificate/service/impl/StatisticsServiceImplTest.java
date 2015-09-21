@@ -21,12 +21,16 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.service.MonitoringLogService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StatisticsServiceImplTest {
 
     @Mock
     private JmsTemplate template = mock(JmsTemplate.class);
+
+    @Mock
+    private MonitoringLogService monitoringLogService;
 
     @InjectMocks
     private StatisticsServiceImpl serviceImpl = new StatisticsServiceImpl(); 

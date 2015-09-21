@@ -14,8 +14,8 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
 
-import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.service.MonitoringLogService;
 import se.inera.certificate.service.StatisticsService;
 
 @Component
@@ -31,25 +31,34 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Autowired(required = false)
     private JmsTemplate jmsTemplate;
 
+    @Autowired
+    private MonitoringLogService monitoringLogService;
+
     @Value("${statistics.enabled}")
     private boolean enabled;
 
     @Override
     public boolean created(Certificate certificate) {
+        boolean rc = true;
         if (enabled) {
-            return doSend(CREATED, certificate);
-        } else {
-            return true;
+            rc = doSend(CREATED, certificate);
+            if (rc) {
+                monitoringLogService.logStatisticsSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
+            }
         }
+        return rc;
     }
 
     @Override
     public boolean revoked(Certificate certificate) {
+        boolean rc = true;
         if (enabled) {
-            return doSend(REVOKED, certificate);
-        } else {
-            return true;
+            rc = doSend(REVOKED, certificate);
+            if (rc) {
+                monitoringLogService.logStatisticsRevoked(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
+            }
         }
+        return rc;
     }
 
     private boolean doSend(String type, Certificate certificate) {
@@ -61,7 +70,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 
             MessageCreator messageCreator = new MC(type, certificate);
             jmsTemplate.send(messageCreator);
-            LOG.info(LogMarkers.MONITORING, "Certificate '{}' type '{}' sent to statistics", certificate.getId(), type);
             return true;
         } catch (JmsException e) {
             LOG.error("Failure sending certificate '{}' type '{}'to statistics", certificate.getId(), type, e);

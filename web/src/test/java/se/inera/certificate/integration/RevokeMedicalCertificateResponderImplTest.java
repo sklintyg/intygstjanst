@@ -16,6 +16,7 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
+
 import se.inera.certificate.exception.PersistenceException;
 import se.inera.certificate.exception.SubsystemCallException;
 import se.inera.certificate.model.CertificateState;
@@ -24,6 +25,7 @@ import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.MonitoringLogService;
 import se.inera.certificate.service.StatisticsService;
 import se.inera.certificate.service.impl.CertificateServiceImpl;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
@@ -39,6 +41,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
+
 import java.util.Collections;
 
 
@@ -56,6 +59,9 @@ public class RevokeMedicalCertificateResponderImplTest {
 
     @Mock
     protected CertificateDao certificateDao;
+
+    @Mock
+    private MonitoringLogService monitoringLogService;
 
     @Spy
     @InjectMocks
