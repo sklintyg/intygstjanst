@@ -120,7 +120,7 @@ public class MonitoringLogServiceImplTest {
     @Test
     public void shouldLogConsentRevoked() {
         logService.logConsentRevoked(CITIZEN);
-        verifyLog(Level.INFO, "CONSENT_REVOKED Consent revoked from citizen 'CITIZEN'");
+        verifyLog(Level.INFO, "CONSENT_REVOKED Consent revoked by citizen 'CITIZEN'");
     }
 
     @Test

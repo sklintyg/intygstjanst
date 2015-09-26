@@ -93,7 +93,7 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
         CERTIFICATE_LISTED_BY_CARE("Certificates for citizen '{}' - listed by care"),
         CERTIFICATE_STATUS_CHANGED("Certificate '{}' - changed to status '{}'"),
         CONSENT_GIVEN("Consent given by citizen '{}'"),
-        CONSENT_REVOKED("Consent revoked from citizen '{}'"),
+        CONSENT_REVOKED("Consent revoked by citizen '{}'"),
         STATISTICS_SENT("Certificate '{}' with type '{}', care unit '{}' - sent to statistics"),
         STATISTICS_REVOKED("Certificate '{}' with type '{}', care unit '{}' - revoke sent to statistics")
         ;
