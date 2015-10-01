@@ -43,6 +43,7 @@
     <intyg-fk.version>0-SNAPSHOT</intyg-fk.version>
     <intyg-fk.version.range>(,1.0.0]</intyg-fk.version.range>
 
+    <skip-jacoco>true</skip-jacoco>
   </properties>
 
   <modules>
@@ -233,6 +234,9 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
+        <configuration>
+            <skip>${skip-jacoco}</skip>
+        </configuration>
         <executions>
           <execution>
             <id>prepare-unit-test-agent</id>
