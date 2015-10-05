@@ -8,6 +8,7 @@ import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
+import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.modules.support.api.exception.ExternalServiceCallException;
 import se.inera.certificate.service.CertificateService;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponderInterface;
@@ -35,11 +36,11 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
 
             String msg = "";
             if (sendStatus == CertificateService.SendStatus.ALREADY_SENT) {
-                msg = String.format("Certificate '%s' already sent to '%s'.", request.getUtlatandeId(), request.getMottagareId());
+                msg = String.format("Certificate '%s' already sent to '%s'.", request.getUtlatandeId(), HashUtility.hash(request.getMottagareId()));
                 response.setResult(ResultTypeUtil.infoResult(msg));
                 LOGGER.info(msg);
             } else {
-                msg = String.format("Certificate '%s' sent to '%s'.", request.getUtlatandeId(), request.getMottagareId());
+                msg = String.format("Certificate '%s' sent to '%s'.", request.getUtlatandeId(), HashUtility.hash(request.getMottagareId()));
                 response.setResult(ResultTypeUtil.okResult());
                 LOGGER.info(msg);
             }
@@ -47,24 +48,22 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
 
         } catch (InvalidCertificateException ex) {
             // return ERROR if no such certificate does exist
-            LOGGER.error(String.format("Certificate '%s' does not exist for user '%s'.", new Object[] { request.getUtlatandeId(), request.getPersonId() }));
+            LOGGER.error("Certificate '{}' does not exist for user '{}'.", request.getUtlatandeId(), HashUtility.hash(request.getPersonId()));
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, String.format("Unknown certificate ID: %s", request.getUtlatandeId())));
         } catch (CertificateRevokedException ex) {
             // return INFO if certificate is revoked
-            String msg = String.format("Certificate '%s' has been revoked.", request.getUtlatandeId());
-            LOGGER.info(msg);
-            response.setResult(ResultTypeUtil.infoResult(msg));
+            LOGGER.info("Certificate '%s' has been revoked.", request.getUtlatandeId());
+            response.setResult(ResultTypeUtil.infoResult(String.format("Certificate '%s' has been revoked.", request.getUtlatandeId())));
         } catch (RecipientUnknownException ex) {
             // return ERROR if recipient is unknwon
-            String msg = String.format("Unknown recipient ID: %s", request.getMottagareId());
-            LOGGER.error(msg);
-            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, msg));
+            LOGGER.error("Unknown recipient ID: {}", request.getMottagareId());
+            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, String.format("Unknown recipient ID: %s", request.getMottagareId())));
         } catch (ServerException ex) {
             Throwable cause = ex.getCause();
             String message = (cause instanceof ExternalServiceCallException) ? cause.getMessage() : ex.getMessage();
             // return ERROR if certificate couldn't be sent
-            LOGGER.error(String.format("Certificate '%s' couldn't be sent to '%s': %s", new Object[] { request.getUtlatandeId(), request.getMottagareId(), message }));
-            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.TECHNICAL_ERROR, String.format("Certificate couldn't be sent to recipient", request.getUtlatandeId())));
+            LOGGER.error("Certificate '{}' couldn't be sent to '{}': {}", request.getUtlatandeId(), HashUtility.hash(request.getMottagareId()), message);
+            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.TECHNICAL_ERROR, String.format("Certificate '%s' couldn't be sent to recipient", request.getUtlatandeId())));
         }
 
         return response;
