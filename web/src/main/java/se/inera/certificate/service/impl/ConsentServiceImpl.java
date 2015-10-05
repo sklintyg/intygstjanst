@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.ConsentDao;
 import se.inera.certificate.service.ConsentService;
@@ -65,7 +66,7 @@ public class ConsentServiceImpl implements ConsentService {
             try {
                 certificateDao.removeCertificatesDeletedByCareGiver(civicRegistrationNumber);
             } catch (PersistenceException e) {
-                LOGGER.error("Failed to remove certificates deleted by care giver for citizen {}", civicRegistrationNumber);
+                LOGGER.error("Failed to remove certificates deleted by care giver for citizen {}", HashUtility.hash(civicRegistrationNumber));
             }
         }
     }

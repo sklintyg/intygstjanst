@@ -42,12 +42,12 @@ public class SetConsentResponderImpl implements SetConsentResponderInterface {
         } catch (DataIntegrityViolationException e) {
             // INTYG-886 GeSamtycke anropas ibland flera gånger i rask takt av klienter, vilket leder till ett
             // race condition som ger DataIntegrityViolationException.
-            LOGGER.warn("Consent already given for " + parameters.getPersonnummer() + " - ignored.");
+            LOGGER.warn("Consent already given for " + HashUtility.hash(parameters.getPersonnummer()) + " - ignored.");
             response.setResult(ResultOfCallUtil.infoResult("Consent already given for " + parameters.getPersonnummer()));
         } catch (HibernateOptimisticLockingFailureException e) {
             // INTYG-886 ÅtertaSamtycke kan teoretiskt anropas flera gånger i rask takt av klienter, vilket leder till ett
             // race condition som ger HibernateOptimisticLockingFailureException.
-            LOGGER.warn("Consent already revoked for " + parameters.getPersonnummer() + " - ignored.");
+            LOGGER.warn("Consent already revoked for " + HashUtility.hash(parameters.getPersonnummer()) + " - ignored.");
             response.setResult(ResultOfCallUtil.infoResult("Consent already revoked for " + parameters.getPersonnummer()));
         }
         return response;

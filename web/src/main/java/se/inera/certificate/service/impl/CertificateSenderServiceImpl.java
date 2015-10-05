@@ -108,10 +108,9 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             monitoringLogService.logCertificateSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(), recipientId);
 
         } catch (ModuleNotFoundException e) {
-            String message = String.format("The module '%s' was not found - not registered in application",
-                    certificate.getType());
-            LOGGER.error(message);
-            throw new MissingModuleException(message, e);
+            LOGGER.error("The module '{}' was not found - not registered in application", certificate.getType());
+            throw new MissingModuleException(String.format("The module '%s' was not found - not registered in application",
+                    certificate.getType()), e);
 
         } catch (ModuleException e) {
             String message = String.format("Failed to send certificate '%s' of type '%s' to recipient '%s'", certificate.getId(), certificate.getType(), recipientId);
