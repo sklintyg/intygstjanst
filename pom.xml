@@ -160,11 +160,6 @@
         <artifactId>intyg-transportstyrelsen-schemas</artifactId>
         <version>${intyg-transportstyrelsen.version}</version>
       </dependency>
-      <dependency>
-        <groupId>se.inera.intyg.fk</groupId>
-        <artifactId>intyg-forsakringskassan-schemas</artifactId>
-        <version>${intyg-fk.version}</version>
-      </dependency>
 
     </dependencies>
   </dependencyManagement>
