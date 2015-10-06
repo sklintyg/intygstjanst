@@ -40,9 +40,6 @@
     <intyg-transportstyrelsen.version>0-SNAPSHOT</intyg-transportstyrelsen.version>
     <intyg-transportstyrelsen.version.range>(,1.0.0]</intyg-transportstyrelsen.version.range>
 
-    <intyg-fk.version>0-SNAPSHOT</intyg-fk.version>
-    <intyg-fk.version.range>(,1.0.0]</intyg-fk.version.range>
-
     <skip-jacoco>true</skip-jacoco>
   </properties>
 
@@ -122,6 +119,11 @@
       <dependency>
         <groupId>se.inera.intyg.intygstyper</groupId>
         <artifactId>sjukpenning</artifactId>
+        <version>${intygstyper.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>se.inera.intyg.intygstyper</groupId>
+        <artifactId>sjukersattning</artifactId>
         <version>${intygstyper.version}</version>
       </dependency>
 
