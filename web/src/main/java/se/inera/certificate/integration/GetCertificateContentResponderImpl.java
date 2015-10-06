@@ -1,6 +1,8 @@
 package se.inera.certificate.integration;
 
 
+import java.util.List;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,14 +16,11 @@ import se.inera.certificate.integration.util.CertificateStateHistoryEntryConvert
 import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.service.CertificateService;
-import se.inera.certificate.service.MonitoringLogService;
 import se.inera.ifv.insuranceprocess.certificate.v1.CertificateStatusType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.insuranceprocess.healthreporting.getcertificatecontent.rivtabp20.v1.GetCertificateContentResponderInterface;
 import se.inera.intyg.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentRequestType;
 import se.inera.intyg.insuranceprocess.healthreporting.getcertificatecontentresponder.v1.GetCertificateContentResponseType;
-
-import java.util.List;
 
 
 /**
@@ -53,7 +52,7 @@ public class GetCertificateContentResponderImpl implements GetCertificateContent
             return response;
         } catch (InvalidCertificateException ex) {
             // return ERROR if no such certificate does exist
-            LOGGER.info("Tried to get certificate '" + request.getCertificateId() + "' but no such certificate does exist for user '" + request.getNationalIdentityNumber() + "'.");
+            LOGGER.info("Tried to get certificate '" + request.getCertificateId() + "' but no such certificate does exist for user '" + HashUtility.hash(request.getNationalIdentityNumber()) + "'.");
             response.setResult(ResultOfCallUtil.failResult(String.format("Unknown certificate ID: %s", request.getCertificateId())));
             return response;
         } catch (CertificateRevokedException ex) {

@@ -87,7 +87,8 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
 
         } catch (CertificateValidationException e) {
             LOGGER.error(LogMarkers.VALIDATION, "Validation error found for send certificate '" + safeGetCertificateId(request)
-                    + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + ": " + e.getMessage());
+                    + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + HashUtility.hash(safeGetCivicRegistrationNumber(request))
+                    + ": " + e.getMessage());
             // return with ERROR response if certificate had validation errors
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             return response;
@@ -100,7 +101,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             Throwable cause = ex.getCause();
             String message = (cause instanceof ExternalServiceCallException) ? cause.getMessage() : ex.getMessage();
             // return ERROR if certificate couldn't be sent
-            LOGGER.error(String.format("Certificate '%s' couldn't be sent: %s", new Object[] { safeGetCertificateId(request), message }));
+            LOGGER.error("Certificate '{}' couldn't be sent: {}", safeGetCertificateId(request), message);
             response.setResult(ResultOfCallUtil.applicationErrorResult("Certificate couldn't be sent to recipient"));
             return response;
         }
