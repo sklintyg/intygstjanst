@@ -1,6 +1,6 @@
 package se.inera.certificate.service.impl;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.Mockito.verify;
 import static org.junit.Assert.assertThat;
 
@@ -64,9 +64,9 @@ public class MonitoringLogServiceImplTest {
         final LoggingEvent loggingEvent = captorLoggingEvent.getValue();
 
         // Verify log
-        assertThat(loggingEvent.getLevel(), is(logLevel));
+        assertThat(loggingEvent.getLevel(), equalTo(logLevel));
         assertThat(loggingEvent.getFormattedMessage(), 
-                is(logMessage));
+                equalTo(logMessage));
     }
 
     @Test
