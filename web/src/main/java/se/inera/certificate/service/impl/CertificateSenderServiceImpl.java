@@ -75,7 +75,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     @Autowired
     private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponderInterface;
-    
+
     @Autowired
     private MonitoringLogService monitoringLogService;
 
@@ -95,8 +95,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
                 //Check that the recipient is valid for certType
                 if (recipientService.listRecipients(certType).contains(recipient)) {
                     logicalAddress = recipient.getLogicalAddress();
-                }
-                else {
+                } else {
                     LOGGER.error("Recipient {} is not available for certificate type {}", recipientId, certType.toString());
                     throw new ServerException(String.format("Recipient %s is not available for certificate type %s", recipientId, certType.toString()));
                 }
@@ -104,7 +103,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             module.getModuleApi().sendCertificateToRecipient(new InternalModelHolder(certificate.getDocument(),
                     certificate.getOriginalCertificate().getDocument()),
                     logicalAddress, recipientId);
-            
+
             monitoringLogService.logCertificateSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(), recipientId);
 
         } catch (ModuleNotFoundException e) {
@@ -168,7 +167,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             LOGGER.error(message);
             throw new SubsystemCallException(FK.toString(), message);
         } else {
-            monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(),"FK");
+            monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(), "FK");
         }
     }
 

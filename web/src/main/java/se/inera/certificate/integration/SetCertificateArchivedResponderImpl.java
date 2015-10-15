@@ -28,7 +28,7 @@ public class SetCertificateArchivedResponderImpl implements SetCertificateArchiv
     @Override
     public SetCertificateArchivedResponseType setCertificateArchived(AttributedURIType logicalAddress, SetCertificateArchivedRequestType request) {
         LOGGER.debug("Attempting to set 'Deleted' to {} for intyg {}", request.getArchivedState(), request.getCertificateId());
-        SetCertificateArchivedResponseType response = new SetCertificateArchivedResponseType(); 
+        SetCertificateArchivedResponseType response = new SetCertificateArchivedResponseType();
         try {
             certificateService.setArchived(request.getCertificateId(), request.getNationalIdentityNumber(), request.getArchivedState());
             response.setResult(ResultOfCallUtil.okResult());

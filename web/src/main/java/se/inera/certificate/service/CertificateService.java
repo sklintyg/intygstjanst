@@ -38,7 +38,7 @@ import java.util.List;
  */
 public interface CertificateService {
 
-    public enum SendStatus {
+    enum SendStatus {
         ALREADY_SENT, OK
     }
 

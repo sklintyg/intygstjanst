@@ -251,7 +251,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     public void certificateReceived(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException, InvalidCertificateException {
         Certificate certificate = storeCertificate(certificateHolder);
         monitoringLogService.logCertificateRegistered(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
-        
+
         if (certificateHolder.isWireTapped()) {
             String personnummer = certificateHolder.getCivicRegistrationNumber();
             String certificateId = certificateHolder.getId();

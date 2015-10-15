@@ -100,10 +100,6 @@ public interface CertificateDao {
 
     /**
      * Set the field 'Deleted', (actually corresponding to whether or not the Intyg is archived by the user or not).
-     * @param certificateId 
-     * @param civicRegistrationNumber
-     * @param timestamp
-     * @throws PersistenceException 
      */
     void setArchived(String certificateId, String civicRegistrationNumber, String archivedState) throws PersistenceException;
 }

@@ -95,12 +95,11 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
         CONSENT_GIVEN("Consent given by citizen '{}'"),
         CONSENT_REVOKED("Consent revoked by citizen '{}'"),
         STATISTICS_SENT("Certificate '{}' with type '{}', care unit '{}' - sent to statistics"),
-        STATISTICS_REVOKED("Certificate '{}' with type '{}', care unit '{}' - revoke sent to statistics")
-        ;
+        STATISTICS_REVOKED("Certificate '{}' with type '{}', care unit '{}' - revoke sent to statistics");
 
         private String msg;
 
-        private MonitoringEvent(String msg) {
+        MonitoringEvent(String msg) {
             this.msg = msg;
         }
 

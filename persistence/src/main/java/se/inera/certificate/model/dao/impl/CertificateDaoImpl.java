@@ -176,7 +176,7 @@ public class CertificateDaoImpl implements CertificateDao {
             throw new PersistenceException(id, civicRegistrationNumber);
         }
 
-        boolean deleted = archived.equalsIgnoreCase("true") ? true : false; 
+        boolean deleted = archived.equalsIgnoreCase("true");
         certificate.setDeleted(deleted);
         store(certificate);
     }
