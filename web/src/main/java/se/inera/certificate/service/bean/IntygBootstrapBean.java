@@ -72,12 +72,14 @@ public class IntygBootstrapBean {
                 try {
                     first = Integer.parseInt(s);
                 } catch (NumberFormatException e) {
+                    LOG.error("Could not parse first int of filename", e);
                 }
             }
             for (String s : secondObjectsStrings) {
                 try {
                     second = Integer.parseInt(s);
                 } catch (NumberFormatException e) {
+                    LOG.error("Could not parse second int of filename", e);
                 }
             }
             if (first > second) {
