@@ -36,7 +36,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
 
             if (sendStatus == CertificateService.SendStatus.ALREADY_SENT) {
                 response.setResult(ResultTypeUtil.infoResult(String.format("Certificate '%s' already sent to '%s'.", request.getUtlatandeId(),
-                        HashUtility.hash(request.getMottagareId()))));
+                        request.getMottagareId())));
                 LOGGER.info("Certificate '{}' already sent to '{}'.", request.getUtlatandeId(), HashUtility.hash(request.getMottagareId()));
             } else {
                 response.setResult(ResultTypeUtil.okResult());
