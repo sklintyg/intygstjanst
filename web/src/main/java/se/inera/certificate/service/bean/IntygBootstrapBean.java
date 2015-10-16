@@ -72,19 +72,14 @@ public class IntygBootstrapBean {
             try {
                 first = Integer.parseInt(firstObjectsStrings[indexOfInt]);
             } catch (NumberFormatException e) {
-                LOG.error("Could not parse first int of filename", e);
+                LOG.error("Could not parse int in filename " + arg0.getFilename(), e);
             }
             try {
                 second = Integer.parseInt(secondObjectsStrings[indexOfInt]);
             } catch (NumberFormatException e) {
-                LOG.error("Could not parse second int of filename", e);
+                LOG.error("Could not parse int in filename " + arg1.getFilename(), e);
             }
-            if (first > second) {
-                return 1;
-            } else if (first < second) {
-                return -1;
-            }
-            return 0;
+            return Integer.compare(first, second);
         }
 
     }
