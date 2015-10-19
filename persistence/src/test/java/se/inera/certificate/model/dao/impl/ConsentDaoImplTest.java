@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import se.inera.certificate.model.dao.Consent;
 import se.inera.certificate.model.dao.ConsentDao;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -29,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 @Transactional
 public class ConsentDaoImplTest {
 
-    public static final String CIVIC_REGISTRATION_NUMBER = "19001122-3344";
+    public static final Personnummer CIVIC_REGISTRATION_NUMBER = new Personnummer("19001122-3344");
     @PersistenceContext
     private EntityManager entityManager;
 

@@ -9,6 +9,7 @@ import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
 import se.inera.certificate.logging.HashUtility;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.modules.support.api.exception.ExternalServiceCallException;
 import se.inera.certificate.service.CertificateService;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponderInterface;
@@ -31,7 +32,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
 
         try {
             // 1. Skicka certifikat till mottagaren
-            CertificateService.SendStatus sendStatus = certificateService.sendCertificate(request.getPersonId(), request.getUtlatandeId(),
+            CertificateService.SendStatus sendStatus = certificateService.sendCertificate(new Personnummer(request.getPersonId()), request.getUtlatandeId(),
                     request.getMottagareId());
 
             if (sendStatus == CertificateService.SendStatus.ALREADY_SENT) {

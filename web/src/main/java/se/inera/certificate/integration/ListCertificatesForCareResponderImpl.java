@@ -9,6 +9,7 @@ import se.inera.certificate.integration.converter.MetaDataResolver;
 import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.registry.ModuleNotFoundException;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.MonitoringLogService;
@@ -44,7 +45,7 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
 
         try {
             List<Certificate> certificates = certificateService.listCertificatesForCare(
-                    parameters.getPersonId(), parameters.getEnhet());
+                    new Personnummer(parameters.getPersonId()), parameters.getEnhet());
             for (Certificate certificate : certificates) {
                 // If the certificate is deleted by the care giver it is not returned. Note that both revoked and
                 // archived certificates are returned

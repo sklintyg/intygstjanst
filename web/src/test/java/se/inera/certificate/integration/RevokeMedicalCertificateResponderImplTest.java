@@ -23,6 +23,7 @@ import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.MonitoringLogService;
@@ -49,7 +50,7 @@ import java.util.Collections;
 public class RevokeMedicalCertificateResponderImplTest {
 
     protected static final String CERTIFICATE_ID = "intygs-id-1234567890";
-    protected static final String PERSONNUMMER = "19121212-1212";
+    protected static final Personnummer PERSONNUMMER = new Personnummer("19121212-1212");
     protected static final String TARGET = "FK";
 
     protected static final AttributedURIType ADDRESS = new AttributedURIType();
@@ -146,7 +147,7 @@ public class RevokeMedicalCertificateResponderImplTest {
 
     @Test
     public void testRevokeUnknownCertificate() throws Exception {
-        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenThrow(new PersistenceException("certificateId", "civicRegistrationNumber"));
+        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenThrow(new PersistenceException("certificateId", new Personnummer("civicRegistrationNumber")));
 
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
 

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateService;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.insuranceprocess.healthreporting.setcertificatearchived.rivtabp20.v1.SetCertificateArchivedResponderInterface;
@@ -30,7 +31,7 @@ public class SetCertificateArchivedResponderImpl implements SetCertificateArchiv
         LOGGER.debug("Attempting to set 'Deleted' to {} for intyg {}", request.getArchivedState(), request.getCertificateId());
         SetCertificateArchivedResponseType response = new SetCertificateArchivedResponseType();
         try {
-            certificateService.setArchived(request.getCertificateId(), request.getNationalIdentityNumber(), request.getArchivedState());
+            certificateService.setArchived(request.getCertificateId(), new Personnummer(request.getNationalIdentityNumber()), request.getArchivedState());
             response.setResult(ResultOfCallUtil.okResult());
         } catch (InvalidCertificateException e) {
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));

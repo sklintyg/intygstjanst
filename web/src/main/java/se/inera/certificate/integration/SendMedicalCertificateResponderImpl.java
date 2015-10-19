@@ -13,6 +13,7 @@ import se.inera.certificate.integration.validator.SendCertificateRequestValidato
 import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.modules.support.api.exception.ExternalServiceCallException;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.CertificateService.SendStatus;
@@ -48,7 +49,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             new SendCertificateRequestValidator(request.getSend()).validateAndCorrect();
 
             String certificateId = request.getSend().getLakarutlatande().getLakarutlatandeId();
-            String civicRegistrationNumber = request.getSend().getLakarutlatande().getPatient().getPersonId().getExtension();
+            Personnummer civicRegistrationNumber = new Personnummer(request.getSend().getLakarutlatande().getPatient().getPersonId().getExtension());
 
             // Comment 2015-02-13 by Magnus Ekstrand:
             //   Lookup recipient based on the certificate type. This works if and only if a certificate

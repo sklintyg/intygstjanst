@@ -3,6 +3,7 @@ package se.inera.certificate.support;
 import org.joda.time.LocalDateTime;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 
 /**
  * @author andreaskaltenbach
@@ -14,7 +15,7 @@ public final class CertificateFactory {
 
     public static final String CERTIFICATE_ID = "123456";
     public static final String CERTIFICATE_DOCUMENT = "{\"name\":\"Some JSON\"}";
-    public static final String CIVIC_REGISTRATION_NUMBER = "19001122-3344";
+    public static final Personnummer CIVIC_REGISTRATION_NUMBER = new Personnummer("19001122-3344");
     public static final String FK7263 = "fk7263";
 
     public static final String VALID_FROM = "2000-01-01";

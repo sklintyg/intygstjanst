@@ -12,6 +12,7 @@ import se.inera.certificate.integration.validator.RevokeRequestValidator;
 import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
@@ -39,8 +40,8 @@ public class RevokeMedicalCertificateResponderWiretapImpl extends RevokeMedicalC
             new RevokeRequestValidator(request.getRevoke()).validateAndCorrect();
 
             String certificateId = request.getRevoke().getLakarutlatande().getLakarutlatandeId();
-            String civicRegistrationNumber = request.getRevoke().getLakarutlatande().getPatient().getPersonId()
-                    .getExtension();
+            Personnummer civicRegistrationNumber = new Personnummer(request.getRevoke().getLakarutlatande().getPatient().getPersonId()
+                    .getExtension());
 
             Certificate certificate = certificateService.revokeCertificate(civicRegistrationNumber, certificateId, null);
             LOGGER.info(certificateId + " revoked");

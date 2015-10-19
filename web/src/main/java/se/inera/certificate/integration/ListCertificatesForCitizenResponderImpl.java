@@ -10,6 +10,7 @@ import se.inera.certificate.integration.module.exception.MissingConsentException
 import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.registry.ModuleNotFoundException;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.MonitoringLogService;
@@ -42,7 +43,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
 
         try {
             List<Certificate> certificates = certificateService.listCertificatesForCitizen(
-                    parameters.getPersonId(), parameters.getUtlatandeTyp(), parameters.getFranDatum(), parameters.getTillDatum());
+                    new Personnummer(parameters.getPersonId()), parameters.getUtlatandeTyp(), parameters.getFranDatum(), parameters.getTillDatum());
             for (Certificate certificate : certificates) {
                 // Note that we return certificates that are deleted by the care giver (isDeletedByCareGiver) but not
                 // revoked or archived certificates.

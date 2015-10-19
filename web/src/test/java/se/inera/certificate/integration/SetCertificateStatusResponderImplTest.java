@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import se.inera.certificate.model.CertificateState;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.MonitoringLogService;
 import se.inera.ifv.insuranceprocess.certificate.v1.StatusType;
@@ -47,6 +48,6 @@ public class SetCertificateStatusResponderImplTest {
 
         responder.setCertificateStatus(null, request);
 
-        verify(certificateService).setCertificateState("19001122-3344", "no5", "försäkringskassan", CertificateState.CANCELLED, timestamp);
+        verify(certificateService).setCertificateState(new Personnummer("19001122-3344"), "no5", "försäkringskassan", CertificateState.CANCELLED, timestamp);
     }
 }

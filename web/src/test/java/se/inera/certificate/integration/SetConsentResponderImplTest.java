@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.ConsentService;
 import se.inera.certificate.service.MonitoringLogService;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
@@ -34,8 +35,8 @@ public class SetConsentResponderImplTest {
     public void consentServiceIsCalledWithPersonnummerAndConsentGiven() {
         responder.setConsent(null, createRequest("12345678-1234", false));
         responder.setConsent(null, createRequest("12345678-1234", true));
-        verify(consentService).setConsent("12345678-1234", false);
-        verify(consentService).setConsent("12345678-1234", true);
+        verify(consentService).setConsent(new Personnummer("12345678-1234"), false);
+        verify(consentService).setConsent(new Personnummer("12345678-1234"), true);
     }
 
     @Test

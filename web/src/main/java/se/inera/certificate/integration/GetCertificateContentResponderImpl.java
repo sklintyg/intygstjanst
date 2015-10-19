@@ -15,6 +15,7 @@ import se.inera.certificate.integration.module.exception.MissingConsentException
 import se.inera.certificate.integration.util.CertificateStateHistoryEntryConverter;
 import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.certificate.v1.CertificateStatusType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
@@ -42,7 +43,7 @@ public class GetCertificateContentResponderImpl implements GetCertificateContent
 
         Certificate certificate;
         try {
-            certificate = certificateService.getCertificateForCitizen(request.getNationalIdentityNumber(),
+            certificate = certificateService.getCertificateForCitizen(new Personnummer(request.getNationalIdentityNumber()),
                     request.getCertificateId());
         } catch (MissingConsentException ex) {
             LOGGER.info("Tried to get certificate '" + request.getCertificateId() + "' but user '"
