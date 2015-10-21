@@ -8,7 +8,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.ConsentService;
 import se.inera.certificate.service.MonitoringLogService;
@@ -32,24 +31,25 @@ public class SetConsentResponderImpl implements SetConsentResponderInterface {
     @Override
     public SetConsentResponseType setConsent(AttributedURIType logicalAddress, SetConsentRequestType parameters) {
         SetConsentResponseType response = new SetConsentResponseType();
+        final Personnummer civicRegistrationNumber = new Personnummer(parameters.getPersonnummer());
         try {
-            consentService.setConsent(new Personnummer(parameters.getPersonnummer()), parameters.isConsentGiven());
+            consentService.setConsent(civicRegistrationNumber, parameters.isConsentGiven());
             response.setResult(ResultOfCallUtil.okResult());
             if (parameters.isConsentGiven()) {
-                monitoringLogService.logConsentGiven(HashUtility.hash(parameters.getPersonnummer()));
+                monitoringLogService.logConsentGiven(civicRegistrationNumber);
             } else {
-                monitoringLogService.logConsentRevoked(HashUtility.hash(parameters.getPersonnummer()));
+                monitoringLogService.logConsentRevoked(civicRegistrationNumber);
             }
         } catch (DataIntegrityViolationException e) {
             // INTYG-886 GeSamtycke anropas ibland flera gånger i rask takt av klienter, vilket leder till ett
             // race condition som ger DataIntegrityViolationException.
-            LOGGER.warn("Consent already given for " + HashUtility.hash(parameters.getPersonnummer()) + " - ignored.");
-            response.setResult(ResultOfCallUtil.infoResult("Consent already given for " + parameters.getPersonnummer()));
+            LOGGER.warn("Consent already given for " + civicRegistrationNumber.getPnrHash() + " - ignored.");
+            response.setResult(ResultOfCallUtil.infoResult("Consent already given for " + civicRegistrationNumber.getPnrHash()));
         } catch (HibernateOptimisticLockingFailureException e) {
             // INTYG-886 ÅtertaSamtycke kan teoretiskt anropas flera gånger i rask takt av klienter, vilket leder till ett
             // race condition som ger HibernateOptimisticLockingFailureException.
-            LOGGER.warn("Consent already revoked for " + HashUtility.hash(parameters.getPersonnummer()) + " - ignored.");
-            response.setResult(ResultOfCallUtil.infoResult("Consent already revoked for " + parameters.getPersonnummer()));
+            LOGGER.warn("Consent already revoked for " + civicRegistrationNumber.getPnrHash() + " - ignored.");
+            response.setResult(ResultOfCallUtil.infoResult("Consent already revoked for " + civicRegistrationNumber.getPnrHash()));
         }
         return response;
     }

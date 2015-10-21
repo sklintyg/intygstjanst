@@ -1,5 +1,7 @@
 package se.inera.certificate.integration;
 
+import java.util.List;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import se.inera.certificate.integration.converter.MetaDataResolver;
 import se.inera.certificate.integration.module.exception.MissingConsentException;
-import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.registry.ModuleNotFoundException;
 import se.inera.certificate.modules.support.api.dto.Personnummer;
@@ -19,8 +20,6 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.listcertificatesfor
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenType;
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
 import se.riv.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
-
-import java.util.List;
 
 
 @SchemaValidation
@@ -42,8 +41,9 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         ListCertificatesForCitizenResponseType response = new ListCertificatesForCitizenResponseType();
 
         try {
+            final Personnummer personnummer = new Personnummer(parameters.getPersonId());
             List<Certificate> certificates = certificateService.listCertificatesForCitizen(
-                    new Personnummer(parameters.getPersonId()), parameters.getUtlatandeTyp(), parameters.getFranDatum(), parameters.getTillDatum());
+                    personnummer, parameters.getUtlatandeTyp(), parameters.getFranDatum(), parameters.getTillDatum());
             for (Certificate certificate : certificates) {
                 // Note that we return certificates that are deleted by the care giver (isDeletedByCareGiver) but not
                 // revoked or archived certificates.
@@ -52,7 +52,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
                 }
             }
             response.setResult(ResultTypeUtil.okResult());
-            monitoringLogService.logCertificateListedByCitizen(HashUtility.hash(parameters.getPersonId()));
+            monitoringLogService.logCertificateListedByCitizen(personnummer);
         } catch (ModuleNotFoundException | ModuleException e) {
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "Module error when processing certificates"));
             LOGGER.error(e.getMessage());

@@ -19,6 +19,7 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.MonitoringLogService;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -95,14 +96,16 @@ public class MonitoringLogServiceImplTest {
 
     @Test
     public void shouldLogCertificateListedByCitizen() {
-        logService.logCertificateListedByCitizen(CITIZEN);
-        verifyLog(Level.INFO, "CERTIFICATE_LISTED_BY_CITIZEN Certificates for citizen 'CITIZEN' - listed by citizen");
+        final Personnummer citizenId = new Personnummer(CITIZEN);
+        logService.logCertificateListedByCitizen(citizenId);
+        verifyLog(Level.INFO, "CERTIFICATE_LISTED_BY_CITIZEN Certificates for citizen '" + citizenId.getPnrHash() + "' - listed by citizen");
     }
 
     @Test
     public void shouldLogCertificateListedByCare() {
-        logService.logCertificateListedByCare(CITIZEN);
-        verifyLog(Level.INFO, "CERTIFICATE_LISTED_BY_CARE Certificates for citizen 'CITIZEN' - listed by care");
+        final Personnummer citizenId = new Personnummer(CITIZEN);
+        logService.logCertificateListedByCare(citizenId);
+        verifyLog(Level.INFO, "CERTIFICATE_LISTED_BY_CARE Certificates for citizen '" + citizenId.getPnrHash() + "' - listed by care");
     }
 
     @Test
@@ -113,14 +116,16 @@ public class MonitoringLogServiceImplTest {
 
     @Test
     public void shouldLogConsentGiven() {
-        logService.logConsentGiven(CITIZEN);
-        verifyLog(Level.INFO, "CONSENT_GIVEN Consent given by citizen 'CITIZEN'");
+        final Personnummer citizenId = new Personnummer(CITIZEN);
+        logService.logConsentGiven(citizenId);
+        verifyLog(Level.INFO, "CONSENT_GIVEN Consent given by citizen '" + citizenId.getPnrHash() + "'");
     }
 
     @Test
     public void shouldLogConsentRevoked() {
-        logService.logConsentRevoked(CITIZEN);
-        verifyLog(Level.INFO, "CONSENT_REVOKED Consent revoked by citizen 'CITIZEN'");
+        final Personnummer citizenId = new Personnummer(CITIZEN);
+        logService.logConsentRevoked(citizenId);
+        verifyLog(Level.INFO, "CONSENT_REVOKED Consent revoked by citizen '" + citizenId.getPnrHash() + "'");
     }
 
     @Test

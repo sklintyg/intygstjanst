@@ -9,7 +9,6 @@ import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
 import se.inera.certificate.integration.validator.RevokeRequestValidator;
-import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.api.dto.Personnummer;
@@ -36,36 +35,35 @@ public class RevokeMedicalCertificateResponderWiretapImpl extends RevokeMedicalC
 
         RevokeMedicalCertificateResponseType response = new RevokeMedicalCertificateResponseType();
 
+        final Personnummer personnummer = safeGetCivicRegistrationNumber(request);
         try {
             new RevokeRequestValidator(request.getRevoke()).validateAndCorrect();
 
             String certificateId = request.getRevoke().getLakarutlatande().getLakarutlatandeId();
-            Personnummer civicRegistrationNumber = new Personnummer(request.getRevoke().getLakarutlatande().getPatient().getPersonId()
-                    .getExtension());
 
-            Certificate certificate = certificateService.revokeCertificate(civicRegistrationNumber, certificateId, null);
+            Certificate certificate = certificateService.revokeCertificate(personnummer, certificateId, null);
             LOGGER.info(certificateId + " revoked");
             getStatisticsService().revoked(certificate);
 
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
             LOGGER.info("Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
-                    + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + "' but certificate does not exist");
+                    + personnummer.getPnrHash() + "' but certificate does not exist");
             response.setResult(ResultOfCallUtil.failResult("No certificate '" + safeGetCertificateId(request)
-                    + "' found to revoke for patient '" + safeGetCivicRegistrationNumber(request) + "'."));
+                    + "' found to revoke for patient '" + personnummer.getPnrHash() + "'."));
             return response;
 
         } catch (CertificateRevokedException e) {
             // return with INFO response if certificate was revoked before
             LOGGER.info("Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
-                    + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + "' which already is revoked");
+                    + personnummer.getPnrHash() + "' which already is revoked");
             response.setResult(ResultOfCallUtil.infoResult("Certificate '" + safeGetCertificateId(request) + "' is already revoked."));
             return response;
 
         } catch (CertificateValidationException e) {
             // return with ERROR response if certificate had validation errors
             LOGGER.info(LogMarkers.VALIDATION, "Validation error found for revoke certificate '" + safeGetCertificateId(request)
-                    + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + ": " + e.getMessage());
+                    + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + personnummer.getPnrHash() + ": " + e.getMessage());
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             return response;
         }

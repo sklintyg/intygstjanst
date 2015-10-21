@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import se.inera.certificate.logging.LogMarkers;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.MonitoringLogService;
 
 @Service
@@ -41,13 +42,13 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     }
 
     @Override
-    public void logCertificateListedByCitizen(String citizenId) {
-        logEvent(MonitoringEvent.CERTIFICATE_LISTED_BY_CITIZEN, citizenId);
+    public void logCertificateListedByCitizen(Personnummer citizenId) {
+        logEvent(MonitoringEvent.CERTIFICATE_LISTED_BY_CITIZEN, Personnummer.getPnrHashSafe(citizenId));
     }
 
     @Override
-    public void logCertificateListedByCare(String citizenId) {
-        logEvent(MonitoringEvent.CERTIFICATE_LISTED_BY_CARE, citizenId);
+    public void logCertificateListedByCare(Personnummer citizenId) {
+        logEvent(MonitoringEvent.CERTIFICATE_LISTED_BY_CARE, Personnummer.getPnrHashSafe(citizenId));
     }
 
     @Override
@@ -56,13 +57,13 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     }
 
     @Override
-    public void logConsentGiven(String citizenId) {
-        logEvent(MonitoringEvent.CONSENT_GIVEN, citizenId);
+    public void logConsentGiven(Personnummer citizenId) {
+        logEvent(MonitoringEvent.CONSENT_GIVEN, Personnummer.getPnrHashSafe(citizenId));
     }
 
     @Override
-    public void logConsentRevoked(String citizenId) {
-        logEvent(MonitoringEvent.CONSENT_REVOKED, citizenId);
+    public void logConsentRevoked(Personnummer citizenId) {
+        logEvent(MonitoringEvent.CONSENT_REVOKED, Personnummer.getPnrHashSafe(citizenId));
     }
 
     @Override

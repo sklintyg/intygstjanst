@@ -115,7 +115,7 @@ public class CertificateDaoImpl implements CertificateDao {
         if (civicRegistrationNumber != null && !certificate.getCivicRegistrationNumber().equals(civicRegistrationNumber)) {
 
             LOG.warn(String.format("Trying to access certificate '%s' for user '%s' but certificate's user is '%s'.",
-                    certificateId, civicRegistrationNumber, certificate.getCivicRegistrationNumber()));
+                    certificateId, civicRegistrationNumber.getPnrHash(), certificate.getCivicRegistrationNumber().getPnrHash()));
             throw new PersistenceException(certificateId, civicRegistrationNumber);
         }
 

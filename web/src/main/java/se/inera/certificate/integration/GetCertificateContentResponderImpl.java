@@ -13,7 +13,6 @@ import se.inera.certificate.integration.module.exception.CertificateRevokedExcep
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
 import se.inera.certificate.integration.module.exception.MissingConsentException;
 import se.inera.certificate.integration.util.CertificateStateHistoryEntryConverter;
-import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateService;
@@ -42,18 +41,18 @@ public class GetCertificateContentResponderImpl implements GetCertificateContent
         GetCertificateContentResponseType response = new GetCertificateContentResponseType();
 
         Certificate certificate;
+        final Personnummer civicRegistrationNumber = new Personnummer(request.getNationalIdentityNumber());
         try {
-            certificate = certificateService.getCertificateForCitizen(new Personnummer(request.getNationalIdentityNumber()),
-                    request.getCertificateId());
+            certificate = certificateService.getCertificateForCitizen(civicRegistrationNumber, request.getCertificateId());
         } catch (MissingConsentException ex) {
             LOGGER.info("Tried to get certificate '" + request.getCertificateId() + "' but user '"
-                    + HashUtility.hash(request.getNationalIdentityNumber()) + "' has not given consent.");
+                    + civicRegistrationNumber.getPnrHash() + "' has not given consent.");
             response.setResult(ResultOfCallUtil.failResult(String.format("Missing consent for patient %s",
-                    request.getNationalIdentityNumber())));
+                    civicRegistrationNumber.getPnrHash())));
             return response;
         } catch (InvalidCertificateException ex) {
             // return ERROR if no such certificate does exist
-            LOGGER.info("Tried to get certificate '" + request.getCertificateId() + "' but no such certificate does exist for user '" + HashUtility.hash(request.getNationalIdentityNumber()) + "'.");
+            LOGGER.info("Tried to get certificate '" + request.getCertificateId() + "' but no such certificate does exist for user '" + civicRegistrationNumber.getPnrHash() + "'.");
             response.setResult(ResultOfCallUtil.failResult(String.format("Unknown certificate ID: %s", request.getCertificateId())));
             return response;
         } catch (CertificateRevokedException ex) {

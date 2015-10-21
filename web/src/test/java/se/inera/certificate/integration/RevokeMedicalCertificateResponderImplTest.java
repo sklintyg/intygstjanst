@@ -152,7 +152,7 @@ public class RevokeMedicalCertificateResponderImplTest {
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
 
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
-        assertEquals("No certificate 'intygs-id-1234567890' found to revoke for patient '19121212-1212'.", response.getResult().getErrorText());
+        assertEquals("No certificate 'intygs-id-1234567890' found to revoke for patient '" + PERSONNUMMER.getPnrHash() + "'.", response.getResult().getErrorText());
         Mockito.verifyZeroInteractions(statisticsService);
     }
 
