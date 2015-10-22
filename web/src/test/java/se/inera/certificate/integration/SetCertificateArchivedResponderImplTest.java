@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateService;
 import se.inera.intyg.insuranceprocess.healthreporting.setcertificatearchivedresponder.v1.SetCertificateArchivedRequestType;
 
@@ -33,6 +34,6 @@ public class SetCertificateArchivedResponderImplTest {
         request.setArchivedState("true");
         responder.setCertificateArchived(null, request);
 
-        verify(certificateService).setArchived("no5", "19001122-3344", "true");
+        verify(certificateService).setArchived("no5", new Personnummer("19001122-3344"), "true");
     }
 }

@@ -24,7 +24,7 @@ public class Recipient {
     private final List<String> certificateTypes;
 
     /**
-     * Constructor for recipient object
+     * Constructor for recipient object.
      * @param logicalAddress a recipient's logical address
      * @param name a recipient's name
      * @param id a recipient's identifier
@@ -43,7 +43,7 @@ public class Recipient {
     }
 
     /**
-     * Constructor for recipient object
+     * Constructor for recipient object.
      * @param logicalAddress a recipient's logical address
      * @param name a recipient's name
      * @param id a recipient's identifier
@@ -79,10 +79,10 @@ public class Recipient {
 
     @Override
     public String toString() {
-        return "logicalAddress: " + logicalAddress +
-                " name: " + name +
-                " id: " + id +
-                " certificateTypes: " + StringUtils.join(certificateTypes, SEPARATOR);
+        return "logicalAddress: " + logicalAddress
+                + " name: " + name
+                + " id: " + id
+                + " certificateTypes: " + StringUtils.join(certificateTypes, SEPARATOR);
     }
 
     @Override

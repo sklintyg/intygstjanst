@@ -5,6 +5,7 @@ import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 
 /**
  * @author andreaskaltenbach
@@ -26,7 +27,7 @@ public class CertificateBuilder {
         return this;
     }
 
-    public CertificateBuilder civicRegistrationNumber(String civicRegistrationNumber) {
+    public CertificateBuilder civicRegistrationNumber(Personnummer civicRegistrationNumber) {
         certificate.setCivicRegistrationNumber(civicRegistrationNumber);
         return this;
     }

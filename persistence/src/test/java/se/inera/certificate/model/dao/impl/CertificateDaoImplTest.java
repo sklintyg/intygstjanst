@@ -56,6 +56,7 @@ import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.OriginalCertificate;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.support.CertificateFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -209,20 +210,20 @@ public class CertificateDaoImplTest {
 
     @Test(expected = PersistenceException.class)
     public void testUpdateStatusForWrongCertificate() throws PersistenceException {
-        certificateDao.updateStatus("<unknownCertId>", "<unknownPersonnummer>", CertificateState.IN_PROGRESS, "fk",
+        certificateDao.updateStatus("<unknownCertId>", new Personnummer("<unknownPersonnummer>"), CertificateState.IN_PROGRESS, "fk",
                 null);
     }
 
     @Test
     public void testGetCertificateForUnknownCertificate() throws PersistenceException {
         certificateDao.store(buildCertificate());
-        assertNull(certificateDao.getCertificate("<unknownCertId>", "<unknownPersonnummer>"));
+        assertNull(certificateDao.getCertificate(new Personnummer("<unknownPersonnummer>"), "<unknownCertId>"));
     }
 
     @Test(expected = PersistenceException.class)
     public void testGetCertificateForWrongCivicRegistrationNumber() throws PersistenceException {
         certificateDao.store(buildCertificate());
-        certificateDao.getCertificate("<another civic registration number>", CERTIFICATE_ID);
+        certificateDao.getCertificate(new Personnummer("<another civic registration number>"), CERTIFICATE_ID);
     }
 
     @Test
@@ -235,7 +236,7 @@ public class CertificateDaoImplTest {
         assertEquals(0, certificate.getStates().size());
 
         try {
-            certificateDao.updateStatus(CERTIFICATE_ID, "another patient", RECEIVED, "fk", null);
+            certificateDao.updateStatus(CERTIFICATE_ID, new Personnummer("another patient"), RECEIVED, "fk", null);
             fail("Exception expected.");
         } catch (PersistenceException e) {
             // Empty

@@ -44,7 +44,7 @@ public class LakarutlatandeEnkelTypeValidator {
         } else {
             validationErrors.addAll(PatientValidator.validateAndCorrect(patient));
         }
-        
+
     }
 
 }

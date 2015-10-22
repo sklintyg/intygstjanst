@@ -26,6 +26,7 @@ import org.joda.time.LocalDateTime;
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.ModelException;
 import se.inera.certificate.model.util.Predicate;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -261,12 +262,12 @@ public class Certificate {
         this.careGiverId = careGiverId;
     }
 
-    public String getCivicRegistrationNumber() {
-        return civicRegistrationNumber;
+    public Personnummer getCivicRegistrationNumber() {
+        return new Personnummer(civicRegistrationNumber);
     }
 
-    public void setCivicRegistrationNumber(String civicRegistrationNumber) {
-        this.civicRegistrationNumber = civicRegistrationNumber;
+    public void setCivicRegistrationNumber(Personnummer civicRegistrationNumber) {
+        this.civicRegistrationNumber = civicRegistrationNumber != null ? civicRegistrationNumber.getPersonnummer() : null;
     }
 
     public LocalDateTime getSignedDate() {

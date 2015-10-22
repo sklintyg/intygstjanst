@@ -26,9 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.ConsentDao;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.ConsentService;
 
 /**
@@ -46,8 +46,8 @@ public class ConsentServiceImpl implements ConsentService {
     private CertificateDao certificateDao;
 
     @Override
-    public boolean isConsent(String civicRegistrationNumber) {
-        if (civicRegistrationNumber != null) {
+    public boolean isConsent(Personnummer civicRegistrationNumber) {
+        if (civicRegistrationNumber != null && civicRegistrationNumber.getPersonnummer() != null) {
             return consentDao.hasConsent(civicRegistrationNumber);
         } else {
             return true;
@@ -56,7 +56,7 @@ public class ConsentServiceImpl implements ConsentService {
 
     @Transactional
     @Override
-    public void setConsent(String civicRegistrationNumber, boolean consentGiven) {
+    public void setConsent(Personnummer civicRegistrationNumber, boolean consentGiven) {
         if (consentGiven) {
             consentDao.setConsent(civicRegistrationNumber);
         } else {
@@ -66,7 +66,7 @@ public class ConsentServiceImpl implements ConsentService {
             try {
                 certificateDao.removeCertificatesDeletedByCareGiver(civicRegistrationNumber);
             } catch (PersistenceException e) {
-                LOGGER.error("Failed to remove certificates deleted by care giver for citizen {}", HashUtility.hash(civicRegistrationNumber));
+                LOGGER.error("Failed to remove certificates deleted by care giver for citizen {}", Personnummer.getPnrHashSafe(civicRegistrationNumber));
             }
         }
     }

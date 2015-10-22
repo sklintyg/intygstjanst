@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.ConsentService;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 import se.inera.intyg.insuranceprocess.healthreporting.getconsent.rivtabp20.v1.GetConsentResponderInterface;
@@ -32,12 +33,12 @@ public class GetConsentResponderImplTest {
     @Test
     public void consentServiceIsCalledWithPersonnummer() {
         responder.getConsent(null, createRequest("12345678-1234"));
-        verify(consentService).isConsent("12345678-1234");
+        verify(consentService).isConsent(new Personnummer("12345678-1234"));
     }
 
     @Test
     public void consentServiceReturnsNoConsent() {
-        when(consentService.isConsent("12345678-1234")).thenReturn(false);
+        when(consentService.isConsent(new Personnummer("12345678-1234"))).thenReturn(false);
         GetConsentResponseType consent = responder.getConsent(null, createRequest("12345678-1234"));
         assertFalse(consent.isConsentGiven());
         assertEquals(ResultCodeEnum.OK, consent.getResult().getResultCode());
@@ -45,7 +46,7 @@ public class GetConsentResponderImplTest {
 
     @Test
     public void consentServiceRetunsConsent() {
-        when(consentService.isConsent("12345678-1235")).thenReturn(true);
+        when(consentService.isConsent(new Personnummer("12345678-1235"))).thenReturn(true);
         GetConsentResponseType consent = responder.getConsent(null, createRequest("12345678-1235"));
         assertTrue(consent.isConsentGiven());
         assertEquals(ResultCodeEnum.OK, consent.getResult().getResultCode());

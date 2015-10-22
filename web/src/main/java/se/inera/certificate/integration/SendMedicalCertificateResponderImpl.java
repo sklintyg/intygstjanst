@@ -1,5 +1,7 @@
 package se.inera.certificate.integration;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +12,9 @@ import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.integration.module.exception.CertificateRevokedException;
 import se.inera.certificate.integration.module.exception.InvalidCertificateException;
 import se.inera.certificate.integration.validator.SendCertificateRequestValidator;
-import se.inera.certificate.logging.HashUtility;
 import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.modules.support.api.exception.ExternalServiceCallException;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.CertificateService.SendStatus;
@@ -24,8 +26,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.rivt
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateResponseType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
-
-import java.util.List;
 
 
 public class SendMedicalCertificateResponderImpl implements SendMedicalCertificateResponderInterface {
@@ -44,11 +44,11 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
 
         SendMedicalCertificateResponseType response = new SendMedicalCertificateResponseType();
 
+        Personnummer personnummer = safeGetCivicRegistrationNumber(request);
         try {
             new SendCertificateRequestValidator(request.getSend()).validateAndCorrect();
 
             String certificateId = request.getSend().getLakarutlatande().getLakarutlatandeId();
-            String civicRegistrationNumber = request.getSend().getLakarutlatande().getPatient().getPersonId().getExtension();
 
             // Comment 2015-02-13 by Magnus Ekstrand:
             //   Lookup recipient based on the certificate type. This works if and only if a certificate
@@ -58,7 +58,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             Recipient recipient = lookupRecipient(certificate);
 
             // Send certificate to recipient
-            SendStatus status = certificateService.sendCertificate(civicRegistrationNumber, certificateId, recipient.getId());
+            SendStatus status = certificateService.sendCertificate(personnummer, certificateId, recipient.getId());
 
             if (status == SendStatus.ALREADY_SENT) {
                 response.setResult(ResultOfCallUtil.infoResult("Certificate '" + certificateId + "' is already sent."));
@@ -73,21 +73,21 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
             LOGGER.info("Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
-                    + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + "' but certificate does not exist");
+                    + personnummer.getPnrHash() + "' but certificate does not exist");
             response.setResult(ResultOfCallUtil.failResult("No certificate '" + safeGetCertificateId(request)
-                    + "' found to send for patient '" + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + "'."));
+                    + "' found to send for patient '" + personnummer.getPnrHash() + "'."));
             return response;
 
         } catch (CertificateRevokedException e) {
             // return with INFO response if certificate was revoked before
             LOGGER.info("Tried to send certificate '" + safeGetCertificateId(request) + "' for patient '"
-                    + HashUtility.hash(safeGetCivicRegistrationNumber(request)) + "' which is revoked");
+                    + personnummer.getPnrHash() + "' which is revoked");
             response.setResult(ResultOfCallUtil.infoResult("Certificate '" + safeGetCertificateId(request) + "' has been revoked."));
             return response;
 
         } catch (CertificateValidationException e) {
             LOGGER.error(LogMarkers.VALIDATION, "Validation error found for send certificate '" + safeGetCertificateId(request)
-                    + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + HashUtility.hash(safeGetCivicRegistrationNumber(request))
+                    + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + personnummer.getPnrHash()
                     + ": " + e.getMessage());
             // return with ERROR response if certificate had validation errors
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
@@ -96,7 +96,6 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             LOGGER.error("Unknown recipient");
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             return response;
-
         } catch (ServerException ex) {
             Throwable cause = ex.getCause();
             String message = (cause instanceof ExternalServiceCallException) ? cause.getMessage() : ex.getMessage();
@@ -143,13 +142,13 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
         return null;
     }
 
-    private String safeGetCivicRegistrationNumber(SendMedicalCertificateRequestType request) {
+    private Personnummer safeGetCivicRegistrationNumber(SendMedicalCertificateRequestType request) {
         // Initialize log context info if available
         if (request.getSend().getLakarutlatande().getPatient() != null
                 && request.getSend().getLakarutlatande().getPatient().getPersonId() != null) {
-            return request.getSend().getLakarutlatande().getPatient().getPersonId().getExtension();
+            return new Personnummer(request.getSend().getLakarutlatande().getPatient().getPersonId().getExtension());
         }
-        return null;
+        return Personnummer.empty();
     }
 
     private String safeGetIssuedBy(SendMedicalCertificateRequestType request) {

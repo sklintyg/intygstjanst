@@ -24,6 +24,7 @@ import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.certificate.integration.converter.ConverterUtil;
 import se.inera.certificate.integration.module.exception.MissingConsentException;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.rivtabp20.v1.ListCertificatesResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesRequestType;
@@ -49,7 +50,7 @@ public class ListCertificatesResponderImpl implements ListCertificatesResponderI
 
         try {
             List<Certificate> certificates = certificateService.listCertificatesForCitizen(
-                    parameters.getNationalIdentityNumber(), parameters.getCertificateType(), parameters.getFromDate(), parameters.getToDate());
+                    new Personnummer(parameters.getNationalIdentityNumber()), parameters.getCertificateType(), parameters.getFromDate(), parameters.getToDate());
             for (Certificate certificate : certificates) {
                 if (parameters.getCertificateType().isEmpty() || !(certificate.getDeleted() || certificate.isRevoked())) {
                     response.getMeta().add(ModelConverter.toCertificateMetaType(ConverterUtil.toCertificateHolder(certificate)));
