@@ -143,7 +143,7 @@ public class CertificateServiceImplTest {
 
     @Test(expected = InvalidCertificateException.class)
     public void testGetCertificateNotFound() throws Exception {
-        when(certificateDao.getCertificate(PERSONNUMMER,CERTIFICATE_ID)).thenReturn(null);
+        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(null);
         certificateService.getCertificateForCare(CERTIFICATE_ID);
     }
 
@@ -155,9 +155,17 @@ public class CertificateServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetCertificateWithoutConsentCheckForEmptyPersonnummer() throws Exception {
+    public void testGetCertificateWithoutConsentCheckForNullPersonnummer() throws Exception {
         Certificate certificate = createCertificate();
         when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(certificate);
         certificateService.getCertificateForCitizen(null, CERTIFICATE_ID);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetCertificateWithoutConsentCheckForEmptyPersonnummer() throws Exception {
+        Certificate certificate = createCertificate();
+        when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(certificate);
+        certificateService.getCertificateForCitizen(new Personnummer(null), CERTIFICATE_ID);
+    }
+
 }
