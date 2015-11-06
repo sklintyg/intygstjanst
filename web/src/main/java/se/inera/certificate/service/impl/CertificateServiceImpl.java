@@ -287,8 +287,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     // - - - - - Private methods - - - - - //
 
     private void assertConsent(Personnummer civicRegistrationNumber) throws MissingConsentException {
-
-        if (StringUtils.isEmpty(civicRegistrationNumber)) {
+        if (civicRegistrationNumber == null || StringUtils.isEmpty(civicRegistrationNumber.getPersonnummer())) {
             throw new IllegalArgumentException("Invalid/missing civicRegistrationNumber");
         }
 

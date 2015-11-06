@@ -35,7 +35,7 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
         try {
             certificateService.setCertificateState(new Personnummer(request.getNationalIdentityNumber()), request.getCertificateId(), request.getTarget(), CertificateState.valueOf(request.getStatus().name()), request.getTimestamp());
             response.setResult(ResultOfCallUtil.okResult());
-            monitoringLogService.logCertificateStatusChanged(request.getCertificateId(), request.getStatus().name());
+            monitoringLogService.logCertificateStatusChanged(request.getCertificateId(), request.getStatus() != null ? request.getStatus().name() : null);
         } catch (InvalidCertificateException e) {
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
         }
