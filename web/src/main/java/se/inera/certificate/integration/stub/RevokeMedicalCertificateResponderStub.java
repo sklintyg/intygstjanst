@@ -18,7 +18,11 @@ import javax.xml.ws.WebServiceProvider;
 
 
 @Transactional
-@WebServiceProvider(targetNamespace = "urn:riv:insuranceprocess:healthreporting:RevokeMedicalCertificate:3:rivtabp20", serviceName = "RevokeMedicalCertificateResponderService", wsdlLocation = "schemas/src/main/resources/schemas/insuranceprocess_healthreporting/interactions/RevokeMedicalCertificateInteraction/RevokeMedicalCertificateInteraction_1.0_rivtabp20.wsdl")
+@WebServiceProvider(
+        targetNamespace = "urn:riv:insuranceprocess:healthreporting:RevokeMedicalCertificate:1:rivtabp20",
+        serviceName = "RevokeMedicalCertificateResponderService",
+        wsdlLocation = "classpath:interactions/RevokeMedicalCertificateInteraction/RevokeMedicalCertificateInteraction_1.0_rivtabp20.wsdl"
+)
 public class RevokeMedicalCertificateResponderStub implements RevokeMedicalCertificateResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RevokeMedicalCertificateResponderStub.class);
