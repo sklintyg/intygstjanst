@@ -44,7 +44,7 @@ class DateFilter {
      *
      * @param data initial collection of {@link Certificate} to filter.
      */
-    public DateFilter(List<Certificate> data) {
+    DateFilter(List<Certificate> data) {
         this.data = new ArrayList<Certificate>(data);
     }
 
