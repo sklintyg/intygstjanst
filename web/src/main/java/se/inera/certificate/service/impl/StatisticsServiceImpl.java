@@ -81,11 +81,12 @@ public class StatisticsServiceImpl implements StatisticsService {
         private final Certificate certificate;
         private final String type;
 
-        public MC(String type, Certificate certificate) {
+        MC(String type, Certificate certificate) {
             this.type = type;
             this.certificate = certificate;
         }
 
+        @Override
         public Message createMessage(Session session) throws JMSException {
             TextMessage message = session.createTextMessage(certificate.getDocument());
             message.setStringProperty(ACTION, type);
