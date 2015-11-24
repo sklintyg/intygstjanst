@@ -60,7 +60,7 @@ import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.support.CertificateFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:persistence-config.xml" })
+@ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
 @ActiveProfiles("dev")
 @Transactional
 public class CertificateDaoImplTest {
