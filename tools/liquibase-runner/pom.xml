@@ -26,7 +26,7 @@
       <artifactId>liquibase-core</artifactId>
     </dependency>
 
-    <!-- Persistance project contains changelog -->
+    <!-- Persistence project contains changelog -->
     <dependency>
       <groupId>se.inera.intyg.intygstjanst</groupId>
       <artifactId>intygstjanst-persistence</artifactId>
