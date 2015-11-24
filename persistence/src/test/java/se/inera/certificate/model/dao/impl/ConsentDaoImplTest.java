@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
  * @author andreaskaltenbach
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:persistence-config.xml" })
+@ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
 @ActiveProfiles("dev")
 @Transactional
 public class ConsentDaoImplTest {
