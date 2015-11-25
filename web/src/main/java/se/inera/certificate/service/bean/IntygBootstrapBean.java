@@ -22,7 +22,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import se.inera.certificate.integration.json.CustomObjectMapper;
+import se.inera.intyg.common.util.integration.integration.json.CustomObjectMapper;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
