@@ -30,6 +30,11 @@
 |personnummer|id|utfärdat|resultat?|
 |${person1.personnummer}|fit-intyg-1|2013-08-01|[INFO] - Certificate already exists|
 
+!3 Försök att registrera ett intyg med ett befintligt intygs-id på en annan invånare ger APPLICATION-ERROR
+|Registrera fk7263 intyg|
+|personnummer|id|utfärdat|resultat?|
+|19121212-1212|fit-intyg-1|2013-08-01|[APPLICATION_ERROR] - Invalid certificate ID|
+
 !3 Ta bort samtycke
 
 |Samtycke|
