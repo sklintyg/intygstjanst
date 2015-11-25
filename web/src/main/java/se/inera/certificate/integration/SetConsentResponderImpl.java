@@ -8,7 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.ConsentService;
 import se.inera.certificate.service.MonitoringLogService;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;

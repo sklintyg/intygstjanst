@@ -26,8 +26,8 @@ import org.springframework.transaction.TransactionStatus;
 import se.inera.certificate.integration.converter.ConverterUtil;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.OriginalCertificate;
-import se.inera.certificate.modules.registry.IntygModuleRegistry;
-import se.inera.certificate.modules.support.api.ModuleApi;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CertificateResourceTest {

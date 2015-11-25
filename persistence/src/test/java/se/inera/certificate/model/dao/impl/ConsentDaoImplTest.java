@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import se.inera.certificate.model.dao.Consent;
 import se.inera.certificate.model.dao.ConsentDao;
-import se.inera.certificate.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

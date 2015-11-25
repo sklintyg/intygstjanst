@@ -18,15 +18,15 @@
  */
 package se.inera.certificate.model.dao;
 
-import static se.inera.certificate.model.util.Iterables.find;
+import static se.inera.intyg.common.support.model.util.Iterables.find;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
-import se.inera.certificate.model.CertificateState;
-import se.inera.certificate.model.ModelException;
-import se.inera.certificate.model.util.Predicate;
-import se.inera.certificate.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.common.support.model.ModelException;
+import se.inera.intyg.common.support.model.util.Predicate;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;

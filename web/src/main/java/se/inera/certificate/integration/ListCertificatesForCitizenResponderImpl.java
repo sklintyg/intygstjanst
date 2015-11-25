@@ -8,11 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import se.inera.certificate.integration.converter.MetaDataResolver;
-import se.inera.certificate.integration.module.exception.MissingConsentException;
+import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.modules.registry.ModuleNotFoundException;
-import se.inera.certificate.modules.support.api.dto.Personnummer;
-import se.inera.certificate.modules.support.api.exception.ModuleException;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.MonitoringLogService;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenResponderInterface;

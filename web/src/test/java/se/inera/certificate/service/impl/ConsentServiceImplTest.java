@@ -14,7 +14,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.ConsentDao;
-import se.inera.certificate.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.ConsentService;
 
 @RunWith(MockitoJUnitRunner.class)

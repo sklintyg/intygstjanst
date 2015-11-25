@@ -25,9 +25,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import se.inera.certificate.integration.json.CustomObjectMapper;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.OriginalCertificate;
-import se.inera.certificate.modules.registry.IntygModuleRegistry;
-import se.inera.certificate.modules.registry.ModuleNotFoundException;
-import se.inera.certificate.modules.support.api.ModuleApi;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 
 public class IntygBootstrapBean {
 

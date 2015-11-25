@@ -2,7 +2,7 @@ package se.inera.certificate.service.impl;
 
 import org.springframework.beans.factory.InitializingBean;
 import se.inera.certificate.exception.RecipientUnknownException;
-import se.inera.certificate.modules.support.api.dto.TransportModelVersion;
+import se.inera.intyg.common.support.modules.support.api.dto.TransportModelVersion;
 import se.inera.certificate.service.RecipientService;
 import se.inera.certificate.service.bean.CertificateType;
 import se.inera.certificate.service.bean.Recipient;

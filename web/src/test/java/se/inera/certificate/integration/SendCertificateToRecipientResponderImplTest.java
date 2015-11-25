@@ -15,7 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
-import se.inera.certificate.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponderInterface;

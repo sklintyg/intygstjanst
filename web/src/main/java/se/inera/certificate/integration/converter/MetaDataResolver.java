@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
-import se.inera.certificate.modules.registry.ModuleNotFoundException;
-import se.inera.certificate.modules.support.api.exception.ModuleException;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.builder.ClinicalProcessCertificateMetaTypeBuilder;
 import se.riv.clinicalprocess.healthcond.certificate.v1.CertificateMetaType;
 import se.riv.clinicalprocess.healthcond.certificate.v1.StatusType;

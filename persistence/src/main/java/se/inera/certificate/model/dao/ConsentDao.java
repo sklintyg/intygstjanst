@@ -1,6 +1,6 @@
 package se.inera.certificate.model.dao;
 
-import se.inera.certificate.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 
 /**
  * @author andreaskaltenbach

@@ -21,15 +21,15 @@ package se.inera.certificate.service;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import se.inera.certificate.exception.RecipientUnknownException;
-import se.inera.certificate.integration.module.exception.CertificateAlreadyExistsException;
-import se.inera.certificate.integration.module.exception.CertificateRevokedException;
-import se.inera.certificate.integration.module.exception.InvalidCertificateException;
-import se.inera.certificate.integration.module.exception.MissingConsentException;
-import se.inera.certificate.model.CertificateState;
+import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
+import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
+import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.modules.support.api.CertificateHolder;
-import se.inera.certificate.modules.support.api.dto.Personnummer;
-import se.inera.certificate.validate.CertificateValidationException;
+import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 
 import java.util.List;
@@ -116,9 +116,9 @@ public interface CertificateService {
      *
      * @returns SendStatus further subclassifying the outcome of a successful send
      *
-     * @throws se.inera.certificate.integration.module.exception.InvalidCertificateException
+     * @throws se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException
      *             if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
-     * @throws se.inera.certificate.integration.module.exception.CertificateRevokedException
+     * @throws se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException
      *             if the certificate has been revoked
      * @throws se.inera.certificate.exception.RecipientUnknownException
      */

@@ -18,7 +18,7 @@
  */
 package se.inera.certificate.service.impl;
 
-import static se.inera.certificate.common.enumerations.Recipients.FK;
+import static se.inera.intyg.common.support.common.enumerations.Recipients.FK;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
 import org.joda.time.LocalDateTime;
@@ -33,11 +33,11 @@ import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.exception.SubsystemCallException;
 import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.modules.registry.IntygModuleRegistry;
-import se.inera.certificate.modules.registry.ModuleNotFoundException;
-import se.inera.certificate.modules.support.ModuleEntryPoint;
-import se.inera.certificate.modules.support.api.dto.InternalModelHolder;
-import se.inera.certificate.modules.support.api.exception.ModuleException;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
+import se.inera.intyg.common.support.modules.support.api.dto.InternalModelHolder;
+import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.MonitoringLogService;
 import se.inera.certificate.service.RecipientService;

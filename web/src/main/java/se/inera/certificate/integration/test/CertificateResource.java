@@ -26,10 +26,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 import se.inera.certificate.integration.converter.ConverterUtil;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.OriginalCertificate;
-import se.inera.certificate.modules.registry.IntygModuleRegistry;
-import se.inera.certificate.modules.registry.ModuleNotFoundException;
-import se.inera.certificate.modules.support.api.CertificateHolder;
-import se.inera.certificate.modules.support.api.ModuleApi;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
+import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 
 /**
  * @author andreaskaltenbach

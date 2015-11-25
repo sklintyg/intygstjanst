@@ -24,8 +24,8 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
 import se.inera.certificate.exception.PersistenceException;
-import se.inera.certificate.model.CertificateState;
-import se.inera.certificate.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 
 /**
  * Data Access Object for handling {@link Certificate}.

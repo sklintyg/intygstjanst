@@ -1,6 +1,7 @@
 package se.inera.certificate.exception;
 
-import se.inera.certificate.modules.support.api.dto.Personnummer;
+
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 
 public class PersistenceException extends Exception {
     public PersistenceException(String certificateId, Personnummer civicRegistrationNumber) {

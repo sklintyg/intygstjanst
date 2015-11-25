@@ -41,12 +41,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import se.inera.certificate.exception.PersistenceException;
-import se.inera.certificate.model.CertificateState;
+import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
-import se.inera.certificate.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 
 /**
  * Implementation of {@link CertificateDao}.
