@@ -25,7 +25,7 @@ import java.util.List;
 import org.joda.time.LocalDate;
 import org.joda.time.Partial;
 import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.schema.adapter.PartialAdapter;
+import se.inera.intyg.common.util.integration.schema.adapter.PartialAdapter;
 
 /**
  * Class that filter a collection of {@link Certificate} that has validity dated within a

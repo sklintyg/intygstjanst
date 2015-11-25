@@ -10,7 +10,7 @@ import javax.xml.bind.Unmarshaller
 
 import org.apache.commons.dbcp2.BasicDataSource
 
-import se.inera.certificate.integration.json.CustomObjectMapper
+import se.inera.intyg.common.util.integration.integration.json.CustomObjectMapper
 import se.inera.certificate.modules.fk7263.model.converter.TransportToInternal
 import se.inera.certificate.modules.fk7263.model.internal.Utlatande
 import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.LakarutlatandeType
