@@ -25,10 +25,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static se.inera.certificate.model.CertificateState.DELETED;
-import static se.inera.certificate.model.CertificateState.RECEIVED;
-import static se.inera.certificate.model.CertificateState.RESTORED;
-import static se.inera.certificate.model.CertificateState.SENT;
+import static se.inera.intyg.common.support.model.CertificateState.DELETED;
+import static se.inera.intyg.common.support.model.CertificateState.RECEIVED;
+import static se.inera.intyg.common.support.model.CertificateState.RESTORED;
+import static se.inera.intyg.common.support.model.CertificateState.SENT;
 import static se.inera.certificate.support.CertificateFactory.CERTIFICATE_ID;
 import static se.inera.certificate.support.CertificateFactory.CIVIC_REGISTRATION_NUMBER;
 import static se.inera.certificate.support.CertificateFactory.FK7263;
@@ -52,11 +52,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import se.inera.certificate.exception.PersistenceException;
-import se.inera.certificate.model.CertificateState;
+import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.OriginalCertificate;
-import se.inera.certificate.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.certificate.support.CertificateFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)

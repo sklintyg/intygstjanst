@@ -36,7 +36,7 @@
   </beans>
 
   <beans>
-    <bean id="moduleRegistry" class="se.inera.certificate.modules.registry.IntygModuleRegistryImpl">
+    <bean id="moduleRegistry" class="se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl">
       <property name="origin" value="INTYGSTJANST"/>
     </bean>
 

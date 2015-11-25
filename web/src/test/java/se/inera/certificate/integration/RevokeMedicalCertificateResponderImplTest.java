@@ -19,11 +19,11 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.certificate.exception.PersistenceException;
 import se.inera.certificate.exception.SubsystemCallException;
-import se.inera.certificate.model.CertificateState;
+import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
-import se.inera.certificate.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.MonitoringLogService;

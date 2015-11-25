@@ -3,7 +3,7 @@ package se.inera.certificate.model.dao;
 import com.google.common.collect.Ordering;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
-import se.inera.certificate.model.CertificateState;
+import se.inera.intyg.common.support.model.CertificateState;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

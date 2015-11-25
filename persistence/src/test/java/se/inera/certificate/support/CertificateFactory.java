@@ -3,7 +3,7 @@ package se.inera.certificate.support;
 import org.joda.time.LocalDateTime;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 
 /**
  * @author andreaskaltenbach

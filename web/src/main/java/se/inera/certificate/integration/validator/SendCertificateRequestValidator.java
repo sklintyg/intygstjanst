@@ -1,7 +1,7 @@
 package se.inera.certificate.integration.validator;
 
 import org.springframework.util.StringUtils;
-import se.inera.certificate.validate.CertificateValidationException;
+import se.inera.intyg.common.support.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.validator.VardAdresseringsTypeValidator;
 

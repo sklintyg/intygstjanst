@@ -16,7 +16,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 
-import se.inera.certificate.model.ModelException;
+import se.inera.intyg.common.support.model.ModelException;
 
 /**
  * @author johannesc
