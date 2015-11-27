@@ -23,8 +23,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Consent;
@@ -34,7 +32,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
  * @author andreaskaltenbach
  */
 @Repository
-@Transactional(propagation = Propagation.MANDATORY)
 public class ConsentDaoImpl implements ConsentDao {
 
     @PersistenceContext
@@ -56,7 +53,6 @@ public class ConsentDaoImpl implements ConsentDao {
     }
 
     @Override
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public boolean hasConsent(Personnummer civicRegistrationNumber) {
         return findConsent(civicRegistrationNumber) != null;
     }

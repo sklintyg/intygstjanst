@@ -52,7 +52,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
  * Implementation of {@link CertificateDao}.
  */
 @Repository
-@Transactional(propagation = Propagation.MANDATORY)
 public class CertificateDaoImpl implements CertificateDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(CertificateDaoImpl.class);
@@ -62,9 +61,8 @@ public class CertificateDaoImpl implements CertificateDao {
     private EntityManager entityManager;
 
     @Override
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<Certificate> findCertificate(Personnummer civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate, List<String> careUnits) {
-
+    public List<Certificate> findCertificate(Personnummer civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate,
+            List<String> careUnits) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Certificate> query = criteriaBuilder.createQuery(Certificate.class);
         Root<Certificate> root = query.from(Certificate.class);
@@ -83,12 +81,12 @@ public class CertificateDaoImpl implements CertificateDao {
 
         // filter by certificate types
         if (types != null && !types.isEmpty()) {
-            predicates.add(criteriaBuilder.lower(root.<String>get("type")).in(toLowerCase(types)));
+            predicates.add(criteriaBuilder.lower(root.<String> get("type")).in(toLowerCase(types)));
         }
 
         // filter by care unit
         if (careUnits != null && !careUnits.isEmpty()) {
-            predicates.add(root.<String>get("careUnitId").in(careUnits));
+            predicates.add(root.<String> get("careUnitId").in(careUnits));
         }
 
         query.where(predicates.toArray(new Predicate[predicates.size()]));
@@ -104,7 +102,6 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, noRollbackFor = { PersistenceException.class })
     public Certificate getCertificate(Personnummer civicRegistrationNumber, String certificateId) throws PersistenceException {
         Certificate certificate = entityManager.find(Certificate.class, certificateId);
 
@@ -135,7 +132,6 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
-    @Transactional(noRollbackFor = { PersistenceException.class })
     public void updateStatus(String id, Personnummer civicRegistrationNumber, CertificateState state, String target, LocalDateTime timestamp)
             throws PersistenceException {
 
@@ -169,7 +165,6 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
-    @Transactional(noRollbackFor = { PersistenceException.class })
     public void setArchived(String id, Personnummer civicRegistrationNumber, String archived) throws PersistenceException {
         Certificate certificate = entityManager.find(Certificate.class, id);
 
@@ -184,7 +179,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
     private List<String> toLowerCase(List<String> list) {
         List<String> result = new ArrayList<>();
-        for (String item: list) {
+        for (String item : list) {
             result.add(item.toLowerCase());
         }
         return result;
@@ -193,7 +188,7 @@ public class CertificateDaoImpl implements CertificateDao {
     private List<Certificate> filterDuplicates(List<Certificate> all) {
         Set<String> found = new HashSet<>();
         List<Certificate> filtered = new ArrayList<>(all.size());
-        for (Certificate certificate: all) {
+        for (Certificate certificate : all) {
             if (!found.contains(certificate.getId())) {
                 filtered.add(certificate);
                 found.add(certificate.getId());

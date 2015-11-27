@@ -46,6 +46,7 @@ public class ConsentServiceImpl implements ConsentService {
     private CertificateDao certificateDao;
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isConsent(Personnummer civicRegistrationNumber) {
         if (civicRegistrationNumber != null && civicRegistrationNumber.getPersonnummer() != null) {
             return consentDao.hasConsent(civicRegistrationNumber);
@@ -54,8 +55,8 @@ public class ConsentServiceImpl implements ConsentService {
         }
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void setConsent(Personnummer civicRegistrationNumber, boolean consentGiven) {
         if (consentGiven) {
             consentDao.setConsent(civicRegistrationNumber);

@@ -24,14 +24,11 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
-import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.intyg.common.support.validate.CertificateValidationException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 
@@ -125,21 +122,6 @@ public interface CertificateService {
      */
     SendStatus sendCertificate(Personnummer civicRegistrationNumber, String certificateId, String recipientId)
             throws InvalidCertificateException, CertificateRevokedException, RecipientUnknownException;
-
-
-    /**
-     * Stores the given certificate.
-     * @param certificateHolder the incoming certificate information
-     * @return the created certificate
-     * @throws CertificateAlreadyExistsException
-     *             when a certificate with the same identifier already exists
-     * @throws InvalidCertificateException
-     *             if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
-     * @throws CertificateValidationException
-     *             if the certificate was not valid
-     */
-    Certificate storeCertificate(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException,
-            InvalidCertificateException, CertificateValidationException;
 
     void setCertificateState(Personnummer civicRegistrationNumber, String certificateId, String target, CertificateState state, LocalDateTime timestamp)
             throws InvalidCertificateException;
