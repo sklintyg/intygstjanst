@@ -73,6 +73,7 @@ public class GetCertificateContentResponderImpl implements GetCertificateContent
         List<CertificateStatusType> states = CertificateStateHistoryEntryConverter.toCertificateStatusType(certificate
                 .getStates());
 
+        response.setType(certificate.getType());
         response.setCertificate(certificate.getDocument());
         response.getStatuses().addAll(states);
     }
