@@ -8,7 +8,7 @@ import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.certificate.logging.HashUtility;
+import se.inera.intyg.common.util.logging.HashUtility;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.common.support.modules.support.api.exception.ExternalServiceCallException;
 import se.inera.certificate.service.CertificateService;
