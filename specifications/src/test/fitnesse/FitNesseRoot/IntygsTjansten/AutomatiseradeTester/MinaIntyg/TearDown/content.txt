@@ -1,5 +1,5 @@
 |Import|
-|se.inera.certificate.spec|
+|se.inera.intyg.common.specifications.spec|
 
 !3 Rensa bort test-intyg
 

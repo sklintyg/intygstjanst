@@ -1,4 +1,4 @@
-package se.inera.certificate.spec
+package se.inera.intyg.common.specifications.spec
 
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.rivtabp20.v3.RegisterMedicalCertificateResponderInterface
 

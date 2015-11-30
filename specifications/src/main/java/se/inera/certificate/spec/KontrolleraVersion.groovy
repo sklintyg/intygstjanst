@@ -1,6 +1,6 @@
-package se.inera.certificate.spec
+package se.inera.intyg.common.specifications.spec
 
-import se.inera.certificate.spec.util.WsClientFixture
+import se.inera.intyg.common.specifications.spec.util.WsClientFixture
 import se.riv.itintegration.monitoring.rivtabp21.v1.PingForConfigurationResponderInterface
 import se.riv.itintegration.monitoring.v1.PingForConfigurationResponseType
 import se.riv.itintegration.monitoring.v1.PingForConfigurationType

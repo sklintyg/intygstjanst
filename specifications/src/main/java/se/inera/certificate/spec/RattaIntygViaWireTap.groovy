@@ -1,4 +1,4 @@
-package se.inera.certificate.spec
+package se.inera.intyg.common.specifications.spec
 
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface
 

@@ -1,7 +1,7 @@
-package se.inera.certificate.spec
+package se.inera.intyg.common.specifications.spec
 
 import org.springframework.core.io.ClassPathResource
-import se.inera.certificate.spec.util.WsClientFixtureNyaKontraktet
+import se.inera.intyg.common.specifications.spec.util.WsClientFixtureNyaKontraktet
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponderInterface
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateResponseType
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v1.RegisterCertificateType
