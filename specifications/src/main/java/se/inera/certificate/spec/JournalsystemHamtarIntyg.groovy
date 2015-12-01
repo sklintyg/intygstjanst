@@ -1,7 +1,7 @@
 package se.inera.intyg.common.specifications.spec
 
 import org.skyscreamer.jsonassert.JSONAssert
-import se.inera.certificate.modules.fk7263.model.converter.TransportToInternal
+import se.inera.intyg.intygstyper.fk7263.model.converter.TransportToInternal
 import se.inera.intyg.common.specifications.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.LakarutlatandeType
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum

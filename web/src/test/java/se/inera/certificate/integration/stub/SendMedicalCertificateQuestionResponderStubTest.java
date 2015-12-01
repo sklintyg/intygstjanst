@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.modules.fk7263.integration.stub.FkMedicalCertificatesStore;
+import se.inera.intyg.intygstyper.fk7263.integration.stub.FkMedicalCertificatesStore;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.QuestionToFkType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;

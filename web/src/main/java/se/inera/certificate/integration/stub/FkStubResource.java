@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import se.inera.certificate.modules.fk7263.integration.stub.FkMedicalCertificatesStore;
+import se.inera.intyg.intygstyper.fk7263.integration.stub.FkMedicalCertificatesStore;
 
 @Path("/fk")
 @Transactional

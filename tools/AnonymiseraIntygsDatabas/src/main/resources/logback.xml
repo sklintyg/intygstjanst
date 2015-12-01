@@ -29,7 +29,7 @@
 
   <logger name="org.apache.cxf" level="ERROR" />
 
-  <logger name="se.inera.certificate.modules.fk7263" level="ERROR" />
+  <logger name="se.inera.intyg.intygstyper.fk7263" level="ERROR" />
 
   <root level="WARN">
     <appender-ref ref="STDOUT" />

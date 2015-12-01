@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 
-import se.inera.certificate.modules.fk7263.integration.stub.FkMedicalCertificatesStore;
+import se.inera.intyg.intygstyper.fk7263.integration.stub.FkMedicalCertificatesStore;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 
 @RunWith(MockitoJUnitRunner.class)
