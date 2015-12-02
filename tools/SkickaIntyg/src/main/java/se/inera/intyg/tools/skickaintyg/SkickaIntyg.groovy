@@ -16,8 +16,8 @@ import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificaterespo
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
-import se.inera.webcert.medcertqa.v1.LakarutlatandeEnkelType
-import se.inera.webcert.medcertqa.v1.VardAdresseringsType
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType
 
 /**
  * SkickaIntyg:
