@@ -1,4 +1,4 @@
-package se.inera.certificate.tools
+package se.inera.intyg.intygstjanst.tools.anonymisering
 
 import groovy.sql.Sql
 import groovyx.gpars.GParsPool
