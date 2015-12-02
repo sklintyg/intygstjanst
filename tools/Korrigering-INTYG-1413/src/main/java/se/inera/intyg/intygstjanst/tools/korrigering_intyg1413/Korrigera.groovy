@@ -1,4 +1,4 @@
-package se.inera.certificate.tools
+package se.inera.intyg.intygstjanst.tools.korrigering_intyg1413
 
 import groovy.sql.Sql
 import groovyx.gpars.GParsPool
