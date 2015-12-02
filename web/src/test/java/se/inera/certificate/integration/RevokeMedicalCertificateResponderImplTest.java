@@ -17,12 +17,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.exception.PersistenceException;
+import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.certificate.exception.SubsystemCallException;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.model.dao.CertificateDao;
-import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;

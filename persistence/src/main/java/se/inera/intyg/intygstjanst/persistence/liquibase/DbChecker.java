@@ -1,4 +1,4 @@
-package se.inera.certificate.liquibase;
+package se.inera.intyg.intygstjanst.persistence.liquibase;
 import liquibase.Liquibase;
 import liquibase.changelog.ChangeSet;
 import liquibase.database.Database;

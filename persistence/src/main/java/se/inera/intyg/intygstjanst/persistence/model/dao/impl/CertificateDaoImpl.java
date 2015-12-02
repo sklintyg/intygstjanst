@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.certificate.model.dao.impl;
+package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,12 +40,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import se.inera.certificate.exception.PersistenceException;
+import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.model.dao.CertificateDao;
-import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
-import se.inera.certificate.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 
 /**

@@ -24,8 +24,8 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 
 import se.inera.certificate.integration.converter.ConverterUtil;
-import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 

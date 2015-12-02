@@ -12,9 +12,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import se.inera.certificate.model.builder.CertificateBuilder;
-import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.builder.CertificateBuilder;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;

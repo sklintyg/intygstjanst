@@ -1,10 +1,10 @@
-package se.inera.certificate.model.builder;
+package se.inera.intyg.intygstjanst.persistence.model.builder;
 
 import org.joda.time.LocalDateTime;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
-import se.inera.certificate.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 
 /**

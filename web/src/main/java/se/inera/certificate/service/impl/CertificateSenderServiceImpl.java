@@ -32,7 +32,7 @@ import se.inera.certificate.exception.MissingModuleException;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.exception.SubsystemCallException;
-import se.inera.certificate.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;

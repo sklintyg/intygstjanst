@@ -1,6 +1,6 @@
 package se.inera.certificate.integration;
 
-import se.inera.certificate.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.riv.clinicalprocess.healthcond.certificate.v1.ResultType;
 
 /**

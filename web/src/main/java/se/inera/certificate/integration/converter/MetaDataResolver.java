@@ -3,8 +3,8 @@ package se.inera.certificate.integration.converter;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 
-import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.builder.ClinicalProcessCertificateMetaTypeBuilder;

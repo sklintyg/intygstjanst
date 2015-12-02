@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.certificate.model.dao.impl;
+package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -30,7 +30,7 @@ import java.util.List;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 
-import se.inera.certificate.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 
 public class DateFilterTest {
 

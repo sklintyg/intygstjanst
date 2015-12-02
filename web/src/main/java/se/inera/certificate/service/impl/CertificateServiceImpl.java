@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import se.inera.certificate.exception.PersistenceException;
+import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.integration.converter.ConverterUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
@@ -35,10 +35,10 @@ import se.inera.intyg.common.support.integration.module.exception.CertificateRev
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.model.dao.CertificateDao;
-import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
-import se.inera.certificate.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;

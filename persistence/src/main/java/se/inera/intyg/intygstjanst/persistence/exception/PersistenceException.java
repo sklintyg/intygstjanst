@@ -1,4 +1,4 @@
-package se.inera.certificate.exception;
+package se.inera.intyg.intygstjanst.persistence.exception;
 
 
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;

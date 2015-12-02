@@ -1,4 +1,4 @@
-package se.inera.certificate.model.dao;
+package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 import com.google.common.collect.Ordering;
 import org.hibernate.annotations.Type;

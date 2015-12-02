@@ -3,8 +3,8 @@ package se.inera.certificate.integration.converter;
 import java.util.ArrayList;
 import java.util.List;
 
-import se.inera.certificate.model.dao.Certificate;
-import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
 

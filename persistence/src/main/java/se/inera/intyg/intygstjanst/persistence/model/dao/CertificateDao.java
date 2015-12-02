@@ -16,14 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.certificate.model.dao;
+package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 import java.util.List;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
-import se.inera.certificate.exception.PersistenceException;
+import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 
@@ -54,7 +54,7 @@ public interface CertificateDao {
      * @return the matching certificate or {@code null} if there is no certificate for the given certificate ID and
      * civic registration number
      *
-     * @throws se.inera.certificate.exception.PersistenceException if the given civic registration number does not match with
+     * @throws se.inera.intyg.intygstjanst.persistence.exception.PersistenceException if the given civic registration number does not match with
      *  the certificate's patient civic registration number
      */
     Certificate getCertificate(Personnummer civicRegistrationNumber, String certificateId) throws PersistenceException;
@@ -82,7 +82,7 @@ public interface CertificateDao {
      * @param state the state of the certificate
      * @param target the target associated with the status update (e.g. Försäkringskassan)
      * @param timestamp the timestamp of the status update
-     * @throws se.inera.certificate.exception.PersistenceException if the combination of certificate ID and civic registration number
+     * @throws se.inera.intyg.intygstjanst.persistence.exception.PersistenceException if the combination of certificate ID and civic registration number
      *  does not match
      */
     void updateStatus(String certificateId, Personnummer civicRegistrationNumber, CertificateState state, String target, LocalDateTime timestamp)

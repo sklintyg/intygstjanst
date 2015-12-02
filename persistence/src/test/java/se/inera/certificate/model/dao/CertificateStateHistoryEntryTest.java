@@ -1,4 +1,4 @@
-package se.inera.certificate.model.dao;
+package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 import org.joda.time.LocalDateTime;
 import org.junit.Test;

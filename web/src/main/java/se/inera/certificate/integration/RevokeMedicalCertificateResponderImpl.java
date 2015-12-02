@@ -12,7 +12,7 @@ import se.inera.intyg.common.support.integration.module.exception.CertificateRev
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.certificate.integration.validator.RevokeRequestValidator;
 import se.inera.intyg.common.util.logging.LogMarkers;
-import se.inera.certificate.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.MonitoringLogService;

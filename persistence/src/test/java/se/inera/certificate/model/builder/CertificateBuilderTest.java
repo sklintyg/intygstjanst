@@ -1,11 +1,11 @@
-package se.inera.certificate.model.builder;
+package se.inera.intyg.intygstjanst.persistence.model.builder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
-import se.inera.certificate.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 
 public class CertificateBuilderTest {
 

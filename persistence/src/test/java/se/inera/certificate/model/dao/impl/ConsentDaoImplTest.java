@@ -1,4 +1,4 @@
-package se.inera.certificate.model.dao.impl;
+package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,8 +8,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import se.inera.certificate.model.dao.Consent;
-import se.inera.certificate.model.dao.ConsentDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Consent;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 
 import javax.persistence.EntityManager;

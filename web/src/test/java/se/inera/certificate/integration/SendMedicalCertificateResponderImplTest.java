@@ -16,7 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.w3.wsaddressing10.AttributedURIType;
-import se.inera.certificate.model.builder.CertificateBuilder;
+import se.inera.intyg.intygstjanst.persistence.model.builder.CertificateBuilder;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateService;
 import se.inera.certificate.service.RecipientService;

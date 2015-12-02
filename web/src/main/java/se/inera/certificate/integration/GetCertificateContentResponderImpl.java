@@ -13,7 +13,7 @@ import se.inera.intyg.common.support.integration.module.exception.CertificateRev
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.certificate.integration.util.CertificateStateHistoryEntryConverter;
-import se.inera.certificate.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.certificate.v1.CertificateStatusType;

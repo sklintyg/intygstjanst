@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.certificate.model.dao;
+package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 import static se.inera.intyg.common.support.model.util.Iterables.find;
 
