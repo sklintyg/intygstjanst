@@ -1,4 +1,4 @@
-package se.inera.certificate.tools
+package se.inera.intyg.intygstjanst.tools.skickaintyg
 
 import groovy.sql.Sql
 

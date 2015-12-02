@@ -93,7 +93,7 @@
             <configuration>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>se.inera.certificate.tools.SkickaIntyg</mainClass>
+                  <mainClass>se.inera.intyg.intygstjanst.tools.skickaintyg.SkickaIntyg</mainClass>
                 </transformer>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                     <resource>META-INF/cxf/bus-extensions.txt</resource>
