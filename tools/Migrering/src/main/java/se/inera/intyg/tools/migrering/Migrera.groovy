@@ -1,4 +1,4 @@
-package se.inera.certificate.tools
+package se.inera.intyg.intygstjanst.tools.migrering
 
 import groovy.sql.Sql
 import groovyx.gpars.GParsPool
