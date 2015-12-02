@@ -1,4 +1,4 @@
-package se.inera.certificate.integration;
+package se.inera.intyg.intygstjanst.web.integration;
 
 
 import java.util.List;
@@ -12,10 +12,10 @@ import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
-import se.inera.certificate.integration.util.CertificateStateHistoryEntryConverter;
+import se.inera.intyg.intygstjanst.web.integration.util.CertificateStateHistoryEntryConverter;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.certificate.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.ifv.insuranceprocess.certificate.v1.CertificateStatusType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.insuranceprocess.healthreporting.getcertificatecontent.rivtabp20.v1.GetCertificateContentResponderInterface;

@@ -1,7 +1,7 @@
-package se.inera.certificate.service.builder;
+package se.inera.intyg.intygstjanst.web.service.builder;
 
 import liquibase.util.StringUtils;
-import se.inera.certificate.service.bean.Recipient;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
 import java.util.List;
 

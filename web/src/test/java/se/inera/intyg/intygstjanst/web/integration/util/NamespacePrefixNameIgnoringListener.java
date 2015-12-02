@@ -1,4 +1,4 @@
-package se.inera.certificate.integration.util;
+package se.inera.intyg.intygstjanst.web.integration.util;
 
 import static org.custommonkey.xmlunit.DifferenceConstants.NAMESPACE_PREFIX_ID;
 

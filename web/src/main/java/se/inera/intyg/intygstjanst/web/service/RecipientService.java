@@ -1,9 +1,9 @@
-package se.inera.certificate.service;
+package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.certificate.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.common.support.modules.support.api.dto.TransportModelVersion;
-import se.inera.certificate.service.bean.CertificateType;
-import se.inera.certificate.service.bean.Recipient;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
 import java.util.List;
 import java.util.Set;

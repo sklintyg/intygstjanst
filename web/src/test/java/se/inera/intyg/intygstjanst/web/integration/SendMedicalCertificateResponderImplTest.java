@@ -1,4 +1,4 @@
-package se.inera.certificate.integration;
+package se.inera.intyg.intygstjanst.web.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.any;
@@ -18,10 +18,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.intyg.intygstjanst.persistence.model.builder.CertificateBuilder;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.certificate.service.CertificateService;
-import se.inera.certificate.service.RecipientService;
-import se.inera.certificate.service.bean.CertificateType;
-import se.inera.certificate.service.bean.Recipient;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.rivtabp20.v1.SendMedicalCertificateResponderInterface;

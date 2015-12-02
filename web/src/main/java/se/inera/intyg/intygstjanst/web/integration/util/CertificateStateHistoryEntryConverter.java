@@ -1,4 +1,4 @@
-package se.inera.certificate.integration.util;
+package se.inera.intyg.intygstjanst.web.integration.util;
 
 import java.util.ArrayList;
 import java.util.Collections;

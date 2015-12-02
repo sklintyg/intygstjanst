@@ -1,4 +1,4 @@
-package se.inera.certificate.integration.stub;
+package se.inera.intyg.intygstjanst.web.integration.stub;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static org.junit.Assert.assertEquals;

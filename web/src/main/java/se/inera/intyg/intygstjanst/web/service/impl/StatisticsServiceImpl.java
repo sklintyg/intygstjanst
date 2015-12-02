@@ -1,4 +1,4 @@
-package se.inera.certificate.service.impl;
+package se.inera.intyg.intygstjanst.web.service.impl;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -15,8 +15,8 @@ import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
 
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.certificate.service.MonitoringLogService;
-import se.inera.certificate.service.StatisticsService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
 @Component
 public class StatisticsServiceImpl implements StatisticsService {

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.certificate.service.impl;
+package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.Mockito.verify;
@@ -38,7 +38,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.certificate.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MonitoringLogServiceImplTest {

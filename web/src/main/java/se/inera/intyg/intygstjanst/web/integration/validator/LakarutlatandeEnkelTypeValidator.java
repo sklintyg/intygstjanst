@@ -1,4 +1,4 @@
-package se.inera.certificate.integration.validator;
+package se.inera.intyg.intygstjanst.web.integration.validator;
 
 import java.util.List;
 

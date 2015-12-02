@@ -1,6 +1,6 @@
-package se.inera.certificate.service;
+package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.certificate.service.impl.HealthCheckServiceImpl.Status;
+import se.inera.intyg.intygstjanst.web.service.impl.HealthCheckServiceImpl.Status;
 
 /**
  * Service for checking the general health status of the application.

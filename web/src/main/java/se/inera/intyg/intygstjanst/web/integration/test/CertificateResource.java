@@ -1,4 +1,4 @@
-package se.inera.certificate.integration.test;
+package se.inera.intyg.intygstjanst.web.integration.test;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import se.inera.certificate.integration.converter.ConverterUtil;
+import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;

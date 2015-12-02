@@ -1,4 +1,4 @@
-package se.inera.certificate.integration.stub;
+package se.inera.intyg.intygstjanst.web.integration.stub;
 
 import java.util.Collections;
 import java.util.HashMap;

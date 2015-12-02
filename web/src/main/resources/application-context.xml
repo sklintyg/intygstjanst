@@ -41,7 +41,7 @@
     </bean>
 
     <bean id="RecipientService"
-      class="se.inera.certificate.service.impl.RecipientServiceImpl">
+      class="se.inera.intyg.intygstjanst.web.service.impl.RecipientServiceImpl">
       <property name="recipients" ref="recipientService" />
     </bean>
 
@@ -64,7 +64,7 @@
     <import resource="classpath*:it-module-cxf-servlet.xml" />
 
     <context:annotation-config />
-    <context:component-scan base-package="se.inera.certificate" />
+    <context:component-scan base-package="se.inera.intyg.intygstjanst.web" />
 
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
       <property name="basenames">
@@ -77,7 +77,7 @@
     <!-- In dev and demo mode we bootstrap data -->
     <beans profile="dev">
       <bean id="IntygBootstrapBean"
-        class="se.inera.certificate.service.bean.IntygBootstrapBean" />
+        class="se.inera.intyg.intygstjanst.web.service.bean.IntygBootstrapBean" />
     </beans>
 
   </beans>

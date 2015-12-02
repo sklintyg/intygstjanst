@@ -1,4 +1,4 @@
-package se.inera.certificate.integration.converter;
+package se.inera.intyg.intygstjanst.web.integration.converter;
 
 import java.util.ArrayList;
 import java.util.List;

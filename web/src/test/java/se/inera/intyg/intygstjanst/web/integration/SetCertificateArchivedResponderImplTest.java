@@ -1,4 +1,4 @@
-package se.inera.certificate.integration;
+package se.inera.intyg.intygstjanst.web.integration;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.certificate.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.insuranceprocess.healthreporting.setcertificatearchivedresponder.v1.SetCertificateArchivedRequestType;
 
 /**

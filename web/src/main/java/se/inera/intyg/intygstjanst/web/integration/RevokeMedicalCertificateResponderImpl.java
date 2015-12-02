@@ -1,4 +1,4 @@
-package se.inera.certificate.integration;
+package se.inera.intyg.intygstjanst.web.integration;
 
 
 import org.slf4j.Logger;
@@ -7,16 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.exception.SubsystemCallException;
+import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.certificate.integration.validator.RevokeRequestValidator;
+import se.inera.intyg.intygstjanst.web.integration.validator.RevokeRequestValidator;
 import se.inera.intyg.common.util.logging.LogMarkers;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.certificate.service.CertificateService;
-import se.inera.certificate.service.MonitoringLogService;
-import se.inera.certificate.service.StatisticsService;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;

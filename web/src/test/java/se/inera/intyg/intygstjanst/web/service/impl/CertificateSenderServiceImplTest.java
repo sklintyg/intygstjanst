@@ -1,4 +1,4 @@
-package se.inera.certificate.service.impl;
+package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -25,9 +25,9 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 
-import se.inera.certificate.exception.MissingModuleException;
-import se.inera.certificate.exception.RecipientUnknownException;
-import se.inera.certificate.exception.ServerException;
+import se.inera.intyg.intygstjanst.web.exception.MissingModuleException;
+import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.persistence.model.builder.CertificateBuilder;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
@@ -37,12 +37,12 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.dto.InternalModelHolder;
 import se.inera.intyg.common.support.modules.support.api.dto.TransportModelVersion;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
-import se.inera.certificate.service.CertificateService;
-import se.inera.certificate.service.MonitoringLogService;
-import se.inera.certificate.service.RecipientService;
-import se.inera.certificate.service.bean.CertificateType;
-import se.inera.certificate.service.bean.Recipient;
-import se.inera.certificate.service.builder.RecipientBuilder;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.rivtabp20.v3.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;

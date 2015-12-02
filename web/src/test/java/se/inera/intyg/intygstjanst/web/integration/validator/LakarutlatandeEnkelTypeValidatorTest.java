@@ -1,4 +1,4 @@
-package se.inera.certificate.integration.validator;
+package se.inera.intyg.intygstjanst.web.integration.validator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

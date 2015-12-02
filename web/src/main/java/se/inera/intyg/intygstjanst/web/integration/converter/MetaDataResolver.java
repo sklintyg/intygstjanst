@@ -1,4 +1,4 @@
-package se.inera.certificate.integration.converter;
+package se.inera.intyg.intygstjanst.web.integration.converter;
 
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;

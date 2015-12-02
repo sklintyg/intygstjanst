@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.certificate.service.impl;
+package se.inera.intyg.intygstjanst.web.service.impl;
 
 import javax.persistence.PersistenceException;
 
@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.certificate.service.ConsentService;
+import se.inera.intyg.intygstjanst.web.service.ConsentService;
 
 /**
  * @author andreaskaltenbach

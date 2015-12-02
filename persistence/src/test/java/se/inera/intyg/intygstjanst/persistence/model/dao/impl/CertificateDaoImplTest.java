@@ -29,10 +29,10 @@ import static se.inera.intyg.common.support.model.CertificateState.DELETED;
 import static se.inera.intyg.common.support.model.CertificateState.RECEIVED;
 import static se.inera.intyg.common.support.model.CertificateState.RESTORED;
 import static se.inera.intyg.common.support.model.CertificateState.SENT;
-import static se.inera.certificate.support.CertificateFactory.CERTIFICATE_ID;
-import static se.inera.certificate.support.CertificateFactory.CIVIC_REGISTRATION_NUMBER;
-import static se.inera.certificate.support.CertificateFactory.FK7263;
-import static se.inera.certificate.support.CertificateFactory.buildCertificate;
+import static se.inera.intyg.intygstjanst.persistence.support.CertificateFactory.CERTIFICATE_ID;
+import static se.inera.intyg.intygstjanst.persistence.support.CertificateFactory.CIVIC_REGISTRATION_NUMBER;
+import static se.inera.intyg.intygstjanst.persistence.support.CertificateFactory.FK7263;
+import static se.inera.intyg.intygstjanst.persistence.support.CertificateFactory.buildCertificate;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,7 +57,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.certificate.support.CertificateFactory;
+import se.inera.intyg.intygstjanst.persistence.support.CertificateFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/persistence-config-unittest.xml" })

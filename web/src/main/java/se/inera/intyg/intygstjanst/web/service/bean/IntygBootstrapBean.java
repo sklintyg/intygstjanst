@@ -1,4 +1,4 @@
-package se.inera.certificate.service.bean;
+package se.inera.intyg.intygstjanst.web.service.bean;
 
 import java.io.IOException;
 import java.util.Arrays;

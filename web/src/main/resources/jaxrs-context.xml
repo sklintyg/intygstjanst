@@ -29,7 +29,7 @@
 
     <jaxrs:server id="healthCheckService" address="/health-check">
       <jaxrs:serviceBeans>
-        <bean class="se.inera.certificate.monitoring.HealthCheckController" />
+        <bean class="se.inera.intyg.intygstjanst.web.monitoring.HealthCheckController" />
       </jaxrs:serviceBeans>
     </jaxrs:server>
     
@@ -49,8 +49,8 @@
       </jaxrs:extensionMappings>
     </jaxrs:server>
 
-    <bean id="certificateBean" class="se.inera.certificate.integration.test.CertificateResource" />
-    <bean id="fkBean" class="se.inera.certificate.integration.stub.FkStubResource" />
+    <bean id="certificateBean" class="se.inera.intyg.intygstjanst.web.integration.test.CertificateResource" />
+    <bean id="fkBean" class="se.inera.intyg.intygstjanst.web.integration.stub.FkStubResource" />
 
   </beans>
 

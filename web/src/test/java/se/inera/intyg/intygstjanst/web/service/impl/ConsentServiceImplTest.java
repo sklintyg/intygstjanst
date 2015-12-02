@@ -1,4 +1,4 @@
-package se.inera.certificate.service.impl;
+package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.eq;
@@ -15,7 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.certificate.service.ConsentService;
+import se.inera.intyg.intygstjanst.web.service.ConsentService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConsentServiceImplTest {

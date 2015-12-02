@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.certificate.service;
+package se.inera.intyg.intygstjanst.web.service;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-import se.inera.certificate.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -120,7 +120,7 @@ public interface CertificateService {
      *             if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
      * @throws se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException
      *             if the certificate has been revoked
-     * @throws se.inera.certificate.exception.RecipientUnknownException
+     * @throws se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException
      */
     SendStatus sendCertificate(Personnummer civicRegistrationNumber, String certificateId, String recipientId)
             throws InvalidCertificateException, CertificateRevokedException, RecipientUnknownException;

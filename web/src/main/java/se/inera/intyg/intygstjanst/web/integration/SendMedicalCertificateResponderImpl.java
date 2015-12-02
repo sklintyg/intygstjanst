@@ -1,4 +1,4 @@
-package se.inera.certificate.integration;
+package se.inera.intyg.intygstjanst.web.integration;
 
 import java.util.List;
 
@@ -7,20 +7,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
 
-import se.inera.certificate.exception.RecipientUnknownException;
-import se.inera.certificate.exception.ServerException;
+import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.certificate.integration.validator.SendCertificateRequestValidator;
+import se.inera.intyg.intygstjanst.web.integration.validator.SendCertificateRequestValidator;
 import se.inera.intyg.common.util.logging.LogMarkers;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.common.support.modules.support.api.exception.ExternalServiceCallException;
-import se.inera.certificate.service.CertificateService;
-import se.inera.certificate.service.CertificateService.SendStatus;
-import se.inera.certificate.service.RecipientService;
-import se.inera.certificate.service.bean.CertificateType;
-import se.inera.certificate.service.bean.Recipient;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.rivtabp20.v1.SendMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType;

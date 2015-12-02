@@ -1,4 +1,4 @@
-package se.inera.certificate.integration;
+package se.inera.intyg.intygstjanst.web.integration;
 
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
@@ -9,8 +9,8 @@ import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureExcep
 import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.certificate.service.ConsentService;
-import se.inera.certificate.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.ConsentService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.insuranceprocess.healthreporting.setconsent.rivtabp20.v1.SetConsentResponderInterface;
 import se.inera.intyg.insuranceprocess.healthreporting.setconsentresponder.v1.SetConsentRequestType;

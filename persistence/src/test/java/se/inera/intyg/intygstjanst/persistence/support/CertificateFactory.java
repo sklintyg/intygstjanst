@@ -1,4 +1,4 @@
-package se.inera.certificate.support;
+package se.inera.intyg.intygstjanst.persistence.support;
 
 import org.joda.time.LocalDateTime;
 import se.inera.intyg.intygstjanst.persistence.model.builder.CertificateBuilder;

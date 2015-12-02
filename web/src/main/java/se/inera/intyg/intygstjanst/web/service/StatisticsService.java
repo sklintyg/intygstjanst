@@ -1,4 +1,4 @@
-package se.inera.certificate.service;
+package se.inera.intyg.intygstjanst.web.service;
 
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 

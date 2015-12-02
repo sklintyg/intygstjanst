@@ -1,4 +1,4 @@
-package se.inera.certificate.support;
+package se.inera.intyg.intygstjanst.web.support;
 
 import static se.inera.intyg.common.support.common.enumerations.CertificateTypes.FK7263;
 

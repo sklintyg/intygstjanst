@@ -1,4 +1,4 @@
-package se.inera.certificate.integration.stub;
+package se.inera.intyg.intygstjanst.web.integration.stub;
 
 import static org.mockito.Mockito.verify;
 

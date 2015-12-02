@@ -1,4 +1,4 @@
-package se.inera.certificate.service;
+package se.inera.intyg.intygstjanst.web.service;
 
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 

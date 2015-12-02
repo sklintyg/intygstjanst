@@ -1,4 +1,4 @@
-package se.inera.certificate.exception;
+package se.inera.intyg.intygstjanst.web.exception;
 
 public class ClientException extends Exception {
 

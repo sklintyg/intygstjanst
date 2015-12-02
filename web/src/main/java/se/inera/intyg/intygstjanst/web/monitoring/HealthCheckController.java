@@ -1,10 +1,10 @@
-package se.inera.certificate.monitoring;
+package se.inera.intyg.intygstjanst.web.monitoring;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import se.inera.certificate.service.HealthCheckService;
-import se.inera.certificate.service.impl.HealthCheckServiceImpl.Status;
+import se.inera.intyg.intygstjanst.web.service.HealthCheckService;
+import se.inera.intyg.intygstjanst.web.service.impl.HealthCheckServiceImpl.Status;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

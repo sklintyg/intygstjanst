@@ -1,4 +1,4 @@
-package se.inera.certificate.service.impl;
+package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import se.inera.certificate.service.HealthCheckService;
+import se.inera.intyg.intygstjanst.web.service.HealthCheckService;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -42,7 +42,7 @@ public class HealthCheckServiceImpl implements HealthCheckService {
     /*
      * (non-Javadoc)
      *
-     * @see se.inera.certificate.service.impl.HealthCheckService#getDbStatus()
+     * @see se.inera.intyg.intygstjanst.web.service.impl.HealthCheckService#getDbStatus()
      */
     @Override
     public Status getDbStatus() {
@@ -59,7 +59,7 @@ public class HealthCheckServiceImpl implements HealthCheckService {
     /*
      * (non-Javadoc)
      *
-     * @see se.inera.certificate.service.impl.HealthCheckService#getJMSStatus()
+     * @see se.inera.intyg.intygstjanst.web.service.impl.HealthCheckService#getJMSStatus()
      */
     @Override
     public Status getJMSStatus() {
@@ -76,7 +76,7 @@ public class HealthCheckServiceImpl implements HealthCheckService {
     /*
      * (non-Javadoc)
      *
-     * @see se.inera.certificate.service.impl.HealthCheckService#getUptime()
+     * @see se.inera.intyg.intygstjanst.web.service.impl.HealthCheckService#getUptime()
      */
     @Override
     public Status getUptime() {

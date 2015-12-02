@@ -67,7 +67,7 @@
 
   <logger name="org.apache.cxf" level="error" />
 
-  <logger name="se.inera.certificate" level="debug" />
+  <logger name="se.inera.intyg" level="debug" />
   
   <logger name="se.inera.intyg.intygstyper.fk7263" level="debug" />
   

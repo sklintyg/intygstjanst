@@ -1,4 +1,4 @@
-package se.inera.certificate.service.impl;
+package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -21,7 +21,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.certificate.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StatisticsServiceImplTest {

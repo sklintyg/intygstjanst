@@ -1,4 +1,4 @@
-package se.inera.certificate.integration.stub;
+package se.inera.intyg.intygstjanst.web.integration.stub;
 
 
 import org.slf4j.Logger;
@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
-import se.inera.certificate.integration.validator.RevokeRequestValidator;
+import se.inera.intyg.intygstjanst.web.integration.validator.RevokeRequestValidator;
 import se.inera.intyg.intygstyper.fk7263.integration.stub.FkMedicalCertificatesStore;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;

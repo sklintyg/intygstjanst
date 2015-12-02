@@ -1,13 +1,13 @@
-package se.inera.certificate.service.impl;
+package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.beans.factory.InitializingBean;
-import se.inera.certificate.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.common.support.modules.support.api.dto.TransportModelVersion;
-import se.inera.certificate.service.RecipientService;
-import se.inera.certificate.service.bean.CertificateType;
-import se.inera.certificate.service.bean.Recipient;
-import se.inera.certificate.service.builder.RecipientBuilder;
-import se.inera.certificate.service.bean.RecipientCertificateType;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
+import se.inera.intyg.intygstjanst.web.service.bean.RecipientCertificateType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
