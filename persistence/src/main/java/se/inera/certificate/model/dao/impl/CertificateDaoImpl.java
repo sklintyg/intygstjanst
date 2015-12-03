@@ -78,7 +78,8 @@ public class CertificateDaoImpl implements CertificateDao {
         List<Predicate> predicates = new ArrayList<>();
 
         // meta data has to match civic registration number
-        predicates.add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), civicRegistrationNumber.getPersonnummer()));
+        // TODO: this must be coordinated between different "tjänstekontrakts".
+        predicates.add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), civicRegistrationNumber.getPersonnummerWithoutDash()));
 
         // filter by certificate types
         if (types != null && !types.isEmpty()) {
