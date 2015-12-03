@@ -1,7 +1,7 @@
-package se.inera.certificate.spec
+package se.inera.intyg.common.specifications.spec
 
 import org.joda.time.LocalDateTime
-import se.inera.certificate.spec.util.WsClientFixture
+import se.inera.intyg.common.specifications.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.certificate.v1.StatusType
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtabp20.v1.SetCertificateStatusResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusRequestType

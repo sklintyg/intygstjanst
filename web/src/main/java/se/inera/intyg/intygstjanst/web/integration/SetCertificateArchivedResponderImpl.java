@@ -1,0 +1,41 @@
+package se.inera.intyg.intygstjanst.web.integration;
+
+import org.apache.cxf.annotations.SchemaValidation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.w3.wsaddressing10.AttributedURIType;
+
+import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.insuranceprocess.healthreporting.setcertificatearchived.rivtabp20.v1.SetCertificateArchivedResponderInterface;
+import se.inera.intyg.insuranceprocess.healthreporting.setcertificatearchivedresponder.v1.SetCertificateArchivedRequestType;
+import se.inera.intyg.insuranceprocess.healthreporting.setcertificatearchivedresponder.v1.SetCertificateArchivedResponseType;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+
+
+/**
+ * @author andreaskaltenbach
+ */
+@SchemaValidation
+public class SetCertificateArchivedResponderImpl implements SetCertificateArchivedResponderInterface {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SendMedicalCertificateResponderImpl.class);
+
+    @Autowired
+    private CertificateService certificateService;
+
+    @Override
+    public SetCertificateArchivedResponseType setCertificateArchived(AttributedURIType logicalAddress, SetCertificateArchivedRequestType request) {
+        LOGGER.debug("Attempting to set 'Deleted' to {} for intyg {}", request.getArchivedState(), request.getCertificateId());
+        SetCertificateArchivedResponseType response = new SetCertificateArchivedResponseType();
+        try {
+            certificateService.setArchived(request.getCertificateId(), new Personnummer(request.getNationalIdentityNumber()), request.getArchivedState());
+            response.setResult(ResultOfCallUtil.okResult());
+        } catch (InvalidCertificateException e) {
+            response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
+        }
+        return response;
+    }
+}

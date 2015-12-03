@@ -98,7 +98,7 @@
             <configuration>
               <archive>
                 <manifest>
-                  <mainClass>se.inera.certificate.tools.Migrera</mainClass>
+                  <mainClass>se.inera.intyg.intygstjanst.tools.migrering.Migrera</mainClass>
                 </manifest>
               </archive>
               <descriptorRefs>

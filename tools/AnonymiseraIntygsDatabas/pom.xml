@@ -118,7 +118,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>se.inera.certificate.tools.AnonymiseraIntygsDatabas</mainClass>
+              <mainClass>se.inera.intyg.intygstjanst.tools.anonymisering.AnonymiseraIntygsDatabas</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>

@@ -21,7 +21,7 @@
   profile="dev">
 
   <context:annotation-config />
-  <context:component-scan base-package="se.inera.certificate.model" />
+  <context:component-scan base-package="se.inera.intyg.intygstjanst.persistence.model" />
 
   <bean id="dataSource" class="org.h2.jdbcx.JdbcConnectionPool" destroy-method="dispose">
     <constructor-arg>

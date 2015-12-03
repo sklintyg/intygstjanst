@@ -1,13 +1,13 @@
 
 
-package se.inera.certificate.spec
+package se.inera.intyg.common.specifications.spec
 
 import net.sf.json.JSON
 import org.custommonkey.xmlunit.Diff
 import org.custommonkey.xmlunit.XMLUnit
-import se.inera.certificate.spec.util.FitnesseHelper
-import se.inera.certificate.spec.util.RestClientFixture
-import se.inera.certificate.spec.util.WsClientFixture
+import se.inera.intyg.common.specifications.spec.util.FitnesseHelper
+import se.inera.intyg.common.specifications.spec.util.RestClientFixture
+import se.inera.intyg.common.specifications.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.rivtabp20.v1.GetCertificateResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.CertificateType
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificateresponder.v1.GetCertificateRequestType

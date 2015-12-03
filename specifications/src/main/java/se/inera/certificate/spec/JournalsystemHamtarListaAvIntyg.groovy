@@ -1,5 +1,5 @@
-package se.inera.certificate.spec
-import se.inera.certificate.spec.util.WsClientFixture
+package se.inera.intyg.common.specifications.spec
+import se.inera.intyg.common.specifications.spec.util.WsClientFixture
 import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1.ListCertificatesForCareResponderInterface
 import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1.ListCertificatesForCareResponseType
 import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v1.ListCertificatesForCareType

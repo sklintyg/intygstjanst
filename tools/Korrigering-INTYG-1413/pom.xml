@@ -99,7 +99,7 @@
             <configuration>
               <archive>
                 <manifest>
-                  <mainClass>se.inera.certificate.tools.Korrigera</mainClass>
+                  <mainClass>se.inera.intyg.intygstjanst.tools.korrigering_intyg1413.Korrigera</mainClass>
                 </manifest>
               </archive>
               <descriptorRefs>

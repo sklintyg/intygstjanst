@@ -40,7 +40,7 @@
   </beans>
 
   <beans profile="!dev,!demo">
-    <bean id="liquibasecheck" class="se.inera.certificate.liquibase.DbChecker">
+    <bean id="liquibasecheck" class="se.inera.intyg.intygstjanst.persistence.liquibase.DbChecker">
       <constructor-arg ref="dataSource"/>
       <constructor-arg value="changelog/changelog.xml"/>
     </bean>

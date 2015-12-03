@@ -22,7 +22,7 @@
   <!-- ws endpoints -->
 
   <jaxws:endpoint address="/get-certificate-content/v1.0"
-      implementor="se.inera.certificate.integration.GetCertificateContentResponderImpl">
+      implementor="se.inera.intyg.intygstjanst.web.integration.GetCertificateContentResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/get-certificate-content-transform.xslt"/>
@@ -30,7 +30,7 @@
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
 
-  <jaxws:endpoint address="/get-consent/v1.0" implementor="se.inera.certificate.integration.GetConsentResponderImpl">
+  <jaxws:endpoint address="/get-consent/v1.0" implementor="se.inera.intyg.intygstjanst.web.integration.GetConsentResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/get-consent-transform.xslt"/>
@@ -39,11 +39,11 @@
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/get-recipients-for-certificate/v1.0"
-      implementor="se.inera.certificate.integration.GetRecipientsForCertificateResponderImpl">
+      implementor="se.inera.intyg.intygstjanst.web.integration.GetRecipientsForCertificateResponderImpl">
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/list-certificates/v1.0"
-                  implementor="se.inera.certificate.integration.ListCertificatesResponderImpl">
+                  implementor="se.inera.intyg.intygstjanst.web.integration.ListCertificatesResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/list-certificates-transform.xslt"/>
@@ -52,7 +52,7 @@
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/list-certificates-for-care/v1.0"
-                  implementor="se.inera.certificate.integration.ListCertificatesForCareResponderImpl">
+                  implementor="se.inera.intyg.intygstjanst.web.integration.ListCertificatesForCareResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg
@@ -62,7 +62,7 @@
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/list-certificates-for-citizen/v1.0"
-                  implementor="se.inera.certificate.integration.ListCertificatesForCitizenResponderImpl">
+                  implementor="se.inera.intyg.intygstjanst.web.integration.ListCertificatesForCitizenResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg
@@ -72,10 +72,10 @@
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/ping-for-configuration/v1.0"
-      implementor="se.inera.certificate.integration.PingForConfigurationResponderImpl"/>
+      implementor="se.inera.intyg.intygstjanst.web.integration.PingForConfigurationResponderImpl"/>
 
   <jaxws:endpoint address="/revoke-certificate/v1.0"
-      implementor="se.inera.certificate.integration.RevokeMedicalCertificateResponderImpl">
+      implementor="se.inera.intyg.intygstjanst.web.integration.RevokeMedicalCertificateResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/revoke-medical-certificate-transform.xslt"/>
@@ -84,7 +84,7 @@
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/revoke-certificate-wiretap/v1.0"
-      implementor="se.inera.certificate.integration.RevokeMedicalCertificateResponderWiretapImpl">
+      implementor="se.inera.intyg.intygstjanst.web.integration.RevokeMedicalCertificateResponderWiretapImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/revoke-medical-certificate-transform.xslt"/>
@@ -93,7 +93,7 @@
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/send-certificate/v1.0"
-      implementor="se.inera.certificate.integration.SendMedicalCertificateResponderImpl">
+      implementor="se.inera.intyg.intygstjanst.web.integration.SendMedicalCertificateResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/send-medical-certificate-transform.xslt"/>
@@ -102,7 +102,7 @@
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/send-certificate-to-recipient/v1.0"
-      implementor="se.inera.certificate.integration.SendCertificateToRecipientResponderImpl">
+      implementor="se.inera.intyg.intygstjanst.web.integration.SendCertificateToRecipientResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/clinicalprocess-healthcond-certificate/send-certificate-to-recipient-transform.xslt"/>
@@ -111,7 +111,7 @@
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/set-certificate-archived/v1.0"
-                  implementor="se.inera.certificate.integration.SetCertificateArchivedResponderImpl">
+                  implementor="se.inera.intyg.intygstjanst.web.integration.SetCertificateArchivedResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/set-certificate-status-transform.xslt"/>
@@ -120,7 +120,7 @@
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/set-certificate-status/v1.0"
-      implementor="se.inera.certificate.integration.SetCertificateStatusResponderImpl">
+      implementor="se.inera.intyg.intygstjanst.web.integration.SetCertificateStatusResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/set-certificate-status-transform.xslt"/>
@@ -128,7 +128,7 @@
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
 
-  <jaxws:endpoint address="/set-consent/v1.0" implementor="se.inera.certificate.integration.SetConsentResponderImpl">
+  <jaxws:endpoint address="/set-consent/v1.0" implementor="se.inera.intyg.intygstjanst.web.integration.SetConsentResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/set-consent-transform.xslt"/>

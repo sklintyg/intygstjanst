@@ -26,7 +26,7 @@
 
   <!--<import resource="classpath:env/*-persistence-config.xml" />-->
   <context:annotation-config />
-  <context:component-scan base-package="se.inera.certificate.model" />
+  <context:component-scan base-package="se.inera.intyg.intygstjanst.persistence.model" />
 
   <bean id="dataSource" class="org.h2.jdbcx.JdbcConnectionPool" destroy-method="dispose">
     <constructor-arg>
@@ -82,7 +82,7 @@
   </beans>
 
   <beans profile="!dev,!demo">
-    <bean id="liquibasecheck" class="se.inera.certificate.liquibase.DbChecker">
+    <bean id="liquibasecheck" class="se.inera.intyg.intygstjanst.persistence.liquibase.DbChecker">
       <constructor-arg ref="dataSource"/>
       <constructor-arg value="changelog/changelog.xml"/>
     </bean>
