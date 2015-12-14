@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:add="http://www.w3.org/2005/08/addressing" xmlns:urn="urn:riv:insuranceprocess:healthreporting:GetCertificateResponder:1">
+   <soapenv:Header>
+      <add:To>?</add:To>
+   </soapenv:Header>
+   <soapenv:Body>
+      <urn:GetCertificateRequest>
+         <urn:certificateId>${intygsId}</urn:certificateId>
+         <urn:nationalIdentityNumber>${personNr}</urn:nationalIdentityNumber>
+      </urn:GetCertificateRequest>
+   </soapenv:Body>
+</soapenv:Envelope>

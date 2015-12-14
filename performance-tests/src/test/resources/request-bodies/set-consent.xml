@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:add="http://www.w3.org/2005/08/addressing" xmlns:urn="urn:riv:insuranceprocess:healthreporting:SetConsentResponder:1">
+   <soapenv:Header>
+      <add:To>?</add:To>
+   </soapenv:Header>
+   <soapenv:Body>
+      <urn:SetConsentRequest>
+         <urn:personnummer>${personNr}</urn:personnummer>
+         <urn:consent-given>true</urn:consent-given>
+      </urn:SetConsentRequest>
+   </soapenv:Body>
+</soapenv:Envelope>
