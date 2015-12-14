@@ -2,16 +2,30 @@ package se.inera.intygstjanst
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
+import io.gatling.core.session._
 import io.gatling.http.request.Body
 import scala.concurrent.duration._
+import collection.mutable.{ HashMap, MultiMap, Set }
 import java.util.UUID
 
-class ListCertificates extends Simulation {
+class GetCertificates extends Simulation {
 
   val numberOfUsers = 100
 
   val testpersonnummer = csv("data/intyg.csv").circular
   val intyg = csv("data/intyg.csv").records
+
+  val scn = scenario("Get Certificates")
+    .feed(testpersonnummer)
+    //Give consent for current user
+    .exec(Utils.consent)
+    .exec(http("Get certificate ${intygsId} for user ${personNr}")
+      .post("/get-certificate/v1.0")
+      .headers(Headers.get_certificate)
+      .body(ELFileBody("request-bodies/get-certificate.xml"))
+      .check(
+        status.is(200),
+        substring("<ns2:certificateId>")))
 
   val preload = scenario("Preload database")
     .foreach(intyg, "record") {
@@ -22,22 +36,8 @@ class ListCertificates extends Simulation {
           .body(ELFileBody("request-bodies/register-medical-certificate.xml")))
     }
 
-  val scn = scenario("List Certificates")
-    .feed(testpersonnummer)
-    //Give consent for current user
-    .exec(Utils.consent)
-    .exec(http("List certificates for ${personNr}")
-      .post("/list-certificates/v1.0")
-      .headers(Headers.list_certificates)
-      .body(ELFileBody("request-bodies/list-certificates.xml"))
-      .check(
-        status.is(200),
-        // Response should contain a certificateId element if successful
-        substring("<ns2:certificateId>")))
-    .pause(2 seconds)
-
   setUp(preload.inject(atOnceUsers(1)).protocols(Conf.httpConf),
-      scn.inject(rampUsers(numberOfUsers) over (120 seconds)).protocols(Conf.httpConf))
+    scn.inject(rampUsers(numberOfUsers) over (120 seconds)).protocols(Conf.httpConf))
 
   after {
     var result = Utils.clean()

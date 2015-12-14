@@ -11,15 +11,15 @@ class StoreCertificates extends Simulation {
 
   val scn = scenario("Store Certificates")
     .feed(testpersonnummer)
-      .repeat(10) {
-        exec(session=>session.set("utlatandeId", UUID.randomUUID().toString()))
+    .repeat(10) {
+      exec(session => session.set("intygsId", UUID.randomUUID().toString()))
         .exec(http("Store certificate ${personNr}")
           .post("/register-certificate/v3.0")
-            .headers(Headers.store_certificate)
-            .body(ELFileBody("request-bodies/register-medical-certificate.xml"))
-            .check(status.is(200)))
-      }
-   .pause(2 seconds)
+          .headers(Headers.store_certificate)
+          .body(ELFileBody("request-bodies/register-medical-certificate.xml"))
+          .check(status.is(200)))
+    }
+    .pause(2 seconds)
   setUp(scn.inject(rampUsers(100) over (120 seconds)).protocols(Conf.httpConf))
 
 }

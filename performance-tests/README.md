@@ -28,16 +28,25 @@ I mappen src/test/resources/request-bodies finns xml-filer med SOAP-requests fö
 
 ### StoreCertificates
 Lagrar 1000 intyg, 10 per testperson, från csv-filen med personnummer.
+Tömmer inte databasen efter körning, använd RemoveTestData för att tömma.
 
 - mvn test -DsimulationClass=se.inera.intygstjanst.StoreCertificates
 
+### GetCertificates
+Preloadar databasen med personer och intyg.
+Lägger in medgivande och hämtar ut specifika intyg för en testperson.
+Tömmer databasen efter körning.
+
+- mvn test -DsimulationClass=se.inera.intygstjanst.GetCertificates
+
 ### ListCertificates
-Körs med fördel efter StoreCertificates så att det finns något att visa...
-Lägger in medgivande och listar ut intyg för samma personnummer som StoreCertificates.
+Preloadar databasen med personer och intyg.
+Lägger in medgivande och listar ut intyg.
+Tömmer databasen efter körning.
 
 - mvn test -DsimulationClass=se.inera.intygstjanst.ListCertificates
 
-### Radera testdata
+### RemoveTestData
 Man kan även tömma databasen genom att köra:
 
 - mvn test -DsimulationClass=se.inera.webcert.RemoveTestData
@@ -53,7 +62,7 @@ iteration som skall författa och signera ett intyg.
 ### Välj målmiljö
 Ett alternativ är att öppna pom.xml och redigera element under <properties>
 
-- <baseUrl>http://localhost:9088</baseUrl>
+- <baseUrl>http://localhost:8080/inera-certificate</baseUrl>
 
 Alternativt kan man ange -DbaseUrl=....... på kommandoraden.
 
@@ -65,7 +74,14 @@ Från command-line fungerar följande:
   mvn test -DsimulationClass=se.inera.intygstjanst.StoreCertificates
   
 - Medgivande och lista intyg
-  mvn test -DsimulationClass=se.inera.webcert.ListCertificates
+  mvn test -DsimulationClass=se.inera.intygstjanst.ListCertificates
+  
+- Medgivande och hämtning av specifika intyg med hjälp av intygsid och personnummer
+  mvn test -DsimulationClass=se.inera.intygstjanst.GetCertificates
+  
+- Tömma databasen
+  mvn test -DsimulationClass=se.inera.intygstjanst.RemoveTestData
+ 
 
 
 ## Hur följer jag upp utfallet?

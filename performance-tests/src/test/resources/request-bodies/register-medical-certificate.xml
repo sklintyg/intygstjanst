@@ -6,7 +6,7 @@
    <soapenv:Body>
       <urn:RegisterMedicalCertificate>
   <urn:lakarutlatande>
-        <urn1:lakarutlatande-id>${utlatandeId}</urn1:lakarutlatande-id>
+        <urn1:lakarutlatande-id>${intygsId}</urn1:lakarutlatande-id>
       <urn1:typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om allmän försäkring</urn1:typAvUtlatande>
       <urn1:kommentar>Har haft mailkontakt med patientenPrognosen att återgå till arbete är svår att bedömma förrän utredningen är genomförd.</urn1:kommentar>
       <urn1:signeringsdatum>2013-03-17T00:00:00</urn1:signeringsdatum>
