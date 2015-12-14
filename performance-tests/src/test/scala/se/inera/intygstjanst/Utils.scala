@@ -28,6 +28,7 @@ object Utils {
       .check(status.is(200)))
   }
 
+  // Use scalaj.http, so this function can be used without gatling DSL
   def clean() : HttpResponse[String] = {
     var url = baseUrl + "/resources/certificate" 
     Http(url)

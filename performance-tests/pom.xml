@@ -54,12 +54,23 @@
             </plugin>
         </plugins>
     </build>
-
     <profiles>
         <profile>
             <id>ListCertificates</id>
             <properties>
                 <simulationClass>se.inera.intygstjanst.ListCertificates</simulationClass>
+            </properties>
+        </profile>
+        <profile>
+            <id>StoreCertificates</id>
+            <properties>
+                <simulationClass>se.inera.intygstjanst.StoreCertificates</simulationClass>
+            </properties>
+        </profile>
+        <profile>
+            <id>GetCertificates</id>
+            <properties>
+                <simulationClass>se.inera.intygstjanst.GetCertificates</simulationClass>
             </properties>
         </profile>
     </profiles>
