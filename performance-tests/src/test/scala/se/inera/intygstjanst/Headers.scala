@@ -29,4 +29,9 @@ object Headers {
     "Content-Type" -> """text/xml;charset=UTF-8""",
     "SOAPAction" -> "urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:1")
 
+  val get_certificate = Map(
+            "Accept" -> """application/json, text/plain, */*""",
+            "Content-Type" -> """text/xml;charset=UTF-8""",
+            "SOAPAction" -> "urn:riv:insuranceprocess:healthreporting:GetCertificateResponder:1:GetCertificate")
+
 }
