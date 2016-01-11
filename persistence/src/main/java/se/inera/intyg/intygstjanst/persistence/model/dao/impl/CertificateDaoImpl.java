@@ -18,11 +18,19 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -70,7 +78,7 @@ public class CertificateDaoImpl implements CertificateDao {
         List<Predicate> predicates = new ArrayList<>();
 
         // meta data has to match civic registration number
-        // TODO: this must be coordinated between different "tjänstekontrakts".
+        // WEBCERT-2287: this must be coordinated between different "tjänstekontrakts".
         predicates.add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), civicRegistrationNumber.getPersonnummerWithoutDash()));
 
         // filter by certificate types
