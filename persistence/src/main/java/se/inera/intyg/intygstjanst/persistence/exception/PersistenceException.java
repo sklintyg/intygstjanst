@@ -23,9 +23,6 @@ package se.inera.intyg.intygstjanst.persistence.exception;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 
 public class PersistenceException extends Exception {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -659903598786532595L;
 
     public PersistenceException(String certificateId, Personnummer civicRegistrationNumber) {
