@@ -1,6 +1,6 @@
 |Hamta intygsinnehall|
 |personnummer|intyg|förväntatSvar|resultat?|
-|${person3.personnummer}|fit-intyg-1||[ERROR] - Missing consent for patient ${person3.personnummer}|
+|${person3.personnummer}|fit-intyg-1||[ERROR] - Missing consent for patient ${person3.pnrhash}|
 |${person1.personnummer}|fit-intyg-1|{"id":"fit-intyg-1","typ":"fk7263"}|OK|
 |${person1.personnummer}|fit-intyg-3||[INFO] - Certificate 'fit-intyg-3' has been revoked|
 |${person1.personnummer}|fit-intyg-6||[ERROR] - Unknown certificate ID: fit-intyg-6|

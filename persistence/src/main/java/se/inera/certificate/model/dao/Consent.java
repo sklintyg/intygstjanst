@@ -1,5 +1,7 @@
 package se.inera.certificate.model.dao;
 
+import se.inera.certificate.modules.support.api.dto.Personnummer;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -18,15 +20,15 @@ public class Consent {
     public Consent() {
     }
 
-    public Consent(String civicRegistrationNumber) {
-        this.civicRegistrationNumber = civicRegistrationNumber;
+    public Consent(Personnummer civicRegistrationNumber) {
+        this.civicRegistrationNumber = civicRegistrationNumber.getPersonnummer();
     }
 
-    public String getCivicRegistrationNumber() {
-        return civicRegistrationNumber;
+    public Personnummer getCivicRegistrationNumber() {
+        return new Personnummer(civicRegistrationNumber);
     }
 
-    public void setCivicRegistrationNumber(String civicRegistrationNumber) {
-        this.civicRegistrationNumber = civicRegistrationNumber;
+    public void setCivicRegistrationNumber(Personnummer civicRegistrationNumber) {
+        this.civicRegistrationNumber = civicRegistrationNumber.getPersonnummer();
     }
 }

@@ -25,6 +25,7 @@ import org.joda.time.LocalDateTime;
 
 import se.inera.certificate.exception.PersistenceException;
 import se.inera.certificate.model.CertificateState;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 
 /**
  * Data Access Object for handling {@link Certificate}.
@@ -43,7 +44,7 @@ public interface CertificateDao {
      * @param toDate To data when the certificate is valid
      * @return filtered list
      */
-    List<Certificate> findCertificate(String civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate, List<String> careUnits);
+    List<Certificate> findCertificate(Personnummer civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate, List<String> careUnits);
 
     /**
      * Gets one {@link Certificate}.
@@ -56,7 +57,7 @@ public interface CertificateDao {
      * @throws se.inera.certificate.exception.PersistenceException if the given civic registration number does not match with
      *  the certificate's patient civic registration number
      */
-    Certificate getCertificate(String civicRegistrationNumber, String certificateId) throws PersistenceException;
+    Certificate getCertificate(Personnummer civicRegistrationNumber, String certificateId) throws PersistenceException;
 
     /**
      * Stores a {@link Certificate}.
@@ -84,7 +85,7 @@ public interface CertificateDao {
      * @throws se.inera.certificate.exception.PersistenceException if the combination of certificate ID and civic registration number
      *  does not match
      */
-    void updateStatus(String certificateId, String civicRegistrationNumber, CertificateState state, String target, LocalDateTime timestamp)
+    void updateStatus(String certificateId, Personnummer civicRegistrationNumber, CertificateState state, String target, LocalDateTime timestamp)
             throws PersistenceException;
 
     /**
@@ -96,14 +97,10 @@ public interface CertificateDao {
      * @param civicRegistrationNumber
      *            The citizen for which to remove certificates.
      */
-    void removeCertificatesDeletedByCareGiver(String civicRegistrationNumber);
+    void removeCertificatesDeletedByCareGiver(Personnummer civicRegistrationNumber);
 
     /**
      * Set the field 'Deleted', (actually corresponding to whether or not the Intyg is archived by the user or not).
-     * @param certificateId 
-     * @param civicRegistrationNumber
-     * @param timestamp
-     * @throws PersistenceException 
      */
-    void setArchived(String certificateId, String civicRegistrationNumber, String archivedState) throws PersistenceException;
+    void setArchived(String certificateId, Personnummer civicRegistrationNumber, String archivedState) throws PersistenceException;
 }

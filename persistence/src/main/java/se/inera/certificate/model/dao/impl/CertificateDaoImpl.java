@@ -46,6 +46,7 @@ import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.CertificateStateHistoryEntry;
 import se.inera.certificate.model.dao.OriginalCertificate;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 
 /**
  * Implementation of {@link CertificateDao}.
@@ -62,7 +63,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<Certificate> findCertificate(String civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate, List<String> careUnits) {
+    public List<Certificate> findCertificate(Personnummer civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate, List<String> careUnits) {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Certificate> query = criteriaBuilder.createQuery(Certificate.class);
@@ -77,7 +78,7 @@ public class CertificateDaoImpl implements CertificateDao {
         List<Predicate> predicates = new ArrayList<>();
 
         // meta data has to match civic registration number
-        predicates.add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), civicRegistrationNumber));
+        predicates.add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), civicRegistrationNumber.getPersonnummer()));
 
         // filter by certificate types
         if (types != null && !types.isEmpty()) {
@@ -103,7 +104,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, noRollbackFor = { PersistenceException.class })
-    public Certificate getCertificate(String civicRegistrationNumber, String certificateId) throws PersistenceException {
+    public Certificate getCertificate(Personnummer civicRegistrationNumber, String certificateId) throws PersistenceException {
         Certificate certificate = entityManager.find(Certificate.class, certificateId);
 
         if (certificate == null) {
@@ -114,7 +115,7 @@ public class CertificateDaoImpl implements CertificateDao {
         if (civicRegistrationNumber != null && !certificate.getCivicRegistrationNumber().equals(civicRegistrationNumber)) {
 
             LOG.warn(String.format("Trying to access certificate '%s' for user '%s' but certificate's user is '%s'.",
-                    certificateId, civicRegistrationNumber, certificate.getCivicRegistrationNumber()));
+                    certificateId, civicRegistrationNumber.getPnrHash(), certificate.getCivicRegistrationNumber().getPnrHash()));
             throw new PersistenceException(certificateId, civicRegistrationNumber);
         }
 
@@ -134,7 +135,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     @Transactional(noRollbackFor = { PersistenceException.class })
-    public void updateStatus(String id, String civicRegistrationNumber, CertificateState state, String target, LocalDateTime timestamp)
+    public void updateStatus(String id, Personnummer civicRegistrationNumber, CertificateState state, String target, LocalDateTime timestamp)
             throws PersistenceException {
 
         Certificate certificate = entityManager.find(Certificate.class, id);
@@ -156,7 +157,7 @@ public class CertificateDaoImpl implements CertificateDao {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void removeCertificatesDeletedByCareGiver(String civicRegistrationNumber) {
+    public void removeCertificatesDeletedByCareGiver(Personnummer civicRegistrationNumber) {
         List<Certificate> certificatesOfCitizen = findCertificate(civicRegistrationNumber, null, null, null, null);
         for (Certificate certificate : certificatesOfCitizen) {
             if (certificate.isDeletedByCareGiver()) {
@@ -168,14 +169,14 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     @Transactional(noRollbackFor = { PersistenceException.class })
-    public void setArchived(String id, String civicRegistrationNumber, String archived) throws PersistenceException {
+    public void setArchived(String id, Personnummer civicRegistrationNumber, String archived) throws PersistenceException {
         Certificate certificate = entityManager.find(Certificate.class, id);
 
         if (certificate == null || !certificate.getCivicRegistrationNumber().equals(civicRegistrationNumber)) {
             throw new PersistenceException(id, civicRegistrationNumber);
         }
 
-        boolean deleted = archived.equalsIgnoreCase("true") ? true : false; 
+        boolean deleted = archived.equalsIgnoreCase("true");
         certificate.setDeleted(deleted);
         store(certificate);
     }

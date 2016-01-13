@@ -23,6 +23,7 @@ import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.OriginalCertificate;
 import se.inera.certificate.modules.support.api.CertificateHolder;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.ConsentService;
 import se.inera.certificate.service.bean.Recipient;
@@ -35,7 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RunWith(MockitoJUnitRunner.class)
 public class CertificateServiceImplTest {
 
-    private static final String PERSONNUMMER = "<civicRegistrationNumber>";
+    private static final Personnummer PERSONNUMMER = new Personnummer("<civicRegistrationNumber>");
     private static final String CERTIFICATE_ID = "<certificate-id>";
 
     private static final String RECIPIENT_ID = "FK";

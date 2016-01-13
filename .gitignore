@@ -13,6 +13,7 @@ rebel.xml
 
 bin
 target
+node_modules
 
 specifications/src/test/fitnesse/FitNesseRoot/ErrorLogs/
 dependency-reduced-pom.xml

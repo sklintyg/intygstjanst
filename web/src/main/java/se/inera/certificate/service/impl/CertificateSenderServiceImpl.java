@@ -32,7 +32,6 @@ import se.inera.certificate.exception.MissingModuleException;
 import se.inera.certificate.exception.RecipientUnknownException;
 import se.inera.certificate.exception.ServerException;
 import se.inera.certificate.exception.SubsystemCallException;
-import se.inera.certificate.logging.LogMarkers;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.registry.IntygModuleRegistry;
 import se.inera.certificate.modules.registry.ModuleNotFoundException;
@@ -40,6 +39,7 @@ import se.inera.certificate.modules.support.ModuleEntryPoint;
 import se.inera.certificate.modules.support.api.dto.InternalModelHolder;
 import se.inera.certificate.modules.support.api.exception.ModuleException;
 import se.inera.certificate.service.CertificateSenderService;
+import se.inera.certificate.service.MonitoringLogService;
 import se.inera.certificate.service.RecipientService;
 import se.inera.certificate.service.bean.CertificateType;
 import se.inera.certificate.service.bean.Recipient;
@@ -76,6 +76,9 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     @Autowired
     private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponderInterface;
 
+    @Autowired
+    private MonitoringLogService monitoringLogService;
+
     @Override
     public void sendCertificate(Certificate certificate, String recipientId) {
         try {
@@ -92,8 +95,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
                 //Check that the recipient is valid for certType
                 if (recipientService.listRecipients(certType).contains(recipient)) {
                     logicalAddress = recipient.getLogicalAddress();
-                }
-                else {
+                } else {
                     LOGGER.error("Recipient {} is not available for certificate type {}", recipientId, certType.toString());
                     throw new ServerException(String.format("Recipient %s is not available for certificate type %s", recipientId, certType.toString()));
                 }
@@ -102,11 +104,12 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
                     certificate.getOriginalCertificate().getDocument()),
                     logicalAddress, recipientId);
 
+            monitoringLogService.logCertificateSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(), recipientId);
+
         } catch (ModuleNotFoundException e) {
-            String message = String.format("The module '%s' was not found - not registered in application",
-                    certificate.getType());
-            LOGGER.error(message);
-            throw new MissingModuleException(message, e);
+            LOGGER.error("The module '{}' was not found - not registered in application", certificate.getType());
+            throw new MissingModuleException(String.format("The module '%s' was not found - not registered in application",
+                    certificate.getType()), e);
 
         } catch (ModuleException e) {
             String message = String.format("Failed to send certificate '%s' of type '%s' to recipient '%s'", certificate.getId(), certificate.getType(), recipientId);
@@ -161,8 +164,10 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
         if (sendResponse.getResult().getResultCode() != OK) {
             String message = "Failed to send question to Försäkringskassan for revoking certificate '" + intygId
                     + "'. Info from forsakringskassan: " + sendResponse.getResult().getInfoText();
-            LOGGER.error(LogMarkers.MONITORING, message);
+            LOGGER.error(message);
             throw new SubsystemCallException(FK.toString(), message);
+        } else {
+            monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(), "FK");
         }
     }
 
@@ -178,8 +183,10 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
         if (sendResponse.getResult().getResultCode() != OK) {
             String message = "Failed to send question to '" + recipientId + "' when revoking certificate '" + certificate.getId()
                     + "'. Info from recipient: " + sendResponse.getResult().getInfoText();
-            LOGGER.error(LogMarkers.MONITORING, message);
+            LOGGER.error(message);
             throw new SubsystemCallException(recipientId, message);
+        } else {
+            monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(), recipientId);
         }
     }
 
@@ -194,7 +201,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             return logicalAddress;
 
         } catch (RecipientUnknownException rue) {
-            LOGGER.error(LogMarkers.MONITORING, rue.getMessage());
+            LOGGER.error(rue.getMessage());
             throw new RuntimeException(rue);
         }
     }

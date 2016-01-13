@@ -1,5 +1,7 @@
 package se.inera.certificate.service;
 
+import se.inera.certificate.modules.support.api.dto.Personnummer;
+
 public interface ConsentService {
 
     /**
@@ -8,7 +10,7 @@ public interface ConsentService {
      * @param civicRegistrationNumber
      * @return true if consent is registered for or civicRegistrationNumer is null
      */
-    boolean isConsent(String civicRegistrationNumber);
+    boolean isConsent(Personnummer civicRegistrationNumber);
 
     /**
      * Set consent status for given cuvucRegistrationNumber. True means consent is given and false means no consent is given.
@@ -16,5 +18,5 @@ public interface ConsentService {
      * @param civicRegistrationNumber
      * @param consentGiven
      */
-    void setConsent(String civicRegistrationNumber, boolean consentGiven);
+    void setConsent(Personnummer civicRegistrationNumber, boolean consentGiven);
 }

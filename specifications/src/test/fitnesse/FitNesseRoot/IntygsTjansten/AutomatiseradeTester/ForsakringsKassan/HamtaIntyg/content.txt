@@ -28,7 +28,7 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|${person3.personnummer}|fit-intyg-1|[ERROR] - Consent required from user ${person3.personnummer}|
+|${person3.personnummer}|fit-intyg-1|[ERROR] - Consent required from user ${person3.pnrhash}|
 
 !2 Felscenarier
 
@@ -36,19 +36,19 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|${person1.personnummer}|fit-intyg-6|[ERROR] - Certificate 'fit-intyg-6' does not exist for user '${person1.personnummer}'|
+|${person1.personnummer}|fit-intyg-6|[ERROR] - Certificate 'fit-intyg-6' does not exist for user '${person1.pnrhash}'|
 
 !3 Testfall Get-Certificate-3.2: Försök hämta okänt intyg
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|${person1.personnummer}|fit-intyg-7|[ERROR] - Certificate 'fit-intyg-7' does not exist for user '${person1.personnummer}'|
+|${person1.personnummer}|fit-intyg-7|[ERROR] - Certificate 'fit-intyg-7' does not exist for user '${person1.pnrhash}'|
 
 !3 Testfall Get-Certificate-3.3: Försök hämta intyg för okänd invånare
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|
-|${person4.personnummer}|fit-intyg-6|[ERROR] - Consent required from user ${person4.personnummer}|
+|${person4.personnummer}|fit-intyg-6|[ERROR] - Consent required from user ${person4.pnrhash}|
 
 !3 Testfall Get-Certificate-3.4: Försök hämta intyg utan intygsid
 

@@ -15,6 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import se.inera.certificate.model.builder.CertificateBuilder;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.model.dao.CertificateDao;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateSenderService;
 import se.inera.certificate.service.CertificateService;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponderInterface;
@@ -25,7 +26,7 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.sendcertificatetore
 @RunWith( MockitoJUnitRunner.class )
 public class SendCertificateToRecipientResponderImplTest {
 
-    private static final String PERSONNUMMER = "19121212-1212";
+    private static final Personnummer PERSONNUMMER = new Personnummer("19121212-1212");
     private static final String CERTIFICATE_ID = "Intygs-id-1234567890";
     private static final String RECIPIENT_ID = "FK";
 
@@ -61,7 +62,7 @@ public class SendCertificateToRecipientResponderImplTest {
     private SendCertificateToRecipientType createRequest() {
 
         SendCertificateToRecipientType request = new SendCertificateToRecipientType();
-        request.setPersonId(PERSONNUMMER);
+        request.setPersonId(PERSONNUMMER.getPersonnummer());
         request.setMottagareId(RECIPIENT_ID);
         request.setUtlatandeId(CERTIFICATE_ID);
 

@@ -34,9 +34,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.certificate.integration.module.exception.MissingConsentException;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateService;
+import se.inera.certificate.service.MonitoringLogService;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listcertificatesforcitizen.v1.ListCertificatesForCitizenType;
@@ -54,12 +58,15 @@ public class ListCertificatesForCitizenResponderImplTest {
     @Mock
     private CertificateService certificateService = mock(CertificateService.class);
 
+    @Mock
+    private MonitoringLogService monitoringLogService;
+
     @InjectMocks
     private ListCertificatesForCitizenResponderInterface responder = new ListCertificatesForCitizenResponderImpl();
 
     @Test
     public void listCertificatesWithNoCertificates() throws Exception {
-        String civicRegistrationNumber = "19350108-1234";
+        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = new LocalDate(2000, 1, 1);
         LocalDate toDate = new LocalDate(2020, 12, 12);
@@ -80,10 +87,10 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     @Test
     public void listCertificatesWithoutConsent() throws Exception {
-        when(certificateService.listCertificatesForCitizen(anyString(), Matchers.<List<String>>any(), any(LocalDate.class), any(LocalDate.class))).thenThrow(new MissingConsentException(""));
+        when(certificateService.listCertificatesForCitizen(any(Personnummer.class), Matchers.<List<String>>any(), any(LocalDate.class), any(LocalDate.class))).thenThrow(new MissingConsentException(null));
 
         List<String> types = Collections.emptyList();
-        ListCertificatesForCitizenType parameters = createListCertificatesRequest("12-3", types, null, null);
+        ListCertificatesForCitizenType parameters = createListCertificatesRequest(new Personnummer("12-3"), types, null, null);
 
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
@@ -92,9 +99,9 @@ public class ListCertificatesForCitizenResponderImplTest {
         assertEquals("NOCONSENT", response.getResult().getResultText());
     }
 
-    private ListCertificatesForCitizenType createListCertificatesRequest(String civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate) {
+    private ListCertificatesForCitizenType createListCertificatesRequest(Personnummer civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate) {
         ListCertificatesForCitizenType parameters = new ListCertificatesForCitizenType();
-        parameters.setPersonId(civicRegistrationNumber);
+        parameters.setPersonId(civicRegistrationNumber.getPersonnummer());
 
         for (String type: types) {
             parameters.getUtlatandeTyp().add(type);

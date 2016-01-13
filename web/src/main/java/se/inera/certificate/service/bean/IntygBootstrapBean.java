@@ -68,24 +68,18 @@ public class IntygBootstrapBean {
             String[] firstObjectsStrings = arg0.getFilename().split("-");
             String[] secondObjectsStrings = arg1.getFilename().split("-");
             int first = 0, second = 0;
-            for (String s : firstObjectsStrings) {
-                try {
-                    first = Integer.parseInt(s);
-                } catch (NumberFormatException e) {
-                }
+            final int indexOfInt = 1;
+            try {
+                first = Integer.parseInt(firstObjectsStrings[indexOfInt]);
+            } catch (NumberFormatException e) {
+                LOG.error("Could not parse int in filename " + arg0.getFilename(), e);
             }
-            for (String s : secondObjectsStrings) {
-                try {
-                    second = Integer.parseInt(s);
-                } catch (NumberFormatException e) {
-                }
+            try {
+                second = Integer.parseInt(secondObjectsStrings[indexOfInt]);
+            } catch (NumberFormatException e) {
+                LOG.error("Could not parse int in filename " + arg1.getFilename(), e);
             }
-            if (first > second) {
-                return 1;
-            } else if (first < second) {
-                return -1;
-            }
-            return 0;
+            return Integer.compare(first, second);
         }
 
     }

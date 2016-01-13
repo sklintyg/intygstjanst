@@ -38,7 +38,7 @@
 
 |Ratta intyg|
 |personnummer|intyg|resultat?|
-|${person1.personnummer}|fit-intyg-non-existing|=~/ERROR.*No certificate 'fit-intyg-non-existing' found to revoke for patient '${person1.personnummer}'/|
+|${person1.personnummer}|fit-intyg-non-existing|=~/ERROR.*No certificate 'fit-intyg-non-existing' found to revoke for patient '${person1.pnrhash}'/|
 
 !3 Intygstjänsten tillåter ej att rätta intyget en gång till
 

@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import se.inera.certificate.model.dao.Consent;
 import se.inera.certificate.model.dao.ConsentDao;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,14 +22,14 @@ public class ConsentDaoImpl implements ConsentDao {
     private EntityManager entityManager;
 
     @Override
-    public void setConsent(String civicRegistrationNumber) {
+    public void setConsent(Personnummer civicRegistrationNumber) {
         if (!hasConsent(civicRegistrationNumber)) {
             entityManager.persist(new Consent(civicRegistrationNumber));
         }
     }
 
     @Override
-    public void revokeConsent(String civicRegistrationNumber) {
+    public void revokeConsent(Personnummer civicRegistrationNumber) {
         Consent consent = findConsent(civicRegistrationNumber);
         if (consent != null) {
             entityManager.remove(consent);
@@ -37,11 +38,11 @@ public class ConsentDaoImpl implements ConsentDao {
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public boolean hasConsent(String civicRegistrationNumber) {
+    public boolean hasConsent(Personnummer civicRegistrationNumber) {
         return findConsent(civicRegistrationNumber) != null;
     }
 
-    private Consent findConsent(String civicRegistrationNumber) {
-        return entityManager.find(Consent.class, civicRegistrationNumber);
+    private Consent findConsent(Personnummer civicRegistrationNumber) {
+        return entityManager.find(Consent.class, civicRegistrationNumber.getPersonnummer());
     }
 }

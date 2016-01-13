@@ -112,7 +112,7 @@ public class HealthCheckServiceImpl implements HealthCheckService {
 
     private void logStatus(String operation, Status status) {
         String result = status.isOk() ? "OK" : "FAIL";
-        LOGGER.info("Operation {} completed with result {} in {} ms", new Object[] { operation, result, status.getMeasurement() });
+        LOGGER.info("Operation {} completed with result {} in {} ms", operation, result, status.getMeasurement());
     }
 
     private Status createStatus(boolean ok, StopWatch stopWatch) {

@@ -28,6 +28,7 @@ import se.inera.certificate.integration.module.exception.MissingConsentException
 import se.inera.certificate.model.CertificateState;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.certificate.modules.support.api.CertificateHolder;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 
@@ -38,7 +39,7 @@ import java.util.List;
  */
 public interface CertificateService {
 
-    public enum SendStatus {
+    enum SendStatus {
         ALREADY_SENT, OK
     }
 
@@ -57,7 +58,7 @@ public interface CertificateService {
      * @throws MissingConsentException
      *             if the patient has not given consent for accessing her certificates
      */
-    List<Certificate> listCertificatesForCitizen(String civicRegistrationNumber, List<String> certificateTypes, LocalDate fromDate, LocalDate toDate)
+    List<Certificate> listCertificatesForCitizen(Personnummer civicRegistrationNumber, List<String> certificateTypes, LocalDate fromDate, LocalDate toDate)
             throws MissingConsentException;
 
     /**
@@ -69,7 +70,7 @@ public interface CertificateService {
      *            a list of care units for which the certificates must belong.
      * @return list of matching certificates or empty list if no such certificates can be found
      */
-    List<Certificate> listCertificatesForCare(String civicRegistrationNumber, List<String> careUnits);
+    List<Certificate> listCertificatesForCare(Personnummer civicRegistrationNumber, List<String> careUnits);
 
     /**
      * Returns the certificate for the given patient and certificate ID.
@@ -87,7 +88,7 @@ public interface CertificateService {
      * @throws CertificateRevokedException
      *             if the certificate has been revoked
      */
-    Certificate getCertificateForCitizen(String civicRegistrationNumber, String certificateId) throws MissingConsentException,
+    Certificate getCertificateForCitizen(Personnummer civicRegistrationNumber, String certificateId) throws MissingConsentException,
             InvalidCertificateException,
             CertificateRevokedException;
 
@@ -121,7 +122,7 @@ public interface CertificateService {
      *             if the certificate has been revoked
      * @throws se.inera.certificate.exception.RecipientUnknownException
      */
-    SendStatus sendCertificate(String civicRegistrationNumber, String certificateId, String recipientId)
+    SendStatus sendCertificate(Personnummer civicRegistrationNumber, String certificateId, String recipientId)
             throws InvalidCertificateException, CertificateRevokedException, RecipientUnknownException;
 
 
@@ -139,7 +140,7 @@ public interface CertificateService {
     Certificate storeCertificate(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException,
             InvalidCertificateException, CertificateValidationException;
 
-    void setCertificateState(String civicRegistrationNumber, String certificateId, String target, CertificateState state, LocalDateTime timestamp)
+    void setCertificateState(Personnummer civicRegistrationNumber, String certificateId, String target, CertificateState state, LocalDateTime timestamp)
             throws InvalidCertificateException;
 
     /**
@@ -158,7 +159,7 @@ public interface CertificateService {
      * @throws CertificateRevokedException
      *             if the certificate has been revoked
      */
-    Certificate revokeCertificate(String civicRegistrationNumber, String certificateId, RevokeType revokeData) throws InvalidCertificateException,
+    Certificate revokeCertificate(Personnummer civicRegistrationNumber, String certificateId, RevokeType revokeData) throws InvalidCertificateException,
             CertificateRevokedException;
 
     /**
@@ -167,5 +168,5 @@ public interface CertificateService {
      * @param archivedState
      * @throws InvalidCertificateException
      */
-    void setArchived(String certificateId, String nationalIdentityNumber, String archivedState) throws InvalidCertificateException;
+    void setArchived(String certificateId, Personnummer nationalIdentityNumber, String archivedState) throws InvalidCertificateException;
 }

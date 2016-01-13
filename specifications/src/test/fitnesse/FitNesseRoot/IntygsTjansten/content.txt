@@ -8,6 +8,13 @@
 !define person5.personnummer {19030303-0303}
 !define person6.personnummer {19121212-1212}
 !define person7.personnummer {19121212-0002}
+!define person1.pnrhash {416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6}
+!define person2.pnrhash {11da733546cb47cfc30f3f789eb6a94898d3d6fae3092e069ada392cddabe3ed}
+!define person3.pnrhash {aaaa76dac36111b9b1b869b40c75ed9139a97643ef2b5a0cffb51991bf9ec17a}
+!define person4.pnrhash {da6c3682701bc3215b286bee5dab2ae6221ad2d759f0a96c8355da4daf723152}
+!define person5.pnrhash {e86382561e7b2b550fb7c46e9706764256ed2671271427a28076c08c8a4eb087}
+!define person6.pnrhash {9a8b138a666f84da32e9383b49a15f46f6e08d2c492352aa0dfcc3f993773b0d}
+!define person7.pnrhash {0632136f44cba779124c7950702e783f28b21b450732f9f760c37c9d7d9ff8cc}
 *!
 
 !contents -R4

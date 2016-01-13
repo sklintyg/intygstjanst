@@ -14,12 +14,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import se.inera.certificate.model.dao.CertificateDao;
 import se.inera.certificate.model.dao.ConsentDao;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.ConsentService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConsentServiceImplTest {
 
-    private static final String CONSENT_USER = "consentUser";
+    private static final Personnummer CONSENT_USER = new Personnummer("consentUser");
 
     @Mock
     private ConsentDao consentDao = mock(ConsentDao.class);
@@ -32,9 +33,9 @@ public class ConsentServiceImplTest {
 
     @Test
     public void unknownUserHasNoConsent() {
-        when(consentDao.hasConsent("unknown")).thenReturn(false);
+        when(consentDao.hasConsent(new Personnummer("unknown"))).thenReturn(false);
 
-        assertFalse(consentService.isConsent("unknown"));
+        assertFalse(consentService.isConsent(new Personnummer("unknown")));
     }
 
     @Test

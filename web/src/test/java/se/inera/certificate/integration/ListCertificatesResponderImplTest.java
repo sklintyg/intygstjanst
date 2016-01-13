@@ -36,6 +36,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import se.inera.certificate.integration.module.exception.MissingConsentException;
 import se.inera.certificate.model.dao.Certificate;
+import se.inera.certificate.modules.support.api.dto.Personnummer;
 import se.inera.certificate.service.CertificateService;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.rivtabp20.v1.ListCertificatesResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesRequestType;
@@ -59,7 +60,7 @@ public class ListCertificatesResponderImplTest {
 
     @Test
     public void listCertificatesWithNoCertificates() throws Exception {
-        String civicRegistrationNumber = "19350108-1234";
+        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = new LocalDate(2000, 1, 1);
         LocalDate toDate = new LocalDate(2020, 12, 12);
@@ -80,10 +81,10 @@ public class ListCertificatesResponderImplTest {
 
     @Test
     public void listCertificatesWithoutConsent() throws Exception {
-        when(certificateService.listCertificatesForCitizen(anyString(), Matchers.<List<String>>any(), any(LocalDate.class), any(LocalDate.class))).thenThrow(new MissingConsentException(""));
+        when(certificateService.listCertificatesForCitizen(any(Personnummer.class), Matchers.<List<String>>any(), any(LocalDate.class), any(LocalDate.class))).thenThrow(new MissingConsentException(null));
 
         List<String> types = Collections.emptyList();
-        ListCertificatesRequestType parameters = createListCertificatesRequest("12-3", types, null, null);
+        ListCertificatesRequestType parameters = createListCertificatesRequest(new Personnummer("12-3"), types, null, null);
 
         ListCertificatesResponseType response = responder.listCertificates(null, parameters);
 
@@ -92,9 +93,9 @@ public class ListCertificatesResponderImplTest {
         assertEquals("NOCONSENT", response.getResult().getInfoText());
     }
 
-    private ListCertificatesRequestType createListCertificatesRequest(String civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate) {
+    private ListCertificatesRequestType createListCertificatesRequest(Personnummer civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate) {
         ListCertificatesRequestType parameters = new ListCertificatesRequestType();
-        parameters.setNationalIdentityNumber(civicRegistrationNumber);
+        parameters.setNationalIdentityNumber(civicRegistrationNumber.getPersonnummer());
 
         for (String type: types) {
             parameters.getCertificateType().add(type);

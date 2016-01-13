@@ -18,9 +18,6 @@
  */
 package se.inera.certificate.service;
 
-import se.inera.certificate.exception.RecipientUnknownException;
-import se.inera.certificate.integration.module.exception.CertificateRevokedException;
-import se.inera.certificate.integration.module.exception.InvalidCertificateException;
 import se.inera.certificate.model.dao.Certificate;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 

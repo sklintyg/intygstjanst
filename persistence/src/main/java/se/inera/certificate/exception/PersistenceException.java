@@ -1,7 +1,9 @@
 package se.inera.certificate.exception;
 
+import se.inera.certificate.modules.support.api.dto.Personnummer;
+
 public class PersistenceException extends Exception {
-    public PersistenceException(String certificateId, String civicRegistrationNumber) {
-        super(String.format("Certificate '%s' does not exist for user '%s'.", certificateId, civicRegistrationNumber));
+    public PersistenceException(String certificateId, Personnummer civicRegistrationNumber) {
+        super(String.format("Certificate '%s' does not exist for user '%s'.", certificateId, Personnummer.getPnrHashSafe(civicRegistrationNumber)));
     }
 }
