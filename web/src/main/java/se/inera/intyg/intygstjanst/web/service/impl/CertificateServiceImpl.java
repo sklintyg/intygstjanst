@@ -62,7 +62,7 @@ import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 @Service
 public class CertificateServiceImpl implements CertificateService, ModuleContainerApi {
 
-    private Logger LOG = LoggerFactory.getLogger(CertificateServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CertificateServiceImpl.class);
 
     public static final String MI = "MI";
 
