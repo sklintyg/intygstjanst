@@ -164,4 +164,10 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="8" author="ans">
+    <createIndex indexName="IDX_CERTIFICATE_STATE_STATE" tableName="CERTIFICATE_STATE" unique="false">
+      <column name="STATE"/>
+    </createIndex>
+  </changeSet>
+
 </databaseChangeLog>
