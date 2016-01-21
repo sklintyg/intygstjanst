@@ -19,7 +19,7 @@
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 /**
- * Data Access Object for obtaining statistics and performance indicators
+ * Data Access Object for obtaining statistics and performance indicators.
  */
 public interface HealthCheckDao {
 
@@ -39,7 +39,7 @@ public interface HealthCheckDao {
     boolean checkTimeFromDb();
 
     /**
-     * Number of received and sent certificates
+     * Number of received and sent certificates.
      */
     interface CertificateStatsInTimeWindow {
 

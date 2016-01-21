@@ -46,12 +46,12 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.HealthCheckDao;
 public class HealthCheckDaoImpl implements HealthCheckDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckDaoImpl.class);
-    
+
     private static final Integer WINDOW_SIZE = 5; // Minutes
     private static final String RECEIVED_ALIAS = "ReceivedCertificates";
     private static final String SENT_ALIAS = "SentCertificates";
     private static final String CURR_TIME_SQL = "SELECT CURRENT_TIME()";
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -75,7 +75,7 @@ public class HealthCheckDaoImpl implements HealthCheckDao {
         Long sentCerts = result.get(SENT_ALIAS, Long.class) != null ? result.get(SENT_ALIAS, Long.class) : 0L;
         return new CertificateStatsInTimeWindowImpl(receivedCerts, sentCerts);
     }
-    
+
     @Override
     public boolean checkTimeFromDb() {
         Time timestamp;

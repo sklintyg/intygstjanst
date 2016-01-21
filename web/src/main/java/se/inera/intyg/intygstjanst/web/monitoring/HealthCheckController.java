@@ -80,7 +80,7 @@ public class HealthCheckController {
         String xmlResponse = buildXMLResponse(status);
         return Response.ok(xmlResponse).build();
     }
-    
+
     @GET
     @Path("/checkCertificateFlow")
     @Produces(MediaType.APPLICATION_XML)
@@ -91,17 +91,17 @@ public class HealthCheckController {
     }
 
     private String buildXMLResponse(Status status) {
-        return buildXMLResponse(status.isOk(), status.getMeasurement(),status.getAdditionalValues());
+        return buildXMLResponse(status.isOk(), status.getMeasurement(), status.getAdditionalValues());
     }
 
-    private String buildXMLResponse(boolean ok, long time, Map<String,String> additionalValues) {
+    private String buildXMLResponse(boolean ok, long time, Map<String, String> additionalValues) {
         StringBuilder sb = new StringBuilder();
         sb.append("<pingdom_http_custom_check>");
         sb.append("<status>" + (ok ? "OK" : "FAIL") + "</status>");
         sb.append("<response_time>" + time + "</response_time>");
         if (additionalValues != null) {
             sb.append("<additional_data>");
-            additionalValues.forEach((k,v) -> sb.append("<"+k+">"+v+"</"+k+">"));
+            additionalValues.forEach((k, v) -> sb.append("<" + k + ">" + v + "</" + k + ">"));
             sb.append("</additional_data>");
         }
         sb.append("</pingdom_http_custom_check>");

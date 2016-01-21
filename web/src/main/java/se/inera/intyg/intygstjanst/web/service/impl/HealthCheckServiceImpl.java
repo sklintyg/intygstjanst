@@ -53,10 +53,10 @@ public class HealthCheckServiceImpl implements HealthCheckService {
     @Autowired
     @Qualifier("jmsFactory")
     private ConnectionFactory connectionFactory;
-    
+
     @Autowired
     private HealthCheckDao healthCheckDao;
-  
+
     private static final String RECEIVED_PARAM_NAME = "ReceivedCertificates";
     private static final String SENT_PARAM_NAME = "SentCertificates";
 
@@ -110,22 +110,22 @@ public class HealthCheckServiceImpl implements HealthCheckService {
      * (non-Javadoc)
      *
      * @see se.inera.intyg.intygstjanst.web.service.impl.HealthCheckService#getCertificateFlow()
-     */  
+     */
     @Override
     public Status getCertificateFlow() {
         boolean ok;
-        Map<String,String> values=null;
+        Map<String, String> values = null;
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         try {
             CertificateStatsInTimeWindow stats = healthCheckDao.getNoOfSentAndReceivedCertsInTimeWindow();
             values = new HashMap<String, String>();
             values.put(SENT_PARAM_NAME, String.valueOf(stats.getNoOfSent()));
-            values.put(RECEIVED_PARAM_NAME, String.valueOf(stats.getNoOfReceived())); 
-            ok=true;
+            values.put(RECEIVED_PARAM_NAME, String.valueOf(stats.getNoOfReceived()));
+            ok = true;
         } catch (Exception e) {
             LOGGER.error("getNoOfSentAndReceivedCertsInTimeWindow() failed with exception: " + e.getMessage());
-            ok=false;
+            ok = false;
         }
         stopWatch.stop();
         Status status = createStatus(ok, stopWatch, values);
@@ -153,23 +153,23 @@ public class HealthCheckServiceImpl implements HealthCheckService {
     private Status createStatus(boolean ok, StopWatch stopWatch) {
         return new Status(stopWatch.getTime(), ok);
     }
-    
-    private Status createStatus(boolean ok, StopWatch stopWatch, Map<String,String> additionalValues) {
+
+    private Status createStatus(boolean ok, StopWatch stopWatch, Map<String, String> additionalValues) {
         return new Status(stopWatch.getTime(), ok, additionalValues);
     }
 
     public final class Status {
         private final long measurement;
         private final boolean ok;
-        private Map<String,String> additionalValues = null;
+        private Map<String, String> additionalValues = null;
 
         private Status(long measurement, boolean ok) {
             this.measurement = measurement;
             this.ok = ok;
         }
-        
-        private Status(long measurement, boolean ok, Map<String,String> additionalValues) {
-            this(measurement,ok);
+
+        private Status(long measurement, boolean ok, Map<String, String> additionalValues) {
+            this(measurement, ok);
             this.additionalValues = additionalValues;
         }
 
@@ -180,10 +180,9 @@ public class HealthCheckServiceImpl implements HealthCheckService {
         public long getMeasurement() {
             return measurement;
         }
-        
-        public Map<String,String> getAdditionalValues() {
+
+        public Map<String, String> getAdditionalValues() {
             return additionalValues;
         }
-        
     }
 }

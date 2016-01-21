@@ -33,6 +33,6 @@ public interface HealthCheckService {
     Status getJMSStatus();
 
     Status getUptime();
-    
+
     Status getCertificateFlow();
 }
