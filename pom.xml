@@ -223,6 +223,7 @@
                 <artifactItem>
                   <groupId>se.inera.intyg.common</groupId>
                   <artifactId>common-build-tools</artifactId>
+                  <version>${common.version}</version>
                 </artifactItem>
               </artifactItems>
               <outputDirectory>${project.build.directory}/build-tools</outputDirectory>
@@ -247,8 +248,7 @@
         <artifactId>versions-maven-plugin</artifactId>
         <configuration>
           <includeProperties>
-            common.version,
-            intygstyper.version
+            common.version,intygstyper.version
           </includeProperties>
           <properties>
             <property>
