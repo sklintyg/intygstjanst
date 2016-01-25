@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Inera AB (http://www.inera.se)
+ * Copyright (C) 2016 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -47,6 +47,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.util.DaoUtil;
 
 /**
  * Implementation of {@link CertificateDao}.
@@ -76,8 +77,7 @@ public class CertificateDaoImpl implements CertificateDao {
         List<Predicate> predicates = new ArrayList<>();
 
         // meta data has to match civic registration number
-        // WEBCERT-2287: this must be coordinated between different "tjänstekontrakts".
-        predicates.add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), civicRegistrationNumber.getPersonnummerWithoutDash()));
+        predicates.add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), DaoUtil.formatPnrForPersistence(civicRegistrationNumber)));
 
         // filter by certificate types
         if (types != null && !types.isEmpty()) {

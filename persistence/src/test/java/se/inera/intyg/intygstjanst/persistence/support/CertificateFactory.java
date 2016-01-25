@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Inera AB (http://www.inera.se)
+ * Copyright (C) 2016 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -35,8 +35,7 @@ public final class CertificateFactory {
 
     public static final String CERTIFICATE_ID = "123456";
     public static final String CERTIFICATE_DOCUMENT = "{\"name\":\"Some JSON\"}";
-    // TODO: for now, the personnumer is saved without a dash ('-').
-    public static final Personnummer CIVIC_REGISTRATION_NUMBER = new Personnummer("190011223344");
+    public static final Personnummer CIVIC_REGISTRATION_NUMBER = new Personnummer("19001122-3344");
     public static final String FK7263 = "fk7263";
 
     public static final String VALID_FROM = "2000-01-01";

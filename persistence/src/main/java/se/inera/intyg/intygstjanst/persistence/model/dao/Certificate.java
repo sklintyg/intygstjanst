@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Inera AB (http://www.inera.se)
+ * Copyright (C) 2016 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -20,13 +20,11 @@ package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 import static se.inera.intyg.common.support.model.util.Iterables.find;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
-import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.common.support.model.ModelException;
-import se.inera.intyg.common.support.model.util.Predicate;
-import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -41,11 +39,17 @@ import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.common.support.model.ModelException;
+import se.inera.intyg.common.support.model.util.Predicate;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.intygstjanst.persistence.model.dao.util.DaoUtil;
 
 /**
  * This class represents the document part of a certificate. The document is stored as a binary large object in the
@@ -267,7 +271,7 @@ public class Certificate {
     }
 
     public void setCivicRegistrationNumber(Personnummer civicRegistrationNumber) {
-        this.civicRegistrationNumber = civicRegistrationNumber != null ? civicRegistrationNumber.getPersonnummer() : null;
+        this.civicRegistrationNumber = civicRegistrationNumber != null ? DaoUtil.formatPnrForPersistence(civicRegistrationNumber) : null;
     }
 
     public LocalDateTime getSignedDate() {

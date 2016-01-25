@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Inera AB (http://www.inera.se)
+ * Copyright (C) 2016 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -210,6 +210,12 @@ public class CertificateDaoImplTest {
         assertNull(certificateDao.getCertificate(new Personnummer("<unknownPersonnummer>"), "<unknownCertId>"));
     }
 
+    @Test
+    public void testGetCertificateForPnrWithoutDash() throws PersistenceException {
+        certificateDao.store(buildCertificate());
+        assertNotNull(certificateDao.getCertificate(new Personnummer("190011223344"), "123456"));
+    }
+
     @Test(expected = PersistenceException.class)
     public void testGetCertificateForWrongCivicRegistrationNumber() throws PersistenceException {
         certificateDao.store(buildCertificate());
@@ -248,6 +254,23 @@ public class CertificateDaoImplTest {
 
         certificateDao.updateStatus(CERTIFICATE_ID, CIVIC_REGISTRATION_NUMBER, DELETED, "fk", null);
 
+        assertEquals(1, certificate.getStates().size());
+        assertEquals(DELETED, certificate.getStates().get(0).getState());
+        assertEquals("fk", certificate.getStates().get(0).getTarget());
+        assertNotNull(certificate.getStates().get(0).getTimestamp());
+    }
+
+    @Test
+    public void testUpdateStatusPnrWithoutDash() throws PersistenceException {
+        
+        // store a certificate for patient 19101112-1314
+        Certificate certificate = buildCertificate();
+        entityManager.persist(certificate);
+        
+        assertEquals(0, certificate.getStates().size());
+        
+        certificateDao.updateStatus(CERTIFICATE_ID, new Personnummer("190011223344"), DELETED, "fk", null);
+        
         assertEquals(1, certificate.getStates().size());
         assertEquals(DELETED, certificate.getStates().get(0).getState());
         assertEquals("fk", certificate.getStates().get(0).getTarget());

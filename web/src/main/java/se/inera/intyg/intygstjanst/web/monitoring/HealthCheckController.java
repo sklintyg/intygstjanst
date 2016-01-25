@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Inera AB (http://www.inera.se)
+ * Copyright (C) 2016 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.intygstjanst.web.service.HealthCheckService;
 import se.inera.intyg.intygstjanst.web.service.impl.HealthCheckServiceImpl.Status;
 
+import java.util.Map;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -47,7 +49,7 @@ public class HealthCheckController {
     @Path("/ping")
     @Produces(MediaType.APPLICATION_XML)
     public Response getPing() {
-        String xmlResponse = buildXMLResponse(true, 0);
+        String xmlResponse = buildXMLResponse(true, 0, null);
         LOGGER.debug("Pinged Intygstjänsten, got: " + xmlResponse);
         return Response.ok(xmlResponse).build();
     }
@@ -79,15 +81,29 @@ public class HealthCheckController {
         return Response.ok(xmlResponse).build();
     }
 
-    private String buildXMLResponse(Status status) {
-        return buildXMLResponse(status.isOk(), status.getMeasurement());
+    @GET
+    @Path("/checkCertificateFlow")
+    @Produces(MediaType.APPLICATION_XML)
+    public Response checkCertificateFlow() {
+        Status status = healthCheck.getCertificateFlow();
+        String xmlResponse = buildXMLResponse(status);
+        return Response.ok(xmlResponse).build();
     }
 
-    private String buildXMLResponse(boolean ok, long time) {
+    private String buildXMLResponse(Status status) {
+        return buildXMLResponse(status.isOk(), status.getMeasurement(), status.getAdditionalValues());
+    }
+
+    private String buildXMLResponse(boolean ok, long time, Map<String, String> additionalValues) {
         StringBuilder sb = new StringBuilder();
         sb.append("<pingdom_http_custom_check>");
         sb.append("<status>" + (ok ? "OK" : "FAIL") + "</status>");
         sb.append("<response_time>" + time + "</response_time>");
+        if (additionalValues != null) {
+            sb.append("<additional_data>");
+            additionalValues.forEach((k, v) -> sb.append("<" + k + ">" + v + "</" + k + ">"));
+            sb.append("</additional_data>");
+        }
         sb.append("</pingdom_http_custom_check>");
         return sb.toString();
     }

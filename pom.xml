@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  ~ Copyright (C) 2015 Inera AB (http://www.inera.se)
+  ~ Copyright (C) 2016 Inera AB (http://www.inera.se)
   ~
   ~ This file is part of sklintyg (https://github.com/sklintyg).
   ~
@@ -137,11 +137,6 @@
       </dependency>
       <dependency>
         <groupId>se.inera.intyg.intygstyper</groupId>
-        <artifactId>sjukpenning</artifactId>
-        <version>${intygstyper.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>se.inera.intyg.intygstyper</groupId>
         <artifactId>sjukersattning</artifactId>
         <version>${intygstyper.version}</version>
       </dependency>
@@ -228,6 +223,7 @@
                 <artifactItem>
                   <groupId>se.inera.intyg.common</groupId>
                   <artifactId>common-build-tools</artifactId>
+                  <version>${common.version}</version>
                 </artifactItem>
               </artifactItems>
               <outputDirectory>${project.build.directory}/build-tools</outputDirectory>
@@ -252,8 +248,7 @@
         <artifactId>versions-maven-plugin</artifactId>
         <configuration>
           <includeProperties>
-            common.version,
-            intygstyper.version
+            common.version,intygstyper.version
           </includeProperties>
           <properties>
             <property>
