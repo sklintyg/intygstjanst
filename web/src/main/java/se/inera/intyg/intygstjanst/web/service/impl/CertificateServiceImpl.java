@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Throwables;
 
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
@@ -40,9 +41,13 @@ import se.inera.intyg.common.support.integration.module.exception.CertificateRev
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
+import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
@@ -68,6 +73,9 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     @Autowired
     private CertificateDao certificateDao;
+
+    @Autowired
+    private IntygModuleRegistryImpl moduleRegistry;
 
     @Autowired
     private CertificateSenderService senderService;
@@ -246,8 +254,30 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             monitoringLogService.logCertificateSentAndNotifiedByWiretapping(certificate.getId(), certificate.getType(), certificate.getCareUnitId(),
                     recipient);
         }
-        statisticsService.created(certificate);
+
+        String transformedXml = certificateReceivedForStatistics(certificateHolder);
+
+        statisticsService.created(transformedXml, certificate.getId(), certificate.getType(), certificate.getCareUnitId());
     }
+
+    public String certificateReceivedForStatistics(CertificateHolder certificateHolder)
+            throws CertificateAlreadyExistsException, InvalidCertificateException {
+
+        try {
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
+
+            String resultXml = moduleApi.transformToStatisticsService(certificateHolder.getOriginalCertificate());
+
+            return resultXml;
+
+        } catch (ModuleNotFoundException | ModuleException e) {
+            e.printStackTrace();
+            throw Throwables.propagate(e);
+        } 
+
+    }
+
+    // moduleApi.getModuleContainer().certificateReceived(certificateHolder);
 
     @VisibleForTesting
     Certificate storeCertificate(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException,
