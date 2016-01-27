@@ -260,7 +260,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         statisticsService.created(transformedXml, certificate.getId(), certificate.getType(), certificate.getCareUnitId());
     }
 
-    public String certificateReceivedForStatistics(CertificateHolder certificateHolder)
+    private String certificateReceivedForStatistics(CertificateHolder certificateHolder)
             throws CertificateAlreadyExistsException, InvalidCertificateException {
 
         try {
@@ -271,13 +271,11 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             return resultXml;
 
         } catch (ModuleNotFoundException | ModuleException e) {
-            e.printStackTrace();
+            LOG.error("Module not found for certificate of type {}", certificateHolder.getType());
             throw Throwables.propagate(e);
         } 
 
     }
-
-    // moduleApi.getModuleContainer().certificateReceived(certificateHolder);
 
     @VisibleForTesting
     Certificate storeCertificate(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException,
