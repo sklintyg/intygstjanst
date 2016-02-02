@@ -154,6 +154,24 @@
       </bean>
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
+  
+  <jaxws:endpoint address="/register-certificate-se/v2.0"
+      implementor="se.inera.intyg.intygstjanst.web.integration.RegisterCertificateResponderImpl">
+    <jaxws:outFaultInterceptors>
+      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+        <constructor-arg value="transform/register-certificate-transform.xslt"/>
+      </bean>
+    </jaxws:outFaultInterceptors>
+  </jaxws:endpoint>
+  
+   <jaxws:endpoint address="/get-certificate-se/v2.0"
+      implementor="se.inera.intyg.intygstjanst.web.integration.GetCertificateResponderImpl">
+    <jaxws:outFaultInterceptors>
+      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+        <constructor-arg value="transform/get-certificate-transform.xslt"/>
+      </bean>
+    </jaxws:outFaultInterceptors>
+  </jaxws:endpoint>
 
 
   <!-- ws clients -->
