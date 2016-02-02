@@ -24,5 +24,6 @@
     <class>se.inera.intyg.intygstjanst.persistence.model.dao.Certificate</class>
     <class>se.inera.intyg.intygstjanst.persistence.model.dao.Consent</class>
     <class>se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate</class>
+    <class>se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate</class>
   </persistence-unit>
 </persistence>

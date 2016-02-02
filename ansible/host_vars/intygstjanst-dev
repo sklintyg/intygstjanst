@@ -7,7 +7,7 @@ activemq_username: "dev"
 activemq_password: "devpass"
 
 # Spring profiles
-profiles: test,it-fk-stub,it-ts-stub
+profiles: test,it-fk-stub,it-ts-stub,wc-hsa-stub
 
 deploy_from_repo: false
 

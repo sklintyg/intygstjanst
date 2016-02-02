@@ -170,6 +170,17 @@
 
   <import resource="application-context-ws-stub.xml"/>
 
+  <!-- TjK for ListActiveSickLeavesForCareUnit. Consider moving to separate xml file and import -->
+  <jaxws:endpoint address="/list-active-sick-leaves-for-care-unit/v1.0"
+      implementor="se.inera.intyg.intygstjanst.web.integration.rehabstod.ListActiveSickLeavesForCareUnitResponderImpl">
+    <jaxws:outFaultInterceptors>
+      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+        <constructor-arg
+            value="transform/clinicalprocess-healthcond-rehabilitation/list-active-sick-leaves-for-care-unit-transform.xslt"/>
+      </bean>
+    </jaxws:outFaultInterceptors>
+  </jaxws:endpoint>
+
   <beans profile="!dev">
     <http:conduit
             name="\{urn:riv:(clinicalprocess:healthcond|insuranceprocess:healthreporting):.*.http-conduit">

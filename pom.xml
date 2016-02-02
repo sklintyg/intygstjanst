@@ -113,6 +113,11 @@
         <artifactId>common-web</artifactId>
         <version>${common.version}</version>
       </dependency>
+      <dependency>
+        <groupId>se.inera.intyg.common</groupId>
+        <artifactId>hsa-integration</artifactId>
+        <version>${common.version}</version>
+      </dependency>
 
       <!-- Intygstyper -->
       <dependency>

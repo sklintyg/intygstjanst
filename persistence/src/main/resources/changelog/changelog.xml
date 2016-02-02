@@ -170,4 +170,70 @@
     </createIndex>
   </changeSet>
 
+  <changeSet id="9" author="el">
+
+    <createTable tableName="SJUKFALL_CERT">
+      <column name="ID" type="varchar(255)">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="CERTIFICATE_TYPE" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CIVIC_REGISTRATION_NUMBER" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="PATIENT_FIRST_NAME" type="varchar(255)">
+        <constraints nullable="true"/>
+      </column>
+      <column name="PATIENT_LAST_NAME" type="varchar(255)">
+        <constraints nullable="true"/>
+      </column>
+      <column name="CARE_UNIT_ID" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CARE_UNIT_NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CARE_GIVER_ID" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="SIGNING_DOCTOR_ID" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="SIGNING_DOCTOR_NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="DIAGNOSE_CODE" type="varchar(64)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="DELETED" type="boolean"/>
+    </createTable>
+
+
+    <createTable tableName="SJUKFALL_CERT_WORK_CAPACITY">
+      <column name="ID" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="CERTIFICATE_ID" type="varchar(255)">
+        <constraints nullable="true"/>
+      </column>
+      <column name="CAPACITY_PERCENTAGE" type="int">
+        <constraints nullable="false"/>
+      </column>
+      <column name="FROM_DATE" type="varchar(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="TO_DATE" type="varchar(10)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint baseColumnNames="CERTIFICATE_ID"
+        baseTableName="SJUKFALL_CERT_WORK_CAPACITY"
+        constraintName="SJUKFALL_CERT_STATE_FK"
+        referencedColumnNames="ID"
+        referencedTableName="SJUKFALL_CERT"/>
+
+  </changeSet>
+
 </databaseChangeLog>
