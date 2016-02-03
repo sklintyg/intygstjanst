@@ -22,4 +22,9 @@ public class HsaServiceImpl implements HsaService {
     public List<String> getHsaIdForUnderenheter(String careUnitHsaId) {
         return hsaOrganizationsService.getHsaIdForAktivaUnderenheter(careUnitHsaId);
     }
+
+    @Override
+    public String getHsaIdForCareGiverOfCareUnit(String careUnitHsaId) {
+        return hsaOrganizationsService.getVardgivareOfVardenhet(careUnitHsaId);
+    }
 }

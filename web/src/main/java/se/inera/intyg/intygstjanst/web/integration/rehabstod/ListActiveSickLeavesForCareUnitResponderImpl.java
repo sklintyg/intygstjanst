@@ -39,12 +39,28 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
 
     @Override
     public ListActiveSickLeavesForCareUnitResponseType listActiveSickLeavesForCareUnit(String logicalAddress, ListActiveSickLeavesForCareUnitType parameters) {
-        List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(parameters.getEnhetsId().getExtension());
-        hsaIdList.add(parameters.getEnhetsId().getExtension());
-
-        List<SjukfallCertificate> activeSjukfallCertificateForCareUnits = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(hsaIdList);
-
         ListActiveSickLeavesForCareUnitResponseType response = new ListActiveSickLeavesForCareUnitResponseType();
+
+        String careUnitHsaId = parameters.getEnhetsId().getExtension();
+        if (careUnitHsaId == null) {
+            response.setResultCode(ResultCodeEnum.ERROR);
+            response.setComment("No careUnitHsaId specified in request.");
+            return response;
+        }
+
+        String careGiverHsaId = hsaService.getHsaIdForCareGiverOfCareUnit(careUnitHsaId);
+        if (careGiverHsaId == null) {
+            response.setResultCode(ResultCodeEnum.ERROR);
+            response.setComment("No caregiver hsaId could be found for careunit hsaId '" + careUnitHsaId + "'.");
+            return response;
+        }
+
+        List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(careUnitHsaId);
+        hsaIdList.add(careUnitHsaId);
+
+        List<SjukfallCertificate> activeSjukfallCertificateForCareUnits = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(hsaIdList, careGiverHsaId);
+
+
         response.setResultCode(ResultCodeEnum.OK);
         IntygsLista intygsLista = new IntygsLista();
         intygsLista.getIntygsData().addAll(buildIntygsData(activeSjukfallCertificateForCareUnits));

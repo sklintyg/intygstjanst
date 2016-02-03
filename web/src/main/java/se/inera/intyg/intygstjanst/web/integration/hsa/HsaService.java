@@ -7,4 +7,6 @@ import java.util.List;
  */
 public interface HsaService {
     List<String> getHsaIdForUnderenheter(String careUnitHsaId);
+
+    String getHsaIdForCareGiverOfCareUnit(String careUnitHsaId);
 }
