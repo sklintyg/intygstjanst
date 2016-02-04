@@ -23,7 +23,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 
 public interface StatisticsService {
 
-    boolean created(Certificate certificate);
+    boolean created(String certificateXml, String certificateId, String certificateType, String careUnitId);
 
     boolean revoked(Certificate certificate);
 

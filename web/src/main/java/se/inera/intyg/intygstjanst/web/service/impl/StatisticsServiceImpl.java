@@ -57,12 +57,12 @@ public class StatisticsServiceImpl implements StatisticsService {
     private boolean enabled;
 
     @Override
-    public boolean created(Certificate certificate) {
+    public boolean created(String certificateXml, String certificateId, String certificateType, String careUnitId) {
         boolean rc = true;
         if (enabled) {
-            rc = doSend(CREATED, certificate);
+            rc = doSend(CREATED, certificateXml, certificateId, certificateType, careUnitId);
             if (rc) {
-                monitoringLogService.logStatisticsSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
+                monitoringLogService.logStatisticsSent(certificateId, certificateType, careUnitId);
             }
         }
         return rc;
@@ -72,7 +72,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public boolean revoked(Certificate certificate) {
         boolean rc = true;
         if (enabled) {
-            rc = doSend(REVOKED, certificate);
+            rc = doSend(REVOKED, certificate.getDocument(), certificate.getId(), certificate.getType(), certificate.getCareUnitName());
             if (rc) {
                 monitoringLogService.logStatisticsRevoked(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
             }
@@ -80,36 +80,38 @@ public class StatisticsServiceImpl implements StatisticsService {
         return rc;
     }
 
-    private boolean doSend(String type, Certificate certificate) {
+    private boolean doSend(String type, String certificateXml, String certificateId, String certificateType, String careUnitId) {
         try {
             if (jmsTemplate == null) {
-                LOG.error("Failure sending certificate '{}' type '{}' to statistics, no JmsTemplate configured", certificate.getId(), type);
+                LOG.error("Failure sending certificate '{}' type '{}' to statistics, no JmsTemplate configured", certificateId, type);
                 return false;
             }
 
-            MessageCreator messageCreator = new MC(type, certificate);
+            MessageCreator messageCreator = new MC(type, certificateXml, certificateId);
             jmsTemplate.send(messageCreator);
             return true;
         } catch (JmsException e) {
-            LOG.error("Failure sending certificate '{}' type '{}'to statistics", certificate.getId(), type, e);
+            LOG.error("Failure sending certificate '{}' type '{}'to statistics", certificateId, type, e);
             return false;
         }
     }
 
     private static final class MC implements MessageCreator {
-        private final Certificate certificate;
+        private final String certificate;
         private final String type;
+        private final String certificateId;
 
-        MC(String type, Certificate certificate) {
+        MC(String type, String certificateXml, String certificateId) {
             this.type = type;
-            this.certificate = certificate;
+            this.certificate = certificateXml;
+            this.certificateId = certificateId;
         }
 
         @Override
         public Message createMessage(Session session) throws JMSException {
-            TextMessage message = session.createTextMessage(certificate.getDocument());
+            TextMessage message = session.createTextMessage(certificate);
             message.setStringProperty(ACTION, type);
-            message.setStringProperty(CERTIFICATE_ID, certificate.getId());
+            message.setStringProperty(CERTIFICATE_ID, certificateId);
             return message;
         }
     }
