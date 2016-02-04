@@ -25,19 +25,17 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
     @Autowired
     private SjukfallCertificateDao sjukfallCertificateDao;
 
-    @Autowired
-    private SjukfallCertificateIntygsDataConverter sjukfallCertificateIntygsDataConverter;
-
     @Override
     public ListActiveSickLeavesForCareUnitResponseType listActiveSickLeavesForCareUnit(String logicalAddress, ListActiveSickLeavesForCareUnitType parameters) {
         ListActiveSickLeavesForCareUnitResponseType response = new ListActiveSickLeavesForCareUnitResponseType();
 
-        String careUnitHsaId = parameters.getEnhetsId().getExtension();
-        if (careUnitHsaId == null) {
+        if (parameters.getEnhetsId() == null || parameters.getEnhetsId().getExtension() == null) {
             response.setResultCode(ResultCodeEnum.ERROR);
             response.setComment("No careUnitHsaId specified in request.");
             return response;
         }
+
+        String careUnitHsaId = parameters.getEnhetsId().getExtension();
 
         String careGiverHsaId = hsaService.getHsaIdForCareGiverOfCareUnit(careUnitHsaId);
         if (careGiverHsaId == null) {
@@ -53,7 +51,7 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
 
         response.setResultCode(ResultCodeEnum.OK);
         IntygsLista intygsLista = new IntygsLista();
-        intygsLista.getIntygsData().addAll(sjukfallCertificateIntygsDataConverter.buildIntygsData(activeSjukfallCertificateForCareUnits));
+        intygsLista.getIntygsData().addAll(new SjukfallCertificateIntygsDataConverter().buildIntygsData(activeSjukfallCertificateForCareUnits));
         response.setIntygsLista(intygsLista);
         return response;
     }
