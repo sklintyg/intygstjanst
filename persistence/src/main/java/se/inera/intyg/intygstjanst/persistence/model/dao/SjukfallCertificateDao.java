@@ -7,4 +7,8 @@ import java.util.List;
  */
 public interface SjukfallCertificateDao {
     List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(List<String> careUnitHsaIds, String parentCareGiverId);
+
+    void store(SjukfallCertificate sjukfallCert);
+
+    void revoke(String id);
 }

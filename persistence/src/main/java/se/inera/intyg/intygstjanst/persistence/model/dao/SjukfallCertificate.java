@@ -18,6 +18,14 @@ import java.util.List;
 @Table(name = "SJUKFALL_CERT")
 public class SjukfallCertificate {
 
+    private SjukfallCertificate() {
+
+    }
+
+    public SjukfallCertificate(String id) {
+        this.id = id;
+    }
+
     /**
      * Id of the certificate.
      */

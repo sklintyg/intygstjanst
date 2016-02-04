@@ -41,6 +41,7 @@ import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
 import se.inera.intyg.intygstjanst.web.integration.validator.RevokeRequestValidator;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
 
@@ -58,7 +59,10 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
     private MonitoringLogService monitoringLogService;
 
     @Autowired
-    private StatisticsService statisticsService;
+    protected StatisticsService statisticsService;
+
+    @Autowired
+    protected SjukfallCertificateService sjukfallCertificateService;
 
     @Override
     @Transactional
@@ -74,7 +78,8 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
             Certificate certificate = certificateService.revokeCertificate(personnummer, certificateId, request.getRevoke());
             monitoringLogService.logCertificateRevoked(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
 
-            getStatisticsService().revoked(certificate);
+            statisticsService.revoked(certificate);
+            sjukfallCertificateService.revoked(certificate);
 
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
@@ -135,13 +140,5 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
             return request.getRevoke().getAdressVard().getHosPersonal().getEnhet().getEnhetsId().getExtension();
         }
         return null;
-    }
-
-    public StatisticsService getStatisticsService() {
-        return statisticsService;
-    }
-
-    public void setStatisticsService(StatisticsService statisticsService) {
-        this.statisticsService = statisticsService;
     }
 }

@@ -31,7 +31,6 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.io.IOUtils;
 import org.joda.time.LocalDateTime;
-import org.joda.time.Partial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +41,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import se.inera.intyg.common.support.model.InternalLocalDateInterval;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
-import se.inera.intyg.common.support.model.converter.util.PartialConverter;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
@@ -52,7 +49,7 @@ import se.inera.intyg.common.util.integration.integration.json.CustomObjectMappe
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
+import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
 
 public class IntygBootstrapBean {
 
@@ -70,6 +67,9 @@ public class IntygBootstrapBean {
 
     @Autowired
     private IntygModuleRegistry moduleRegistry;
+
+    @Autowired
+    private CertificateToSjukfallCertificateConverter certificateToSjukfallCertificateConverter;
 
     @PostConstruct
     public void initData() throws IOException {
@@ -164,40 +164,11 @@ public class IntygBootstrapBean {
                         Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
                         certificate.setDocument(IOUtils.toString(content.getInputStream(), "UTF-8"));
 
-                        OriginalCertificate originalCertificate = new OriginalCertificate();
-
                         ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
                         Utlatande utlatande = moduleApi.getUtlatandeFromJson(certificate.getDocument());
 
-                        // For now, we handle fk7263 explicitly. This needs to be improved when we start handling new sjukpenning.
-                        if (utlatande instanceof se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande) {
-                            SjukfallCertificate sjukfallCertificate = new SjukfallCertificate();
-                            sjukfallCertificate.setId(certificate.getId());
-                            sjukfallCertificate.setCareGiverId(certificate.getCareGiverId());
-                            sjukfallCertificate.setCareUnitId(certificate.getCareUnitId());
-                            sjukfallCertificate.setCareUnitName(certificate.getCareUnitName());
-                            sjukfallCertificate.setCivicRegistrationNumber(certificate.getCivicRegistrationNumber().getPersonnummer());
-
-                            sjukfallCertificate.setDeleted(false);
-
-                            se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande fkUtlatande = (se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande) utlatande;
-                            sjukfallCertificate.setPatientFirstName(fkUtlatande.getGrundData().getPatient().getFornamn());
-                            sjukfallCertificate.setPatientLastName(fkUtlatande.getGrundData().getPatient().getEfternamn());
-                            sjukfallCertificate.setDiagnoseCode(fkUtlatande.getDiagnosKod());
-                            sjukfallCertificate.setSigningDoctorId(fkUtlatande.getGrundData().getSkapadAv().getPersonId());
-                            sjukfallCertificate.setSigningDoctorName(fkUtlatande.getGrundData().getSkapadAv().getFullstandigtNamn());
-                            sjukfallCertificate.setType(certificate.getType());
-
-                            if (fkUtlatande.getNedsattMed100() != null) {
-                                sjukfallCertificate.getSjukfallCertificateWorkCapacity().add(buildWorkCapacity(100, fkUtlatande.getNedsattMed100()));
-                                sjukfallCertificate.getSjukfallCertificateWorkCapacity().add(buildWorkCapacity(75, fkUtlatande.getNedsattMed75()));
-                                sjukfallCertificate.getSjukfallCertificateWorkCapacity().add(buildWorkCapacity(50, fkUtlatande.getNedsattMed50()));
-                                sjukfallCertificate.getSjukfallCertificateWorkCapacity().add(buildWorkCapacity(25, fkUtlatande.getNedsattMed25()));
-                            }
-                            entityManager.persist(sjukfallCertificate);
-                        }
-
-
+                        SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertFk7263(certificate, utlatande);
+                        entityManager.persist(sjukfallCertificate);
                     } catch (Throwable t) {
                         status.setRollbackOnly();
                         LOG.error("Loading of Sjukfall intyg failed for {}: {}", metadata.getFilename(), t.getMessage());
@@ -208,14 +179,6 @@ public class IntygBootstrapBean {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private SjukfallCertificateWorkCapacity buildWorkCapacity(Integer workCapacity, InternalLocalDateInterval interval) {
-        SjukfallCertificateWorkCapacity wc = new SjukfallCertificateWorkCapacity();
-        wc.setCapacityPercentage(workCapacity);
-        wc.setFromDate(PartialConverter.partialToString(new Partial(interval.fromAsLocalDate())));
-        wc.setToDate(PartialConverter.partialToString(new Partial(interval.tomAsLocalDate())));
-        return wc;
     }
 
     // TODO of course, do this properly...

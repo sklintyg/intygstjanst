@@ -58,6 +58,7 @@ import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.impl.CertificateServiceImpl;
 
@@ -86,6 +87,9 @@ public class RevokeMedicalCertificateResponderImplTest {
 
     @Mock
     protected StatisticsService statisticsService = mock(StatisticsService.class);
+
+    @Mock
+    protected SjukfallCertificateService sjukfallCertificateService;
 
     @Mock
     protected SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
@@ -131,6 +135,7 @@ public class RevokeMedicalCertificateResponderImplTest {
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
         Mockito.verify(statisticsService, Mockito.only()).revoked(certificate);
+        Mockito.verify(sjukfallCertificateService, Mockito.only()).revoked(certificate);
     }
 
     @Test
@@ -159,6 +164,7 @@ public class RevokeMedicalCertificateResponderImplTest {
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
         Mockito.verify(statisticsService, Mockito.only()).revoked(certificate);
+        Mockito.verify(sjukfallCertificateService, Mockito.only()).revoked(certificate);
     }
 
     @Test

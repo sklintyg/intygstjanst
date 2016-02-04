@@ -19,6 +19,10 @@
 
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -26,16 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Consent;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author andreaskaltenbach
@@ -87,5 +83,28 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                 resultList.size(), personNummerList.size(), careUnitHsaIds, parentCareGiverId);
 
         return resultList;
+    }
+
+    @Override
+    public void store(SjukfallCertificate sjukfallCert) {
+        entityManager.persist(sjukfallCert);
+    }
+
+    @Override
+    public void revoke(String id) {
+
+        List<SjukfallCertificate> resultList = entityManager.createQuery("SELECT sc FROM SjukfallCertificate sc WHERE sc.id=:id", SjukfallCertificate.class)
+                .setParameter("id", id)
+                .getResultList();
+
+        if (resultList.size() == 0) {
+            log.error("Could not mark SjukfallCert {0} as deleted, not found.", id);
+            return;
+        }
+        for (SjukfallCertificate sc : resultList) {
+            sc.setDeleted(true);
+            entityManager.merge(sc);
+            log.debug("Successfully marked SjukfallCert {0} as deleted", id);
+        }
     }
 }

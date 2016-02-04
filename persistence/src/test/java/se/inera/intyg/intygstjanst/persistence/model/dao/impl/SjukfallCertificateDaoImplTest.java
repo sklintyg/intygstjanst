@@ -133,9 +133,9 @@ public class SjukfallCertificateDaoImplTest {
 
 
     private SjukfallCertificate buildSjukfallCertificate(String careUnitId, String careGiverId, List<SjukfallCertificateWorkCapacity> workCapacities, boolean deleted) {
-        SjukfallCertificate sc = new SjukfallCertificate();
+        SjukfallCertificate sc = new SjukfallCertificate(UUID.randomUUID().toString());
         sc.setCareUnitId(careUnitId);
-        sc.setId(UUID.randomUUID().toString());
+
         sc.setSjukfallCertificateWorkCapacity(workCapacities);
         sc.setCareGiverId(careGiverId);
         sc.setCareUnitName(CARE_UNIT_NAME);

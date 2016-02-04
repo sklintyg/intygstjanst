@@ -54,6 +54,7 @@ import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.ConsentService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
 /**
@@ -80,6 +81,9 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     @Autowired
     private MonitoringLogService monitoringLogService;
+
+    @Autowired
+    private SjukfallCertificateService sjukfallCertificateService;
 
     @Autowired
     @Value("${store.original.certificate}")
@@ -247,6 +251,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
                     recipient);
         }
         statisticsService.created(certificate);
+        sjukfallCertificateService.created(certificate);
     }
 
     @VisibleForTesting
