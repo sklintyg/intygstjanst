@@ -273,7 +273,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         } catch (ModuleNotFoundException | ModuleException e) {
             LOG.error("Module not found for certificate of type {}", certificateHolder.getType());
             throw Throwables.propagate(e);
-        } 
+        }
 
     }
 
