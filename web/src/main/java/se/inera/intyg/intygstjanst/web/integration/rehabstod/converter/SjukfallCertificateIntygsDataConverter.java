@@ -9,6 +9,7 @@ import org.joda.time.LocalDate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
+import se.riv.clinicalprocess.healthcond.certificate.types.v2.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.Arbetsformaga;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.Diagnos;
@@ -17,6 +18,7 @@ import se.riv.clinicalprocess.healthcond.rehabilitation.v1.Formaga;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.HosPersonal;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsData;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.Patient;
+import se.riv.clinicalprocess.healthcond.rehabilitation.v1.Vardgivare;
 
 /**
  * Created by eriklupander on 2016-02-04.
@@ -28,10 +30,20 @@ public class SjukfallCertificateIntygsDataConverter {
 
         for (SjukfallCertificate sc : sjukfallCertificates) {
             IntygsData intygsData = new IntygsData();
+
+            IntygId intygId = new IntygId();
+            intygId.setExtension(sc.getId());
+            intygsData.setIntygsId(intygId);
+
             intygsData.setPatient(buildPatient(sc.getCivicRegistrationNumber(), sc.getPatientFirstName(), sc.getPatientLastName()));
-            intygsData.setDiagnos(buildDiagnos(sc.getDiagnoseCode(), "TODO"));
-            intygsData.setEnhet(buildEnhet(sc.getCareUnitId(), sc.getCareUnitName()));
+            intygsData.setDiagnos(buildDiagnos("TODO", sc.getDiagnoseCode()));
+
+            Vardgivare vardgivare = buildVardgivare(sc.getCareGiverId());
+            Enhet enhet = buildEnhet(sc.getCareUnitId(), sc.getCareUnitName(), vardgivare);
+            intygsData.setEnhet(enhet);
+
             intygsData.setSkapadAv(buildHoSPerson(intygsData.getEnhet(), sc.getSigningDoctorName(), sc.getSigningDoctorId()));
+            intygsData.setEnkeltIntyg(false);
 
             Arbetsformaga arbetsformaga = new Arbetsformaga();
             arbetsformaga.getFormaga().addAll(buildFormaga(sc.getSjukfallCertificateWorkCapacity()));
@@ -42,6 +54,14 @@ public class SjukfallCertificateIntygsDataConverter {
 
         return intygsDataList;
 
+    }
+
+    private Vardgivare buildVardgivare(String vardgivarId) {
+        Vardgivare vardgivare = new Vardgivare();
+        HsaId hsaId = new HsaId();
+        hsaId.setExtension(vardgivarId);
+        vardgivare.setVardgivareId(hsaId);
+        return vardgivare;
     }
 
     private List<Formaga> buildFormaga(List<SjukfallCertificateWorkCapacity> workCapacities) {
@@ -73,12 +93,13 @@ public class SjukfallCertificateIntygsDataConverter {
         return patient;
     }
 
-    private Enhet buildEnhet(String hsaId, String hsaName) {
+    private Enhet buildEnhet(String hsaId, String hsaName, Vardgivare vardgivare) {
         Enhet enhet = new Enhet();
         HsaId hsaIdType = new HsaId();
         hsaIdType.setExtension(hsaId);
         enhet.setEnhetsId(hsaIdType);
         enhet.setEnhetsnamn(hsaName);
+        enhet.setVardgivare(vardgivare);
         return enhet;
     }
 
