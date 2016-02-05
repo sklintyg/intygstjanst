@@ -51,7 +51,8 @@ public final class ConverterUtil {
         certificate.setWireTapped(certificateHolder.isWireTapped());
         certificate.setAdditionalInfo(certificateHolder.getAdditionalInfo());
         if (certificateHolder.getCertificateStates() != null) {
-            List<CertificateStateHistoryEntry> certificateStates = new ArrayList<CertificateStateHistoryEntry>(certificateHolder.getCertificateStates().size());
+            List<CertificateStateHistoryEntry> certificateStates = new ArrayList<CertificateStateHistoryEntry>(
+                    certificateHolder.getCertificateStates().size());
             for (CertificateStateHolder certificateStateHolder : certificateHolder.getCertificateStates()) {
                 CertificateStateHistoryEntry certificateState = new CertificateStateHistoryEntry();
                 certificateState.setTarget(certificateStateHolder.getTarget());
@@ -68,6 +69,8 @@ public final class ConverterUtil {
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId(certificate.getId());
         certificateHolder.setType(certificate.getType());
+        certificateHolder.setOriginalCertificate(certificate.getOriginalCertificate() == null ? null
+                : certificate.getOriginalCertificate().getDocument());
         certificateHolder.setCareUnitId(certificate.getCareUnitId());
         certificateHolder.setCareUnitName(certificate.getCareUnitName());
         certificateHolder.setCareGiverId(certificate.getCareGiverId());

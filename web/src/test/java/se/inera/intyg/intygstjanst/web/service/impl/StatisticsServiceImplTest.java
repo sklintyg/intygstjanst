@@ -56,7 +56,7 @@ public class StatisticsServiceImplTest {
 
     @Test
     public void disabledServiceDoesNothingOnCreated() {
-        serviceImpl.created(null);
+        serviceImpl.created(null, null, null, null);
         verify(template, never()).send(any(MessageCreator.class));
     }
 
@@ -79,7 +79,7 @@ public class StatisticsServiceImplTest {
         Session session = mock(Session.class);
         when(session.createTextMessage("The document")).thenReturn(message);
         
-        serviceImpl.created(certificate);
+        serviceImpl.created(certificate.getDocument(), certificate.getId(), certificate.getType(), certificate.getCareUnitId());
         
         verify(template, only()).send(captor.capture());
         captor.getValue().createMessage(session);
