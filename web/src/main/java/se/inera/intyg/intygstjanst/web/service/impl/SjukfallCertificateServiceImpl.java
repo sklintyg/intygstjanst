@@ -26,7 +26,7 @@ public class SjukfallCertificateServiceImpl implements SjukfallCertificateServic
     private static final Logger log = LoggerFactory.getLogger(SjukfallCertificateServiceImpl.class);
 
     @Autowired
-    SjukfallCertificateDao sjukfallCertificateDao;
+    private SjukfallCertificateDao sjukfallCertificateDao;
 
     @Autowired
     private IntygModuleRegistry moduleRegistry;
@@ -40,10 +40,15 @@ public class SjukfallCertificateServiceImpl implements SjukfallCertificateServic
             return false;
         }
 
-        SjukfallCertificate sjukfallCert = null;
+        SjukfallCertificate sjukfallCert;
         try {
             ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
             Utlatande utlatande = moduleApi.getUtlatandeFromJson(certificate.getDocument());
+            if (!certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
+                log.debug("Not storing {0}, is smittskydd or does not have a diagnoseCode.", certificate.getId());
+                return false;
+            }
+
             sjukfallCert = certificateToSjukfallCertificateConverter.convertFk7263(certificate, utlatande);
             sjukfallCertificateDao.store(sjukfallCert);
             return true;

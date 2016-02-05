@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.Partial;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
@@ -21,6 +23,9 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWork
  */
 @Component
 public class CertificateToSjukfallCertificateConverter {
+
+    private static final Logger log = LoggerFactory.getLogger(CertificateToSjukfallCertificateConverter.class);
+
 
     private static final int WORK_CAPACITY_100 = 100;
     private static final int WORK_CAPACITY_75 = 75;
@@ -89,5 +94,25 @@ public class CertificateToSjukfallCertificateConverter {
         wc.setFromDate(PartialConverter.partialToString(new Partial(interval.fromAsLocalDate())));
         wc.setToDate(PartialConverter.partialToString(new Partial(interval.tomAsLocalDate())));
         return wc;
+    }
+
+    public boolean isConvertableFk7263(Utlatande utlatande) {
+        if (!(utlatande instanceof se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande)) {
+            throw new IllegalArgumentException("Cannot validate " + utlatande.getClass().getName() + " to SjukfallCertificate, not of fk7263 type.");
+        }
+
+        se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande fkUtlatande = (se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande) utlatande;
+
+        if (fkUtlatande.isAvstangningSmittskydd()) {
+            log.debug("Not converting Intyg {0} to SjukfallCertificate, is smittskydd.");
+            return false;
+        }
+
+        if (fkUtlatande.getDiagnosKod() == null || fkUtlatande.getDiagnosKod().trim().equals("")) {
+            log.debug("Not converting Intyg {0} to SjukfallCertificate, has no diagnoseCode.");
+            return false;
+        }
+
+        return true;
     }
 }

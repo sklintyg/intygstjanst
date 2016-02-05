@@ -1,0 +1,171 @@
+package se.inera.intyg.intygstjanst.web.service.impl;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import se.inera.intyg.common.support.model.InternalLocalDateInterval;
+import se.inera.intyg.common.support.model.common.internal.GrundData;
+import se.inera.intyg.common.support.model.common.internal.HoSPersonal;
+import se.inera.intyg.common.support.model.common.internal.Patient;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.common.support.modules.support.api.ModuleApi;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
+import se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande;
+import sun.security.pkcs11.Secmod;
+
+/**
+ * Created by eriklupander on 2016-02-05.
+ */
+@RunWith(MockitoJUnitRunner.class)
+public class SjukfallCertificateServiceImplTest {
+
+    private static final String CERT_ID = "cert-123";
+    private static final String FNAME = "Tolvan";
+    private static final String ENAME = "Tolvansson";
+    private static final String PERSONNUMMER = "19121212-1212";
+    private static final String DOC_NAME = "Doc Name";
+    private static final String CERT_TYPE = "fk7263";
+    private static final String START_DATE_100 = "2016-02-01";
+    private static final String END_DATE_100 = "2216-02-01";
+    private static final String START_DATE_75 = "2016-03-01";
+    private static final String END_DATE_75 = "2216-03-01";
+    private static final String START_DATE_50 = "2016-04-01";
+    private static final String END_DATE_50 = "2216-04-01";
+    private static final String START_DATE_25 = "2016-05-01";
+    private static final String END_DATE_25 = "2216-05-01";
+
+    private static final String DOC_ID = "doc-1";
+    private static final String CARE_UNIT_ID = "enhet-1";
+    private static final String CARE_UNIT_NAME = "Enhet1";
+    private static final String CARE_GIVER_ID = "vardgivare-1";
+
+    private Personnummer pNr = new Personnummer(PERSONNUMMER);
+
+    @Mock
+    private IntygModuleRegistry moduleRegistry;
+
+    @Mock
+    private CertificateToSjukfallCertificateConverter certificateToSjukfallCertificateConverter;
+
+    @Mock
+    private SjukfallCertificateDao sjukfallCertificateDao;
+
+    @InjectMocks
+    private SjukfallCertificateServiceImpl testee;
+
+    private ModuleApi moduleApi = mock(ModuleApi.class);
+
+    @Test
+    public void testDoesNothingIfNotFk7263() {
+        Certificate certificate = buildCert();
+        certificate.setType("other");
+        testee.created(certificate);
+        verifyZeroInteractions(sjukfallCertificateDao);
+    }
+
+    @Test
+    public void testReturnsFalseIfUnparsableUtlatande() throws ModuleNotFoundException, IOException {
+        when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
+        when(moduleApi.getUtlatandeFromJson(any())).thenThrow(IOException.class);
+        when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(false);
+
+        boolean result = testee.created(buildCert());
+        assertFalse(result);
+        verify(sjukfallCertificateDao, times(0)).store(any(SjukfallCertificate.class));
+    }
+
+    @Test
+    public void testNoStoreIfModuleWasntFound() throws ModuleNotFoundException, IOException {
+
+        when(moduleRegistry.getModuleApi(anyString())).thenThrow(ModuleNotFoundException.class);
+        boolean result = testee.created(buildCert());
+        assertFalse(result);
+        verify(sjukfallCertificateDao, times(0)).store(any(SjukfallCertificate.class));
+    }
+
+    @Test
+    public void testNoStoreIfNoDiagnosKod() throws ModuleNotFoundException, IOException {
+        Utlatande utlatande = buildUtlatande();
+        utlatande.setDiagnosKod(null);
+        when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
+        when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
+        when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(false);
+
+        boolean result = testee.created(buildCert());
+        assertFalse(result);
+        verify(sjukfallCertificateDao, times(0)).store(any(SjukfallCertificate.class));
+    }
+
+    @Test
+    public void testOk() throws ModuleNotFoundException, IOException {
+        Utlatande utlatande = buildUtlatande();
+        when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
+        when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
+        when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(true);
+
+        boolean result = testee.created(buildCert());
+        assertTrue(result);
+        verify(sjukfallCertificateDao, times(1)).store(any(SjukfallCertificate.class));
+    }
+
+    @Test
+    public void testRevoke() {
+        boolean revoked = testee.revoked(buildCert());
+        assertTrue(revoked);
+    }
+
+    // TODOO Merge the code below with code from CertToSjukfall converter test. To utility
+    private Utlatande buildUtlatande() {
+        Utlatande utlatande = mock(Utlatande.class);
+        GrundData grundData = mock(GrundData.class);
+
+        HoSPersonal hoSPersonal = mock(HoSPersonal.class);
+        Patient patient = mock(Patient.class);
+
+        when(utlatande.getGrundData()).thenReturn(grundData);
+        when(grundData.getPatient()).thenReturn(patient);
+        when(grundData.getSkapadAv()).thenReturn(hoSPersonal);
+        when(hoSPersonal.getPersonId()).thenReturn(DOC_ID);
+        when(hoSPersonal.getFullstandigtNamn()).thenReturn(DOC_NAME);
+        when(patient.getFornamn()).thenReturn(FNAME);
+        when(patient.getEfternamn()).thenReturn(ENAME);
+
+        when(utlatande.getNedsattMed100()).thenReturn(new InternalLocalDateInterval(START_DATE_100, END_DATE_100));
+        when(utlatande.getNedsattMed75()).thenReturn(new InternalLocalDateInterval(START_DATE_75, END_DATE_75));
+        when(utlatande.getNedsattMed50()).thenReturn(new InternalLocalDateInterval(START_DATE_50, END_DATE_50));
+        when(utlatande.getNedsattMed25()).thenReturn(new InternalLocalDateInterval(START_DATE_25, END_DATE_25));
+
+        return utlatande;
+    }
+
+    private Certificate buildCert() {
+        Certificate cert = new Certificate(CERT_ID, "doc");
+        cert.setType(CERT_TYPE);
+        cert.setSigningDoctorName(DOC_NAME);
+        cert.setCivicRegistrationNumber(pNr);
+        cert.setCareGiverId(CARE_GIVER_ID);
+        cert.setCareUnitId(CARE_UNIT_ID);
+        cert.setCareUnitName(CARE_UNIT_NAME);
+        return cert;
+    }
+}

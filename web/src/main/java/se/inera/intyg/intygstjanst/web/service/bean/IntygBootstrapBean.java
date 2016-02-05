@@ -167,8 +167,12 @@ public class IntygBootstrapBean {
                         ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
                         Utlatande utlatande = moduleApi.getUtlatandeFromJson(certificate.getDocument());
 
-                        SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertFk7263(certificate, utlatande);
-                        entityManager.persist(sjukfallCertificate);
+                        if (certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
+                            SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertFk7263(certificate, utlatande);
+                            entityManager.persist(sjukfallCertificate);
+                        }
+
+
                     } catch (Throwable t) {
                         status.setRollbackOnly();
                         LOG.error("Loading of Sjukfall intyg failed for {}: {}", metadata.getFilename(), t.getMessage());

@@ -93,7 +93,8 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     @Override
     public void revoke(String id) {
 
-        List<SjukfallCertificate> resultList = entityManager.createQuery("SELECT sc FROM SjukfallCertificate sc WHERE sc.id=:id", SjukfallCertificate.class)
+        List<SjukfallCertificate> resultList = entityManager.createQuery("SELECT sc FROM SjukfallCertificate sc "
+                + "WHERE sc.id=:id", SjukfallCertificate.class)
                 .setParameter("id", id)
                 .getResultList();
 

@@ -108,27 +108,48 @@ public class SjukfallCertificateDaoImplTest {
         // Create some certs for Care Giver 2.
         SjukfallCertificate sc1 = buildSjukfallCertificate(HSA_ID_2_1, CARE_GIVER_2_ID, defaultWorkCapacities(), false);
         SjukfallCertificate sc2 = buildSjukfallCertificate(HSA_ID_2_2, CARE_GIVER_2_ID, defaultWorkCapacities(), false);
-        entityManager.persist(sc1);
-        entityManager.persist(sc2);
+        sjukfallCertificateDao.store(sc1);
+        sjukfallCertificateDao.store(sc2);
 
         List<SjukfallCertificate> resultList = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(Arrays.asList(HSA_ID_2_1), CARE_GIVER_2_ID);
         assertNotNull(resultList);
         assertEquals(2, resultList.size());
     }
 
-    private void buildDefaultSjukfallCertificates() {
+    @Test
+    public void testRevoke() {
+        String id = buildDefaultSjukfallCertificates();
+        sjukfallCertificateDao.revoke(id);
+
+        SjukfallCertificate fromDb = entityManager.find(SjukfallCertificate.class, id);
+        assertEquals(true, fromDb.getDeleted());
+    }
+
+    @Test
+    public void testNothingHappensOnRevokeForNonExistingSjukfallCert() {
+        String id = buildDefaultSjukfallCertificates();
+        sjukfallCertificateDao.revoke("some-other-id");
+
+        SjukfallCertificate fromDb = entityManager.find(SjukfallCertificate.class, id);
+        assertEquals(false, fromDb.getDeleted());
+    }
+
+    private String buildDefaultSjukfallCertificates() {
         SjukfallCertificate sc = buildSjukfallCertificate(HSA_ID_1, CARE_GIVER_1_ID, defaultWorkCapacities(), false);
-        entityManager.persist(sc);
+        sc = entityManager.merge(sc);
+        return sc.getId();
     }
 
-    private void buildDeletedSjukfallCertificates() {
+    private String buildDeletedSjukfallCertificates() {
         SjukfallCertificate sc = buildSjukfallCertificate(HSA_ID_1, CARE_GIVER_1_ID, defaultWorkCapacities(), true);
-        entityManager.persist(sc);
+        sc = entityManager.merge(sc);
+        return sc.getId();
     }
 
-    private void buildNonOngoingSjukfallCertificates() {
+    private String buildNonOngoingSjukfallCertificates() {
         SjukfallCertificate sc = buildSjukfallCertificate(HSA_ID_1, CARE_GIVER_1_ID, nonOngoingWorkCapacities(), false);
-        entityManager.persist(sc);
+        sc = entityManager.merge(sc);
+        return sc.getId();
     }
 
 
