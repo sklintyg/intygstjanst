@@ -19,25 +19,24 @@
 
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
-import com.google.common.base.Throwables;
+import java.io.StringWriter;
+
+import javax.xml.bind.*;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
-import se.inera.intyg.intygstyper.fk7263.integration.stub.FkMedicalCertificatesStore;
+
+import com.google.common.base.Throwables;
+
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.rivtabp20.v1.SendMedicalCertificateQuestionResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.ObjectFactory;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.*;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import java.io.StringWriter;
+import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 
 
 /**
@@ -52,7 +51,7 @@ public class SendMedicalCertificateQuestionResponderStub implements SendMedicalC
     private final JAXBContext jaxbContext;
 
     @Autowired
-    private FkMedicalCertificatesStore fkMedicalCertificatesStore;
+    private MedicalCertificatesStore medicalCertificatesStore;
 
     public SendMedicalCertificateQuestionResponderStub() {
         try {
@@ -74,7 +73,7 @@ public class SendMedicalCertificateQuestionResponderStub implements SendMedicalC
             marshalCertificate(request);
             logger.info("STUB Received question concerning certificate with id: " + id);
             if (request.getQuestion().getAmne().equals(Amnetyp.MAKULERING_AV_LAKARINTYG)) {
-                fkMedicalCertificatesStore.makulera(id, meddelande);
+                medicalCertificatesStore.makulera(id, meddelande);
             }
         } catch (JAXBException e) {
             response.setResult(ResultOfCallUtil.failResult("Unable to marshal certificate information"));
