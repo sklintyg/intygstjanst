@@ -103,11 +103,10 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             LOGGER.error("JAXB error in Webservice: ", e);
             Throwables.propagate(e);
 
-        } catch(NotImplementedException e){
+        } catch (NotImplementedException e) {
             LOGGER.error("This webservice is not valid for the current certificate type {}", registerCertificate.getIntyg());
             Throwables.propagate(e);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Error in Webservice: ", e);
             Throwables.propagate(e);
         }
