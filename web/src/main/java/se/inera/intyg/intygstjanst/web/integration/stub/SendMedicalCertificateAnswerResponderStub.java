@@ -19,24 +19,21 @@
 
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
-import com.google.common.base.Throwables;
+import java.io.StringWriter;
+
+import javax.xml.bind.*;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
-import se.inera.intyg.intygstyper.fk7263.integration.stub.FkMedicalCertificatesStore;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswer.rivtabp20.v1.SendMedicalCertificateAnswerResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.ObjectFactory;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.SendMedicalCertificateAnswerResponseType;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.SendMedicalCertificateAnswerType;
-import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import java.io.StringWriter;
+import com.google.common.base.Throwables;
+
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswer.rivtabp20.v1.SendMedicalCertificateAnswerResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateanswerresponder.v1.*;
+import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 
 
 /**
@@ -51,9 +48,6 @@ public class SendMedicalCertificateAnswerResponderStub implements
             .getLogger(SendMedicalCertificateQuestionResponderStub.class);
 
     private final JAXBContext jaxbContext;
-
-    @Autowired
-    private FkMedicalCertificatesStore fkMedicalCertificatesStore;
 
     public SendMedicalCertificateAnswerResponderStub() {
         try {
