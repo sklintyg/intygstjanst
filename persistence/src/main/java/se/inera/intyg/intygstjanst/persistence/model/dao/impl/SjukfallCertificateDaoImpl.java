@@ -34,7 +34,9 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 
 /**
- * @author andreaskaltenbach
+ * Uses JPQL to query {@link SjukfallCertificate} a list of sjukfall related intyg.
+ *
+ * @author eriklupander
  */
 @Repository
 public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
@@ -48,54 +50,39 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(List<String> careUnitHsaIds) {
         String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
 
-//        List<String> personNummerList = entityManager.createQuery(
-//                "SELECT sc.civicRegistrationNumber FROM SjukfallCertificate sc JOIN "
-//                + "sc.sjukfallCertificateWorkCapacity scwc WHERE "
-//                + "    sc.careUnitId IN (:careUnitHsaId) "
-//                + "AND scwc.fromDate <= :today "
-//                + "AND scwc.toDate >= :today "
-//                + "AND sc.deleted = false "
-//                + "ORDER BY sc.civicRegistrationNumber", String.class)
-//
-//                .setParameter("careUnitHsaId", careUnitHsaIds)
-//                .setParameter("today", today)
-//                .getResultList();
-//
-//        // Remove this or change to debug later on.
-//        log.info("Get personnr with active intyg on enhet {0} (with mottagningar) returned {1} items.", careUnitHsaIds, personNummerList.size());
-//
-//
-//        List<SjukfallCertificate> resultList = entityManager.createQuery(
-//                "SELECT DISTINCT sc FROM SjukfallCertificate sc "
-//                + "JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc "
-//                + "WHERE sc.civicRegistrationNumber IN (:personNummerList) "
-//                + "AND sc.careGiverId = :careGiverId "
-//                + "AND sc.deleted = false "
-//                + "ORDER BY sc.civicRegistrationNumber",
-//                SjukfallCertificate.class)
-//
-//                .setParameter("careGiverId", parentCareGiverId)
-//                .setParameter("personNummerList", personNummerList)
-//                .getResultList();
-//
-//        log.info("Read {0} SjukfallCertificate for {1} patients belonging to one of units {2} organized under care giver {3}",
-//                resultList.size(), personNummerList.size(), careUnitHsaIds, parentCareGiverId);
-
-        List<SjukfallCertificate> resultList = entityManager.createQuery(
-                "SELECT DISTINCT sc FROM SjukfallCertificate sc JOIN FETCH "
-                        + "sc.sjukfallCertificateWorkCapacity scwc WHERE "
-                        + "    sc.careUnitId IN (:careUnitHsaId) "
-                        + "AND scwc.fromDate <= :today "
-                        + "AND scwc.toDate >= :today "
-                        + "AND sc.deleted = false "
-                        + "ORDER BY sc.civicRegistrationNumber", SjukfallCertificate.class)
+        // First, get personnummer for all patients having a currently ongoing intyg.
+        List<String> personNummerList = entityManager.createQuery(
+                "SELECT DISTINCT sc.civicRegistrationNumber FROM SjukfallCertificate sc JOIN "
+                + "sc.sjukfallCertificateWorkCapacity scwc WHERE "
+                + "    sc.careUnitId IN (:careUnitHsaId) "
+                + "AND scwc.fromDate <= :today "
+                + "AND scwc.toDate >= :today "
+                + "AND sc.deleted = false "
+                + "ORDER BY sc.civicRegistrationNumber", String.class)
 
                 .setParameter("careUnitHsaId", careUnitHsaIds)
                 .setParameter("today", today)
                 .getResultList();
 
+        // Remove this or change to debug later on.
+        LOG.info("Get personnr with active intyg on enhet {} (with mottagningar) returned {} items.", careUnitHsaIds, personNummerList.size());
 
-        LOG.info("Read {0} SjukfallCertificate for belonging to unit {1}",
+        // Then, fetch all SjukfallCertificates for these persons on the designated units.
+        List<SjukfallCertificate> resultList = entityManager.createQuery(
+                "SELECT DISTINCT sc FROM SjukfallCertificate sc "
+                + "JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc "
+                + "WHERE sc.civicRegistrationNumber IN (:personNummerList) "
+                + "AND sc.careUnitId IN (:careUnitHsaId) "
+                + "AND sc.deleted = false "
+                + "ORDER BY sc.civicRegistrationNumber",
+                SjukfallCertificate.class)
+
+                .setParameter("careUnitHsaId", careUnitHsaIds)
+                .setParameter("personNummerList", personNummerList)
+                .getResultList();
+
+
+        LOG.info("Read {} SjukfallCertificate for belonging to unit {}",
                 resultList.size(), careUnitHsaIds);
 
         return resultList;
@@ -115,13 +102,13 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                 .getResultList();
 
         if (resultList.size() == 0) {
-            LOG.error("Could not mark SjukfallCert {0} as deleted, not found.", id);
+            LOG.error("Could not mark SjukfallCert {} as deleted, not found.", id);
             return;
         }
         for (SjukfallCertificate sc : resultList) {
             sc.setDeleted(true);
             entityManager.merge(sc);
-            LOG.debug("Successfully marked SjukfallCert {0} as deleted", id);
+            LOG.debug("Successfully marked SjukfallCert {} as deleted", id);
         }
     }
 }

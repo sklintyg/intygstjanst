@@ -78,7 +78,7 @@ public class SjukfallCertificateDaoImplTest {
         List<SjukfallCertificate> resultList = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(Arrays.asList(HSA_ID_1));
         assertNotNull(resultList);
         assertEquals(1, resultList.size());
-        assertEquals(2, resultList.get(0).getSjukfallCertificateWorkCapacity().size());
+        assertEquals(3, resultList.get(0).getSjukfallCertificateWorkCapacity().size());
     }
 
     @Test
@@ -156,16 +156,22 @@ public class SjukfallCertificateDaoImplTest {
         List<SjukfallCertificateWorkCapacity> workCapacities = new ArrayList<>();
         SjukfallCertificateWorkCapacity wc = new SjukfallCertificateWorkCapacity();
 
-        wc.setCapacityPercentage(75);
+        wc.setCapacityPercentage(100);
         wc.setFromDate(LocalDate.now().minusWeeks(1).format(DateTimeFormatter.ISO_DATE));
         wc.setToDate(LocalDate.now().plusWeeks(1).format(DateTimeFormatter.ISO_DATE));
         workCapacities.add(wc);
 
         SjukfallCertificateWorkCapacity wc2 = new SjukfallCertificateWorkCapacity();
-        wc2.setCapacityPercentage(100);
+        wc2.setCapacityPercentage(75);
         wc2.setFromDate(LocalDate.now().minusWeeks(3).format(DateTimeFormatter.ISO_DATE));
         wc2.setToDate(LocalDate.now().minusWeeks(1).format(DateTimeFormatter.ISO_DATE));
         workCapacities.add(wc2);
+
+        SjukfallCertificateWorkCapacity wc3 = new SjukfallCertificateWorkCapacity();
+        wc3.setCapacityPercentage(50);
+        wc3.setFromDate(LocalDate.now().minusWeeks(4).format(DateTimeFormatter.ISO_DATE));
+        wc3.setToDate(LocalDate.now().minusWeeks(3).format(DateTimeFormatter.ISO_DATE));
+        workCapacities.add(wc3);
         return workCapacities;
     }
 
