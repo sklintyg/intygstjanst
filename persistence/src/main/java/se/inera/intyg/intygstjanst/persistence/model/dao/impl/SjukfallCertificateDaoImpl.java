@@ -115,13 +115,13 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                 .getResultList();
 
         if (resultList.size() == 0) {
-            log.error("Could not mark SjukfallCert {0} as deleted, not found.", id);
+            LOG.error("Could not mark SjukfallCert {0} as deleted, not found.", id);
             return;
         }
         for (SjukfallCertificate sc : resultList) {
             sc.setDeleted(true);
             entityManager.merge(sc);
-            log.debug("Successfully marked SjukfallCert {0} as deleted", id);
+            LOG.debug("Successfully marked SjukfallCert {0} as deleted", id);
         }
     }
 }
