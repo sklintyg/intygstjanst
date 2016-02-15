@@ -47,6 +47,7 @@
     <jaxrs:server id="certificateService" address="/resources">
       <jaxrs:serviceBeans>
         <ref bean="certificateBean" />
+        <ref bean="sjukfallCertBean" />
         <ref bean="fkBean" />
       </jaxrs:serviceBeans>
       <jaxrs:providers>
@@ -58,6 +59,7 @@
     </jaxrs:server>
 
     <bean id="certificateBean" class="se.inera.intyg.intygstjanst.web.integration.test.CertificateResource" />
+    <bean id="sjukfallCertBean" class="se.inera.intyg.intygstjanst.web.integration.test.SjukfallCertResource" />
     <bean id="fkBean" class="se.inera.intyg.intygstjanst.web.integration.stub.FkStubResource" />
 
   </beans>

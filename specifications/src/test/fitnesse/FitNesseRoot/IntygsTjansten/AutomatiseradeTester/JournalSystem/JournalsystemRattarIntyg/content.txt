@@ -91,3 +91,6 @@
 |fit-intyg-2|
 |fit-intyg-3|
 |fit-intyg-4|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|

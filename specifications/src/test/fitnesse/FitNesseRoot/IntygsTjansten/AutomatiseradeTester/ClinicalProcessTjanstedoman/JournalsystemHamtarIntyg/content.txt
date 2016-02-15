@@ -39,3 +39,7 @@
 |id|
 |fit-intyg-1|
 |fit-intyg-2|
+
+!3 Rensa bort sjukfallintyg
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|

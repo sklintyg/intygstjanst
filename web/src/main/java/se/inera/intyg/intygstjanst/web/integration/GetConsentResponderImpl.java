@@ -30,7 +30,6 @@ import se.inera.intyg.insuranceprocess.healthreporting.getconsentresponder.v1.Ge
 import se.inera.intyg.insuranceprocess.healthreporting.getconsentresponder.v1.GetConsentResponseType;
 import se.inera.intyg.intygstjanst.web.service.ConsentService;
 
-
 @SchemaValidation
 public class GetConsentResponderImpl implements GetConsentResponderInterface {
 

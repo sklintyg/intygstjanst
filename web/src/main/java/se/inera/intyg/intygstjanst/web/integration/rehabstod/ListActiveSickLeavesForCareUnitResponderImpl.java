@@ -37,17 +37,20 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
 
         String careUnitHsaId = parameters.getEnhetsId().getExtension();
 
-        String careGiverHsaId = hsaService.getHsaIdForCareGiverOfCareUnit(careUnitHsaId);
-        if (careGiverHsaId == null) {
-            response.setResultCode(ResultCodeEnum.ERROR);
-            response.setComment("No caregiver hsaId could be found for careunit hsaId '" + careUnitHsaId + "'.");
-            return response;
-        }
+        // Commented out for now - in Rehabstöd 1.0 we only use intyg on the same care unit with sub-units. Not across an
+        // entire care giver.
+
+//        String careGiverHsaId = hsaService.getHsaIdForCareGiverOfCareUnit(careUnitHsaId);
+//        if (careGiverHsaId == null) {
+//            response.setResultCode(ResultCodeEnum.ERROR);
+//            response.setComment("No caregiver hsaId could be found for careunit hsaId '" + careUnitHsaId + "'.");
+//            return response;
+//        }
 
         List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(careUnitHsaId);
         hsaIdList.add(careUnitHsaId);
 
-        List<SjukfallCertificate> activeSjukfallCertificateForCareUnits = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(hsaIdList, careGiverHsaId);
+        List<SjukfallCertificate> activeSjukfallCertificateForCareUnits = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(hsaIdList);
 
         response.setResultCode(ResultCodeEnum.OK);
         IntygsLista intygsLista = new IntygsLista();

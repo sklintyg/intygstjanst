@@ -41,3 +41,6 @@
 |ta bort Intyg|
 |id|
 |fit-intyg-1|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|

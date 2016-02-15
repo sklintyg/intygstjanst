@@ -45,42 +45,58 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     private EntityManager entityManager;
 
     @Override
-    public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(List<String> careUnitHsaIds, String parentCareGiverId) {
+    public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(List<String> careUnitHsaIds) {
         String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
-       // String careUnitHsaIdsAsString = careUnitHsaIds.stream().collect(Collectors.joining(","));
-        List<String> personNummerList = entityManager.createQuery(
-                "SELECT sc.civicRegistrationNumber FROM SjukfallCertificate sc JOIN "
-                + "sc.sjukfallCertificateWorkCapacity scwc WHERE "
-                + "    sc.careUnitId IN (:careUnitHsaId) "
-                + "AND scwc.fromDate <= :today "
-                + "AND scwc.toDate >= :today "
-                + "AND sc.deleted = false "
-                + "ORDER BY sc.civicRegistrationNumber", String.class)
+
+//        List<String> personNummerList = entityManager.createQuery(
+//                "SELECT sc.civicRegistrationNumber FROM SjukfallCertificate sc JOIN "
+//                + "sc.sjukfallCertificateWorkCapacity scwc WHERE "
+//                + "    sc.careUnitId IN (:careUnitHsaId) "
+//                + "AND scwc.fromDate <= :today "
+//                + "AND scwc.toDate >= :today "
+//                + "AND sc.deleted = false "
+//                + "ORDER BY sc.civicRegistrationNumber", String.class)
+//
+//                .setParameter("careUnitHsaId", careUnitHsaIds)
+//                .setParameter("today", today)
+//                .getResultList();
+//
+//        // Remove this or change to debug later on.
+//        log.info("Get personnr with active intyg on enhet {0} (with mottagningar) returned {1} items.", careUnitHsaIds, personNummerList.size());
+//
+//
+//        List<SjukfallCertificate> resultList = entityManager.createQuery(
+//                "SELECT DISTINCT sc FROM SjukfallCertificate sc "
+//                + "JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc "
+//                + "WHERE sc.civicRegistrationNumber IN (:personNummerList) "
+//                + "AND sc.careGiverId = :careGiverId "
+//                + "AND sc.deleted = false "
+//                + "ORDER BY sc.civicRegistrationNumber",
+//                SjukfallCertificate.class)
+//
+//                .setParameter("careGiverId", parentCareGiverId)
+//                .setParameter("personNummerList", personNummerList)
+//                .getResultList();
+//
+//        log.info("Read {0} SjukfallCertificate for {1} patients belonging to one of units {2} organized under care giver {3}",
+//                resultList.size(), personNummerList.size(), careUnitHsaIds, parentCareGiverId);
+
+        List<SjukfallCertificate> resultList = entityManager.createQuery(
+                "SELECT DISTINCT sc FROM SjukfallCertificate sc JOIN FETCH "
+                        + "sc.sjukfallCertificateWorkCapacity scwc WHERE "
+                        + "    sc.careUnitId IN (:careUnitHsaId) "
+                        + "AND scwc.fromDate <= :today "
+                        + "AND scwc.toDate >= :today "
+                        + "AND sc.deleted = false "
+                        + "ORDER BY sc.civicRegistrationNumber", SjukfallCertificate.class)
 
                 .setParameter("careUnitHsaId", careUnitHsaIds)
                 .setParameter("today", today)
                 .getResultList();
 
-        // Remove this or change to debug later on.
-        log.info("Get personnr with active intyg on enhet {0} (with mottagningar) returned {1} items.", careUnitHsaIds, personNummerList.size());
 
-          // personNummerList.stream().collect(Collectors.joining(","))
-
-        List<SjukfallCertificate> resultList = entityManager.createQuery(
-                "SELECT DISTINCT sc FROM SjukfallCertificate sc "
-                + "JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc "
-                + "WHERE sc.civicRegistrationNumber IN (:personNummerList) "
-                + "AND sc.careGiverId = :careGiverId "
-                + "AND sc.deleted = false "
-                + "ORDER BY sc.civicRegistrationNumber",
-                SjukfallCertificate.class)
-
-                .setParameter("careGiverId", parentCareGiverId)
-                .setParameter("personNummerList", personNummerList)
-                .getResultList();
-
-        log.info("Read {0} SjukfallCertificate for {1} patients belonging to one of units {2} organized under care giver {3}",
-                resultList.size(), personNummerList.size(), careUnitHsaIds, parentCareGiverId);
+        log.info("Read {0} SjukfallCertificate for belonging to unit {1}",
+                resultList.size(), careUnitHsaIds);
 
         return resultList;
     }
