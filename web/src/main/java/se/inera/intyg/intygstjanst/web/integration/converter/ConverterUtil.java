@@ -24,10 +24,8 @@ import java.util.List;
 
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
-import se.inera.intyg.intygstjanst.persistence.model.builder.SjukfallCertificateBuilder;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 
 public final class ConverterUtil {
 

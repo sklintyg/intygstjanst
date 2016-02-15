@@ -3,6 +3,7 @@ package se.inera.intyg.intygstjanst.web.service.converter;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getInstance;
 
 import org.junit.Test;
 
@@ -42,16 +43,15 @@ public class CertificateToSjukfallCertificateConverterTest {
     private static final String CARE_GIVER_ID = "vardgivare-1";
 
     private CertificateToSjukfallCertificateConverter testee = new CertificateToSjukfallCertificateConverter();
-    private Personnummer pNr = new Personnummer(PERSONNUMMER);
 
     @Test(expected = IllegalArgumentException.class)
     public void testThrowsExceptionWhenNonFk7263Type() {
-        testee.convertFk7263(buildCert(), new se.inera.intyg.intygstyper.ts_bas.model.internal.Utlatande());
+        testee.convertFk7263(getInstance().buildCert(), new se.inera.intyg.intygstyper.ts_bas.model.internal.Utlatande());
     }
 
     @Test
     public void testStandardConvert() {
-        SjukfallCertificate sjukfallCertificate = testee.convertFk7263(buildCert(), buildUtlatande());
+        SjukfallCertificate sjukfallCertificate = testee.convertFk7263(getInstance().buildCert(), getInstance().buildUtlatande());
         assertEquals(CERT_ID, sjukfallCertificate.getId());
         assertEquals(CERT_TYPE, sjukfallCertificate.getType());
 
@@ -78,39 +78,5 @@ public class CertificateToSjukfallCertificateConverterTest {
         assertEquals(new Integer(75), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(1).getCapacityPercentage());
         assertEquals(new Integer(50), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(2).getCapacityPercentage());
         assertEquals(new Integer(25), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(3).getCapacityPercentage());
-    }
-
-    private Utlatande buildUtlatande() {
-        Utlatande utlatande = mock(Utlatande.class);
-        GrundData grundData = mock(GrundData.class);
-
-        HoSPersonal hoSPersonal = mock(HoSPersonal.class);
-        Patient patient = mock(Patient.class);
-
-        when(utlatande.getGrundData()).thenReturn(grundData);
-        when(grundData.getPatient()).thenReturn(patient);
-        when(grundData.getSkapadAv()).thenReturn(hoSPersonal);
-        when(hoSPersonal.getPersonId()).thenReturn(DOC_ID);
-        when(hoSPersonal.getFullstandigtNamn()).thenReturn(DOC_NAME);
-        when(patient.getFornamn()).thenReturn(FNAME);
-        when(patient.getEfternamn()).thenReturn(ENAME);
-
-        when(utlatande.getNedsattMed100()).thenReturn(new InternalLocalDateInterval(START_DATE_100, END_DATE_100));
-        when(utlatande.getNedsattMed75()).thenReturn(new InternalLocalDateInterval(START_DATE_75, END_DATE_75));
-        when(utlatande.getNedsattMed50()).thenReturn(new InternalLocalDateInterval(START_DATE_50, END_DATE_50));
-        when(utlatande.getNedsattMed25()).thenReturn(new InternalLocalDateInterval(START_DATE_25, END_DATE_25));
-
-        return utlatande;
-    }
-
-    private Certificate buildCert() {
-        Certificate cert = new Certificate(CERT_ID, "doc");
-        cert.setType(CERT_TYPE);
-        cert.setSigningDoctorName(DOC_NAME);
-        cert.setCivicRegistrationNumber(pNr);
-        cert.setCareGiverId(CARE_GIVER_ID);
-        cert.setCareUnitId(CARE_UNIT_ID);
-        cert.setCareUnitName(CARE_UNIT_NAME);
-        return cert;
     }
 }

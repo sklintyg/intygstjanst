@@ -39,7 +39,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 @Repository
 public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
 
-    private static final Logger log = LoggerFactory.getLogger(SjukfallCertificateDaoImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SjukfallCertificateDaoImpl.class);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -95,7 +95,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                 .getResultList();
 
 
-        log.info("Read {0} SjukfallCertificate for belonging to unit {1}",
+        LOG.info("Read {0} SjukfallCertificate for belonging to unit {1}",
                 resultList.size(), careUnitHsaIds);
 
         return resultList;
