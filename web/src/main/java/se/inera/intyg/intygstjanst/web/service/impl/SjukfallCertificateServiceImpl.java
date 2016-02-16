@@ -62,6 +62,7 @@ public class SjukfallCertificateServiceImpl implements SjukfallCertificateServic
         try {
             ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
             Utlatande utlatande = moduleApi.getUtlatandeFromJson(certificate.getDocument());
+
             if (!certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
                 LOG.debug("Not storing {0}, is smittskydd or does not have a diagnoseCode.", certificate.getId());
                 return false;

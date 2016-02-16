@@ -2,19 +2,12 @@ package se.inera.intyg.intygstjanst.web.service.converter;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getInstance;
+import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
 
+import org.joda.time.LocalDateTime;
 import org.junit.Test;
 
-import se.inera.intyg.common.support.model.InternalLocalDateInterval;
-import se.inera.intyg.common.support.model.common.internal.GrundData;
-import se.inera.intyg.common.support.model.common.internal.HoSPersonal;
-import se.inera.intyg.common.support.model.common.internal.Patient;
-import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande;
 
 /**
  * Created by eriklupander on 2016-02-04.
@@ -23,6 +16,7 @@ import se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande;
 public class CertificateToSjukfallCertificateConverterTest {
 
     private static final String CERT_ID = "cert-123";
+    private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
     private static final String FNAME = "Tolvan";
     private static final String ENAME = "Tolvansson";
     private static final String PERSONNUMMER = "19121212-1212";
@@ -46,14 +40,16 @@ public class CertificateToSjukfallCertificateConverterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testThrowsExceptionWhenNonFk7263Type() {
-        testee.convertFk7263(getInstance().buildCert(), new se.inera.intyg.intygstyper.ts_bas.model.internal.Utlatande());
+        testee.convertFk7263(getFactoryInstance().buildCert(), new se.inera.intyg.intygstyper.ts_bas.model.internal.Utlatande());
     }
 
     @Test
     public void testStandardConvert() {
-        SjukfallCertificate sjukfallCertificate = testee.convertFk7263(getInstance().buildCert(), getInstance().buildUtlatande());
+        SjukfallCertificate sjukfallCertificate = testee.convertFk7263(getFactoryInstance().buildCert(), getFactoryInstance().buildUtlatande());
         assertEquals(CERT_ID, sjukfallCertificate.getId());
         assertEquals(CERT_TYPE, sjukfallCertificate.getType());
+
+        assertEquals(CERT_SIGNING_DATETIME, sjukfallCertificate.getSigningDateTime());
 
         assertEquals(CARE_GIVER_ID, sjukfallCertificate.getCareGiverId());
         assertEquals(CARE_UNIT_ID, sjukfallCertificate.getCareUnitId());

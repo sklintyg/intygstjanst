@@ -32,6 +32,7 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,9 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
 
 /**
- * @author andreaskaltenbach
+ * DAO test, uses @ContextConfiguration e.g. real DB.
+ *
+ * @author eriklupander
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
@@ -54,6 +57,8 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWork
 public class SjukfallCertificateDaoImplTest {
 
     private static final String HSA_ID_1 = "careunit-1";
+
+    private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
     private static final String CARE_UNIT_NAME = "careunit-name-1";
     private static final String PERSONNUMMER = "191212121212";
     private static final String DOCTOR_HSA_ID = "doctor-1";
@@ -137,7 +142,7 @@ public class SjukfallCertificateDaoImplTest {
     private SjukfallCertificate buildSjukfallCertificate(String careUnitId, List<SjukfallCertificateWorkCapacity> workCapacities, boolean deleted) {
         SjukfallCertificate sc = new SjukfallCertificate(UUID.randomUUID().toString());
         sc.setCareUnitId(careUnitId);
-
+        sc.setSigningDateTime(CERT_SIGNING_DATETIME);
         sc.setSjukfallCertificateWorkCapacity(workCapacities);
         sc.setCareGiverId(CARE_GIVER_1_ID);
         sc.setCareUnitName(CARE_UNIT_NAME);

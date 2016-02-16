@@ -18,6 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +71,13 @@ public class SjukfallCertificate {
      */
     @Column(name = "SIGNING_DOCTOR_NAME", nullable = false)
     private String signingDoctorName;
+
+    /**
+     * Date and time when the certificate was signed.
+     */
+    @Column(name = "SIGNING_DATETIME", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+    private LocalDateTime signingDateTime;
 
     /**
      * Id of care unit.
@@ -155,6 +165,14 @@ public class SjukfallCertificate {
 
     public void setSigningDoctorName(String signingDoctorName) {
         this.signingDoctorName = signingDoctorName;
+    }
+
+    public LocalDateTime getSigningDateTime() {
+        return signingDateTime;
+    }
+
+    public void setSigningDateTime(LocalDateTime signingDateTime) {
+        this.signingDateTime = signingDateTime;
     }
 
     public String getCareUnitId() {

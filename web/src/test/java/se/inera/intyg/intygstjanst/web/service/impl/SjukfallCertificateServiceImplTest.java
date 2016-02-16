@@ -9,7 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getInstance;
+import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
 
 import java.io.IOException;
 
@@ -50,7 +50,7 @@ public class SjukfallCertificateServiceImplTest {
 
     @Test
     public void testDoesNothingIfNotFk7263() {
-        Certificate certificate = getInstance().buildCert();
+        Certificate certificate = getFactoryInstance().buildCert();
         certificate.setType("other");
         testee.created(certificate);
         verifyZeroInteractions(sjukfallCertificateDao);
@@ -62,7 +62,7 @@ public class SjukfallCertificateServiceImplTest {
         when(moduleApi.getUtlatandeFromJson(any())).thenThrow(IOException.class);
         when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(false);
 
-        boolean result = testee.created(getInstance().buildCert());
+        boolean result = testee.created(getFactoryInstance().buildCert());
         assertFalse(result);
         verify(sjukfallCertificateDao, times(0)).store(any(SjukfallCertificate.class));
     }
@@ -71,39 +71,39 @@ public class SjukfallCertificateServiceImplTest {
     public void testNoStoreIfModuleWasntFound() throws ModuleNotFoundException, IOException {
 
         when(moduleRegistry.getModuleApi(anyString())).thenThrow(ModuleNotFoundException.class);
-        boolean result = testee.created(getInstance().buildCert());
+        boolean result = testee.created(getFactoryInstance().buildCert());
         assertFalse(result);
         verify(sjukfallCertificateDao, times(0)).store(any(SjukfallCertificate.class));
     }
 
     @Test
     public void testNoStoreIfNoDiagnosKod() throws ModuleNotFoundException, IOException {
-        Utlatande utlatande = getInstance().buildUtlatande();
+        Utlatande utlatande = getFactoryInstance().buildUtlatande();
         utlatande.setDiagnosKod(null);
         when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
         when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(false);
 
-        boolean result = testee.created(getInstance().buildCert());
+        boolean result = testee.created(getFactoryInstance().buildCert());
         assertFalse(result);
         verify(sjukfallCertificateDao, times(0)).store(any(SjukfallCertificate.class));
     }
 
     @Test
     public void testOk() throws ModuleNotFoundException, IOException {
-        Utlatande utlatande = getInstance().buildUtlatande();
+        Utlatande utlatande = getFactoryInstance().buildUtlatande();
         when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
         when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(true);
 
-        boolean result = testee.created(getInstance().buildCert());
+        boolean result = testee.created(getFactoryInstance().buildCert());
         assertTrue(result);
         verify(sjukfallCertificateDao, times(1)).store(any(SjukfallCertificate.class));
     }
 
     @Test
     public void testRevoke() {
-        boolean revoked = testee.revoked(getInstance().buildCert());
+        boolean revoked = testee.revoked(getFactoryInstance().buildCert());
         assertTrue(revoked);
     }
 }

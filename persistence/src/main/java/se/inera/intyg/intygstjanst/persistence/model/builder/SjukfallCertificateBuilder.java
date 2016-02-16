@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.persistence.model.builder;
 
 import java.util.List;
 
+import org.joda.time.LocalDateTime;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
 
@@ -76,6 +77,11 @@ public class SjukfallCertificateBuilder {
 
     public SjukfallCertificateBuilder signingDoctorName(String signingDoctorName) {
         certificate.setSigningDoctorName(signingDoctorName);
+        return this;
+    }
+
+    public SjukfallCertificateBuilder signingDateTime(LocalDateTime signingDateTime) {
+        certificate.setSigningDateTime(signingDateTime);
         return this;
     }
 

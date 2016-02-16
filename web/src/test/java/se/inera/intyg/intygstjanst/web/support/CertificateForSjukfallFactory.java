@@ -1,5 +1,6 @@
 package se.inera.intyg.intygstjanst.web.support;
 
+import org.joda.time.LocalDateTime;
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
 import se.inera.intyg.common.support.model.common.internal.GrundData;
 import se.inera.intyg.common.support.model.common.internal.HoSPersonal;
@@ -7,6 +8,8 @@ import se.inera.intyg.common.support.model.common.internal.Patient;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande;
+
+
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -17,6 +20,7 @@ import static org.mockito.Mockito.when;
 public class CertificateForSjukfallFactory {
 
     private static final String CERT_ID = "cert-123";
+    private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
     private static final String FNAME = "Tolvan";
     private static final String ENAME = "Tolvansson";
     private static final String PERSONNUMMER = "19121212-1212";
@@ -44,7 +48,7 @@ public class CertificateForSjukfallFactory {
 
     }
 
-    public static CertificateForSjukfallFactory getInstance() {
+    public static CertificateForSjukfallFactory getFactoryInstance() {
         if (factory == null) {
             factory = new CertificateForSjukfallFactory();
         }
@@ -78,6 +82,7 @@ public class CertificateForSjukfallFactory {
     public Certificate buildCert() {
         Certificate cert = new Certificate(CERT_ID, "doc");
         cert.setType(CERT_TYPE);
+        cert.setSignedDate(CERT_SIGNING_DATETIME);
         cert.setSigningDoctorName(DOC_NAME);
         cert.setCivicRegistrationNumber(pNr);
         cert.setCareGiverId(CARE_GIVER_ID);

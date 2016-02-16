@@ -236,4 +236,12 @@
 
   </changeSet>
 
+  <changeSet id="10" author="el">
+    <addColumn tableName="SJUKFALL_CERT">
+      <column name="SIGNING_DATETIME" type="datetime">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>
