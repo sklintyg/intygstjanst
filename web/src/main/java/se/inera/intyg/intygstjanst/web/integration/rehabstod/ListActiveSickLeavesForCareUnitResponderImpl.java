@@ -49,7 +49,7 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
     public ListActiveSickLeavesForCareUnitResponseType listActiveSickLeavesForCareUnit(String logicalAddress, ListActiveSickLeavesForCareUnitType parameters) {
         ListActiveSickLeavesForCareUnitResponseType response = new ListActiveSickLeavesForCareUnitResponseType();
 
-        if (parameters.getEnhetsId() == null || parameters.getEnhetsId().getExtension() == null) {
+        if (hasNoCareUnitId(parameters)) {
             response.setResultCode(ResultCodeEnum.ERROR);
             response.setComment("No careUnitHsaId specified in request.");
             return response;
@@ -77,6 +77,10 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
         intygsLista.getIntygsData().addAll(new SjukfallCertificateIntygsDataConverter().buildIntygsData(activeSjukfallCertificateForCareUnits));
         response.setIntygsLista(intygsLista);
         return response;
+    }
+
+    private boolean hasNoCareUnitId(ListActiveSickLeavesForCareUnitType parameters) {
+        return parameters.getEnhetsId() == null || parameters.getEnhetsId().getExtension() == null || parameters.getEnhetsId().getExtension().trim().length() == 0;
     }
 
 

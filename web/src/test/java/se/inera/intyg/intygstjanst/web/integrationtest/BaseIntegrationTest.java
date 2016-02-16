@@ -19,8 +19,6 @@
 
 package se.inera.intyg.intygstjanst.web.integrationtest;
 
-import static com.jayway.restassured.RestAssured.given;
-
 import org.junit.After;
 import org.junit.Before;
 
@@ -29,13 +27,11 @@ import se.inera.intyg.common.util.integration.integration.json.CustomObjectMappe
 import com.jayway.restassured.RestAssured;
 
 /**
- * Base class for "REST-ish" integrationTests using RestAssured.
- * <p/>
- * Created by marced on 19/11/15.
+ * Base class for REST / SOAP in-container tests for Intygstjänsten.
+ *
+ * @author eriklupander
  */
 public abstract class BaseIntegrationTest {
-
-    private static final String USER_JSON_FORM_PARAMETER = "userJsonDisplay";
 
     protected CustomObjectMapper objectMapper = new CustomObjectMapper();
 
@@ -55,7 +51,6 @@ public abstract class BaseIntegrationTest {
     @After
     public void tearDown() {
         // TODO Remove all intyg and sjukfallintyg after each test
-        // given().expect().statusCode(200).when().delete("testability/intyg");
     }
 
 
