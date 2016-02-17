@@ -45,14 +45,14 @@ public class SendMessageToCare {
 
     @Column(name = "MEDDELANDE")
     private String meddelande;
-    
-//    @Column(name = "REFERENS")
-//    private String referens;
 
-//    @Column(name = "FRAGE_SIGNERINGS_DATUM")
-//    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
-//    private LocalDateTime frageSigneringsDatum;
-   
+    // @Column(name = "REFERENS")
+    // private String referens;
+
+    // @Column(name = "FRAGE_SIGNERINGS_DATUM")
+    // @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+    // private LocalDateTime frageSigneringsDatum;
+
     public Long getInternReferens() {
         return internReferens;
     }
@@ -61,14 +61,14 @@ public class SendMessageToCare {
         this.internReferens = internReferens;
     }
 
-//    public LocalDateTime getFrageSigneringsDatum() {
-//        return frageSigneringsDatum;
-//    }
-//
-//    public void setFrageSigneringsDatum(LocalDateTime frageSigneringsDatum) {
-//        this.frageSigneringsDatum = frageSigneringsDatum;
-//    }
-   
+    // public LocalDateTime getFrageSigneringsDatum() {
+    // return frageSigneringsDatum;
+    // }
+    //
+    // public void setFrageSigneringsDatum(LocalDateTime frageSigneringsDatum) {
+    // this.frageSigneringsDatum = frageSigneringsDatum;
+    // }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
