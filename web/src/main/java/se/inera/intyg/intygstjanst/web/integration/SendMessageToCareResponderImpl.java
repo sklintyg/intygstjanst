@@ -19,7 +19,7 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
         SendMessageToCareResponseType response = new SendMessageToCareResponseType();
         
         
-        forwarder.sendMessageToCare(parameters.getLogiskAdressMottagare().getExtension(), parameters);
+       // forwarder.sendMessageToCare(parameters.getLogiskAdressMottagare().getExtension(), parameters);
         
         ResultType resultType = new ResultType();
         resultType.setResultCode(ResultCodeType.OK);

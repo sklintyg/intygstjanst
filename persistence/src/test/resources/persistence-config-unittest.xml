@@ -18,13 +18,14 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
-              http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+              http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
   <!--<import resource="classpath:env/*-persistence-config.xml" />-->
   <context:annotation-config />
   <context:component-scan base-package="se.inera.intyg.intygstjanst.persistence.model" />
+  <jpa:repositories base-package="se.inera.intyg.intygstjanst.persistence.model" transaction-manager-ref="transactionManager"/>
 
   <bean id="dataSource" class="org.h2.jdbcx.JdbcConnectionPool" destroy-method="dispose">
     <constructor-arg>
@@ -34,17 +35,6 @@
         <property name="password" value="" />
       </bean>
     </constructor-arg>
-  </bean>
-
-  <bean id="org.h2.tools.Server" class="org.h2.tools.Server"
-      factory-method="createTcpServer" init-method="start" destroy-method="stop"
-      lazy-init="false">
-    <constructor-arg value="-tcp,-tcpAllowOthers,-tcpPort,9192" />
-  </bean>
-
-  <bean id="h2WebServer" class="org.h2.tools.Server"
-      factory-method="createWebServer" init-method="start" destroy-method="stop">
-    <constructor-arg value="-web,-webAllowOthers,-webPort,8182" />
   </bean>
 
   <bean id="entityManagerFactory"
