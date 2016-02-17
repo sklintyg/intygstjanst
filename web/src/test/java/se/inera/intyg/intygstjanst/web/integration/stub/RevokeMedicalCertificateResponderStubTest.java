@@ -32,8 +32,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 
-import se.inera.intyg.intygstyper.fk7263.integration.stub.FkMedicalCertificatesStore;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
+import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RevokeMedicalCertificateResponderStubTest {
@@ -43,7 +43,7 @@ public class RevokeMedicalCertificateResponderStubTest {
     private static final String REVOKE_MESSAGE = "Meddelande";
 
     @Mock
-    FkMedicalCertificatesStore store;
+    MedicalCertificatesStore store;
 
     @InjectMocks
     RevokeMedicalCertificateResponderStub stub = new RevokeMedicalCertificateResponderStub();

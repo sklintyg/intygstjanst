@@ -41,12 +41,15 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.util.integration.integration.json.CustomObjectMapper;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
 
 public class IntygBootstrapBean {
 
@@ -65,6 +68,9 @@ public class IntygBootstrapBean {
     @Autowired
     private IntygModuleRegistry moduleRegistry;
 
+    @Autowired
+    private CertificateToSjukfallCertificateConverter certificateToSjukfallCertificateConverter;
+
     @PostConstruct
     public void initData() throws IOException {
 
@@ -78,6 +84,7 @@ public class IntygBootstrapBean {
             Resource content = contentFiles.get(i);
             LOG.debug("Loading metadata " + metadata.getFilename() + " and content " + content.getFilename());
             addIntyg(metadata, content);
+            addSjukfall(metadata, content);
         }
     }
 
@@ -140,6 +147,47 @@ public class IntygBootstrapBean {
     private List<Resource> getResourceListing(String classpathResourcePath) throws IOException {
         PathMatchingResourcePatternResolver r = new PathMatchingResourcePatternResolver();
         return Arrays.asList(r.getResources(classpathResourcePath));
+    }
+
+
+    private void addSjukfall(final Resource metadata, final Resource content) {
+        try {
+            Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
+            if (!isSjukfallsGrundandeIntyg(certificate.getType())) {
+                return;
+            }
+
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {
+                    try {
+                        Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
+                        certificate.setDocument(IOUtils.toString(content.getInputStream(), "UTF-8"));
+
+                        ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
+                        Utlatande utlatande = moduleApi.getUtlatandeFromJson(certificate.getDocument());
+
+                        if (certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
+                            SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertFk7263(certificate, utlatande);
+                            entityManager.persist(sjukfallCertificate);
+                        }
+
+
+                    } catch (Throwable t) {
+                        status.setRollbackOnly();
+                        LOG.error("Loading of Sjukfall intyg failed for {}: {}", metadata.getFilename(), t.getMessage());
+                    }
+                }
+            });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // TODO of course, do this properly...
+    private boolean isSjukfallsGrundandeIntyg(String type) {
+        return type.equalsIgnoreCase("fk7263") || type.equalsIgnoreCase("fk");
     }
 
 }

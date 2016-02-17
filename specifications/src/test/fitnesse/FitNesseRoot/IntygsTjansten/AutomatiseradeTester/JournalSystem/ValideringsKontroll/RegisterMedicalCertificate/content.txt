@@ -14,6 +14,9 @@
 |id|
 |giltigt-intyg|
 
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
+
 !3 Giltigt intyg med tomt typ av utlatande ger inga fel
 
 | validera register   |
@@ -23,6 +26,9 @@
 |ta bort intyg|
 |id|
 |giltigt-intyg-med-tomt-typAvUtlatande|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
 
 !3 Giltigt intyg som saknar elementet typAvUtlatande ger inga fel
 
@@ -34,6 +40,9 @@
 |id|
 |giltigt-intyg-typAvUtlatande-saknas.xml|
 
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
+
 !3 Giltigt intyg med godtycklig string som typ av utlatande ger inga fel
 
 | validera register   |
@@ -43,6 +52,9 @@
 |ta bort intyg|
 |id|
 |giltigt-intyg-med-godtycklig-string-som-typAvUtlatande|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
 
 !3 Intyg med blanktecken i obligatoriska fält ger inga fel
 
@@ -54,6 +66,9 @@
 |id|
 |intyg-med-blanksteg|
 
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
+
 !3 Intyg utan Aktivitetsbegränsning (fält 5) ger inga fel
 
 |validera register|
@@ -63,6 +78,9 @@
 |ta bort intyg|
 |id|
 |giltigt-intyg-utan-aktivitet-beskrivning|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
 
 !3 Intyg utan Prognosangivelse (fält 10) ger inga fel
 
@@ -74,6 +92,9 @@
 |id|
 |giltigt-intyg-utan-prognosangivelse|
 
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
+
 !3 Intyg med orimliga datum ger inga fel
 
 |validera register|
@@ -83,6 +104,9 @@
 |ta bort intyg|
 |id|
 |giltigt-intyg-med-orimligt-datum|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
 
 !3 Saknad nedsattningsgrad ger fel
 
@@ -432,6 +456,9 @@
 |id|
 |SMiL-saknad-diagnos-kod|
 
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
+
 !3 Saknad diagnos-kod-system ger fel
 
 |validera register|
@@ -454,6 +481,9 @@
 |id|
 |giltigt-intyg-med-tom-bedomtTillstand-beskrivning|
 
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
+
 !3 Intyg med saknad bedömt tillstånd beskrivning (fält 3) ger fel
 
 |validera register|
@@ -471,6 +501,9 @@
 |id|
 |SMiL-saknad-funktionstillstand-kroppsfunktion|
 
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
+
 !3 Intyg med tom funktionstillstånd-kroppsfunktion-beskrivning (fält 4) ger fel, om inte avstängning enligt smittskyddslagen
 
 |validera register|
@@ -481,6 +514,9 @@
 |ta bort intyg|
 |id|
 |SMiL-tom-funktionstillstand-kroppsfunktion-beskrivning|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
 
 !3 Saknad funktionstillstånd-kroppsfunktion-beskrivning (fält 4) ger fel, om inte avstängning enligt smittskyddslagen
 
@@ -493,6 +529,9 @@
 |id|
 |SMiL-saknad-funktionstillstand-kroppsfunktion-beskrivning|
 
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
+
 !3 Saknade vårdkontakter och referenser (fält 4 kryssrutor) ger fel, om inte avstängning enligt smittskyddslagen
 
 |validera register|
@@ -503,6 +542,9 @@
 |ta bort intyg|
 |id|
 |SMiL-saknade-vardkontakter-referenser|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
 
 !3 Saknad vårdkontakt-tid ger fel
 
@@ -519,6 +561,9 @@
 |ta bort intyg|
 |id|
 |giltigt-intyg-med-tom-aktivitetsbegransning-beskrivning|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
 
 !3 Saknad beskrivning vid rekommendationer - Övrigt (fält 6a) ger fel, även för smittskyddsintyg
 
@@ -551,6 +596,9 @@
 |id|
 |giltigt-intyg-tom-beskrivning-rekommendation-ovrigt|
 
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
+
 !3 Tom beskrivning vid behandling - vården (fält 6b) ger inga fel
 
 |validera register|
@@ -561,6 +609,9 @@
 |id|
 |giltigt-intyg-tom-beskrivning-behandling-varden|
 
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
+
 !3 Tom beskrivning vid behandling - övrigt (fält 6b) ger inga fel
 
 |validera register|
@@ -570,6 +621,9 @@
 |ta bort intyg|
 |id|
 |giltigt-intyg-tom-beskrivning-behandling-ovrigt|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
 
 !3 Saknad kommentar (fält 13) om referens är annat eller om prognos är garEjAttBedomma  ger fel
 
@@ -595,6 +649,9 @@
 |id|
 |SMiL-saknad-sysselsattning|
 
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
+
 !3 Saknad arbetsuppgift ger fel, om inte avstängning enligt smittskyddslagen
 
 |validera register|
@@ -605,6 +662,9 @@
 |ta bort intyg|
 |id|
 |SMiL-saknad-arbetsuppgift|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
 
 !3 Saknad arbetsuppgift-beskrivning ger fel, även för smittskyddsintyg
 
@@ -651,6 +711,9 @@
 |ta bort intyg|
 |id|
 |giltigt-intyg-med-overlappande-varaktighet|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
 
 !3 Multipla ressätt-värden ger fel
 

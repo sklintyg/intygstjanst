@@ -62,3 +62,6 @@
 |id|
 |fit-intyg-1|
 |fit-intyg-2|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|

@@ -163,6 +163,24 @@
       </bean>
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
+  
+  <jaxws:endpoint address="/register-certificate-se/v2.0"
+      implementor="se.inera.intyg.intygstjanst.web.integration.RegisterCertificateResponderImpl">
+    <jaxws:outFaultInterceptors>
+      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+        <constructor-arg value="transform/register-certificate-transform.xslt"/>
+      </bean>
+    </jaxws:outFaultInterceptors>
+  </jaxws:endpoint>
+  
+   <jaxws:endpoint address="/get-certificate-se/v2.0"
+      implementor="se.inera.intyg.intygstjanst.web.integration.GetCertificateResponderImpl">
+    <jaxws:outFaultInterceptors>
+      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+        <constructor-arg value="transform/get-certificate-transform.xslt"/>
+      </bean>
+    </jaxws:outFaultInterceptors>
+  </jaxws:endpoint>
 
 
   <!-- ws clients -->
@@ -178,6 +196,17 @@
   </jaxws:client>
 
   <import resource="application-context-ws-stub.xml"/>
+
+  <!-- TjK for ListActiveSickLeavesForCareUnit. Consider moving to separate xml file and import -->
+  <jaxws:endpoint address="/list-active-sick-leaves-for-care-unit/v1.0"
+      implementor="se.inera.intyg.intygstjanst.web.integration.rehabstod.ListActiveSickLeavesForCareUnitResponderImpl">
+    <jaxws:outFaultInterceptors>
+      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+        <constructor-arg
+            value="transform/clinicalprocess-healthcond-rehabilitation/list-active-sick-leaves-for-care-unit-transform.xslt"/>
+      </bean>
+    </jaxws:outFaultInterceptors>
+  </jaxws:endpoint>
 
   <beans profile="!dev">
     <http:conduit

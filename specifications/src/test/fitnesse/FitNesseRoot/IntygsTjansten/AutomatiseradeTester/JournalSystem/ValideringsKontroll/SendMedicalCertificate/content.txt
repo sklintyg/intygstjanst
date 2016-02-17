@@ -22,6 +22,9 @@
 |id|
 |intygs-id-1234567890|
 
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
+
 !3 Meddelande med blanksteg i obligatoriska fält ger inga fel
 
 !4 Givet ett intyg
@@ -39,6 +42,9 @@
 |ta bort Intyg|
 |id|
 |intygs-id-1234567890|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
 
 !3 Saknat intygs-id ger fel
 
@@ -98,6 +104,9 @@
 |ta bort Intyg|
 |id|
 |intygs-id-1234567890|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
 
 !3 Saknat patient-namn ger fel
 

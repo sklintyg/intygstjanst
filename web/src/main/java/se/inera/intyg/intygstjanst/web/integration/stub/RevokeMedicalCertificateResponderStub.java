@@ -19,7 +19,6 @@
 
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
-
 import javax.xml.ws.WebServiceProvider;
 
 import org.slf4j.Logger;
@@ -32,10 +31,9 @@ import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.ri
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
+import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
 import se.inera.intyg.intygstjanst.web.integration.validator.RevokeRequestValidator;
-import se.inera.intyg.intygstyper.fk7263.integration.stub.FkMedicalCertificatesStore;
-
 
 @Transactional
 @WebServiceProvider(
@@ -48,7 +46,7 @@ public class RevokeMedicalCertificateResponderStub implements RevokeMedicalCerti
     private static final Logger LOGGER = LoggerFactory.getLogger(RevokeMedicalCertificateResponderStub.class);
 
     @Autowired
-    private FkMedicalCertificatesStore fkMedicalCertificatesStore;
+    private MedicalCertificatesStore store;
 
     @Override
     public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress,
@@ -62,7 +60,7 @@ public class RevokeMedicalCertificateResponderStub implements RevokeMedicalCerti
             String meddelande = request.getRevoke().getMeddelande();
 
             LOGGER.info("STUB Received revocation concerning certificate with id: " + id);
-            fkMedicalCertificatesStore.makulera(id, meddelande);
+            store.makulera(id, meddelande);
 
         } catch (CertificateValidationException e) {
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));

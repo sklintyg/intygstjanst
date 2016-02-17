@@ -24,11 +24,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static se.inera.intyg.common.support.stub.MedicalCertificatesStore.*;
 
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,13 +35,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import se.inera.intyg.intygstyper.fk7263.integration.stub.FkMedicalCertificatesStore;
+import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FkStubResourceTest {
 
     @Mock
-    FkMedicalCertificatesStore store;
+    MedicalCertificatesStore store;
 
     @Mock
     Map<String, Map<String, String>> map;
@@ -76,17 +75,17 @@ public class FkStubResourceTest {
         when(value.getKey()).thenReturn("1", "2", "3");
 
         Map<String, String> v1 = newHashMap();
-        v1.put("Personnummer", "19121212-1111");
-        v1.put("Makulerad", "NEJ");
-        v1.put("Meddelande", "m1");
+        v1.put(PERSONNUMMER, "19121212-1111");
+        v1.put(MAKULERAD, MAKULERAD_NEJ);
+        v1.put(MEDDELANDE, "m1");
         Map<String, String> v2 = newHashMap();
-        v2.put("Personnummer", "19121212-2222");
-        v2.put("Makulerad", "NEJ");
-        v2.put("Meddelande", "m2");
+        v2.put(PERSONNUMMER, "19121212-2222");
+        v2.put(MAKULERAD, MAKULERAD_NEJ);
+        v2.put(MEDDELANDE, "m2");
         Map<String, String> v3 = newHashMap();
-        v3.put("Personnummer", "19121212-3333");
-        v3.put("Makulerad", "JA");
-        v3.put("Meddelande", "m3");
+        v3.put(PERSONNUMMER, "19121212-3333");
+        v3.put(MAKULERAD, MAKULERAD_JA);
+        v3.put(MEDDELANDE, "m3");
         when(value.getValue()).thenReturn(v1, v1, v1, v2, v2, v2, v3, v3, v3);
 
         String v1Str = "<tr><td>1</td><td>19121212-1111</td><td>NEJ</td><td>m1</td></tr>";
@@ -104,14 +103,14 @@ public class FkStubResourceTest {
     public void testCertificatesJson() throws Exception {
 
         Map<String, String> v1 = newHashMap();
-        v1.put("Personnummer", "19121212-1111");
-        v1.put("Makulerad", "NEJ");
+        v1.put(PERSONNUMMER, "19121212-1111");
+        v1.put(MAKULERAD, MAKULERAD_NEJ);
         Map<String, String> v2 = newHashMap();
-        v2.put("Personnummer", "19121212-2222");
-        v2.put("Makulerad", "NEJ");
+        v2.put(PERSONNUMMER, "19121212-2222");
+        v2.put(MAKULERAD, MAKULERAD_NEJ);
         Map<String, String> v3 = newHashMap();
-        v3.put("Personnummer", "19121212-3333");
-        v3.put("Makulerad", "JA");
+        v3.put(PERSONNUMMER, "19121212-3333");
+        v3.put(MAKULERAD, MAKULERAD_JA);
         Map<String,Map<String,String>> expected = newHashMap();
         expected.put("1", v1);
         expected.put("2", v2);

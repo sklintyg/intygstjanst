@@ -23,6 +23,9 @@ Detta test säkerställer att dessa intyg korrekt kan registreras och skickas vi
 |id|
 |giltigt-intyg-arbetsloshet-med-obsolet-arbetsuppgift|
 
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
+
 
 INTYG-1420: Intyg med orimliga datum skall kunna registreras och skickas vidare till FK.
 
@@ -37,6 +40,9 @@ INTYG-1420: Intyg med orimliga datum skall kunna registreras och skickas vidare 
 |ta bort intyg|
 |id|
 |giltigt-intyg-med-orimligt-datum|
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
 
 !3 Återta samtycken:
 

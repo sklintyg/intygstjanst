@@ -3,6 +3,7 @@
 |se.inera.intyg.common.specifications.spec|
 |se.inera.intyg.common.specifications.spec.util|
 |se.inera.intyg.common.specifications.spec.util.jms|
+|se.inera.certificate.spec|
 
 !|Config|
 |property|value|
@@ -39,7 +40,8 @@
 |fit-intyg-7|
 |fit-intyg-blanksteg|
 
-
-
+!3 Rensa bort sjukfallsintyg
+| script | !-TaBortSjukfallIntyg-! |
+| ta bort alla sjukfall intyg |
 
 *****! 

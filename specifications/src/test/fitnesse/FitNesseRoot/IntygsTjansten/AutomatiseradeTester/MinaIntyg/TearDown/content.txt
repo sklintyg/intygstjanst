@@ -19,3 +19,8 @@
 |Samtycke|
 |personnr|samtycke|
 |${person1.personnummer}|nej|
+
+!3 Rensa bort sjukfallsintyg
+
+|script|!-TaBortSjukfallIntyg-!|
+|ta bort alla sjukfall intyg|
