@@ -128,6 +128,15 @@
       </bean>
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
+  
+  <jaxws:endpoint address="/send-certificate-to-care/v1.0"
+      implementor="se.inera.intyg.intygstjanst.web.integration.SendMessageToCareResponderImpl">
+    <jaxws:outFaultInterceptors>
+      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+        <constructor-arg value="transform/clinicalprocess-healthcond-certificate/send-message-to-care-transform.xslt"/>
+      </bean>
+    </jaxws:outFaultInterceptors>
+  </jaxws:endpoint>
 
   <jaxws:endpoint address="/set-certificate-archived/v1.0"
                   implementor="se.inera.intyg.intygstjanst.web.integration.SetCertificateArchivedResponderImpl">
