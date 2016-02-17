@@ -122,7 +122,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     }
 
     private String getIntygsTyp(RegisterCertificateType certificateType) {
-        return certificateType.getIntyg().getTyp().getCode();
+        return certificateType.getIntyg().getTyp().getCode().toLowerCase();
     }
 
     private CertificateHolder toCertificateHolder(Utlatande utlatande, String document, String type) {
