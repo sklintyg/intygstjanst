@@ -26,9 +26,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
-
 @Entity
 @Table(name = "FRAGASVAR")
 public class SendMessageToCare {
