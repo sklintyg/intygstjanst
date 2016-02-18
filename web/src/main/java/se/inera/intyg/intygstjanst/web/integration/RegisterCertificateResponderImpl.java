@@ -31,23 +31,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.base.Throwables;
+
 import se.inera.certificate.modules.fkparent.integration.ResultUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.model.converter.util.ConverterException;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
-import se.inera.intyg.common.support.validate.CertificateValidationException;
+import se.inera.intyg.common.support.modules.support.api.dto.ValidateXmlResponse;
 import se.inera.intyg.common.util.logging.LogMarkers;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.ObjectFactory;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.RegisterCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.RegisterCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.RegisterCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
-
-import com.google.common.base.Throwables;
 
 public class RegisterCertificateResponderImpl implements RegisterCertificateResponderInterface {
 
@@ -70,39 +71,25 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
 
     @Override
     public RegisterCertificateResponseType registerCertificate(String logicalAddress, RegisterCertificateType registerCertificate) {
-        RegisterCertificateResponseType response = new RegisterCertificateResponseType();
-
         try {
-            String xml = xmlToString(registerCertificate);
-
             String intygsTyp = getIntygsTyp(registerCertificate);
-
             ModuleApi api = moduleRegistry.getModuleApi(intygsTyp);
+            String xml = xmlToString(registerCertificate);
+            ValidateXmlResponse validationResponse = api.validateXml(xml);
 
-            Utlatande utlatande = api.getUtlatandeFromIntyg(registerCertificate.getIntyg(), xml);
-
-            CertificateHolder certificateHolder = toCertificateHolder(utlatande, xml, intygsTyp);
-            certificateHolder.setOriginalCertificate(xml);
-
-            moduleContainer.certificateReceived(certificateHolder);
-
-            response.setResult(ResultUtil.okResult());
-
+            if (!validationResponse.hasErrorMessages()) {
+                return makeOkResult(registerCertificate, intygsTyp, api, xml);
+            } else {
+                String validationErrors = String.join(";", validationResponse.getValidationErrors());
+                return makeValidationErrorResult(validationErrors);
+            }
         } catch (CertificateAlreadyExistsException e) {
-            response.setResult(ResultUtil.infoResult("Certificate already exists"));
-            String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
-            String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
-            LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId + " issued by " + issuedBy
-                    + ": Certificate already exists - ignored.");
-
-        } catch (CertificateValidationException | ConverterException e) {
-            response.setResult(ResultUtil.errorResult(ErrorIdType.VALIDATION_ERROR, e.getMessage()));
-            LOGGER.error(LogMarkers.VALIDATION, e.getMessage());
-
+            return makeCertificateAlreadyExistsResult(registerCertificate);
+        } catch (ConverterException e) {
+            return makeValidationErrorResult(e.getMessage());
         } catch (JAXBException e) {
             LOGGER.error("JAXB error in Webservice: ", e);
             Throwables.propagate(e);
-
         } catch (NotImplementedException e) {
             LOGGER.error("This webservice is not valid for the current certificate type {}", registerCertificate.getIntyg());
             Throwables.propagate(e);
@@ -110,7 +97,34 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             LOGGER.error("Error in Webservice: ", e);
             Throwables.propagate(e);
         }
+        throw new RuntimeException("Unrecoverable exception in registerCertificate");
+    }
 
+    private RegisterCertificateResponseType makeOkResult(RegisterCertificateType registerCertificate, String intygsTyp, ModuleApi api,
+            String xml) throws Exception, CertificateAlreadyExistsException, InvalidCertificateException {
+        RegisterCertificateResponseType response = new RegisterCertificateResponseType();
+        Utlatande utlatande = api.getUtlatandeFromIntyg(registerCertificate.getIntyg(), xml);
+        CertificateHolder certificateHolder = toCertificateHolder(utlatande, xml, intygsTyp);
+        certificateHolder.setOriginalCertificate(xml);
+        moduleContainer.certificateReceived(certificateHolder);
+        response.setResult(ResultUtil.okResult());
+        return response;
+    }
+
+    private RegisterCertificateResponseType makeValidationErrorResult(String errorString) {
+        RegisterCertificateResponseType response = new RegisterCertificateResponseType();
+        response.setResult(ResultUtil.errorResult(ErrorIdType.VALIDATION_ERROR, errorString));
+        LOGGER.error(LogMarkers.VALIDATION, errorString);
+        return response;
+    }
+
+    private RegisterCertificateResponseType makeCertificateAlreadyExistsResult(RegisterCertificateType registerCertificate) {
+        RegisterCertificateResponseType response = new RegisterCertificateResponseType();
+        response.setResult(ResultUtil.infoResult("Certificate already exists"));
+        String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
+        String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
+        LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId + " issued by " + issuedBy
+                + ": Certificate already exists - ignored.");
         return response;
     }
 

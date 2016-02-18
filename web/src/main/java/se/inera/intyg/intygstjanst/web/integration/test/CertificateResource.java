@@ -48,6 +48,7 @@ import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 
 /**
@@ -90,6 +91,12 @@ public class CertificateResource {
                         entityManager.remove(certificate.getOriginalCertificate());
                         entityManager.remove(certificate);
                     }
+
+                    // Also delete any SjukfallCertificate
+                    SjukfallCertificate sjukfallCertificate = entityManager.find(SjukfallCertificate.class, id);
+                    if (sjukfallCertificate != null) {
+                        entityManager.remove(sjukfallCertificate);
+                    }
                     return Response.ok().build();
                 } catch (Throwable t) {
                     status.setRollbackOnly();
@@ -115,6 +122,13 @@ public class CertificateResource {
                         }
                         entityManager.remove(certificate);
                     }
+
+                    // Also delete any SjukfallCertificates
+                    List<SjukfallCertificate> sjukfallCertificates = entityManager.createQuery("SELECT c FROM SjukfallCertificate c", SjukfallCertificate.class).getResultList();
+                    for (SjukfallCertificate sjukfallCert : sjukfallCertificates) {
+                        entityManager.remove(sjukfallCert);
+                    }
+
                     return Response.ok().build();
                 } catch (Throwable t) {
                     status.setRollbackOnly();
