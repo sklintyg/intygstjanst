@@ -31,6 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.base.Throwables;
+
+import joptsimple.internal.Strings;
 import se.inera.certificate.modules.fkparent.integration.ResultUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
@@ -39,15 +42,13 @@ import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
-import se.inera.intyg.common.support.validate.CertificateValidationException;
+import se.inera.intyg.common.support.modules.support.api.dto.ValidateXmlResponse;
 import se.inera.intyg.common.util.logging.LogMarkers;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.ObjectFactory;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.RegisterCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.RegisterCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.RegisterCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
-
-import com.google.common.base.Throwables;
 
 public class RegisterCertificateResponderImpl implements RegisterCertificateResponderInterface {
 
@@ -73,21 +74,23 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
 
         try {
-            String xml = xmlToString(registerCertificate);
-
             String intygsTyp = getIntygsTyp(registerCertificate);
-
             ModuleApi api = moduleRegistry.getModuleApi(intygsTyp);
 
-            Utlatande utlatande = api.getUtlatandeFromIntyg(registerCertificate.getIntyg(), xml);
+            String xml = xmlToString(registerCertificate);
+            ValidateXmlResponse validationResponse = api.validateXml(xml);
 
-            CertificateHolder certificateHolder = toCertificateHolder(utlatande, xml, intygsTyp);
-            certificateHolder.setOriginalCertificate(xml);
-
-            moduleContainer.certificateReceived(certificateHolder);
-
-            response.setResult(ResultUtil.okResult());
-
+            if (validationResponse.hasErrorMessages()) {
+                String validationErrors = Strings.join(validationResponse.getValidationErrors(), ";");
+                response.setResult(ResultUtil.errorResult(ErrorIdType.VALIDATION_ERROR, validationErrors));
+                LOGGER.error(LogMarkers.VALIDATION, validationErrors);
+            } else {
+                Utlatande utlatande = api.getUtlatandeFromIntyg(registerCertificate.getIntyg(), xml);
+                CertificateHolder certificateHolder = toCertificateHolder(utlatande, xml, intygsTyp);
+                certificateHolder.setOriginalCertificate(xml);
+                moduleContainer.certificateReceived(certificateHolder);
+                response.setResult(ResultUtil.okResult());
+            }
         } catch (CertificateAlreadyExistsException e) {
             response.setResult(ResultUtil.infoResult("Certificate already exists"));
             String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
@@ -95,7 +98,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId + " issued by " + issuedBy
                     + ": Certificate already exists - ignored.");
 
-        } catch (CertificateValidationException | ConverterException e) {
+        } catch (ConverterException e) {
             response.setResult(ResultUtil.errorResult(ErrorIdType.VALIDATION_ERROR, e.getMessage()));
             LOGGER.error(LogMarkers.VALIDATION, e.getMessage());
 
