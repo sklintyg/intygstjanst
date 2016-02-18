@@ -16,12 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.persistence.model.dao;
+package se.inera.intyg.intygstjanst.web.service.impl;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-@Repository
-public interface SendMessageToCareRepository extends JpaRepository<SendMessageToCare, Long> {
+import se.inera.intyg.intygstjanst.persistence.model.dao.SendMessageToCare;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SendMessageToCareRepository;
+import se.inera.intyg.intygstjanst.web.service.SendMessageToCareService;
+
+@Service
+public class SendMessageToCareServiceImpl implements SendMessageToCareService {
+
+    @Autowired
+    private SendMessageToCareRepository sendMessageToCareRepository;
+
+    @Override
+    public SendMessageToCare processIncomingSendMessageToCare(SendMessageToCare sendMessageToCare) {
+        return sendMessageToCareRepository.save(sendMessageToCare);
+    }
 
 }

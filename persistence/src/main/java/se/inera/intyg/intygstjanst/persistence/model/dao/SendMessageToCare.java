@@ -25,9 +25,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDateTime;
 
 @Entity
-@Table(name = "FRAGASVAR")
+@Table(name = "ARENDE")
 public class SendMessageToCare {
 
     /**
@@ -43,15 +45,18 @@ public class SendMessageToCare {
     @Column(name = "MEDDELANDE_ID")
     private String meddelandeId;
 
-    @Column(name = "MEDDELANDE")
+    @Column(name = "MEDDELANDE_DATA")
     private String meddelande;
 
-    // @Column(name = "REFERENS")
-    // private String referens;
+    @Column(name = "REFERENS_ID")
+    private String referens;
 
-    // @Column(name = "FRAGE_SIGNERINGS_DATUM")
-    // @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
-    // private LocalDateTime frageSigneringsDatum;
+    @Column(name = "LOGISK_ADRESSMOTTAGARE")
+    private String logiskAdressmottagare;
+
+    @Column(name = "TIMESTAMP")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+    private LocalDateTime timestamp;
 
     public Long getInternReferens() {
         return internReferens;
@@ -61,34 +66,12 @@ public class SendMessageToCare {
         this.internReferens = internReferens;
     }
 
-    // public LocalDateTime getFrageSigneringsDatum() {
-    // return frageSigneringsDatum;
-    // }
-    //
-    // public void setFrageSigneringsDatum(LocalDateTime frageSigneringsDatum) {
-    // this.frageSigneringsDatum = frageSigneringsDatum;
-    // }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        } else if (o == null || getClass() != o.getClass()) {
-            return false;
-        } else {
-            SendMessageToCare fragaSvar = (SendMessageToCare) o;
-
-            if (internReferens == null) {
-                return fragaSvar.internReferens == null;
-            } else {
-                return internReferens.equals(fragaSvar.internReferens);
-            }
-        }
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 
-    @Override
-    public int hashCode() {
-        return internReferens != null ? internReferens.hashCode() : 0;
+    public void setTimeStamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getIntygsId() {
@@ -113,6 +96,44 @@ public class SendMessageToCare {
 
     public void setMeddelande(String meddelande) {
         this.meddelande = meddelande;
+    }
+
+    public String getReferens() {
+        return referens;
+    }
+
+    public void setReferens(String referens) {
+        this.referens = referens;
+    }
+
+    public void setLogiskAdressmottagare(String logiskAdressmottagare) {
+        this.logiskAdressmottagare = logiskAdressmottagare;
+    }
+
+    public String getLogiskAdressmottagare() {
+        return logiskAdressmottagare;
+    }
+
+    @Override
+    public int hashCode() {
+        return internReferens != null ? internReferens.hashCode() : 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (o == null || getClass() != o.getClass()) {
+            return false;
+        } else {
+            SendMessageToCare fragaSvar = (SendMessageToCare) o;
+
+            if (internReferens == null) {
+                return fragaSvar.internReferens == null;
+            } else {
+                return internReferens.equals(fragaSvar.internReferens);
+            }
+        }
     }
 
 }

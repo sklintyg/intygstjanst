@@ -239,24 +239,33 @@
 	<changeSet id="11" author="kol">
 		<!-- initial creation of tables -->
 
-		<createTable tableName="FRAGASVAR">
+		<createTable tableName="ARENDE">
 			<column name="internReferens" type="bigint">
 				<constraints unique="true" nullable="false" />
 			</column>
 			<column name="INTYGS_ID" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
+			<column name="REFERENS_ID" type="varchar(255)">
+				<constraints nullable="true" />
+			</column>
 			<column name="MEDDELANDE_ID" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LOGISK_ADRESSMOTTAGARE" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="MEDDELANDE_DATA" type="text">
 				<constraints nullable="true" />
 			</column>
-			<column name="MEDDELANDE" type="text">
-				<constraints nullable="true" />
-			</column>
+			<column name="TIMESTAMP" type="datetime">
+        <constraints nullable="false" />
+      </column>
 		</createTable>
 
 		<!-- Add auto incremented id column to table -->
 		<addAutoIncrement columnDataType="bigint" columnName="internReferens"
-			incrementBy="1" startWith="1" tableName="FRAGASVAR" />
+			incrementBy="1" startWith="1" tableName="ARENDE" />
 	</changeSet>
 
 

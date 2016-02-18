@@ -157,4 +157,10 @@ public class MonitoringLogServiceImplTest {
         logService.logStatisticsRevoked(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
         verifyLog(Level.INFO, "STATISTICS_REVOKED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - revoke sent to statistics");
     }
+    
+    @Test
+    public void shouldLogSendMessageToCareReceived() {
+        logService.logSendMessageToCareReceived(CERTIFICATE_ID, CARE_UNIT);
+        verifyLog(Level.INFO, "SEND_MESSAGE_TO_CARE_RECEIVED Certificate 'CERTIFICATE_ID', care unit recipient 'CARE_UNIT' - was received and forwarded to its recipient.");
+    }
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,6 @@ public class SendMessageToCareRepositoryTest {
     @Test
     public void testFindOne() {
         SendMessageToCare saved = buildFragaSvarFraga(ENHET_1_ID);
-        System.out.println(sendMessageToCareRepository==null);
         sendMessageToCareRepository.save(saved);
         SendMessageToCare read = sendMessageToCareRepository.findOne(saved.getInternReferens());
         assertEquals(read.getInternReferens(), saved.getInternReferens());
@@ -58,8 +58,10 @@ public class SendMessageToCareRepositoryTest {
         SendMessageToCare sendMessageToCare = new SendMessageToCare();
         sendMessageToCare.setIntygsId("intygsID");
         sendMessageToCare.setMeddelandeId("meddelandeId");
-        //sendMessageToCare.setFrageSigneringsDatum(LocalDateTime.now());
-        sendMessageToCare.setMeddelande("");
+        sendMessageToCare.setReferens(ENHET_2_ID);
+        sendMessageToCare.setTimeStamp(LocalDateTime.now());
+        sendMessageToCare.setMeddelande("Meddelande");
+        sendMessageToCare.setLogiskAdressmottagare(ENHET_3_ID);
         return sendMessageToCare;
     }
     
