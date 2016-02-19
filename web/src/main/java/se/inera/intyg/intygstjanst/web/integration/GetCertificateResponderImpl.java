@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import se.inera.certificate.modules.fkparent.integration.ResultUtil;
+import se.inera.certificate.modules.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
@@ -76,6 +77,7 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
         try {
             RegisterCertificateType jaxbObject = JAXB.unmarshal(new StringReader(certificate.getOriginalCertificate()), RegisterCertificateType.class);
             response.setIntyg(jaxbObject.getIntyg());
+            response.getIntyg().getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificate.getCertificateStates()));
         } catch (Exception e) {
             LOGGER.error("Error while converting in getMedicalCertificate for id: {} with stacktrace: {}", certificate.getId(), e.getStackTrace());
             Throwables.propagate(e);
