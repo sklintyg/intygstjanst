@@ -18,14 +18,16 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,12 +43,15 @@ import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
 
 @Transactional
 @SchemaValidation
+@Path("/send-message-to-care")
 public class SendMessageToCareResponderStub implements SendMessageToCareResponderInterface {
     private Logger logger = LoggerFactory.getLogger(SendMessageToCareResponderStub.class);
 
     @Autowired
     private SendMessageToCareConverter converter;
-    private Map<Pair<String, String>, String> messages = new HashMap<>();
+
+    @Autowired
+    private SendMessageToCareStorage storage;
 
     @Override
     public SendMessageToCareResponseType sendMessageToCare(String logicalAddress, SendMessageToCareType parameters) {
@@ -54,7 +59,6 @@ public class SendMessageToCareResponderStub implements SendMessageToCareResponde
         ResultType resultType = new ResultType();
         try {
             storeMessage(parameters);
-
             logger.info("STUB Received question concerning certificate with id: " + parameters.getIntygsId().getExtension());
             resultType.setResultCode(ResultCodeType.OK);
         } catch (JAXBException e) {
@@ -70,28 +74,41 @@ public class SendMessageToCareResponderStub implements SendMessageToCareResponde
     }
 
     private String marshalCertificate(SendMessageToCareType parameters) throws JAXBException {
-        System.out.println(converter == null);
         return converter.convertToXmlString(parameters);
     }
 
     public void storeMessage(SendMessageToCareType sendMessageToCareType) throws JAXBException {
-        Pair<String, String> pair = Pair.of(sendMessageToCareType.getIntygsId().getExtension(), sendMessageToCareType.getMeddelandeId());
+        String certificateId = sendMessageToCareType.getIntygsId().getExtension();
+        String messageId = sendMessageToCareType.getMeddelandeId();
         String xmlBlob = marshalCertificate(sendMessageToCareType);
-        messages.put(pair, xmlBlob);
+        storage.addMessage(certificateId, messageId, xmlBlob);
     }
 
-    public List<String> getMessagesForCertificateId(String extension) {
-        List<String> messagesList = new ArrayList<>();
-        for (Pair<String, String> pair : messages.keySet()) {
-            if (pair.getLeft().equals(extension)) {
-                messagesList.add(messages.get(pair));
-            }
-        }
-        return messagesList;
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<String> getMessagesForCertificateId(@PathParam("id") String id) {
+        return storage.getMessagesForCertificateId(id);
     }
 
-    public List<String> findAllMessages() {
-        return new ArrayList<String>(messages.values());
+    @GET
+    @Path("/messages-all")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<String> getAllMessages() {
+        return storage.getAllMessages();
+    }
+
+    @GET
+    @Path("/count")
+    @Produces(MediaType.TEXT_PLAIN)
+    public int getCount() {
+        return storage.getCount();
+    }
+
+    @POST
+    @Path("/clear")
+    public void clear() {
+        storage.clear();
     }
 
 }

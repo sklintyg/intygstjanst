@@ -18,15 +18,16 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import se.inera.intyg.intygstjanst.web.integration.converter.SendMessageToCareConverter;
@@ -46,21 +47,23 @@ public class SendMessageToCareResponderStubTest {
     @InjectMocks
     private SendMessageToCareResponderStub stub = new SendMessageToCareResponderStub();
 
-    @Mock
-    private SendMessageToCareConverter converter;
+    @Spy
+    private SendMessageToCareConverter converter = spy(new SendMessageToCareConverter());
+
+    @Spy
+    private SendMessageToCareStorage storage = spy(new SendMessageToCareStorage());
 
     @Test
     public void testSendMessageToCareResponderStub() throws Exception {
         String logicalAddress = "";
-        SendMessageToCareType sendMessageToCareType = buildSendMessageToCare(intygsIdNo1, meddelandeIdNo1);
-        System.out.println("test: " + sendMessageToCareType.getReferensId());
-        stub.sendMessageToCare(logicalAddress, sendMessageToCareType);
+        SendMessageToCareType sendMessageToCareType1 = buildSendMessageToCare(intygsIdNo1, meddelandeIdNo1);
+        stub.sendMessageToCare(logicalAddress, sendMessageToCareType1);
         verify(converter, times(1)).convertToXmlString(any(SendMessageToCareType.class));
-        assertEquals(1, stub.getMessagesForCertificateId(sendMessageToCareType.getIntygsId().getExtension()).size());
+        assertEquals(1, stub.getMessagesForCertificateId(sendMessageToCareType1.getIntygsId().getExtension()).size());
     }
 
     @Test
-    public void testSendMultipleMessagesToCareResponderStub() throws Exception {
+    public void testSendMultipleMessagesToCareResponderStubAndThenClear() throws Exception {
         String logicalAddress = "FK";
         SendMessageToCareType sendMessageToCareType1 = buildSendMessageToCare(intygsIdNo1, meddelandeIdNo1);
         SendMessageToCareType sendMessageToCareType2 = buildSendMessageToCare(intygsIdNo1, meddelandeIdNo2);
@@ -71,13 +74,15 @@ public class SendMessageToCareResponderStubTest {
         verify(converter, times(3)).convertToXmlString(any(SendMessageToCareType.class));
         assertEquals(2, stub.getMessagesForCertificateId(intygsIdNo1).size());
         assertEquals(1, stub.getMessagesForCertificateId(intygsIdNo2).size());
-        assertEquals(3, stub.findAllMessages().size());
+        assertEquals(3, stub.getAllMessages().size());
+        assertEquals(stub.getCount(), 3);
+        stub.clear();
+        assertEquals(0, stub.getCount());
     }
 
     private SendMessageToCareType buildSendMessageToCare(String intygsId, String meddelandeId) throws Exception {
         SendMessageToCareType sendMessageToCareType = SendMessageToCareUtil
                 .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
-        System.out.println(sendMessageToCareType.getMeddelandeId());
         sendMessageToCareType.getIntygsId().setExtension(intygsId);
         sendMessageToCareType.setMeddelandeId(meddelandeId);
         return sendMessageToCareType;
