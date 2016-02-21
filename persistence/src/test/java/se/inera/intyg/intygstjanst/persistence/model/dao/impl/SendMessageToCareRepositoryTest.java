@@ -62,6 +62,14 @@ public class SendMessageToCareRepositoryTest {
     }
     
     @Test
+    public void testFindByMeddelandeId() {
+        SendMessageToCare saved = buildFragaSvarFraga(ENHET_1_ID);
+        sendMessageToCareRepository.save(saved);
+        SendMessageToCare read = sendMessageToCareRepository.findByMeddelandeId(saved.getMeddelandeId());
+        assertEquals(read.getInternReferens(), saved.getInternReferens());
+    }
+    
+    @Test
     public void testFindAll() {
         sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_1_ID));
         sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_2_ID));
@@ -80,6 +88,7 @@ public class SendMessageToCareRepositoryTest {
         sendMessageToCare.setTimeStamp(LocalDateTime.now());
         sendMessageToCare.setMeddelande("Meddelande");
         sendMessageToCare.setLogiskAdressmottagare(ENHET_3_ID);
+        sendMessageToCare.setAmne("OVRIGT");
         return sendMessageToCare;
     }
     

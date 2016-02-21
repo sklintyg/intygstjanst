@@ -51,6 +51,9 @@ public class SendMessageToCare {
     @Column(name = "REFERENS_ID")
     private String referens;
 
+    @Column(name = "AMNE")
+    private String amne;
+
     @Column(name = "LOGISK_ADRESSMOTTAGARE")
     private String logiskAdressmottagare;
 
@@ -112,6 +115,14 @@ public class SendMessageToCare {
 
     public String getLogiskAdressmottagare() {
         return logiskAdressmottagare;
+    }
+
+    public String getAmne() {
+        return amne;
+    }
+
+    public void setAmne(String amne) {
+        this.amne = amne;
     }
 
     @Override

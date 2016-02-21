@@ -252,6 +252,9 @@
 			<column name="MEDDELANDE_ID" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
+			<column name="AMNE" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
 			<column name="LOGISK_ADRESSMOTTAGARE" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>

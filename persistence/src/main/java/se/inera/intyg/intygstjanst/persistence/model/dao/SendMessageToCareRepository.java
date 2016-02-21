@@ -23,5 +23,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SendMessageToCareRepository extends JpaRepository<SendMessageToCare, Long> {
-
+    /**
+     * Should return a {@link SendMessageToCare} matching the search criteria.
+     *
+     * @param meddelandeId
+     * @return
+     */
+    SendMessageToCare findByMeddelandeId(String meddelandeId);
 }

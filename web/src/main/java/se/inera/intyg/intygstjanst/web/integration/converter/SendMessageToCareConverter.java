@@ -54,6 +54,7 @@ public class SendMessageToCareConverter {
         sendMessageToCare.setTimeStamp(LocalDateTime.now());
         sendMessageToCare.setLogiskAdressmottagare(sendMessageToCareType.getLogiskAdressMottagare().getExtension());
         sendMessageToCare.setMeddelande(convertToXmlString(sendMessageToCareType));
+        sendMessageToCare.setAmne(sendMessageToCare.getAmne());
         return sendMessageToCare;
     }
 
