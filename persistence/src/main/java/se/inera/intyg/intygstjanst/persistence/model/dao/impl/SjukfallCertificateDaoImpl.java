@@ -78,12 +78,12 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                 "SELECT DISTINCT sc FROM SjukfallCertificate sc "
                 + "JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc "
                 + "WHERE sc.civicRegistrationNumber IN (:personNummerList) "
-                + "AND sc.careUnitId IN (:careUnitHsaId) "
+                + "AND sc.careUnitId IN (:careUnitHsaIds) "
                 + "AND sc.deleted = FALSE "
                 + "ORDER BY sc.civicRegistrationNumber",
                 SjukfallCertificate.class)
 
-                .setParameter("careUnitHsaId", careUnitHsaIds)
+                .setParameter("careUnitHsaIds", careUnitHsaIds)
                 .setParameter("personNummerList", personNummerList)
                 .getResultList();
 
