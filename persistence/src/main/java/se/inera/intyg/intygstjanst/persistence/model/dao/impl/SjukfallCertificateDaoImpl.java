@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -57,7 +58,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                 + "    sc.careUnitId IN (:careUnitHsaId) "
                 + "AND scwc.fromDate <= :today "
                 + "AND scwc.toDate >= :today "
-                + "AND sc.deleted = false "
+                + "AND sc.deleted = FALSE "
                 + "ORDER BY sc.civicRegistrationNumber", String.class)
 
                 .setParameter("careUnitHsaId", careUnitHsaIds)
@@ -67,17 +68,22 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         // Remove this or change to debug later on.
         LOG.info("Get personnr with active intyg on enhet {} (with mottagningar) returned {} items.", careUnitHsaIds, personNummerList.size());
 
+        // if no personnummer found, return empty list
+        if (personNummerList.size() == 0) {
+           return new ArrayList<>();
+        }
+
         // Then, fetch all SjukfallCertificates for these persons on the designated units.
         List<SjukfallCertificate> resultList = entityManager.createQuery(
                 "SELECT DISTINCT sc FROM SjukfallCertificate sc "
                 + "JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc "
                 + "WHERE sc.civicRegistrationNumber IN (:personNummerList) "
-                + "AND sc.careUnitId IN (:careUnitHsaId) "
-                + "AND sc.deleted = false "
+                + "AND sc.careUnitId IN (:careUnitHsaIds) "
+                + "AND sc.deleted = FALSE "
                 + "ORDER BY sc.civicRegistrationNumber",
                 SjukfallCertificate.class)
 
-                .setParameter("careUnitHsaId", careUnitHsaIds)
+                .setParameter("careUnitHsaIds", careUnitHsaIds)
                 .setParameter("personNummerList", personNummerList)
                 .getResultList();
 
