@@ -61,7 +61,6 @@ public class SendMessageToCareValidator {
             validationErrors.add(" The supplied certificate subject is invalid. "
                     + "Supported subjects are KOMPLETTERING_AV_LAKARINTYG, MAKULERING_AV_LAKARINTYG, AVSTAMNINGSMOTE, KONTAKT, ARBETSTIDSFORLAGGNING, PAMINNELSE, OVRIGT");
         }
-
     }
 
     public void validateSendMessageToCare(SendMessageToCareType sendMessageToCareType) throws CertificateValidationException {
