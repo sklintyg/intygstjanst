@@ -25,8 +25,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import se.inera.intyg.common.support.validate.CertificateValidationException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SendMessageToCare;
 import se.inera.intyg.intygstjanst.web.integration.converter.SendMessageToCareConverter;
+import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.SendMessageToCareService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareResponderInterface;
@@ -37,7 +39,6 @@ import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
 
 public class SendMessageToCareResponderImpl implements SendMessageToCareResponderInterface {
     private static final Logger LOGGER = LoggerFactory.getLogger(SendMessageToCareResponderImpl.class);
-    private String errorMessage = "Could not convert message of type SendMessageToCareType to its ORM object. ";
 
     @Autowired
     private MonitoringLogService logService;
@@ -49,6 +50,9 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
     private SendMessageToCareService sendMessageToCareService;
 
     @Autowired
+    private SendMessageToCareValidator validator;
+
+    @Autowired
     @Qualifier("sendMessageToCareClient")
     private SendMessageToCareResponderInterface sendMessageToCareResponder;
 
@@ -58,23 +62,37 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
         SendMessageToCare sendMessage;
         ResultType resultType = new ResultType();
         try {
+            validator.validateSendMessageToCare(parameters);
             sendMessage = converter.convertSendMessageToCare(parameters);
-            sendMessageToCareResponder.sendMessageToCare(parameters.getLogiskAdressMottagare().getExtension(), parameters);
-            resultType.setResultCode(ResultCodeType.OK);
-            sendMessageToCareService.processIncomingSendMessageToCare(sendMessage);
-            logService.logSendMessageToCareReceived(parameters.getIntygsId().getExtension(), parameters.getLogiskAdressMottagare().getExtension());
+            response = sendMessageToCareResponder
+                    .sendMessageToCare(parameters.getLogiskAdressMottagare().getExtension(), parameters);
+            if (response.getResult().getResultCode().equals(ResultCodeType.OK)) {
+                LOGGER.debug("Converting to ORM object. " + sendMessage.toString());
+                sendMessageToCareService.processIncomingSendMessageToCare(sendMessage);
+                resultType.setResultCode(ResultCodeType.OK);
+            }
+            logService.logSendMessageToCareReceived(parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare().getExtension());
         } catch (JAXBException e) {
-            LOGGER.error(errorMessage);
-            resultType.setResultCode(ResultCodeType.ERROR);
-            resultType.setResultText(errorMessage + "Error code " + e.getErrorCode() + " " + e.getMessage());
+            String errorMessage = "Could not marshal message of type SendMessageToCareType with meddelande id " + parameters.getMeddelandeId() + ": "
+                    + e.getMessage() + "Error code " + e.getErrorCode() + " " + e.getMessage();
+            setErrorResult(resultType, response, errorMessage);
+        } catch (CertificateValidationException e) {
+            String validationErrorMessage = "Validation of SendMessageToCareType failed for message with meddelandeid " + parameters.getMeddelandeId()
+                    + ": " + e.getMessage();
+            setErrorResult(resultType, response, validationErrorMessage);
         } catch (Exception e) {
-            LOGGER.error("Could not convert message of type SendMessageToCareType to its ORM object. ");
-            resultType.setResultCode(ResultCodeType.ERROR);
-            resultType.setResultText(e.getMessage());
-            e.printStackTrace();
+            String generalErrorMessage = "Could not handle SendMessageToCareType with meddelande id " + parameters.getMeddelandeId() + ": "
+                    + e.getMessage();
+            setErrorResult(resultType, response, generalErrorMessage);
         }
-        response.setResult(resultType);
         return response;
+    }
+
+    private void setErrorResult(ResultType resultType, SendMessageToCareResponseType response, String errorMessage) {
+        LOGGER.error(errorMessage);
+        resultType.setResultCode(ResultCodeType.ERROR);
+        resultType.setResultText(errorMessage);
+        response.setResult(resultType);
     }
 
 }

@@ -120,7 +120,7 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
                                                                                 "Consent revoked by citizen '{}'"), STATISTICS_SENT(
                                                                                         "Certificate '{}' with type '{}', care unit '{}' - sent to statistics"), STATISTICS_REVOKED(
                                                                                                 "Certificate '{}' with type '{}', care unit '{}' - revoke sent to statistics"), SEND_MESSAGE_TO_CARE_RECEIVED(
-                                                                                                        "Certificate '{}', care unit recipient '{}' - was received and forwarded to its recipient.");
+                                                                                                        "Message with id '{}', care unit recipient '{}' - was received and forwarded to its recipient.");
 
         private String msg;
 

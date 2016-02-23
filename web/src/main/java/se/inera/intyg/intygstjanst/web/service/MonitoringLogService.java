@@ -34,5 +34,5 @@ public interface MonitoringLogService {
     void logConsentRevoked(Personnummer citizenId);
     void logStatisticsSent(String certificateId, String certificateType, String careUnit);
     void logStatisticsRevoked(String certificateId, String certificateType, String careUnit);
-    void logSendMessageToCareReceived(String certificateId, String careUnit);
+    void logSendMessageToCareReceived(String messageId, String careUnit);
 }

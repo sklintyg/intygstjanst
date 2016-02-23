@@ -53,8 +53,8 @@ public class SendMessageToCareConverter {
         }
         sendMessageToCare.setTimeStamp(LocalDateTime.now());
         sendMessageToCare.setLogiskAdressmottagare(sendMessageToCareType.getLogiskAdressMottagare().getExtension());
+        sendMessageToCare.setAmne(sendMessageToCareType.getAmne());
         sendMessageToCare.setMeddelande(convertToXmlString(sendMessageToCareType));
-        sendMessageToCare.setAmne(sendMessageToCare.getAmne());
         return sendMessageToCare;
     }
 

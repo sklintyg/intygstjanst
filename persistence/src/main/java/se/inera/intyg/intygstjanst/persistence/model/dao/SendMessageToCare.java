@@ -147,4 +147,13 @@ public class SendMessageToCare {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        return stringBuilder.append("Intern referens: ").append(this.internReferens).append(" \n").append("INTYGS_ID: ").append(this.intygsId)
+                .append(" \n").append("MEDDELANDE_ID: ").append(this.meddelandeId).append(" \n").append("REFERENS_ID: ").append(this.referens)
+                .append(" \n").append("AMNE: ").append(this.amne).append(" \n").append("LOGISK_ADRESSMOTTAGARE: ").append(this.logiskAdressmottagare)
+                .append(" \n").append("TIMESTAMP: ").append(this.timestamp).toString();
+    }
+
 }
