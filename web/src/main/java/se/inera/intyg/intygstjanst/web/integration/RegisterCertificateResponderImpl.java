@@ -48,6 +48,7 @@ import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.Obje
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.RegisterCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.RegisterCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.RegisterCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v2.DatePeriodType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
 
 public class RegisterCertificateResponderImpl implements RegisterCertificateResponderInterface {
@@ -65,7 +66,8 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
 
     @PostConstruct
     public void initializeJaxbContext() throws JAXBException {
-        jaxbContext = JAXBContext.newInstance(RegisterCertificateType.class);
+        // We need to register DatePeriodType with the JAXBContext explicitly for some reason.  
+        jaxbContext = JAXBContext.newInstance(RegisterCertificateType.class, DatePeriodType.class);
         objectFactory = new ObjectFactory();
     }
 
@@ -100,8 +102,8 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         throw new RuntimeException("Unrecoverable exception in registerCertificate");
     }
 
-    private RegisterCertificateResponseType makeOkResult(RegisterCertificateType registerCertificate, String intygsTyp, ModuleApi api,
-            String xml) throws Exception, CertificateAlreadyExistsException, InvalidCertificateException {
+    private RegisterCertificateResponseType makeOkResult(final RegisterCertificateType registerCertificate, final String intygsTyp, final ModuleApi api,
+            final String xml) throws Exception, CertificateAlreadyExistsException, InvalidCertificateException {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
         Utlatande utlatande = api.getUtlatandeFromIntyg(registerCertificate.getIntyg(), xml);
         CertificateHolder certificateHolder = toCertificateHolder(utlatande, xml, intygsTyp);
