@@ -65,7 +65,7 @@ public class SendMessageToCareRepositoryTest {
     public void testFindByMeddelandeId() {
         SendMessageToCare saved = buildFragaSvarFraga(ENHET_1_ID);
         sendMessageToCareRepository.save(saved);
-        SendMessageToCare read = sendMessageToCareRepository.findByMeddelandeId(saved.getMeddelandeId());
+        SendMessageToCare read = sendMessageToCareRepository.findByMeddelandeId(saved.getMeddelandeId()).get(0);
         assertEquals(read.getInternReferens(), saved.getInternReferens());
     }
     

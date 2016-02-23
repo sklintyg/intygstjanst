@@ -49,6 +49,7 @@ public class MonitoringLogServiceImplTest {
     private static final String RECIPIENT = "RECIPIENT"; 
     private static final String CITIZEN = "CITIZEN"; 
     private static final String STATUS = "STATUS"; 
+    private static final String MESSAGE_ID = "MESSAGE_ID"; 
 
     @Mock
     private Appender<ILoggingEvent> mockAppender;
@@ -160,7 +161,7 @@ public class MonitoringLogServiceImplTest {
     
     @Test
     public void shouldLogSendMessageToCareReceived() {
-        logService.logSendMessageToCareReceived(CERTIFICATE_ID, CARE_UNIT);
-        verifyLog(Level.INFO, "SEND_MESSAGE_TO_CARE_RECEIVED Certificate 'CERTIFICATE_ID', care unit recipient 'CARE_UNIT' - was received and forwarded to its recipient.");
+        logService.logSendMessageToCareReceived(MESSAGE_ID, CARE_UNIT);
+        verifyLog(Level.INFO, "SEND_MESSAGE_TO_CARE_RECEIVED Message with id 'MESSAGE_ID', care unit recipient 'CARE_UNIT' - was received and forwarded to its recipient.");
     }
 }

@@ -24,9 +24,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.stereotype.Component;
 
 @Component
+@SchemaValidation
 public class SendMessageToCareStorage {
     private Map<Pair<String, String>, String> messages = new ConcurrentHashMap<Pair<String, String>, String>();
 
@@ -43,8 +45,8 @@ public class SendMessageToCareStorage {
         messages.clear();
     }
 
-    public List<String> getAllMessages() {
-        return new ArrayList<String>(messages.values());
+    public Map<Pair<String, String>, String> getAllMessages() {
+        return messages;
     }
 
     public List<String> getMessagesForCertificateId(String certificateId) {

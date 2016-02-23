@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.joda.time.LocalDate;
@@ -103,7 +104,7 @@ public class SendMessageToCareValidatorTest {
         String referencedMeddelandeId = sendMessageToCareType.getSvarPa().getMeddelandeId();
         SendMessageToCare referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, Amneskod.KOMPLT.toString());
 
-        when(sendMessageToCareRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(referencedMessage);
+        when(sendMessageToCareRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(Arrays.asList(referencedMessage));
         validator.validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
         assertTrue(validationErrors.isEmpty());
     }
@@ -114,7 +115,7 @@ public class SendMessageToCareValidatorTest {
         SendMessageToCareType sendMessageToCareType = buildSendMessageCareType("originalMessageId", "OVRIGT");
         String referencedMeddelandeId = sendMessageToCareType.getSvarPa().getMeddelandeId();
         SendMessageToCare referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, "OVRIGT");
-        when(sendMessageToCareRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(referencedMessage);
+        when(sendMessageToCareRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(Arrays.asList(referencedMessage));
         validator.validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
         assertTrue(validationErrors.isEmpty());
     }
@@ -128,7 +129,7 @@ public class SendMessageToCareValidatorTest {
         sendMessageToCareType.setPaminnelseMeddelandeId(null);
         String referencedMeddelandeId = sendMessageToCareType.getSvarPa().getMeddelandeId();
         SendMessageToCare referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, Amneskod.ARBTID.toString());
-        when(sendMessageToCareRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(referencedMessage);
+        when(sendMessageToCareRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(Arrays.asList(referencedMessage));
 
         String certificateId = sendMessageToCareType.getIntygsId().getExtension();
         String civicRegistrationNumber = sendMessageToCareType.getPatientPersonId().getExtension();
@@ -210,7 +211,7 @@ public class SendMessageToCareValidatorTest {
         String referencedMeddelandeId = sendMessageToCareType.getSvarPa().getMeddelandeId();
         SendMessageToCare referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, "KOMPLT");
 
-        when(sendMessageToCareRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(referencedMessage);
+        when(sendMessageToCareRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(Arrays.asList(referencedMessage));
         validator.validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
         assertFalse(validationErrors.isEmpty());
         assertTrue(validationErrors.get(0).contains(SendMessageToCareValidator.ErrorCode.SUBJECT_CONSISTENCY_ERROR.toString()));
@@ -266,7 +267,6 @@ public class SendMessageToCareValidatorTest {
     private SendMessageToCareType buildSendMessageCareType(String meddelandeId, String amne) throws Exception {
         SendMessageToCareType sendMessageToCareType = SendMessageToCareUtil
                 .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
-
         MeddelandeReferens meddelandeReferens = new MeddelandeReferens();
         meddelandeReferens.setMeddelandeId(meddelandeId);
         sendMessageToCareType.setSvarPa(meddelandeReferens);

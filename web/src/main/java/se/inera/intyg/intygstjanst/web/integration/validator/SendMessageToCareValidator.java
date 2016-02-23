@@ -94,13 +94,13 @@ public class SendMessageToCareValidator {
         MeddelandeReferens meddelandeReferens = sendMessageToCareType.getSvarPa();
         if (meddelandeReferens != null) {
             String meddelandeId = meddelandeReferens.getMeddelandeId();
-            SendMessageToCare sendMessageToCare = messageRepository.findByMeddelandeId(meddelandeId);
+            List<SendMessageToCare> sendMessageToCare = messageRepository.findByMeddelandeId(meddelandeId);
 
-            if (sendMessageToCare == null) {
+            if (sendMessageToCare == null || sendMessageToCare.isEmpty()) {
                 validationErrors.add(ErrorCode.REFERENCED_MESSAGE_NOT_FOUND_ERROR.toString());
                 return;
             }
-            String amne = sendMessageToCare.getAmne();
+            String amne = sendMessageToCare.get(0).getAmne();
             if (!sendMessageToCareType.getAmne().equals(amne) && !isPaminnelse(sendMessageToCareType)) {
                 validationErrors.add(ErrorCode.SUBJECT_CONSISTENCY_ERROR.toString());
                 validationErrors.add(" Message with meddelandeId " + meddelandeId + " referenced by reply message with id "
