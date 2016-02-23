@@ -66,7 +66,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
 
     @PostConstruct
     public void initializeJaxbContext() throws JAXBException {
-        // We need to register DatePeriodType with the JAXBContext explicitly for some reason.  
+        // We need to register DatePeriodType with the JAXBContext explicitly for some reason.
         jaxbContext = JAXBContext.newInstance(RegisterCertificateType.class, DatePeriodType.class);
         objectFactory = new ObjectFactory();
     }
