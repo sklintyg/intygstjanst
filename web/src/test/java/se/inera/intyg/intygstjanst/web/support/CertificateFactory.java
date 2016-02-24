@@ -19,7 +19,6 @@
 
 package se.inera.intyg.intygstjanst.web.support;
 
-import static se.inera.intyg.common.support.common.enumerations.CertificateTypes.FK7263;
 
 import org.joda.time.LocalDateTime;
 
@@ -31,7 +30,8 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
  * @author andreaskaltenbach
  */
 public final class CertificateFactory {
-
+    private static final String INTYG_TYPE = "fk7263";
+    
     private CertificateFactory() {
     }
 
@@ -61,7 +61,7 @@ public final class CertificateFactory {
     }
 
     public static Certificate buildCertificate(String certificateId, String validFrom, String validTo) {
-        return buildCertificate(certificateId, FK7263.toString(), validFrom, validTo);
+        return buildCertificate(certificateId, INTYG_TYPE, validFrom, validTo);
     }
 
     public static Certificate buildCertificate(String certificateId, String certificateType, String validFrom, String validTo) {
