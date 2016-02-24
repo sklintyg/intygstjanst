@@ -105,7 +105,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     private RegisterCertificateResponseType makeOkResult(final RegisterCertificateType registerCertificate, final String intygsTyp, final ModuleApi api,
             final String xml) throws Exception, CertificateAlreadyExistsException, InvalidCertificateException {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
-        Utlatande utlatande = api.getUtlatandeFromIntyg(registerCertificate.getIntyg(), xml);
+        Utlatande utlatande = api.getUtlatandeFromIntyg(registerCertificate.getIntyg());
         CertificateHolder certificateHolder = toCertificateHolder(utlatande, xml, intygsTyp);
         certificateHolder.setOriginalCertificate(xml);
         moduleContainer.certificateReceived(certificateHolder);
