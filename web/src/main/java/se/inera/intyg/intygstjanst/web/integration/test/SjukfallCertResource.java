@@ -39,7 +39,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 
 /**
@@ -59,9 +58,6 @@ public class SjukfallCertResource {
     public void setTxManager(PlatformTransactionManager txManager) {
         this.transactionTemplate = new TransactionTemplate(txManager);
     }
-
-    @Autowired
-    private IntygModuleRegistry moduleRegistry;
 
     @GET
     @Path("/{id}")
