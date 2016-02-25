@@ -47,7 +47,7 @@ public class SendMessageToCareConverterTest {
     public void testConvertToXmlString() throws Exception{
         String xmlResult = converter.convertToXmlString(getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML));
         String fileXml = loadXmlMessageFromFile();
-        assertEquals(xmlResult, fileXml);
+        assertEquals(fileXml, xmlResult);
     }
     
     @Test
@@ -64,7 +64,7 @@ public class SendMessageToCareConverterTest {
     
     private String loadXmlMessageFromFile() throws IOException {
         String fileXml = Resources.toString(getResource(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML), Charsets.UTF_8);
-        return fileXml.replaceAll("[\\n\\t ]", "");
+        return fileXml.replaceAll("[\\r\\n\\t ]", "");
     }
     
     private SendMessageToCareType getSendMessageToCareTypeFromFile(String fileName) throws Exception {
