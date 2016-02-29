@@ -53,18 +53,17 @@ class SkapaSjukfall {
                                 username: config.dataSource.username, password: config.dataSource.password,
                                 initialSize: numberOfThreads, maxTotal: numberOfThreads)
         def bootstrapSql = new Sql(dataSource)
-        def certificateIds = bootstrapSql.rows("select c.ID from CERTIFICATE c WHERE c.CERTIFICATE_TYPE = 'fk7263'")
+        def certificateIds = bootstrapSql.rows("select c.ID from CERTIFICATE c WHERE c.CERTIFICATE_TYPE = :certType AND DELETED = :deleted",
+                                               [certType : 'fk7263', deleted : false])
         bootstrapSql.close()
                 
         println "- ${certificateIds.size()} candidates for being processed into sjukfall found"
         
         final AtomicInteger totalCount = new AtomicInteger(0)
         final AtomicInteger errorCount = new AtomicInteger(0)
-        final AtomicInteger recoverCount = new AtomicInteger(0)
 
         def results
 
-        // CustomObjectMapper objectMapper = new CustomObjectMapper()
         se.inera.intyg.common.util.integration.integration.json.CustomObjectMapper objectMapper = new  se.inera.intyg.common.util.integration.integration.json.CustomObjectMapper()
 
         GParsPool.withPool(numberOfThreads) {
@@ -74,8 +73,8 @@ class SkapaSjukfall {
                 def id = it.ID
                 Sql sql = new Sql(dataSource)
                 try {
-                    def row = sql.firstRow( 'select DOCUMENT from CERTIFICATE where ID = :id AND DELETED = :deleted'
-                            , [id : id, deleted : false])
+                    def row = sql.firstRow( 'select DOCUMENT from CERTIFICATE where ID = :id'
+                            , [id : id])
                     if (row == null || row.DOCUMENT == null) {
                         println "Intyg ${id} has no DOCUMENT, skipping."
                         throw new Exception("Intyg ${id} has no DOCUMENT, skipping.")
@@ -94,7 +93,7 @@ class SkapaSjukfall {
                     String lastName = utlatande.grundData.patient.efternamn
                     String careUnitId = utlatande.grundData.skapadAv.vardenhet.enhetsid
                     String careUnitName = utlatande.grundData.skapadAv.vardenhet.enhetsnamn
-                    String care_giver_id = utlatande.grundData.skapadAv.vardenhet.vardgivare.vardgivarid
+                    String careGiverId = utlatande.grundData.skapadAv.vardenhet.vardgivare.vardgivarid
                     String doctorId = utlatande.grundData.skapadAv.personId
                     String doctorName = utlatande.grundData.skapadAv.fullstandigtNamn
 
@@ -108,11 +107,9 @@ class SkapaSjukfall {
                             + "(ID,CERTIFICATE_TYPE,CIVIC_REGISTRATION_NUMBER,PATIENT_FIRST_NAME,PATIENT_LAST_NAME,CARE_UNIT_ID,CARE_UNIT_NAME,CARE_GIVER_ID,SIGNING_DOCTOR_ID,SIGNING_DOCTOR_NAME,DIAGNOSE_CODE,DELETED,SIGNING_DATETIME)"
                             + "VALUES (:id,:type,:personnummer,:firstName,:lastName,:careUnitId,:careUnitName,:careGiverId,:doctorId,:doctorName,:diagnosKod,:deleted,:signingDateTime)"
                             , [id: id, type : utlatande.typ, personnummer: personnummer, firstName : firstName, lastName : lastName ,
-                               careUnitId : careUnitId, careUnitName : careUnitName, careGiverId : care_giver_id, doctorId : doctorId,
+                               careUnitId : careUnitId, careUnitName : careUnitName, careGiverId : careGiverId, doctorId : doctorId,
                                doctorName : doctorName, diagnosKod : diagnosKod, deleted : deleted, signingDateTime : sqlSigningDateTime
                             ])
-
-                    //sql.commit()
 
                     // Insert one item per nedsattning
                     String insertSql = "INSERT INTO SJUKFALL_CERT_WORK_CAPACITY (CERTIFICATE_ID,CAPACITY_PERCENTAGE,FROM_DATE,TO_DATE) VALUES(:id,:nedsattningProcent,:fromDate,:toDate)";
