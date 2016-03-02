@@ -30,8 +30,6 @@
         http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd"
         profile="dev,it-fk-stub">
 
-  <bean class="se.inera.intyg.common.support.stub.MedicalCertificatesStore"/>
-
   <!-- ws endpoints -->
   <jaxws:endpoint address="/send-certificate-question-stub" implementor="se.inera.intyg.intygstjanst.web.integration.stub.SendMedicalCertificateQuestionResponderStub" />
   <jaxws:endpoint address="/send-certificate-answer-stub" implementor="se.inera.intyg.intygstjanst.web.integration.stub.SendMedicalCertificateAnswerResponderStub" />

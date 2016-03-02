@@ -40,13 +40,17 @@
         <bean class="se.inera.intyg.intygstjanst.web.monitoring.HealthCheckController" />
       </jaxrs:serviceBeans>
     </jaxrs:server>
-    
+
     <jaxrs:server id="sendMessageToCareStub" address="/send-message-to-care-stub-rest">
       <jaxrs:serviceBeans>
         <bean class="se.inera.intyg.intygstjanst.web.integration.stub.SendMessageToCareResponderStubRestApi" />
       </jaxrs:serviceBeans>
     </jaxrs:server>
-    
+
+  </beans>
+
+  <beans profile="dev,testability-api,it-fk-stub">
+    <bean id="medicalCertificateStore" class="se.inera.intyg.common.support.stub.MedicalCertificatesStore"/>
   </beans>
 
   <beans profile="dev,testability-api">
@@ -64,10 +68,10 @@
       </jaxrs:extensionMappings>
     </jaxrs:server>
 
+
     <bean id="certificateBean" class="se.inera.intyg.intygstjanst.web.integration.test.CertificateResource" />
     <bean id="sjukfallCertBean" class="se.inera.intyg.intygstjanst.web.integration.test.SjukfallCertResource" />
     <bean id="fkBean" class="se.inera.intyg.intygstjanst.web.integration.stub.FkStubResource" />
-
   </beans>
 
 </beans>
