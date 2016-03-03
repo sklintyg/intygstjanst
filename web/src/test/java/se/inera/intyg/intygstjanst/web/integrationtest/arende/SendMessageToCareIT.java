@@ -19,6 +19,7 @@
 package se.inera.intyg.intygstjanst.web.integrationtest.arende;
 
 import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.post;
 import static org.hamcrest.core.Is.is;
 
 import org.junit.Before;
@@ -48,8 +49,11 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
 
     @Test
     public void testReadIntygsDataForPrePopulatedIntyg() {
+        post("inera-certificate/send-message-to-care-stub-rest/clear");
+
         String enhetsId = "123456";
-        requestTemplate.add("data", new ArendeData("intyg-1", "KOMPL", "191212121212", enhetsId));
+        String intygsId = "intyg-1";
+        requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
 
         given().body(requestTemplate.render()).
                 when().
@@ -63,7 +67,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
                 param("address", enhetsId).
                 when().get("inera-certificate/send-message-to-care-stub-rest/byLogicalAddress")
                 .then()
-                .body("pingdom_http_custom_check.status", is("OK"));
+                .body("messages[0].certificateId", is(intygsId));
     }
 
     private static class ArendeData {

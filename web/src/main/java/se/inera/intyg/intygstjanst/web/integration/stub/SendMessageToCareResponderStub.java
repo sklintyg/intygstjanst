@@ -79,7 +79,7 @@ public class SendMessageToCareResponderStub implements SendMessageToCareResponde
         String certificateId = sendMessageToCareType.getIntygsId().getExtension();
         String messageId = sendMessageToCareType.getMeddelandeId();
         String xmlBlob = marshalCertificate(sendMessageToCareType);
-        storage.addMessage(certificateId, messageId, xmlBlob, logicalAddress);
+        storage.addMessage(certificateId, messageId, logicalAddress, xmlBlob);
     }
 
     public Map<SendMessageToCareStorage.MessageKey, String> getAllMessages() {

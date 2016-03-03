@@ -21,12 +21,12 @@ package se.inera.intyg.intygstjanst.web.integration.stub;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.stereotype.Component;
-
-import static java.util.stream.Collectors.toList;
 
 @Component
 public class SendMessageToCareStorage {
@@ -48,10 +48,10 @@ public class SendMessageToCareStorage {
         return messages;
     }
 
-    public List<String> getMessagesIdsForLogicalAddress(String logicalAddress) {
+    public Set<MessageKey> getMessagesIdsForLogicalAddress(String logicalAddress) {
         return messages.keySet().stream().
-                filter(x -> x.logicalAddress.equals(logicalAddress)).
-                map(x -> x.certificateId).collect(toList());
+                filter(k -> k.logicalAddress.equals(logicalAddress)).
+                collect(Collectors.toSet());
     }
 
     public List<String> getMessagesForCertificateId(String certificateId) {
