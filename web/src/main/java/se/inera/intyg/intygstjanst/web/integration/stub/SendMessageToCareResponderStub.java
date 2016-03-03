@@ -55,7 +55,7 @@ public class SendMessageToCareResponderStub implements SendMessageToCareResponde
         SendMessageToCareResponseType response = new SendMessageToCareResponseType();
         ResultType resultType = new ResultType();
         try {
-            storeMessage(parameters);
+            storeMessage(parameters, logicalAddress);
             logger.info("STUB Received question concerning certificate with id: " + parameters.getIntygsId().getExtension());
             resultType.setResultCode(ResultCodeType.OK);
         } catch (JAXBException e) {
@@ -75,14 +75,14 @@ public class SendMessageToCareResponderStub implements SendMessageToCareResponde
         return converter.convertToXmlString(parameters);
     }
 
-    public void storeMessage(SendMessageToCareType sendMessageToCareType) throws JAXBException {
+    public void storeMessage(SendMessageToCareType sendMessageToCareType, String logicalAddress) throws JAXBException {
         String certificateId = sendMessageToCareType.getIntygsId().getExtension();
         String messageId = sendMessageToCareType.getMeddelandeId();
         String xmlBlob = marshalCertificate(sendMessageToCareType);
-        storage.addMessage(certificateId, messageId, xmlBlob);
+        storage.addMessage(certificateId, messageId, xmlBlob, logicalAddress);
     }
 
-    public Map<Pair<String, String>, String> getAllMessages() {
+    public Map<SendMessageToCareStorage.MessageKey, String> getAllMessages() {
         return storage.getAllMessages();
     }
 

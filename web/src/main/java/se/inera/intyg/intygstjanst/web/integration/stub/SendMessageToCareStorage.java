@@ -23,38 +23,57 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.stereotype.Component;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class SendMessageToCareStorage {
-    private Map<Pair<String, String>, String> messages = new ConcurrentHashMap<Pair<String, String>, String>();
+    private Map<MessageKey, String> messages = new ConcurrentHashMap<>();
 
     public int getCount() {
         return messages.size();
     }
 
-    public void addMessage(String certificateId, String messageId, String xmlBlob) {
-        Pair<String, String> pair = Pair.of(certificateId, messageId);
-        messages.put(pair, xmlBlob);
+    public void addMessage(String certificateId, String messageId, String logicalAddress, String xmlBlob) {
+        messages.put(new MessageKey(certificateId, messageId, logicalAddress), xmlBlob);
     }
 
     public void clear() {
         messages.clear();
     }
 
-    public Map<Pair<String, String>, String> getAllMessages() {
+    public Map<MessageKey, String> getAllMessages() {
         return messages;
+    }
+
+    public List<String> getMessagesIdsForLogicalAddress(String logicalAddress) {
+        return messages.keySet().stream().
+                filter(x -> x.logicalAddress.equals(logicalAddress)).
+                map(x -> x.certificateId).collect(toList());
     }
 
     public List<String> getMessagesForCertificateId(String certificateId) {
         List<String> messagesList = new ArrayList<>();
-        for (Pair<String, String> pair : messages.keySet()) {
-            if (pair.getLeft().equals(certificateId)) {
-                messagesList.add(messages.get(pair));
+        for (MessageKey key : messages.keySet()) {
+            if (key.certificateId.equals(certificateId)) {
+                messagesList.add(messages.get(key));
             }
         }
         return messagesList;
+    }
+
+    public static final class MessageKey {
+        public final String certificateId;
+        public final String messageId;
+        public final String logicalAddress;
+
+        public MessageKey(String certificateId, String messageId, String logicalAddress) {
+            this.certificateId = certificateId;
+            this.messageId = messageId;
+            this.logicalAddress = logicalAddress;
+        }
     }
 
 }

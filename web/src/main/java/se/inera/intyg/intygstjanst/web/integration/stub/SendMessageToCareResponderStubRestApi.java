@@ -23,11 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -40,6 +36,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class SendMessageToCareResponderStubRestApi {
     private static final Logger LOGGER = LoggerFactory.getLogger(SendMessageToCareResponderStubRestApi.class);
+
+    private static final String UTF_8_CHARSET = ";charset=utf-8";
 
     @Autowired
     private SendMessageToCareStorage storage;
@@ -90,10 +88,18 @@ public class SendMessageToCareResponderStubRestApi {
     }
 
     @GET
+    @Path("/byLogicalAddress")
+    @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
+    public Response getMessagesForLogicalAddress(@QueryParam("address") String address) {
+        List<String> messageIds = storage.getMessagesIdsForLogicalAddress(address);
+        return Response.ok(messageIds).build();
+    }
+
+    @GET
     @Path("/messages-all")
     @Produces(MediaType.APPLICATION_XML)
     public Response getAllMessages() {
-        Map<Pair<String, String>, String> xmlMessages = storage.getAllMessages();
+        Map<SendMessageToCareStorage.MessageKey, String> xmlMessages = storage.getAllMessages();
         Map<String, String> results = new HashMap<>();
         StringBuilder stringBuilder = new StringBuilder();
         for (String message : xmlMessages.values()) {
