@@ -7,7 +7,7 @@
     "states": [
         {
             "state": "RECEIVED",
-            "target": "MI",
+            "target": "HV",
             "timestamp": "2014-08-05T13:28:03.227"
         },
         {
@@ -17,7 +17,7 @@
         },
         {
             "state": "CANCELLED",
-            "target": "TS",
+            "target": "HV",
             "timestamp": "2014-08-06T13:28:07.227"
         }
     ],

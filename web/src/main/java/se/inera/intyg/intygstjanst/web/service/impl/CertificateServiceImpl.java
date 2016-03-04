@@ -70,7 +70,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     private static final Logger LOG = LoggerFactory.getLogger(CertificateServiceImpl.class);
 
-    public static final String MI = "MI";
+    public static final String MI = "HV";
 
     @Autowired
     private CertificateDao certificateDao;
@@ -221,8 +221,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             throw new CertificateRevokedException(certificateId);
         }
 
-        String type = certificate.getType();
-        setCertificateState(civicRegistrationNumber, certificateId, type, CertificateState.CANCELLED, null);
+        setCertificateState(civicRegistrationNumber, certificateId, "HV", CertificateState.CANCELLED, null);
 
         if (revokeData != null) {
             sendRevokeMessagesToRecipients(certificate, revokeData);

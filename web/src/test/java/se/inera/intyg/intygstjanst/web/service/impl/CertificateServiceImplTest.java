@@ -110,7 +110,7 @@ public class CertificateServiceImplTest {
         assertEquals("id", certificate.getId());
         assertEquals(1, certificate.getStates().size());
         assertEquals(CertificateState.RECEIVED, certificate.getStates().get(0).getState());
-        assertEquals("MI", certificate.getStates().get(0).getTarget());
+        assertEquals("HV", certificate.getStates().get(0).getTarget());
 
         LocalDateTime aMinuteAgo = new LocalDateTime().minusMinutes(1);
         LocalDateTime inAMinute = new LocalDateTime().plusMinutes(1);
