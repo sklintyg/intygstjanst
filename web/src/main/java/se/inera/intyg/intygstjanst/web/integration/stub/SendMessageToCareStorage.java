@@ -24,11 +24,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.stereotype.Component;
 
 @Component
-@SchemaValidation
 public class SendMessageToCareStorage {
     private Map<Pair<String, String>, String> messages = new ConcurrentHashMap<Pair<String, String>, String>();
 

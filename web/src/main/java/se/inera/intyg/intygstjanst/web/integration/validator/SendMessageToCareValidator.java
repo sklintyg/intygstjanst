@@ -25,6 +25,8 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.dto.InvalidPersonNummerException;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
@@ -53,16 +55,6 @@ public class SendMessageToCareValidator {
     @Autowired
     private SendMessageToCareRepository messageRepository;
 
-    public void validateMessageSubject(String subject, List<String> validationErrors) {
-        try {
-            Amneskod.valueOf(subject);
-        } catch (Exception e) {
-            validationErrors.add(ErrorCode.SUBJECT_NOT_SUPPORTED_ERROR.toString());
-            validationErrors.add(" The supplied certificate subject is invalid. "
-                    + "Supported subjects are KOMPLETTERING_AV_LAKARINTYG, MAKULERING_AV_LAKARINTYG, AVSTAMNINGSMOTE, KONTAKT, ARBETSTIDSFORLAGGNING, PAMINNELSE, OVRIGT");
-        }
-    }
-
     public void validateSendMessageToCare(SendMessageToCareType sendMessageToCareType) throws CertificateValidationException {
         List<String> validationErrors = new ArrayList<String>();
         String personnummeer = sendMessageToCareType.getPatientPersonId().getExtension();
@@ -79,7 +71,19 @@ public class SendMessageToCareValidator {
 
     }
 
-    public void validateConsistencyForQuestionVsAnswer(SendMessageToCareType sendMessageToCareType, List<String> validationErrors) {
+    @VisibleForTesting
+    void validateMessageSubject(String subject, List<String> validationErrors) {
+        try {
+            Amneskod.valueOf(subject);
+        } catch (Exception e) {
+            validationErrors.add(ErrorCode.SUBJECT_NOT_SUPPORTED_ERROR.toString());
+            validationErrors.add(" The supplied certificate subject is invalid. "
+                    + "Supported subjects are KOMPLETTERING_AV_LAKARINTYG, MAKULERING_AV_LAKARINTYG, AVSTAMNINGSMOTE, KONTAKT, ARBETSTIDSFORLAGGNING, PAMINNELSE, OVRIGT");
+        }
+    }
+
+    @VisibleForTesting
+    void validateConsistencyForQuestionVsAnswer(SendMessageToCareType sendMessageToCareType, List<String> validationErrors) {
         LocalDate lastDayOfReply = sendMessageToCareType.getSistaDatumForSvar();
         if (lastDayOfReply != null && messageIsAnAnswer(sendMessageToCareType)) {
             validationErrors.add(ErrorCode.MESSAGE_TYPE_CONSISTENCY_ERROR.toString());
@@ -89,7 +93,8 @@ public class SendMessageToCareValidator {
         }
     }
 
-    public void validateConsistencyOfSubject(SendMessageToCareType sendMessageToCareType, List<String> validationErrors) {
+    @VisibleForTesting
+    void validateConsistencyOfSubject(SendMessageToCareType sendMessageToCareType, List<String> validationErrors) {
         MeddelandeReferens meddelandeReferens = sendMessageToCareType.getSvarPa();
         if (meddelandeReferens != null) {
             String meddelandeId = meddelandeReferens.getMeddelandeId();
@@ -110,13 +115,15 @@ public class SendMessageToCareValidator {
 
     }
 
-    public void validateConsistencyForKomplettering(SendMessageToCareType sendMessageToCareType, List<String> validationErrors) {
+    @VisibleForTesting
+    void validateConsistencyForKomplettering(SendMessageToCareType sendMessageToCareType, List<String> validationErrors) {
         if (!sendMessageToCareType.getAmne().equals(Amneskod.KOMPLT.toString()) && hasKomplettering(sendMessageToCareType)) {
             validationErrors.add(ErrorCode.KOMPLETTERING_INCONSISTENCY_ERROR.toString());
         }
     }
 
-    public void validateThatCertificateExists(String certificateId, String civicRegistrationNumber, List<String> validationErrors) {
+    @VisibleForTesting
+    void validateThatCertificateExists(String certificateId, String civicRegistrationNumber, List<String> validationErrors) {
         Certificate certificate;
         try {
             certificate = certificateService.getCertificateForCare(certificateId);
@@ -136,7 +143,8 @@ public class SendMessageToCareValidator {
         }
     }
 
-    public void validatePaminnelseIdConsistency(SendMessageToCareType message, List<String> validationErrors) {
+    @VisibleForTesting
+    void validatePaminnelseIdConsistency(SendMessageToCareType message, List<String> validationErrors) {
         boolean paminnelseSubjectMissing = (!message.getAmne().equals(Amneskod.PAMINN.toString())) && (message.getPaminnelseMeddelandeId() != null);
         boolean paminnelseIdMissing = message.getAmne().equals(Amneskod.PAMINN.toString()) && (message.getPaminnelseMeddelandeId() == null);
         if (paminnelseSubjectMissing || paminnelseIdMissing) {

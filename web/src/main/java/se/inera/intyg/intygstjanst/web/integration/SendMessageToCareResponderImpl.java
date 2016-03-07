@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.web.integration;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMe
 import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
 
+@SchemaValidation
 public class SendMessageToCareResponderImpl implements SendMessageToCareResponderInterface {
     private static final Logger LOGGER = LoggerFactory.getLogger(SendMessageToCareResponderImpl.class);
 
