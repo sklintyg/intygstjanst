@@ -70,7 +70,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     private static final Logger LOG = LoggerFactory.getLogger(CertificateServiceImpl.class);
 
-    public static final String MI = "HV";
+    public static final String HVTARGET = "HV";
 
     @Autowired
     private CertificateDao certificateDao;
@@ -221,7 +221,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             throw new CertificateRevokedException(certificateId);
         }
 
-        setCertificateState(civicRegistrationNumber, certificateId, "HV", CertificateState.CANCELLED, null);
+        setCertificateState(civicRegistrationNumber, certificateId, HVTARGET, CertificateState.CANCELLED, null);
 
         if (revokeData != null) {
             sendRevokeMessagesToRecipients(certificate, revokeData);
@@ -294,7 +294,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         }
 
         // add initial RECEIVED state using current time as receiving timestamp
-        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(MI, CertificateState.RECEIVED,
+        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(HVTARGET, CertificateState.RECEIVED,
                 new LocalDateTime());
         certificate.addState(state);
         certificateDao.store(certificate);
