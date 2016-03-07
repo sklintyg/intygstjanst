@@ -21,9 +21,6 @@ package se.inera.intyg.intygstjanst.persistence.model.dao;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,6 +28,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by eriklupander on 2016-02-02.
@@ -105,16 +104,10 @@ public class SjukfallCertificate {
 
 
     /**
-     * Patient first name.
+     * Patient's full name including first, middle and last name.
      */
-    @Column(name = "PATIENT_FIRST_NAME", nullable = true)
-    private String patientFirstName;
-
-    /**
-     * Patient last name.
-     */
-    @Column(name = "PATIENT_LAST_NAME", nullable = true)
-    private String patientLastName;
+    @Column(name = "PATIENT_NAME", nullable = true)
+    private String patientName;
 
     /**
      * Main diagnose code.
@@ -207,20 +200,12 @@ public class SjukfallCertificate {
         this.civicRegistrationNumber = civicRegistrationNumber;
     }
 
-    public String getPatientFirstName() {
-        return patientFirstName;
+    public String getPatientName() {
+        return patientName;
     }
 
-    public void setPatientFirstName(String patientFirstName) {
-        this.patientFirstName = patientFirstName;
-    }
-
-    public String getPatientLastName() {
-        return patientLastName;
-    }
-
-    public void setPatientLastName(String patientLastName) {
-        this.patientLastName = patientLastName;
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
     }
 
     public String getDiagnoseCode() {

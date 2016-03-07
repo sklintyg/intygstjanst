@@ -22,16 +22,6 @@ package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,10 +30,18 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * DAO test, uses @ContextConfiguration e.g. real DB.
@@ -148,8 +146,7 @@ public class SjukfallCertificateDaoImplTest {
         sc.setCareUnitName(CARE_UNIT_NAME);
         sc.setCivicRegistrationNumber(PERSONNUMMER);
         sc.setDiagnoseCode("M16");
-        sc.setPatientFirstName("Tolvan");
-        sc.setPatientLastName("Tolvansson");
+        sc.setPatientName("Tolvan Tolvansson");
         sc.setSigningDoctorId(DOCTOR_HSA_ID);
         sc.setSigningDoctorName(DOCTOR_NAME);
         sc.setType(FK7263);

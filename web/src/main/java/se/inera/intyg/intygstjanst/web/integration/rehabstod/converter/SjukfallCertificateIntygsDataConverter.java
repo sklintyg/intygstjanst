@@ -18,12 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.rehabstod.converter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.joda.time.LocalDate;
-
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
@@ -35,6 +30,10 @@ import se.riv.clinicalprocess.healthcond.rehabilitation.v1.HosPersonal;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsData;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.Patient;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.Vardgivare;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Converts a list of {@link SjukfallCertificate} into a list of {@link IntygsData}.
@@ -51,7 +50,7 @@ public class SjukfallCertificateIntygsDataConverter {
 
             intygsData.setIntygsId(sc.getId());
             intygsData.setSigneringsTidpunkt(sc.getSigningDateTime());
-            intygsData.setPatient(buildPatient(sc.getCivicRegistrationNumber(), sc.getPatientFirstName(), sc.getPatientLastName()));
+            intygsData.setPatient(buildPatient(sc.getCivicRegistrationNumber(), sc.getPatientName()));
             intygsData.setDiagnoskod(sc.getDiagnoseCode());
 
             Vardgivare vardgivare = buildVardgivare(sc.getCareGiverId());
@@ -94,13 +93,12 @@ public class SjukfallCertificateIntygsDataConverter {
         return formaga;
     }
 
-    private Patient buildPatient(String pnr, String fornamn, String efternamn) {
+    private Patient buildPatient(String pnr, String namn) {
         Patient patient = new Patient();
         PersonId personId = new PersonId();
         personId.setExtension(pnr);
         patient.setPersonId(personId);
-        patient.setFornamn(fornamn);
-        patient.setEfternamn(efternamn);
+        patient.setFullstandigtNamn(namn);
         return patient;
     }
 
