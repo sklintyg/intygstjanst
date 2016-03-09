@@ -20,24 +20,37 @@ package se.inera.intyg.intygstjanst.web.integrationtest.arende;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.post;
+import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static java.lang.System.load;
 import static org.hamcrest.core.Is.is;
 
+import com.google.common.io.Resources;
+import com.google.common.base.Charsets;
+import com.sun.org.apache.xerces.internal.dom.DOMInputImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSResourceResolver;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 public class SendMessageToCareIT extends BaseIntegrationTest {
 
     private static final String BASE = "Envelope.Body.SendMessageToCareResponse.";
 
     private ST requestTemplate;
+
+
 
     @Before
     public void setup() {
@@ -48,7 +61,9 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void testReadIntygsDataForPrePopulatedIntyg() {
+    public void testReadIntygsDataForPrePopulatedIntyg() throws Exception {
+        String inputXml = "interactions/SendMessageToCareInteraction/SendMessageToCareResponder_1.0.xsd";
+
         post("inera-certificate/send-message-to-care-stub-rest/clear");
 
         String enhetsId = "123456";
@@ -61,6 +76,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
                 then().
                 statusCode(200).
                 rootPath(BASE).
+                //body(matchesXsd(inputXml).using(new ClasspathResourceResolver())).
                 body("result.resultCode", is("OK"));
 
         given().
@@ -82,6 +98,19 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
             this.personId = personId;
             this.enhetsId = enhetsId;
         }
+    }
+
+    public static class ClasspathResourceResolver implements LSResourceResolver {
+
+        @Override
+        public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
+            InputStream resource = getResourceAsStream(systemId);
+            return new DOMInputImpl(publicId, systemId, baseURI, resource, null);
+        }
+    }
+
+    private static InputStream getResourceAsStream(String href) {
+        return Thread.currentThread().getContextClassLoader().getResourceAsStream(href);
     }
 
 }
