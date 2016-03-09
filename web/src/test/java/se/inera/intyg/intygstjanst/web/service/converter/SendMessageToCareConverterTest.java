@@ -31,42 +31,42 @@ import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
-
 import se.inera.intyg.intygstjanst.persistence.model.dao.SendMessageToCare;
 import se.inera.intyg.intygstjanst.web.integration.converter.SendMessageToCareConverter;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 
 public class SendMessageToCareConverterTest {
 
     private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML = "SendMessageToCareTest/sendmessagetocare.xml";
     private SendMessageToCareConverter converter = new SendMessageToCareConverter();
-    
+
     @Test
     public void testConvertToXmlString() throws Exception{
         String xmlResult = converter.convertToXmlString(getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML));
         String fileXml = loadXmlMessageFromFile();
         assertEquals(fileXml, xmlResult);
     }
-    
+
     @Test
     public void testConvertToSendMessageToCare() throws Exception{
         SendMessageToCareType sendMessageToCareType = getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         SendMessageToCare sendMessageToCare = converter.convertSendMessageToCare(sendMessageToCareType);
         assertEquals(sendMessageToCareType.getIntygsId().getExtension(), sendMessageToCare.getIntygsId());
-        assertEquals(sendMessageToCareType.getLogiskAdressMottagare().getExtension(), sendMessageToCare.getLogiskAdressmottagare());
+        assertEquals(sendMessageToCareType.getLogiskAdressMottagare(), sendMessageToCare.getLogiskAdressmottagare());
         assertEquals(sendMessageToCareType.getMeddelandeId(), sendMessageToCare.getMeddelandeId());
         assertEquals(sendMessageToCareType.getReferensId(), sendMessageToCare.getReferens());
         assertTrue(new LocalDateTime().toLocalDate().equals(sendMessageToCare.getTimestamp().toLocalDate()));
         assertEquals(loadXmlMessageFromFile(), sendMessageToCare.getMeddelande());
     }
-    
+
     private String loadXmlMessageFromFile() throws IOException {
         String fileXml = Resources.toString(getResource(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML), Charsets.UTF_8);
         return fileXml.replaceAll("[\\r\\n\\t ]", "");
     }
-    
+
     private SendMessageToCareType getSendMessageToCareTypeFromFile(String fileName) throws Exception {
         JAXBContext jaxbContext = JAXBContext.newInstance(SendMessageToCareType.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -74,9 +74,9 @@ public class SendMessageToCareConverterTest {
                 new StreamSource(new ClassPathResource(fileName).getInputStream()),
                 SendMessageToCareType.class).getValue();
     }
-    
+
     private static URL getResource(String href) {
         return Thread.currentThread().getContextClassLoader().getResource(href);
     }
-    
+
 }

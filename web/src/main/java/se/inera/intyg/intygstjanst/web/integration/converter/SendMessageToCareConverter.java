@@ -20,9 +20,7 @@ package se.inera.intyg.intygstjanst.web.integration.converter;
 
 import java.io.StringWriter;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import javax.xml.bind.*;
 
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Component;
@@ -52,8 +50,8 @@ public class SendMessageToCareConverter {
             sendMessageToCare.setReferens(sendMessageToCareType.getReferensId());
         }
         sendMessageToCare.setTimeStamp(LocalDateTime.now());
-        sendMessageToCare.setLogiskAdressmottagare(sendMessageToCareType.getLogiskAdressMottagare().getExtension());
-        sendMessageToCare.setAmne(sendMessageToCareType.getAmne());
+        sendMessageToCare.setLogiskAdressmottagare(sendMessageToCareType.getLogiskAdressMottagare());
+        sendMessageToCare.setAmne(sendMessageToCareType.getAmne().getCode());
         sendMessageToCare.setMeddelande(convertToXmlString(sendMessageToCareType));
         return sendMessageToCare;
     }

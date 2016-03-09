@@ -5,9 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import org.joda.time.LocalDate;
 import org.junit.Test;
@@ -19,9 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SendMessageToCare;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SendMessageToCareRepository;
+import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.integration.util.SendMessageToCareUtil;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.Amneskod;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.ErrorCode;
@@ -270,7 +266,8 @@ public class SendMessageToCareValidatorTest {
         MeddelandeReferens meddelandeReferens = new MeddelandeReferens();
         meddelandeReferens.setMeddelandeId(meddelandeId);
         sendMessageToCareType.setSvarPa(meddelandeReferens);
-        sendMessageToCareType.setAmne(amne);
+        sendMessageToCareType.setAmne(new se.riv.clinicalprocess.healthcond.certificate.types.v2.Amneskod());
+        sendMessageToCareType.getAmne().setCode(amne);
         return sendMessageToCareType;
     }
 

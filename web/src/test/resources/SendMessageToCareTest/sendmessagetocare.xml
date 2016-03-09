@@ -13,11 +13,10 @@
     <ns2:root>1.2.752.129.2.1.4.1</ns2:root>
     <ns2:extension>1212121212</ns2:extension>
   </patientPerson-id>
-  <logiskAdressMottagare>
-    <ns2:root>hsaroot</ns2:root>
-    <ns2:extension>enhetsid</ns2:extension>
-  </logiskAdressMottagare>
-  <amne>AVSTAMNINGSMOTE</amne>
+  <logiskAdressMottagare>enhetsid</logiskAdressMottagare>
+  <amne>
+    <ns2:code>AVSTAMNINGSMOTE</ns2:code>
+  </amne>
   <rubrik>Rubrik</rubrik>
   <paminnelseMeddelande-id>56</paminnelseMeddelande-id>
   <skickatAv>

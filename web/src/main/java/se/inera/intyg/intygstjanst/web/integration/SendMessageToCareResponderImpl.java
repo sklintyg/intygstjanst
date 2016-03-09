@@ -32,9 +32,7 @@ import se.inera.intyg.intygstjanst.web.integration.converter.SendMessageToCareCo
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.SendMessageToCareService;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareResponderInterface;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareResponseType;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.*;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
 
@@ -67,13 +65,13 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
             validator.validateSendMessageToCare(parameters);
             sendMessage = converter.convertSendMessageToCare(parameters);
             response = sendMessageToCareResponder
-                    .sendMessageToCare(parameters.getLogiskAdressMottagare().getExtension(), parameters);
+                    .sendMessageToCare(parameters.getLogiskAdressMottagare(), parameters);
             if (response.getResult().getResultCode().equals(ResultCodeType.OK)) {
                 LOGGER.debug("Converting to ORM object. " + sendMessage.toString());
                 sendMessageToCareService.processIncomingSendMessageToCare(sendMessage);
                 resultType.setResultCode(ResultCodeType.OK);
             }
-            logService.logSendMessageToCareReceived(parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare().getExtension());
+            logService.logSendMessageToCareReceived(parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());
         } catch (JAXBException e) {
             String errorMessage = "Could not marshal message of type SendMessageToCareType with meddelande id " + parameters.getMeddelandeId() + ": "
                     + e.getMessage() + "Error code " + e.getErrorCode() + " " + e.getMessage();
