@@ -37,6 +37,7 @@ database_pool_minIdle: 10
 database_pool_initialSize: 10
 
 # ActiveMQ configuration
+activemq_version : 5.13.0
 activemq_broker_url: "http://localhost"
 activemq_username: ""
 activemq_password: ""
