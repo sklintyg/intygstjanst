@@ -51,8 +51,7 @@
     <rivta-itintegration-monitoring.version>1.0.0.1</rivta-itintegration-monitoring.version>
 
     <intyg-infrastructure-directory-organization.version>1.1.RC5.1</intyg-infrastructure-directory-organization.version>
-    <!--<intyg-clinicalprocess-healthcond-rehabilitation.version>0.9.2</intyg-clinicalprocess-healthcond-rehabilitation.version>-->
-    <intyg-clinicalprocess-healthcond-rehabilitation.version>0-SNAPSHOT</intyg-clinicalprocess-healthcond-rehabilitation.version>
+    <intyg-clinicalprocess-healthcond-rehabilitation.version>1.0.0</intyg-clinicalprocess-healthcond-rehabilitation.version>
     <intyg-clinicalprocess.version>1.0.1</intyg-clinicalprocess.version>
     <intyg-insuranceprocess.version>1.0.1</intyg-insuranceprocess.version>
     <intyg-transportstyrelsen.version>1.0.1</intyg-transportstyrelsen.version>
