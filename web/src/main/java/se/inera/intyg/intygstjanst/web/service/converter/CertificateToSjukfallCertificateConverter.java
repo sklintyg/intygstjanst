@@ -18,21 +18,21 @@
  */
 package se.inera.intyg.intygstjanst.web.service.converter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.joda.time.Partial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
+import se.inera.intyg.common.support.model.common.internal.Patient;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.model.converter.util.PartialConverter;
 import se.inera.intyg.intygstjanst.persistence.model.builder.SjukfallCertificateBuilder;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Converts a (fk7263) Certificate to a CertificateSjukfall.
@@ -77,8 +77,7 @@ public class CertificateToSjukfallCertificateConverter {
                 .certificateType(certificate.getType())
                 .civicRegistrationNumber(certificate.getCivicRegistrationNumber().getPersonnummer())
                 .signingDoctorName(certificate.getSigningDoctorName())
-                .patientFirstName(fkUtlatande.getGrundData().getPatient().getFornamn())
-                .patientLastName(fkUtlatande.getGrundData().getPatient().getEfternamn())
+                .patientName(getPatientName(fkUtlatande.getGrundData().getPatient()))
                 .diagnoseCode(fkUtlatande.getDiagnosKod())
                 .signingDoctorId(fkUtlatande.getGrundData().getSkapadAv().getPersonId())
                 .signingDoctorName(fkUtlatande.getGrundData().getSkapadAv().getFullstandigtNamn())
@@ -107,6 +106,31 @@ public class CertificateToSjukfallCertificateConverter {
         return workCapacities;
     }
 
+    private String getPatientName(Patient patient) {
+        String name = "";
+
+        if (patient == null) {
+            return name;
+        }
+
+        String fnamn = patient.getFornamn();
+        String mnamn = patient.getMellannamn();
+        String enamn = patient.getEfternamn();
+
+        if (fnamn != null) {
+            name = fnamn.isEmpty() ? "" : fnamn;
+        }
+
+        if (mnamn != null) {
+            name = mnamn.isEmpty() ? "" : name + " " + mnamn;
+        }
+
+        if (enamn != null) {
+            name = enamn.isEmpty() ? "" : name + " " + enamn;
+        }
+
+        return name;
+    }
 
     private SjukfallCertificateWorkCapacity buildWorkCapacity(Integer workCapacity, InternalLocalDateInterval
             interval) {

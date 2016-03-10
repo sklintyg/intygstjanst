@@ -1,12 +1,10 @@
 package se.inera.intyg.intygstjanst.web.service.converter;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
 
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
-
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 
 /**
@@ -17,8 +15,7 @@ public class CertificateToSjukfallCertificateConverterTest {
 
     private static final String CERT_ID = "cert-123";
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
-    private static final String FNAME = "Tolvan";
-    private static final String ENAME = "Tolvansson";
+    private static final String NAME = "Tolvan Tolvansson";
     private static final String PERSONNUMMER = "19121212-1212";
     private static final String DOC_NAME = "Doc Name";
     private static final String CERT_TYPE = "fk7263";
@@ -57,8 +54,7 @@ public class CertificateToSjukfallCertificateConverterTest {
 
         assertEquals(DOC_ID, sjukfallCertificate.getSigningDoctorId());
         assertEquals(DOC_NAME, sjukfallCertificate.getSigningDoctorName());
-        assertEquals(FNAME, sjukfallCertificate.getPatientFirstName());
-        assertEquals(ENAME, sjukfallCertificate.getPatientLastName());
+        assertEquals(NAME, sjukfallCertificate.getPatientName());
         assertEquals(PERSONNUMMER, sjukfallCertificate.getCivicRegistrationNumber());
 
         assertEquals(START_DATE_100, sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(0).getFromDate());

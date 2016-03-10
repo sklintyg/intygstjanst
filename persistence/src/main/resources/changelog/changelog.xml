@@ -275,4 +275,9 @@
     <sql>update CERTIFICATE_STATE set TARGET='HV' where (STATE='CANCELLED' or STATE='RECEIVED');</sql>
   </changeSet>
 
+	<changeSet id="13" author="me">
+		<renameColumn tableName="SJUKFALL_CERT" oldColumnName="PATIENT_LAST_NAME" newColumnName="PATIENT_NAME" />
+		<dropColumn tableName="SJUKFALL_CERT" columnName="PATIENT_FIRST_NAME" />
+	</changeSet>
+
 </databaseChangeLog>

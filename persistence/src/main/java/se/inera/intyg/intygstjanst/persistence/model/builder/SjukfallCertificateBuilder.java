@@ -18,11 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.builder;
 
-import java.util.List;
-
 import org.joda.time.LocalDateTime;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
+
+import java.util.List;
 
 /**
  * Created by eriklupander on 2016-02-04.
@@ -45,13 +45,8 @@ public class SjukfallCertificateBuilder {
         return this;
     }
 
-    public SjukfallCertificateBuilder patientFirstName(String patientFirstName) {
-        certificate.setPatientFirstName(patientFirstName);
-        return this;
-    }
-
-    public SjukfallCertificateBuilder patientLastName(String patientLastName) {
-        certificate.setPatientLastName(patientLastName);
+    public SjukfallCertificateBuilder patientName(String patientName) {
+        certificate.setPatientName(patientName);
         return this;
     }
 

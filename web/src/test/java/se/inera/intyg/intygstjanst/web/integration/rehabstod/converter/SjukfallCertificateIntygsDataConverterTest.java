@@ -1,5 +1,7 @@
 package se.inera.intyg.intygstjanst.web.integration.rehabstod.converter;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
@@ -10,8 +12,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by eriklupander on 2016-02-04.
@@ -51,8 +51,7 @@ public class SjukfallCertificateIntygsDataConverterTest {
         sc.setCareUnitName(CARE_UNIT_NAME);
         sc.setCivicRegistrationNumber(PERSONNUMMER);
         sc.setDiagnoseCode("M16");
-        sc.setPatientFirstName("Tolvan");
-        sc.setPatientLastName("Tolvansson");
+        sc.setPatientName("Tolvan Tolvansson");
         sc.setSigningDoctorId(DOCTOR_HSA_ID);
         sc.setSigningDoctorName(DOCTOR_NAME);
         sc.setType(FK7263);
