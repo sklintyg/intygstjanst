@@ -276,7 +276,7 @@
   </changeSet>
 
 	<changeSet id="13" author="me">
-		<renameColumn tableName="SJUKFALL_CERT" oldColumnName="PATIENT_LAST_NAME" newColumnName="PATIENT_NAME" />
+		<renameColumn tableName="SJUKFALL_CERT" oldColumnName="PATIENT_LAST_NAME" newColumnName="PATIENT_NAME" columnDataType="varchar(255)"/>
 		<dropColumn tableName="SJUKFALL_CERT" columnName="PATIENT_FIRST_NAME" />
 	</changeSet>
 
