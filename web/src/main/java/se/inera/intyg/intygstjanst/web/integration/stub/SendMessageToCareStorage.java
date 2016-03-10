@@ -18,14 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.stereotype.Component;
 
 @Component
