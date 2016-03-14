@@ -20,8 +20,10 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
-import static se.riv.clinicalprocess.healthcond.certificate.v1.ResultCodeType.OK;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType.OK;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,15 +31,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import se.inera.intyg.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponderInterface;
-import se.inera.intyg.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponseType;
-import se.inera.intyg.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientType;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.builder.CertificateBuilder;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v1.*;
+import se.riv.clinicalprocess.healthcond.certificate.types.v2.*;
 
 
 @RunWith( MockitoJUnitRunner.class )
@@ -79,9 +80,12 @@ public class SendCertificateToRecipientResponderImplTest {
     private SendCertificateToRecipientType createRequest() {
 
         SendCertificateToRecipientType request = new SendCertificateToRecipientType();
-        request.setPersonId(PERSONNUMMER.getPersonnummer());
-        request.setMottagareId(RECIPIENT_ID);
-        request.setUtlatandeId(CERTIFICATE_ID);
+        request.setPatientPersonId(new PersonId());
+        request.getPatientPersonId().setExtension(PERSONNUMMER.getPersonnummer());
+        request.setMottagare(new Part());
+        request.getMottagare().setCode(RECIPIENT_ID);
+        request.setIntygsId(new IntygId());
+        request.getIntygsId().setExtension(CERTIFICATE_ID);
 
         return request;
     }

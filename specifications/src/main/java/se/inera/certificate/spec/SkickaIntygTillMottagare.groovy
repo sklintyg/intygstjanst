@@ -19,10 +19,13 @@
 
 package se.inera.intyg.common.specifications.spec
 import se.inera.intyg.common.specifications.spec.util.WsClientFixture
-import se.inera.intyg.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponderInterface
-import se.inera.intyg.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientResponseType
-import se.inera.intyg.clinicalprocess.healthcond.certificate.sendcertificatetorecipient.v1.SendCertificateToRecipientType
-import se.riv.clinicalprocess.healthcond.certificate.v1.ResultCodeType
+import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v1.SendCertificateToRecipientResponderInterface
+import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v1.SendCertificateToRecipientResponseType
+import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v1.SendCertificateToRecipientType
+import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType
+import se.riv.clinicalprocess.healthcond.certificate.types.v2.IntygId
+import se.riv.clinicalprocess.healthcond.certificate.types.v2.Part
+import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId
 
 
 public class SkickaIntygTillMottagare extends WsClientFixture {
@@ -45,9 +48,12 @@ public class SkickaIntygTillMottagare extends WsClientFixture {
 
     def execute() {
         def request = new SendCertificateToRecipientType()
-        request.mottagareId = mottagare
-        request.personId = personnummer
-        request.utlatandeId = intyg
+        request.mottagare = new Part()
+        request.mottagare.code = mottagare
+        request.patientPersonId = new PersonId()
+        request.patientPersonId.extension = personnummer
+        request.intygsId = new IntygId()
+        request.intygsId.extension = intyg
 
         response = responder.sendCertificateToRecipient(logicalAddress.value, request)
 
