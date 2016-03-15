@@ -19,8 +19,11 @@
 
 package se.inera.intyg.intygstjanst.web.integration;
 
+import org.apache.cxf.annotations.SchemaValidation;
+
 import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.v2.*;
 
+@SchemaValidation
 public class ListCertificatesForCitizenResponderImpl2 implements ListCertificatesForCitizenResponderInterface {
 
     @Override

@@ -22,10 +22,12 @@ import se.inera.intyg.common.specifications.spec.util.WsClientFixture
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v1.SendCertificateToRecipientResponderInterface
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v1.SendCertificateToRecipientResponseType
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v1.SendCertificateToRecipientType
+import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v1.SendCertificateToRecipientType.SkickatAv
 import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.IntygId
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.Part
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId
+import org.joda.time.LocalDateTime
 
 
 public class InvanareSkickarIntygTillFk extends WsClientFixture {
@@ -48,12 +50,19 @@ public class InvanareSkickarIntygTillFk extends WsClientFixture {
 
     def execute() {
         def request = new SendCertificateToRecipientType()
+        request.skickatTidpunkt = LocalDateTime.now()
         request.mottagare = new Part()
         request.mottagare.code = mottagare
+        request.mottagare.codeSystem = ""
         request.patientPersonId = new PersonId()
+        request.patientPersonId.root = ""
         request.patientPersonId.extension = personnummer
         request.intygsId = new IntygId()
+        request.intygsId.root = ""
         request.intygsId.extension = intyg
+        request.skickatAv = new SkickatAv()
+        request.skickatAv.personId = new PersonId()
+        request.skickatAv.personId.root = ""
 
         response = responder.sendCertificateToRecipient(logicalAddress.value, request)
 
