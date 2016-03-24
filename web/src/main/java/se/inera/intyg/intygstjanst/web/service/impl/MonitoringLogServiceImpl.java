@@ -108,19 +108,20 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     }
 
     private enum MonitoringEvent {
-        CERTIFICATE_REGISTERED("Certificate '{}' with type '{}', care unit '{}' - registered"), CERTIFICATE_SENT(
-                "Certificate '{}' with type '{}', care unit '{}' - sent to '{}'"), CERTIFICATE_SENT_AND_NOTIFIED_BY_WIRETAPPING(
-                        "Certificate '{}' with type '{}', care unit '{}' - sent to '{}' (notification received by wiretapping)"), CERTIFICATE_REVOKED(
-                                "Certificate '{}' with type '{}', care unit '{}' - revoked"), CERTIFICATE_REVOKE_SENT(
-                                        "Certificate '{}' with type '{}', care unit '{}' - revoke sent to '{}'"), CERTIFICATE_LISTED_BY_CITIZEN(
-                                                "Certificates for citizen '{}' - listed by citizen"), CERTIFICATE_LISTED_BY_CARE(
-                                                        "Certificates for citizen '{}' - listed by care"), CERTIFICATE_STATUS_CHANGED(
-                                                                "Certificate '{}' - changed to status '{}'"), CONSENT_GIVEN(
-                                                                        "Consent given by citizen '{}'"), CONSENT_REVOKED(
-                                                                                "Consent revoked by citizen '{}'"), STATISTICS_SENT(
-                                                                                        "Certificate '{}' with type '{}', care unit '{}' - sent to statistics"), STATISTICS_REVOKED(
-                                                                                                "Certificate '{}' with type '{}', care unit '{}' - revoke sent to statistics"), SEND_MESSAGE_TO_CARE_RECEIVED(
-                                                                                                        "Message with id '{}', care unit recipient '{}' - was received and forwarded to its recipient.");
+        CERTIFICATE_REGISTERED("Certificate '{}' with type '{}', care unit '{}' - registered"),
+        CERTIFICATE_SENT("Certificate '{}' with type '{}', care unit '{}' - sent to '{}'"),
+        CERTIFICATE_SENT_AND_NOTIFIED_BY_WIRETAPPING(
+                "Certificate '{}' with type '{}', care unit '{}' - sent to '{}' (notification received by wiretapping)"),
+        CERTIFICATE_REVOKED("Certificate '{}' with type '{}', care unit '{}' - revoked"),
+        CERTIFICATE_REVOKE_SENT("Certificate '{}' with type '{}', care unit '{}' - revoke sent to '{}'"),
+        CERTIFICATE_LISTED_BY_CITIZEN("Certificates for citizen '{}' - listed by citizen"),
+        CERTIFICATE_LISTED_BY_CARE("Certificates for citizen '{}' - listed by care"),
+        CERTIFICATE_STATUS_CHANGED("Certificate '{}' - changed to status '{}'"),
+        CONSENT_GIVEN("Consent given by citizen '{}'"),
+        CONSENT_REVOKED("Consent revoked by citizen '{}'"),
+        STATISTICS_SENT("Certificate '{}' with type '{}', care unit '{}' - sent to statistics"),
+        STATISTICS_REVOKED("Certificate '{}' with type '{}', care unit '{}' - revoke sent to statistics"),
+        SEND_MESSAGE_TO_CARE_RECEIVED("Message with id '{}', care unit recipient '{}' - was received and forwarded to its recipient.");
 
         private String msg;
 
