@@ -19,20 +19,18 @@
 
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
-
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 
 /**
  * Uses JPQL to query {@link SjukfallCertificate} a list of sjukfall related intyg.
@@ -65,8 +63,9 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                 .setParameter("today", today)
                 .getResultList();
 
-        // Remove this or change to debug later on.
-        LOG.info("Get personnr with active intyg on enhet {} (with mottagningar) returned {} items.", careUnitHsaIds, personNummerList.size());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Get personnr with active intyg on enhet {} (with mottagningar) returned {} items.", careUnitHsaIds, personNummerList.size());
+        }
 
         // if no personnummer found, return empty list
         if (personNummerList.size() == 0) {
@@ -87,10 +86,10 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                 .setParameter("personNummerList", personNummerList)
                 .getResultList();
 
-
-        LOG.info("Read {} SjukfallCertificate for belonging to unit {}",
-                resultList.size(), careUnitHsaIds);
-
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Read {} SjukfallCertificate for belonging to unit {}",
+                    resultList.size(), careUnitHsaIds);
+        }
         return resultList;
     }
 
