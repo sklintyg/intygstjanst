@@ -175,11 +175,8 @@
   
    <jaxws:endpoint address="/get-certificate-se/v2.0"
       implementor="se.inera.intyg.intygstjanst.web.integration.GetCertificateResponderImpl">
-    <jaxws:outFaultInterceptors>
-      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
-        <constructor-arg value="transform/get-certificate-transform.xslt"/>
-      </bean>
-    </jaxws:outFaultInterceptors>
+      <!-- No outFaultInterceptors should be declared here. We want a SOAPFault
+           for when the certificate does not exist. See INTYG-2126 -->
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/list-certificates-for-citizen/v2.0"

@@ -30,7 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import se.inera.certificate.modules.fkparent.integration.ResultUtil;
+import com.google.common.base.Throwables;
+
+import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.v2.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
@@ -42,8 +44,6 @@ import se.inera.intyg.common.util.logging.LogMarkers;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.*;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.DatePeriodType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
-
-import com.google.common.base.Throwables;
 
 @SchemaValidation
 public class RegisterCertificateResponderImpl implements RegisterCertificateResponderInterface {
@@ -104,20 +104,20 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         CertificateHolder certificateHolder = toCertificateHolder(utlatande, xml, intygsTyp);
         certificateHolder.setOriginalCertificate(xml);
         moduleContainer.certificateReceived(certificateHolder);
-        response.setResult(ResultUtil.okResult());
+        response.setResult(ResultTypeUtil.okResult());
         return response;
     }
 
     private RegisterCertificateResponseType makeValidationErrorResult(String errorString) {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
-        response.setResult(ResultUtil.errorResult(ErrorIdType.VALIDATION_ERROR, errorString));
+        response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, errorString));
         LOGGER.error(LogMarkers.VALIDATION, errorString);
         return response;
     }
 
     private RegisterCertificateResponseType makeCertificateAlreadyExistsResult(RegisterCertificateType registerCertificate) {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
-        response.setResult(ResultUtil.infoResult("Certificate already exists"));
+        response.setResult(ResultTypeUtil.infoResult("Certificate already exists"));
         String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
         String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
         LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId + " issued by " + issuedBy

@@ -23,21 +23,22 @@ import java.io.StringReader;
 
 import javax.xml.bind.JAXB;
 
+import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import se.inera.certificate.modules.fkparent.integration.ResultUtil;
+import com.google.common.base.Throwables;
+
 import se.inera.certificate.modules.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
+import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v1.*;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.RegisterCertificateType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
 
-import com.google.common.base.Throwables;
-
+@SchemaValidation
 public class GetCertificateResponderImpl implements GetCertificateResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetCertificateResponderImpl.class);
@@ -54,30 +55,24 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
         try {
             CertificateHolder certificate = moduleContainer.getCertificate(certificateId, null, false);
             if (certificate.isDeletedByCareGiver()) {
-                response.setResult(ResultUtil.errorResult(ErrorIdType.APPLICATION_ERROR,
-                        String.format("Certificate '%s' has been deleted by care giver", certificateId)));
+                throw new ServerException("Certificate with id " + certificateId + " is deleted from intygstjansten");
             } else {
                 setCertificateBody(certificate, response);
-                if (certificate.isRevoked()) {
-                    response.setResult(ResultUtil.errorResult(ErrorIdType.REVOKED,
-                            String.format("Certificate '%s' has been revoked", certificateId)));
-                } else {
-                    response.setResult(ResultUtil.okResult());
-                }
             }
         } catch (InvalidCertificateException e) {
-            response.setResult(ResultUtil.errorResult(ErrorIdType.VALIDATION_ERROR, e.getMessage()));
+            throw new ServerException("Certificate with id " + certificateId + " is invalid or does not exist");
         }
         return response;
     }
 
     protected void setCertificateBody(CertificateHolder certificate, GetCertificateResponseType response) {
         try {
-            RegisterCertificateType jaxbObject = JAXB.unmarshal(new StringReader(certificate.getOriginalCertificate()), RegisterCertificateType.class);
+            RegisterCertificateType jaxbObject = JAXB.unmarshal(new StringReader(certificate.getOriginalCertificate()),
+                    RegisterCertificateType.class);
             response.setIntyg(jaxbObject.getIntyg());
             response.getIntyg().getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificate.getCertificateStates()));
         } catch (Exception e) {
-            LOGGER.error("Error while converting in getMedicalCertificate for id: {} with stacktrace: {}", certificate.getId(), e.getStackTrace());
+            LOGGER.error("Error while converting in GetCertificate for id: {} with stacktrace: {}", certificate.getId(), e.getStackTrace());
             Throwables.propagate(e);
         }
     }
