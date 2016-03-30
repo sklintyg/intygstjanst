@@ -33,7 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Throwables;
 
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
@@ -42,12 +41,9 @@ import se.inera.intyg.common.support.integration.module.exception.InvalidCertifi
 import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
-import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
@@ -75,6 +71,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Autowired
     private CertificateDao certificateDao;
 
+    @SuppressWarnings("unused")
     @Autowired
     private IntygModuleRegistryImpl moduleRegistry;
 
@@ -257,29 +254,34 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             monitoringLogService.logCertificateSentAndNotifiedByWiretapping(certificate.getId(), certificate.getType(), certificate.getCareUnitId(),
                     recipient);
         }
-        String transformedXml = certificateReceivedForStatistics(certificateHolder);
 
-        statisticsService.created(transformedXml, certificate.getId(), certificate.getType(), certificate.getCareUnitId());
+        statisticsService.created(certificate);
+
+        // String transformedXml = certificateReceivedForStatistics(certificateHolder);
+        // statisticsService.created(transformedXml, certificate.getId(), certificate.getType(),
+        // certificate.getCareUnitId());
+
         sjukfallCertificateService.created(certificate);
 
     }
 
-    private String certificateReceivedForStatistics(CertificateHolder certificateHolder)
-            throws CertificateAlreadyExistsException, InvalidCertificateException {
-
-        try {
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
-
-            String resultXml = moduleApi.transformToStatisticsService(certificateHolder.getOriginalCertificate());
-
-            return resultXml;
-
-        } catch (ModuleNotFoundException | ModuleException e) {
-            LOG.error("Module not found for certificate of type {}", certificateHolder.getType());
-            throw Throwables.propagate(e);
-        }
-
-    }
+    // TODO This code should be used immediately when the statistics service has been updated accordingly.
+    // private String certificateReceivedForStatistics(CertificateHolder certificateHolder)
+    // throws CertificateAlreadyExistsException, InvalidCertificateException {
+    //
+    // try {
+    // ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
+    //
+    // String resultXml = moduleApi.transformToStatisticsService(certificateHolder.getOriginalCertificate());
+    //
+    // return resultXml;
+    //
+    // } catch (ModuleNotFoundException | ModuleException e) {
+    // LOG.error("Module not found for certificate of type {}", certificateHolder.getType());
+    // throw Throwables.propagate(e);
+    // }
+    //
+    // }
 
     @VisibleForTesting
     Certificate storeCertificate(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException,

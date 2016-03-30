@@ -72,7 +72,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     public boolean revoked(Certificate certificate) {
         boolean rc = true;
         if (enabled) {
-            rc = doSend(REVOKED, certificate.getDocument(), certificate.getId(), certificate.getType(), certificate.getCareUnitName());
+            // rc = doSend(REVOKED, certificate.getDocument(), certificate.getId(), certificate.getType(),
+            // certificate.getCareUnitName());
+            rc = doSend(REVOKED, certificate);
             if (rc) {
                 monitoringLogService.logStatisticsRevoked(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
             }
@@ -115,4 +117,55 @@ public class StatisticsServiceImpl implements StatisticsService {
             return message;
         }
     }
+
+    ///////////////////////////////////////////////////// temporary solution below for wc 4.1, remove this when
+    ///////////////////////////////////////////////////// statistics service
+    ///////////////////////////////////////////////////// has been updated////////
+
+    @Override
+    public boolean created(Certificate certificate) {
+        boolean rc = true;
+        if (enabled) {
+            rc = doSend(CREATED, certificate);
+            if (rc) {
+                monitoringLogService.logStatisticsSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
+            }
+        }
+        return rc;
+    }
+
+    private boolean doSend(String type, Certificate certificate) {
+        try {
+            if (jmsTemplate == null) {
+                LOG.error("Failure sending certificate '{}' type '{}' to statistics, no JmsTemplate configured", certificate.getId(), type);
+                return false;
+            }
+
+            MessageCreator messageCreator = new VeryTemporaryMC(type, certificate);
+            jmsTemplate.send(messageCreator);
+            return true;
+        } catch (JmsException e) {
+            LOG.error("Failure sending certificate '{}' type '{}'to statistics", certificate.getId(), type, e);
+            return false;
+        }
+    }
+
+    private static final class VeryTemporaryMC implements MessageCreator {
+        private final Certificate certificate;
+        private final String type;
+
+        VeryTemporaryMC(String type, Certificate certificate) {
+            this.type = type;
+            this.certificate = certificate;
+        }
+
+        @Override
+        public Message createMessage(Session session) throws JMSException {
+            TextMessage message = session.createTextMessage(certificate.getDocument());
+            message.setStringProperty(ACTION, type);
+            message.setStringProperty(CERTIFICATE_ID, certificate.getId());
+            return message;
+        }
+    }
+
 }
