@@ -72,6 +72,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public boolean revoked(Certificate certificate) {
         boolean rc = true;
         if (enabled) {
+            /** TODO INTYG-2042: uncomment below when statistics service has been updated.**/
             // rc = doSend(REVOKED, certificate.getDocument(), certificate.getId(), certificate.getType(),
             // certificate.getCareUnitName());
             rc = doSend(REVOKED, certificate);
@@ -118,9 +119,9 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
     }
 
-    ///////////////////////////////////////////////////// temporary solution below for 4.1 release, remove this when
-    /////////////////////////////////////////////////// statistics service
-    ///////////////////////////////////////////////////// has been updated////////
+    /**
+     * TODO INTYG-2042 temporary solution below for 4.1 release, remove and use solution above when statistics service has been updated
+     **/
 
     @Override
     public boolean created(Certificate certificate) {

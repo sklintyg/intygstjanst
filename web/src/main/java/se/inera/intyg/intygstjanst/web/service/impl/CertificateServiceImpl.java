@@ -257,31 +257,42 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
         statisticsService.created(certificate);
 
-        // String transformedXml = certificateReceivedForStatistics(certificateHolder);
-        // statisticsService.created(transformedXml, certificate.getId(), certificate.getType(),
-        // certificate.getCareUnitId());
+        /**
+         * TODO INTYG-2042: This code below should be uncommented and used immediately when the statistics service has
+         * been updated accordingly.
+         **/
+        /**
+         * String transformedXml = certificateReceivedForStatistics(certificateHolder);
+         * statisticsService.created(transformedXml, certificate.getId(), certificate.getType(),
+         * certificate.getCareUnitId());
+         **/
 
         sjukfallCertificateService.created(certificate);
 
     }
 
-    // TODO This code should be used immediately when the statistics service has been updated accordingly.
-    // private String certificateReceivedForStatistics(CertificateHolder certificateHolder)
-    // throws CertificateAlreadyExistsException, InvalidCertificateException {
-    //
-    // try {
-    // ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
-    //
-    // String resultXml = moduleApi.transformToStatisticsService(certificateHolder.getOriginalCertificate());
-    //
-    // return resultXml;
-    //
-    // } catch (ModuleNotFoundException | ModuleException e) {
-    // LOG.error("Module not found for certificate of type {}", certificateHolder.getType());
-    // throw Throwables.propagate(e);
-    // }
-    //
-    // }
+    /**
+     * TODO INTYG-2042: This code should be uncommented and used immediately when the statistics service has been
+     * updated accordingly.
+     **/
+    /**
+     * private String certificateReceivedForStatistics(CertificateHolder certificateHolder)
+     * throws CertificateAlreadyExistsException, InvalidCertificateException {
+     * 
+     * try {
+     * ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
+     * 
+     * String resultXml = moduleApi.transformToStatisticsService(certificateHolder.getOriginalCertificate());
+     * 
+     * return resultXml;
+     * 
+     * } catch (ModuleNotFoundException | ModuleException e) {
+     * LOG.error("Module not found for certificate of type {}", certificateHolder.getType());
+     * throw Throwables.propagate(e);
+     * }
+     * 
+     * }
+     **/
 
     @VisibleForTesting
     Certificate storeCertificate(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException,
