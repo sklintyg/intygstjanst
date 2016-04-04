@@ -129,7 +129,7 @@ public class CertificateToSjukfallCertificateConverter {
             name = enamn.isEmpty() ? "" : name + " " + enamn;
         }
 
-        return name;
+        return name.trim();
     }
 
     private SjukfallCertificateWorkCapacity buildWorkCapacity(Integer workCapacity, InternalLocalDateInterval
