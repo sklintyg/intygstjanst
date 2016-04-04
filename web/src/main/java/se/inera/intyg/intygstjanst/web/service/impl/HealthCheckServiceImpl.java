@@ -19,6 +19,10 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import java.util.Map;
+
+import javax.jms.*;
+
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
@@ -28,14 +32,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import se.inera.intyg.intygstjanst.persistence.model.dao.HealthCheckDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.HealthCheckDao.CertificateStatsInTimeWindow;
 import se.inera.intyg.intygstjanst.web.service.HealthCheckService;
-
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Service for checking the general health status of the application.
@@ -56,9 +53,6 @@ public class HealthCheckServiceImpl implements HealthCheckService {
 
     @Autowired
     private HealthCheckDao healthCheckDao;
-
-    private static final String RECEIVED_PARAM_NAME = "ReceivedCertificates";
-    private static final String SENT_PARAM_NAME = "SentCertificates";
 
     /*
      * (non-Javadoc)
@@ -106,33 +100,6 @@ public class HealthCheckServiceImpl implements HealthCheckService {
         return new Status(uptime, true);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see se.inera.intyg.intygstjanst.web.service.impl.HealthCheckService#getCertificateFlow()
-     */
-    @Override
-    public Status getCertificateFlow() {
-        boolean ok;
-        Map<String, String> values = null;
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        try {
-            CertificateStatsInTimeWindow stats = healthCheckDao.getNoOfSentAndReceivedCertsInTimeWindow();
-            values = new HashMap<String, String>();
-            values.put(SENT_PARAM_NAME, String.valueOf(stats.getNoOfSent()));
-            values.put(RECEIVED_PARAM_NAME, String.valueOf(stats.getNoOfReceived()));
-            ok = true;
-        } catch (Exception e) {
-            LOGGER.error("getNoOfSentAndReceivedCertsInTimeWindow() failed with exception: " + e.getMessage());
-            ok = false;
-        }
-        stopWatch.stop();
-        Status status = createStatus(ok, stopWatch, values);
-        logStatus("getCertificateFlow", status);
-        return status;
-    }
-
     private boolean checkJmsConnection() {
         Connection connection = null;
         try {
@@ -152,10 +119,6 @@ public class HealthCheckServiceImpl implements HealthCheckService {
 
     private Status createStatus(boolean ok, StopWatch stopWatch) {
         return new Status(stopWatch.getTime(), ok);
-    }
-
-    private Status createStatus(boolean ok, StopWatch stopWatch, Map<String, String> additionalValues) {
-        return new Status(stopWatch.getTime(), ok, additionalValues);
     }
 
     public final class Status {

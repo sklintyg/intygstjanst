@@ -81,15 +81,6 @@ public class HealthCheckController {
         return Response.ok(xmlResponse).build();
     }
 
-    @GET
-    @Path("/checkCertificateFlow")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response checkCertificateFlow() {
-        Status status = healthCheck.getCertificateFlow();
-        String xmlResponse = buildXMLResponse(status);
-        return Response.ok(xmlResponse).build();
-    }
-
     private String buildXMLResponse(Status status) {
         return buildXMLResponse(status.isOk(), status.getMeasurement(), status.getAdditionalValues());
     }

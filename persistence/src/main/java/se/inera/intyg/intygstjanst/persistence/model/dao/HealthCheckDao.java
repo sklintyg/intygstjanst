@@ -24,28 +24,10 @@ package se.inera.intyg.intygstjanst.persistence.model.dao;
 public interface HealthCheckDao {
 
     /**
-     * Retrieves a {@link CertificateStatsInTimeWindow} representing the number of received and sent certificates in the
-     * last 5 minutes.
-     *
-     * @return Number of received and sent certificates.
-     */
-    CertificateStatsInTimeWindow getNoOfSentAndReceivedCertsInTimeWindow();
-
-    /**
      * Returns true if it was possible to retrieve the time from the DB.
      *
      * @return true if the DB connection succeeded.
      */
     boolean checkTimeFromDb();
-
-    /**
-     * Number of received and sent certificates.
-     */
-    interface CertificateStatsInTimeWindow {
-
-        Long getNoOfReceived();
-
-        Long getNoOfSent();
-    }
 
 }

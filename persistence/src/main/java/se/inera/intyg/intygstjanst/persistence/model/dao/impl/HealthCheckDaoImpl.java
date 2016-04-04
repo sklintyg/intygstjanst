@@ -56,27 +56,6 @@ public class HealthCheckDaoImpl implements HealthCheckDao {
     private EntityManager entityManager;
 
     @Override
-    public CertificateStatsInTimeWindow getNoOfSentAndReceivedCertsInTimeWindow() {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Tuple> query = cb.createTupleQuery();
-        Root<Certificate> cert = query.from(Certificate.class);
-        Join<Certificate, CertificateStateHistoryEntry> states = cert.join("states");
-        LocalDateTime now = LocalDateTime.now();
-        query.where(
-                cb.and(cb.between(states.get("timestamp"), now.minusMinutes(WINDOW_SIZE), now),
-                        cb.or(cb.equal(states.get("state"), CertificateState.RECEIVED),
-                                cb.equal(states.get("state"), CertificateState.SENT))));
-        query.multiselect(cb.sum(cb.<Long> selectCase().when(cb.equal(states.get("state"), CertificateState.RECEIVED), 1L).otherwise(0L))
-                .alias(RECEIVED_ALIAS),
-                cb.sum(cb.<Long> selectCase().when(cb.equal(states.get("state"), CertificateState.SENT), 1L).otherwise(0L))
-                        .alias(SENT_ALIAS));
-        Tuple result = entityManager.createQuery(query).getSingleResult();
-        Long receivedCerts = result.get(RECEIVED_ALIAS, Long.class) != null ? result.get(RECEIVED_ALIAS, Long.class) : 0L;
-        Long sentCerts = result.get(SENT_ALIAS, Long.class) != null ? result.get(SENT_ALIAS, Long.class) : 0L;
-        return new CertificateStatsInTimeWindowImpl(receivedCerts, sentCerts);
-    }
-
-    @Override
     public boolean checkTimeFromDb() {
         Time timestamp;
         try {
@@ -90,24 +69,4 @@ public class HealthCheckDaoImpl implements HealthCheckDao {
 
     }
 
-    private static final class CertificateStatsInTimeWindowImpl implements CertificateStatsInTimeWindow {
-
-        private Long received;
-        private Long sent;
-
-        CertificateStatsInTimeWindowImpl(Long received, Long sent) {
-            this.received = received;
-            this.sent = sent;
-        }
-
-        @Override
-        public Long getNoOfReceived() {
-            return received;
-        }
-
-        @Override
-        public Long getNoOfSent() {
-            return sent;
-        }
-    }
 }
