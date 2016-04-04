@@ -20,23 +20,12 @@ package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
 import java.sql.Time;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.Tuple;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
+import javax.persistence.*;
 
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.HealthCheckDao;
 
 /**
@@ -47,9 +36,6 @@ public class HealthCheckDaoImpl implements HealthCheckDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckDaoImpl.class);
 
-    private static final Integer WINDOW_SIZE = 5; // Minutes
-    private static final String RECEIVED_ALIAS = "ReceivedCertificates";
-    private static final String SENT_ALIAS = "SentCertificates";
     private static final String CURR_TIME_SQL = "SELECT CURRENT_TIME()";
 
     @PersistenceContext
