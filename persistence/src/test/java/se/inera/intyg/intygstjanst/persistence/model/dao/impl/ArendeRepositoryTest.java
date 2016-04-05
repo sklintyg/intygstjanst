@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -83,7 +84,7 @@ public class ArendeRepositoryTest {
     private Arende buildFragaSvarFraga(String logiskMottagare) {
         Arende sendMessageToCare = new Arende();
         sendMessageToCare.setIntygsId("intygsID");
-        sendMessageToCare.setMeddelandeId("meddelandeId");
+        sendMessageToCare.setMeddelandeId(UUID.randomUUID().toString());
         sendMessageToCare.setReferens(ENHET_2_ID);
         sendMessageToCare.setTimeStamp(LocalDateTime.now());
         sendMessageToCare.setMeddelande("Meddelande");

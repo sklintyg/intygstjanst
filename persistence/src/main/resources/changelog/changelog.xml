@@ -280,4 +280,9 @@
 		<dropColumn tableName="SJUKFALL_CERT" columnName="PATIENT_FIRST_NAME" />
 	</changeSet>
 
+  <changeSet id="29" author="kja">
+    <addUniqueConstraint
+      columnNames="MEDDELANDE_ID"
+      tableName="ARENDE" />
+  </changeSet>
 </databaseChangeLog>

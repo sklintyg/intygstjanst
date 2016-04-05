@@ -18,21 +18,22 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import java.util.List;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import se.inera.intyg.common.support.validate.CertificateValidationException;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
+import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.v2.ResultTypeUtil;
 import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator;
 import se.inera.intyg.intygstjanst.web.service.ArendeService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.*;
+import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
 
 @SchemaValidation
 public class SendMessageToCareResponderImpl implements SendMessageToCareResponderInterface {
@@ -53,34 +54,28 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
 
     @Override
     public SendMessageToCareResponseType sendMessageToCare(String logicalAddress, SendMessageToCareType parameters) {
-        SendMessageToCareResponseType response = new SendMessageToCareResponseType();
-        try {
-            validator.validateSendMessageToCare(parameters);
-            Arende sendMessage = ArendeConverter.convertSendMessageToCare(parameters);
-            response = sendMessageToCareResponder.sendMessageToCare(parameters.getLogiskAdressMottagare(), parameters);
-            if (response.getResult().getResultCode().equals(ResultCodeType.OK)) {
-                LOGGER.debug("Converting to ORM object. " + sendMessage.toString());
-                arendeService.processIncomingMessage(sendMessage);
-            }
-            logService.logSendMessageToCareReceived(parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());
-        } catch (CertificateValidationException e) {
-            String validationErrorMessage = "Validation of SendMessageToCareType failed for message with meddelandeid " + parameters.getMeddelandeId()
-                    + ": " + e.getMessage();
-            setErrorResult(response, validationErrorMessage);
-        } catch (Exception e) {
-            String generalErrorMessage = "Could not handle SendMessageToCareType with meddelande id " + parameters.getMeddelandeId() + ": "
-                    + e.getMessage();
-            setErrorResult(response, generalErrorMessage);
+        List<String> validationErrors = validator.validateSendMessageToCare(parameters);
+        if (!validationErrors.isEmpty()) {
+            SendMessageToCareResponseType response = new SendMessageToCareResponseType();
+            String resultText = "Validation of SendMessageToCareType failed for message with meddelandeid " + parameters.getMeddelandeId() + ": "
+                    + validationErrors.toString();
+            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, resultText));
+            LOGGER.error(resultText);
+            return response;
         }
-        return response;
-    }
 
-    private void setErrorResult(SendMessageToCareResponseType response, String errorMessage) {
-        ResultType resultType = new ResultType();
-        LOGGER.error(errorMessage);
-        resultType.setResultCode(ResultCodeType.ERROR);
-        resultType.setResultText(errorMessage);
-        response.setResult(resultType);
+        SendMessageToCareResponseType response = sendMessageToCareResponder.sendMessageToCare(parameters.getLogiskAdressMottagare(), parameters);
+
+        if (ResultCodeType.OK.equals(response.getResult().getResultCode())) {
+            try {
+                arendeService.processIncomingMessage(ArendeConverter.convertSendMessageToCare(parameters));
+            } catch (Exception e) {
+                LOGGER.error("Could not save information about request of type SendMessageToCareType with meddelande id " + parameters.getMeddelandeId() + ": " + e.getMessage());
+            }
+        }
+
+        logService.logSendMessageToCareReceived(parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());
+        return response;
     }
 
 }

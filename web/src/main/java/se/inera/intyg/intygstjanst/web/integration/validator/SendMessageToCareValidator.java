@@ -18,17 +18,16 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import se.inera.intyg.common.support.common.util.StringUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.dto.InvalidPersonNummerException;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.intyg.common.support.validate.CertificateValidationException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
@@ -44,7 +43,7 @@ public class SendMessageToCareValidator {
     };
 
     public enum ErrorCode {
-        SUBJECT_CONSISTENCY_ERROR, MESSAGE_TYPE_CONSISTENCY_ERROR, SUBJECT_NOT_SUPPORTED_ERROR, CERTIFICATE_NOT_FOUND_ERROR, CIVIC_REGISTRATION_NUMBER_INCONSISTENCY_ERROR, REFERENCED_MESSAGE_NOT_FOUND_ERROR, KOMPLETTERING_INCONSISTENCY_ERROR, PAMINNELSE_ID_INCONSISTENCY_ERROR
+        SUBJECT_CONSISTENCY_ERROR, MESSAGE_TYPE_CONSISTENCY_ERROR, SUBJECT_NOT_SUPPORTED_ERROR, CERTIFICATE_NOT_FOUND_ERROR, CIVIC_REGISTRATION_NUMBER_INCONSISTENCY_ERROR, REFERENCED_MESSAGE_NOT_FOUND_ERROR, KOMPLETTERING_INCONSISTENCY_ERROR, PAMINNELSE_ID_INCONSISTENCY_ERROR, MEDDELANDE_ID_NOT_UNIQUE_ERROR
     }
 
     @Autowired
@@ -53,20 +52,27 @@ public class SendMessageToCareValidator {
     @Autowired
     private ArendeRepository messageRepository;
 
-    public void validateSendMessageToCare(SendMessageToCareType sendMessageToCareType) throws CertificateValidationException {
+    public List<String> validateSendMessageToCare(SendMessageToCareType sendMessageToCareType) {
         List<String> validationErrors = new ArrayList<String>();
         String personnummeer = sendMessageToCareType.getPatientPersonId().getExtension();
 
+        validateMeddelandeId(sendMessageToCareType.getMeddelandeId(), validationErrors);
         validateMessageSubject(sendMessageToCareType.getAmne().getCode(), validationErrors);
         validateThatCertificateExists(sendMessageToCareType.getIntygsId().getExtension(), personnummeer, validationErrors);
         validateConsistencyForQuestionVsAnswer(sendMessageToCareType, validationErrors);
         validatePaminnelseIdConsistency(sendMessageToCareType, validationErrors);
         validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
         validateConsistencyForKomplettering(sendMessageToCareType, validationErrors);
-        if (!validationErrors.isEmpty()) {
-            throw new CertificateValidationException(validationErrors);
-        }
+        return validationErrors;
 
+    }
+
+    @VisibleForTesting
+    void validateMeddelandeId(String meddelandeId, List<String> validationErrors) {
+        if (StringUtil.isNullOrEmpty(meddelandeId) || !messageRepository.findByMeddelandeId(meddelandeId).isEmpty()) {
+            validationErrors.add(ErrorCode.MEDDELANDE_ID_NOT_UNIQUE_ERROR.toString());
+            validationErrors.add("Meddelande-id is not a GUID");
+        }
     }
 
     @VisibleForTesting
