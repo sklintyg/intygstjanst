@@ -75,13 +75,15 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             ValidateXmlResponse validationResponse = api.validateXml(xml);
 
             if (!validationResponse.hasErrorMessages()) {
-                return makeOkResult(registerCertificate, intygsTyp, api, xml);
+                return storeIntyg(registerCertificate, intygsTyp, api, xml);
             } else {
                 String validationErrors = String.join(";", validationResponse.getValidationErrors());
                 return makeValidationErrorResult(validationErrors);
             }
         } catch (CertificateAlreadyExistsException e) {
             return makeCertificateAlreadyExistsResult(registerCertificate);
+        } catch (InvalidCertificateException e) {
+            return makeInvalidCertificateResult(registerCertificate);
         } catch (ConverterException e) {
             return makeValidationErrorResult(e.getMessage());
         } catch (JAXBException e) {
@@ -97,8 +99,8 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         throw new RuntimeException("Unrecoverable exception in registerCertificate");
     }
 
-    private RegisterCertificateResponseType makeOkResult(final RegisterCertificateType registerCertificate, final String intygsTyp, final ModuleApi api,
-            final String xml) throws Exception, CertificateAlreadyExistsException, InvalidCertificateException {
+    private RegisterCertificateResponseType storeIntyg(final RegisterCertificateType registerCertificate, final String intygsTyp, final ModuleApi api,
+                                                       final String xml) throws CertificateAlreadyExistsException, InvalidCertificateException, ConverterException {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
         Utlatande utlatande = api.getUtlatandeFromIntyg(registerCertificate.getIntyg());
         CertificateHolder certificateHolder = toCertificateHolder(utlatande, xml, intygsTyp);
@@ -122,6 +124,15 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
         LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId + " issued by " + issuedBy
                 + ": Certificate already exists - ignored.");
+        return response;
+    }
+
+    private RegisterCertificateResponseType makeInvalidCertificateResult(RegisterCertificateType registerCertificate) {
+        RegisterCertificateResponseType response = new RegisterCertificateResponseType();
+        response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, "Certificate already exists"));
+        String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
+        String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
+        LOGGER.error(LogMarkers.VALIDATION, "Failed to create Certificate with id " + certificateId + " issued by " + issuedBy + ": Certificate ID already exists for another person.");
         return response;
     }
 
