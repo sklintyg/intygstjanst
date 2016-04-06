@@ -51,7 +51,7 @@ public class SendMessageToCareValidator {
     private CertificateService certificateService;
 
     @Autowired
-    private SendMessageToCareRepository messageRepository;
+    private ArendeRepository messageRepository;
 
     public void validateSendMessageToCare(SendMessageToCareType sendMessageToCareType) throws CertificateValidationException {
         List<String> validationErrors = new ArrayList<String>();
@@ -96,13 +96,13 @@ public class SendMessageToCareValidator {
         MeddelandeReferens meddelandeReferens = sendMessageToCareType.getSvarPa();
         if (meddelandeReferens != null) {
             String meddelandeId = meddelandeReferens.getMeddelandeId();
-            List<SendMessageToCare> sendMessageToCare = messageRepository.findByMeddelandeId(meddelandeId);
+            List<Arende> res = messageRepository.findByMeddelandeId(meddelandeId);
 
-            if (sendMessageToCare == null || sendMessageToCare.isEmpty()) {
+            if (res == null || res.isEmpty()) {
                 validationErrors.add(ErrorCode.REFERENCED_MESSAGE_NOT_FOUND_ERROR.toString());
                 return;
             }
-            String amne = sendMessageToCare.get(0).getAmne();
+            String amne = res.get(0).getAmne();
             if (!sendMessageToCareType.getAmne().getCode().equals(amne) && !isPaminnelse(sendMessageToCareType)) {
                 validationErrors.add(ErrorCode.SUBJECT_CONSISTENCY_ERROR.toString());
                 validationErrors.add(" Message with meddelandeId " + meddelandeId + " referenced by reply message with id "

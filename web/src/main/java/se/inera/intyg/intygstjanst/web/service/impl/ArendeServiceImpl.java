@@ -16,12 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.service;
+package se.inera.intyg.intygstjanst.web.service.impl;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.SendMessageToCare;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public interface SendMessageToCareService {
+import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
+import se.inera.intyg.intygstjanst.web.service.ArendeService;
 
-    SendMessageToCare processIncomingSendMessageToCare(SendMessageToCare sendMessageToCare);
+@Service
+public class ArendeServiceImpl implements ArendeService {
+
+    @Autowired
+    private ArendeRepository arendeRepository;
+
+    @Override
+    public Arende processIncomingMessage(Arende message) {
+        return arendeRepository.save(message);
+    }
 
 }

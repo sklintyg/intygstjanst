@@ -16,20 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.persistence.model.dao;
+package se.inera.intyg.intygstjanst.web.service;
 
-import java.util.List;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+public interface ArendeService {
 
-@Repository
-public interface SendMessageToCareRepository extends JpaRepository<SendMessageToCare, Long> {
-    /**
-     * Should return a {@link SendMessageToCare} matching the search criteria.
-     *
-     * @param meddelandeId
-     * @return
-     */
-    List<SendMessageToCare> findByMeddelandeId(String meddelandeId);
+    Arende processIncomingMessage(Arende message);
+
 }

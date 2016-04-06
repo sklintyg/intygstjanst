@@ -2,7 +2,6 @@ package se.inera.intyg.intygstjanst.web.integration.validator;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.*;
@@ -31,16 +30,16 @@ public class SendMessageToCareValidatorTest {
     private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML = "SendMessageToCareTest/sendmessagetocare.xml";
 
     @Mock
-    private CertificateService certificateService = mock(CertificateService.class);
+    private CertificateService certificateService;
 
     @Mock
-    private Certificate certificate = mock(Certificate.class);
+    private Certificate certificate;
 
     @Mock
-    private SendMessageToCareRepository sendMessageToCareRepository;
+    private ArendeRepository sendMessageToCareRepository;
 
     @InjectMocks
-    private SendMessageToCareValidator validator = new SendMessageToCareValidator();
+    private SendMessageToCareValidator validator;
 
     @Test
     public void testValidationOfAmne() {
@@ -98,7 +97,7 @@ public class SendMessageToCareValidatorTest {
         List<String> validationErrors = new ArrayList<String>();
         SendMessageToCareType sendMessageToCareType = buildSendMessageCareType("originalMessageId", Amneskod.PAMINN.toString());
         String referencedMeddelandeId = sendMessageToCareType.getSvarPa().getMeddelandeId();
-        SendMessageToCare referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, Amneskod.KOMPLT.toString());
+        Arende referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, Amneskod.KOMPLT.toString());
 
         when(sendMessageToCareRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(Arrays.asList(referencedMessage));
         validator.validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
@@ -110,7 +109,7 @@ public class SendMessageToCareValidatorTest {
         List<String> validationErrors = new ArrayList<String>();
         SendMessageToCareType sendMessageToCareType = buildSendMessageCareType("originalMessageId", "OVRIGT");
         String referencedMeddelandeId = sendMessageToCareType.getSvarPa().getMeddelandeId();
-        SendMessageToCare referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, "OVRIGT");
+        Arende referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, "OVRIGT");
         when(sendMessageToCareRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(Arrays.asList(referencedMessage));
         validator.validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
         assertTrue(validationErrors.isEmpty());
@@ -124,7 +123,7 @@ public class SendMessageToCareValidatorTest {
         sendMessageToCareType.setSistaDatumForSvar(null);
         sendMessageToCareType.setPaminnelseMeddelandeId(null);
         String referencedMeddelandeId = sendMessageToCareType.getSvarPa().getMeddelandeId();
-        SendMessageToCare referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, Amneskod.ARBTID.toString());
+        Arende referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, Amneskod.ARBTID.toString());
         when(sendMessageToCareRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(Arrays.asList(referencedMessage));
 
         String certificateId = sendMessageToCareType.getIntygsId().getExtension();
@@ -205,7 +204,7 @@ public class SendMessageToCareValidatorTest {
         List<String> validationErrors = new ArrayList<String>();
         SendMessageToCareType sendMessageToCareType = buildSendMessageCareType("originalMessageId", "OVRIGT");
         String referencedMeddelandeId = sendMessageToCareType.getSvarPa().getMeddelandeId();
-        SendMessageToCare referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, "KOMPLT");
+        Arende referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, "KOMPLT");
 
         when(sendMessageToCareRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(Arrays.asList(referencedMessage));
         validator.validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
@@ -252,8 +251,8 @@ public class SendMessageToCareValidatorTest {
         validator.validateThatCertificateExists(certificateId, civicRegistrationNumber, validationErrors);
     }
 
-    private SendMessageToCare buildSendMessageToCare(SendMessageToCareType sendMessageToCareType, String referencedMeddelandeId, String amne) {
-        SendMessageToCare referencedMessage = new SendMessageToCare();
+    private Arende buildSendMessageToCare(SendMessageToCareType sendMessageToCareType, String referencedMeddelandeId, String amne) {
+        Arende referencedMessage = new Arende();
         referencedMessage.setIntygsId(sendMessageToCareType.getIntygsId().getExtension());
         referencedMessage.setAmne(amne);
         referencedMessage.setMeddelandeId(referencedMeddelandeId);

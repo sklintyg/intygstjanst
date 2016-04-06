@@ -34,41 +34,41 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.SendMessageToCare;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SendMessageToCareRepository;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
 @ActiveProfiles({ "dev", "unit-testing" })
 @Transactional
-public class SendMessageToCareRepositoryTest {
-    
+public class ArendeRepositoryTest {
+
     private static String ENHET_1_ID = "ENHET_1_ID";
     private static String ENHET_2_ID = "ENHET_2_ID";
     private static String ENHET_3_ID = "ENHET_3_ID";
     private static String ENHET_4_ID = "ENHET_4_ID";
-    
+
     @PersistenceContext
     private EntityManager em;
-    
+
     @Autowired
-    private SendMessageToCareRepository sendMessageToCareRepository;
+    private ArendeRepository sendMessageToCareRepository;
 
     @Test
     public void testFindOne() {
-        SendMessageToCare saved = buildFragaSvarFraga(ENHET_1_ID);
+        Arende saved = buildFragaSvarFraga(ENHET_1_ID);
         sendMessageToCareRepository.save(saved);
-        SendMessageToCare read = sendMessageToCareRepository.findOne(saved.getInternReferens());
+        Arende read = sendMessageToCareRepository.findOne(saved.getInternReferens());
         assertEquals(read.getInternReferens(), saved.getInternReferens());
     }
-    
+
     @Test
     public void testFindByMeddelandeId() {
-        SendMessageToCare saved = buildFragaSvarFraga(ENHET_1_ID);
+        Arende saved = buildFragaSvarFraga(ENHET_1_ID);
         sendMessageToCareRepository.save(saved);
-        SendMessageToCare read = sendMessageToCareRepository.findByMeddelandeId(saved.getMeddelandeId()).get(0);
+        Arende read = sendMessageToCareRepository.findByMeddelandeId(saved.getMeddelandeId()).get(0);
         assertEquals(read.getInternReferens(), saved.getInternReferens());
     }
-    
+
     @Test
     public void testFindAll() {
         sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_1_ID));
@@ -76,12 +76,12 @@ public class SendMessageToCareRepositoryTest {
         sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_3_ID));
         sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_3_ID));
         sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_4_ID));
-        List<SendMessageToCare> read = sendMessageToCareRepository.findAll();
+        List<Arende> read = sendMessageToCareRepository.findAll();
         assertEquals(read.size(), 5);
     }
 
-    private SendMessageToCare buildFragaSvarFraga(String logiskMottagare) {
-        SendMessageToCare sendMessageToCare = new SendMessageToCare();
+    private Arende buildFragaSvarFraga(String logiskMottagare) {
+        Arende sendMessageToCare = new Arende();
         sendMessageToCare.setIntygsId("intygsID");
         sendMessageToCare.setMeddelandeId("meddelandeId");
         sendMessageToCare.setReferens(ENHET_2_ID);
@@ -91,5 +91,5 @@ public class SendMessageToCareRepositoryTest {
         sendMessageToCare.setAmne("OVRIGT");
         return sendMessageToCare;
     }
-    
+
 }

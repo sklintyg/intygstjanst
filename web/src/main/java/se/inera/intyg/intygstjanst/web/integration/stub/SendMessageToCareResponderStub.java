@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import se.inera.intyg.intygstjanst.web.integration.converter.SendMessageToCareConverter;
+import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.*;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
@@ -40,9 +40,6 @@ import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
 @SchemaValidation
 public class SendMessageToCareResponderStub implements SendMessageToCareResponderInterface {
     private Logger logger = LoggerFactory.getLogger(SendMessageToCareResponderStub.class);
-
-    @Autowired
-    private SendMessageToCareConverter converter;
 
     @Autowired
     private SendMessageToCareStorage storage;
@@ -69,7 +66,7 @@ public class SendMessageToCareResponderStub implements SendMessageToCareResponde
     }
 
     private String marshalCertificate(SendMessageToCareType parameters) throws JAXBException {
-        return converter.convertToXmlString(parameters);
+        return ArendeConverter.convertToXmlString(parameters);
     }
 
     public void storeMessage(SendMessageToCareType sendMessageToCareType, String logicalAddress) throws JAXBException {

@@ -18,11 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +26,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import se.inera.intyg.intygstjanst.web.integration.converter.SendMessageToCareConverter;
 import se.inera.intyg.intygstjanst.web.integration.util.SendMessageToCareUtil;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
 
@@ -45,20 +40,16 @@ public class SendMessageToCareResponderStubTest {
     private String meddelandeIdNo3 = "meddelandeIdNo3";
 
     @InjectMocks
-    private SendMessageToCareResponderStub stub = new SendMessageToCareResponderStub();
+    private SendMessageToCareResponderStub stub;
 
     @Spy
-    private SendMessageToCareConverter converter = spy(new SendMessageToCareConverter());
-
-    @Spy
-    private SendMessageToCareStorage storage = spy(new SendMessageToCareStorage());
+    private SendMessageToCareStorage storage;
 
     @Test
     public void testSendMessageToCareResponderStub() throws Exception {
         String logicalAddress = "";
         SendMessageToCareType sendMessageToCareType1 = buildSendMessageToCare(intygsIdNo1, meddelandeIdNo1);
         stub.sendMessageToCare(logicalAddress, sendMessageToCareType1);
-        verify(converter, times(1)).convertToXmlString(any(SendMessageToCareType.class));
     }
 
     @Test
@@ -70,7 +61,6 @@ public class SendMessageToCareResponderStubTest {
         stub.sendMessageToCare(logicalAddress, sendMessageToCareType1);
         stub.sendMessageToCare(logicalAddress, sendMessageToCareType2);
         stub.sendMessageToCare(logicalAddress, sendMessageToCareType3);
-        verify(converter, times(3)).convertToXmlString(any(SendMessageToCareType.class));
         assertEquals(2, stub.getMessagesForCertificateId(intygsIdNo1).size());
         assertEquals(1, stub.getMessagesForCertificateId(intygsIdNo2).size());
         assertEquals(3, stub.getAllMessages().size());

@@ -138,6 +138,15 @@
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
 
+  <jaxws:endpoint address="/send-message-to-recipient/v1.0"
+      implementor="se.inera.intyg.intygstjanst.web.integration.SendMessageToRecipientResponderImpl">
+    <jaxws:outFaultInterceptors>
+      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+        <constructor-arg value="transform/clinicalprocess-healthcond-certificate/send-message-to-recipient-transform.xslt"/>
+      </bean>
+    </jaxws:outFaultInterceptors>
+  </jaxws:endpoint>
+
   <jaxws:endpoint address="/set-certificate-archived/v1.0"
                   implementor="se.inera.intyg.intygstjanst.web.integration.SetCertificateArchivedResponderImpl">
     <jaxws:outFaultInterceptors>
@@ -201,9 +210,14 @@
       address="${sendmedicalcertificatequestionv1.endpoint.url}">
   </jaxws:client>
 
-<jaxws:client id="sendMessageToCareClient"
+  <jaxws:client id="sendMessageToCareClient"
       serviceClass="se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareResponderInterface"
       address="${sendmessagetocarequestionv1.endpoint.url}">
+  </jaxws:client>
+
+  <jaxws:client id="sendMessageToRecipientClient"
+      serviceClass="se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientResponderInterface"
+      address="${sendmessagetorecipientv1.endpoint.url}">
   </jaxws:client>
 
   <import resource="application-context-ws-stub.xml"/>

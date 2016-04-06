@@ -19,7 +19,6 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -34,35 +33,35 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.SendMessageToCare;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SendMessageToCareRepository;
-import se.inera.intyg.intygstjanst.web.integration.converter.SendMessageToCareConverter;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
+import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SendMessageToCareServiceImplTest {
+public class ArendeServiceImplTest {
     private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML = "SendMessageToCareTest/sendmessagetocare.xml";
 
     @InjectMocks
-    private SendMessageToCareServiceImpl service = new SendMessageToCareServiceImpl();
+    private ArendeServiceImpl service;
 
     @Mock
-    private SendMessageToCareRepository repository = mock(SendMessageToCareRepository.class);
+    private ArendeRepository repository;
 
     @Test
     public void testProcessIncomingSendMessageToCare() throws Exception {
-        SendMessageToCare message = loadFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
-        service.processIncomingSendMessageToCare(message);
-        verify(repository, times(1)).save(any(SendMessageToCare.class));
+        Arende message = loadFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
+        service.processIncomingMessage(message);
+        verify(repository, times(1)).save(any(Arende.class));
     }
 
-    private SendMessageToCare loadFromFile(String fileName) throws Exception {
+    private Arende loadFromFile(String fileName) throws Exception {
         JAXBContext jaxbContext = JAXBContext.newInstance(SendMessageToCareType.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         SendMessageToCareType sendMessageToCareType = unmarshaller.unmarshal(
                 new StreamSource(new ClassPathResource(fileName).getInputStream()),
                 SendMessageToCareType.class).getValue();
-        return new SendMessageToCareConverter().convertSendMessageToCare(sendMessageToCareType);
+        return ArendeConverter.convertSendMessageToCare(sendMessageToCareType);
     }
 
 }

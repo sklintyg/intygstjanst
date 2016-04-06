@@ -25,14 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import se.inera.intyg.common.support.validate.CertificateValidationException;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SendMessageToCare;
-import se.inera.intyg.intygstjanst.web.integration.converter.SendMessageToCareConverter;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
+import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator;
+import se.inera.intyg.intygstjanst.web.service.ArendeService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.inera.intyg.intygstjanst.web.service.SendMessageToCareService;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareResponderInterface;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareResponseType;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.*;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
 
@@ -44,10 +42,7 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
     private MonitoringLogService logService;
 
     @Autowired
-    private SendMessageToCareConverter converter;
-
-    @Autowired
-    private SendMessageToCareService sendMessageToCareService;
+    private ArendeService arendeService;
 
     @Autowired
     private SendMessageToCareValidator validator;
@@ -61,11 +56,11 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
         SendMessageToCareResponseType response = new SendMessageToCareResponseType();
         try {
             validator.validateSendMessageToCare(parameters);
-            SendMessageToCare sendMessage = converter.convertSendMessageToCare(parameters);
+            Arende sendMessage = ArendeConverter.convertSendMessageToCare(parameters);
             response = sendMessageToCareResponder.sendMessageToCare(parameters.getLogiskAdressMottagare(), parameters);
             if (response.getResult().getResultCode().equals(ResultCodeType.OK)) {
                 LOGGER.debug("Converting to ORM object. " + sendMessage.toString());
-                sendMessageToCareService.processIncomingSendMessageToCare(sendMessage);
+                arendeService.processIncomingMessage(sendMessage);
             }
             logService.logSendMessageToCareReceived(parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());
         } catch (CertificateValidationException e) {

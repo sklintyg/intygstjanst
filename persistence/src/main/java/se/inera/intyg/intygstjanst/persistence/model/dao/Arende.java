@@ -30,7 +30,7 @@ import org.joda.time.LocalDateTime;
 
 @Entity
 @Table(name = "ARENDE")
-public class SendMessageToCare {
+public class Arende {
 
     /**
      * The (system-wide) unique id for this entity.
@@ -137,7 +137,7 @@ public class SendMessageToCare {
         } else if (o == null || getClass() != o.getClass()) {
             return false;
         } else {
-            SendMessageToCare fragaSvar = (SendMessageToCare) o;
+            Arende fragaSvar = (Arende) o;
 
             if (internReferens == null) {
                 return fragaSvar.internReferens == null;
