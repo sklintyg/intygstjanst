@@ -5,7 +5,8 @@ import io.gatling.jdbc.Predef._
 
 object Conf {
 
-  val baseUrl = System.getProperty("baseUrl", "http://localhost:8080")
+  val baseUrl = System.getProperty("baseUrl")
+  println(baseUrl)
   val httpConf = http
     .baseURL(baseUrl)
     .acceptHeader("*/*")

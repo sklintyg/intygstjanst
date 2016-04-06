@@ -34,7 +34,7 @@
     <properties>
         <gatling.version>2.1.7</gatling.version>
         <gatling-plugin.version>2.1.7</gatling-plugin.version>
-        <baseUrl>http://localhost:8080</baseUrl>
+        <baseUrl>http://localhost:8080/inera-certificate</baseUrl>
     </properties>
 
     <dependencies>
@@ -58,6 +58,7 @@
                 <artifactId>gatling-maven-plugin</artifactId>
                 <version>${gatling-plugin.version}</version>
                 <configuration>
+                    <runMultipleSimulations>true</runMultipleSimulations>
                     <simulationClass>${simulationClass}</simulationClass>
                     <jvmArgs>
                         <jvmArg>-DbaseUrl=${baseUrl}</jvmArg>
@@ -75,6 +76,12 @@
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>SendMedicalCertificate</id>
+            <properties>
+                <simulationClass>se.inera.intygstjanst.SendMedicalCertificate</simulationClass>
+            </properties>
+        </profile>
         <profile>
             <id>ListCertificates</id>
             <properties>
