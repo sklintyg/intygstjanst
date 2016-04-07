@@ -67,14 +67,15 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
         SendMessageToCareResponseType response = sendMessageToCareResponder.sendMessageToCare(parameters.getLogiskAdressMottagare(), parameters);
 
         if (ResultCodeType.OK.equals(response.getResult().getResultCode())) {
+            logService.logSendMessageToCareReceived(parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());
             try {
                 arendeService.processIncomingMessage(ArendeConverter.convertSendMessageToCare(parameters));
             } catch (Exception e) {
-                LOGGER.error("Could not save information about request of type SendMessageToCareType with meddelande id " + parameters.getMeddelandeId() + ": " + e.getMessage());
+                LOGGER.error("Could not save information about request of type SendMessageToCareType with meddelande id "
+                        + parameters.getMeddelandeId() + ": " + e.getMessage());
             }
         }
 
-        logService.logSendMessageToCareReceived(parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());
         return response;
     }
 
