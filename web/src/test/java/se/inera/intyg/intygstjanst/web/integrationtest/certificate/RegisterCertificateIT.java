@@ -38,16 +38,31 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
 
     private ST requestTemplate;
 
+    private String intygsId = "123456";
+
+    private String personId1 = "192703104321";
+    private String personId2 = "195206172339";
+    private STGroup templateGroup;
+
+
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
 
-        STGroup templateGroup = new STGroupFile("integrationtests/register/requests.stg");
+        templateGroup = new STGroupFile("integrationtests/register/requests.stg");
         requestTemplate = templateGroup.getInstanceOf("request");
+
+        deleteIntyg(intygsId);
+    }
+
+    private void deleteIntyg(String id) {
+        given().delete("inera-certificate/resources/certificate/" + id).then().statusCode(200);
     }
 
     @Test
-    public void testReadIntygsDataForPrePopulatedIntyg() {
+    public void registerCertificateWorks() {
+        requestTemplate.add("data", new IntygsData(intygsId, personId1));
+
         given().body(requestTemplate.render()).
                 when().
                 post("inera-certificate/register-certificate-se/v2.0").
@@ -55,6 +70,61 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
                 statusCode(200).
                 rootPath(BASE).
                 body("result.resultCode", is("OK"));
+    }
+
+    @Test
+    public void registerSameCertificateTwiceReturnsInfoResult() {
+        requestTemplate.add("data", new IntygsData(intygsId, personId1));
+
+        given().body(requestTemplate.render()).
+                when().
+                post("inera-certificate/register-certificate-se/v2.0").
+                then().
+                statusCode(200).
+                rootPath(BASE).
+                body("result.resultCode", is("OK"));
+
+        given().body(requestTemplate.render()).
+                when().
+                post("inera-certificate/register-certificate-se/v2.0").
+                then().
+                statusCode(200).
+                rootPath(BASE).
+                body("result.resultCode", is("INFO"));
+    }
+
+    @Test
+    public void registerSameCertificateForDifferentPersonsReturnsErrorResult() {
+        requestTemplate.add("data", new IntygsData(intygsId, personId1));
+
+        given().body(requestTemplate.render()).
+                when().
+                post("inera-certificate/register-certificate-se/v2.0").
+                then().
+                statusCode(200).
+                rootPath(BASE).
+                body("result.resultCode", is("OK"));
+
+        ST requestTemplate2 = templateGroup.getInstanceOf("request");
+        requestTemplate2.add("data", new IntygsData(intygsId, personId2));
+
+        given().body(requestTemplate2.render()).
+                when().
+                post("inera-certificate/register-certificate-se/v2.0").
+                then().
+                statusCode(200).
+                rootPath(BASE).
+                body("result.resultCode", is("ERROR"));
+    }
+
+    private static class IntygsData {
+        public final String intygsId;
+        public final String personId;
+
+        public IntygsData(String intygsId, String personId) {
+            this.intygsId = intygsId;
+            this.personId = personId;
+        }
     }
 
 }
