@@ -23,31 +23,29 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
-import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import se.inera.intyg.common.support.integration.module.exception.*;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.builder.CertificateBuilder;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
+import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.web.service.ConsentService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author andreaskaltenbach
@@ -134,13 +132,32 @@ public class CertificateServiceImplTest {
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
         when(recipientService.getRecipientForLogicalAddress(Mockito.any(String.class))).thenReturn(createRecipient());
 
-        certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
+        SendStatus res = certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
 
+        assertEquals(SendStatus.OK, res);
         verify(certificateDao).getCertificate(PERSONNUMMER, CERTIFICATE_ID);
         verify(certificateDao).updateStatus(CERTIFICATE_ID, PERSONNUMMER, CertificateState.SENT, RECIPIENT_ID, null);
         verify(certificateSender).sendCertificate(certificate, RECIPIENT_ID);
     }
 
+    @Test
+    public void sendCertificateAlreadySentCertificate() throws Exception {
+
+        Certificate certificate = new CertificateBuilder(CERTIFICATE_ID).civicRegistrationNumber(PERSONNUMMER).build();
+        List<CertificateStateHistoryEntry> states = new ArrayList<>(certificate.getStates());
+        states.add(new CertificateStateHistoryEntry(RECIPIENT_ID, CertificateState.SENT, LocalDateTime.now()));
+        certificate.setStates(states);
+
+        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
+        when(recipientService.getRecipientForLogicalAddress(Mockito.any(String.class))).thenReturn(createRecipient());
+
+        SendStatus res = certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
+
+        assertEquals(SendStatus.ALREADY_SENT, res);
+        verify(certificateDao).getCertificate(PERSONNUMMER, CERTIFICATE_ID);
+        verify(certificateDao, times(0)).updateStatus(CERTIFICATE_ID, PERSONNUMMER, CertificateState.SENT, RECIPIENT_ID, null);
+        verify(certificateSender, times(0)).sendCertificate(certificate, RECIPIENT_ID);
+    }
     @Test(expected = InvalidCertificateException.class)
     public void testSendCertificateWitUnknownCertificate() throws Exception {
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(null);

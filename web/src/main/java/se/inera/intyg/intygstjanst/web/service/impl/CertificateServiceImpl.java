@@ -172,9 +172,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             throw new CertificateRevokedException(certificateId);
         }
 
-        SendStatus sendStatus = SendStatus.OK;
         if (certificate.isAlreadySent(recipientId)) {
-            sendStatus = SendStatus.ALREADY_SENT;
+            return SendStatus.ALREADY_SENT;
         }
 
         // Do send the certificate
@@ -183,7 +182,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         // Update the certificate
         setCertificateState(civicRegistrationNumber, certificateId, recipientId, CertificateState.SENT, null);
 
-        return sendStatus;
+        return SendStatus.OK;
     }
 
     @Override
