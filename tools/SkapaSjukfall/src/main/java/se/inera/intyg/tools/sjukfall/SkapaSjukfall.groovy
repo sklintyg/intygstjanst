@@ -94,6 +94,7 @@ class SkapaSjukfall {
                     String personnummer = utlatande.grundData.patient.personId.personnummer
                     String firstName = utlatande.grundData.patient.fornamn
                     String lastName = utlatande.grundData.patient.efternamn
+                    String patientName = (firstName != null ? firstName : '') + ' ' + (lastName != null ? lastName : '')
                     String careUnitId = utlatande.grundData.skapadAv.vardenhet.enhetsid
                     String careUnitName = utlatande.grundData.skapadAv.vardenhet.enhetsnamn
                     String careGiverId = utlatande.grundData.skapadAv.vardenhet.vardgivare.vardgivarid
@@ -111,9 +112,9 @@ class SkapaSjukfall {
 
                         // Insert base sjukfall cert data
                         sql.execute("INSERT INTO SJUKFALL_CERT "
-                                + "(ID,CERTIFICATE_TYPE,CIVIC_REGISTRATION_NUMBER,PATIENT_FIRST_NAME,PATIENT_LAST_NAME,CARE_UNIT_ID,CARE_UNIT_NAME,CARE_GIVER_ID,SIGNING_DOCTOR_ID,SIGNING_DOCTOR_NAME,DIAGNOSE_CODE,DELETED,SIGNING_DATETIME)"
-                                + "VALUES (:id,:type,:personnummer,:firstName,:lastName,:careUnitId,:careUnitName,:careGiverId,:doctorId,:doctorName,:diagnosKod,:deleted,:signingDateTime)"
-                                , [id: id, type : utlatande.typ, personnummer: personnummer, firstName : firstName, lastName : lastName ,
+                                + "(ID,CERTIFICATE_TYPE,CIVIC_REGISTRATION_NUMBER,PATIENT_NAME,CARE_UNIT_ID,CARE_UNIT_NAME,CARE_GIVER_ID,SIGNING_DOCTOR_ID,SIGNING_DOCTOR_NAME,DIAGNOSE_CODE,DELETED,SIGNING_DATETIME)"
+                                + "VALUES (:id,:type,:personnummer,:patientName,:careUnitId,:careUnitName,:careGiverId,:doctorId,:doctorName,:diagnosKod,:deleted,:signingDateTime)"
+                                , [id: id, type : utlatande.typ, personnummer: personnummer, patientName : patientName.trim(),
                                    careUnitId : careUnitId, careUnitName : careUnitName, careGiverId : careGiverId, doctorId : doctorId,
                                    doctorName : doctorName, diagnosKod : diagnosKod, deleted : deleted, signingDateTime : sqlSigningDateTime
                         ])
