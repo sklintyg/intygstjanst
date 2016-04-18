@@ -47,6 +47,9 @@
       "efternamn": "Testorsson",
       "fornamn": "Test",
       "fullstandigtNamn": "Test Testorsson",
+      "postort": "Staden",
+      "postnummer": "130 10",
+      "postadress": "Stadsg. 1",
       "personId": "19121212-1212"
     },
     "skapadAv": {

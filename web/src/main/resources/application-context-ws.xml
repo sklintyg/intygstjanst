@@ -189,7 +189,7 @@
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/list-certificates-for-citizen/v2.0"
-      implementor="se.inera.intyg.intygstjanst.web.integration.ListCertificatesForCitizenResponderImpl2">
+      implementor="se.inera.intyg.intygstjanst.web.integration.v2.ListCertificatesForCitizenResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg
