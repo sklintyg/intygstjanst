@@ -54,10 +54,11 @@ class SkapaSjukfall {
                                 initialSize: numberOfThreads, maxTotal: numberOfThreads)
         def bootstrapSql = new Sql(dataSource)
 
-        // TODO include deleted, we may need to update state of SJUKFALL_CERT
-
-        def certificateIds = bootstrapSql.rows("select c.ID from CERTIFICATE c WHERE c.CERTIFICATE_TYPE = :certType",      //  AND DELETED = :deleted
+        println("Fetching all FK7263 certificates. This may take several minutes...")
+        def certificateIds = bootstrapSql.rows("select c.ID, cs.STATE from CERTIFICATE c LEFT OUTER JOIN CERTIFICATE_STATE cs ON cs.CERTIFICATE_ID=c.ID  AND cs.STATE = 'CANCELLED' WHERE c.CERTIFICATE_TYPE = :certType",      //  AND DELETED = :deleted
                                                [certType : 'fk7263'])                                                      // , deleted : false
+
+
         bootstrapSql.close()
                 
         println "- ${certificateIds.size()} candidates for being processed into sjukfall found"
@@ -74,9 +75,10 @@ class SkapaSjukfall {
             results = certificateIds.collectParallel {
                 StringBuffer result = new StringBuffer()
                 def id = it.ID
+                def cancelled = it.STATE
                 Sql sql = new Sql(dataSource)
                 try {
-                    def row = sql.firstRow( 'select DOCUMENT, DELETED from CERTIFICATE where ID = :id'
+                    def row = sql.firstRow( 'SELECT DOCUMENT FROM CERTIFICATE c WHERE c.ID=:id'
                             , [id : id])
                     if (row == null || row.DOCUMENT == null) {
                         println "Intyg ${id} has no DOCUMENT, skipping."
@@ -101,7 +103,8 @@ class SkapaSjukfall {
                     String doctorId = utlatande.grundData.skapadAv.personId
                     String doctorName = utlatande.grundData.skapadAv.fullstandigtNamn
 
-                    Boolean deleted = row.DELETED;
+                    Boolean deleted = cancelled != null
+
                     LocalDateTime signingDateTime = utlatande.grundData.signeringsdatum
                     java.sql.Date sqlSigningDateTime = new java.sql.Date(signingDateTime.toDate().getTime())
 
@@ -147,7 +150,7 @@ class SkapaSjukfall {
                         }
                     } else {
                         // If SJUKFALL_CERT already exists for id, just update the DELETED state.
-                        sql.execute( 'UPDATE SJUKFALL_CERT sc SET sc.deleted = :deleted WHERE id = :id', [deleted : row.DELETED, id : id])
+                        sql.execute( 'UPDATE SJUKFALL_CERT sc SET sc.deleted = :deleted WHERE id = :id', [deleted : deleted, id : id])
                     }
 
 
