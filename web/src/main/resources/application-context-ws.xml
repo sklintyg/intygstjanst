@@ -127,6 +127,11 @@
         <constructor-arg value="transform/clinicalprocess-healthcond-certificate/send-certificate-to-recipient-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
+    <jaxws:schemaLocations>
+        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/interactions/SendCertificateToRecipientInteraction/SendCertificateToRecipientResponder_1.0.xsd</jaxws:schemaLocation>
+    </jaxws:schemaLocations>
   </jaxws:endpoint>
   
   <jaxws:endpoint address="/send-message-to-care/v1.0"
@@ -136,6 +141,11 @@
         <constructor-arg value="transform/clinicalprocess-healthcond-certificate/send-message-to-care-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
+    <jaxws:schemaLocations>
+        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/interactions/SendMessageToCareInteraction/SendMessageToCareResponder_1.0.xsd</jaxws:schemaLocation>
+    </jaxws:schemaLocations>
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/send-message-to-recipient/v1.0"
@@ -145,6 +155,11 @@
         <constructor-arg value="transform/clinicalprocess-healthcond-certificate/send-message-to-recipient-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
+    <jaxws:schemaLocations>
+        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_1.0.xsd</jaxws:schemaLocation>
+    </jaxws:schemaLocations>
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/set-certificate-archived/v1.0"
@@ -180,6 +195,11 @@
         <constructor-arg value="transform/register-certificate-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
+    <jaxws:schemaLocations>
+        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/interactions/RegisterCertificateInteraction/RegisterCertificateResponder_2.0.xsd</jaxws:schemaLocation>
+    </jaxws:schemaLocations>
   </jaxws:endpoint>
   
    <jaxws:endpoint address="/get-certificate-se/v2.0"
@@ -196,6 +216,11 @@
             value="transform/list-certificates-for-citizen-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
+    <jaxws:schemaLocations>
+        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/interactions/ListCertificatesForCitizenInteraction/ListCertificatesForCitizenResponder_2.0.xsd</jaxws:schemaLocation>
+    </jaxws:schemaLocations>
   </jaxws:endpoint>
 
   <!-- ws clients -->
