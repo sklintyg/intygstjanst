@@ -223,6 +223,20 @@
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
+  <jaxws:endpoint address="/list-certificates-for-care/v2.0"
+                  implementor="se.inera.intyg.intygstjanst.web.integration.v2.ListCertificatesForCareResponderImpl">
+    <jaxws:outFaultInterceptors>
+      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+        <constructor-arg
+                value="transform/clinicalprocess-healthcond-certificate-2/list-certificates-for-care-transform.xslt"/>
+      </bean>
+    </jaxws:outFaultInterceptors>
+    <jaxws:schemaLocations>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_2.0.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_2.0.xsd</jaxws:schemaLocation>
+     <jaxws:schemaLocation>classpath:/interactions/ListCertificatesForCareInteraction/ListCertificatesForCareResponder_2.0.xsd</jaxws:schemaLocation>
+    </jaxws:schemaLocations>
+  </jaxws:endpoint>
   <!-- ws clients -->
 
   <jaxws:client id="revokeMedicalCertificateClient"
