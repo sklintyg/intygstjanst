@@ -19,7 +19,9 @@
 
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -48,6 +50,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
 public class ConsentDaoImplTest {
 
     public static final Personnummer CIVIC_REGISTRATION_NUMBER = new Personnummer("19001122-3344");
+    public static final Personnummer CIVIC_REGISTRATION_NUMBER_NO_DASH = new Personnummer("190011223344");
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -80,13 +83,33 @@ public class ConsentDaoImplTest {
     public void testHasConsent() {
 
         assertFalse(consentDao.hasConsent(CIVIC_REGISTRATION_NUMBER));
+        assertFalse(consentDao.hasConsent(CIVIC_REGISTRATION_NUMBER_NO_DASH));
 
         consentDao.setConsent(CIVIC_REGISTRATION_NUMBER);
 
         assertTrue(consentDao.hasConsent(CIVIC_REGISTRATION_NUMBER));
+        assertTrue(consentDao.hasConsent(CIVIC_REGISTRATION_NUMBER_NO_DASH));
 
         consentDao.revokeConsent(CIVIC_REGISTRATION_NUMBER);
 
+        assertFalse(consentDao.hasConsent(CIVIC_REGISTRATION_NUMBER));
+        assertFalse(consentDao.hasConsent(CIVIC_REGISTRATION_NUMBER_NO_DASH));
+    }
+
+    @Test
+    public void testHasConsentNoDash() {
+
+        assertFalse(consentDao.hasConsent(CIVIC_REGISTRATION_NUMBER_NO_DASH));
+        assertFalse(consentDao.hasConsent(CIVIC_REGISTRATION_NUMBER));
+
+        consentDao.setConsent(CIVIC_REGISTRATION_NUMBER_NO_DASH);
+
+        assertTrue(consentDao.hasConsent(CIVIC_REGISTRATION_NUMBER_NO_DASH));
+        assertTrue(consentDao.hasConsent(CIVIC_REGISTRATION_NUMBER));
+
+        consentDao.revokeConsent(CIVIC_REGISTRATION_NUMBER_NO_DASH);
+
+        assertFalse(consentDao.hasConsent(CIVIC_REGISTRATION_NUMBER_NO_DASH));
         assertFalse(consentDao.hasConsent(CIVIC_REGISTRATION_NUMBER));
     }
 
