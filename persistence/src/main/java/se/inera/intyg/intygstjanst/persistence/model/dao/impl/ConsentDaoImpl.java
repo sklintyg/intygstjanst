@@ -27,6 +27,7 @@ import org.springframework.stereotype.Repository;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Consent;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.util.DaoUtil;
 
 /**
  * @author andreaskaltenbach
@@ -58,6 +59,6 @@ public class ConsentDaoImpl implements ConsentDao {
     }
 
     private Consent findConsent(Personnummer civicRegistrationNumber) {
-        return entityManager.find(Consent.class, civicRegistrationNumber.getPersonnummer());
+        return entityManager.find(Consent.class, DaoUtil.formatPnrForPersistence(civicRegistrationNumber));
     }
 }

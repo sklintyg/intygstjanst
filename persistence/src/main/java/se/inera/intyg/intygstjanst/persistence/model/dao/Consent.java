@@ -19,11 +19,10 @@
 
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import javax.persistence.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.intygstjanst.persistence.model.dao.util.DaoUtil;
 
 /**
  * @author andreaskaltenbach
@@ -40,7 +39,7 @@ public class Consent {
     }
 
     public Consent(Personnummer civicRegistrationNumber) {
-        this.civicRegistrationNumber = civicRegistrationNumber.getPersonnummer();
+        this.civicRegistrationNumber = DaoUtil.formatPnrForPersistence(civicRegistrationNumber);
     }
 
     public Personnummer getCivicRegistrationNumber() {
@@ -48,6 +47,6 @@ public class Consent {
     }
 
     public void setCivicRegistrationNumber(Personnummer civicRegistrationNumber) {
-        this.civicRegistrationNumber = civicRegistrationNumber.getPersonnummer();
+        this.civicRegistrationNumber = DaoUtil.formatPnrForPersistence(civicRegistrationNumber);
     }
 }

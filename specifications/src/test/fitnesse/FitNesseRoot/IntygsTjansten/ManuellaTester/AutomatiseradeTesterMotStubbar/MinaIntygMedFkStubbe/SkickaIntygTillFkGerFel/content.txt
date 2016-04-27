@@ -12,7 +12,7 @@
 
 |Invanare Skickar Intyg Till Fk|
 |personnummer|intyg|mottagare|resultat?|
-|19010101-0101|error|FK|[ERROR] - Certificate couldn't be sent to recipient|
+|190101010101|error|FK|[ERROR] - Certificate couldn't be sent to recipient|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|

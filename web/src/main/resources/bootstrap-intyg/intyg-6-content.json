@@ -102,7 +102,8 @@
         "vardgivare": {
           "vardgivarid": "SE0000000000-HAHAHHSAA",
           "vardgivarnamn": "V\u00e5rdgivarnamn"
-        }
+        },
+        "arbetsplatsKod": "123456789011"
       }
     }
   },

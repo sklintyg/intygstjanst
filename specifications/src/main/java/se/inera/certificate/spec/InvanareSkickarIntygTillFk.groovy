@@ -53,16 +53,17 @@ public class InvanareSkickarIntygTillFk extends WsClientFixture {
         request.skickatTidpunkt = LocalDateTime.now()
         request.mottagare = new Part()
         request.mottagare.code = mottagare
-        request.mottagare.codeSystem = ""
+        request.mottagare.codeSystem = "769bb12b-bd9f-4203-a5cd-fd14f2eb3b80"
         request.patientPersonId = new PersonId()
-        request.patientPersonId.root = ""
+        request.patientPersonId.root = "1.2.752.129.2.1.3.1"
         request.patientPersonId.extension = personnummer
         request.intygsId = new IntygId()
-        request.intygsId.root = ""
+        request.intygsId.root = "enhet-hsaid"
         request.intygsId.extension = intyg
         request.skickatAv = new SkickatAv()
         request.skickatAv.personId = new PersonId()
-        request.skickatAv.personId.root = ""
+        request.skickatAv.personId.root = "1.2.752.129.2.1.3.1"
+        request.skickatAv.personId.extension = 191212121212
 
         response = responder.sendCertificateToRecipient(logicalAddress.value, request)
 
