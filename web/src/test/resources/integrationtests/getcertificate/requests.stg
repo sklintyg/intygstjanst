@@ -1,0 +1,17 @@
+delimiters "$", "$"
+
+request(data) ::= <<
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:clinicalprocess:healthcond:certificate:GetCertificateResponder:1" xmlns:urn2="urn:riv:clinicalprocess:healthcond:certificate:types:2">
+   <soapenv:Header>
+      <urn:LogicalAddress>1</urn:LogicalAddress>
+   </soapenv:Header>
+   <soapenv:Body>
+      <urn1:GetCertificate>
+         <urn1:intygs-id>
+            <urn2:root>1234</urn2:root>
+            <urn2:extension>$data.intygsId$</urn2:extension>
+         </urn1:intygs-id>
+      </urn1:GetCertificate>
+   </soapenv:Body>
+</soapenv:Envelope>
+>>

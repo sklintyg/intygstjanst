@@ -75,7 +75,7 @@ request(data) ::= <<
                 <svar id="1">
                     <delsvar id="1.1">
                         <ns3:cv>
-                            <ns3:code>1</ns3:code>
+                            <ns3:code>UNDERSOKNING</ns3:code>
                             <ns3:codeSystem>KV_FKMU_0001</ns3:codeSystem>
                         </ns3:cv>
                     </delsvar>
@@ -85,28 +85,8 @@ request(data) ::= <<
                     <delsvar id="2.1">2015-01-07</delsvar>
                 </svar>
                 <svar id="3">
-                    <delsvar id="3.1">true
+                    <delsvar id="3.1">false
                     </delsvar>
-                </svar>
-                <svar id="4">
-                    <delsvar id="4.1">
-                        <ns3:cv>
-                            <ns3:code>6</ns3:code>
-                            <ns3:codeSystem>KV_FKMU_0005</ns3:codeSystem>
-                        </ns3:cv>
-                    </delsvar>
-                    <delsvar id="4.2">2015-09-03</delsvar>
-                    <delsvar id="4.3">Skickas med posten</delsvar>
-                </svar>
-                <svar id="4">
-                    <delsvar id="4.1">
-                        <ns3:cv>
-                            <ns3:code>4</ns3:code>
-                            <ns3:codeSystem>KV_FKMU_0005</ns3:codeSystem>
-                        </ns3:cv>
-                    </delsvar>
-                    <delsvar id="4.2">2015-06-30</delsvar>
-                    <delsvar id="4.3">Skickas med e-mail</delsvar>
                 </svar>
                 <svar id="5">
                     <delsvar id="5.1">Arbetsplatsolycka där patienten fastnade med höger hand i en vals 2014-07-09. Omhändertogs initialt på akutmottagningen AVC Södra Älvsborgs sjukhus i Borås. Vävnadsförluster i 3:e och 4:e fingret. Nedsatt kraft, känsel och funktion i handen, smärtsyndom i hela höger arm. Sedan några månader depression som har varit svår att behandla medikamentellt.</delsvar>
@@ -122,7 +102,7 @@ request(data) ::= <<
                 </svar>
                 <svar id="7">
                     <delsvar id="7.1">Diagnoserna ställdes vid besök på AVC Södra Älvsborgs sjukhus i Borås 2014-07-09 och på Vårdenheten 2015-03-02.</delsvar>
-                    <delsvar id="7.2">true</delsvar>
+                    <delsvar id="7.2">false</delsvar>
                 </svar>
                 <svar id="9">
                     <delsvar id="9.1">Nedsatt initiativförmåga, drar sig ofta undan folksamlingar.</delsvar>

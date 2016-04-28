@@ -19,10 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.integrationtest;
 
-import org.junit.After;
 import org.junit.Before;
-
-import se.inera.intyg.common.util.integration.integration.json.CustomObjectMapper;
 
 import com.jayway.restassured.RestAssured;
 
@@ -33,8 +30,6 @@ import com.jayway.restassured.RestAssured;
  */
 public abstract class BaseIntegrationTest {
 
-    protected CustomObjectMapper objectMapper = new CustomObjectMapper();
-
     /**
      * Common setup for all tests
      */
@@ -44,14 +39,5 @@ public abstract class BaseIntegrationTest {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         RestAssured.baseURI = System.getProperty("integration.tests.baseUrl");
     }
-
-    /**
-     * Common teardown for all tests
-     */
-    @After
-    public void tearDown() {
-        // TODO Remove all intyg and sjukfallintyg after each test
-    }
-
 
 }

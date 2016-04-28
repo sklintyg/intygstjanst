@@ -1,4 +1,4 @@
-package se.inera.intyg.intygstjanst.web.integrationtest.arende;
+package se.inera.intyg.intygstjanst.web.integrationtest;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -17,6 +17,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import com.google.common.collect.ImmutableMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -30,20 +31,12 @@ public class XPathExtractor {
 
     public XPathExtractor(final String message, final Map<String, String> namespaceMap) {
         InputSource inputSource = new InputSource(new StringReader(message));
-        setup(inputSource, namespaceMap);
-    }
-
-    private XPathFactory getXPathFactory() {
-        return XPathFactory.newInstance();
-    }
-
-    private void setup(InputSource inputSource, Map<String, String> namespaceMap) {
         try {
             DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
             domFactory.setNamespaceAware(true);
             xmlDocument = domFactory.newDocumentBuilder().parse(inputSource);
 
-            xpath = getXPathFactory().newXPath();
+            xpath = XPathFactory.newInstance().newXPath();
             xpath.setNamespaceContext(new XPathNamespaceContext(namespaceMap));
         } catch (Exception e) {
             throw Throwables.propagate(e);
@@ -69,10 +62,12 @@ public class XPathExtractor {
 
     private static class XPathNamespaceContext implements NamespaceContext {
 
+        ImmutableMap<String, String> soapNamespace = ImmutableMap.of("soap", "http://schemas.xmlsoap.org/soap/envelope/");
+
         private final Map<String, String> namespaceMap;
 
         public XPathNamespaceContext(final Map<String, String> namespaceMap) {
-            this.namespaceMap = namespaceMap;
+            this.namespaceMap = new ImmutableMap.Builder<String, String>().putAll(soapNamespace).putAll(namespaceMap).build();
         }
 
         public String getNamespaceURI(final String prefix) {

@@ -19,8 +19,11 @@
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
 import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
 
+import com.google.common.collect.ImmutableMap;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.stringtemplate.v4.ST;
@@ -31,6 +34,10 @@ import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
+import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
+import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
+
+import java.io.InputStream;
 
 public class RegisterCertificateIT extends BaseIntegrationTest {
 
@@ -42,8 +49,8 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
 
     private String personId1 = "192703104321";
     private String personId2 = "195206172339";
-    private STGroup templateGroup;
 
+    private STGroup templateGroup;
 
     @Before
     public void setup() {
@@ -70,6 +77,23 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
                 statusCode(200).
                 rootPath(BASE).
                 body("result.resultCode", is("OK"));
+    }
+
+    @Test
+    public void responseRespectsSchema() throws Exception {
+        final InputStream inputstream = ClasspathResourceResolver.load(null,
+                "interactions/RegisterCertificateInteraction/RegisterCertificateResponder_2.0.xsd");
+
+        requestTemplate.add("data", new IntygsData(intygsId, personId1));
+
+        given().
+                filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:2"),
+                        "soap:Envelope/soap:Body/lc:RegisterCertificateResponse")).
+                body(requestTemplate.render()).
+                when().
+                post("inera-certificate/register-certificate-se/v2.0").
+                then().
+                body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
     }
 
     @Test

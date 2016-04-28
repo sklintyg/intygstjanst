@@ -24,28 +24,22 @@ import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
 
 import java.io.InputStream;
+import java.util.UUID;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
-import org.w3c.dom.ls.LSInput;
-import org.w3c.dom.ls.LSResourceResolver;
 
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
+import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 
-import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.builder.ResponseBuilder;
-import com.jayway.restassured.filter.Filter;
-import com.jayway.restassured.filter.FilterContext;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.FilterableRequestSpecification;
-import com.jayway.restassured.specification.FilterableResponseSpecification;
-import com.sun.org.apache.xerces.internal.dom.DOMInputImpl;
 
 public class SendMessageToCareIT extends BaseIntegrationTest {
 
@@ -63,9 +57,6 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
 
     @Test
     public void messageGoesToCorrectEndDestination() throws Exception {
-        final InputStream inputstream = load(null, "interactions/SendMessageToCareInteraction/SendMessageToCareResponder_1.0.xsd");
-        final String xsd = IOUtils.toString(inputstream);
-
         post("inera-certificate/send-message-to-care-stub-rest/clear");
 
         String enhetsId = "123456";
@@ -73,7 +64,6 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
         requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
 
         given().
-                // filter(new BodyExtractorFilter()).
                 body(requestTemplate.render()).
                 when().
                 post("inera-certificate/send-message-to-care/v1.0").
@@ -81,7 +71,6 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
                 statusCode(200).
                 rootPath(BASE).
                 body("result.resultCode", is("OK"));
-        // body(matchesXsd(xsd).with(new ClasspathResourceResolver()));
 
         // Make sure that the final destination received the message
         given().
@@ -89,6 +78,25 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
                 when().get("inera-certificate/send-message-to-care-stub-rest/byLogicalAddress")
                 .then()
                 .body("messages[0].certificateId", is(intygsId));
+    }
+
+    @Test
+    public void responseRespectsSchema() throws Exception {
+        final InputStream inputstream = ClasspathResourceResolver.load(null,
+                "interactions/SendMessageToCareInteraction/SendMessageToCareResponder_1.0.xsd");
+
+        String enhetsId = "123456";
+        String intygsId = "intyg-1";
+
+        requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
+
+        given().filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendMessageToCareResponder:1"),
+                "soap:Envelope/soap:Body/lc:SendMessageToCareResponse")).
+                body(requestTemplate.render()).
+                when().
+                post("inera-certificate/send-message-to-care/v1.0").
+                then().
+                body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
     }
 
     @Test
@@ -128,6 +136,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
         public final String arende;
         public final String personId;
         public final String enhetsId;
+        public final String messageId = UUID.randomUUID().toString();
 
         public ArendeData(String intygsId, String arende, String personId, String enhetsId) {
             this.intygsId = intygsId;
@@ -135,35 +144,6 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
             this.personId = personId;
             this.enhetsId = enhetsId;
         }
-    }
-
-    public static class BodyExtractorFilter implements Filter {
-        @Override
-        public Response filter(FilterableRequestSpecification requestSpec, FilterableResponseSpecification responseSpec, FilterContext ctx) {
-            Response response = ctx.next(requestSpec, responseSpec);
-            XPathExtractor extractor = new XPathExtractor(response.print(), ImmutableMap.of("soap", "http://schemas.xmlsoap.org/soap/envelope/",
-                    "lc", "urn:riv:clinicalprocess:healthcond:certificate:SendMessageToCareResponder:1"));
-            String newBody = extractor.getFragmentFromXPath("soap:Envelope/soap:Body/lc:SendMessageToCareResponse");
-            System.out.println(newBody);
-            Response newResponse = new ResponseBuilder().clone(response).setBody(newBody).build();
-            return newResponse;
-        }
-    }
-
-    public static class ClasspathResourceResolver implements LSResourceResolver {
-        @Override
-        public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
-            return new DOMInputImpl(publicId, systemId, baseURI, load(baseURI, systemId), null);
-        }
-    }
-
-    private static InputStream load(String baseURI, String name) {
-        String localName = name.replaceAll("^(\\.\\./)+", "");
-        InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(localName);
-        // if (resourceAsStream == null) {
-        // throw new RuntimeException("Could not find resource " + localName+ " with baseURI " + baseURI);
-        // }
-        return resourceAsStream;
     }
 
 }
