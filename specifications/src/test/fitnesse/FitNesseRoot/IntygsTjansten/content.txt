@@ -6,7 +6,7 @@
 !define person3.personnummer {19020202-0202}
 !define person4.personnummer {19999999-9999}
 !define person5.personnummer {19030303-0303}
-!define person6.personnummer {191212121212}
+!define person6.personnummer {19121212-1212}
 !define person7.personnummer {19121212-0002}
 !define person1.pnrhash {416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6}
 !define person2.pnrhash {11da733546cb47cfc30f3f789eb6a94898d3d6fae3092e069ada392cddabe3ed}
