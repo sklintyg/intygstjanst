@@ -1,13 +1,12 @@
 package se.inera.intyg.intygstjanst.web.integrationtest;
 
-import com.sun.org.apache.xerces.internal.dom.DOMInputImpl;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import com.sun.org.apache.xerces.internal.dom.DOMInputImpl;
 
 public class ClasspathResourceResolver implements LSResourceResolver {
     @Override

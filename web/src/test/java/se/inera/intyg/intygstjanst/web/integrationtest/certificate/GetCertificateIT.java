@@ -22,8 +22,6 @@ public class GetCertificateIT extends BaseIntegrationTest {
 
     private STGroup templateGroup;
 
-    //"soap:Envelope/soap:Body/lc:SendMessageToCareResponse"
-
     private String intygsId = "intyg-10";
 
     @Before
