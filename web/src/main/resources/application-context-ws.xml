@@ -138,7 +138,7 @@
       implementor="se.inera.intyg.intygstjanst.web.integration.SendCertificateToRecipientResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
-        <constructor-arg value="transform/clinicalprocess-healthcond-certificate/send-certificate-to-recipient-transform.xslt"/>
+        <constructor-arg value="transform/clinicalprocess-healthcond-certificate-2/send-certificate-to-recipient-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
     <jaxws:schemaLocations>
@@ -152,7 +152,7 @@
       implementor="se.inera.intyg.intygstjanst.web.integration.SendMessageToCareResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
-        <constructor-arg value="transform/clinicalprocess-healthcond-certificate/send-message-to-care-transform.xslt"/>
+        <constructor-arg value="transform/clinicalprocess-healthcond-certificate-2/send-message-to-care-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
     <jaxws:schemaLocations>
@@ -166,7 +166,7 @@
       implementor="se.inera.intyg.intygstjanst.web.integration.SendMessageToRecipientResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
-        <constructor-arg value="transform/clinicalprocess-healthcond-certificate/send-message-to-recipient-transform.xslt"/>
+        <constructor-arg value="transform/clinicalprocess-healthcond-certificate-2/send-message-to-recipient-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
     <jaxws:schemaLocations>
@@ -206,7 +206,7 @@
       implementor="se.inera.intyg.intygstjanst.web.integration.RegisterCertificateResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
-        <constructor-arg value="transform/register-certificate-transform.xslt"/>
+        <constructor-arg value="transform/clinicalprocess-healthcond-certificate-2/register-certificate-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
     <jaxws:schemaLocations>
@@ -227,7 +227,7 @@
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg
-            value="transform/list-certificates-for-citizen-transform.xslt"/>
+            value="transform/clinicalprocess-healthcond-certificate-2/list-certificates-for-citizen-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
     <jaxws:schemaLocations>
@@ -248,9 +248,10 @@
     <jaxws:schemaLocations>
       <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_2.0.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_2.0.xsd</jaxws:schemaLocation>
-     <jaxws:schemaLocation>classpath:/interactions/ListCertificatesForCareInteraction/ListCertificatesForCareResponder_2.0.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/interactions/ListCertificatesForCareInteraction/ListCertificatesForCareResponder_2.0.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
+
   <!-- ws clients -->
 
   <jaxws:client id="revokeMedicalCertificateClient"
