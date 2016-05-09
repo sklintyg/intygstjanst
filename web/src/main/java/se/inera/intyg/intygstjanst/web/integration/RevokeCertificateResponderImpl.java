@@ -79,7 +79,9 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
 
             response.setResult(ResultTypeUtil.okResult());
         } catch (InvalidCertificateException e) {
-            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR,
+            // Send APPLICATION_ERROR to trigger retransmission in the client. This is because this revoke request
+            // could arrive before the register request and we want to avoid race conditions.
+            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR,
                     "Certificate " + certificateId + " does not exist for patient."));
             LOG.warn("Certificate '{}' does not exist for patient '{}'.", certificateId, pnr.getPnrHash());
         } catch (CertificateRevokedException e) {

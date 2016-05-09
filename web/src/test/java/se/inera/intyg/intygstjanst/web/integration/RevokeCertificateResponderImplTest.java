@@ -125,7 +125,7 @@ public class RevokeCertificateResponderImplTest {
         RevokeCertificateResponseType resp = revokeCertificateResponder.revokeCertificate("initial logical address", request);
 
         assertEquals(ResultCodeType.ERROR, resp.getResult().getResultCode());
-        assertEquals(ErrorIdType.VALIDATION_ERROR, resp.getResult().getErrorId());
+        assertEquals(ErrorIdType.APPLICATION_ERROR, resp.getResult().getErrorId());
         verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
         verify(statisticsService, times(0)).revoked(any());
         verify(sjukfallCertificateService, times(0)).revoked(any());
