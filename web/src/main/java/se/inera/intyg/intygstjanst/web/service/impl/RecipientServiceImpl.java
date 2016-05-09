@@ -19,21 +19,15 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.InitializingBean;
 
 import se.inera.intyg.common.support.modules.support.api.dto.TransportModelVersion;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
-import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
-import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
-import se.inera.intyg.intygstjanst.web.service.bean.RecipientCertificateType;
+import se.inera.intyg.intygstjanst.web.service.bean.*;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 
 public class RecipientServiceImpl implements RecipientService, InitializingBean {
@@ -64,22 +58,18 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
 
     @Override
     public Recipient getRecipientForLogicalAddress(String logicalAddress) throws RecipientUnknownException {
-        for (Recipient r : recipientList) {
-            if (r.getLogicalAddress().equals(logicalAddress)) {
-                return r;
-            }
-        }
-        throw new RecipientUnknownException(String.format("No recipient found for logical address: %s", logicalAddress));
+        return recipientList.stream()
+                .filter(r -> r.getLogicalAddress().equals(logicalAddress))
+                .findFirst()
+                .orElseThrow(() -> new RecipientUnknownException(String.format("No recipient found for logical address: %s", logicalAddress)));
     }
 
     @Override
     public Recipient getRecipient(String recipientId) throws RecipientUnknownException {
-        for (Recipient r : recipientList) {
-            if (r.getId().equalsIgnoreCase(recipientId)) {
-                return r;
-            }
-        }
-        throw new RecipientUnknownException(String.format("No recipient found for recipient id: %s", recipientId));
+        return recipientList.stream()
+                .filter(r -> r.getId().equals(recipientId))
+                .findFirst()
+                .orElseThrow(() -> new RecipientUnknownException(String.format("No recipient found for recipient id: %s", recipientId)));
     }
 
     @Override
@@ -89,19 +79,9 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
 
     @Override
     public List<Recipient> listRecipients(CertificateType certificateType) throws RecipientUnknownException {
-        List<Recipient> list = new ArrayList<Recipient>();
-
-        try {
-            for (Recipient r : recipientList) {
-                if (r.getCertificateTypes().contains(certificateType.getCertificateTypeId())) {
-                    list.add(r);
-                }
-            }
-        } catch (Exception e) {
-            throw new RecipientUnknownException(String.format("No recipient found for certificate type: %s", certificateType.getCertificateTypeId()));
-        }
-
-        return list;
+        return recipientList.stream()
+                .filter(r -> r.getCertificateTypes().contains(certificateType.getCertificateTypeId()))
+                .collect(Collectors.toList());
     }
 
     @Override

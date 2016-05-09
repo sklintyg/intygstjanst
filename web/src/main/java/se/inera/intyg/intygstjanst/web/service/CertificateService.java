@@ -23,10 +23,7 @@ import java.util.List;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
-import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
-import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
-import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
+import se.inera.intyg.common.support.integration.module.exception.*;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -38,7 +35,8 @@ import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 public interface CertificateService {
 
     enum SendStatus {
-        ALREADY_SENT, OK
+        ALREADY_SENT,
+        OK
     }
 
     /**
@@ -56,7 +54,8 @@ public interface CertificateService {
      * @throws MissingConsentException
      *             if the patient has not given consent for accessing her certificates
      */
-    List<Certificate> listCertificatesForCitizen(Personnummer civicRegistrationNumber, List<String> certificateTypes, LocalDate fromDate, LocalDate toDate)
+    List<Certificate> listCertificatesForCitizen(Personnummer civicRegistrationNumber, List<String> certificateTypes, LocalDate fromDate,
+            LocalDate toDate)
             throws MissingConsentException;
 
     /**
@@ -123,7 +122,8 @@ public interface CertificateService {
     SendStatus sendCertificate(Personnummer civicRegistrationNumber, String certificateId, String recipientId)
             throws InvalidCertificateException, CertificateRevokedException, RecipientUnknownException;
 
-    void setCertificateState(Personnummer civicRegistrationNumber, String certificateId, String target, CertificateState state, LocalDateTime timestamp)
+    void setCertificateState(Personnummer civicRegistrationNumber, String certificateId, String target, CertificateState state,
+            LocalDateTime timestamp)
             throws InvalidCertificateException;
 
     /**
@@ -133,17 +133,14 @@ public interface CertificateService {
      *            the patient's civic registration number.
      * @param certificateId
      *            the certificate ID
-     * @param revokeData
-     *            Data of who requested the revoke, when etc. If <code>null</code>, no revocation should be sent to
-     *            earlier recipients of the intyg
      * @return the revoked certificate.
      * @throws InvalidCertificateException
      *             if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
      * @throws CertificateRevokedException
      *             if the certificate has been revoked
      */
-    Certificate revokeCertificate(Personnummer civicRegistrationNumber, String certificateId, RevokeType revokeData) throws InvalidCertificateException,
-            CertificateRevokedException;
+    Certificate revokeCertificate(Personnummer civicRegistrationNumber, String certificateId)
+            throws InvalidCertificateException, CertificateRevokedException;
 
     /**
      * @param certificateId

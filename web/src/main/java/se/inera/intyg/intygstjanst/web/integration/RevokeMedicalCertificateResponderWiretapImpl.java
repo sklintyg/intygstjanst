@@ -38,7 +38,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.integration.validator.RevokeRequestValidator;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 
-
 @Transactional
 public class RevokeMedicalCertificateResponderWiretapImpl extends RevokeMedicalCertificateResponderImpl implements
         RevokeMedicalCertificateResponderInterface {
@@ -60,7 +59,7 @@ public class RevokeMedicalCertificateResponderWiretapImpl extends RevokeMedicalC
 
             String certificateId = request.getRevoke().getLakarutlatande().getLakarutlatandeId();
 
-            Certificate certificate = certificateService.revokeCertificate(personnummer, certificateId, null);
+            Certificate certificate = certificateService.revokeCertificate(personnummer, certificateId);
             LOGGER.info(certificateId + " revoked");
             statisticsService.revoked(certificate);
             sjukfallCertificateService.revoked(certificate);

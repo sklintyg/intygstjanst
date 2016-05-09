@@ -18,7 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import java.util.HashSet;
 import java.util.List;
 
 import org.joda.time.LocalDate;
@@ -34,29 +33,17 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
-import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
-import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
-import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
+import se.inera.intyg.common.support.integration.module.exception.*;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
-import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
-import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
-import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.inera.intyg.intygstjanst.web.service.ConsentService;
-import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
-import se.inera.intyg.intygstjanst.web.service.StatisticsService;
+import se.inera.intyg.intygstjanst.web.service.*;
 
 /**
  * @author andreaskaltenbach
@@ -199,9 +186,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Override
     @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = { InvalidCertificateException.class,
             CertificateRevokedException.class })
-    public Certificate revokeCertificate(Personnummer civicRegistrationNumber, String certificateId, RevokeType revokeData)
-            throws InvalidCertificateException,
-            CertificateRevokedException {
+    public Certificate revokeCertificate(Personnummer civicRegistrationNumber, String certificateId)
+            throws InvalidCertificateException, CertificateRevokedException {
         Certificate certificate = null;
         try {
             certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
@@ -218,10 +204,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         }
 
         setCertificateState(civicRegistrationNumber, certificateId, HVTARGET, CertificateState.CANCELLED, null);
-
-        if (revokeData != null) {
-            sendRevokeMessagesToRecipients(certificate, revokeData);
-        }
 
         return certificate;
     }
@@ -347,19 +329,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         return certificateDao.getCertificate(civicRegistrationNumber, certificateId);
     }
 
-    private void sendRevokeMessagesToRecipients(Certificate certificate, RevokeType revokeData) {
-        HashSet<String> recipientsFound = new HashSet<>();
-
-        for (CertificateStateHistoryEntry event : certificate.getStates()) {
-            if (event.getState().equals(CertificateState.SENT)) {
-                String recipient = event.getTarget();
-                if (recipientsFound.add(recipient)) {
-                    senderService.sendCertificateRevocation(certificate, recipient, revokeData);
-                }
-            }
-        }
-    }
-
     /**
      *
      * @param utlatandeXml
@@ -373,5 +342,4 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             certificateDao.storeOriginalCertificate(original);
         }
     }
-
 }

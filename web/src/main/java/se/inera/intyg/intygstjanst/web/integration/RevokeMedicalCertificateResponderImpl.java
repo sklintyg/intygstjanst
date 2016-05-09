@@ -31,14 +31,15 @@ import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateres
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
 import se.inera.intyg.common.util.logging.LogMarkers;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
 import se.inera.intyg.intygstjanst.web.integration.validator.RevokeRequestValidator;
 import se.inera.intyg.intygstjanst.web.service.*;
-import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 
 public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCertificateResponderInterface {
 
@@ -46,6 +47,9 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
 
     @Autowired
     private CertificateService certificateService;
+
+    @Autowired
+    private CertificateSenderService senderService;
 
     @Autowired
     private MonitoringLogService monitoringLogService;
@@ -56,9 +60,10 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
     @Autowired
     protected SjukfallCertificateService sjukfallCertificateService;
 
-    @Override
     @Transactional
-    public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress, RevokeMedicalCertificateRequestType request) {
+    @Override
+    public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress,
+            RevokeMedicalCertificateRequestType request) {
 
         RevokeMedicalCertificateResponseType response = new RevokeMedicalCertificateResponseType();
 
@@ -67,12 +72,18 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
             new RevokeRequestValidator(request.getRevoke()).validateAndCorrect();
 
             String certificateId = request.getRevoke().getLakarutlatande().getLakarutlatandeId();
-            Certificate certificate = certificateService.revokeCertificate(personnummer, certificateId, request.getRevoke());
-            monitoringLogService.logCertificateRevoked(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
+            Certificate certificate = certificateService.revokeCertificate(personnummer, certificateId);
+
+            certificate.getStates().stream()
+                    .filter(entry -> CertificateState.SENT.equals(entry.getState()))
+                    .map(CertificateStateHistoryEntry::getTarget)
+                    .distinct()
+                    .forEach(recipient -> senderService.sendCertificateRevocation(certificate, recipient, request.getRevoke()));
 
             statisticsService.revoked(certificate);
             sjukfallCertificateService.revoked(certificate);
 
+            monitoringLogService.logCertificateRevoked(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
             LOGGER.info("Tried to revoke certificate '" + safeGetCertificateId(request) + "' for patient '"
@@ -97,7 +108,8 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
 
         } catch (SubsystemCallException e) {
             LOGGER.warn("Encountered an exception when sending a revocation to subsystem '" + e.getSubsystemId() + "'");
-            response.setResult(ResultOfCallUtil.failResult("Informing subsystem '" + e.getSubsystemId() + "' about revoked certificate resulted in error"));
+            response.setResult(
+                    ResultOfCallUtil.failResult("Informing subsystem '" + e.getSubsystemId() + "' about revoked certificate resulted in error"));
             return response;
         }
 

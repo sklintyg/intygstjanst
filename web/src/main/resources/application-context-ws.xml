@@ -111,6 +111,20 @@
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
 
+  <jaxws:endpoint address="/revoke-certificate-rivta/v1.0"
+      implementor="se.inera.intyg.intygstjanst.web.integration.RevokeCertificateResponderImpl">
+    <jaxws:outFaultInterceptors>
+      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+          <constructor-arg value="transform/clinicalprocess-healthcond-certificate-2/revoke-certificate-transform.xslt"/>
+      </bean>
+    </jaxws:outFaultInterceptors>
+    <jaxws:schemaLocations>
+        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/interactions/RevokeCertificateInteraction/RevokeCertificateResponder_1.0.xsd</jaxws:schemaLocation>
+    </jaxws:schemaLocations>
+  </jaxws:endpoint>
+
   <jaxws:endpoint address="/send-certificate/v1.0"
       implementor="se.inera.intyg.intygstjanst.web.integration.SendMedicalCertificateResponderImpl">
     <jaxws:outFaultInterceptors>
@@ -257,6 +271,11 @@
   <jaxws:client id="sendMessageToRecipientClient"
       serviceClass="se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientResponderInterface"
       address="${sendmessagetorecipientv1.endpoint.url}">
+  </jaxws:client>
+
+  <jaxws:client id="revokeCertificateClient"
+      serviceClass="se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateResponderInterface"
+      address="${revokecertificatev1.endpoint.url}">
   </jaxws:client>
 
   <import resource="application-context-ws-stub.xml"/>
