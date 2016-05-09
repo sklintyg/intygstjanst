@@ -184,6 +184,17 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     @Override
+    @Transactional(noRollbackFor = { InvalidCertificateException.class, PersistenceException.class })
+    public void setCertificateState(String certificateId, String target,
+            CertificateState state, LocalDateTime timestamp) throws InvalidCertificateException {
+        try {
+            certificateDao.updateStatus(certificateId, state, target, timestamp);
+        } catch (PersistenceException e) {
+            throw new InvalidCertificateException(certificateId, null);
+        }
+    }
+
+    @Override
     @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = { InvalidCertificateException.class,
             CertificateRevokedException.class })
     public Certificate revokeCertificate(Personnummer civicRegistrationNumber, String certificateId)

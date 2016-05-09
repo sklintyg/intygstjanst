@@ -21,12 +21,16 @@ package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.*;
-import static se.inera.intyg.common.support.model.CertificateState.*;
-import static se.inera.intyg.intygstjanst.persistence.support.CertificateFactory.*;
+import static se.inera.intyg.common.support.model.CertificateState.DELETED;
+import static se.inera.intyg.common.support.model.CertificateState.RECEIVED;
+import static se.inera.intyg.common.support.model.CertificateState.RESTORED;
+import static se.inera.intyg.common.support.model.CertificateState.SENT;
+import static se.inera.intyg.intygstjanst.persistence.support.CertificateFactory.CERTIFICATE_ID;
+import static se.inera.intyg.intygstjanst.persistence.support.CertificateFactory.CIVIC_REGISTRATION_NUMBER;
+import static se.inera.intyg.intygstjanst.persistence.support.CertificateFactory.FK7263;
+import static se.inera.intyg.intygstjanst.persistence.support.CertificateFactory.buildCertificate;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -44,9 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.persistence.support.CertificateFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -262,15 +264,35 @@ public class CertificateDaoImplTest {
 
     @Test
     public void testUpdateStatusPnrWithoutDash() throws PersistenceException {
-        
+
         // store a certificate for patient 19101112-1314
         Certificate certificate = buildCertificate();
         entityManager.persist(certificate);
-        
+
         assertEquals(0, certificate.getStates().size());
-        
+
         certificateDao.updateStatus(CERTIFICATE_ID, new Personnummer("190011223344"), DELETED, "fk", null);
-        
+
+        assertEquals(1, certificate.getStates().size());
+        assertEquals(DELETED, certificate.getStates().get(0).getState());
+        assertEquals("fk", certificate.getStates().get(0).getTarget());
+        assertNotNull(certificate.getStates().get(0).getTimestamp());
+    }
+
+    @Test(expected = PersistenceException.class)
+    public void testUpdateStatusNoPnrForWrongCertificate() throws PersistenceException {
+        certificateDao.updateStatus("<unknownCertId>", CertificateState.IN_PROGRESS, "fk", null);
+    }
+
+    @Test
+    public void testUpdateStatusNoPnr() throws PersistenceException {
+        Certificate certificate = buildCertificate();
+        entityManager.persist(certificate);
+
+        assertEquals(0, certificate.getStates().size());
+
+        certificateDao.updateStatus(CERTIFICATE_ID, DELETED, "fk", null);
+
         assertEquals(1, certificate.getStates().size());
         assertEquals(DELETED, certificate.getStates().get(0).getState());
         assertEquals("fk", certificate.getStates().get(0).getTarget());

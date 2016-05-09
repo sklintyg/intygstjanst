@@ -18,19 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -43,10 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
-import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.persistence.model.dao.util.DaoUtil;
 
 /**
@@ -139,6 +128,21 @@ public class CertificateDaoImpl implements CertificateDao {
 
         if (certificate == null || !certificate.getCivicRegistrationNumber().equals(civicRegistrationNumber)) {
             throw new PersistenceException(id, civicRegistrationNumber);
+        }
+
+        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(target, state, timestamp);
+
+        certificate.addState(historyEntry);
+    }
+
+    @Override
+    public void updateStatus(String id, CertificateState state, String target, LocalDateTime timestamp)
+            throws PersistenceException {
+
+        Certificate certificate = entityManager.find(Certificate.class, id);
+
+        if (certificate == null) {
+            throw new PersistenceException(id, null);
         }
 
         CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(target, state, timestamp);

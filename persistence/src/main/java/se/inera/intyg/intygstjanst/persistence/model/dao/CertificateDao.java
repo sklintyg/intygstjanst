@@ -89,6 +89,17 @@ public interface CertificateDao {
             throws PersistenceException;
 
     /**
+     * Updates the certificate's status.
+     * @param certificateId the certificate's ID
+     * @param state the state of the certificate
+     * @param target the target associated with the status update (e.g. Försäkringskassan)
+     * @param timestamp the timestamp of the status update
+     * @throws se.inera.intyg.intygstjanst.persistence.exception.PersistenceException if the certificate does not exist
+     */
+    void updateStatus(String certificateId, CertificateState state, String target, LocalDateTime timestamp)
+            throws PersistenceException;
+
+    /**
      * Removes all {@link Certificate}s belonging to specified citizen which have the flag
      * {@link Certificate#isDeletedByCareGiver()} set to <code>true</code>.
      * <p>

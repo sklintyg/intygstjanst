@@ -126,6 +126,9 @@ public interface CertificateService {
             LocalDateTime timestamp)
             throws InvalidCertificateException;
 
+    void setCertificateState(String certificateId, String target, CertificateState state, LocalDateTime timestamp)
+            throws InvalidCertificateException;
+
     /**
      * Revokes the certificate.
      *
