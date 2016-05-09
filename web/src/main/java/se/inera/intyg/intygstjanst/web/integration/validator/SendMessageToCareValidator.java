@@ -18,12 +18,16 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.annotations.VisibleForTesting;
+
+import se.inera.intyg.common.support.common.enumerations.PartKod;
 import se.inera.intyg.common.support.common.util.StringUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.dto.InvalidPersonNummerException;
@@ -33,8 +37,6 @@ import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType.Komplettering;
 import se.riv.clinicalprocess.healthcond.certificate.v2.MeddelandeReferens;
-
-import com.google.common.annotations.VisibleForTesting;
 
 @Component
 public class SendMessageToCareValidator {
@@ -56,6 +58,7 @@ public class SendMessageToCareValidator {
         List<String> validationErrors = new ArrayList<String>();
         String personnummeer = sendMessageToCareType.getPatientPersonId().getExtension();
 
+        validateSkickatAv(sendMessageToCareType.getSkickatAv().getPart().getCode(), validationErrors);
         validateMeddelandeId(sendMessageToCareType.getMeddelandeId(), validationErrors);
         validateMessageSubject(sendMessageToCareType.getAmne().getCode(), validationErrors);
         validateThatCertificateExists(sendMessageToCareType.getIntygsId().getExtension(), personnummeer, validationErrors);
@@ -65,6 +68,15 @@ public class SendMessageToCareValidator {
         validateConsistencyForKomplettering(sendMessageToCareType, validationErrors);
         return validationErrors;
 
+    }
+
+    @VisibleForTesting
+    void validateSkickatAv(String code, List<String> validationErrors) {
+        try {
+            PartKod.valueOf(code);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            validationErrors.add("SkickatAv part code " + code + " is not valid");
+        }
     }
 
     @VisibleForTesting

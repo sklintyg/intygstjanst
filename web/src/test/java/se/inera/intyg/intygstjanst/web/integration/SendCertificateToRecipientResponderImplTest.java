@@ -46,7 +46,7 @@ public class SendCertificateToRecipientResponderImplTest {
 
     private static final Personnummer PERSONNUMMER = new Personnummer("19121212-1212");
     private static final String CERTIFICATE_ID = "Intygs-id-1234567890";
-    private static final String RECIPIENT_ID = "FK";
+    private static final String RECIPIENT_ID = "TRANSP";
 
     private static final String LOGICAL_ADDRESS = "Intygstjänsten";
 
@@ -74,7 +74,7 @@ public class SendCertificateToRecipientResponderImplTest {
 
         // Verify behaviour
         assertEquals(OK, response.getResult().getResultCode());
-        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
+        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "TS");
     }
 
     private SendCertificateToRecipientType createRequest() {

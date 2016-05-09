@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.v2.ResultTypeUtil;
+import se.inera.intyg.common.support.common.enumerations.PartKod;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
@@ -49,7 +50,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
 
         SendCertificateToRecipientResponseType response = new SendCertificateToRecipientResponseType();
 
-        final String mottagareId = request.getMottagare().getCode();
+        final String mottagareId = PartKod.valueOf(request.getMottagare().getCode()).getValue();
         final Personnummer personnummer = new Personnummer(request.getPatientPersonId().getExtension());
         final String intygsId = request.getIntygsId().getExtension();
         try {

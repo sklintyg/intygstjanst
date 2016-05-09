@@ -50,6 +50,13 @@ public class SendMessageToCareValidatorTest {
     }
 
     @Test
+    public void testThatValidationOKIfPartCodeIsValid() throws Exception {
+        List<String> validationErrors = new ArrayList<String>();
+        validator.validateSkickatAv("FKASSA", validationErrors);
+        assertTrue(validationErrors.isEmpty());
+    }
+
+    @Test
     public void testThatValidationOKIfPaminnelseIdIsSpecifiedForPaminnelseSubject() throws Exception {
         List<String> validationErrors = new ArrayList<String>();
         SendMessageToCareType message = buildSendMessageCareType("meddelandeId", Amneskod.PAMINN.toString());
@@ -117,8 +124,6 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationOkWhenEverythingIsPerfect() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
-
         SendMessageToCareType sendMessageToCareType = buildSendMessageCareType("originalMessageId", Amneskod.ARBTID.toString());
         sendMessageToCareType.setMeddelandeId("meddelande-id");
         sendMessageToCareType.setSistaDatumForSvar(null);
@@ -133,11 +138,18 @@ public class SendMessageToCareValidatorTest {
         certificate.setCivicRegistrationNumber(new Personnummer(civicRegistrationNumber));
         when(certificateService.getCertificateForCare(certificateId)).thenReturn(certificate);
 
-        validator.validateSendMessageToCare(sendMessageToCareType);
-        assertTrue(validationErrors.isEmpty());
+        List<String> res = validator.validateSendMessageToCare(sendMessageToCareType);
+        assertTrue(res.isEmpty());
     }
 
     // ----------- ERROR CASES------------------------------------------------------------------------------
+
+    @Test
+    public void testThatValidationFailsIfPartCodeIsInvalid() throws Exception {
+        List<String> validationErrors = new ArrayList<String>();
+        validator.validateSkickatAv("FK", validationErrors);
+        assertFalse(validationErrors.isEmpty());
+    }
 
     @Test
     public void testValidationOfAmneProducesError() {

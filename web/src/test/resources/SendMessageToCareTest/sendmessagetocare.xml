@@ -21,7 +21,7 @@
   <paminnelseMeddelande-id>56</paminnelseMeddelande-id>
   <skickatAv>
     <part>
-      <ns2:code>partCode</ns2:code>
+      <ns2:code>FKASSA</ns2:code>
       <ns2:codeSystem>partCodeSystem</ns2:codeSystem>
     </part>
   </skickatAv>
