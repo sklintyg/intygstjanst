@@ -19,17 +19,23 @@
 
 package se.inera.intyg.intygstjanst.web.integration.converter;
 
+import static java.util.Comparator.comparing;
+import static se.inera.intyg.common.support.model.converter.util.CertificateStateHolderUtil.ARCHIVED_STATUSES;
+
+import java.util.List;
+
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.builder.ClinicalProcessCertificateMetaTypeBuilder;
+import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.riv.clinicalprocess.healthcond.certificate.v1.CertificateMetaType;
 import se.riv.clinicalprocess.healthcond.certificate.v1.StatusType;
-
 
 @Component
 public class MetaDataResolver {
@@ -44,7 +50,7 @@ public class MetaDataResolver {
                 .issuerName(source.getSigningDoctorName())
                 .facilityName(source.getCareUnitName())
                 .signDate(source.getSignedDate())
-                .available(source.getDeleted() ? "false" : "true")
+                .available(isAvailable(source.getStates()))
                 .complemantaryInfo(source.getAdditionalInfo());
 
         for (CertificateStateHistoryEntry stateEntry : source.getStates()) {
@@ -60,5 +66,17 @@ public class MetaDataResolver {
             return null;
         }
         return new LocalDate(date);
+    }
+
+    private String isAvailable(List<CertificateStateHistoryEntry> states) {
+        if (CollectionUtils.isEmpty(states)) {
+            return String.valueOf(true);
+        }
+        return states.stream()
+            .filter(s -> ARCHIVED_STATUSES.contains(s.getState()))
+            .max(comparing(CertificateStateHistoryEntry::getTimestamp))
+            .map(s -> !CertificateState.DELETED.equals(s.getState()))
+            .orElse(true)
+            .toString();
     }
 }

@@ -126,10 +126,9 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         Certificate certificate = new Certificate();
         certificate.setDocument(deletedDocument);
-        certificate.setDeleted(Boolean.TRUE);
+        certificate.addState(new CertificateStateHistoryEntry("MI", CertificateState.DELETED, LocalDateTime.now().minusDays(4)));
         Certificate certificate2 = new Certificate();
         certificate2.setDocument(document);
-        certificate2.setDeleted(Boolean.FALSE);
         List<Certificate> result = Arrays.asList(certificate, certificate2);
 
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
@@ -158,10 +157,9 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         Certificate certificate = new Certificate();
         certificate.setDocument(deletedDocument);
-        certificate.setDeleted(Boolean.TRUE);
+        certificate.addState(new CertificateStateHistoryEntry("MI", CertificateState.DELETED, LocalDateTime.now().minusDays(4)));
         Certificate certificate2 = new Certificate();
         certificate2.setDocument(document);
-        certificate2.setDeleted(Boolean.FALSE);
         List<Certificate> result = Arrays.asList(certificate, certificate2);
 
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
@@ -189,7 +187,6 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         Certificate certificate = new Certificate();
         certificate.setDocument("document");
-        certificate.setDeleted(Boolean.FALSE);
         CertificateStateHistoryEntry state = new CertificateStateHistoryEntry();
         state.setState(CertificateState.SENT);
         state.setTarget("FK");

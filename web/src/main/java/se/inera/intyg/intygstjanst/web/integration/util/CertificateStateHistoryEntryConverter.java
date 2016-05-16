@@ -19,13 +19,13 @@
 
 package se.inera.intyg.intygstjanst.web.integration.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import static se.inera.intyg.common.support.model.converter.util.CertificateStateHolderUtil.ARCHIVED_STATUSES;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
+import java.util.*;
+
 import se.inera.ifv.insuranceprocess.certificate.v1.CertificateStatusType;
 import se.inera.ifv.insuranceprocess.certificate.v1.StatusType;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 
 /**
  * @author andreaskaltenbach
@@ -42,7 +42,9 @@ public final class CertificateStateHistoryEntryConverter {
 
         List<CertificateStatusType> states = new ArrayList<>();
         for (CertificateStateHistoryEntry state : source) {
-            states.add(toCertificateStatusType(state));
+            if (!ARCHIVED_STATUSES.contains(state.getState())) {
+                states.add(toCertificateStatusType(state));
+            }
         }
         return states;
     }

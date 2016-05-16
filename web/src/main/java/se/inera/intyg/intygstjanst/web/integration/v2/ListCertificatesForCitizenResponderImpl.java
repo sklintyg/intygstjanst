@@ -19,9 +19,13 @@
 
 package se.inera.intyg.intygstjanst.web.integration.v2;
 
+import static se.inera.intyg.common.support.model.converter.util.CertificateStateHolderUtil.isArchived;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,8 +75,9 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
             List<Certificate> certificates = certificateService.listCertificatesForCitizen(
                     personnummer, toStringList(parameters.getIntygTyp()), parameters.getFromDatum(), parameters.getTomDatum());
             for (Certificate certificate : certificates) {
-                if (certificateMatchesArkiveradeParameter(parameters.isArkiverade(), certificate.getDeleted())) {
-                    response.getIntygsLista().getIntyg().add(convert(certificate));
+                CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
+                if (certificateMatchesArkiveradeParameter(parameters.isArkiverade(), certificateHolder)) {
+                    response.getIntygsLista().getIntyg().add(convert(certificateHolder));
                 }
             }
             response.setResult(ResultTypeUtil.okResult());
@@ -87,23 +92,18 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         return response;
     }
 
-    private boolean certificateMatchesArkiveradeParameter(boolean arkiverade, Boolean isDeleted) {
-        return (arkiverade && Boolean.TRUE.equals(isDeleted)) || (!arkiverade && !Boolean.TRUE.equals(isDeleted));
+    private boolean certificateMatchesArkiveradeParameter(boolean arkiverade, CertificateHolder certificateHolder) {
+        return arkiverade == isArchived(certificateHolder.getCertificateStates());
     }
 
     private List<String> toStringList(List<TypAvIntyg> intygTyp) {
-        List<String> list = new ArrayList<>();
-        if (intygTyp != null) {
-            for (TypAvIntyg typAvIntyg : intygTyp) {
-                list.add(typAvIntyg.getCode());
-            }
+        if (CollectionUtils.isEmpty(intygTyp)) {
+            return new ArrayList<>();
         }
-        return list;
+        return intygTyp.stream().map(TypAvIntyg::getCode).collect(Collectors.toList());
     }
 
-    private Intyg convert(Certificate certificate) throws ModuleNotFoundException, ModuleException {
-        CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
-
+    private Intyg convert(CertificateHolder certificateHolder) throws ModuleNotFoundException, ModuleException {
         ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
         Intyg intyg = moduleApi.getIntygFromCertificateHolder(certificateHolder);
         intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates()));

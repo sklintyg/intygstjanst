@@ -285,4 +285,9 @@
       columnNames="MEDDELANDE_ID"
       tableName="ARENDE" />
   </changeSet>
+
+  <changeSet id="30" author="mn">
+    <sql>insert into CERTIFICATE_STATE(CERTIFICATE_ID, TARGET, STATE, TIMESTAMP) SELECT ID, 'MI', 'DELETED', now() from CERTIFICATE where DELETED='TRUE';</sql>
+  </changeSet>
+
 </databaseChangeLog>
