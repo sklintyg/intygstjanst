@@ -15,7 +15,6 @@
 |Journalsystem hamtar lista av intyg|
 |personnummer|enhet|resultat?|intyg?|
 |${person1.personnummer}|okänt|OK|[]|
-|okänt|1.2.3.4|OK|[]|
 |${person1.personnummer}|1.2.3.4|OK|[fit-intyg-1]|
 |${person1.personnummer}|5.6.7.8|OK|[fit-intyg-2]|
 

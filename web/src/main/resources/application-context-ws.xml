@@ -70,26 +70,6 @@
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
 
-  <jaxws:endpoint address="/list-certificates-for-care/v1.0"
-                  implementor="se.inera.intyg.intygstjanst.web.integration.ListCertificatesForCareResponderImpl">
-    <jaxws:outFaultInterceptors>
-      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
-        <constructor-arg
-                value="transform/clinicalprocess-healthcond-certificate/list-certificates-for-care-transform.xslt"/>
-      </bean>
-    </jaxws:outFaultInterceptors>
-  </jaxws:endpoint>
-
-  <jaxws:endpoint address="/list-certificates-for-citizen/v1.0"
-                  implementor="se.inera.intyg.intygstjanst.web.integration.ListCertificatesForCitizenResponderImpl">
-    <jaxws:outFaultInterceptors>
-      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
-        <constructor-arg
-                value="transform/clinicalprocess-healthcond-certificate/list-certificates-for-citizen-transform.xslt"/>
-      </bean>
-    </jaxws:outFaultInterceptors>
-  </jaxws:endpoint>
-
   <jaxws:endpoint address="/ping-for-configuration/v1.0"
       implementor="se.inera.intyg.intygstjanst.web.integration.PingForConfigurationResponderImpl"/>
 
