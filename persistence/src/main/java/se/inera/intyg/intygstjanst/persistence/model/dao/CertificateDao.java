@@ -110,8 +110,4 @@ public interface CertificateDao {
      */
     void removeCertificatesDeletedByCareGiver(Personnummer civicRegistrationNumber);
 
-    /**
-     * Set the field 'Deleted', (actually corresponding to whether or not the Intyg is archived by the user or not).
-     */
-    void setArchived(String certificateId, Personnummer civicRegistrationNumber, String archivedState) throws PersistenceException;
 }

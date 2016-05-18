@@ -176,15 +176,6 @@
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
-  <jaxws:endpoint address="/set-certificate-archived/v1.0"
-                  implementor="se.inera.intyg.intygstjanst.web.integration.SetCertificateArchivedResponderImpl">
-    <jaxws:outFaultInterceptors>
-      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
-        <constructor-arg value="transform/set-certificate-status-transform.xslt"/>
-      </bean>
-    </jaxws:outFaultInterceptors>
-  </jaxws:endpoint>
-
   <jaxws:endpoint address="/set-certificate-status/v1.0"
       implementor="se.inera.intyg.intygstjanst.web.integration.SetCertificateStatusResponderImpl">
     <jaxws:outFaultInterceptors>

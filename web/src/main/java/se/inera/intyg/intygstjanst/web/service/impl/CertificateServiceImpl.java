@@ -220,16 +220,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     @Override
-    @Transactional(noRollbackFor = { PersistenceException.class })
-    public void setArchived(String certificateId, Personnummer civicRegistrationNumber, String archivedState) throws InvalidCertificateException {
-        try {
-            certificateDao.setArchived(certificateId, civicRegistrationNumber, archivedState);
-        } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
-        }
-    }
-
-    @Override
     @Transactional
     public void certificateReceived(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException, InvalidCertificateException {
         LOG.debug("Certificate received {}", certificateHolder.getId());

@@ -145,11 +145,4 @@ public interface CertificateService {
     Certificate revokeCertificate(Personnummer civicRegistrationNumber, String certificateId)
             throws InvalidCertificateException, CertificateRevokedException;
 
-    /**
-     * @param certificateId
-     * @param nationalIdentityNumber
-     * @param archivedState
-     * @throws InvalidCertificateException
-     */
-    void setArchived(String certificateId, Personnummer nationalIdentityNumber, String archivedState) throws InvalidCertificateException;
 }
