@@ -21,7 +21,9 @@ package se.inera.intyg.intygstjanst.web.integration.converter;
 
 import java.io.StringWriter;
 
-import javax.xml.bind.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.joda.time.LocalDateTime;
 
@@ -71,7 +73,7 @@ public final class ArendeConverter {
         return arende;
     }
 
-    private static String convertToXmlString(SendMessageToRecipientType source) throws JAXBException {
+    public static String convertToXmlString(SendMessageToRecipientType source) throws JAXBException {
         se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.ObjectFactory objectFactory = new se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.ObjectFactory();
         JAXBContext jaxbContext = JAXBContext
                 .newInstance(SendMessageToRecipientType.class);
