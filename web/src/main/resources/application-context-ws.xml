@@ -40,15 +40,6 @@
 
   <!-- ws endpoints -->
 
-  <jaxws:endpoint address="/get-certificate-content/v1.0"
-      implementor="se.inera.intyg.intygstjanst.web.integration.GetCertificateContentResponderImpl">
-    <jaxws:outFaultInterceptors>
-      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
-        <constructor-arg value="transform/get-certificate-content-transform.xslt"/>
-      </bean>
-    </jaxws:outFaultInterceptors>
-  </jaxws:endpoint>
-
   <jaxws:endpoint address="/get-consent/v1.0" implementor="se.inera.intyg.intygstjanst.web.integration.GetConsentResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">

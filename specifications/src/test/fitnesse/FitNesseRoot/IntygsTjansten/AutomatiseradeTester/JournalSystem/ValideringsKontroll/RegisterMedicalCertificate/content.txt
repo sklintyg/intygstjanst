@@ -256,9 +256,9 @@
 |filnamn|resultat?|
 |validering/register/personnr-utan-bindestreck.xml|OK|
 
-|Hamta intygsinnehall|
-|personnummer|intyg|förväntatSvar|resultat?|
-|${person1.personnummer}|personnr-utan-bindestreck|{id : personnr-utan-bindestreck}|OK|
+|Hamta intyg|
+|personnummer|intyg|förväntat svar|resultat?|
+|${person1.personnummer}|personnr-utan-bindestreck|{"lakarutlatande":{"lakarutlatandeId":"personnr-utan-bindestreck","patient":{"personId":{"extension":"${person1.personnummer}"}}}}|OK|
 
 |ta bort intyg|
 |id|
