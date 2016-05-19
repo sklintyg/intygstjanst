@@ -232,10 +232,6 @@
       <artifactId>infrastructure-directory-organization-schemas</artifactId>
     </dependency>
     <dependency>
-      <groupId>se.inera.intyg.common</groupId>
-      <artifactId>hsa-integration</artifactId>
-    </dependency>
-    <dependency>
       <groupId>se.inera.intyg.clinicalprocess.healthcond.rehabilitation</groupId>
       <artifactId>intyg-clinicalprocess-healthcond-rehabilitation-schemas</artifactId>
     </dependency>
