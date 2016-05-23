@@ -30,12 +30,12 @@
     {
       "hamtasFran": "Skickas med posten",
       "datum": "2015-09-03",
-      "typ": 6
+      "typ": "PSYKOLOG"
     },
     {
       "hamtasFran": "Skickas med e-mail",
       "datum": "2015-06-30",
-      "typ": 4
+      "typ": "FYSIOTERAPEUT"
     }
   ],
   "underlagFinns": true,
