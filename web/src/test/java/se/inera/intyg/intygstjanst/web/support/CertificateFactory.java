@@ -23,15 +23,15 @@ package se.inera.intyg.intygstjanst.web.support;
 import org.joda.time.LocalDateTime;
 
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.intyg.intygstjanst.persistence.model.builder.CertificateBuilder;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 
 /**
  * @author andreaskaltenbach
  */
 public final class CertificateFactory {
     private static final String INTYG_TYPE = "fk7263";
-    
+
     private CertificateFactory() {
     }
 
@@ -65,14 +65,17 @@ public final class CertificateFactory {
     }
 
     public static Certificate buildCertificate(String certificateId, String certificateType, String validFrom, String validTo) {
-        return new CertificateBuilder(certificateId, CERTIFICATE_DOCUMENT)
-                .civicRegistrationNumber(CIVIC_REGISTRATION_NUMBER)
-                .certificateType(certificateType)
-                .validity(validFrom, validTo)
-                .signedDate(SIGNED_DATE)
-                .signingDoctorName(SIGNING_DOCTOR)
-                .careUnitId(CARE_UNIT_ID)
-                .careUnitName(CARE_UNIT_NAME)
-                .build();
+        Certificate certificate = new Certificate(certificateId);
+        certificate.setCivicRegistrationNumber(CIVIC_REGISTRATION_NUMBER);
+        certificate.setType(certificateType);
+        certificate.setValidFromDate(validFrom);
+        certificate.setValidToDate(validTo);
+        certificate.setSignedDate(SIGNED_DATE);
+        certificate.setSigningDoctorName(SIGNING_DOCTOR);
+        certificate.setCareUnitId(CARE_UNIT_ID);
+        certificate.setCareUnitName(CARE_UNIT_NAME);
+        certificate.setOriginalCertificate(new OriginalCertificate());
+        certificate.getOriginalCertificate().setDocument("XML");
+        return certificate;
     }
 }

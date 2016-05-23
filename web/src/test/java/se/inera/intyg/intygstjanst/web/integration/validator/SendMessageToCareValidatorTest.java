@@ -134,7 +134,7 @@ public class SendMessageToCareValidatorTest {
 
         String certificateId = sendMessageToCareType.getIntygsId().getExtension();
         String civicRegistrationNumber = sendMessageToCareType.getPatientPersonId().getExtension();
-        Certificate certificate = new Certificate(certificateId, null);
+        Certificate certificate = new Certificate(certificateId);
         certificate.setCivicRegistrationNumber(new Personnummer(civicRegistrationNumber));
         when(certificateService.getCertificateForCare(certificateId)).thenReturn(certificate);
 
@@ -294,7 +294,7 @@ public class SendMessageToCareValidatorTest {
             throws Exception, InvalidCertificateException {
         String certificateId = message.getIntygsId().getExtension();
         String civicRegistrationNumber = message.getPatientPersonId().getExtension();
-        Certificate certificate = new Certificate(certificateId, null);
+        Certificate certificate = new Certificate(certificateId);
         certificate.setCivicRegistrationNumber(new Personnummer(civicRegNumber));
         when(certificateService.getCertificateForCare(certificateId)).thenReturn(certificate);
         validator.validateThatCertificateExists(certificateId, civicRegistrationNumber, validationErrors);

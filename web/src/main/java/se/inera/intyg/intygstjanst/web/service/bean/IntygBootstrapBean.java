@@ -20,10 +20,7 @@
 package se.inera.intyg.intygstjanst.web.service.bean;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -43,12 +40,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.util.integration.integration.json.CustomObjectMapper;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
 
 public class IntygBootstrapBean {
@@ -75,7 +69,7 @@ public class IntygBootstrapBean {
     public void initData() throws IOException {
 
         List<Resource> metadataFiles = getResourceListing("bootstrap-intyg/*-metadata.json");
-        List<Resource> contentFiles = getResourceListing("bootstrap-intyg/*-content.json");
+        List<Resource> contentFiles = getResourceListing("bootstrap-intyg/*-content.xml");
         Collections.sort(metadataFiles, new ResourceFilenameComparator());
         Collections.sort(contentFiles, new ResourceFilenameComparator());
         int count = metadataFiles.size();
@@ -116,23 +110,8 @@ public class IntygBootstrapBean {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 try {
                     Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
-                    certificate.setDocument(IOUtils.toString(content.getInputStream(), "UTF-8"));
-                    ModuleApi moduleApi = null;
-                    OriginalCertificate originalCertificate = new OriginalCertificate();
-                    try {
-                        moduleApi = moduleRegistry.getModuleApi(certificate.getType());
-                    } catch (ModuleNotFoundException e) {
-                        LOG.error("Module {} not found ", certificate.getType());
-                    }
-                    if (moduleApi != null && moduleApi.marshall(certificate.getDocument()) != null) {
-                        originalCertificate.setReceived(new LocalDateTime());
-                        originalCertificate.setDocument(moduleApi.marshall(certificate.getDocument()));
-                        certificate.setOriginalCertificate(originalCertificate);
-                        originalCertificate.setCertificate(certificate);
-                    } else {
-                        LOG.debug("Got null while populating with original_certificate");
-                        originalCertificate.setDocument(certificate.getDocument());
-                    }
+                    String contentString = IOUtils.toString(content.getInputStream(), "UTF-8");
+                    OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), contentString, certificate);
                     entityManager.persist(originalCertificate);
                     entityManager.persist(certificate);
                 } catch (Throwable t) {
@@ -162,10 +141,10 @@ public class IntygBootstrapBean {
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     try {
                         Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
-                        certificate.setDocument(IOUtils.toString(content.getInputStream(), "UTF-8"));
+                        String contentString = IOUtils.toString(content.getInputStream(), "UTF-8");
 
                         ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
-                        Utlatande utlatande = moduleApi.getUtlatandeFromJson(certificate.getDocument());
+                        Utlatande utlatande = moduleApi.getUtlatandeFromXml(contentString);
 
                         if (certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
                             SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertFk7263(certificate, utlatande);

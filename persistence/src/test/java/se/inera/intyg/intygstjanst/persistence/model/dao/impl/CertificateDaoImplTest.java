@@ -169,27 +169,6 @@ public class CertificateDaoImplTest {
     }
 
     @Test
-    public void testGetDocument() throws PersistenceException{
-
-        Certificate certificate = CertificateFactory.buildCertificate("1", "2013-04-25", "2013-05-25");
-        certificate.setCivicRegistrationNumber(CIVIC_REGISTRATION_NUMBER);
-        certificate.setSignedDate(new LocalDateTime("2013-04-24"));
-        certificateDao.store(certificate);
-
-        entityManager.flush();
-        entityManager.clear();
-
-        Certificate storedCertificate = certificateDao.getCertificate(CIVIC_REGISTRATION_NUMBER, "1");
-
-        assertEquals(new LocalDateTime("2013-04-24"), storedCertificate.getSignedDate());
-        assertEquals("2013-04-25", storedCertificate.getValidFromDate());
-        assertEquals("2013-05-25", storedCertificate.getValidToDate());
-
-        String document = storedCertificate.getDocument();
-        assertEquals("{\"name\":\"Some JSON\"}", document);
-    }
-
-    @Test
     public void testStore() throws PersistenceException {
 
         assertNull(certificateDao.getCertificate(CIVIC_REGISTRATION_NUMBER, CERTIFICATE_ID));
@@ -345,6 +324,5 @@ public class CertificateDaoImplTest {
         OriginalCertificate original = entityManager.find(OriginalCertificate.class, originalCertId);
         assertNotNull(original);
         assertEquals("Some text", original.getDocument());
-        assertEquals(CertificateFactory.CERTIFICATE_DOCUMENT, original.getCertificate().getDocument());
     }
 }

@@ -290,4 +290,8 @@
     <sql>insert into CERTIFICATE_STATE(CERTIFICATE_ID, TARGET, STATE, TIMESTAMP) SELECT ID, 'MI', 'DELETED', now() from CERTIFICATE where DELETED=1;</sql>
   </changeSet>
 
+  <changeSet id="31" author="mn">
+    <dropColumn tableName="CERTIFICATE" columnName="DOCUMENT" />
+  </changeSet>
+
 </databaseChangeLog>

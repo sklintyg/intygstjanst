@@ -20,24 +20,9 @@ package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 import static se.inera.intyg.common.support.model.util.Iterables.find;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.annotations.Type;
@@ -46,7 +31,6 @@ import org.joda.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.common.support.model.ModelException;
 import se.inera.intyg.common.support.model.util.Predicate;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
@@ -68,14 +52,6 @@ public class Certificate {
     @Id
     @Column(name = "ID")
     private String id;
-
-    /**
-     * Certificate document.
-     */
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name = "DOCUMENT")
-    private byte[] document;
 
     /**
      * The transport model (XML) that was used to generate this entity.
@@ -179,9 +155,8 @@ public class Certificate {
      * @param document
      *            the document
      */
-    public Certificate(String id, String document) {
+    public Certificate(String id) {
         this.id = id;
-        doSetDocument(document);
     }
 
     /**
@@ -191,31 +166,11 @@ public class Certificate {
         // Empty
     }
 
-    private void doSetDocument(String document) {
-        this.document = toBytes(document);
-    }
-
     /**
      * @return id
      */
     public String getId() {
         return id;
-    }
-
-    /**
-     * @return document
-     */
-    public String getDocument() {
-        return fromBytes(this.document);
-    }
-
-    /**
-     * Sets the document data.
-     *
-     * @param document
-     */
-    public void setDocument(String document) {
-        doSetDocument(document);
     }
 
     public OriginalCertificate getOriginalCertificate() {
@@ -342,27 +297,6 @@ public class Certificate {
         this.states.add(state);
     }
 
-    private byte[] toBytes(String data) {
-
-        if (data == null) {
-            return new byte[0];
-        }
-
-        try {
-            return data.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new ModelException("Failed to convert String to bytes!", e);
-        }
-    }
-
-    private String fromBytes(byte[] bytes) {
-        try {
-            return new String(bytes, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new ModelException("Failed to convert bytes to String!", e);
-        }
-    }
-
     public boolean isRevoked() {
         return find(getStates(), new Predicate<CertificateStateHistoryEntry>() {
             @Override
@@ -383,7 +317,7 @@ public class Certificate {
 
     @Override
     public String toString() {
-        return "Certificate{" + "id='" + id + '\'' + ", document=" + fromBytes(document) + ", type='" + type + '\''
+        return "Certificate{" + "id='" + id + '\'' + ", type='" + type + '\''
                 + ", signingDoctorName='" + signingDoctorName + '\'' + ", careUnitName='" + careUnitName + '\''
                 + ", civicRegistrationNumber='" + civicRegistrationNumber + '\'' + ", signedDate=" + signedDate
                 + ", validFromDate='" + validFromDate + '\'' + ", validToDate='" + validToDate + '\'' + ", deleted="

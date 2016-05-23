@@ -22,33 +22,28 @@ package se.inera.intyg.intygstjanst.web.integration.v2;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v2.ListCertificatesForCareResponderInterface;
-import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v2.ListCertificatesForCareResponseType;
-import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v2.ListCertificatesForCareType;
+import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v2.*;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v2.Intyg;
@@ -75,7 +70,8 @@ public class ListCertificatesForCareResponderImplTest {
     @Before
     public void setup() throws ModuleNotFoundException, ModuleException {
         when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
-        when(moduleApi.getIntygFromCertificateHolder(any(CertificateHolder.class))).thenReturn(new Intyg());
+        when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(mock(se.inera.intyg.common.support.model.common.internal.Utlatande.class));
+        when(moduleApi.getIntygFromUtlatande(any(se.inera.intyg.common.support.model.common.internal.Utlatande.class))).thenReturn(new Intyg());
     }
 
     @Test
@@ -99,17 +95,12 @@ public class ListCertificatesForCareResponderImplTest {
 
     @Test
     public void listCertificates() throws Exception {
-        final String document1 = "document1";
-        final String document2 = "document2";
-
         Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
         List<String> careUnit = Collections.singletonList("enhet");
 
         Certificate certificate1 = new Certificate();
-        certificate1.setDocument(document1);
         certificate1.setDeletedByCareGiver(Boolean.FALSE);
         Certificate certificate2 = new Certificate();
-        certificate2.setDocument(document2);
         certificate2.setDeletedByCareGiver(Boolean.FALSE);
 
         List<Certificate> result = Arrays.asList(certificate1, certificate2);
@@ -129,17 +120,12 @@ public class ListCertificatesForCareResponderImplTest {
 
     @Test
     public void listCertificatesDoesNotListCertificatesDeletedByCaregiver() throws Exception {
-        final String deletedDocument = "deleted document";
-        final String document = "document";
-
         Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
         List<String> careUnit = Collections.singletonList("enhet");
 
         Certificate certificate = new Certificate();
-        certificate.setDocument(deletedDocument);
         certificate.setDeletedByCareGiver(Boolean.TRUE);
         Certificate certificate2 = new Certificate();
-        certificate2.setDocument(document);
         certificate2.setDeletedByCareGiver(Boolean.FALSE);
 
         List<Certificate> result = Arrays.asList(certificate, certificate2);
@@ -152,11 +138,10 @@ public class ListCertificatesForCareResponderImplTest {
         ListCertificatesForCareResponseType response = responder.listCertificatesForCare(null, parameters);
 
         verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
-        ArgumentCaptor<CertificateHolder> certificateHolderCaptor = ArgumentCaptor.forClass(CertificateHolder.class);
-        verify(moduleApi).getIntygFromCertificateHolder(certificateHolderCaptor.capture());
+        verify(moduleApi).getIntygFromUtlatande(any(se.inera.intyg.common.support.model.common.internal.Utlatande.class));
+        verify(moduleApi).getUtlatandeFromXml(anyString());
 
         // We only return Intyg that are not deletedByCaregiver
-        assertEquals(document, certificateHolderCaptor.getValue().getDocument());
         assertEquals(1, response.getIntygsLista().getIntyg().size());
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }

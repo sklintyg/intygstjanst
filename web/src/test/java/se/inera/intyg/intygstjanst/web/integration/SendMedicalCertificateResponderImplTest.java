@@ -20,7 +20,10 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ERROR;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
@@ -35,24 +38,18 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.w3.wsaddressing10.AttributedURIType;
 
+import iso.v21090.dt.v1.II;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.rivtabp20.v1.SendMedicalCertificateResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateResponseType;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType;
-import se.inera.ifv.insuranceprocess.healthreporting.v2.EnhetType;
-import se.inera.ifv.insuranceprocess.healthreporting.v2.HosPersonalType;
-import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
-import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.*;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.*;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.intyg.intygstjanst.persistence.model.builder.CertificateBuilder;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
-import iso.v21090.dt.v1.II;
-
 
 @RunWith( MockitoJUnitRunner.class )
 public class SendMedicalCertificateResponderImplTest {
@@ -89,7 +86,7 @@ public class SendMedicalCertificateResponderImplTest {
         List<Recipient> recipients = new ArrayList<Recipient>();
         recipients.add(createFkRecipient());
 
-        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificateBuilder().build());
+        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
         when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(recipients);
 
         AttributedURIType uri = new AttributedURIType();
@@ -111,7 +108,7 @@ public class SendMedicalCertificateResponderImplTest {
         recipients.add(createFkRecipient());
         recipients.add(createFkRecipient());
 
-        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificateBuilder().build());
+        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
         when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(recipients);
 
         AttributedURIType uri = new AttributedURIType();
@@ -131,7 +128,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         List<Recipient> recipients = new ArrayList<Recipient>();
 
-        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificateBuilder().build());
+        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
         when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(recipients);
 
         AttributedURIType uri = new AttributedURIType();
@@ -145,10 +142,11 @@ public class SendMedicalCertificateResponderImplTest {
         verify(recipientService).listRecipients(createCertificateType());
     }
 
-    private CertificateBuilder createCertificateBuilder() {
-        return new CertificateBuilder(CERTIFICATE_ID)
-                .certificateType(CERTIFICATE_TYPE)
-                .civicRegistrationNumber(PERSONNUMMER);
+    private Certificate createCertificate() {
+        Certificate certificate = new Certificate(CERTIFICATE_ID);
+        certificate.setType(CERTIFICATE_TYPE);
+        certificate.setCivicRegistrationNumber(PERSONNUMMER);
+        return certificate;
     }
 
     private CertificateType createCertificateType() {
@@ -165,7 +163,7 @@ public class SendMedicalCertificateResponderImplTest {
     private SendMedicalCertificateRequestType createRequest() {
         SendMedicalCertificateRequestType request = new SendMedicalCertificateRequestType();
         SendType sendType = new SendType();
-        
+
         VardAdresseringsType vardAdresseringsType = new VardAdresseringsType();
         HosPersonalType hosPersonal = new HosPersonalType();
 
@@ -212,7 +210,7 @@ public class SendMedicalCertificateResponderImplTest {
         patient.setFullstandigtNamn("patientnamn");
         lakarutlatande.setPatient(patient);
 
-        sendType.setLakarutlatande(lakarutlatande);        
+        sendType.setLakarutlatande(lakarutlatande);
 
         request.setSend(sendType);
 

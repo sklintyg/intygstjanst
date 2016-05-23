@@ -21,12 +21,11 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
@@ -40,7 +39,6 @@ import se.inera.intyg.common.support.integration.module.exception.*;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.intyg.intygstjanst.persistence.model.builder.CertificateBuilder;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
@@ -80,7 +78,7 @@ public class CertificateServiceImplTest {
     private CertificateServiceImpl certificateService = new CertificateServiceImpl();
 
     private Certificate createCertificate() {
-        Certificate certificate = new Certificate(CERTIFICATE_ID, "document");
+        Certificate certificate = new Certificate(CERTIFICATE_ID);
         certificate.setCivicRegistrationNumber(PERSONNUMMER);
         return certificate;
     }
@@ -127,7 +125,8 @@ public class CertificateServiceImplTest {
     @Test
     public void sendCertificateCallsSenderAndSetsStatus() throws Exception {
 
-        Certificate certificate = new CertificateBuilder(CERTIFICATE_ID).civicRegistrationNumber(PERSONNUMMER).build();
+        Certificate certificate = new Certificate(CERTIFICATE_ID);
+        certificate.setCivicRegistrationNumber(PERSONNUMMER);
 
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
         when(recipientService.getRecipientForLogicalAddress(Mockito.any(String.class))).thenReturn(createRecipient());
@@ -143,7 +142,8 @@ public class CertificateServiceImplTest {
     @Test
     public void sendCertificateAlreadySentCertificate() throws Exception {
 
-        Certificate certificate = new CertificateBuilder(CERTIFICATE_ID).civicRegistrationNumber(PERSONNUMMER).build();
+        Certificate certificate = new Certificate(CERTIFICATE_ID);
+        certificate.setCivicRegistrationNumber(PERSONNUMMER);
         List<CertificateStateHistoryEntry> states = new ArrayList<>(certificate.getStates());
         states.add(new CertificateStateHistoryEntry(RECIPIENT_ID, CertificateState.SENT, LocalDateTime.now()));
         certificate.setStates(states);
@@ -166,7 +166,8 @@ public class CertificateServiceImplTest {
 
     @Test(expected = CertificateRevokedException.class)
     public void testSendRevokedCertificate() throws Exception {
-        Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID).state(CertificateState.CANCELLED, null).build();
+        Certificate revokedCertificate = new Certificate(CERTIFICATE_ID);
+        revokedCertificate.setStates(Arrays.asList(new CertificateStateHistoryEntry("target", CertificateState.CANCELLED, LocalDateTime.now())));
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(revokedCertificate);
         certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fk");
     }
@@ -185,7 +186,8 @@ public class CertificateServiceImplTest {
 
     @Test(expected = InvalidCertificateException.class)
     public void testGetCertificateRevoked() throws Exception {
-        Certificate revokedCertificate = new CertificateBuilder(CERTIFICATE_ID).state(CertificateState.CANCELLED, null).build();
+        Certificate revokedCertificate = new Certificate(CERTIFICATE_ID);
+        revokedCertificate.setStates(Arrays.asList(new CertificateStateHistoryEntry("target", CertificateState.CANCELLED, LocalDateTime.now())));
         when(certificateDao.getCertificate(PERSONNUMMER,CERTIFICATE_ID)).thenReturn(revokedCertificate);
         certificateService.getCertificateForCare(CERTIFICATE_ID);
     }

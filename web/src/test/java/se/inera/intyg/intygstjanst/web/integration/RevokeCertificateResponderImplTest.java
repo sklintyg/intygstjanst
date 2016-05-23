@@ -1,6 +1,8 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -161,7 +163,7 @@ public class RevokeCertificateResponderImplTest {
     }
 
     private Certificate createCertificate(String certificateId, CertificateStateHistoryEntry... entries) {
-        Certificate cert = new Certificate(certificateId, null);
+        Certificate cert = new Certificate(certificateId);
         cert.setStates(Arrays.asList(entries));
         return cert;
     }

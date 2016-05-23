@@ -103,7 +103,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
                                                        final String xml) throws CertificateAlreadyExistsException, InvalidCertificateException, ConverterException {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
         Utlatande utlatande = api.getUtlatandeFromIntyg(registerCertificate.getIntyg());
-        CertificateHolder certificateHolder = toCertificateHolder(utlatande, xml, intygsTyp);
+        CertificateHolder certificateHolder = toCertificateHolder(utlatande, intygsTyp);
         certificateHolder.setOriginalCertificate(xml);
         moduleContainer.certificateReceived(certificateHolder);
         response.setResult(ResultTypeUtil.okResult());
@@ -147,7 +147,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         return certificateType.getIntyg().getTyp().getCode().toLowerCase();
     }
 
-    private CertificateHolder toCertificateHolder(Utlatande utlatande, String document, String type) {
+    private CertificateHolder toCertificateHolder(Utlatande utlatande, String type) {
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId(utlatande.getId());
         certificateHolder.setCareUnitId(utlatande.getGrundData().getSkapadAv().getVardenhet().getEnhetsid());
@@ -157,7 +157,6 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         certificateHolder.setCivicRegistrationNumber(utlatande.getGrundData().getPatient().getPersonId());
         certificateHolder.setSignedDate(utlatande.getGrundData().getSigneringsdatum());
         certificateHolder.setType(type);
-        certificateHolder.setDocument(document);
         return certificateHolder;
     }
 

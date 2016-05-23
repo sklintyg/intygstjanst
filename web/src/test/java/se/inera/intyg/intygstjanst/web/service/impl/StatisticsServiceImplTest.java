@@ -20,26 +20,23 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-import javax.jms.JMSException;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import javax.jms.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
+import se.inera.intyg.common.support.model.common.internal.Utlatande;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.support.api.ModuleApi;
+import se.inera.intyg.common.util.integration.integration.json.CustomObjectMapper;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -51,8 +48,14 @@ public class StatisticsServiceImplTest {
     @Mock
     private MonitoringLogService monitoringLogService;
 
+    @Mock
+    private IntygModuleRegistry moduleRegistry;
+
+    @Mock
+    private CustomObjectMapper objectMapper;
+
     @InjectMocks
-    private StatisticsServiceImpl serviceImpl = new StatisticsServiceImpl(); 
+    private StatisticsServiceImpl serviceImpl = new StatisticsServiceImpl();
 
     @Test
     public void disabledServiceDoesNothingOnCreated() {
@@ -68,19 +71,17 @@ public class StatisticsServiceImplTest {
 
     @Test
     public void serviceSendsDocumentAndIdForCreate() throws JMSException {
+        final String xml = "The document";
+        final String id = "The id";
         org.springframework.test.util.ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
         ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
 
-        Certificate certificate = mock(Certificate.class);
-        when(certificate.getDocument()).thenReturn("The document");
-        when(certificate.getId()).thenReturn("The id");
-        
         TextMessage message = mock(TextMessage.class);
         Session session = mock(Session.class);
-        when(session.createTextMessage("The document")).thenReturn(message);
-        
-        serviceImpl.created(certificate.getDocument(), certificate.getId(), certificate.getType(), certificate.getCareUnitId());
-        
+        when(session.createTextMessage(xml)).thenReturn(message);
+
+        serviceImpl.created(xml, id, "luse", "unit");
+
         verify(template, only()).send(captor.capture());
         captor.getValue().createMessage(session);
         verify(message).setStringProperty("action", "created");
@@ -88,20 +89,30 @@ public class StatisticsServiceImplTest {
     }
 
     @Test
-    public void serviceSendsDocumentAndIdForRevoke() throws JMSException {
+    public void serviceSendsDocumentAndIdForRevoke() throws Exception {
+        final String type = "lisu";
+        final String xmlBody = "xml body";
+        final String jsonString = "json string";
         org.springframework.test.util.ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
         ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
+        ModuleApi moduleApi = mock(ModuleApi.class);
+        when(moduleApi.getUtlatandeFromXml(xmlBody)).thenReturn(mock(Utlatande.class));
+        when(moduleRegistry.getModuleApi(type)).thenReturn(moduleApi);
+        when(objectMapper.writeValueAsString(any(Utlatande.class))).thenReturn(jsonString);
 
         Certificate certificate = mock(Certificate.class);
-        when(certificate.getDocument()).thenReturn("The document");
+        OriginalCertificate originalCertificate = mock(OriginalCertificate.class);
+        when(originalCertificate.getDocument()).thenReturn(xmlBody);
+        when(certificate.getOriginalCertificate()).thenReturn(originalCertificate);
         when(certificate.getId()).thenReturn("The id");
-        
+        when(certificate.getType()).thenReturn(type);
+
         TextMessage message = mock(TextMessage.class);
         Session session = mock(Session.class);
-        when(session.createTextMessage("The document")).thenReturn(message);
-        
+        when(session.createTextMessage(jsonString)).thenReturn(message);
+
         serviceImpl.revoked(certificate);
-        
+
         verify(template, only()).send(captor.capture());
         captor.getValue().createMessage(session);
         verify(message).setStringProperty("action", "revoked");

@@ -18,8 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +27,8 @@ import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
+import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
 
@@ -61,7 +58,7 @@ public class SjukfallCertificateServiceImpl implements SjukfallCertificateServic
         SjukfallCertificate sjukfallCert;
         try {
             ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
-            Utlatande utlatande = moduleApi.getUtlatandeFromJson(certificate.getDocument());
+            Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
 
             if (!certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
                 LOG.debug("Not storing {0}, is smittskydd or does not have a diagnoseCode.", certificate.getId());
@@ -74,8 +71,8 @@ public class SjukfallCertificateServiceImpl implements SjukfallCertificateServic
         } catch (ModuleNotFoundException e) {
             LOG.error("Could not construct sjukfall certificate from intyg, ModuleNotFoundException: {0}", e.getMessage());
             return false;
-        } catch (IOException e) {
-            LOG.error("Could not construct sjukfall certificate from intyg, IOException: {0}", e.getMessage());
+        } catch (ModuleException e) {
+            LOG.error("Could not construct sjukfall certificate from intyg, ModuleException: {0}", e.getMessage());
             return false;
         }
     }

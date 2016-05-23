@@ -33,7 +33,7 @@ public final class ConverterUtil {
     }
 
     public static Certificate toCertificate(CertificateHolder certificateHolder) {
-        Certificate certificate = new Certificate(certificateHolder.getId(), certificateHolder.getDocument());
+        Certificate certificate = new Certificate(certificateHolder.getId());
 
         certificate.setType(certificateHolder.getType());
         certificate.setSigningDoctorName(certificateHolder.getSigningDoctorName());
@@ -76,7 +76,6 @@ public final class ConverterUtil {
         certificateHolder.setSignedDate(certificate.getSignedDate());
         certificateHolder.setCivicRegistrationNumber(certificate.getCivicRegistrationNumber());
         certificateHolder.setAdditionalInfo(certificate.getAdditionalInfo());
-        certificateHolder.setDocument(certificate.getDocument());
         certificateHolder.setDeleted(certificate.getDeleted());
         certificateHolder.setValidFromDate(certificate.getValidFromDate());
         certificateHolder.setValidToDate(certificate.getValidToDate());

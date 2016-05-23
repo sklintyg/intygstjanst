@@ -23,13 +23,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -42,13 +36,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
-import se.inera.intyg.common.support.modules.support.api.ModuleApi;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 
 /**
@@ -69,9 +58,6 @@ public class CertificateResource {
         this.transactionTemplate = new TransactionTemplate(txManager);
     }
 
-    @Autowired
-    private IntygModuleRegistry moduleRegistry;
-
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -84,6 +70,7 @@ public class CertificateResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteCertificate(@PathParam("id") final String id) {
         return transactionTemplate.execute(new TransactionCallback<Response>() {
+            @Override
             public Response doInTransaction(TransactionStatus status) {
                 try {
                     Certificate certificate = entityManager.find(Certificate.class, id);
@@ -112,6 +99,7 @@ public class CertificateResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteAllCertificates() {
         return transactionTemplate.execute(new TransactionCallback<Response>() {
+            @Override
             public Response doInTransaction(TransactionStatus status) {
                 try {
                     @SuppressWarnings("unchecked")
@@ -144,27 +132,11 @@ public class CertificateResource {
     @Path("/")
     public Response insertCertificate(final CertificateHolder certificateHolder) {
         return transactionTemplate.execute(new TransactionCallback<Response>() {
+            @Override
             public Response doInTransaction(TransactionStatus status) {
                 Certificate certificate = ConverterUtil.toCertificate(certificateHolder);
                 try {
-                    OriginalCertificate originalCertificate = new OriginalCertificate();
-                    originalCertificate.setReceived(new LocalDateTime());
-
-                    // Call marshall from the modules ModuleApi to create XML for originalCertificate
-                    ModuleApi moduleApi = null;
-                    try {
-                        moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
-                    } catch (ModuleNotFoundException e) {
-                        LOGGER.error("Module {} not found ", certificateHolder.getType());
-                    }
-                    if (moduleApi != null && moduleApi.marshall(certificate.getDocument()) != null) {
-                        originalCertificate.setDocument(moduleApi.marshall(certificate.getDocument()));
-                    } else {
-                        LOGGER.debug("Got null while populating with original_certificate");
-                        originalCertificate.setDocument(certificate.getDocument());
-                    }
-
-                    originalCertificate.setCertificate(certificate);
+                    OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), certificateHolder.getOriginalCertificate(), certificate);
                     entityManager.persist(certificate);
                     entityManager.persist(originalCertificate);
                     return Response.ok().build();

@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -41,7 +42,6 @@ import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
@@ -76,7 +76,8 @@ public class ListCertificatesForCitizenResponderImplTest {
     @Before
     public void setup() throws ModuleNotFoundException, ModuleException {
         when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
-        when(moduleApi.getIntygFromCertificateHolder(any(CertificateHolder.class))).thenReturn(new Intyg());
+        when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(mock(se.inera.intyg.common.support.model.common.internal.Utlatande.class));
+        when(moduleApi.getIntygFromUtlatande(any(se.inera.intyg.common.support.model.common.internal.Utlatande.class))).thenReturn(new Intyg());
     }
 
     @Test
@@ -117,18 +118,14 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     @Test
     public void listCertificatesArkiveradFalse() throws Exception {
-        final String deletedDocument = "deleted document";
-        final String document = "document";
         Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = new LocalDate(2000, 1, 1);
         LocalDate toDate = new LocalDate(2020, 12, 12);
 
         Certificate certificate = new Certificate();
-        certificate.setDocument(deletedDocument);
         certificate.addState(new CertificateStateHistoryEntry("MI", CertificateState.DELETED, LocalDateTime.now().minusDays(4)));
         Certificate certificate2 = new Certificate();
-        certificate2.setDocument(document);
         List<Certificate> result = Arrays.asList(certificate, certificate2);
 
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
@@ -138,28 +135,23 @@ public class ListCertificatesForCitizenResponderImplTest {
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
         verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
-        ArgumentCaptor<CertificateHolder> certificateHolderCaptor = ArgumentCaptor.forClass(CertificateHolder.class);
-        verify(moduleApi).getIntygFromCertificateHolder(certificateHolderCaptor.capture());
+        verify(moduleApi).getIntygFromUtlatande(any(se.inera.intyg.common.support.model.common.internal.Utlatande.class));
+        verify(moduleApi).getUtlatandeFromXml(anyString());
 
-        assertEquals(document, certificateHolderCaptor.getValue().getDocument());
         assertEquals(1, response.getIntygsLista().getIntyg().size());
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     @Test
     public void listCertificatesArkiveradTrue() throws Exception {
-        final String deletedDocument = "deleted document";
-        final String document = "document";
         Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = new LocalDate(2000, 1, 1);
         LocalDate toDate = new LocalDate(2020, 12, 12);
 
         Certificate certificate = new Certificate();
-        certificate.setDocument(deletedDocument);
         certificate.addState(new CertificateStateHistoryEntry("MI", CertificateState.DELETED, LocalDateTime.now().minusDays(4)));
         Certificate certificate2 = new Certificate();
-        certificate2.setDocument(document);
         List<Certificate> result = Arrays.asList(certificate, certificate2);
 
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
@@ -169,10 +161,9 @@ public class ListCertificatesForCitizenResponderImplTest {
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
         verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
-        ArgumentCaptor<CertificateHolder> certificateHolderCaptor = ArgumentCaptor.forClass(CertificateHolder.class);
-        verify(moduleApi).getIntygFromCertificateHolder(certificateHolderCaptor.capture());
+        verify(moduleApi).getIntygFromUtlatande(any(se.inera.intyg.common.support.model.common.internal.Utlatande.class));
+        verify(moduleApi).getUtlatandeFromXml(anyString());
 
-        assertEquals(deletedDocument, certificateHolderCaptor.getValue().getDocument());
         assertEquals(1, response.getIntygsLista().getIntyg().size());
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
@@ -186,7 +177,6 @@ public class ListCertificatesForCitizenResponderImplTest {
         LocalDate toDate = new LocalDate(2020, 12, 12);
 
         Certificate certificate = new Certificate();
-        certificate.setDocument("document");
         CertificateStateHistoryEntry state = new CertificateStateHistoryEntry();
         state.setState(CertificateState.SENT);
         state.setTarget("FK");

@@ -1,18 +1,16 @@
 package se.inera.intyg.intygstjanst.web.support;
 
-import org.joda.time.LocalDateTime;
-import se.inera.intyg.common.support.model.InternalLocalDateInterval;
-import se.inera.intyg.common.support.model.common.internal.GrundData;
-import se.inera.intyg.common.support.model.common.internal.HoSPersonal;
-import se.inera.intyg.common.support.model.common.internal.Patient;
-import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande;
-
-
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.joda.time.LocalDateTime;
+
+import se.inera.intyg.common.support.model.InternalLocalDateInterval;
+import se.inera.intyg.common.support.model.common.internal.*;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande;
 
 /**
  * Created by eriklupander on 2016-02-15.
@@ -80,7 +78,7 @@ public class CertificateForSjukfallFactory {
     }
 
     public Certificate buildCert() {
-        Certificate cert = new Certificate(CERT_ID, "doc");
+        Certificate cert = new Certificate(CERT_ID);
         cert.setType(CERT_TYPE);
         cert.setSignedDate(CERT_SIGNING_DATETIME);
         cert.setSigningDoctorName(DOC_NAME);
@@ -88,6 +86,8 @@ public class CertificateForSjukfallFactory {
         cert.setCareGiverId(CARE_GIVER_ID);
         cert.setCareUnitId(CARE_UNIT_ID);
         cert.setCareUnitName(CARE_UNIT_NAME);
+        cert.setOriginalCertificate(new OriginalCertificate());
+        cert.getOriginalCertificate().setDocument("XML");
         return cert;
     }
 

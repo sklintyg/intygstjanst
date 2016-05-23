@@ -20,24 +20,20 @@
 package se.inera.intyg.intygstjanst.web.integration.test;
 
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.*;
 
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
@@ -59,7 +55,7 @@ public class CertificateResourceTest {
 
     @Mock
     private IntygModuleRegistry moduleRegistry = mock(IntygModuleRegistry.class);
-    
+
     @Mock
     private ModuleApi moduleApi = mock(ModuleApi.class);
 
@@ -80,7 +76,7 @@ public class CertificateResourceTest {
 
     @Test
     public void testDeleteCertificate() throws Exception {
-        Certificate certificate = new Certificate("1", "");
+        Certificate certificate = new Certificate("1");
         when(txManager.getTransaction((TransactionDefinition) anyObject())).thenReturn(txStatus);
         when(entityManager.find(Certificate.class, "1")).thenReturn(certificate);
 
@@ -93,7 +89,7 @@ public class CertificateResourceTest {
 
     @Test
     public void testDeleteCertificateHandlesException() throws Exception {
-        Certificate certificate = new Certificate("1", "");
+        Certificate certificate = new Certificate("1");
         when(txManager.getTransaction((TransactionDefinition) anyObject())).thenReturn(txStatus);
         when(entityManager.find(Certificate.class, "1")).thenReturn(certificate);
 
@@ -106,7 +102,7 @@ public class CertificateResourceTest {
 
     @Test
     public void testInsertCertificate() throws Exception {
-        Certificate certificate = new Certificate("1", "");
+        Certificate certificate = new Certificate("1");
         OriginalCertificate originalCertificate = new OriginalCertificate();
         originalCertificate.setCertificate(certificate);
         when(txManager.getTransaction((TransactionDefinition) anyObject())).thenReturn(txStatus);
@@ -125,7 +121,7 @@ public class CertificateResourceTest {
 
     @Test
     public void testInsertCertificateHandlesException() throws Exception {
-        Certificate certificate = new Certificate("1", "");
+        Certificate certificate = new Certificate("1");
         when(txManager.getTransaction((TransactionDefinition) anyObject())).thenReturn(txStatus);
         doThrow(new RuntimeException("")).when(entityManager).persist(Mockito.any(Certificate.class));
 

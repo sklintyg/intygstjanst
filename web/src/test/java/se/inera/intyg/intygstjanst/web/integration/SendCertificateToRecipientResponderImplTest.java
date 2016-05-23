@@ -32,7 +32,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.intyg.intygstjanst.persistence.model.builder.CertificateBuilder;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
@@ -64,7 +63,7 @@ public class SendCertificateToRecipientResponderImplTest {
 
     @Test
     public void testSendOk() throws Exception {
-        Certificate certificate = new CertificateBuilder(CERTIFICATE_ID).build();
+        Certificate certificate = new Certificate(CERTIFICATE_ID);
 
         // Setup mocks
         when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID)).thenReturn(CertificateService.SendStatus.OK);

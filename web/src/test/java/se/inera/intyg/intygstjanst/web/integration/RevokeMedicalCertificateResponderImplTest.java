@@ -20,22 +20,20 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.*;
 import javax.xml.transform.stream.StreamSource;
 
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
@@ -51,15 +49,9 @@ import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.Resu
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
-import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
-import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
-import se.inera.intyg.intygstjanst.web.service.StatisticsService;
+import se.inera.intyg.intygstjanst.web.service.*;
 import se.inera.intyg.intygstjanst.web.service.impl.CertificateServiceImpl;
 
 
@@ -120,7 +112,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     @Test
     public void testRevokeCertificateWhichWasAlreadySentToForsakringskassan() throws Exception {
 
-        Certificate certificate = new Certificate(CERTIFICATE_ID, "text");
+        Certificate certificate = new Certificate(CERTIFICATE_ID);
         CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TARGET, CertificateState.SENT, new LocalDateTime());
         certificate.setStates(Collections.singletonList(historyEntry));
 
@@ -141,7 +133,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     @Test
     public void testRevokeCertificateWithForsakringskassanReturningError() throws Exception {
 
-        Certificate certificate = new Certificate(CERTIFICATE_ID, "text");
+        Certificate certificate = new Certificate(CERTIFICATE_ID);
         CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TARGET, CertificateState.SENT, new LocalDateTime());
         certificate.setStates(Collections.singletonList(historyEntry));
 
@@ -157,7 +149,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     @Test
     public void testRevokeCertificateWhichWasNotSentToForsakringskassan() throws Exception {
 
-        Certificate certificate = new Certificate(CERTIFICATE_ID, "text");
+        Certificate certificate = new Certificate(CERTIFICATE_ID);
 
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
@@ -180,7 +172,7 @@ public class RevokeMedicalCertificateResponderImplTest {
 
     @Test
     public void testRevokeAlreadyRevokedCertificate() throws Exception {
-        Certificate certificate = new Certificate(CERTIFICATE_ID, "text");
+        Certificate certificate = new Certificate(CERTIFICATE_ID);
         CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TARGET, CertificateState.CANCELLED, new LocalDateTime());
         certificate.setStates(Collections.singletonList(historyEntry));
 

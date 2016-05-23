@@ -39,10 +39,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v2.ListCertificatesForCareResponderInterface;
-import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v2.ListCertificatesForCareResponseType;
-import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v2.ListCertificatesForCareType;
-import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v2.ListaType;
+import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v2.*;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.Intyg;
 
@@ -95,7 +92,7 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
         CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
 
         ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
-        Intyg intyg = moduleApi.getIntygFromCertificateHolder(certificateHolder);
+        Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
         intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates()));
         return intyg;
     }

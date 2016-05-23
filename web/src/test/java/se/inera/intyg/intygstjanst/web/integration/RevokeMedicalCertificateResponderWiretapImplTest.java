@@ -50,7 +50,7 @@ public class RevokeMedicalCertificateResponderWiretapImplTest extends RevokeMedi
     @Override
     public void testRevokeCertificateWhichWasAlreadySentToForsakringskassan() throws Exception {
 
-        Certificate certificate = new Certificate(CERTIFICATE_ID, "text");
+        Certificate certificate = new Certificate(CERTIFICATE_ID);
         CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TARGET, CertificateState.SENT, new LocalDateTime());
         certificate.setStates(Collections.singletonList(historyEntry));
 
@@ -62,7 +62,7 @@ public class RevokeMedicalCertificateResponderWiretapImplTest extends RevokeMedi
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
         Mockito.verify(statisticsService, Mockito.only()).revoked(certificate);
     }
-    
+
     @Override
     public void testRevokeCertificateWithForsakringskassanReturningError() {
         // This is not a valid case for wiretap (no communication with Forsakringskassan so no error can occur).
