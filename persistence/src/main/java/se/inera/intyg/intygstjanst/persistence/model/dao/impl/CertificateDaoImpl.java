@@ -34,9 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
-import se.inera.intyg.intygstjanst.persistence.model.dao.util.DaoUtil;
 
 /**
  * Implementation of {@link CertificateDao}.

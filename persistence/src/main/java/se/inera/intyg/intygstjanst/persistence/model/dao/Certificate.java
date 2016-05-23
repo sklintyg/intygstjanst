@@ -49,7 +49,7 @@ import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.ModelException;
 import se.inera.intyg.common.support.model.util.Predicate;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.intyg.intygstjanst.persistence.model.dao.util.DaoUtil;
+import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
 
 /**
  * This class represents the document part of a certificate. The document is stored as a binary large object in the

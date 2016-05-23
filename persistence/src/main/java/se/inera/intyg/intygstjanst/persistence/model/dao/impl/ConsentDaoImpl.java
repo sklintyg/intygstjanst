@@ -25,9 +25,9 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Consent;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.util.DaoUtil;
 
 /**
  * @author andreaskaltenbach
