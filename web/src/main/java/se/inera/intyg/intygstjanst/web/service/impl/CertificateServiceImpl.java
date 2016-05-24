@@ -25,7 +25,6 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,10 +75,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     @Autowired
     private SjukfallCertificateService sjukfallCertificateService;
-
-    @Autowired
-    @Value("${store.original.certificate}")
-    private Boolean shouldStoreOriginalCertificate = true;
 
     @Override
     @Transactional(readOnly = true)
@@ -338,9 +333,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
      *            the {@link Certificate} generated from the utlatandeXml, or <code>null</code> if unknown.
      */
     private void storeOriginalCertificate(String utlatandeXml, Certificate certificate) {
-        if (shouldStoreOriginalCertificate) {
-            OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), utlatandeXml, certificate);
-            certificateDao.storeOriginalCertificate(original);
-        }
+        OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), utlatandeXml, certificate);
+        certificateDao.storeOriginalCertificate(original);
+        certificate.setOriginalCertificate(original);
     }
 }
