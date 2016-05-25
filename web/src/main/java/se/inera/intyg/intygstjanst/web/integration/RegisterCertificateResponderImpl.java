@@ -35,15 +35,15 @@ import com.google.common.base.Throwables;
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.v2.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.common.support.model.common.internal.Utlatande;
-import se.inera.intyg.common.support.model.converter.util.ConverterException;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.support.api.*;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.common.support.modules.support.api.dto.ValidateXmlResponse;
 import se.inera.intyg.common.util.logging.LogMarkers;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.*;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.DatePeriodType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
+import se.riv.clinicalprocess.healthcond.certificate.v2.Intyg;
 
 @SchemaValidation
 public class RegisterCertificateResponderImpl implements RegisterCertificateResponderInterface {
@@ -75,7 +75,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             ValidateXmlResponse validationResponse = api.validateXml(xml);
 
             if (!validationResponse.hasErrorMessages()) {
-                return storeIntyg(registerCertificate, intygsTyp, api, xml);
+                return storeIntyg(registerCertificate, intygsTyp, xml);
             } else {
                 String validationErrors = String.join(";", validationResponse.getValidationErrors());
                 return makeValidationErrorResult(validationErrors);
@@ -84,8 +84,6 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             return makeCertificateAlreadyExistsResult(registerCertificate);
         } catch (InvalidCertificateException e) {
             return makeInvalidCertificateResult(registerCertificate);
-        } catch (ConverterException e) {
-            return makeValidationErrorResult(e.getMessage());
         } catch (JAXBException e) {
             LOGGER.error("JAXB error in Webservice: ", e);
             Throwables.propagate(e);
@@ -99,12 +97,10 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         throw new RuntimeException("Unrecoverable exception in registerCertificate");
     }
 
-    private RegisterCertificateResponseType storeIntyg(final RegisterCertificateType registerCertificate, final String intygsTyp, final ModuleApi api,
-                                                       final String xml) throws CertificateAlreadyExistsException, InvalidCertificateException, ConverterException {
+    private RegisterCertificateResponseType storeIntyg(final RegisterCertificateType registerCertificate, final String intygsTyp,
+            final String xml) throws CertificateAlreadyExistsException, InvalidCertificateException {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
-        Utlatande utlatande = api.getUtlatandeFromIntyg(registerCertificate.getIntyg());
-        CertificateHolder certificateHolder = toCertificateHolder(utlatande, intygsTyp);
-        certificateHolder.setOriginalCertificate(xml);
+        CertificateHolder certificateHolder = toCertificateHolder(registerCertificate.getIntyg(), intygsTyp, xml);
         moduleContainer.certificateReceived(certificateHolder);
         response.setResult(ResultTypeUtil.okResult());
         return response;
@@ -147,16 +143,17 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         return certificateType.getIntyg().getTyp().getCode().toLowerCase();
     }
 
-    private CertificateHolder toCertificateHolder(Utlatande utlatande, String type) {
+    private CertificateHolder toCertificateHolder(Intyg intyg, String type, String originalCertificate) {
         CertificateHolder certificateHolder = new CertificateHolder();
-        certificateHolder.setId(utlatande.getId());
-        certificateHolder.setCareUnitId(utlatande.getGrundData().getSkapadAv().getVardenhet().getEnhetsid());
-        certificateHolder.setCareUnitName(utlatande.getGrundData().getSkapadAv().getVardenhet().getEnhetsnamn());
-        certificateHolder.setCareGiverId(utlatande.getGrundData().getSkapadAv().getVardenhet().getVardgivare().getVardgivarid());
-        certificateHolder.setSigningDoctorName(utlatande.getGrundData().getSkapadAv().getFullstandigtNamn());
-        certificateHolder.setCivicRegistrationNumber(utlatande.getGrundData().getPatient().getPersonId());
-        certificateHolder.setSignedDate(utlatande.getGrundData().getSigneringsdatum());
+        certificateHolder.setId(intyg.getIntygsId().getExtension());
+        certificateHolder.setCareUnitId(intyg.getSkapadAv().getEnhet().getEnhetsId().getExtension());
+        certificateHolder.setCareUnitName(intyg.getSkapadAv().getEnhet().getEnhetsnamn());
+        certificateHolder.setCareGiverId(intyg.getSkapadAv().getEnhet().getVardgivare().getVardgivareId().getExtension());
+        certificateHolder.setSigningDoctorName(intyg.getSkapadAv().getFullstandigtNamn());
+        certificateHolder.setCivicRegistrationNumber(new Personnummer(intyg.getPatient().getPersonId().getExtension()));
+        certificateHolder.setSignedDate(intyg.getSigneringstidpunkt());
         certificateHolder.setType(type);
+        certificateHolder.setOriginalCertificate(originalCertificate);
         return certificateHolder;
     }
 
