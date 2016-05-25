@@ -35,6 +35,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
@@ -70,8 +71,8 @@ public class ListCertificatesForCareResponderImplTest {
     @Before
     public void setup() throws ModuleNotFoundException, ModuleException {
         when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
-        when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(mock(se.inera.intyg.common.support.model.common.internal.Utlatande.class));
-        when(moduleApi.getIntygFromUtlatande(any(se.inera.intyg.common.support.model.common.internal.Utlatande.class))).thenReturn(new Intyg());
+        when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(mock(Utlatande.class));
+        when(moduleApi.getIntygFromUtlatande(any(Utlatande.class))).thenReturn(new Intyg());
     }
 
     @Test
@@ -138,7 +139,7 @@ public class ListCertificatesForCareResponderImplTest {
         ListCertificatesForCareResponseType response = responder.listCertificatesForCare(null, parameters);
 
         verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
-        verify(moduleApi).getIntygFromUtlatande(any(se.inera.intyg.common.support.model.common.internal.Utlatande.class));
+        verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
         verify(moduleApi).getUtlatandeFromXml(anyString());
 
         // We only return Intyg that are not deletedByCaregiver

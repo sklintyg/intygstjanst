@@ -31,6 +31,7 @@ import se.inera.intyg.common.support.modules.support.api.exception.ModuleExcepti
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
+import se.inera.intyg.intygstyper.fk7263.support.Fk7263EntryPoint;
 
 /**
  * Created by eriklupander on 2016-02-03.
@@ -51,7 +52,7 @@ public class SjukfallCertificateServiceImpl implements SjukfallCertificateServic
 
     @Override
     public boolean created(Certificate certificate) {
-        if (!certificate.getType().equalsIgnoreCase("fk7263")) {
+        if (!certificate.getType().equalsIgnoreCase(Fk7263EntryPoint.MODULE_ID)) {
             return false;
         }
 
@@ -61,7 +62,7 @@ public class SjukfallCertificateServiceImpl implements SjukfallCertificateServic
             Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
 
             if (!certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
-                LOG.debug("Not storing {0}, is smittskydd or does not have a diagnoseCode.", certificate.getId());
+                LOG.debug("Not storing {}, is smittskydd or does not have a diagnoseCode.", certificate.getId());
                 return false;
             }
 
@@ -69,10 +70,10 @@ public class SjukfallCertificateServiceImpl implements SjukfallCertificateServic
             sjukfallCertificateDao.store(sjukfallCert);
             return true;
         } catch (ModuleNotFoundException e) {
-            LOG.error("Could not construct sjukfall certificate from intyg, ModuleNotFoundException: {0}", e.getMessage());
+            LOG.error("Could not construct sjukfall certificate from intyg, ModuleNotFoundException: {}", e.getMessage());
             return false;
         } catch (ModuleException e) {
-            LOG.error("Could not construct sjukfall certificate from intyg, ModuleException: {0}", e.getMessage());
+            LOG.error("Could not construct sjukfall certificate from intyg, ModuleException: {}", e.getMessage());
             return false;
         }
     }

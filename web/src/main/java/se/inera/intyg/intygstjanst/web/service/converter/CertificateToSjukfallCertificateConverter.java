@@ -60,7 +60,7 @@ public class CertificateToSjukfallCertificateConverter {
      * @return
      *      A SjukfallCertificate
      * @throws
-     *      IllegalArgumentException if fk7263 chcek fails.
+     *      IllegalArgumentException if fk7263 check fails.
      */
     public SjukfallCertificate convertFk7263(Certificate certificate, Utlatande utlatande) {
 

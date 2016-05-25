@@ -40,6 +40,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
+import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
@@ -76,8 +77,8 @@ public class ListCertificatesForCitizenResponderImplTest {
     @Before
     public void setup() throws ModuleNotFoundException, ModuleException {
         when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
-        when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(mock(se.inera.intyg.common.support.model.common.internal.Utlatande.class));
-        when(moduleApi.getIntygFromUtlatande(any(se.inera.intyg.common.support.model.common.internal.Utlatande.class))).thenReturn(new Intyg());
+        when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(mock(Utlatande.class));
+        when(moduleApi.getIntygFromUtlatande(any(Utlatande.class))).thenReturn(new Intyg());
     }
 
     @Test
@@ -135,7 +136,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
         verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
-        verify(moduleApi).getIntygFromUtlatande(any(se.inera.intyg.common.support.model.common.internal.Utlatande.class));
+        verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
         verify(moduleApi).getUtlatandeFromXml(anyString());
 
         assertEquals(1, response.getIntygsLista().getIntyg().size());
@@ -161,7 +162,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
         verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
-        verify(moduleApi).getIntygFromUtlatande(any(se.inera.intyg.common.support.model.common.internal.Utlatande.class));
+        verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
         verify(moduleApi).getUtlatandeFromXml(anyString());
 
         assertEquals(1, response.getIntygsLista().getIntyg().size());
