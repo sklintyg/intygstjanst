@@ -104,7 +104,8 @@ public class CertificateResourceTest {
     public void testInsertCertificate() throws Exception {
         Certificate certificate = new Certificate("1");
         OriginalCertificate originalCertificate = new OriginalCertificate();
-        originalCertificate.setCertificate(certificate);
+        originalCertificate.setDocument("xml");
+        certificate.setOriginalCertificate(originalCertificate);
         when(txManager.getTransaction((TransactionDefinition) anyObject())).thenReturn(txStatus);
         when(moduleRegistry.getModuleApi(Mockito.anyString())).thenReturn(moduleApi);
         certificateResource.insertCertificate(ConverterUtil.toCertificateHolder(certificate));

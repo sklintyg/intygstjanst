@@ -19,6 +19,8 @@
 
 package se.inera.intyg.intygstjanst.web.integration.test;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -27,10 +29,13 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -73,6 +78,7 @@ public class CertificateResource {
             @Override
             public Response doInTransaction(TransactionStatus status) {
                 try {
+                    LOGGER.info("Deleting certificate {}", id);
                     Certificate certificate = entityManager.find(Certificate.class, id);
                     if (certificate != null) {
                         entityManager.remove(certificate.getOriginalCertificate());
@@ -136,14 +142,31 @@ public class CertificateResource {
             public Response doInTransaction(TransactionStatus status) {
                 Certificate certificate = ConverterUtil.toCertificate(certificateHolder);
                 try {
-                    OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), certificateHolder.getOriginalCertificate(), certificate);
+                    LOGGER.info("insert certificate {} ({})", certificate.getId(), certificate.getType());
+                    OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), getXmlBody(certificateHolder), certificate);
                     entityManager.persist(certificate);
                     entityManager.persist(originalCertificate);
                     return Response.ok().build();
                 } catch (Throwable t) {
                     status.setRollbackOnly();
-                    LOGGER.warn("insert certificate with id " + certificate.getId() + " failed: " + t.getMessage());
+                    LOGGER.warn("insert certificate {} ({}) failed: {}", certificate.getId(), certificate.getType(), t.getMessage());
                     return Response.serverError().build();
+                }
+            }
+
+            private String getXmlBody(CertificateHolder certificateHolder) throws IOException {
+                if (StringUtils.isNotBlank(certificateHolder.getOriginalCertificate())) {
+                    return certificateHolder.getOriginalCertificate();
+                } else {
+                    File file = new ClassPathResource("content/intyg-" + certificateHolder.getType() + "-content.xml").getFile();
+                    return FileUtils.readFileToString(file)
+                            .replace("CERTIFICATE_ID", certificateHolder.getId())
+                            .replace("PATIENT_CRN", certificateHolder.getCivicRegistrationNumber().getPersonnummerWithoutDash())
+                            .replace("CAREUNIT_ID", certificateHolder.getCareUnitId())
+                            .replace("CAREUNIT_NAME", certificateHolder.getCareUnitName())
+                            .replace("CAREGIVER_ID", certificateHolder.getCareGiverId())
+                            .replace("DOCTOR_NAME", certificateHolder.getSigningDoctorName())
+                            .replace("SIGNED_DATE", certificateHolder.getSignedDate().toString());
                 }
             }
         });
