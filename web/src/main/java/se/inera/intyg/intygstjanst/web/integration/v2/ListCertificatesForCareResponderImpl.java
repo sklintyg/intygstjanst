@@ -92,6 +92,7 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
         CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
 
         ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
+        // Unified handling of all certificate types, maintaining a simple module api
         Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
         intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates()));
         return intyg;

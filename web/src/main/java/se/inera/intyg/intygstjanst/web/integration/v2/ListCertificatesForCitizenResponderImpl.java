@@ -105,6 +105,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
 
     private Intyg convert(CertificateHolder certificateHolder) throws ModuleNotFoundException, ModuleException {
         ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
+        // Unified handling of all certificate types, maintaining a simple module api
         Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
         intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates()));
         return intyg;
