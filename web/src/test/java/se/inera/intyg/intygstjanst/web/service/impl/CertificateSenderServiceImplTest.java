@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -38,10 +39,18 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
+import org.w3.wsaddressing10.AttributedURIType;
 
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.rivtabp20.v3.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.rivtabp20.v1.SendMedicalCertificateQuestionResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
+import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
@@ -89,6 +98,9 @@ public class CertificateSenderServiceImplTest {
 
     @Mock
     private RegisterMedicalCertificateResponderInterface registerClient;
+
+    @Mock
+    private SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
 
     @Mock
     private MonitoringLogService monitoringLogService;
@@ -152,5 +164,23 @@ public class CertificateSenderServiceImplTest {
     @Test(expected = ServerException.class)
     public void testSendWithNoMatchingRecipient() {
         senderService.sendCertificate(certificate, "TS");
+    }
+
+    @Test
+    public void sendCertificateRevocationTest() {
+        SendMedicalCertificateQuestionResponseType sendMedicalCertificateQuestionResponse = new SendMedicalCertificateQuestionResponseType();
+        sendMedicalCertificateQuestionResponse.setResult(ResultOfCallUtil.okResult());
+        when(sendMedicalCertificateQuestionResponderInterface.sendMedicalCertificateQuestion(any(AttributedURIType.class),
+                any(SendMedicalCertificateQuestionType.class))).thenReturn(sendMedicalCertificateQuestionResponse );
+        RevokeType revokeData = new RevokeType();
+        revokeData.setLakarutlatande(new LakarutlatandeEnkelType());
+        senderService.sendCertificateRevocation(certificate, RECIPIENT_ID, revokeData );
+
+        ArgumentCaptor<AttributedURIType> uriCaptor = ArgumentCaptor.forClass(AttributedURIType.class);
+        ArgumentCaptor<SendMedicalCertificateQuestionType> requestCaptor = ArgumentCaptor.forClass(SendMedicalCertificateQuestionType.class);
+        verify(sendMedicalCertificateQuestionResponderInterface).sendMedicalCertificateQuestion(uriCaptor.capture(), requestCaptor.capture());
+
+        assertEquals(RECIPIENT_LOGICALADDRESS, uriCaptor.getValue().getValue());
+        assertEquals(Amnetyp.MAKULERING_AV_LAKARINTYG, requestCaptor.getValue().getQuestion().getAmne());
     }
 }
