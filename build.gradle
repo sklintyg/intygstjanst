@@ -1,0 +1,31 @@
+allprojects  {
+  apply plugin: 'maven'
+
+  group = 'se.inera.intyg.intygstjanst'
+  version = '0-SNAPSHOT'
+}
+
+subprojects {
+  apply plugin: 'java'
+
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+
+  repositories {
+    mavenLocal()
+    maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/" }
+    maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/" }
+    maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/" }
+    maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/thirdparty/" }
+    maven { url "http://repo.maven.apache.org/maven2" }
+  }
+
+  dependencies {
+    compile 'ch.qos.logback:logback-classic:1.0.11'
+    compile 'org.slf4j:jcl-over-slf4j:1.7.5'
+    compile 'org.slf4j:log4j-over-slf4j:1.7.5'
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.9.0'
+  }
+}

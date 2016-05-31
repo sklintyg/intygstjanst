@@ -1,0 +1,29 @@
+
+description = 'Intygstjänsten (FitNesse)'
+dependencies {
+  compile project(':intygstjanst-persistence')
+    compile group: 'se.inera.intyg.common', name: 'common-specifications', version:'0-SNAPSHOT'
+    compile group: 'se.inera.intyg.intygstyper', name: 'fk7263', version:'0-SNAPSHOT'
+    compile group: 'se.riv.clinicalprocess.healthcond.certificate', name: 'clinicalprocess-healthcond-certificate-schemas', version:'2.0.RC5.1'
+    compile group: 'se.riv.insuranceprocess.healthreporting', name: 'insuranceprocess-healthreporting-schemas', version:'3.1.0.1'
+    compile group: 'se.riv.itintegration.monitoring', name: 'itintegration-monitoring-schemas', version:'1.0.0.1'
+    compile group: 'se.inera.intyg.clinicalprocess.healthcond.certificate', name: 'intyg-clinicalprocess-healthcond-certificate-schemas', version:'1.0.1'
+    compile group: 'se.inera.intyg.insuranceprocess.healthreporting', name: 'intyg-insuranceprocess-healthreporting-schemas', version:'1.0.1'
+    compile group: 'javax.jms', name: 'jms-api', version:'1.1-rev-1'
+    compile group: 'joda-time', name: 'joda-time', version:'2.2'
+    compile group: 'org.apache.activemq', name: 'activemq-client', version:'5.13.0'
+    compile group: 'org.codehaus.groovy', name: 'groovy-all', version:'2.4.3'
+    compile group: 'org.fitnesse', name: 'fitnesse', version:'20131110'
+    compile group: 'org.gebish', name: 'geb-core', version:'0.10.0'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-server', version:'2.48.2'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-firefox-driver', version:'2.48.2'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-support', version:'2.48.2'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version:'2.48.2'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-safari-driver', version:'2.48.2'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-remote-driver', version:'2.48.2'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-htmlunit-driver', version:'2.48.2'
+    compile(group: 'org.skyscreamer', name: 'jsonassert', version:'1.2.0') {
+exclude(module: 'commons-collections')
+    }
+    compile group: 'xmlunit', name: 'xmlunit', version:'1.4'
+}
