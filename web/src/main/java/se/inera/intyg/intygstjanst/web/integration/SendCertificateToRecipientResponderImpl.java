@@ -19,7 +19,6 @@
 
 package se.inera.intyg.intygstjanst.web.integration;
 
-import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,6 @@ import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v1.*;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
 
-@SchemaValidation
 public class SendCertificateToRecipientResponderImpl implements SendCertificateToRecipientResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SendCertificateToRecipientResponderImpl.class);
