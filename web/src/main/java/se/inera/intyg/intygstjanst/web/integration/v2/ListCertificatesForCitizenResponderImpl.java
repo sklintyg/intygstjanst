@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import se.inera.certificate.modules.fkparent.model.converter.CertificateStateHolderConverter;
+import se.inera.intyg.intygstyper.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.v2.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;

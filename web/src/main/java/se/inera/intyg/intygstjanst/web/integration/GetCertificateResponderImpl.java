@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Throwables;
 
-import se.inera.certificate.modules.fkparent.model.converter.CertificateStateHolderConverter;
+import se.inera.intyg.intygstyper.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;

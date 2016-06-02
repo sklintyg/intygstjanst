@@ -19,7 +19,6 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
-import static se.inera.intyg.common.support.common.enumerations.Recipients.FK;
 
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -33,6 +32,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.ri
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.*;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.rivtabp20.v1.SendMedicalCertificateQuestionResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.*;
+import se.inera.intyg.common.support.common.enumerations.PartKod;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
@@ -111,7 +111,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     @Override
     public void sendCertificateRevocation(Certificate certificate, String recipientId, RevokeType revokeData) {
-        if (recipientId.equals(FK.toString())) {
+        if (recipientId.equals(PartKod.FKASSA.getValue())) {
             useFKRevocationStrategy(certificate, revokeData);
         } else {
             useDefaultRevocationStrategy(certificate, revokeData, recipientId);
@@ -140,7 +140,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
         question.getFraga().setSigneringsTidpunkt(signTs);
         question.setLakarutlatande(revokeData.getLakarutlatande());
 
-        AttributedURIType logicalAddress = getLogicalAddress(FK.toString());
+        AttributedURIType logicalAddress = getLogicalAddress(PartKod.FKASSA.getValue());
 
         SendMedicalCertificateQuestionType parameters = new SendMedicalCertificateQuestionType();
         parameters.setQuestion(question);
@@ -152,7 +152,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             String message = "Failed to send question to Försäkringskassan for revoking certificate '" + intygId
                     + "'. Info from forsakringskassan: " + sendResponse.getResult().getInfoText();
             LOGGER.error(message);
-            throw new SubsystemCallException(FK.toString(), message);
+            throw new SubsystemCallException(PartKod.FKASSA.getValue(), message);
         } else {
             monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(), "FK");
         }

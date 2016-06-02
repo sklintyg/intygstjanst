@@ -255,6 +255,11 @@
       address="${revokecertificatev1.endpoint.url}">
   </jaxws:client>
 
+  <jaxws:client id="registerCertificateClient"
+      serviceClass="se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.RegisterCertificateResponderInterface"
+      address="${registercertificatev2.endpoint.url}">
+  </jaxws:client>
+
   <import resource="application-context-ws-stub.xml"/>
 
   <!-- TjK for ListActiveSickLeavesForCareUnit. Consider moving to separate xml file and import -->
