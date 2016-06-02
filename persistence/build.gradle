@@ -1,5 +1,7 @@
 description = 'Intygstjänsten (Persistence)'
 
+sourceSets.main.output.resourcesDir = sourceSets.main.output.classesDir
+
 dependencies {
   compile 'se.inera.intyg.common:common-support:0-SNAPSHOT'
   compile 'se.inera.intyg.common:integration-util:0-SNAPSHOT'
