@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.stringtemplate.v4.ST;
@@ -54,11 +55,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest  {
         templateGroupRegister = new STGroupFile("integrationtests/register/requests.stg");
         requestTemplateRegister = templateGroupRegister.getInstanceOf("request");
 
-        deleteIntyg(intygsId);
-    }
-
-    private void deleteIntyg(String id) {
-        given().delete("inera-certificate/resources/certificate/" + id).then().statusCode(200);
+        IntegrationTestUtil.deleteIntyg(intygsId);
     }
 
     @Test
@@ -82,6 +79,11 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest  {
                 statusCode(200).
                 rootPath(RECIPIENT_BASE).
                 body("result.resultCode", is("OK"));
+    }
+
+    @After
+    public void cleanup() {
+        IntegrationTestUtil.deleteIntyg(intygsId);
     }
 
     private static class IntygsData {

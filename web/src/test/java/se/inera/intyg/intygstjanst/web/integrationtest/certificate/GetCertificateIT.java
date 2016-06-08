@@ -9,10 +9,10 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
-import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
-
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
+
+import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 
 public class GetCertificateIT extends BaseIntegrationTest {
 
@@ -22,6 +22,7 @@ public class GetCertificateIT extends BaseIntegrationTest {
 
     private STGroup templateGroup;
 
+    private String tolvansId = "191212121212";
     private String intygsId = "intyg-10";
 
     @Before
@@ -33,7 +34,7 @@ public class GetCertificateIT extends BaseIntegrationTest {
 
     @Test
     public void getCertificateWorks() {
-        requestTemplate.add("data", new IntygsData(intygsId));
+        requestTemplate.add("data", new IntygsData(intygsId, tolvansId));
 
         given().body(requestTemplate.render()).
                 when().
@@ -46,7 +47,7 @@ public class GetCertificateIT extends BaseIntegrationTest {
 
     @Test
     public void getCertificateRespectsSchema() {
-        requestTemplate.add("data", new IntygsData(intygsId));
+        requestTemplate.add("data", new IntygsData(intygsId, tolvansId));
 
         given().body(requestTemplate.render()).
                 when().
@@ -59,9 +60,11 @@ public class GetCertificateIT extends BaseIntegrationTest {
 
     private static class IntygsData {
         public final String intygsId;
+        public final String personId;
 
-        public IntygsData(String intygsId) {
+        public IntygsData(String intygsId, String personId) {
             this.intygsId = intygsId;
+            this.personId = personId;
         }
     }
 

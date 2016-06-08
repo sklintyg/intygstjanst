@@ -13,11 +13,11 @@ request(data) ::= <<
          <urn1:skickatTidpunkt>2016-05-23T00:00:00</urn1:skickatTidpunkt>
          <urn1:intygs-id>
             <urn2:root>ddd</urn2:root>
-            <urn2:extension>intyg-10</urn2:extension>
+            <urn2:extension>$data.intygsId$</urn2:extension>
          </urn1:intygs-id>
          <urn1:patientPerson-id>
             <urn2:root>1.2.752.129.2.1.3.1</urn2:root>
-            <urn2:extension>191212121212</urn2:extension>
+            <urn2:extension>$data.personId$</urn2:extension>
          </urn1:patientPerson-id>
          <urn1:logiskAdressMottagare>fk</urn1:logiskAdressMottagare>
          <urn1:amne>

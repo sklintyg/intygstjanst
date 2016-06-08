@@ -6,7 +6,7 @@ request(data) ::= <<
         <urn:LogicalAddress>1</urn:LogicalAddress>
     </soapenv:Header>
     <soapenv:Body>
-        <ns2:RegisterCertificate xmlns="urn:riv:clinicalprocess:healthcond:certificate:2" >
+        <ns2:RegisterCertificate xmlns="urn:riv:clinicalprocess:healthcond:certificate:2">
             <ns2:intyg>
                 <intygs-id>
                     <ns3:root>SE2321000016-H489</ns3:root>

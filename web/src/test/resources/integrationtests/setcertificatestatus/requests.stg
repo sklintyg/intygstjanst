@@ -9,7 +9,7 @@ request(data) ::= <<
       <urn1:SetCertificateStatus>
          <urn1:intygs-id>
             <urn2:root>blerk</urn2:root>
-            <urn2:extension>intyg-10</urn2:extension>
+            <urn2:extension>$data.intygsId$</urn2:extension>
          </urn1:intygs-id>
          <urn1:part>
             <urn2:code>FKASSA</urn2:code>

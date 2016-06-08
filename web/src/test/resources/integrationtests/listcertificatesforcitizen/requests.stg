@@ -9,7 +9,7 @@ request(data) ::= <<
       <urn1:ListCertificatesForCitizen>
          <urn1:person-id>
             <urn2:root>1.2.752.129.2.1.3.1</urn2:root>
-            <urn2:extension>191212121212</urn2:extension>
+            <urn2:extension>$data.personId$</urn2:extension>
          </urn1:person-id>
          <!--Zero or more repetitions:-->
          <urn1:intygTyp>

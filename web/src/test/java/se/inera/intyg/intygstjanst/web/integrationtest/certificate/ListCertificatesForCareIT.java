@@ -32,13 +32,9 @@ import com.jayway.restassured.builder.RequestSpecBuilder;
 
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 
-/**
- * @author katarinaolsson
- *
- */
 public class ListCertificatesForCareIT extends BaseIntegrationTest{
     private ST requestTemplate;
-    private String intygsId = "123456";
+    private String personId1 = "192703104321";
 
     private static final String BASE = "Envelope.Body.ListCertificatesForCareResponse.";
 
@@ -52,17 +48,17 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest{
 
     @Test
     public void listCertificateForCareWorks() {
-        requestTemplate.add("data", new IntygsData(intygsId));
+        requestTemplate.add("data", new IntygsData(personId1));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v2.0").then().statusCode(200)
                 .rootPath(BASE).body("result.resultCode", is("OK"));
     }
 
     private static class IntygsData {
-        public final String intygsId;
+        public final String personId;
 
-        public IntygsData(String intygsId) {
-            this.intygsId = intygsId;
+        public IntygsData(String personId) {
+            this.personId = personId;
         }
     }
 }
