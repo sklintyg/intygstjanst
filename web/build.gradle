@@ -12,6 +12,36 @@ task integrationTest(type: Test) {
   include '**/*IT*'
 }
 
+gretty {
+  //servletContainer = 'jetty9'
+  contextPath = '/inera-certificate'
+
+  contextConfigFile = file(projectDir + "/src/main/webapp/WEB-INF/jetty-web.xml")
+  logbackConfigFile = projectDri + "/certificate-logback.xml"
+
+  jvmArgs = [
+    '-Djava.awt.headless=true',
+    '-Dcatalina.base=' + projectDir + '/catalina.base',
+    '-Dcredentials.file=' + projectDir + '/certificate-credentials.properties',
+    '-Dcertificate.config.file=' + projectDir + '/certificate-dev.properties',
+    '-Dcertificate.logback.file=' + projectDir + '/certificate-logback.xml',
+    '-Drecipient.config.file=' + projectDir + '/recipient-dev.properties'
+  ]
+
+  // jvmArgs = [
+  //         jvmArgSpringProfiles,
+  //         '-Dstatistics.test.max.intyg=500',
+  //         '-Dstatistics.config.file=' + projectDir + '/src/main/resources/default.dev.properties',
+  //         '-Dstatistics.credentials.file=' + projectDir + '/src/main/resources/dev-credentials.properties'
+  // ]
+
+  debugSuspend = false
+  recompileOnSourceChange = false
+  reloadOnClassChange = false
+  reloadOnConfigChange = false
+  reloadOnLibChange = false
+}
+
 buildscript {
   repositories {
     jcenter()
@@ -36,7 +66,6 @@ dependencies {
   compile 'se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:1.0.1'
   compile 'se.inera.intyg.insuranceprocess.healthreporting:intyg-insuranceprocess-healthreporting-schemas:1.0.1'
   compile 'se.inera.intyg.transportstyrelsen:intyg-transportstyrelsen-schemas:1.0.1'
-  compile 'se.inera.intyg.intygstyper:fk7263:0-SNAPSHOT'
   compile 'se.inera.intyg.intygstyper:ts-bas:0-SNAPSHOT'
   compile 'se.inera.intyg.intygstyper:ts-diabetes:0-SNAPSHOT'
   compile 'se.inera.intyg.intygstyper:ts-parent:0-SNAPSHOT'
@@ -60,6 +89,11 @@ dependencies {
   compile 'org.springframework:spring-tx:4.2.2.RELEASE'
   compile 'se.riv.infrastructure.directory.organization:infrastructure-directory-organization-schemas:1.1.RC5.1'
   compile 'se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:1.0.0'
+  compile (group: 'se.inera.intyg.intygstyper', name:'fk7263', version: '0-SNAPSHOT') {
+    exclude(module: 'insuranceprocess-healthreporting-schemas')
+    exclude(module: 'fk-vardgivare-sjukvard-schemas')
+    exclude(module: 'ServiceContracts_itintegration_monitoring')
+  }
 
   testCompile 'org.springframework:spring-test:4.2.2.RELEASE'
   testCompile 'xmlunit:xmlunit:1.4'
