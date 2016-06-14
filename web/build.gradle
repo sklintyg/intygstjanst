@@ -13,34 +13,38 @@ task integrationTest(type: Test) {
 }
 
 gretty {
-  //servletContainer = 'jetty9'
   contextPath = '/inera-certificate'
 
-  contextConfigFile = file(projectDir + "/src/main/webapp/WEB-INF/jetty-web.xml")
-  logbackConfigFile = projectDri + "/certificate-logback.xml"
+  contextConfigFile = file("src/main/webapp/WEB-INF/jetty-web.xml")
 
   jvmArgs = [
-    '-Djava.awt.headless=true',
-    '-Dcatalina.base=' + projectDir + '/catalina.base',
+    '-Dspring.profiles.active=dev',
+    '-Drecipient.config.file=' + projectDir + '/recipient-dev.properties',
     '-Dcredentials.file=' + projectDir + '/certificate-credentials.properties',
-    '-Dcertificate.config.file=' + projectDir + '/certificate-dev.properties',
     '-Dcertificate.logback.file=' + projectDir + '/certificate-logback.xml',
-    '-Drecipient.config.file=' + projectDir + '/recipient-dev.properties'
+    '-Dcertificate.config.file=' + projectDir + '/certificate-dev.properties'
   ]
 
-  // jvmArgs = [
-  //         jvmArgSpringProfiles,
-  //         '-Dstatistics.test.max.intyg=500',
-  //         '-Dstatistics.config.file=' + projectDir + '/src/main/resources/default.dev.properties',
-  //         '-Dstatistics.credentials.file=' + projectDir + '/src/main/resources/dev-credentials.properties'
-  // ]
-
-  debugSuspend = false
-  recompileOnSourceChange = false
-  reloadOnClassChange = false
-  reloadOnConfigChange = false
-  reloadOnLibChange = false
+  // TODO: use?
+  //   debugSuspend = false
+  //   recompileOnSourceChange = false
+  //   reloadOnClassChange = false
+  //   reloadOnConfigChange = false
+  //   reloadOnLibChange = false
 }
+
+// TODO: buildNumber must be taken from environment
+task createVersionPropertyFile(dependsOn: processResources) << {
+    def propertyFile = "${buildDir}/resources/main/version.properties"
+    ant.touch(file: propertyFile, mkdirs: "true")
+    ant.propertyfile(file: propertyFile) {
+        entry(key: 'project.version', default: rootProject.version)
+        entry(key: 'buildTime', default: new Date())
+        entry(key: 'buildNumber', default: '6a25a6bf58687fd2a9250e413ae8050cfe534c3f')
+    }
+}
+
+war.dependsOn createVersionPropertyFile
 
 buildscript {
   repositories {
@@ -69,8 +73,9 @@ dependencies {
   compile 'se.inera.intyg.intygstyper:ts-bas:0-SNAPSHOT'
   compile 'se.inera.intyg.intygstyper:ts-diabetes:0-SNAPSHOT'
   compile 'se.inera.intyg.intygstyper:ts-parent:0-SNAPSHOT'
-  compile 'se.inera.intyg.intygstyper:sjukersattning:0-SNAPSHOT'
-  compile 'se.inera.intyg.intygstyper:sjukpenning-utokad:0-SNAPSHOT'
+  compile 'se.inera.intyg.intygstyper:fk-parent:0-SNAPSHOT'
+  compile 'se.inera.intyg.intygstyper:luse:0-SNAPSHOT'
+  compile 'se.inera.intyg.intygstyper:lisu:0-SNAPSHOT'
   compile 'se.inera.intyg.intygstyper:luae_fs:0-SNAPSHOT'
   compile 'se.inera.intyg.intygstyper:luae_na:0-SNAPSHOT'
   compile 'commons-io:commons-io:2.4'
@@ -106,4 +111,9 @@ dependencies {
   providedCompile 'javax.servlet:servlet-api:2.5'
   providedCompile 'org.apache.activemq:activemq-client:5.13.0'
   providedCompile 'org.apache.activemq:activemq-broker:5.13.0'
+
+  gretty 'org.apache.activemq:activemq-client:5.13.0'
+  gretty 'org.apache.activemq:activemq-broker:5.13.0'
+  gretty "com.h2database:h2:1.3.174"
+  gretty "mysql:mysql-connector-java:5.1.24"
 }
