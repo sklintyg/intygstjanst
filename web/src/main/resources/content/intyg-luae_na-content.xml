@@ -139,8 +139,10 @@
         </ns4:svar>
         <ns4:svar id="7">
             <ns4:delsvar id="7.1">Diagnos 1</ns4:delsvar>
-            <ns4:delsvar id="7.2">true</ns4:delsvar>
-            <ns4:delsvar id="7.3">Diagnos 2</ns4:delsvar>
+        </ns4:svar>
+        <ns4:svar id="45">
+            <ns4:delsvar id="45.1">true</ns4:delsvar>
+            <ns4:delsvar id="45.2">Diagnos 2</ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="8">
             <ns4:delsvar id="8.1">Funktionsnedsättning1</ns4:delsvar>

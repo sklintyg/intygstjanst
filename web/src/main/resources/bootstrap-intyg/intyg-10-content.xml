@@ -116,8 +116,10 @@
         </ns4:svar>
         <ns4:svar id="7">
             <ns4:delsvar id="7.1">Diagnoserna ställdes vid besök pä AVC Södra Älvsborgs sjukhus i Boräs 2014-07-09 och pä Värdenheten 2015-03-02.</ns4:delsvar>
-            <ns4:delsvar id="7.2">true</ns4:delsvar>
-            <ns4:delsvar id="7.3">Det gäller diagnos 1</ns4:delsvar>
+        </ns4:svar>
+        <ns4:svar id="45">
+            <ns4:delsvar id="45.1">true</ns4:delsvar>
+            <ns4:delsvar id="45.2">Det gäller diagnos 1</ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="9">
             <ns4:delsvar id="9.1">Nedsatt initiativförmäga, drar sig ofta undan folksamlingar.</ns4:delsvar>
