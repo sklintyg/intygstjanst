@@ -63,7 +63,7 @@ public class SendMessageToCareValidator {
         validateMessageSubject(sendMessageToCareType.getAmne().getCode(), validationErrors);
         validateThatCertificateExists(sendMessageToCareType.getIntygsId().getExtension(), personnummeer, validationErrors);
         validateConsistencyForQuestionVsAnswer(sendMessageToCareType, validationErrors);
-        validatePaminnelseIdConsistency(sendMessageToCareType, validationErrors);
+        validatePaminnelse(sendMessageToCareType, validationErrors);
         validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
         validateConsistencyForKomplettering(sendMessageToCareType, validationErrors);
         return validationErrors;
@@ -160,11 +160,20 @@ public class SendMessageToCareValidator {
     }
 
     @VisibleForTesting
-    void validatePaminnelseIdConsistency(SendMessageToCareType message, List<String> validationErrors) {
+    void validatePaminnelse(SendMessageToCareType message, List<String> validationErrors) {
         boolean paminnelseSubjectMissing = (!message.getAmne().getCode().equals(Amneskod.PAMINN.toString())) && (message.getPaminnelseMeddelandeId() != null);
         boolean paminnelseIdMissing = message.getAmne().getCode().equals(Amneskod.PAMINN.toString()) && (message.getPaminnelseMeddelandeId() == null);
         if (paminnelseSubjectMissing || paminnelseIdMissing) {
             validationErrors.add(ErrorCode.PAMINNELSE_ID_INCONSISTENCY_ERROR.toString());
+        }
+
+        if (isPaminnelse(message)) {
+            List<Arende> res = messageRepository.findByMeddelandeId(message.getPaminnelseMeddelandeId());
+
+            if (res == null || res.isEmpty()) {
+                validationErrors.add(ErrorCode.REFERENCED_MESSAGE_NOT_FOUND_ERROR.toString());
+                return;
+            }
         }
     }
 

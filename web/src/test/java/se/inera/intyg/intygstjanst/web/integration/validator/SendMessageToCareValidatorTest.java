@@ -60,8 +60,17 @@ public class SendMessageToCareValidatorTest {
     public void testThatValidationOKIfPaminnelseIdIsSpecifiedForPaminnelseSubject() throws Exception {
         List<String> validationErrors = new ArrayList<String>();
         SendMessageToCareType message = buildSendMessageCareType("meddelandeId", Amneskod.PAMINN.toString());
-        validator.validatePaminnelseIdConsistency(message, validationErrors);
+        when(arendeRepository.findByMeddelandeId(eq(message.getPaminnelseMeddelandeId()))).thenReturn(Arrays.asList(new Arende()));
+        validator.validatePaminnelse(message, validationErrors);
         assertTrue(validationErrors.isEmpty());
+    }
+
+    @Test
+    public void testThatValidationFailsIfPaminnelseArendeNotExist() throws Exception {
+        List<String> validationErrors = new ArrayList<String>();
+        SendMessageToCareType message = buildSendMessageCareType("meddelandeId", Amneskod.PAMINN.toString());
+        validator.validatePaminnelse(message, validationErrors);
+        assertFalse(validationErrors.isEmpty());
     }
 
     @Test
@@ -164,7 +173,7 @@ public class SendMessageToCareValidatorTest {
     public void testThatValidationFailsIfPaminnelseIdIsSpecifiedForOtherMessageTypes() throws Exception {
         List<String> validationErrors = new ArrayList<String>();
         SendMessageToCareType message = buildSendMessageCareType("meddelandeId", Amneskod.OVRIGT.toString());
-        validator.validatePaminnelseIdConsistency(message, validationErrors);
+        validator.validatePaminnelse(message, validationErrors);
         assertFalse(validationErrors.isEmpty());
         assertTrue(validationErrors.get(0).contains(ErrorCode.PAMINNELSE_ID_INCONSISTENCY_ERROR.toString()));
     }
@@ -174,7 +183,7 @@ public class SendMessageToCareValidatorTest {
         List<String> validationErrors = new ArrayList<String>();
         SendMessageToCareType sendMessageToCareType = buildSendMessageCareType("originalMessageId", Amneskod.PAMINN.toString());
         sendMessageToCareType.setPaminnelseMeddelandeId(null);
-        validator.validatePaminnelseIdConsistency(sendMessageToCareType, validationErrors);
+        validator.validatePaminnelse(sendMessageToCareType, validationErrors);
         assertFalse(validationErrors.isEmpty());
         assertTrue(validationErrors.get(0).contains(ErrorCode.PAMINNELSE_ID_INCONSISTENCY_ERROR.toString()));
     }
@@ -273,9 +282,7 @@ public class SendMessageToCareValidatorTest {
     public void testValidationOfExistingMeddelandeId() {
         final String meddelandeId = "meddelande-id";
         List<String> validationErrors = new ArrayList<String>();
-        when(arendeRepository.findByMeddelandeId(eq(meddelandeId))).thenReturn(new ArrayList<Arende>() {{
-                add(new Arende());
-            }});
+        when(arendeRepository.findByMeddelandeId(eq(meddelandeId))).thenReturn(Arrays.asList(new Arende()));
         validator.validateMeddelandeId(meddelandeId, validationErrors);
         assertFalse(validationErrors.isEmpty());
     }

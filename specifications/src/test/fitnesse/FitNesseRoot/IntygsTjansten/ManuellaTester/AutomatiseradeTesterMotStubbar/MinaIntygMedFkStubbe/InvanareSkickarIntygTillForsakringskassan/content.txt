@@ -18,7 +18,7 @@
 
 |Invanare Skickar Intyg Till Fk|
 |personnummer|intyg|mottagare|resultat?|
-|190101010101|fit-intyg-1|FK|OK|
+|190101010101|fit-intyg-1|FKASSA|OK|
 
 |Verifiera Intyg Hos Fk|
 |id|status?|
@@ -32,11 +32,11 @@
 
 |Invanare Skickar Intyg Till Fk|
 |personnummer|intyg|mottagare|resultat?|
-|190101010101|fit-intyg-1|FK|[INFO] - Certificate 'fit-intyg-1' already sent to 'FK'.|
+|190101010101|fit-intyg-1|FKASSA|[INFO] - Certificate 'fit-intyg-1' already sent to 'FK'.|
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19010101-0101|fit-intyg-1|OK|[RECEIVED, SENT, SENT]|
+|19010101-0101|fit-intyg-1|OK|[RECEIVED, SENT]|
 
 !3 Rensa bort test-intyg
 

@@ -36,7 +36,7 @@
 
 |Hamta intyg|
 |personnummer|intyg|resultat?|status?|
-|19010101-0101|fit-intyg-1|OK|[RECEIVED, SENT, SENT]|
+|19010101-0101|fit-intyg-1|OK|[RECEIVED, SENT]|
 
 !3 Ett rättat intyg ska informera Försäkringskassan. Intyget i intygstjänsten ska inte vara åtkomligt längre.
 
@@ -75,7 +75,7 @@
 
 |Skicka Intyg Till Fk|
 |personnummer|intyg|resultat?|
-|19010101-0101|fit-intyg-non-existing|[VALIDATION_ERROR] - No certificate 'fit-intyg-non-existing' found to send for patient '19010101-0101'.|
+|19010101-0101|fit-intyg-non-existing|[VALIDATION_ERROR] - No certificate 'fit-intyg-non-existing' found to send for patient '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'.|
 
 !3 Rensa bort test-intyg och samtycket
 

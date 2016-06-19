@@ -19,15 +19,10 @@
 
 package se.inera.intyg.intygstjanst.web.integration.v2;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import se.inera.intyg.intygstyper.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.v2.ResultTypeUtil;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
@@ -39,9 +34,16 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v2.*;
+import se.inera.intyg.intygstyper.fkparent.model.converter.CertificateStateHolderConverter;
+import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v2.ListCertificatesForCareResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v2.ListCertificatesForCareResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v2.ListCertificatesForCareType;
+import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v2.ListaType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.Intyg;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @SchemaValidation
 public class ListCertificatesForCareResponderImpl implements ListCertificatesForCareResponderInterface {
@@ -78,8 +80,10 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
                     response.getIntygsLista().getIntyg().add(convert(certificate));
                 }
             }
+
             response.setResult(ResultTypeUtil.okResult());
             monitoringLogService.logCertificateListedByCare(personnummer);
+
         } catch (ModuleNotFoundException | ModuleException e) {
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "Module error when processing certificates"));
             LOGGER.error(e.getMessage());
