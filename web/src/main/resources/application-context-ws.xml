@@ -242,7 +242,7 @@
 
   <jaxws:client id="sendMessageToCareClient"
       serviceClass="se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareResponderInterface"
-      address="${sendmessagetocarequestionv1.endpoint.url}">
+      address="${sendmessagetocarev1.endpoint.url}">
   </jaxws:client>
 
   <jaxws:client id="sendMessageToRecipientClient"
