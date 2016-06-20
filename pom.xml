@@ -31,18 +31,18 @@
 
   <groupId>se.inera.intyg.intygstjanst</groupId>
   <artifactId>intygstjanst</artifactId>
-  <version>3.0.0-b33</version>
+  <version>3.0.0-b34</version>
   <packaging>pom</packaging>
 
   <name>Intygstjänsten</name>
 
   <properties>
     <!-- Common -->
-    <common.version>3.0.0-b71</common.version>
+    <common.version>3.0.0-b72</common.version>
     <common.version.range>(,3.0.0]</common.version.range>
 
     <!-- Intygstyper -->
-    <intygstyper.version>3.0.0-b52</intygstyper.version>
+    <intygstyper.version>3.0.0-b55</intygstyper.version>
     <intygstyper.version.range>(,3.0.0]</intygstyper.version.range>
 
     <!-- Schemas -->

@@ -28,7 +28,7 @@
   <parent>
     <groupId>se.inera.intyg.intygstjanst</groupId>
     <artifactId>intygstjanst</artifactId>
-    <version>3.0.0-b33</version>
+    <version>3.0.0-b34</version>
   </parent>
 
   <artifactId>intygstjanst-specifications</artifactId>
