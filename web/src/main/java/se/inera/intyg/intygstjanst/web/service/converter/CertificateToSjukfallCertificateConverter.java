@@ -18,21 +18,20 @@
  */
 package se.inera.intyg.intygstjanst.web.service.converter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.joda.time.Partial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
 import se.inera.intyg.common.support.model.common.internal.Patient;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.model.converter.util.PartialConverter;
 import se.inera.intyg.intygstjanst.persistence.model.builder.SjukfallCertificateBuilder;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
-
-import java.util.ArrayList;
-import java.util.List;
+import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 
 /**
  * Converts a (fk7263) Certificate to a CertificateSjukfall.
@@ -149,12 +148,12 @@ public class CertificateToSjukfallCertificateConverter {
         se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande fkUtlatande = (se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande) utlatande;
 
         if (fkUtlatande.isAvstangningSmittskydd()) {
-            LOG.debug("Not converting Intyg {0} to SjukfallCertificate, is smittskydd.");
+            LOG.debug("Intyg {} is not a valid SjukfallCertificate, is smittskydd.");
             return false;
         }
 
         if (fkUtlatande.getDiagnosKod() == null || fkUtlatande.getDiagnosKod().trim().equals("")) {
-            LOG.debug("Not converting Intyg {0} to SjukfallCertificate, has no diagnoseCode.");
+            LOG.debug("Intyg {} is not a valid SjukfallCertificate, has no diagnoseCode.");
             return false;
         }
 
