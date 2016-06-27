@@ -22,8 +22,6 @@ package se.inera.intyg.intygstjanst.web.service;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 
 public interface StatisticsService {
-    // TODO INTYG-2042: Below method should be removed when the statistics service has been updated.
-    boolean created(Certificate certificate);
 
     boolean created(String certificateXml, String certificateId, String certificateType, String careUnitId);
 

@@ -246,7 +246,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
                     recipient);
         }
 
-        statisticsService.created(certificate);
         String transformedXml = certificateReceivedForStatistics(certificateHolder);
         statisticsService.created(transformedXml, certificate.getId(), certificate.getType(),
                 certificate.getCareUnitId());
