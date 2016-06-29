@@ -37,9 +37,6 @@ public final class CertificateFactory {
     public static final Personnummer CIVIC_REGISTRATION_NUMBER = new Personnummer("19001122-3344");
     public static final String FK7263 = "fk7263";
 
-    public static final String VALID_FROM = "2000-01-01";
-    public static final String VALID_TO = "2000-12-31";
-
     public static final LocalDateTime SIGNED_DATE = new LocalDateTime(1999, 12, 31, 10, 32);
     public static final String SIGNING_DOCTOR = "Dr. Oetker";
 
@@ -52,24 +49,22 @@ public final class CertificateFactory {
     }
 
     public static Certificate buildCertificate(String certificateId) {
-        return buildCertificate(certificateId, VALID_FROM, VALID_TO);
+        return buildCertificate(certificateId, SIGNED_DATE);
     }
 
     public static Certificate buildCertificate(String certificateId, String certificateType) {
-        return buildCertificate(certificateId, certificateType, VALID_FROM, VALID_TO);
+        return buildCertificate(certificateId, certificateType, SIGNED_DATE);
     }
 
-    public static Certificate buildCertificate(String certificateId, String validFrom, String validTo) {
-        return buildCertificate(certificateId, FK7263, validFrom, validTo);
+    public static Certificate buildCertificate(String certificateId, LocalDateTime signedDate) {
+        return buildCertificate(certificateId, FK7263, signedDate);
     }
 
-    public static Certificate buildCertificate(String certificateId, String certificateType, String validFrom, String validTo) {
+    public static Certificate buildCertificate(String certificateId, String certificateType, LocalDateTime signedDate) {
         Certificate certificate = new Certificate(certificateId);
         certificate.setCivicRegistrationNumber(CIVIC_REGISTRATION_NUMBER);
         certificate.setType(certificateType);
-        certificate.setValidFromDate(validFrom);
-        certificate.setValidToDate(validTo);
-        certificate.setSignedDate(SIGNED_DATE);
+        certificate.setSignedDate(signedDate);
         certificate.setSigningDoctorName(SIGNING_DOCTOR);
         certificate.setCareUnitId(CARE_UNIT_ID);
         certificate.setCareUnitName(CARE_UNIT_NAME);

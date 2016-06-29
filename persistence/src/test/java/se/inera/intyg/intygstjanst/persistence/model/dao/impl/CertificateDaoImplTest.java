@@ -49,7 +49,6 @@ import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
-import se.inera.intyg.intygstjanst.persistence.support.CertificateFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
@@ -155,17 +154,80 @@ public class CertificateDaoImplTest {
     }
 
     @Test
-    public void testFindCertificateWithValidityFilter() throws Exception {
+    public void testFindCertificateWithDates() throws Exception {
         int certificateId = Integer.parseInt(CERTIFICATE_ID);
 
-        entityManager.persist(buildCertificate(String.valueOf(certificateId++), "2013-04-13", "2013-05-13"));
-        entityManager.persist(buildCertificate(String.valueOf(certificateId++), "2013-03-13", "2013-04-12"));
-        entityManager.persist(buildCertificate(String.valueOf(certificateId++), "2013-05-13", "2013-06-13"));
+        entityManager.persist(buildCertificate(String.valueOf(certificateId++), LocalDateTime.parse("2013-04-13")));
+        entityManager.persist(buildCertificate(String.valueOf(certificateId++), LocalDateTime.parse("2013-05-13")));
+        entityManager.persist(buildCertificate(String.valueOf(certificateId++), LocalDateTime.parse("2013-04-12")));
 
         List<Certificate> certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER,
                 singletonList(FK7263), new LocalDate("2013-04-01"), new LocalDate("2013-04-15"), null);
 
         assertEquals(2, certificate.size());
+    }
+
+    @Test
+    public void testFindCertificateWithDatesInclusive() throws Exception {
+        int certificateId = Integer.parseInt(CERTIFICATE_ID);
+        final String certificateId1 = String.valueOf(certificateId++);
+        final String certificateId2 = String.valueOf(certificateId++);
+
+        entityManager.persist(buildCertificate(String.valueOf(certificateId++), LocalDateTime.parse("2013-04-11")));
+        entityManager.persist(buildCertificate(certificateId1, LocalDateTime.parse("2013-04-12")));
+        entityManager.persist(buildCertificate(certificateId2, LocalDateTime.parse("2013-04-13")));
+        entityManager.persist(buildCertificate(String.valueOf(certificateId++), LocalDateTime.parse("2013-04-14")));
+
+        List<Certificate> certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER,
+                singletonList(FK7263), new LocalDate("2013-04-12"), new LocalDate("2013-04-13"), null);
+
+        assertEquals(2, certificate.size());
+        assertEquals(certificateId1, certificate.get(0).getId()); // ordered by signedDate
+        assertEquals(certificateId2, certificate.get(1).getId());
+    }
+
+    @Test
+    public void testFindCertificateFromDateOnly() throws Exception {
+        int certificateId = Integer.parseInt(CERTIFICATE_ID);
+        final String certificateId1 = String.valueOf(certificateId++);
+        final String certificateId2 = String.valueOf(certificateId++);
+        final String certificateId3 = String.valueOf(certificateId++);
+        final String certificateId4 = String.valueOf(certificateId++);
+
+        entityManager.persist(buildCertificate(certificateId1, LocalDateTime.parse("2013-04-11")));
+        entityManager.persist(buildCertificate(certificateId2, LocalDateTime.parse("2013-04-12")));
+        entityManager.persist(buildCertificate(certificateId3, LocalDateTime.parse("2013-04-13")));
+        entityManager.persist(buildCertificate(certificateId4, LocalDateTime.parse("2013-04-14")));
+
+        List<Certificate> certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER,
+                singletonList(FK7263), new LocalDate("2013-04-12"), null, null);
+
+        assertEquals(3, certificate.size());
+        assertEquals(certificateId2, certificate.get(0).getId()); // ordered by signedDate
+        assertEquals(certificateId3, certificate.get(1).getId());
+        assertEquals(certificateId4, certificate.get(2).getId());
+    }
+
+    @Test
+    public void testFindCertificateToDateOnly() throws Exception {
+        int certificateId = Integer.parseInt(CERTIFICATE_ID);
+        final String certificateId1 = String.valueOf(certificateId++);
+        final String certificateId2 = String.valueOf(certificateId++);
+        final String certificateId3 = String.valueOf(certificateId++);
+        final String certificateId4 = String.valueOf(certificateId++);
+
+        entityManager.persist(buildCertificate(certificateId1, LocalDateTime.parse("2013-04-11")));
+        entityManager.persist(buildCertificate(certificateId2, LocalDateTime.parse("2013-04-12")));
+        entityManager.persist(buildCertificate(certificateId3, LocalDateTime.parse("2013-04-13")));
+        entityManager.persist(buildCertificate(certificateId4, LocalDateTime.parse("2013-04-14")));
+
+        List<Certificate> certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER,
+                singletonList(FK7263), null, new LocalDate("2013-04-13"), null);
+
+        assertEquals(3, certificate.size());
+        assertEquals(certificateId1, certificate.get(0).getId()); // ordered by signedDate
+        assertEquals(certificateId2, certificate.get(1).getId());
+        assertEquals(certificateId3, certificate.get(2).getId());
     }
 
     @Test

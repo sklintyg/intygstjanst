@@ -24,8 +24,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
+import org.joda.time.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -78,16 +77,22 @@ public class CertificateDaoImpl implements CertificateDao {
             predicates.add(root.<String> get("careUnitId").in(careUnits));
         }
 
+        if (fromDate != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("signedDate"), fromDate.toLocalDateTime(LocalTime.MIDNIGHT)));
+        }
+
+        if (toDate != null) {
+            predicates.add(criteriaBuilder.lessThan(root.get("signedDate"), toDate.plusDays(1).toLocalDateTime(LocalTime.MIDNIGHT)));
+        }
+
         query.where(predicates.toArray(new Predicate[predicates.size()]));
 
         // order by signed date
         query.orderBy(criteriaBuilder.asc(root.get("signedDate")));
 
         List<Certificate> tmpResult = entityManager.createQuery(query).getResultList();
-        List<Certificate> result = filterDuplicates(tmpResult);
 
-        // expect a small number, so lets filter in memory
-        return new DateFilter(result).filter(fromDate, toDate);
+        return filterDuplicates(tmpResult);
     }
 
     @Override
@@ -178,7 +183,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
     private List<Certificate> filterDuplicates(List<Certificate> all) {
         Set<String> found = new HashSet<>();
-        List<Certificate> filtered = new ArrayList<>(all.size());
+        List<Certificate> filtered = new ArrayList<>(all.size()); // keep list sorted
         for (Certificate certificate : all) {
             if (!found.contains(certificate.getId())) {
                 filtered.add(certificate);

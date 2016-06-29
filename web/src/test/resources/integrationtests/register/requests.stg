@@ -102,7 +102,6 @@ request(data) ::= <<
                 </svar>
                 <svar id="7">
                     <delsvar id="7.1">Diagnoserna ställdes vid besök på AVC Södra Älvsborgs sjukhus i Borås 2014-07-09 och på Vårdenheten 2015-03-02.</delsvar>
-                    <delsvar id="7.2">false</delsvar>
                 </svar>
                 <svar id="9">
                     <delsvar id="9.1">Nedsatt initiativförmåga, drar sig ofta undan folksamlingar.</delsvar>
@@ -115,6 +114,10 @@ request(data) ::= <<
                 </svar>
                 <svar id="25">
                     <delsvar id="25.1">Patientens tillstånd bedöms behöva en ny bedömning om 12 månader för att avgöra grad av arbetsförmåga, men till åtminstone viss del kommer patientens arbetsförmåga att vara fortsatt nedsatt.</delsvar>
+                </svar>
+                <svar id="45">
+                    <delsvar id="45.1">true</delsvar>
+                    <delsvar id="45.2">Diagnos för ny bedömning</delsvar>
                 </svar>
             </ns2:intyg>
         </ns2:RegisterCertificate>
