@@ -40,7 +40,6 @@ public class StatisticsServiceResource {
     @Produces(MediaType.APPLICATION_XML)
     public String getMessages(@PathParam("id") String id) {
         LOGGER.debug("Receiving id " + id);
-        System.out.println(receiver.getMessages().get(id));
         return receiver.getMessages().get(id);
     }
 

@@ -26,12 +26,14 @@
 		<bean id="queue" class="org.springframework.jndi.JndiObjectFactoryBean">
 			<property name="jndiName" value="java:comp/env/jms/Queue" />
 		</bean>
+		<beans profile="dev,testability-api">
 		<bean id="jmsreceiver" class="se.inera.intyg.intygstjanst.web.integration.test.Receiver"/>
 		<bean id="jmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
             <property name="connectionFactory" ref="jmsFactory"/>
             <property name="destination" ref="queue"/>
             <property name="messageListener" ref="jmsreceiver"/>
         </bean>
+        </beans>
 	</beans>
 
 </beans>
