@@ -80,7 +80,24 @@ public class SjukfallCertificateServiceImpl implements SjukfallCertificateServic
 
     @Override
     public boolean revoked(Certificate certificate) {
-        sjukfallCertificateDao.revoke(certificate.getId());
-        return true;
+        if (!certificate.getType().equalsIgnoreCase(Fk7263EntryPoint.MODULE_ID)) {
+            return false;
+        }
+
+        try {
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
+            Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
+
+            if (!certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
+                LOG.debug("Will not mark SjukfallCert {} as deleted, is smittskydd or does not have a diagnoseCode.", certificate.getId());
+                return false;
+            }
+
+            sjukfallCertificateDao.revoke(certificate.getId());
+            return true;
+        } catch (ModuleNotFoundException | ModuleException e) {
+            LOG.error("Could not mark SjukfallCert as deleted: {}", e.getMessage());
+            return false;
+        }
     }
 }
