@@ -83,7 +83,6 @@ public class TransformToStatisticsIT extends BaseIntegrationTest{
         RegisterCertificateType result = JAXB.unmarshal(new StringReader(xml.prettyPrint()), RegisterCertificateType.class);
         assertEquals(result.getIntyg().getPatient().getPersonId().getExtension(), personId1);
         assertEquals(intygsId, xml.get("RegisterCertificate.intyg.intygs-id.extension").toString());
-
     }
 
     @SuppressWarnings("unused")
