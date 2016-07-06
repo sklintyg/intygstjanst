@@ -19,12 +19,10 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -82,18 +80,18 @@ public class RecipientServiceImplTest {
     public void testListRecipients() {
         assertTrue("Got null!", service.listRecipients().size() > 0);
     }
-    
+
     @Test
     public void testListRecipientsForCerttypeFK7263() throws RecipientUnknownException {
         List<Recipient> expected = Arrays.asList(createFkRecipient());
-        
+
         assertEquals(expected, service.listRecipients(new CertificateType(FK_CERTIFICATE_TYPE)));
     }
 
     @Test
     public void testListRecipientsForCerttypeTS() throws RecipientUnknownException {
         List<Recipient> expected = Arrays.asList(createTsRecipient());
-        
+
         assertEquals(expected, service.listRecipients(new CertificateType(TS_CERTIFICATE_TYPE_BAS)));
         assertEquals(expected, service.listRecipients(new CertificateType(TS_CERTIFICATE_TYPE_DIABETES)));
     }
@@ -107,7 +105,7 @@ public class RecipientServiceImplTest {
     public void testGetTransportModelVersionForTsBas() throws RecipientUnknownException {
         assertEquals(TransportModelVersion.UTLATANDE_V1, service.getVersion("tsTestAddress", "ts-bas"));
     }
-    
+
     @Test(expected = RecipientUnknownException.class)
     public void testUnknownRecipient() throws RecipientUnknownException {
         service.getVersion("F K", "fk7263");
