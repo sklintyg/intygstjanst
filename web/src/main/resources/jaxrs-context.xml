@@ -46,13 +46,6 @@
         <bean class="se.inera.intyg.intygstjanst.web.integration.stub.SendMessageToCareResponderStubRestApi" />
       </jaxrs:serviceBeans>
     </jaxrs:server>
-    
-    <jaxrs:server id="sendMessageToRecipientStub" address="/send-message-to-recipient-stub-rest">
-      <jaxrs:serviceBeans>
-        <bean class="se.inera.intyg.intygstjanst.web.integration.stub.SendMessageToCareResponderStubRestApi" />
-      </jaxrs:serviceBeans>
-    </jaxrs:server>
-
   </beans>
 
   <beans profile="dev,testability-api,it-fk-stub">
@@ -65,6 +58,7 @@
         <ref bean="certificateBean" />
         <ref bean="sjukfallCertBean" />
         <ref bean="fkBean" />
+        <ref bean="statisticsServiceBean" />
       </jaxrs:serviceBeans>
       <jaxrs:providers>
         <ref bean="jacksonJsonProvider" />
@@ -74,8 +68,8 @@
       </jaxrs:extensionMappings>
     </jaxrs:server>
 
-
     <bean id="certificateBean" class="se.inera.intyg.intygstjanst.web.integration.test.CertificateResource" />
+    <bean id="statisticsServiceBean" class="se.inera.intyg.intygstjanst.web.integration.test.StatisticsServiceResource" />
     <bean id="sjukfallCertBean" class="se.inera.intyg.intygstjanst.web.integration.test.SjukfallCertResource" />
     <bean id="fkBean" class="se.inera.intyg.intygstjanst.web.integration.stub.FkStubResource" />
   </beans>

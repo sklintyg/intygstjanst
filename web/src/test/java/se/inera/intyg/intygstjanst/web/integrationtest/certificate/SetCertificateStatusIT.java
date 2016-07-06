@@ -35,10 +35,13 @@ import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 
 public class SetCertificateStatusIT extends BaseIntegrationTest {
     private ST requestTemplate;
+    private ST requestTemplateResult;
     private String intygsId = "123456";
     private String personId = "192703104321";
+    private String intygsIdNotExists = "123456t";
 
     private static final String BASE = "Envelope.Body.SetCertificateStatusResponse.";
+    private static final String GET_BASE = "Envelope.Body.GetCertificateResponse.";
 
     @Before
     public void setup() {
@@ -46,6 +49,9 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
 
         STGroup templateGroup = new STGroupFile("integrationtests/setcertificatestatus/requests.stg");
         requestTemplate = templateGroup.getInstanceOf("request");
+
+        STGroup templateGroupResult = new STGroupFile("integrationtests/getcertificate/requests.stg");
+        requestTemplateResult = templateGroupResult.getInstanceOf("request");
         IntegrationTestUtil.deleteIntyg(intygsId);
     }
 
@@ -56,6 +62,26 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
 
         given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v1.0").then().statusCode(200)
                 .rootPath(BASE).body("result.resultCode", is("OK"));
+
+        requestTemplateResult.add("data", new IntygsData(intygsId));
+
+        given().body(requestTemplateResult.render()).
+        when().
+        post("inera-certificate/get-certificate-se/v2.0").
+        then().
+        statusCode(200).
+        rootPath(GET_BASE).
+        body("intyg.intygs-id.extension", is(intygsId));
+    }
+
+    @Test
+    public void setCertificateStatusIntygNotExists() {
+        IntegrationTestUtil.registerCertificate(intygsId, personId);
+        requestTemplate.add("data", new IntygsData(intygsIdNotExists));
+
+        given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v1.0").then().statusCode(200)
+                .rootPath(BASE).body("result.resultCode", is("OK"));
+
     }
 
     @After

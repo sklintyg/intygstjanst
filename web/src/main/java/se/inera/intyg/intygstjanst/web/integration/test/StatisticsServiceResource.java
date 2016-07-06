@@ -16,14 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package se.inera.intyg.intygstjanst.web.integration.test;
 
-package se.inera.intyg.intygstjanst.web.service;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public interface StatisticsService {
+@Path("/statisticsresource")
+public class StatisticsServiceResource {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatisticsServiceResource.class);
 
-    boolean created(String certificateXml, String certificateId, String certificateType, String careUnitId);
+    @Autowired
+    private Receiver receiver;
 
-    boolean revoked(Certificate certificate);
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_XML)
+    public String getMessages(@PathParam("id") String id) {
+        LOGGER.debug("Receiving id " + id);
+        return receiver.getMessages().get(id);
+    }
+
 }

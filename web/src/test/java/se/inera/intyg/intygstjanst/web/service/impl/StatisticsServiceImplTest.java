@@ -20,21 +20,27 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import javax.jms.*;
+import javax.jms.JMSException;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
-import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
-import se.inera.intyg.common.util.integration.integration.json.CustomObjectMapper;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
@@ -47,12 +53,6 @@ public class StatisticsServiceImplTest {
 
     @Mock
     private MonitoringLogService monitoringLogService;
-
-    @Mock
-    private IntygModuleRegistry moduleRegistry;
-
-    @Mock
-    private CustomObjectMapper objectMapper;
 
     @InjectMocks
     private StatisticsServiceImpl serviceImpl = new StatisticsServiceImpl();
@@ -92,13 +92,10 @@ public class StatisticsServiceImplTest {
     public void serviceSendsDocumentAndIdForRevoke() throws Exception {
         final String type = "lisu";
         final String xmlBody = "xml body";
-        final String jsonString = "json string";
         org.springframework.test.util.ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
         ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
         ModuleApi moduleApi = mock(ModuleApi.class);
         when(moduleApi.getUtlatandeFromXml(xmlBody)).thenReturn(mock(Utlatande.class));
-        when(moduleRegistry.getModuleApi(type)).thenReturn(moduleApi);
-        when(objectMapper.writeValueAsString(any(Utlatande.class))).thenReturn(jsonString);
 
         Certificate certificate = mock(Certificate.class);
         OriginalCertificate originalCertificate = mock(OriginalCertificate.class);
@@ -109,7 +106,7 @@ public class StatisticsServiceImplTest {
 
         TextMessage message = mock(TextMessage.class);
         Session session = mock(Session.class);
-        when(session.createTextMessage(jsonString)).thenReturn(message);
+        when(session.createTextMessage(xmlBody)).thenReturn(message);
 
         serviceImpl.revoked(certificate);
 
