@@ -20,6 +20,8 @@ package se.inera.intyg.intygstjanst.web.integration.validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +96,7 @@ public class SendMessageToCareValidator {
         } catch (Exception e) {
             validationErrors.add(ErrorCode.SUBJECT_NOT_SUPPORTED_ERROR.toString());
             validationErrors.add(" The supplied certificate subject is invalid. "
-                    + "Supported subjects are KOMPLETTERING_AV_LAKARINTYG, MAKULERING_AV_LAKARINTYG, AVSTAMNINGSMOTE, KONTAKT, ARBETSTIDSFORLAGGNING, PAMINNELSE, OVRIGT");
+                    + "Supported subjects are " + Stream.of(Amneskod.values()).map(Amneskod::name).collect(Collectors.joining(", ")));
         }
     }
 
