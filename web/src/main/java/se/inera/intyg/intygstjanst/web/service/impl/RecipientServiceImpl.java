@@ -78,7 +78,7 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
     }
 
     @Override
-    public List<Recipient> listRecipients(CertificateType certificateType) throws RecipientUnknownException {
+    public List<Recipient> listRecipients(CertificateType certificateType) {
         return recipientList.stream()
                 .filter(r -> r.getCertificateTypes().contains(certificateType.getCertificateTypeId()))
                 .collect(Collectors.toList());

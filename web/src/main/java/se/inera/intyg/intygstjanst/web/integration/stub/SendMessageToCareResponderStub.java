@@ -57,9 +57,9 @@ public class SendMessageToCareResponderStub implements SendMessageToCareResponde
             resultType.setResultText("Error occurred when marshalling message to xml. " + e.getMessage());
             response.setResult(resultType);
             return response;
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw t;
+        } catch (Exception e) {
+            logger.error("STUB failed: {}", e);
+            throw e;
         }
         response.setResult(resultType);
         return response;

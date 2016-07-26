@@ -78,9 +78,9 @@ public class SendMedicalCertificateQuestionResponderStub implements SendMedicalC
         } catch (JAXBException e) {
             response.setResult(ResultOfCallUtil.failResult("Unable to marshal certificate information"));
             return response;
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw t;
+        } catch (Exception e) {
+            logger.error("STUB failed: {}", e);
+            throw e;
         }
         response.setResult(ResultOfCallUtil.okResult());
         return response;

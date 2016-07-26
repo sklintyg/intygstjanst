@@ -44,6 +44,7 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.util.integration.integration.json.CustomObjectMapper;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
+import se.inera.intyg.intygstyper.fk7263.support.Fk7263EntryPoint;
 
 public class IntygBootstrapBean {
 
@@ -114,9 +115,9 @@ public class IntygBootstrapBean {
                     OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), contentString, certificate);
                     entityManager.persist(originalCertificate);
                     entityManager.persist(certificate);
-                } catch (Throwable t) {
+                } catch (Exception e) {
                     status.setRollbackOnly();
-                    LOG.error("Loading failed of {}: {}", metadata.getFilename(), t.getMessage());
+                    LOG.error("Loading failed of {}: {}", metadata.getFilename(), e);
                 }
             }
         });
@@ -140,7 +141,6 @@ public class IntygBootstrapBean {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     try {
-                        Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
                         String contentString = IOUtils.toString(content.getInputStream(), "UTF-8");
 
                         ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
@@ -150,23 +150,20 @@ public class IntygBootstrapBean {
                             SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertFk7263(certificate, utlatande);
                             entityManager.persist(sjukfallCertificate);
                         }
-
-
-                    } catch (Throwable t) {
+                    } catch (Exception e) {
                         status.setRollbackOnly();
-                        LOG.error("Loading of Sjukfall intyg failed for {}: {}", metadata.getFilename(), t.getMessage());
+                        LOG.error("Loading of Sjukfall intyg failed for {}: {}", metadata.getFilename(), e);
                     }
                 }
             });
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Loading of Sjukfall intyg failed for {}: {}", metadata.getFilename(), e);
         }
     }
 
-    // TODO of course, do this properly...
     private boolean isSjukfallsGrundandeIntyg(String type) {
-        return type.equalsIgnoreCase("fk7263") || type.equalsIgnoreCase("fk");
+        return Fk7263EntryPoint.MODULE_ID.equalsIgnoreCase(type);
     }
 
 }
