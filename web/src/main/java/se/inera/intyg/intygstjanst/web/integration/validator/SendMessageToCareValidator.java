@@ -32,7 +32,6 @@ import com.google.common.annotations.VisibleForTesting;
 import se.inera.intyg.common.support.common.enumerations.PartKod;
 import se.inera.intyg.common.support.common.util.StringUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.common.support.modules.support.api.dto.InvalidPersonNummerException;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
@@ -57,7 +56,7 @@ public class SendMessageToCareValidator {
     private ArendeRepository messageRepository;
 
     public List<String> validateSendMessageToCare(SendMessageToCareType sendMessageToCareType) {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         String personnummeer = sendMessageToCareType.getPatientPersonId().getExtension();
 
         validateSkickatAv(sendMessageToCareType.getSkickatAv().getPart().getCode(), validationErrors);
@@ -149,14 +148,11 @@ public class SendMessageToCareValidator {
                 validationErrors.add(ErrorCode.CERTIFICATE_NOT_FOUND_ERROR.toString());
                 return;
             }
-            String foundCivicRegistrationNumber = certificate.getCivicRegistrationNumber().getNormalizedPnr();
-            String suppliedCivicRegistrationNumber = new Personnummer(civicRegistrationNumber).getNormalizedPnr();
-            if (!foundCivicRegistrationNumber.equals(suppliedCivicRegistrationNumber)) {
+            Personnummer suppliedCivicRegistrationNumber = new Personnummer(civicRegistrationNumber);
+            if (!suppliedCivicRegistrationNumber.equals(certificate.getCivicRegistrationNumber())) {
                 validationErrors.add(ErrorCode.CIVIC_REGISTRATION_NUMBER_INCONSISTENCY_ERROR.toString());
             }
         } catch (InvalidCertificateException e) {
-            validationErrors.add(e.getMessage());
-        } catch (InvalidPersonNummerException e) {
             validationErrors.add(e.getMessage());
         }
     }
