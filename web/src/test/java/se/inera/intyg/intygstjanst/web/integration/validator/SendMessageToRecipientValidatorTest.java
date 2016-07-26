@@ -23,7 +23,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.joda.time.LocalDate;
@@ -229,7 +228,7 @@ public class SendMessageToRecipientValidatorTest {
     private void setupMeddelandeExist(String meddelandeId, String amne) {
         Arende arende = new Arende();
         arende.setAmne(amne);
-        when(messageRepository.findByMeddelandeId(meddelandeId)).thenReturn(Arrays.asList(arende));
+        when(messageRepository.findByMeddelandeId(meddelandeId)).thenReturn(arende);
     }
 
     private void setupCertificateExist(String patientCrn) throws InvalidCertificateException {

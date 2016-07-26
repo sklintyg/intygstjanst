@@ -82,7 +82,7 @@ public class SendMessageToCareValidator {
 
     @VisibleForTesting
     void validateMeddelandeId(String meddelandeId, List<String> validationErrors) {
-        if (StringUtil.isNullOrEmpty(meddelandeId) || !messageRepository.findByMeddelandeId(meddelandeId).isEmpty()) {
+        if (StringUtil.isNullOrEmpty(meddelandeId) || messageRepository.findByMeddelandeId(meddelandeId) != null) {
             validationErrors.add(ErrorCode.MEDDELANDE_ID_NOT_UNIQUE_ERROR.toString());
             validationErrors.add("Meddelande-id is not a GUID");
         }
@@ -115,13 +115,13 @@ public class SendMessageToCareValidator {
         MeddelandeReferens meddelandeReferens = sendMessageToCareType.getSvarPa();
         if (meddelandeReferens != null) {
             String meddelandeId = meddelandeReferens.getMeddelandeId();
-            List<Arende> res = messageRepository.findByMeddelandeId(meddelandeId);
+            Arende res = messageRepository.findByMeddelandeId(meddelandeId);
 
-            if (res == null || res.isEmpty()) {
+            if (res == null) {
                 validationErrors.add(ErrorCode.REFERENCED_MESSAGE_NOT_FOUND_ERROR.toString());
                 return;
             }
-            String amne = res.get(0).getAmne();
+            String amne = res.getAmne();
             if (!sendMessageToCareType.getAmne().getCode().equals(amne) && !isPaminnelse(sendMessageToCareType)) {
                 validationErrors.add(ErrorCode.SUBJECT_CONSISTENCY_ERROR.toString());
                 validationErrors.add(" Message with meddelandeId " + meddelandeId + " referenced by reply message with id "
@@ -166,9 +166,9 @@ public class SendMessageToCareValidator {
         }
 
         if (isPaminnelse(message)) {
-            List<Arende> res = messageRepository.findByMeddelandeId(message.getPaminnelseMeddelandeId());
+            Arende res = messageRepository.findByMeddelandeId(message.getPaminnelseMeddelandeId());
 
-            if (res == null || res.isEmpty()) {
+            if (res == null) {
                 validationErrors.add(ErrorCode.REFERENCED_MESSAGE_NOT_FOUND_ERROR.toString());
                 return;
             }
