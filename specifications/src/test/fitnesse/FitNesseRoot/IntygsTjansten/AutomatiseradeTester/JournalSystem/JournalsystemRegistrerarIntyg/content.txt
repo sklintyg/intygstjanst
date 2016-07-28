@@ -18,11 +18,11 @@
 |personnummer|intyg|resultat?|status?|
 |${person1.personnummer}|fit-intyg-1|OK|[RECEIVED]|
 
-!3 Kontrollera att intyget har korrekt vårdenhet och vårdgivare satt, och inte är flaggat som wire-tappat
+!3 Kontrollera att intyget har korrekt vårdenhet och vårdgivare satt
 
 |Kontrollera intyg|
-|intyg|vårdEnhet?|vårdGivare?|wiretappat?|
-|fit-intyg-1|enEnhet|enVårdGivare|false|
+|intyg|vårdEnhet?|vårdGivare?|
+|fit-intyg-1|enEnhet|enVårdGivare|
 
 !3 Försök att registrera ett redan registrerat intyg ger INFO: intyget finns redan
 

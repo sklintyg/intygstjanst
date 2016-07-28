@@ -24,7 +24,6 @@ public interface MonitoringLogService {
 
     void logCertificateRegistered(String certificateId, String certificateType, String careUnit);
     void logCertificateSent(String certificateId, String certificateType, String careUnit, String recipient);
-    void logCertificateSentAndNotifiedByWiretapping(String certificateId, String certificateType, String careUnit, String recipient);
     void logCertificateRevoked(String certificateId, String certificateType, String careUnit);
     void logCertificateRevokeSent(String certificateId, String certificateType, String careUnit, String recipientId);
     void logCertificateListedByCitizen(Personnummer citizenId);

@@ -33,31 +33,18 @@ import org.springframework.util.StringUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Throwables;
 
-import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
-import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
-import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
+import se.inera.intyg.common.support.integration.module.exception.*;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
-import se.inera.intyg.common.support.modules.support.api.ModuleApi;
-import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
+import se.inera.intyg.common.support.modules.support.api.*;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
-import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
-import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
-import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.inera.intyg.intygstjanst.web.service.ConsentService;
-import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
-import se.inera.intyg.intygstjanst.web.service.StatisticsService;
+import se.inera.intyg.intygstjanst.web.service.*;
 
 /**
  * @author andreaskaltenbach
@@ -235,16 +222,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         Certificate certificate = storeCertificate(certificateHolder);
         LOG.debug("Certificate stored {}", certificateHolder.getId());
         monitoringLogService.logCertificateRegistered(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
-
-        if (certificateHolder.isWireTapped()) {
-            Personnummer personnummer = certificateHolder.getCivicRegistrationNumber();
-            String certificateId = certificateHolder.getId();
-            final String recipient = "FK";
-            setCertificateState(personnummer, certificateId, recipient, CertificateState.SENT,
-                    new LocalDateTime());
-            monitoringLogService.logCertificateSentAndNotifiedByWiretapping(certificate.getId(), certificate.getType(), certificate.getCareUnitId(),
-                    recipient);
-        }
 
         String transformedXml = certificateReceivedForStatistics(certificateHolder);
         statisticsService.created(transformedXml, certificate.getId(), certificate.getType(),

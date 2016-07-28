@@ -46,10 +46,9 @@ public final class ConverterUtil {
         certificate.setValidFromDate(certificateHolder.getValidFromDate());
         certificate.setValidToDate(certificateHolder.getValidToDate());
         certificate.setDeletedByCareGiver(certificateHolder.isDeletedByCareGiver());
-        certificate.setWireTapped(certificateHolder.isWireTapped());
         certificate.setAdditionalInfo(certificateHolder.getAdditionalInfo());
         if (certificateHolder.getCertificateStates() != null) {
-            List<CertificateStateHistoryEntry> certificateStates = new ArrayList<CertificateStateHistoryEntry>(
+            List<CertificateStateHistoryEntry> certificateStates = new ArrayList<>(
                     certificateHolder.getCertificateStates().size());
             for (CertificateStateHolder certificateStateHolder : certificateHolder.getCertificateStates()) {
                 CertificateStateHistoryEntry certificateState = new CertificateStateHistoryEntry();
@@ -80,8 +79,7 @@ public final class ConverterUtil {
         certificateHolder.setValidFromDate(certificate.getValidFromDate());
         certificateHolder.setValidToDate(certificate.getValidToDate());
         certificateHolder.setDeletedByCareGiver(certificate.isDeletedByCareGiver());
-        certificateHolder.setWireTapped(certificate.isWireTapped());
-        List<CertificateStateHolder> certificateStates = new ArrayList<CertificateStateHolder>(certificate.getStates().size());
+        List<CertificateStateHolder> certificateStates = new ArrayList<>(certificate.getStates().size());
         for (CertificateStateHistoryEntry certificateStateEntry : certificate.getStates()) {
             CertificateStateHolder certificateStateHolder = new CertificateStateHolder();
             certificateStateHolder.setTarget(certificateStateEntry.getTarget());
