@@ -115,6 +115,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
 
     private RegisterCertificateResponseType makeCertificateAlreadyExistsResult(RegisterCertificateType registerCertificate) {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
+        // NOTE: Do NOT change this string as we are dependent on comparing this in FkParentModuleApi
         response.setResult(ResultTypeUtil.infoResult("Certificate already exists"));
         String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
         String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
