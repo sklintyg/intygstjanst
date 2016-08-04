@@ -56,15 +56,15 @@ public class IntygBootstrapBean {
     private TransactionTemplate transactionTemplate;
 
     @Autowired
-    public void setTxManager(PlatformTransactionManager txManager) {
-        this.transactionTemplate = new TransactionTemplate(txManager);
-    }
-
-    @Autowired
     private IntygModuleRegistry moduleRegistry;
 
     @Autowired
     private CertificateToSjukfallCertificateConverter certificateToSjukfallCertificateConverter;
+
+    @Autowired
+    public void setTxManager(PlatformTransactionManager txManager) {
+        this.transactionTemplate = new TransactionTemplate(txManager);
+    }
 
     @PostConstruct
     public void initData() throws IOException {

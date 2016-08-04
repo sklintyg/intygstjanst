@@ -86,8 +86,7 @@ public class CertificateForSjukfallFactory {
         cert.setCareGiverId(CARE_GIVER_ID);
         cert.setCareUnitId(CARE_UNIT_ID);
         cert.setCareUnitName(CARE_UNIT_NAME);
-        cert.setOriginalCertificate(new OriginalCertificate());
-        cert.getOriginalCertificate().setDocument("XML");
+        cert.setOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "XML", cert));
         return cert;
     }
 

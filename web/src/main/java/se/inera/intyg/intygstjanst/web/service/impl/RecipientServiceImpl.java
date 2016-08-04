@@ -92,7 +92,7 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
     @Override
     public TransportModelVersion getVersion(String logicalAddress, String certificateType) throws RecipientUnknownException {
         String recipientId = getRecipientForLogicalAddress(logicalAddress).getId();
-        return supportedTransportModelVersion.get((new RecipientCertificateType(recipientId, certificateType)));
+        return supportedTransportModelVersion.get(new RecipientCertificateType(recipientId, certificateType));
     }
 
     @Override
@@ -108,11 +108,11 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
                 if (recipientMap.get(id) == null) {
                     recipientMap.put(id, new RecipientBuilder().setId(id));
                 }
-                if (keyParts[2].equals("name")) {
+                if ("name".equals(keyParts[2])) {
                     recipientMap.get(id).setName(value);
-                } else if (keyParts[2].equals("logicalAddress")) {
+                } else if ("logicalAddress".equals(keyParts[2])) {
                     recipientMap.get(id).setLogicalAddress(value);
-                } else if (keyParts[2].equals("certificateType")) {
+                } else if ("certificateType".equals(keyParts[2])) {
                     recipientMap.get(id).setCertificateTypes(value);
                 }
                 break;

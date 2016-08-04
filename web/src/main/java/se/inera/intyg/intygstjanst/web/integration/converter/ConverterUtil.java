@@ -51,11 +51,8 @@ public final class ConverterUtil {
             List<CertificateStateHistoryEntry> certificateStates = new ArrayList<>(
                     certificateHolder.getCertificateStates().size());
             for (CertificateStateHolder certificateStateHolder : certificateHolder.getCertificateStates()) {
-                CertificateStateHistoryEntry certificateState = new CertificateStateHistoryEntry();
-                certificateState.setTarget(certificateStateHolder.getTarget());
-                certificateState.setState(certificateStateHolder.getState());
-                certificateState.setTimestamp(certificateStateHolder.getTimestamp());
-                certificateStates.add(certificateState);
+                certificateStates.add(new CertificateStateHistoryEntry(certificateStateHolder.getTarget(), certificateStateHolder.getState(),
+                        certificateStateHolder.getTimestamp()));
             }
             certificate.setStates(certificateStates);
         }

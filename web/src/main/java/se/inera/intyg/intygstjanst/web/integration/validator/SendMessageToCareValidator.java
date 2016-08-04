@@ -43,7 +43,7 @@ import se.riv.clinicalprocess.healthcond.certificate.v2.MeddelandeReferens;
 public class SendMessageToCareValidator {
     public enum Amneskod {
         KOMPLT, ARBTID, AVSTMN, KONTKT, OVRIGT, PAMINN
-    };
+    }
 
     public enum ErrorCode {
         SUBJECT_CONSISTENCY_ERROR, MESSAGE_TYPE_CONSISTENCY_ERROR, SUBJECT_NOT_SUPPORTED_ERROR, CERTIFICATE_NOT_FOUND_ERROR, CIVIC_REGISTRATION_NUMBER_INCONSISTENCY_ERROR, REFERENCED_MESSAGE_NOT_FOUND_ERROR, KOMPLETTERING_INCONSISTENCY_ERROR, PAMINNELSE_ID_INCONSISTENCY_ERROR, MEDDELANDE_ID_NOT_UNIQUE_ERROR
@@ -180,8 +180,7 @@ public class SendMessageToCareValidator {
     }
 
     private boolean messageIsAnAnswer(SendMessageToCareType sendMessageToCareType) {
-        MeddelandeReferens meddelandeReferens = sendMessageToCareType.getSvarPa();
-        return (meddelandeReferens != null);
+        return sendMessageToCareType.getSvarPa() != null;
     }
 
     private boolean hasKomplettering(SendMessageToCareType sendMessageToCareType) {

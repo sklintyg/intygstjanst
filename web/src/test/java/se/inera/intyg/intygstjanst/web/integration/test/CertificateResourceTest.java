@@ -29,6 +29,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
+import org.joda.time.LocalDateTime;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.*;
@@ -103,9 +104,7 @@ public class CertificateResourceTest {
     @Test
     public void testInsertCertificate() throws Exception {
         Certificate certificate = new Certificate("1");
-        OriginalCertificate originalCertificate = new OriginalCertificate();
-        originalCertificate.setDocument("xml");
-        certificate.setOriginalCertificate(originalCertificate);
+        certificate.setOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "xml", certificate));
         when(txManager.getTransaction((TransactionDefinition) anyObject())).thenReturn(txStatus);
         when(moduleRegistry.getModuleApi(Mockito.anyString())).thenReturn(moduleApi);
         certificateResource.insertCertificate(ConverterUtil.toCertificateHolder(certificate));

@@ -39,7 +39,7 @@ import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
 @Transactional
 @SchemaValidation
 public class SendMessageToCareResponderStub implements SendMessageToCareResponderInterface {
-    private Logger logger = LoggerFactory.getLogger(SendMessageToCareResponderStub.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SendMessageToCareResponderStub.class);
 
     @Autowired
     private SendMessageToCareStorage storage;
@@ -50,7 +50,7 @@ public class SendMessageToCareResponderStub implements SendMessageToCareResponde
         ResultType resultType = new ResultType();
         try {
             storeMessage(parameters, logicalAddress);
-            logger.info("STUB Received question concerning certificate with id: " + parameters.getIntygsId().getExtension());
+            LOG.info("STUB Received question concerning certificate with id: " + parameters.getIntygsId().getExtension());
             resultType.setResultCode(ResultCodeType.OK);
         } catch (JAXBException e) {
             resultType.setResultCode(ResultCodeType.ERROR);
@@ -58,7 +58,7 @@ public class SendMessageToCareResponderStub implements SendMessageToCareResponde
             response.setResult(resultType);
             return response;
         } catch (Exception e) {
-            logger.error("STUB failed: {}", e);
+            LOG.error("STUB failed: {}", e);
             throw e;
         }
         response.setResult(resultType);

@@ -80,7 +80,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Override
     @Transactional(readOnly = true)
     public List<Certificate> listCertificatesForCitizen(Personnummer civicRegistrationNumber, List<String> certificateTypes,
-            LocalDate fromDate, LocalDate toDate) throws MissingConsentException {
+            LocalDate fromDate, LocalDate toDate) {
         assertConsent(civicRegistrationNumber);
         return certificateDao.findCertificate(civicRegistrationNumber, certificateTypes, fromDate, toDate, null);
     }
@@ -94,8 +94,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Override
     @Transactional(readOnly = true, noRollbackFor = { PersistenceException.class })
     public Certificate getCertificateForCitizen(Personnummer civicRegistrationNumber, String certificateId) throws InvalidCertificateException,
-            CertificateRevokedException,
-            MissingConsentException {
+            CertificateRevokedException {
 
         assertConsent(civicRegistrationNumber);
 
@@ -234,8 +233,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             throws CertificateAlreadyExistsException, InvalidCertificateException {
         try {
             ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
-            String resultXml = moduleApi.transformToStatisticsService(certificateHolder.getOriginalCertificate());
-            return resultXml;
+            return moduleApi.transformToStatisticsService(certificateHolder.getOriginalCertificate());
         } catch (ModuleNotFoundException | ModuleException e) {
             LOG.error("Module not found for certificate of type {}", certificateHolder.getType());
             throw Throwables.propagate(e);
@@ -284,7 +282,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         return ConverterUtil.toCertificateHolder(certificate);
     }
 
-    private void assertConsent(Personnummer civicRegistrationNumber) throws MissingConsentException {
+    private void assertConsent(Personnummer civicRegistrationNumber) {
         if (civicRegistrationNumber == null || StringUtils.isEmpty(civicRegistrationNumber.getPersonnummer())) {
             throw new IllegalArgumentException("Invalid/missing civicRegistrationNumber");
         }

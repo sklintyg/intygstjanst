@@ -18,18 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.*;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDateTime;
 
 /**
  * Created by eriklupander on 2016-02-02.
@@ -37,14 +32,6 @@ import java.util.List;
 @Entity
 @Table(name = "SJUKFALL_CERT")
 public class SjukfallCertificate {
-
-    private SjukfallCertificate() {
-
-    }
-
-    public SjukfallCertificate(String id) {
-        this.id = id;
-    }
 
     /**
      * Id of the certificate.
@@ -127,6 +114,13 @@ public class SjukfallCertificate {
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "CERTIFICATE_ID")
     private List<SjukfallCertificateWorkCapacity> sjukfallCertificateWorkCapacity;
+
+    private SjukfallCertificate() {
+    }
+
+    public SjukfallCertificate(String id) {
+        this.id = id;
+    }
 
     public String getId() {
         return id;

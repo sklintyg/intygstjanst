@@ -74,8 +74,7 @@ public final class CertificateFactory {
         certificate.setSigningDoctorName(SIGNING_DOCTOR);
         certificate.setCareUnitId(CARE_UNIT_ID);
         certificate.setCareUnitName(CARE_UNIT_NAME);
-        certificate.setOriginalCertificate(new OriginalCertificate());
-        certificate.getOriginalCertificate().setDocument("XML");
+        certificate.setOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "XML", certificate));
         return certificate;
     }
 }

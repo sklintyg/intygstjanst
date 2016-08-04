@@ -117,7 +117,7 @@ public class SendMessageToRecipientValidator {
     }
 
     private boolean messageIsQuestion(SendMessageToRecipientType message) {
-        return (message.getSvarPa() == null && message.getPaminnelseMeddelandeId() == null);
+        return message.getSvarPa() == null && message.getPaminnelseMeddelandeId() == null;
     }
 
 }
