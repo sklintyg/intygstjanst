@@ -70,7 +70,7 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
         }
 
         SendMessageToRecipientResponseType response = sendMessageToRecipientResponder.sendMessageToRecipient(parameters.getLogiskAdressMottagare(), parameters);
-        if (ResultCodeType.OK.equals(response.getResult().getResultCode())) {
+        if (response.getResult().getResultCode() != ResultCodeType.ERROR) {
             monitoringLog.logSendMessageToRecipient(parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());
             try {
                 // try saving message in db, but always return response from recipient

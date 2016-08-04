@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -39,6 +40,7 @@ import se.inera.intyg.common.support.integration.module.exception.*;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
@@ -206,4 +208,45 @@ public class CertificateServiceImplTest {
         certificateService.getCertificateForCitizen(new Personnummer(null), CERTIFICATE_ID);
     }
 
+    @Test
+    public void testRevokeCertificate() throws Exception {
+        final Personnummer civicRegistrationNumber = new Personnummer("191212121212");
+        when(certificateDao.getCertificate(civicRegistrationNumber , CERTIFICATE_ID)).thenReturn(new Certificate(CERTIFICATE_ID));
+        Certificate revokeCertificate = certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
+        assertEquals(CERTIFICATE_ID, revokeCertificate.getId());
+
+        // verify status CANCELLED is set
+        verify(certificateDao).updateStatus(CERTIFICATE_ID, civicRegistrationNumber, CertificateState.CANCELLED, CertificateServiceImpl.HVTARGET, null);
+    }
+
+    @Test(expected = InvalidCertificateException.class)
+    public void testRevokeCertificateGetThrowsPersistenceException() throws Exception {
+        final Personnummer civicRegistrationNumber = new Personnummer("191212121212");
+        when(certificateDao.getCertificate(civicRegistrationNumber , CERTIFICATE_ID)).thenThrow(new PersistenceException(CERTIFICATE_ID, civicRegistrationNumber));
+        certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
+    }
+
+    @Test(expected = InvalidCertificateException.class)
+    public void testRevokeCertificateUpdateStatusThrowsPersistenceException() throws Exception {
+        final Personnummer civicRegistrationNumber = new Personnummer("191212121212");
+        when(certificateDao.getCertificate(civicRegistrationNumber , CERTIFICATE_ID)).thenReturn(new Certificate(CERTIFICATE_ID));
+        doThrow(new PersistenceException(CERTIFICATE_ID, civicRegistrationNumber)).when(certificateDao).updateStatus(CERTIFICATE_ID, civicRegistrationNumber, CertificateState.CANCELLED, CertificateServiceImpl.HVTARGET, null);
+        certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
+    }
+
+    @Test(expected = InvalidCertificateException.class)
+    public void testRevokeCertificateNullAnswer() throws Exception {
+        final Personnummer civicRegistrationNumber = new Personnummer("191212121212");
+        when(certificateDao.getCertificate(civicRegistrationNumber , CERTIFICATE_ID)).thenReturn(null);
+        certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
+    }
+
+    @Test(expected = CertificateRevokedException.class)
+    public void testRevokeCertificateAlreadyRevoked() throws Exception {
+        final Personnummer civicRegistrationNumber = new Personnummer("191212121212");
+        Certificate certificate = new Certificate(CERTIFICATE_ID);
+        certificate.addState(new CertificateStateHistoryEntry("HV", CertificateState.CANCELLED, LocalDateTime.now()));
+        when(certificateDao.getCertificate(civicRegistrationNumber , CERTIFICATE_ID)).thenReturn(certificate);
+        certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
+    }
 }

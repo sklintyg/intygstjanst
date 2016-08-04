@@ -19,7 +19,9 @@
 
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import org.joda.time.LocalDateTime;
@@ -32,11 +34,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import se.inera.ifv.insuranceprocess.certificate.v1.StatusType;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtabp20.v1.SetCertificateStatusResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusRequestType;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-
 
 /**
  * @author andreaskaltenbach
@@ -44,8 +46,10 @@ import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 @RunWith(MockitoJUnitRunner.class)
 public class SetCertificateStatusResponderImplTest {
 
+    private static final String CERTIFICATE_ID = "no5";
+
     @Mock
-    private CertificateService certificateService = mock(CertificateService.class);
+    private CertificateService certificateService;
 
     @Mock
     private MonitoringLogService monitoringLogService;
@@ -59,7 +63,7 @@ public class SetCertificateStatusResponderImplTest {
         LocalDateTime timestamp = new LocalDateTime(2013, 4, 26, 12, 0, 0);
 
         SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
-        request.setCertificateId("no5");
+        request.setCertificateId(CERTIFICATE_ID);
         request.setNationalIdentityNumber("19001122-3344");
         request.setStatus(StatusType.CANCELLED);
         request.setTarget("försäkringskassan");
@@ -67,6 +71,25 @@ public class SetCertificateStatusResponderImplTest {
 
         responder.setCertificateStatus(null, request);
 
-        verify(certificateService).setCertificateState(new Personnummer("19001122-3344"), "no5", "försäkringskassan", CertificateState.CANCELLED, timestamp);
+        verify(certificateService).setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, "försäkringskassan", CertificateState.CANCELLED, timestamp);
+        verify(monitoringLogService).logCertificateStatusChanged(CERTIFICATE_ID, "CANCELLED");
+    }
+
+    @Test
+    public void testSetCertificateStatusInvalidCertificate() throws Exception {
+        LocalDateTime timestamp = new LocalDateTime(2013, 4, 26, 12, 0, 0);
+        doThrow(new InvalidCertificateException(CERTIFICATE_ID, new Personnummer("19001122-3344"))).when(certificateService).setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, "försäkringskassan", CertificateState.CANCELLED, timestamp);
+
+        SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
+        request.setCertificateId(CERTIFICATE_ID);
+        request.setNationalIdentityNumber("19001122-3344");
+        request.setStatus(StatusType.CANCELLED);
+        request.setTarget("försäkringskassan");
+        request.setTimestamp(timestamp);
+
+        responder.setCertificateStatus(null, request);
+
+        verify(certificateService).setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, "försäkringskassan", CertificateState.CANCELLED, timestamp);
+        verify(monitoringLogService, never()).logCertificateStatusChanged(anyString(), anyString());
     }
 }

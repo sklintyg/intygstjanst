@@ -53,10 +53,19 @@ public class SendMessageToRecipientResponderImplTest {
 
     @Test
     public void sendMessageToRecipientTest() throws Exception {
-        ResultType clientResult = ResultTypeUtil.okResult();
-        setupClientResponse(clientResult);
+        setupClientResponse(ResultTypeUtil.okResult());
         SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
-        assertEquals(clientResult, res.getResult());
+        assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
+        assertInvocations(times(1), times(1), times(1));
+    }
+
+    @Test
+    public void sendMessageToRecipientClientInfoTest() throws Exception {
+        final String clientInfoText = "info here";
+        setupClientResponse(ResultTypeUtil.infoResult(clientInfoText));
+        SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
+        assertEquals(ResultCodeType.INFO, res.getResult().getResultCode());
+        assertEquals(clientInfoText, res.getResult().getResultText());
         assertInvocations(times(1), times(1), times(1));
     }
 
@@ -71,20 +80,21 @@ public class SendMessageToRecipientResponderImplTest {
 
     @Test
     public void sendMessageToRecipientResponderClientErrorTest() throws Exception {
-        ResultType clientResult = ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "something wrong");
-        setupClientResponse(clientResult);
+        final String clientErrorText = "something wrong";
+        setupClientResponse(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, clientErrorText));
         SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
-        assertEquals(clientResult, res.getResult());
+        assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
+        assertEquals(ErrorIdType.APPLICATION_ERROR, res.getResult().getErrorId());
+        assertEquals(clientErrorText, res.getResult().getResultText());
         assertInvocations(never(), never(), times(1));
     }
 
     @Test
     public void sendMessageToRecipientArendeServiceThrowsExceptionTest() throws Exception {
-        ResultType clientResult = ResultTypeUtil.okResult();
-        setupClientResponse(clientResult);
+        setupClientResponse(ResultTypeUtil.okResult());
         when(arendeService.processIncomingMessage(any(Arende.class))).thenThrow(new RuntimeException("error"));
         SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
-        assertEquals(clientResult, res.getResult());
+        assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
         assertInvocations(times(1), times(1), times(1));
     }
 

@@ -22,13 +22,15 @@ package se.inera.intyg.intygstjanst.web.integration;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ERROR;
+import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
@@ -44,14 +46,18 @@ import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresserin
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.rivtabp20.v1.SendMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.*;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.*;
+import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
-@RunWith( MockitoJUnitRunner.class )
+@RunWith(MockitoJUnitRunner.class)
 public class SendMedicalCertificateResponderImplTest {
 
     private static final String LOGICAL_ADDRESS = "HSA-1234567890";
@@ -71,7 +77,6 @@ public class SendMedicalCertificateResponderImplTest {
     private static final String ENHET_OID = "1.2.752.129.2.1.4.1";
     private static final String ARBETSPLATS_CODE_OID = "1.2.752.29.4.71";
 
-
     @Mock
     private CertificateService certificateService = mock(CertificateService.class);
 
@@ -83,16 +88,10 @@ public class SendMedicalCertificateResponderImplTest {
 
     @Test
     public void testSendOk() throws Exception {
-        List<Recipient> recipients = new ArrayList<Recipient>();
-        recipients.add(createFkRecipient());
-
         when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
-        when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(recipients);
+        when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(Arrays.asList(createFkRecipient()));
 
-        AttributedURIType uri = new AttributedURIType();
-        uri.setValue(LOGICAL_ADDRESS);
-
-        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(uri, createRequest());
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), createRequest());
 
         assertEquals(OK, response.getResult().getResultCode());
 
@@ -101,45 +100,109 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendFailsWhenMultipleRecipients() throws Exception {
-        String errMsg = "Multiple recipients were found for certificate of type fk7263. Unable to decide recipient. Maybe this is a missed configuration.";
-
-        List<Recipient> recipients = new ArrayList<Recipient>();
-        recipients.add(createFkRecipient());
-        recipients.add(createFkRecipient());
-
+    public void testAlreadySent() throws Exception {
         when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
-        when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(recipients);
+        when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(Arrays.asList(createFkRecipient()));
+        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID)).thenReturn(SendStatus.ALREADY_SENT);
 
-        AttributedURIType uri = new AttributedURIType();
-        uri.setValue(LOGICAL_ADDRESS);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), createRequest());
 
-        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(uri, createRequest());
+        assertEquals(INFO, response.getResult().getResultCode());
+        assertEquals("Certificate 'Intygs-id-1234567890' is already sent.", response.getResult().getInfoText());
+
+        verify(recipientService).listRecipients(createCertificateType());
+        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendFailsWhenMultipleRecipients() throws Exception {
+        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
+        when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(Arrays.asList(createFkRecipient(), createFkRecipient()));
+
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), createRequest());
 
         assertEquals(ERROR, response.getResult().getResultCode());
-        assertEquals(errMsg, response.getResult().getErrorText());
+        assertEquals(
+                "Multiple recipients were found for certificate of type fk7263. Unable to decide recipient. Maybe this is a missed configuration.",
+                response.getResult().getErrorText());
 
         verify(recipientService).listRecipients(createCertificateType());
     }
 
     @Test
     public void testSendFailsWhenZeroRecipients() throws Exception {
-        String errMsg = "No recipient was found for certificate of type fk7263. Maybe this is a missed configuration.";
-
-        List<Recipient> recipients = new ArrayList<Recipient>();
-
         when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
-        when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(recipients);
+        when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(new ArrayList<>());
 
-        AttributedURIType uri = new AttributedURIType();
-        uri.setValue(LOGICAL_ADDRESS);
-
-        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(uri, createRequest());
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), createRequest());
 
         assertEquals(ERROR, response.getResult().getResultCode());
-        assertEquals(errMsg, response.getResult().getErrorText());
+        assertEquals("No recipient was found for certificate of type fk7263. Maybe this is a missed configuration.",
+                response.getResult().getErrorText());
 
         verify(recipientService).listRecipients(createCertificateType());
+    }
+
+    @Test
+    public void testSendMedicalCertificateInvalidCertificate() throws Exception {
+        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenThrow(new InvalidCertificateException(CERTIFICATE_ID, PERSONNUMMER));
+
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), createRequest());
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals(
+                "No certificate 'Intygs-id-1234567890' found to send for patient '9a8b138a666f84da32e9383b49a15f46f6e08d2c492352aa0dfcc3f993773b0d'.",
+                response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateCertificateRevoked() throws Exception {
+        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
+        when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(Arrays.asList(createFkRecipient()));
+        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID))
+                .thenThrow(new CertificateRevokedException(CERTIFICATE_ID));
+
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), createRequest());
+
+        assertEquals(INFO, response.getResult().getResultCode());
+        assertEquals("Certificate 'Intygs-id-1234567890' has been revoked.", response.getResult().getInfoText());
+
+        verify(recipientService).listRecipients(createCertificateType());
+        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateValidationError() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getLakarutlatande().setPatient(null);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No Patient element found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateServerException() throws Exception {
+        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
+        when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(Arrays.asList(createFkRecipient()));
+        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID)).thenThrow(new ServerException());
+
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), createRequest());
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.APPLICATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Certificate couldn't be sent to recipient", response.getResult().getErrorText());
+
+        verify(recipientService).listRecipients(createCertificateType());
+        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
     }
 
     private Certificate createCertificate() {
@@ -151,6 +214,12 @@ public class SendMedicalCertificateResponderImplTest {
 
     private CertificateType createCertificateType() {
         return new CertificateType(CERTIFICATE_TYPE);
+    }
+
+    private AttributedURIType createAttributedURIType() {
+        AttributedURIType uri = new AttributedURIType();
+        uri.setValue(LOGICAL_ADDRESS);
+        return uri;
     }
 
     private Recipient createFkRecipient() {
