@@ -27,10 +27,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
-
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
+
+import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 
 /**
  * Created by eriklupander on 2016-02-16.
@@ -39,6 +39,7 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ListActiveSickleavesForCareUnitIT.class);
 
+    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
@@ -68,7 +69,7 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
                 .expect()
                 .statusCode(200)
                 .body(BASE + "resultCode", is("OK"))
-                .body(BASE + "intygsLista.intygsData.size()", equalTo(4))
+                .body(BASE + "intygsLista.intygsData.size()", equalTo(3))
                 .body(BASE + "intygsLista.intygsData[0].patient.personId.extension", is("19121212-1212"))
                 .when()
                 .post("inera-certificate/list-active-sick-leaves-for-care-unit/v1.0");

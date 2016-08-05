@@ -82,7 +82,7 @@ public class CertificateToSjukfallCertificateConverter {
                 .signingDoctorName(fkUtlatande.getGrundData().getSkapadAv().getFullstandigtNamn())
                 .signingDateTime(certificate.getSignedDate())
                 .certificateType(certificate.getType())
-                .deleted(certificate.getDeleted())
+                .deleted(certificate.isRevoked())
                 .workCapacities(buildWorkCapacities(fkUtlatande))
 
                 .build();

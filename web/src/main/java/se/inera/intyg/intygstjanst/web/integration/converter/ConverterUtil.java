@@ -72,7 +72,7 @@ public final class ConverterUtil {
         certificateHolder.setSignedDate(certificate.getSignedDate());
         certificateHolder.setCivicRegistrationNumber(certificate.getCivicRegistrationNumber());
         certificateHolder.setAdditionalInfo(certificate.getAdditionalInfo());
-        certificateHolder.setDeleted(certificate.getDeleted());
+        certificateHolder.setDeleted(certificate.isDeleted());
         certificateHolder.setValidFromDate(certificate.getValidFromDate());
         certificateHolder.setValidToDate(certificate.getValidToDate());
         certificateHolder.setDeletedByCareGiver(certificate.isDeletedByCareGiver());

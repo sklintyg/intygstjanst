@@ -99,7 +99,7 @@ public class ListCertificatesResponderImplTest {
         LocalDate toDate = new LocalDate(2020, 12, 12);
 
         Certificate deletedCertificate = new Certificate();
-        deletedCertificate.setDeleted(true);
+        deletedCertificate.addState(new CertificateStateHistoryEntry("MI", CertificateState.DELETED, null));
         Certificate revokedCertificate = new Certificate();
         revokedCertificate.addState(new CertificateStateHistoryEntry("HV", CertificateState.CANCELLED, null));
         List<Certificate> result = Arrays.asList(new Certificate(), deletedCertificate, revokedCertificate);
@@ -125,7 +125,7 @@ public class ListCertificatesResponderImplTest {
         LocalDate toDate = new LocalDate(2020, 12, 12);
 
         Certificate deletedCertificate = new Certificate();
-        deletedCertificate.setDeleted(true);
+        deletedCertificate.addState(new CertificateStateHistoryEntry("MI", CertificateState.DELETED, null));
         Certificate revokedCertificate = new Certificate();
         revokedCertificate.addState(new CertificateStateHistoryEntry("HV", CertificateState.CANCELLED, null));
         List<Certificate> result = Arrays.asList(new Certificate(), deletedCertificate, revokedCertificate);

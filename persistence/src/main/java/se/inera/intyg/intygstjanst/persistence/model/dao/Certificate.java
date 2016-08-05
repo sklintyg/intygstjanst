@@ -122,12 +122,6 @@ public class Certificate {
     private String additionalInfo;
 
     /**
-     * If this certificate is deleted or not.
-     */
-    @Column(name = "DELETED", nullable = false, columnDefinition = "TINYINT(1)")
-    private Boolean deleted = Boolean.FALSE;
-
-    /**
      * If this certificate is no longer used by the care giver.
      * <p>
      * This can be due to that the care giver has stopped using WebCert and have their certificates persisted elsewhere.
@@ -261,14 +255,6 @@ public class Certificate {
         this.additionalInfo = additionalInfo;
     }
 
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public boolean isDeletedByCareGiver() {
         return deletedByCareGiver;
     }
@@ -306,6 +292,22 @@ public class Certificate {
         }, null) != null;
     }
 
+    /**
+     * Check if this certificate is currently deleted ("arkiverad") by the citizen.
+     *
+     * @return <code>true</code> if the latest {@link CertificateState} of either type <code>DELETED</code> or <code>RESTORED</code> is <code>DELETED</code>, otherwise return <code>false</code>.
+     */
+    public boolean isDeleted() {
+        for (CertificateStateHistoryEntry state : getStates()) {
+            if (state.getState() == CertificateState.DELETED) {
+                return true;
+            } else if (state.getState() == CertificateState.RESTORED) {
+                return false;
+            }
+        }
+        return false;
+    }
+
     public boolean isAlreadySent(final String recipientId) {
         return find(getStates(), new Predicate<CertificateStateHistoryEntry>() {
             @Override
@@ -320,8 +322,7 @@ public class Certificate {
         return "Certificate{" + "id='" + id + '\'' + ", type='" + type + '\''
                 + ", signingDoctorName='" + signingDoctorName + '\'' + ", careUnitName='" + careUnitName + '\''
                 + ", civicRegistrationNumber='" + civicRegistrationNumber + '\'' + ", signedDate=" + signedDate
-                + ", validFromDate='" + validFromDate + '\'' + ", validToDate='" + validToDate + '\'' + ", deleted="
-                + deleted + ", states=" + states + '}';
+                + ", validFromDate='" + validFromDate + '\'' + ", validToDate='" + validToDate + '\'' + ", states=" + states + '}';
     }
 
 }
