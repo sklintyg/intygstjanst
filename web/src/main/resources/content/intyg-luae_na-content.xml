@@ -7,7 +7,7 @@
         <ns4:typ>
             <ns3:code>LUAE_NA</ns3:code>
             <ns3:codeSystem>b64ea353-e8f6-4832-b563-fc7d46f29548</ns3:codeSystem>
-            <ns3:displayName>Läkarutlåtande för sjukersättning</ns3:displayName>
+            <ns3:displayName>Läkarutlåtande för aktivitetsersättning vid nedsatt arbetsförmåga</ns3:displayName>
         </ns4:typ>
         <ns4:version>1.0</ns4:version>
         <ns4:signeringstidpunkt>SIGNED_DATE</ns4:signeringstidpunkt>
