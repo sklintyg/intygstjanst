@@ -18,8 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import static se.inera.intyg.common.support.model.util.Iterables.find;
-
 import java.util.*;
 
 import javax.persistence.*;
@@ -31,7 +29,6 @@ import org.joda.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.common.support.model.util.Predicate;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
 
@@ -284,12 +281,7 @@ public class Certificate {
     }
 
     public boolean isRevoked() {
-        return find(getStates(), new Predicate<CertificateStateHistoryEntry>() {
-            @Override
-            public boolean apply(CertificateStateHistoryEntry state) {
-                return state.getState() == CertificateState.CANCELLED;
-            }
-        }, null) != null;
+        return getStates().stream().anyMatch(state -> state.getState() == CertificateState.CANCELLED);
     }
 
     /**
@@ -309,12 +301,7 @@ public class Certificate {
     }
 
     public boolean isAlreadySent(final String recipientId) {
-        return find(getStates(), new Predicate<CertificateStateHistoryEntry>() {
-            @Override
-            public boolean apply(CertificateStateHistoryEntry state) {
-                return state.getState() == CertificateState.SENT && state.getTarget().equals(recipientId);
-            }
-        }, null) != null;
+        return getStates().stream().anyMatch(state -> state.getState() == CertificateState.SENT && state.getTarget().equals(recipientId));
     }
 
     @Override

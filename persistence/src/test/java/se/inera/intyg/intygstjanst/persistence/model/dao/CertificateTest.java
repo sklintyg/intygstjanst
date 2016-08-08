@@ -76,4 +76,48 @@ public class CertificateTest {
         assertFalse(new Certificate().isDeleted());
     }
 
+    @Test
+    public void isRevokedTest() {
+        Certificate certificate = new Certificate();
+        certificate.addState(new CertificateStateHistoryEntry("HV", CertificateState.RECEIVED, LocalDateTime.now()));
+        certificate.addState(new CertificateStateHistoryEntry("HV", CertificateState.CANCELLED, LocalDateTime.now()));
+        certificate.addState(new CertificateStateHistoryEntry("FK", CertificateState.SENT, LocalDateTime.now()));
+        assertTrue(certificate.isRevoked());
+    }
+
+    @Test
+    public void isRevokedFalseTest() {
+        Certificate certificate = new Certificate();
+        certificate.addState(new CertificateStateHistoryEntry("HV", CertificateState.RECEIVED, LocalDateTime.now()));
+        certificate.addState(new CertificateStateHistoryEntry("FK", CertificateState.SENT, LocalDateTime.now()));
+        assertFalse(certificate.isRevoked());
+    }
+
+    @Test
+    public void isRevokedNoStatusesTest() {
+        assertFalse(new Certificate().isRevoked());
+    }
+
+    @Test
+    public void isAlreadySentTest() {
+        Certificate certificate = new Certificate();
+        certificate.addState(new CertificateStateHistoryEntry("HV", CertificateState.RECEIVED, LocalDateTime.now()));
+        certificate.addState(new CertificateStateHistoryEntry("HV", CertificateState.CANCELLED, LocalDateTime.now()));
+        certificate.addState(new CertificateStateHistoryEntry("FK", CertificateState.SENT, LocalDateTime.now()));
+        assertTrue(certificate.isAlreadySent("FK"));
+        assertFalse(certificate.isAlreadySent("TS"));
+    }
+
+    @Test
+    public void isAlreadySentFalseTest() {
+        Certificate certificate = new Certificate();
+        certificate.addState(new CertificateStateHistoryEntry("HV", CertificateState.RECEIVED, LocalDateTime.now()));
+        assertFalse(certificate.isAlreadySent("FK"));
+        assertFalse(certificate.isAlreadySent("TS"));
+    }
+
+    @Test
+    public void isAlreadySentNoStatusesTest() {
+        assertFalse(new Certificate().isAlreadySent("FK"));
+    }
 }
