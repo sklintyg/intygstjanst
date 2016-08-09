@@ -33,6 +33,7 @@ import org.springframework.util.StringUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Throwables;
 
+import se.inera.intyg.common.support.common.enumerations.PartKod;
 import se.inera.intyg.common.support.integration.module.exception.*;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
@@ -53,8 +54,6 @@ import se.inera.intyg.intygstjanst.web.service.*;
 public class CertificateServiceImpl implements CertificateService, ModuleContainerApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(CertificateServiceImpl.class);
-
-    public static final String HVTARGET = "HV";
 
     @Autowired
     private CertificateDao certificateDao;
@@ -209,7 +208,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             throw new CertificateRevokedException(certificateId);
         }
 
-        setCertificateState(civicRegistrationNumber, certificateId, HVTARGET, CertificateState.CANCELLED, null);
+        setCertificateState(civicRegistrationNumber, certificateId, PartKod.HSVARD.getValue(), CertificateState.CANCELLED, null);
 
         return certificate;
     }
@@ -253,7 +252,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         }
 
         // add initial RECEIVED state using current time as receiving timestamp
-        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(HVTARGET, CertificateState.RECEIVED,
+        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(PartKod.HSVARD.getValue(), CertificateState.RECEIVED,
                 new LocalDateTime());
         certificate.addState(state);
         certificateDao.store(certificate);

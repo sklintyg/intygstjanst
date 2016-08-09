@@ -275,7 +275,7 @@ public class CertificateServiceImplTest {
         assertEquals(CERTIFICATE_ID, revokeCertificate.getId());
 
         // verify status CANCELLED is set
-        verify(certificateDao).updateStatus(CERTIFICATE_ID, civicRegistrationNumber, CertificateState.CANCELLED, CertificateServiceImpl.HVTARGET,
+        verify(certificateDao).updateStatus(CERTIFICATE_ID, civicRegistrationNumber, CertificateState.CANCELLED, "HV",
                 null);
     }
 
@@ -292,7 +292,7 @@ public class CertificateServiceImplTest {
         final Personnummer civicRegistrationNumber = new Personnummer("191212121212");
         when(certificateDao.getCertificate(civicRegistrationNumber, CERTIFICATE_ID)).thenReturn(new Certificate(CERTIFICATE_ID));
         doThrow(new PersistenceException(CERTIFICATE_ID, civicRegistrationNumber)).when(certificateDao).updateStatus(CERTIFICATE_ID,
-                civicRegistrationNumber, CertificateState.CANCELLED, CertificateServiceImpl.HVTARGET, null);
+                civicRegistrationNumber, CertificateState.CANCELLED, "HV", null);
         certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
     }
 
