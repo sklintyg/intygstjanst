@@ -66,7 +66,7 @@ public class ArendeRepositoryTest {
     public void testFindByMeddelandeId() {
         Arende saved = buildFragaSvarFraga(ENHET_1_ID);
         sendMessageToCareRepository.save(saved);
-        Arende read = sendMessageToCareRepository.findByMeddelandeId(saved.getMeddelandeId()).get(0);
+        Arende read = sendMessageToCareRepository.findByMeddelandeId(saved.getMeddelandeId());
         assertEquals(read.getInternReferens(), saved.getInternReferens());
     }
 

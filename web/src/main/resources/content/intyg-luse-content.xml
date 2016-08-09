@@ -6,7 +6,7 @@
         </ns4:intygs-id>
         <ns4:typ>
             <ns3:code>LUSE</ns3:code>
-            <ns3:codeSystem>f6fb361a-e31d-48b8-8657-99b63912dd9b</ns3:codeSystem>
+            <ns3:codeSystem>b64ea353-e8f6-4832-b563-fc7d46f29548</ns3:codeSystem>
             <ns3:displayName>Läkarutlåtande för sjukersättning</ns3:displayName>
         </ns4:typ>
         <ns4:version>1.0</ns4:version>
@@ -55,6 +55,7 @@
             </ns4:enhet>
         </ns4:skapadAv>
         <ns4:svar id="1">
+            <ns4:instans>1</ns4:instans>
             <ns4:delsvar id="1.1">
                 <ns3:cv>
                     <ns3:code>UNDERSOKNING</ns3:code>
@@ -65,6 +66,7 @@
             <ns4:delsvar id="1.2">2016-04-21</ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="1">
+            <ns4:instans>2</ns4:instans>
             <ns4:delsvar id="1.1">
                 <ns3:cv>
                     <ns3:code>JOURNALUPPGIFTER</ns3:code>
@@ -75,6 +77,7 @@
             <ns4:delsvar id="1.2">2016-04-21</ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="1">
+            <ns4:instans>3</ns4:instans>
             <ns4:delsvar id="1.1">
                 <ns3:cv>
                     <ns3:code>ANHORIG</ns3:code>
@@ -85,6 +88,7 @@
             <ns4:delsvar id="1.2">2016-04-21</ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="1">
+            <ns4:instans>4</ns4:instans>
             <ns4:delsvar id="1.1">
                 <ns3:cv>
                     <ns3:code>ANNAT</ns3:code>
@@ -102,6 +106,7 @@
             <ns4:delsvar id="3.1">true</ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="4">
+            <ns4:instans>1</ns4:instans>
             <ns4:delsvar id="4.1">
                 <ns3:cv>
                     <ns3:code>HABILITERING</ns3:code>

@@ -140,7 +140,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
 
         String errorMsg = "";
 
-        if (recipients.size() == 0) {
+        if (recipients.isEmpty()) {
             errorMsg = String.format("No recipient was found for certificate of type %s. Maybe this is a missed configuration.", certificateType.getCertificateTypeId());
         }
 

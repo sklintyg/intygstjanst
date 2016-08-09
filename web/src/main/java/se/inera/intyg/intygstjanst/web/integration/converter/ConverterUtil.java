@@ -46,17 +46,13 @@ public final class ConverterUtil {
         certificate.setValidFromDate(certificateHolder.getValidFromDate());
         certificate.setValidToDate(certificateHolder.getValidToDate());
         certificate.setDeletedByCareGiver(certificateHolder.isDeletedByCareGiver());
-        certificate.setWireTapped(certificateHolder.isWireTapped());
         certificate.setAdditionalInfo(certificateHolder.getAdditionalInfo());
         if (certificateHolder.getCertificateStates() != null) {
-            List<CertificateStateHistoryEntry> certificateStates = new ArrayList<CertificateStateHistoryEntry>(
+            List<CertificateStateHistoryEntry> certificateStates = new ArrayList<>(
                     certificateHolder.getCertificateStates().size());
             for (CertificateStateHolder certificateStateHolder : certificateHolder.getCertificateStates()) {
-                CertificateStateHistoryEntry certificateState = new CertificateStateHistoryEntry();
-                certificateState.setTarget(certificateStateHolder.getTarget());
-                certificateState.setState(certificateStateHolder.getState());
-                certificateState.setTimestamp(certificateStateHolder.getTimestamp());
-                certificateStates.add(certificateState);
+                certificateStates.add(new CertificateStateHistoryEntry(certificateStateHolder.getTarget(), certificateStateHolder.getState(),
+                        certificateStateHolder.getTimestamp()));
             }
             certificate.setStates(certificateStates);
         }
@@ -76,12 +72,11 @@ public final class ConverterUtil {
         certificateHolder.setSignedDate(certificate.getSignedDate());
         certificateHolder.setCivicRegistrationNumber(certificate.getCivicRegistrationNumber());
         certificateHolder.setAdditionalInfo(certificate.getAdditionalInfo());
-        certificateHolder.setDeleted(certificate.getDeleted());
+        certificateHolder.setDeleted(certificate.isDeleted());
         certificateHolder.setValidFromDate(certificate.getValidFromDate());
         certificateHolder.setValidToDate(certificate.getValidToDate());
         certificateHolder.setDeletedByCareGiver(certificate.isDeletedByCareGiver());
-        certificateHolder.setWireTapped(certificate.isWireTapped());
-        List<CertificateStateHolder> certificateStates = new ArrayList<CertificateStateHolder>(certificate.getStates().size());
+        List<CertificateStateHolder> certificateStates = new ArrayList<>(certificate.getStates().size());
         for (CertificateStateHistoryEntry certificateStateEntry : certificate.getStates()) {
             CertificateStateHolder certificateStateHolder = new CertificateStateHolder();
             certificateStateHolder.setTarget(certificateStateEntry.getTarget());

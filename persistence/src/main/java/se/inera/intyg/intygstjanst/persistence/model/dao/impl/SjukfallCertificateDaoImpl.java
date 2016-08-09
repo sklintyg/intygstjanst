@@ -19,18 +19,20 @@
 
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 
 /**
  * Uses JPQL to query {@link SjukfallCertificate} a list of sjukfall related intyg.
@@ -68,7 +70,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         }
 
         // if no personnummer found, return empty list
-        if (personNummerList.size() == 0) {
+        if (personNummerList.isEmpty()) {
            return new ArrayList<>();
         }
 
@@ -106,7 +108,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                 .setParameter("id", id)
                 .getResultList();
 
-        if (resultList.size() == 0) {
+        if (resultList.isEmpty()) {
             LOG.error("Could not mark SjukfallCert {} as deleted, not found.", id);
             return;
         }

@@ -45,11 +45,6 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     }
 
     @Override
-    public void logCertificateSentAndNotifiedByWiretapping(String certificateId, String certificateType, String careUnit, String recipient) {
-        logEvent(MonitoringEvent.CERTIFICATE_SENT_AND_NOTIFIED_BY_WIRETAPPING, certificateId, certificateType, careUnit, recipient);
-    }
-
-    @Override
     public void logCertificateRevoked(String certificateId, String certificateType, String careUnit) {
         logEvent(MonitoringEvent.CERTIFICATE_REVOKED, certificateId, certificateType, careUnit);
     }
@@ -115,7 +110,6 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     private enum MonitoringEvent {
         CERTIFICATE_REGISTERED("Certificate '{}' with type '{}', care unit '{}' - registered"),
         CERTIFICATE_SENT("Certificate '{}' with type '{}', care unit '{}' - sent to '{}'"),
-        CERTIFICATE_SENT_AND_NOTIFIED_BY_WIRETAPPING("Certificate '{}' with type '{}', care unit '{}' - sent to '{}' (notification received by wiretapping)"),
         CERTIFICATE_REVOKED("Certificate '{}' with type '{}', care unit '{}' - revoked"),
         CERTIFICATE_REVOKE_SENT("Certificate '{}' with type '{}', care unit '{}' - revoke sent to '{}'"),
         CERTIFICATE_LISTED_BY_CITIZEN("Certificates for citizen '{}' - listed by citizen"),

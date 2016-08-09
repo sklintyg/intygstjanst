@@ -16,29 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package se.inera.intyg.intygstjanst.web.integration.test;
 
-package se.inera.intyg.common.specifications.spec
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.rivtabp20.v3.RegisterMedicalCertificateResponderInterface
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@Path("/statisticsresource")
+public class StatisticsServiceResource {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatisticsServiceResource.class);
 
-/**
- *
- * @author andreaskaltenbach
- */
-public class RegistreraFk7263IntygViaWireTap extends RegistreraFk7263Intyg {
+    @Autowired
+    private Receiver receiver;
 
-    public RegistreraFk7263IntygViaWireTap() {
-		super()
-	}
-
-    public RegistreraFk7263IntygViaWireTap(String logiskAddress) {
-        super(logiskAddress)
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_XML)
+    public String getMessages(@PathParam("id") String id) {
+        LOGGER.debug("Receiving id " + id);
+        return receiver.getMessages().get(id);
     }
 
-    @Override
-    public void init() {
-		String url = serviceUrl ? serviceUrl : baseUrl + "register-certificate-wiretap/v3.0"
-		registerMedicalCertificateResponder = createClient(RegisterMedicalCertificateResponderInterface.class, url)
-    }
 }

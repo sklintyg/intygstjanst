@@ -19,8 +19,6 @@
 
 package se.inera.intyg.intygstjanst.web.integration.v2;
 
-import static se.inera.intyg.common.support.model.converter.util.CertificateStateHolderUtil.isArchived;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import se.inera.intyg.intygstyper.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.v2.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
@@ -44,6 +41,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstyper.fkparent.model.converter.CertificateStateHolderConverter;
 import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.v2.*;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
@@ -75,9 +73,8 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
             List<Certificate> certificates = certificateService.listCertificatesForCitizen(
                     personnummer, toStringList(parameters.getIntygTyp()), parameters.getFromDatum(), parameters.getTomDatum());
             for (Certificate certificate : certificates) {
-                CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
-                if (certificateMatchesArkiveradeParameter(parameters.isArkiverade(), certificateHolder)) {
-                    response.getIntygsLista().getIntyg().add(convert(certificateHolder));
+                if (certificateMatchesArkiveradeParameter(parameters.isArkiverade(), certificate)) {
+                    response.getIntygsLista().getIntyg().add(convert(certificate));
                 }
             }
             response.setResult(ResultTypeUtil.okResult());
@@ -92,8 +89,8 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         return response;
     }
 
-    private boolean certificateMatchesArkiveradeParameter(boolean arkiverade, CertificateHolder certificateHolder) {
-        return arkiverade == isArchived(certificateHolder.getCertificateStates());
+    private boolean certificateMatchesArkiveradeParameter(boolean arkiverade, Certificate certificate) {
+        return arkiverade == certificate.isDeleted();
     }
 
     private List<String> toStringList(List<TypAvIntyg> intygTyp) {
@@ -103,7 +100,8 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         return intygTyp.stream().map(TypAvIntyg::getCode).collect(Collectors.toList());
     }
 
-    private Intyg convert(CertificateHolder certificateHolder) throws ModuleNotFoundException, ModuleException {
+    private Intyg convert(Certificate certificate) throws ModuleNotFoundException, ModuleException {
+        CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
         ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
         // Unified handling of all certificate types, maintaining a simple module api
         Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));

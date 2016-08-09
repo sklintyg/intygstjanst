@@ -31,13 +31,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Throwables;
 
+import se.inera.intyg.common.support.common.enumerations.PartKod;
 import se.inera.intyg.common.support.integration.module.exception.*;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
-import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
-import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.common.support.modules.support.api.*;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
@@ -52,12 +55,9 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     private static final Logger LOG = LoggerFactory.getLogger(CertificateServiceImpl.class);
 
-    public static final String HVTARGET = "HV";
-
     @Autowired
     private CertificateDao certificateDao;
 
-    @SuppressWarnings("unused")
     @Autowired
     private IntygModuleRegistryImpl moduleRegistry;
 
@@ -79,7 +79,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Override
     @Transactional(readOnly = true)
     public List<Certificate> listCertificatesForCitizen(Personnummer civicRegistrationNumber, List<String> certificateTypes,
-            LocalDate fromDate, LocalDate toDate) throws MissingConsentException {
+            LocalDate fromDate, LocalDate toDate) {
         assertConsent(civicRegistrationNumber);
         return certificateDao.findCertificate(civicRegistrationNumber, certificateTypes, fromDate, toDate, null);
     }
@@ -93,8 +93,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Override
     @Transactional(readOnly = true, noRollbackFor = { PersistenceException.class })
     public Certificate getCertificateForCitizen(Personnummer civicRegistrationNumber, String certificateId) throws InvalidCertificateException,
-            CertificateRevokedException,
-            MissingConsentException {
+            CertificateRevokedException {
 
         assertConsent(civicRegistrationNumber);
 
@@ -209,7 +208,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             throw new CertificateRevokedException(certificateId);
         }
 
-        setCertificateState(civicRegistrationNumber, certificateId, HVTARGET, CertificateState.CANCELLED, null);
+        setCertificateState(civicRegistrationNumber, certificateId, PartKod.HSVARD.getValue(), CertificateState.CANCELLED, null);
 
         return certificate;
     }
@@ -222,45 +221,23 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         LOG.debug("Certificate stored {}", certificateHolder.getId());
         monitoringLogService.logCertificateRegistered(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
 
-        if (certificateHolder.isWireTapped()) {
-            Personnummer personnummer = certificateHolder.getCivicRegistrationNumber();
-            String certificateId = certificateHolder.getId();
-            final String recipient = "FK";
-            setCertificateState(personnummer, certificateId, recipient, CertificateState.SENT,
-                    new LocalDateTime());
-            monitoringLogService.logCertificateSentAndNotifiedByWiretapping(certificate.getId(), certificate.getType(), certificate.getCareUnitId(),
-                    recipient);
-        }
-
-        statisticsService.created(certificate);
-
-        /**
-         * TODO INTYG-2042: This code below should be uncommented and used immediately when the statistics service has
-         * been updated accordingly.
-         * String transformedXml = certificateReceivedForStatistics(certificateHolder);
-         * statisticsService.created(transformedXml, certificate.getId(), certificate.getType(),
-         * certificate.getCareUnitId());
-         **/
-
+        String transformedXml = certificateReceivedForStatistics(certificateHolder);
+        statisticsService.created(transformedXml, certificate.getId(), certificate.getType(),
+                certificate.getCareUnitId());
         sjukfallCertificateService.created(certificate);
 
     }
 
-    /**
-     * TODO INTYG-2042: This code should be uncommented and used immediately when the statistics service has been
-     * updated accordingly.
-     * private String certificateReceivedForStatistics(CertificateHolder certificateHolder)
-     * throws CertificateAlreadyExistsException, InvalidCertificateException {
-     * try {
-     * ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
-     * String resultXml = moduleApi.transformToStatisticsService(certificateHolder.getOriginalCertificate());
-     * return resultXml;
-     * } catch (ModuleNotFoundException | ModuleException e) {
-     * LOG.error("Module not found for certificate of type {}", certificateHolder.getType());
-     * throw Throwables.propagate(e);
-     * }
-     * }
-     **/
+    private String certificateReceivedForStatistics(CertificateHolder certificateHolder)
+            throws CertificateAlreadyExistsException, InvalidCertificateException {
+        try {
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
+            return moduleApi.transformToStatisticsService(certificateHolder.getOriginalCertificate());
+        } catch (ModuleNotFoundException | ModuleException e) {
+            LOG.error("Module not found for certificate of type {}", certificateHolder.getType());
+            throw Throwables.propagate(e);
+        }
+    }
 
     @VisibleForTesting
     Certificate storeCertificate(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException,
@@ -275,7 +252,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         }
 
         // add initial RECEIVED state using current time as receiving timestamp
-        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(HVTARGET, CertificateState.RECEIVED,
+        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(PartKod.HSVARD.getValue(), CertificateState.RECEIVED,
                 new LocalDateTime());
         certificate.addState(state);
         certificateDao.store(certificate);
@@ -304,7 +281,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         return ConverterUtil.toCertificateHolder(certificate);
     }
 
-    private void assertConsent(Personnummer civicRegistrationNumber) throws MissingConsentException {
+    private void assertConsent(Personnummer civicRegistrationNumber) {
         if (civicRegistrationNumber == null || StringUtils.isEmpty(civicRegistrationNumber.getPersonnummer())) {
             throw new IllegalArgumentException("Invalid/missing civicRegistrationNumber");
         }

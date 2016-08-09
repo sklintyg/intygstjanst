@@ -46,7 +46,7 @@ import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 @SchemaValidation
 public class SendMedicalCertificateQuestionResponderStub implements SendMedicalCertificateQuestionResponderInterface {
 
-    private Logger logger = LoggerFactory.getLogger(SendMedicalCertificateQuestionResponderStub.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SendMedicalCertificateQuestionResponderStub.class);
 
     private final JAXBContext jaxbContext;
 
@@ -71,16 +71,16 @@ public class SendMedicalCertificateQuestionResponderStub implements SendMedicalC
             String meddelande = request.getQuestion().getFraga().getMeddelandeText();
 
             marshalCertificate(request);
-            logger.info("STUB Received question concerning certificate with id: " + id);
+            LOG.info("STUB Received question concerning certificate with id: " + id);
             if (request.getQuestion().getAmne().equals(Amnetyp.MAKULERING_AV_LAKARINTYG)) {
                 medicalCertificatesStore.makulera(id, meddelande);
             }
         } catch (JAXBException e) {
             response.setResult(ResultOfCallUtil.failResult("Unable to marshal certificate information"));
             return response;
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw t;
+        } catch (Exception e) {
+            LOG.error("STUB failed: {}", e);
+            throw e;
         }
         response.setResult(ResultOfCallUtil.okResult());
         return response;

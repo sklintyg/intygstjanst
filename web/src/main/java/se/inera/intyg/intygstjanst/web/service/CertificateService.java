@@ -55,8 +55,7 @@ public interface CertificateService {
      *             if the patient has not given consent for accessing her certificates
      */
     List<Certificate> listCertificatesForCitizen(Personnummer civicRegistrationNumber, List<String> certificateTypes, LocalDate fromDate,
-            LocalDate toDate)
-            throws MissingConsentException;
+            LocalDate toDate);
 
     /**
      * Returns a list of certificates for one or many care units.
@@ -85,8 +84,7 @@ public interface CertificateService {
      * @throws CertificateRevokedException
      *             if the certificate has been revoked
      */
-    Certificate getCertificateForCitizen(Personnummer civicRegistrationNumber, String certificateId) throws MissingConsentException,
-            InvalidCertificateException,
+    Certificate getCertificateForCitizen(Personnummer civicRegistrationNumber, String certificateId) throws InvalidCertificateException,
             CertificateRevokedException;
 
     /**

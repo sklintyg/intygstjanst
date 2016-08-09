@@ -18,8 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import static se.inera.intyg.common.support.model.util.Iterables.find;
-
 import java.util.*;
 
 import javax.persistence.*;
@@ -31,7 +29,6 @@ import org.joda.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.common.support.model.util.Predicate;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
 
@@ -120,12 +117,6 @@ public class Certificate {
      */
     @Column(name = "ADDITIONAL_INFO", nullable = true)
     private String additionalInfo;
-
-    /**
-     * If this certificate is deleted or not.
-     */
-    @Column(name = "DELETED", nullable = false, columnDefinition = "TINYINT(1)")
-    private Boolean deleted = Boolean.FALSE;
 
     /**
      * If this certificate is no longer used by the care giver.
@@ -261,14 +252,6 @@ public class Certificate {
         this.additionalInfo = additionalInfo;
     }
 
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public boolean isDeletedByCareGiver() {
         return deletedByCareGiver;
     }
@@ -298,21 +281,27 @@ public class Certificate {
     }
 
     public boolean isRevoked() {
-        return find(getStates(), new Predicate<CertificateStateHistoryEntry>() {
-            @Override
-            public boolean apply(CertificateStateHistoryEntry state) {
-                return state.getState() == CertificateState.CANCELLED;
+        return getStates().stream().anyMatch(state -> state.getState() == CertificateState.CANCELLED);
+    }
+
+    /**
+     * Check if this certificate is currently deleted ("arkiverad") by the citizen.
+     *
+     * @return <code>true</code> if the latest {@link CertificateState} of either type <code>DELETED</code> or <code>RESTORED</code> is <code>DELETED</code>, otherwise return <code>false</code>.
+     */
+    public boolean isDeleted() {
+        for (CertificateStateHistoryEntry state : getStates()) {
+            if (state.getState() == CertificateState.DELETED) {
+                return true;
+            } else if (state.getState() == CertificateState.RESTORED) {
+                return false;
             }
-        }, null) != null;
+        }
+        return false;
     }
 
     public boolean isAlreadySent(final String recipientId) {
-        return find(getStates(), new Predicate<CertificateStateHistoryEntry>() {
-            @Override
-            public boolean apply(CertificateStateHistoryEntry state) {
-                return state.getState() == CertificateState.SENT && state.getTarget().equals(recipientId);
-            }
-        }, null) != null;
+        return getStates().stream().anyMatch(state -> state.getState() == CertificateState.SENT && state.getTarget().equals(recipientId));
     }
 
     @Override
@@ -320,8 +309,7 @@ public class Certificate {
         return "Certificate{" + "id='" + id + '\'' + ", type='" + type + '\''
                 + ", signingDoctorName='" + signingDoctorName + '\'' + ", careUnitName='" + careUnitName + '\''
                 + ", civicRegistrationNumber='" + civicRegistrationNumber + '\'' + ", signedDate=" + signedDate
-                + ", validFromDate='" + validFromDate + '\'' + ", validToDate='" + validToDate + '\'' + ", deleted="
-                + deleted + ", states=" + states + '}';
+                + ", validFromDate='" + validFromDate + '\'' + ", validToDate='" + validToDate + '\'' + ", states=" + states + '}';
     }
 
 }

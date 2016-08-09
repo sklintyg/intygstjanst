@@ -19,7 +19,10 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import javax.jms.*;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +33,6 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.common.support.modules.support.api.ModuleApi;
-import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
-import se.inera.intyg.common.util.integration.integration.json.CustomObjectMapper;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
@@ -57,12 +53,6 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Autowired
     private MonitoringLogService monitoringLogService;
 
-    @Autowired
-    private IntygModuleRegistry moduleRegistry;
-
-    @Autowired
-    private CustomObjectMapper objectMapper;
-
     @Value("${statistics.enabled}")
     private boolean enabled;
 
@@ -82,10 +72,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     public boolean revoked(Certificate certificate) {
         boolean rc = true;
         if (enabled) {
-            /** TODO INTYG-2042: uncomment below when statistics service has been updated. **/
-            // rc = doSend(REVOKED, certificate.getDocument(), certificate.getId(), certificate.getType(),
-            // certificate.getCareUnitName());
-            rc = doSend(REVOKED, certificate);
+             rc = doSend(REVOKED, certificate.getOriginalCertificate().getDocument(), certificate.getId(), certificate.getType(),
+             certificate.getCareUnitName());
             if (rc) {
                 monitoringLogService.logStatisticsRevoked(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
             }
@@ -110,86 +98,22 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private static final class MC implements MessageCreator {
-        private final String certificate;
+        private final String certificateXml;
         private final String type;
         private final String certificateId;
 
         MC(String type, String certificateXml, String certificateId) {
             this.type = type;
-            this.certificate = certificateXml;
+            this.certificateXml = certificateXml;
             this.certificateId = certificateId;
         }
 
         @Override
         public Message createMessage(Session session) throws JMSException {
-            TextMessage message = session.createTextMessage(certificate);
+            TextMessage message = session.createTextMessage(certificateXml);
             message.setStringProperty(ACTION, type);
             message.setStringProperty(CERTIFICATE_ID, certificateId);
             return message;
         }
     }
-
-    /**
-     * TODO INTYG-2042 temporary solution below for 4.1 release, remove and use solution above when statistics service
-     * has been updated.
-     **/
-
-    @Override
-    public boolean created(Certificate certificate) {
-        boolean rc = true;
-        if (enabled) {
-            rc = doSend(CREATED, certificate);
-            if (rc) {
-                monitoringLogService.logStatisticsSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
-            }
-        }
-        return rc;
-    }
-
-    private boolean doSend(String type, Certificate certificate) {
-        try {
-            if (jmsTemplate == null) {
-                LOG.error("Failure sending certificate '{}' type '{}' to statistics, no JmsTemplate configured", certificate.getId(), type);
-                return false;
-            }
-
-            ModuleApi moduleApi = null;
-            try {
-                moduleApi = moduleRegistry.getModuleApi(certificate.getType());
-            } catch (ModuleNotFoundException e) {
-                LOG.error("Module {} not found ", certificate.getType());
-            }
-            String jsonString = objectMapper.writeValueAsString(moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument()));
-            MessageCreator messageCreator = new VeryTemporaryMC(type, certificate, jsonString);
-            jmsTemplate.send(messageCreator);
-            return true;
-        } catch (JmsException e) {
-            LOG.error("Failure sending certificate '{}' type '{}'to statistics", certificate.getId(), type, e);
-            return false;
-        } catch (ModuleException | JsonProcessingException e) {
-            LOG.error("Failure converting certificate '{}' type '{}' to statistics: {}", certificate.getId(), type, e.getMessage());
-            return false;
-        }
-    }
-
-    private static final class VeryTemporaryMC implements MessageCreator {
-        private final Certificate certificate;
-        private final String type;
-        private final String jsonString;
-
-        VeryTemporaryMC(String type, Certificate certificate, String jsonString) {
-            this.type = type;
-            this.certificate = certificate;
-            this.jsonString = jsonString;
-        }
-
-        @Override
-        public Message createMessage(Session session) throws JMSException {
-            TextMessage message = session.createTextMessage(jsonString);
-            message.setStringProperty(ACTION, type);
-            message.setStringProperty(CERTIFICATE_ID, certificate.getId());
-            return message;
-        }
-    }
-
 }

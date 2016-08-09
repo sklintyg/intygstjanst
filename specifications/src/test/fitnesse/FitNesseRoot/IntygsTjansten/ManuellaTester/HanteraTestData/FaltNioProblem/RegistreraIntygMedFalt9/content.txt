@@ -10,15 +10,9 @@
 |19121212-1212|2014-04-01|IFV1239877878-104B|Åsa Andersson|IFV1239877878-1045|FK7263|test-19121212-1212-falt9-6|falt9|ja     |ja    |
 |19121212-1212|2014-04-01|IFV1239877878-104B|Åsa Andersson|IFV1239877878-1046|FK7263|test-19121212-1212-falt9-7|falt9|nej    |nej   |
 |19121212-1212|2014-04-01|IFV1239877878-104B|Åsa Andersson|IFV1239877878-1042|FK7263|test-19121212-1212-falt9-8|falt9|nej    |ja    |
-!3 Registrera två intyg via wiretap
 
-|Registrera fk7263 intyg via wire tap|
-|personnummer |utfärdat  |utfärdare    |enhetsId          |id                         |mall |resultat?|
-|19121212-1212|2014-05-01|Åsa Andersson|IFV1239877878-1042|test-19121212-1212-falt9-9 |falt9|OK       |
-|19121212-1212|2014-05-01|Åsa Andersson|IFV1239877878-1042|test-19121212-1212-falt9-10|falt9|OK       |
+!3 Rätta ett av intygen
 
-!3 Rätta ett av intygen via
-
-|Ratta intyg via wire tap|
+|Ratta intyg|
 |personnummer|intyg|resultat?|
-|19121212-1212|test-19121212-1212-falt9-10|OK|
+|19121212-1212|test-19121212-1212-falt9-7|OK|

@@ -5,7 +5,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.joda.time.LocalDate;
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testValidationOfAmne() {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         String subject = SendMessageToCareValidator.Amneskod.ARBTID.toString();
         validator.validateMessageSubject(subject, validationErrors);
         assertTrue(validationErrors.isEmpty());
@@ -51,23 +52,23 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationOKIfPartCodeIsValid() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         validator.validateSkickatAv("FKASSA", validationErrors);
         assertTrue(validationErrors.isEmpty());
     }
 
     @Test
     public void testThatValidationOKIfPaminnelseIdIsSpecifiedForPaminnelseSubject() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType message = buildSendMessageCareType("meddelandeId", Amneskod.PAMINN.toString());
-        when(arendeRepository.findByMeddelandeId(eq(message.getPaminnelseMeddelandeId()))).thenReturn(Arrays.asList(new Arende()));
+        when(arendeRepository.findByMeddelandeId(eq(message.getPaminnelseMeddelandeId()))).thenReturn(new Arende());
         validator.validatePaminnelse(message, validationErrors);
         assertTrue(validationErrors.isEmpty());
     }
 
     @Test
     public void testThatValidationFailsIfPaminnelseArendeNotExist() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType message = buildSendMessageCareType("meddelandeId", Amneskod.PAMINN.toString());
         validator.validatePaminnelse(message, validationErrors);
         assertFalse(validationErrors.isEmpty());
@@ -75,7 +76,7 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationOKIfCertificateExistsButCivicRegistrationNumberIsCorrect() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType message = SendMessageToCareUtil.getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         validateCertificateAndCivicRegistrationNumberConsistency(validationErrors, message.getPatientPersonId().getExtension(), message);
         assertTrue(validationErrors.isEmpty());
@@ -83,7 +84,7 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationOKWhenSistaDatumForSvarIsNotSpecifiedForAnswer() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType answerWithoutSistaDatumForSvar = SendMessageToCareUtil
                 .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         answerWithoutSistaDatumForSvar.setSvarPa(new MeddelandeReferens());
@@ -101,7 +102,7 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationOkForKompletteringConsistency() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType sendMessageToCareType = buildSendMessageCareType("originalMessageId", "KOMPLT");
         sendMessageToCareType.getKomplettering().add(new Komplettering());
         validator.validateConsistencyForKomplettering(sendMessageToCareType, validationErrors);
@@ -110,23 +111,23 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationOKWhenMessageIsPaminnelseButHasDifferentSubjectThanItsQuestion() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType sendMessageToCareType = buildSendMessageCareType("originalMessageId", Amneskod.PAMINN.toString());
         String referencedMeddelandeId = sendMessageToCareType.getSvarPa().getMeddelandeId();
         Arende referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, Amneskod.KOMPLT.toString());
 
-        when(arendeRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(Arrays.asList(referencedMessage));
+        when(arendeRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(referencedMessage);
         validator.validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
         assertTrue(validationErrors.isEmpty());
     }
 
     @Test
     public void testThatValidationIsOkWhenAnswerHasSameSubjectAsItsQuestion() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType sendMessageToCareType = buildSendMessageCareType("originalMessageId", "OVRIGT");
         String referencedMeddelandeId = sendMessageToCareType.getSvarPa().getMeddelandeId();
         Arende referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, "OVRIGT");
-        when(arendeRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(Arrays.asList(referencedMessage));
+        when(arendeRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(referencedMessage);
         validator.validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
         assertTrue(validationErrors.isEmpty());
     }
@@ -139,7 +140,7 @@ public class SendMessageToCareValidatorTest {
         sendMessageToCareType.setPaminnelseMeddelandeId(null);
         String referencedMeddelandeId = sendMessageToCareType.getSvarPa().getMeddelandeId();
         Arende referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, Amneskod.ARBTID.toString());
-        when(arendeRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(Arrays.asList(referencedMessage));
+        when(arendeRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(referencedMessage);
 
         String certificateId = sendMessageToCareType.getIntygsId().getExtension();
         String civicRegistrationNumber = sendMessageToCareType.getPatientPersonId().getExtension();
@@ -155,14 +156,14 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationFailsIfPartCodeIsInvalid() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         validator.validateSkickatAv("FK", validationErrors);
         assertFalse(validationErrors.isEmpty());
     }
 
     @Test
     public void testValidationOfAmneProducesError() {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         String subject = "SomeRandomSubject";
         validator.validateMessageSubject(subject, validationErrors);
         assertFalse(validationErrors.isEmpty());
@@ -171,7 +172,7 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationFailsIfPaminnelseIdIsSpecifiedForOtherMessageTypes() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType message = buildSendMessageCareType("meddelandeId", Amneskod.OVRIGT.toString());
         validator.validatePaminnelse(message, validationErrors);
         assertFalse(validationErrors.isEmpty());
@@ -180,7 +181,7 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationFailsWhenPaminnelseIdMissingForPaminnelse() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType sendMessageToCareType = buildSendMessageCareType("originalMessageId", Amneskod.PAMINN.toString());
         sendMessageToCareType.setPaminnelseMeddelandeId(null);
         validator.validatePaminnelse(sendMessageToCareType, validationErrors);
@@ -190,7 +191,7 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationFailsIfCertificateDoesNotExist() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType message = SendMessageToCareUtil.getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         String certificateId = message.getIntygsId().getExtension();
         String civicRegistrationNumber = message.getPatientPersonId().getExtension();
@@ -202,7 +203,7 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationFailsIfCertificateExistsButCivicRegistrationNumberIsWrong() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType message = SendMessageToCareUtil.getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         validateCertificateAndCivicRegistrationNumberConsistency(validationErrors, "101010-1010", message);
         assertFalse(validationErrors.isEmpty());
@@ -211,7 +212,7 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationFailsWhen_SvarPa_And_SistaDatumForSvar_AreSimultaneouslySpecified() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType sendMessageToCareType = SendMessageToCareUtil
                 .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         sendMessageToCareType.setSvarPa(new MeddelandeReferens());
@@ -223,12 +224,12 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationFailsWhenAnswerHasDifferentSubjectThanItsQuestion() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType sendMessageToCareType = buildSendMessageCareType("originalMessageId", "OVRIGT");
         String referencedMeddelandeId = sendMessageToCareType.getSvarPa().getMeddelandeId();
         Arende referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, "KOMPLT");
 
-        when(arendeRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(Arrays.asList(referencedMessage));
+        when(arendeRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(referencedMessage);
         validator.validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
         assertFalse(validationErrors.isEmpty());
         assertTrue(validationErrors.get(0).contains(SendMessageToCareValidator.ErrorCode.SUBJECT_CONSISTENCY_ERROR.toString()));
@@ -236,7 +237,7 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationFailsWhenReferencedMessageNotFound() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType sendMessageToCareType = buildSendMessageCareType("originalMessageId", "OVRIGT");
         String referencedMeddelandeId = sendMessageToCareType.getSvarPa().getMeddelandeId();
         when(arendeRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(null);
@@ -247,7 +248,7 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationFailsForKompletteringInconsistency() throws Exception {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType sendMessageToCareType = buildSendMessageCareType("originalMessageId", "OVRIGT");
         sendMessageToCareType.getKomplettering().add(new Komplettering());
         validator.validateConsistencyForKomplettering(sendMessageToCareType, validationErrors);
@@ -265,7 +266,7 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testValidationOfEmptyMeddelandeId() {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         validator.validateMeddelandeId("", validationErrors);
         assertFalse(validationErrors.isEmpty());
 
@@ -273,7 +274,7 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testValidationOfNullMeddelandeId() {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         validator.validateMeddelandeId(null, validationErrors);
         assertFalse(validationErrors.isEmpty());
     }
@@ -281,8 +282,8 @@ public class SendMessageToCareValidatorTest {
     @Test
     public void testValidationOfExistingMeddelandeId() {
         final String meddelandeId = "meddelande-id";
-        List<String> validationErrors = new ArrayList<String>();
-        when(arendeRepository.findByMeddelandeId(eq(meddelandeId))).thenReturn(Arrays.asList(new Arende()));
+        List<String> validationErrors = new ArrayList<>();
+        when(arendeRepository.findByMeddelandeId(eq(meddelandeId))).thenReturn(new Arende());
         validator.validateMeddelandeId(meddelandeId, validationErrors);
         assertFalse(validationErrors.isEmpty());
     }
@@ -290,8 +291,8 @@ public class SendMessageToCareValidatorTest {
     @Test
     public void testValidationOfMeddelandeId() {
         final String meddelandeId = "meddelande-id";
-        List<String> validationErrors = new ArrayList<String>();
-        when(arendeRepository.findByMeddelandeId(eq(meddelandeId))).thenReturn(new ArrayList<>());
+        List<String> validationErrors = new ArrayList<>();
+        when(arendeRepository.findByMeddelandeId(eq(meddelandeId))).thenReturn(null);
         validator.validateMeddelandeId(meddelandeId, validationErrors);
         assertTrue(validationErrors.isEmpty());
     }
