@@ -55,6 +55,7 @@
             </ns4:enhet>
         </ns4:skapadAv>
         <ns4:svar id="1">
+            <ns4:instans>1</ns4:instans>
             <ns4:delsvar id="1.1">
                 <ns3:cv>
                     <ns3:code>UNDERSOKNING</ns3:code>
@@ -65,6 +66,7 @@
             <ns4:delsvar id="1.2">2016-04-21</ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="1">
+            <ns4:instans>2</ns4:instans>
             <ns4:delsvar id="1.1">
                 <ns3:cv>
                     <ns3:code>JOURNALUPPGIFTER</ns3:code>
@@ -75,6 +77,7 @@
             <ns4:delsvar id="1.2">2016-04-21</ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="1">
+            <ns4:instans>3</ns4:instans>
             <ns4:delsvar id="1.1">
                 <ns3:cv>
                     <ns3:code>ANHORIG</ns3:code>
@@ -85,6 +88,7 @@
             <ns4:delsvar id="1.2">2016-04-21</ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="1">
+            <ns4:instans>4</ns4:instans>
             <ns4:delsvar id="1.1">
                 <ns3:cv>
                     <ns3:code>ANNAT</ns3:code>
@@ -102,6 +106,7 @@
             <ns4:delsvar id="3.1">true</ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="4">
+            <ns4:instans>1</ns4:instans>
             <ns4:delsvar id="4.1">
                 <ns3:cv>
                     <ns3:code>HABILITERING</ns3:code>

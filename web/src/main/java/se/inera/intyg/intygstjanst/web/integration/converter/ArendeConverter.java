@@ -51,9 +51,7 @@ public final class ArendeConverter {
         Arende arende = new Arende();
         arende.setIntygsId(sendMessageToCareType.getIntygsId().getExtension());
         arende.setMeddelandeId(sendMessageToCareType.getMeddelandeId());
-        if (sendMessageToCareType.getReferensId() != null) {
-            arende.setReferens(sendMessageToCareType.getReferensId());
-        }
+        arende.setReferens(sendMessageToCareType.getReferensId());
         arende.setTimeStamp(LocalDateTime.now());
         arende.setLogiskAdressmottagare(sendMessageToCareType.getLogiskAdressMottagare());
         arende.setAmne(sendMessageToCareType.getAmne().getCode());

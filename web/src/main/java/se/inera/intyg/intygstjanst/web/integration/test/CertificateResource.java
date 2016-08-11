@@ -91,9 +91,9 @@ public class CertificateResource {
                         entityManager.remove(sjukfallCertificate);
                     }
                     return Response.ok().build();
-                } catch (Throwable t) {
+                } catch (Exception e) {
                     status.setRollbackOnly();
-                    LOGGER.warn("delete certificate with id " + id + " failed: " + t.getMessage());
+                    LOGGER.warn("delete certificate with id {} failed: {}", id, e);
                     return Response.serverError().build();
                 }
             }
@@ -124,9 +124,9 @@ public class CertificateResource {
                     }
 
                     return Response.ok().build();
-                } catch (Throwable t) {
+                } catch (Exception e) {
                     status.setRollbackOnly();
-                    LOGGER.warn("delete all certificates failed: " + t.getMessage());
+                    LOGGER.warn("delete all certificates failed: {}", e);
                     return Response.serverError().build();
                 }
             }
@@ -147,9 +147,9 @@ public class CertificateResource {
                     entityManager.persist(certificate);
                     entityManager.persist(originalCertificate);
                     return Response.ok().build();
-                } catch (Throwable t) {
+                } catch (Exception e) {
                     status.setRollbackOnly();
-                    LOGGER.warn("insert certificate {} ({}) failed: {}", certificate.getId(), certificate.getType(), t.getMessage());
+                    LOGGER.warn("insert certificate {} ({}) failed: {}", certificate.getId(), certificate.getType(), e);
                     return Response.serverError().build();
                 }
             }

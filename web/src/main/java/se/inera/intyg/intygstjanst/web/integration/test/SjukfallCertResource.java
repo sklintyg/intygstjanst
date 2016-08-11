@@ -23,11 +23,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -71,6 +67,7 @@ public class SjukfallCertResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteSjukfallCertificate(@PathParam("id") final String id) {
         return transactionTemplate.execute(new TransactionCallback<Response>() {
+            @Override
             public Response doInTransaction(TransactionStatus status) {
                 try {
                     SjukfallCertificate cert = entityManager.find(SjukfallCertificate.class, id);
@@ -78,9 +75,9 @@ public class SjukfallCertResource {
                         entityManager.remove(cert);
                     }
                     return Response.ok().build();
-                } catch (Throwable t) {
+                } catch (Exception e) {
                     status.setRollbackOnly();
-                    LOGGER.warn("deleted sjukfall certificate with id " + id + " failed: " + t.getMessage());
+                    LOGGER.warn("deleted sjukfall certificate with id {} failed: {}", id, e);
                     return Response.serverError().build();
                 }
             }
@@ -92,6 +89,7 @@ public class SjukfallCertResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteAllSjukfallCertificates() {
         return transactionTemplate.execute(new TransactionCallback<Response>() {
+            @Override
             public Response doInTransaction(TransactionStatus status) {
                 try {
                     @SuppressWarnings("unchecked")
@@ -100,9 +98,9 @@ public class SjukfallCertResource {
                         entityManager.remove(sjukfallCert);
                     }
                     return Response.ok().build();
-                } catch (Throwable t) {
+                } catch (Exception e) {
                     status.setRollbackOnly();
-                    LOGGER.warn("delete all sjukfall certificates failed: " + t.getMessage());
+                    LOGGER.warn("delete all sjukfall certificates failed: {}", e);
                     return Response.serverError().build();
                 }
             }

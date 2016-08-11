@@ -44,7 +44,7 @@ import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.Resu
 public class SendMedicalCertificateAnswerResponderStub implements
         SendMedicalCertificateAnswerResponderInterface {
 
-    private Logger logger = LoggerFactory
+    private static final Logger LOG = LoggerFactory
             .getLogger(SendMedicalCertificateQuestionResponderStub.class);
 
     private final JAXBContext jaxbContext;
@@ -70,13 +70,13 @@ public class SendMedicalCertificateAnswerResponderStub implements
                     .getLakarutlatandeId();
 
             marshalCertificate(request);
-            logger.info("STUB Received answer concerning certificate with id: " + id);
+            LOG.info("STUB Received answer concerning certificate with id: " + id);
         } catch (JAXBException e) {
             response.setResult(ResultOfCallUtil.failResult("Unable to marshal certificate information"));
             return response;
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw t;
+        } catch (Exception e) {
+            LOG.error("STUB failed: {}", e);
+            throw e;
         }
         response.setResult(ResultOfCallUtil.okResult());
         return response;

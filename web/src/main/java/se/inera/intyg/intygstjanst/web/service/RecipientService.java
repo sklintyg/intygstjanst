@@ -61,7 +61,7 @@ public interface RecipientService {
      *
      * @return a List of {@link Recipient}
      */
-    List<Recipient> listRecipients(CertificateType certificateType) throws RecipientUnknownException;
+    List<Recipient> listRecipients(CertificateType certificateType);
 
     /**
      * List the {@link CertificateType}[s] the specified {@link Recipient} accepts.

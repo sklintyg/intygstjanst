@@ -41,7 +41,7 @@ import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
 @Transactional
 @SchemaValidation
 public class RevokeCertificateResponderImpl implements RevokeCertificateResponderInterface {
-    public static final Logger LOG = LoggerFactory.getLogger(RevokeCertificateResponderImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RevokeCertificateResponderImpl.class);
 
     @Autowired
     private MonitoringLogService monitoringService;

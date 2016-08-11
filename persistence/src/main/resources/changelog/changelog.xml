@@ -294,4 +294,8 @@
     <dropColumn tableName="CERTIFICATE" columnName="DOCUMENT" />
   </changeSet>
 
+  <changeSet id="32" author="mn">
+    <dropColumn tableName="CERTIFICATE" columnName="DELETED" />
+  </changeSet>
+
 </databaseChangeLog>

@@ -1,11 +1,16 @@
 package se.inera.intyg.intygstjanst.web.service.converter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
 
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
+
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande;
 
 /**
  * Created by eriklupander on 2016-02-04.
@@ -70,5 +75,38 @@ public class CertificateToSjukfallCertificateConverterTest {
         assertEquals(new Integer(75), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(1).getCapacityPercentage());
         assertEquals(new Integer(50), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(2).getCapacityPercentage());
         assertEquals(new Integer(25), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(3).getCapacityPercentage());
+    }
+
+    @Test
+    public void testIsConvertableFk7263() {
+        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        when(utlatande.getDiagnosKod()).thenReturn("J91");
+        assertTrue(testee.isConvertableFk7263(utlatande));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testIsConvertableFk7263ThrowsExceptionWhenNonFk7263Type() {
+        assertTrue(testee.isConvertableFk7263(new se.inera.intyg.intygstyper.ts_bas.model.internal.Utlatande()));
+    }
+
+    @Test
+    public void testIsConvertableFk7263WhenIsSmittskydd() {
+        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        when(utlatande.isAvstangningSmittskydd()).thenReturn(true);
+        assertFalse(testee.isConvertableFk7263(utlatande));
+    }
+
+    @Test
+    public void testIsConvertableFk7263DiagnosisNull() {
+        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        when(utlatande.getDiagnosKod()).thenReturn(null);
+        assertFalse(testee.isConvertableFk7263(utlatande));
+    }
+
+    @Test
+    public void testIsConvertableFk7263DiagnosisEmpty() {
+        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        when(utlatande.getDiagnosKod()).thenReturn("  ");
+        assertFalse(testee.isConvertableFk7263(utlatande));
     }
 }

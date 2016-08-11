@@ -24,7 +24,6 @@ import java.io.StringWriter;
 import javax.annotation.PostConstruct;
 import javax.xml.bind.*;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +86,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         } catch (JAXBException e) {
             LOGGER.error("JAXB error in Webservice: ", e);
             Throwables.propagate(e);
-        } catch (NotImplementedException e) {
+        } catch (UnsupportedOperationException e) {
             LOGGER.error("This webservice is not valid for the current certificate type {}", registerCertificate.getIntyg());
             Throwables.propagate(e);
         } catch (Exception e) {
@@ -115,6 +114,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
 
     private RegisterCertificateResponseType makeCertificateAlreadyExistsResult(RegisterCertificateType registerCertificate) {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
+        // NOTE: Do NOT change this string as we are dependent on comparing this in FkParentModuleApi
         response.setResult(ResultTypeUtil.infoResult("Certificate already exists"));
         String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
         String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();

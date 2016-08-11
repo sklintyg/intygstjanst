@@ -22,56 +22,52 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.LoggerFactory;
 
-import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MonitoringLogServiceImplTest {
-    
+
     private static final String CERTIFICATE_ID = "CERTIFICATE_ID";
     private static final String CERTIFICATE_TYPE = "CERTIFICATE_TYPE";
     private static final String CARE_UNIT = "CARE_UNIT";
-    private static final String RECIPIENT = "RECIPIENT"; 
-    private static final String CITIZEN = "CITIZEN"; 
-    private static final String STATUS = "STATUS"; 
-    private static final String MESSAGE_ID = "MESSAGE_ID"; 
+    private static final String RECIPIENT = "RECIPIENT";
+    private static final String CITIZEN = "CITIZEN";
+    private static final String STATUS = "STATUS";
+    private static final String MESSAGE_ID = "MESSAGE_ID";
 
     @Mock
     private Appender<ILoggingEvent> mockAppender;
 
     @Captor
     private ArgumentCaptor<LoggingEvent> captorLoggingEvent;
-    
+
     MonitoringLogService logService = new MonitoringLogServiceImpl();
 
     @Before
     public void setup() {
-        
+
         final Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         logger.addAppender(mockAppender);
     }
-    
+
     @After
     public void teardown() {
         final Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         logger.detachAppender(mockAppender);
     }
-    
+
     @Test
     public void shouldLogCertificateRegistered() {
         logService.logCertificateRegistered(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
@@ -85,7 +81,7 @@ public class MonitoringLogServiceImplTest {
 
         // Verify log
         assertThat(loggingEvent.getLevel(), equalTo(logLevel));
-        assertThat(loggingEvent.getFormattedMessage(), 
+        assertThat(loggingEvent.getFormattedMessage(),
                 equalTo(logMessage));
     }
 
@@ -93,12 +89,6 @@ public class MonitoringLogServiceImplTest {
     public void shouldLogCertificateSent() {
         logService.logCertificateSent(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, RECIPIENT);
         verifyLog(Level.INFO, "CERTIFICATE_SENT Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - sent to 'RECIPIENT'");
-    }
-
-    @Test
-    public void shouldLogCertificateSentAndNotifiedByWiretapping() {
-        logService.logCertificateSentAndNotifiedByWiretapping(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, RECIPIENT);
-        verifyLog(Level.INFO, "CERTIFICATE_SENT_AND_NOTIFIED_BY_WIRETAPPING Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - sent to 'RECIPIENT' (notification received by wiretapping)");
     }
 
     @Test
@@ -158,7 +148,7 @@ public class MonitoringLogServiceImplTest {
         logService.logStatisticsRevoked(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
         verifyLog(Level.INFO, "STATISTICS_REVOKED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - revoke sent to statistics");
     }
-    
+
     @Test
     public void shouldLogSendMessageToCareReceived() {
         logService.logSendMessageToCareReceived(MESSAGE_ID, CARE_UNIT);

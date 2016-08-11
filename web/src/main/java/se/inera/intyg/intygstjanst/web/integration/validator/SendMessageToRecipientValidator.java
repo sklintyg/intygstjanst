@@ -22,7 +22,6 @@ package se.inera.intyg.intygstjanst.web.integration.validator;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -44,7 +43,7 @@ public class SendMessageToRecipientValidator {
     private ArendeRepository messageRepository;
 
     public List<String> validate(SendMessageToRecipientType message) {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
 
         Amneskod amne = validateAmneskod(message, validationErrors);
         validateSistaDatumForSvar(message, validationErrors);
@@ -73,8 +72,8 @@ public class SendMessageToRecipientValidator {
         } else if (isPaminnelse && !paminnelseMeddelandeIdPresent) {
             validationErrors.add("PAMINN should define paminnelseMeddelandeId");
         } else if (paminnelseMeddelandeIdPresent) {
-            List<Arende> res = messageRepository.findByMeddelandeId(message.getPaminnelseMeddelandeId());
-            if (CollectionUtils.isEmpty(res)) {
+            Arende res = messageRepository.findByMeddelandeId(message.getPaminnelseMeddelandeId());
+            if (res == null) {
                 validationErrors.add("Paminnelse Meddelande does not exist");
             }
         }
@@ -87,8 +86,8 @@ public class SendMessageToRecipientValidator {
     }
 
     private void validateMeddelandeId(SendMessageToRecipientType message, List<String> validationErrors) {
-        List<Arende> res = messageRepository.findByMeddelandeId(message.getMeddelandeId());
-        if (CollectionUtils.isNotEmpty(res)) {
+        Arende res = messageRepository.findByMeddelandeId(message.getMeddelandeId());
+        if (res != null) {
             validationErrors.add("MeddelandeId is not globally unique");
         }
     }
@@ -96,10 +95,10 @@ public class SendMessageToRecipientValidator {
     private void validateSvarPa(SendMessageToRecipientType message, List<String> validationErrors) {
         if (message.getSvarPa() != null) {
             String svarPaMeddelandeId = message.getSvarPa().getMeddelandeId();
-            List<Arende> res = messageRepository.findByMeddelandeId(svarPaMeddelandeId);
-            if (CollectionUtils.isEmpty(res)) {
+            Arende res = messageRepository.findByMeddelandeId(svarPaMeddelandeId);
+            if (res == null) {
                 validationErrors.add("SvarPa Meddelande does not exist");
-            } else if (message.getAmne().getCode() != null && !message.getAmne().getCode().equals(res.get(0).getAmne())) {
+            } else if (message.getAmne().getCode() != null && !message.getAmne().getCode().equals(res.getAmne())) {
                 validationErrors.add("Svar amne is not consistent with question");
             }
         }
@@ -118,7 +117,7 @@ public class SendMessageToRecipientValidator {
     }
 
     private boolean messageIsQuestion(SendMessageToRecipientType message) {
-        return (message.getSvarPa() == null && message.getPaminnelseMeddelandeId() == null);
+        return message.getSvarPa() == null && message.getPaminnelseMeddelandeId() == null;
     }
 
 }

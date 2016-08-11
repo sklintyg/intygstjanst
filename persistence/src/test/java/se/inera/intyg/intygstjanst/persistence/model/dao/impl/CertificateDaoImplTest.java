@@ -243,7 +243,7 @@ public class CertificateDaoImplTest {
 
     @Test(expected = PersistenceException.class)
     public void testUpdateStatusForWrongCertificate() throws PersistenceException {
-        certificateDao.updateStatus("<unknownCertId>", new Personnummer("<unknownPersonnummer>"), CertificateState.IN_PROGRESS, "fk",
+        certificateDao.updateStatus("<unknownCertId>", new Personnummer("<unknownPersonnummer>"), CertificateState.SENT, "fk",
                 null);
     }
 
@@ -322,7 +322,7 @@ public class CertificateDaoImplTest {
 
     @Test(expected = PersistenceException.class)
     public void testUpdateStatusNoPnrForWrongCertificate() throws PersistenceException {
-        certificateDao.updateStatus("<unknownCertId>", CertificateState.IN_PROGRESS, "fk", null);
+        certificateDao.updateStatus("<unknownCertId>", CertificateState.SENT, "fk", null);
     }
 
     @Test

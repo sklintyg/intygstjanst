@@ -178,11 +178,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         LocalDate toDate = new LocalDate(2020, 12, 12);
 
         Certificate certificate = new Certificate();
-        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry();
-        state.setState(CertificateState.SENT);
-        state.setTarget("FK");
-        state.setTimestamp(statusTimestamp);
-        certificate.setStates(Arrays.asList(state));
+        certificate.setStates(Arrays.asList(new CertificateStateHistoryEntry("FK", CertificateState.SENT, statusTimestamp)));
         List<Certificate> result = Arrays.asList(certificate);
 
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);

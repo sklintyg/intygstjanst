@@ -1,15 +1,20 @@
 package se.inera.intyg.intygstjanst.web.integration.test;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+
+import javax.persistence.PersistenceException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -17,14 +22,14 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 
+import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.v2.ResultTypeUtil;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.web.integration.SendMessageToCareResponderImpl;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator;
 import se.inera.intyg.intygstjanst.web.service.ArendeService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.*;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
+import se.riv.clinicalprocess.healthcond.certificate.v2.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendMessageToCareResponderImplTest {
@@ -48,21 +53,82 @@ public class SendMessageToCareResponderImplTest {
 
     @Test
     public void testSendMessage() throws Exception {
-        SendMessageToCareType sendMessageToCareType = buildSendMessageToCareType();
-        SendMessageToCareResponseType response = new SendMessageToCareResponseType();
-        ResultType resultType = new ResultType();
-        resultType.setResultCode(ResultCodeType.OK);
-        response.setResult(resultType);
-        when(fwdResponder.sendMessageToCare(any(String.class), any(SendMessageToCareType.class))).thenReturn(response);
-        SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, sendMessageToCareType);
-        Assert.assertTrue(responseType.getResult().getResultCode() == ResultCodeType.OK);
+        when(fwdResponder.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
+                .thenReturn(createClientResponse(ResultTypeUtil.okResult()));
+
+        SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, buildSendMessageToCareType());
+        assertEquals(ResultCodeType.OK, responseType.getResult().getResultCode());
+        verify(fwdResponder).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
+        verify(sendMessageToCareService).processIncomingMessage((any(Arende.class)));
+        verify(logService).logSendMessageToCareReceived(anyString(), anyString());
+    }
+
+    @Test
+    public void testSendMessageClientInfo() throws Exception {
+        final String clientInfoText = "info here";
+        when(fwdResponder.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
+                .thenReturn(createClientResponse(ResultTypeUtil.infoResult(clientInfoText)));
+
+        SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, buildSendMessageToCareType());
+        assertEquals(ResultCodeType.INFO, responseType.getResult().getResultCode());
+        assertEquals(clientInfoText, responseType.getResult().getResultText());
+        verify(fwdResponder).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
+        verify(sendMessageToCareService).processIncomingMessage((any(Arende.class)));
+        verify(logService).logSendMessageToCareReceived(anyString(), anyString());
+    }
+
+    @Test
+    public void testSendMessageValidationError() throws Exception {
+        when(validator.validateSendMessageToCare(any(SendMessageToCareType.class))).thenReturn(Arrays.asList("fel"));
+
+        SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, buildSendMessageToCareType());
+        assertEquals(ResultCodeType.ERROR, responseType.getResult().getResultCode());
+        assertEquals(ErrorIdType.VALIDATION_ERROR, responseType.getResult().getErrorId());
+        assertEquals("Validation of SendMessageToCareType failed for message with meddelandeid 4: [fel]", responseType.getResult().getResultText());
+        verify(fwdResponder, never()).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
+        verify(sendMessageToCareService, never()).processIncomingMessage((any(Arende.class)));
+        verify(logService, never()).logSendMessageToCareReceived(anyString(), anyString());
+    }
+
+    @Test
+    public void testSendMessageClientError() throws Exception {
+        final ErrorIdType clientErrorId = ErrorIdType.TECHNICAL_ERROR;
+        final String clientErrorText = "fel";
+
+        when(fwdResponder.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
+                .thenReturn(createClientResponse(ResultTypeUtil.errorResult(clientErrorId, clientErrorText)));
+
+        SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, buildSendMessageToCareType());
+        assertEquals(ResultCodeType.ERROR, responseType.getResult().getResultCode());
+        assertEquals(clientErrorId, responseType.getResult().getErrorId());
+        assertEquals(clientErrorText, responseType.getResult().getResultText());
         verify(fwdResponder, times(1)).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
-        verify(sendMessageToCareService, times(1)).processIncomingMessage((any(Arende.class)));
+        verify(sendMessageToCareService, never()).processIncomingMessage((any(Arende.class)));
+        verify(logService, never()).logSendMessageToCareReceived(anyString(), anyString());
+    }
+
+    @Test
+    public void testSendMessageProcessThrowsException() throws Exception {
+        when(fwdResponder.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
+                .thenReturn(createClientResponse(ResultTypeUtil.okResult()));
+        when(sendMessageToCareService.processIncomingMessage(any(Arende.class))).thenThrow(new PersistenceException());
+
+        SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, buildSendMessageToCareType());
+        assertEquals(ResultCodeType.OK, responseType.getResult().getResultCode());
+        verify(fwdResponder).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
+        verify(sendMessageToCareService).processIncomingMessage((any(Arende.class)));
+        verify(logService).logSendMessageToCareReceived(anyString(), anyString());
     }
 
     private SendMessageToCareType buildSendMessageToCareType() throws Exception {
         SendMessageToCareType sendMessageToCareType = getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         return sendMessageToCareType;
+    }
+
+    private SendMessageToCareResponseType createClientResponse(ResultType resultType) {
+        SendMessageToCareResponseType response = new SendMessageToCareResponseType();
+        response.setResult(resultType);
+        return response;
     }
 
     private SendMessageToCareType getSendMessageToCareTypeFromFile(String fileName) throws Exception {

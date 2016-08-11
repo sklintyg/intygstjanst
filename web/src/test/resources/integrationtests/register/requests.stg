@@ -73,6 +73,7 @@ request(data) ::= <<
                     </enhet>
                 </skapadAv>
                 <svar id="1">
+                    <instans>1</instans>
                     <delsvar id="1.1">
                         <ns3:cv>
                             <ns3:code>UNDERSOKNING</ns3:code>

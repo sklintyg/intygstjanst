@@ -20,6 +20,8 @@ package se.inera.intyg.intygstjanst.web.integration.validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,6 @@ import com.google.common.annotations.VisibleForTesting;
 import se.inera.intyg.common.support.common.enumerations.PartKod;
 import se.inera.intyg.common.support.common.util.StringUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.common.support.modules.support.api.dto.InvalidPersonNummerException;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
@@ -42,7 +43,7 @@ import se.riv.clinicalprocess.healthcond.certificate.v2.MeddelandeReferens;
 public class SendMessageToCareValidator {
     public enum Amneskod {
         KOMPLT, ARBTID, AVSTMN, KONTKT, OVRIGT, PAMINN
-    };
+    }
 
     public enum ErrorCode {
         SUBJECT_CONSISTENCY_ERROR, MESSAGE_TYPE_CONSISTENCY_ERROR, SUBJECT_NOT_SUPPORTED_ERROR, CERTIFICATE_NOT_FOUND_ERROR, CIVIC_REGISTRATION_NUMBER_INCONSISTENCY_ERROR, REFERENCED_MESSAGE_NOT_FOUND_ERROR, KOMPLETTERING_INCONSISTENCY_ERROR, PAMINNELSE_ID_INCONSISTENCY_ERROR, MEDDELANDE_ID_NOT_UNIQUE_ERROR
@@ -55,7 +56,7 @@ public class SendMessageToCareValidator {
     private ArendeRepository messageRepository;
 
     public List<String> validateSendMessageToCare(SendMessageToCareType sendMessageToCareType) {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         String personnummeer = sendMessageToCareType.getPatientPersonId().getExtension();
 
         validateSkickatAv(sendMessageToCareType.getSkickatAv().getPart().getCode(), validationErrors);
@@ -81,7 +82,7 @@ public class SendMessageToCareValidator {
 
     @VisibleForTesting
     void validateMeddelandeId(String meddelandeId, List<String> validationErrors) {
-        if (StringUtil.isNullOrEmpty(meddelandeId) || !messageRepository.findByMeddelandeId(meddelandeId).isEmpty()) {
+        if (StringUtil.isNullOrEmpty(meddelandeId) || messageRepository.findByMeddelandeId(meddelandeId) != null) {
             validationErrors.add(ErrorCode.MEDDELANDE_ID_NOT_UNIQUE_ERROR.toString());
             validationErrors.add("Meddelande-id is not a GUID");
         }
@@ -94,7 +95,7 @@ public class SendMessageToCareValidator {
         } catch (Exception e) {
             validationErrors.add(ErrorCode.SUBJECT_NOT_SUPPORTED_ERROR.toString());
             validationErrors.add(" The supplied certificate subject is invalid. "
-                    + "Supported subjects are KOMPLETTERING_AV_LAKARINTYG, MAKULERING_AV_LAKARINTYG, AVSTAMNINGSMOTE, KONTAKT, ARBETSTIDSFORLAGGNING, PAMINNELSE, OVRIGT");
+                    + "Supported subjects are " + Stream.of(Amneskod.values()).map(Amneskod::name).collect(Collectors.joining(", ")));
         }
     }
 
@@ -114,13 +115,13 @@ public class SendMessageToCareValidator {
         MeddelandeReferens meddelandeReferens = sendMessageToCareType.getSvarPa();
         if (meddelandeReferens != null) {
             String meddelandeId = meddelandeReferens.getMeddelandeId();
-            List<Arende> res = messageRepository.findByMeddelandeId(meddelandeId);
+            Arende res = messageRepository.findByMeddelandeId(meddelandeId);
 
-            if (res == null || res.isEmpty()) {
+            if (res == null) {
                 validationErrors.add(ErrorCode.REFERENCED_MESSAGE_NOT_FOUND_ERROR.toString());
                 return;
             }
-            String amne = res.get(0).getAmne();
+            String amne = res.getAmne();
             if (!sendMessageToCareType.getAmne().getCode().equals(amne) && !isPaminnelse(sendMessageToCareType)) {
                 validationErrors.add(ErrorCode.SUBJECT_CONSISTENCY_ERROR.toString());
                 validationErrors.add(" Message with meddelandeId " + meddelandeId + " referenced by reply message with id "
@@ -147,14 +148,11 @@ public class SendMessageToCareValidator {
                 validationErrors.add(ErrorCode.CERTIFICATE_NOT_FOUND_ERROR.toString());
                 return;
             }
-            String foundCivicRegistrationNumber = certificate.getCivicRegistrationNumber().getNormalizedPnr();
-            String suppliedCivicRegistrationNumber = new Personnummer(civicRegistrationNumber).getNormalizedPnr();
-            if (!foundCivicRegistrationNumber.equals(suppliedCivicRegistrationNumber)) {
+            Personnummer suppliedCivicRegistrationNumber = new Personnummer(civicRegistrationNumber);
+            if (!suppliedCivicRegistrationNumber.equals(certificate.getCivicRegistrationNumber())) {
                 validationErrors.add(ErrorCode.CIVIC_REGISTRATION_NUMBER_INCONSISTENCY_ERROR.toString());
             }
         } catch (InvalidCertificateException e) {
-            validationErrors.add(e.getMessage());
-        } catch (InvalidPersonNummerException e) {
             validationErrors.add(e.getMessage());
         }
     }
@@ -168,9 +166,9 @@ public class SendMessageToCareValidator {
         }
 
         if (isPaminnelse(message)) {
-            List<Arende> res = messageRepository.findByMeddelandeId(message.getPaminnelseMeddelandeId());
+            Arende res = messageRepository.findByMeddelandeId(message.getPaminnelseMeddelandeId());
 
-            if (res == null || res.isEmpty()) {
+            if (res == null) {
                 validationErrors.add(ErrorCode.REFERENCED_MESSAGE_NOT_FOUND_ERROR.toString());
                 return;
             }
@@ -182,8 +180,7 @@ public class SendMessageToCareValidator {
     }
 
     private boolean messageIsAnAnswer(SendMessageToCareType sendMessageToCareType) {
-        MeddelandeReferens meddelandeReferens = sendMessageToCareType.getSvarPa();
-        return (meddelandeReferens != null);
+        return sendMessageToCareType.getSvarPa() != null;
     }
 
     private boolean hasKomplettering(SendMessageToCareType sendMessageToCareType) {
