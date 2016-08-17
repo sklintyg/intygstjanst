@@ -37,10 +37,10 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.http.ContentType;
 
-import se.inera.intyg.intygstjanst.web.integrationstest.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
+import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class RevokeCertificateIT extends BaseIntegrationTest {
 

@@ -40,11 +40,11 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.response.Response;
 
-import se.inera.intyg.intygstjanst.web.integrationstest.util.IntegrationTestUtil;
-import se.inera.intyg.intygstjanst.web.integrationstest.util.IntegrationTestUtil.IntegrationTestCertificateType;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
+import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
+import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil.IntegrationTestCertificateType;
 
 public class ListCertificatesForCareIT extends BaseIntegrationTest {
     private ST requestTemplate;

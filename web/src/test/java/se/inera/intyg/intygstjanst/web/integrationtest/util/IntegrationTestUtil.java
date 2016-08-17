@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.integrationstest.util;
+package se.inera.intyg.intygstjanst.web.integrationtest.util;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;

@@ -31,7 +31,7 @@ import org.stringtemplate.v4.STGroupFile;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 
-import se.inera.intyg.intygstjanst.web.integrationstest.util.IntegrationTestUtil;
+import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class RegisterCertificateScenarioIT {
     private String intygsId = "123456";

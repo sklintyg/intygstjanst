@@ -36,10 +36,10 @@ import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 
-import se.inera.intyg.intygstjanst.web.integrationstest.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
+import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class SetCertificateStatusIT extends BaseIntegrationTest {
     private ST requestTemplate;
