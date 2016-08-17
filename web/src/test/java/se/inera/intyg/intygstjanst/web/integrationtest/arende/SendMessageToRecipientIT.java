@@ -22,21 +22,25 @@ import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.post;
 import static org.hamcrest.core.Is.is;
 
+import java.io.InputStream;
 import java.util.UUID;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
+import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
+import com.jayway.restassured.internal.matcher.xml.XmlXsdMatcher;
 
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
+import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 
-@Ignore
 public class SendMessageToRecipientIT extends BaseIntegrationTest{
     private static final String BASE = "Envelope.Body.SendMessageToRecipientResponse.";
 
@@ -46,13 +50,13 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest{
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
 
-        STGroup templateGroup = new STGroupFile("integrationtests/arende/requests.stg");
+        STGroup templateGroup = new STGroupFile("integrationtests/arende/request_recipient.stg");
         requestTemplate = templateGroup.getInstanceOf("request");
     }
 
     @Test
     public void messageGoesToCorrectEndDestination() throws Exception {
-        post("inera-certificate/send-message-to-recipient-stub-rest/clear");
+        post("inera-certificate/send-message-to-care-stub-rest/clear");
 
         String enhetsId = "123456";
         String intygsId = "intyg-1";
@@ -70,62 +74,67 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest{
 //         Make sure that the final destination received the message
         given().
                 param("address", enhetsId).
-                when().get("inera-certificate/send-message-to-recipient-stub-rest/byLogicalAddress")
+                when().get("inera-certificate/send-message-to-care-stub-rest/byLogicalAddress")
                 .then()
                 .body("messages[0].certificateId", is(intygsId));
     }
 
-//    @Test
-//    public void responseRespectsSchema() throws Exception {
-//        final InputStream inputstream = ClasspathResourceResolver.load(null,
-//                "interactions/SendMessageToCareInteraction/SendMessageToCareResponder_1.0.xsd");
-//
-//        String enhetsId = "123456";
-//        String intygsId = "intyg-1";
-//
-//        requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
-//
-//        given().filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendMessageToCareResponder:1"),
-//                "soap:Envelope/soap:Body/lc:SendMessageToCareResponse")).
-//                body(requestTemplate.render()).
-//                when().
-//                post("inera-certificate/send-message-to-care/v1.0").
-//                then().
-//                body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
-//    }
-//
-//    @Test
-//    public void messageForNonExistantCertificateIsNotAccepted() throws Exception {
-//        String enhetsId = "123456";
-//        String intygsId = "intyg-nonexistant";
-//        requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
-//
-//        given().
-//                body(requestTemplate.render()).
-//                when().
-//                post("inera-certificate/send-message-to-care/v1.0").
-//                then().
-//                statusCode(200).
-//                rootPath(BASE).
-//                body("result.resultCode", is("ERROR"));
-//    }
-//
-//    @Test
-//    public void messageNotFollowingXSDIsNotAccepted() throws Exception {
-//        String enhetsId = "<root>123456</root>"; // This brakes the XML Schema
-//        String intygsId = "intyg-1";
-//        requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
-//
-//        given().
-//                body(requestTemplate.render()).
-//                when().
-//                post("inera-certificate/send-message-to-care/v1.0").
-//                then().
-//                statusCode(200).
-//                rootPath(BASE).
-//                body("result.resultCode", is("ERROR"));
-//    }
+    @Test
+    public void responseRespectsSchema() throws Exception {
+        final InputStream inputstream = ClasspathResourceResolver.load(null,
+                "interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_1.0.xsd");
 
+        String enhetsId = "123456";
+        String intygsId = "intyg-1";
+
+        requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
+
+        given().filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendMessageToRecipientResponder:1"),
+                "soap:Envelope/soap:Body/lc:SendMessageToRecipientResponse")).
+                body(requestTemplate.render()).
+                when().
+                post("inera-certificate/send-message-to-recipient/v1.0").
+                then().
+                body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
+    }
+
+    @Test
+    public void messageForNonExistantCertificateIsNotAccepted() throws Exception {
+        String enhetsId = "123456";
+        String intygsId = "intyg-nonexistant";
+        requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
+
+        given().
+                body(requestTemplate.render()).
+                when().
+                post("inera-certificate/send-message-to-recipient/v1.0").
+                then().
+                statusCode(200).
+                rootPath(BASE).
+                body("result.resultCode", is("ERROR"));
+    }
+
+    @Test
+    public void messageNotFollowingXSDIsNotAccepted() throws Exception {
+        String enhetsId = "<root>123456</root>"; // This brakes the XML Schema
+        String intygsId = "intyg-1";
+        requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
+
+        given().
+                body(requestTemplate.render()).
+                when().
+                post("inera-certificate/send-message-to-recipient/v1.0").
+                then().
+                statusCode(200).
+                rootPath(BASE).
+                body("result.resultCode", is("ERROR"));
+    }
+
+    private XmlXsdMatcher matchesXsd(String xsd) {
+        return XmlXsdMatcher.matchesXsd(xsd);
+    }
+
+    @SuppressWarnings("unused")
     private static class ArendeData {
         public final String intygsId;
         public final String arende;

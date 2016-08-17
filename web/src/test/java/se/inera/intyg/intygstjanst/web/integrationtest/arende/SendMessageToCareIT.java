@@ -51,7 +51,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
 
-        STGroup templateGroup = new STGroupFile("integrationtests/arende/requests.stg");
+        STGroup templateGroup = new STGroupFile("integrationtests/arende/request_care.stg");
         requestTemplate = templateGroup.getInstanceOf("request");
     }
 
@@ -131,6 +131,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
                 body("result.resultCode", is("ERROR"));
     }
 
+    @SuppressWarnings("unused")
     private static class ArendeData {
         public final String intygsId;
         public final String arende;
