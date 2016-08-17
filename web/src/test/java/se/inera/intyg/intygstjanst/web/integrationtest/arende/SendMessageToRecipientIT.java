@@ -25,6 +25,7 @@ import static org.hamcrest.core.Is.is;
 import java.util.UUID;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
@@ -35,6 +36,7 @@ import com.jayway.restassured.builder.RequestSpecBuilder;
 
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 
+@Ignore
 public class SendMessageToRecipientIT extends BaseIntegrationTest{
     private static final String BASE = "Envelope.Body.SendMessageToRecipientResponse.";
 
