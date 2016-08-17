@@ -36,6 +36,7 @@ import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 
+import se.inera.intyg.intygstjanst.web.integrationstest.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
@@ -57,7 +58,7 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
 
-        templateGroup = new STGroupFile("integrationtests/register/requests.stg");
+        templateGroup = new STGroupFile("integrationtests/register/request_default.stg");
         requestTemplate = templateGroup.getInstanceOf("request");
 
         IntegrationTestUtil.deleteIntyg(intygsId);
@@ -143,8 +144,10 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
         IntegrationTestUtil.deleteIntyg(intygsId);
     }
 
+    @SuppressWarnings("unused")
     private static class IntygsData {
         public final String intygsId;
+
         public final String personId;
 
         public IntygsData(String intygsId, String personId) {

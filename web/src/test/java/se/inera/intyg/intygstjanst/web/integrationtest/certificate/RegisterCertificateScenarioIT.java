@@ -31,12 +31,11 @@ import org.stringtemplate.v4.STGroupFile;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 
+import se.inera.intyg.intygstjanst.web.integrationstest.util.IntegrationTestUtil;
+
 public class RegisterCertificateScenarioIT {
     private String intygsId = "123456";
     private String personId = "192703104321";
-
-
-    private static final String SEND_BASE = "Envelope.Body.SendCertificateToRecipientResponse.";
     private static final String REGISTER_BASE = "Envelope.Body.RegisterCertificateResponse.";
     private static final String GET_BASE = "Envelope.Body.GetCertificateResponse.";
 
@@ -49,14 +48,13 @@ public class RegisterCertificateScenarioIT {
     @Test
     public void runScenarioRegisterCertificate() {
         IntegrationTestUtil.registerCertificate(intygsId, personId);
-        sendCertificateToRecipient();
+        IntegrationTestUtil.sendCertificateToRecipient(intygsId, personId);
         IntegrationTestUtil.revokeCertificate(intygsId, personId);
     }
 
     @Test
     public void runScenarioRegisterAndGetCertificate() {
-        STGroup templateGroupRegister = new STGroupFile("integrationtests/register/requests.stg");
-        ST requestTemplateForRegister = templateGroupRegister.getInstanceOf("request");
+        ST requestTemplateForRegister = getRequestTemplate("register/request_default.stg");
         requestTemplateForRegister.add("data", new IntygsData(intygsId, personId));
 
         given().body(requestTemplateForRegister.render()).when().post("inera-certificate/register-certificate-se/v2.0").then().statusCode(200)
@@ -71,20 +69,19 @@ public class RegisterCertificateScenarioIT {
                 .rootPath(GET_BASE).body("intyg.intygs-id.extension", is(intygsId));
     }
 
-    private void sendCertificateToRecipient() {
-        STGroup templateGroupRecipient = new STGroupFile("integrationtests/sendcertificatetorecipient/requests.stg");
-        ST requestTemplateRecipient = templateGroupRecipient.getInstanceOf("request");
-        requestTemplateRecipient.add("data", new IntygsData(intygsId, personId));
-
-        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
-                .rootPath(SEND_BASE).body("result.resultCode", is("OK"));
-    }
-
     @After
     public void cleanup() {
         IntegrationTestUtil.deleteIntyg(intygsId);
     }
 
+    private static ST getRequestTemplate(String path) {
+        String base = "integrationtests/";
+        STGroup templateGroup = new STGroupFile(base+path);
+        ST registerTemplateForConsent = templateGroup.getInstanceOf("request");
+        return registerTemplateForConsent;
+    }
+
+    @SuppressWarnings("unused")
     private static class IntygsData {
         public final String intygsId;
         public final String personId;

@@ -48,7 +48,8 @@
           <jaxws:schemaLocation>classpath:/interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_1.0.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
-  <jaxws:endpoint address="/revoke-certificate-rivta-stub" implementor="se.inera.intyg.intygstjanst.web.integration.stub.RevokeCertificateResponderStub">
+  <bean id="revokeCertificateClientStub" class="se.inera.intyg.intygstjanst.web.integration.stub.RevokeCertificateResponderStub"/>
+  <jaxws:endpoint address="/revoke-certificate-rivta-stub" implementor="#revokeCertificateClientStub">
       <jaxws:schemaLocations>
           <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_2.0.xsd</jaxws:schemaLocation>
           <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_2.0.xsd</jaxws:schemaLocation>

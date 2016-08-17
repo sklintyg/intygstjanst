@@ -19,8 +19,12 @@
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
 import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
 
+import java.io.InputStream;
+
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,12 +32,17 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
+import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
+import com.jayway.restassured.http.ContentType;
 
+import se.inera.intyg.intygstjanst.web.integrationstest.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
+import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 
-public class SendCertificateToRecipientIT extends BaseIntegrationTest  {
+public class SendCertificateToRecipientIT extends BaseIntegrationTest {
     private static final String REGISTER_BASE = "Envelope.Body.RegisterCertificateResponse.";
     private static final String RECIPIENT_BASE = "Envelope.Body.SendCertificateToRecipientResponse.";
 
@@ -43,6 +52,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest  {
     private STGroup templateGroupRecipient;
     private STGroup templateGroupRegister;
     private String personId1 = "192703104321";
+    private final String baseUrl = "http://localhost:8080/inera-certificate";
 
     private String intygsId = "123456";
 
@@ -52,40 +62,69 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest  {
         templateGroupRecipient = new STGroupFile("integrationtests/sendcertificatetorecipient/requests.stg");
         requestTemplateRecipient = templateGroupRecipient.getInstanceOf("request");
 
-        templateGroupRegister = new STGroupFile("integrationtests/register/requests.stg");
+        templateGroupRegister = new STGroupFile("integrationtests/register/request_default.stg");
         requestTemplateRegister = templateGroupRegister.getInstanceOf("request");
 
         IntegrationTestUtil.deleteIntyg(intygsId);
+        setFakeExceptionAtRegisterCertificateResponderStub(false);
     }
 
     @Test
     public void sendCertificateToRecipientWorks() {
 
         requestTemplateRegister.add("data", new IntygsData(intygsId, personId1));
-        given().body(requestTemplateRegister.render()).
-                when().
-                post("inera-certificate/register-certificate-se/v2.0").
-                then().
-                statusCode(200).
-                rootPath(REGISTER_BASE).
-                body("result.resultCode", is("OK"));
+        given().body(requestTemplateRegister.render()).when().post("inera-certificate/register-certificate-se/v2.0").then().statusCode(200)
+                .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
 
         requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
 
-        given().body(requestTemplateRecipient.render()).
+        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
+                .rootPath(RECIPIENT_BASE).body("result.resultCode", is("OK"));
+    }
+
+    @Test
+    public void responseRespectsSchema() throws Exception {
+        final InputStream inputstream = ClasspathResourceResolver.load(null,
+                "interactions/SendCertificateToRecipientInteraction/SendCertificateToRecipientResponder_1.0.xsd");
+
+        requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
+
+        given().
+                filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendCertificateToRecipientResponder:1"),
+                        "soap:Envelope/soap:Body/lc:SendCertificateToRecipientResponse")).
+                body(requestTemplateRecipient.render()).
                 when().
                 post("inera-certificate/send-certificate-to-recipient/v1.0").
                 then().
-                statusCode(200).
-                rootPath(RECIPIENT_BASE).
-                body("result.resultCode", is("OK"));
+                body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
+    }
+
+    @Test
+    public void sendCertificateToRecipientFailureAtRecipientWorks() {
+        setFakeExceptionAtRegisterCertificateResponderStub(true);
+
+        requestTemplateRegister.add("data", new IntygsData(intygsId, personId1));
+        given().body(requestTemplateRegister.render()).when().post("inera-certificate/register-certificate-se/v2.0").then().statusCode(200)
+                .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
+
+        requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
+
+        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
+                .rootPath(RECIPIENT_BASE).body("result.resultCode", is("ERROR"));
+    }
+
+    private void setFakeExceptionAtRegisterCertificateResponderStub(boolean active) {
+        given().contentType(ContentType.JSON).queryParam("fakeException", active).expect().statusCode(204).when()
+                .post(baseUrl + "/fk-register-certificate-stub/certificates");
     }
 
     @After
     public void cleanup() {
+        setFakeExceptionAtRegisterCertificateResponderStub(false);
         IntegrationTestUtil.deleteIntyg(intygsId);
     }
 
+    @SuppressWarnings("unused")
     private static class IntygsData {
         public final String intygsId;
         public final String personId;

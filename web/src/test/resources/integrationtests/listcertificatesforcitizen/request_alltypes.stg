@@ -12,12 +12,6 @@ request(data) ::= <<
             <urn2:extension>$data.personId$</urn2:extension>
          </urn1:person-id>
          <!--Zero or more repetitions:-->
-         <urn1:intygTyp>
-            <urn2:code>$data.type$</urn2:code>
-            <urn2:codeSystem>codesystemxyz</urn2:codeSystem>
-            <!--Optional:-->
-            <urn2:displayName>moff</urn2:displayName>
-         </urn1:intygTyp>
          <urn1:arkiverade>false</urn1:arkiverade>
          <!--Optional:-->
          <!--<urn1:fromDatum>2015-06-25</urn1:fromDatum>-->

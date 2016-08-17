@@ -58,6 +58,7 @@ public class GetCertificateIT extends BaseIntegrationTest {
                 body("intyg.intygs-id.extension", is("intyg-10"));
     }
 
+    @SuppressWarnings("unused")
     private static class IntygsData {
         public final String intygsId;
         public final String personId;

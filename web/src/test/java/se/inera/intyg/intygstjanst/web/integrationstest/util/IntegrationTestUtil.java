@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
+package se.inera.intyg.intygstjanst.web.integrationstest.util;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
@@ -30,9 +30,40 @@ public class IntegrationTestUtil {
     private static final String REGISTER_BASE = "Envelope.Body.RegisterCertificateResponse.";
     private static final String CONSENT_BASE = "Envelope.Body.SetConsentResponse.";
     private static final String REVOKE_BASE = "Envelope.Body.RevokeCertificateResponse.";
+    private static final String SEND_BASE = "Envelope.Body.SendCertificateToRecipientResponse.";
+    private static final String DEFAULT_FILE_PATH = "integrationtests/register/request_default.stg";
+    public enum IntegrationTestCertificateType{
+        LUSE, LUAENA, LUAEFS, LISU
+    }
+
+    public static void registerCertificate(String intygsId, String personId, IntegrationTestCertificateType type) {
+        String filePath = getFilePath(type);
+        registerCertificate(intygsId, personId, filePath);
+    }
+
+    private static String getFilePath(IntegrationTestCertificateType type) {
+        String baseUrl = "integrationtests/register/";
+        switch(type){
+        case LISU:
+            return baseUrl+"request_lisu.stg";
+        case LUSE:
+            return baseUrl+"request_luse.stg";
+        case LUAEFS:
+            return baseUrl+"request_luaefs.stg";
+        case LUAENA:
+            return baseUrl+"request_luaena.stg";
+            default:
+                return DEFAULT_FILE_PATH;
+        }
+    }
+
 
     public static void registerCertificate(String intygsId, String personId) {
-        STGroup templateGroup = new STGroupFile("integrationtests/register/requests.stg");
+        registerCertificate(intygsId, personId, DEFAULT_FILE_PATH);
+    }
+
+    private static void registerCertificate(String intygsId, String personId, String filePath){
+        STGroup templateGroup = new STGroupFile(filePath);
         ST requestTemplateForConsent = templateGroup.getInstanceOf("request");
         requestTemplateForConsent.add("data", new IntygsData(intygsId, personId));
 
@@ -54,12 +85,18 @@ public class IntegrationTestUtil {
     }
 
     private static void setConsent(String personId, Boolean consent) {
-        STGroup templateGroup = new STGroupFile("integrationtests/setconsent/requests.stg");
-        ST registerTemplateForConsent = templateGroup.getInstanceOf("request");
+        ST registerTemplateForConsent = getRequestTemplate("setconsent/requests.stg");
         registerTemplateForConsent.add("data", new ConsentData(personId, consent));
 
         given().body(registerTemplateForConsent.render()).when().post("inera-certificate/set-consent/v1.0").then().statusCode(200)
                 .rootPath(CONSENT_BASE).body("result.resultCode", is("OK"));
+    }
+
+    private static ST getRequestTemplate(String path) {
+        String base = "integrationtests/";
+        STGroup templateGroup = new STGroupFile(base+path);
+        ST registerTemplateForConsent = templateGroup.getInstanceOf("request");
+        return registerTemplateForConsent;
     }
 
     public static void deleteIntyg(String id) {
@@ -67,8 +104,7 @@ public class IntegrationTestUtil {
     }
 
     public static void revokeCertificate(String intygsId, String personId) {
-        STGroup templateGroupForRevoke = new STGroupFile("integrationtests/revokecertificate/requests.stg");
-        ST requestTemplateForRevoke = templateGroupForRevoke.getInstanceOf("request");
+        ST requestTemplateForRevoke = getRequestTemplate("revokecertificate/requests.stg");
         requestTemplateForRevoke.add("data", new IntygsData(intygsId, personId));
         given().body(requestTemplateForRevoke.render()).
         when().
@@ -80,6 +116,15 @@ public class IntegrationTestUtil {
 
     }
 
+    public static void sendCertificateToRecipient(String intygsId, String personId) {
+        ST requestTemplateRecipient  = getRequestTemplate("sendcertificatetorecipient/requests.stg");
+        requestTemplateRecipient.add("data", new IntygsData(intygsId, personId));
+
+        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
+                .rootPath(SEND_BASE).body("result.resultCode", is("OK"));
+    }
+
+    @SuppressWarnings("unused")
     private static class IntygsData {
         public final String intygsId;
         public final String personId;
@@ -90,6 +135,7 @@ public class IntegrationTestUtil {
         }
     }
 
+    @SuppressWarnings("unused")
     private static class ConsentData{
         public final String personId;
         public final Boolean consent;
