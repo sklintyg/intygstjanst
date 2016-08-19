@@ -21,15 +21,23 @@ package se.inera.intyg.intygstjanst.web.integrationtest.util;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupFile;
+import java.util.Arrays;
+
+import org.joda.time.LocalDateTime;
+import org.stringtemplate.v4.*;
+
+import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
+import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
+import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 
 public class IntegrationTestUtil {
 
     private static final String REGISTER_BASE = "Envelope.Body.RegisterCertificateResponse.";
+    private static final String REGISTER_MEDICAL_BASE = "Envelope.Body.RegisterMedicalCertificateResponse.";
     private static final String CONSENT_BASE = "Envelope.Body.SetConsentResponse.";
     private static final String REVOKE_BASE = "Envelope.Body.RevokeCertificateResponse.";
+    private static final String REVOKE_MEDICAL_BASE = "Envelope.Body.RevokeMedicalCertificateResponse.";
     private static final String SEND_BASE = "Envelope.Body.SendCertificateToRecipientResponse.";
     private static final String DEFAULT_FILE_PATH = "integrationtests/register/request_default.stg";
     public enum IntegrationTestCertificateType{
@@ -93,14 +101,23 @@ public class IntegrationTestUtil {
     }
 
     private static ST getRequestTemplate(String path) {
+        return getRequestTemplate(path, "request");
+    }
+
+    private static ST getRequestTemplate(String path, String instance) {
         String base = "integrationtests/";
         STGroup templateGroup = new STGroupFile(base+path);
-        ST registerTemplateForConsent = templateGroup.getInstanceOf("request");
+        ST registerTemplateForConsent = templateGroup.getInstanceOf(instance);
         return registerTemplateForConsent;
     }
 
     public static void deleteIntyg(String id) {
         given().delete("inera-certificate/resources/certificate/" + id).then().statusCode(200);
+    }
+
+    public static void givenIntyg(String intygId, String intygTyp, String personId, boolean deletedByCareGiver) {
+        given().contentType("application/json;charset=utf-8").body(certificate(intygId, intygTyp, personId, deletedByCareGiver))
+            .post("inera-certificate/resources/certificate/").then().statusCode(200);
     }
 
     public static void revokeCertificate(String intygsId, String personId) {
@@ -116,9 +133,41 @@ public class IntegrationTestUtil {
 
     }
 
+    public static void revokeMedicalCertificate(String intygsId, String personId, String meddelande) {
+        ST requestTemplateForRevoke = getRequestTemplate("revokemedicalcertificate/requests.stg");
+        requestTemplateForRevoke.add("intygsId", intygsId);
+        requestTemplateForRevoke.add("personId", personId);
+        requestTemplateForRevoke.add("meddelande", meddelande);
+        given().body(requestTemplateForRevoke.render()).
+        when().
+        post("inera-certificate/revoke-certificate/v1.0").
+        then().
+        statusCode(200).
+        rootPath(REVOKE_MEDICAL_BASE).
+        body("result.resultCode", is("OK"));
+    }
+
+    public static void registerMedicalCertificate(String intygsId, String personId) {
+        registerMedicalCertificate(intygsId, personId, "request");
+    }
+
+    public static void registerMedicalCertificate(String intygsId, String personId, String template) {
+        ST requestTemplateForRegister = getRequestTemplate("registermedicalcertificate/requests.stg", template);
+        requestTemplateForRegister.add("intygId", intygsId);
+        requestTemplateForRegister.add("personId", personId);
+        given().body(requestTemplateForRegister.render()).
+        when().
+        post("inera-certificate/register-certificate/v3.0").
+        then().
+        statusCode(200).
+        rootPath(REGISTER_MEDICAL_BASE).
+        body("result.resultCode", is("OK"));
+    }
+
     public static void sendCertificateToRecipient(String intygsId, String personId) {
         ST requestTemplateRecipient  = getRequestTemplate("sendcertificatetorecipient/requests.stg");
         requestTemplateRecipient.add("data", new IntygsData(intygsId, personId));
+        requestTemplateRecipient.add("mottagare", "FKASSA");
 
         given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
                 .rootPath(SEND_BASE).body("result.resultCode", is("OK"));
@@ -146,4 +195,18 @@ public class IntegrationTestUtil {
         }
     }
 
+    private static CertificateHolder certificate(String intygId, String intygTyp, String personId, boolean deletedByCareGiver) {
+        CertificateHolder certificate = new CertificateHolder();
+        certificate.setId(intygId);
+        certificate.setType(intygTyp);
+        certificate.setSignedDate(LocalDateTime.now());
+        certificate.setCareGiverId("CareGiverId");
+        certificate.setCareUnitId("CareUnitId");
+        certificate.setCareUnitName("CareUnitName");
+        certificate.setSigningDoctorName("Singing Doctor");
+        certificate.setCivicRegistrationNumber(new Personnummer(personId));
+        certificate.setCertificateStates(Arrays.asList(new CertificateStateHolder("HV", CertificateState.RECEIVED, LocalDateTime.now())));
+        certificate.setDeletedByCareGiver(deletedByCareGiver);
+        return certificate;
+    }
 }

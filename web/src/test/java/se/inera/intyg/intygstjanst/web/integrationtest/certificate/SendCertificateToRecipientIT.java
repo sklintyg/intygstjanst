@@ -25,21 +25,15 @@ import static org.hamcrest.core.Is.is;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupFile;
+import org.junit.*;
+import org.stringtemplate.v4.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.http.ContentType;
 
-import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
-import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
-import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
+import se.inera.intyg.intygstjanst.web.integrationtest.*;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class SendCertificateToRecipientIT extends BaseIntegrationTest {
@@ -56,6 +50,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
 
     private String intygsId = "123456";
 
+    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
@@ -77,6 +72,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
                 .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
 
         requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
+        requestTemplateRecipient.add("mottagare", "FKASSA");
 
         given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
                 .rootPath(RECIPIENT_BASE).body("result.resultCode", is("OK"));
@@ -88,6 +84,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
                 "interactions/SendCertificateToRecipientInteraction/SendCertificateToRecipientResponder_1.0.xsd");
 
         requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
+        requestTemplateRecipient.add("mottagare", "FKASSA");
 
         given().
                 filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendCertificateToRecipientResponder:1"),
@@ -108,19 +105,49 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
                 .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
 
         requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
+        requestTemplateRecipient.add("mottagare", "FKASSA");
 
         given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
                 .rootPath(RECIPIENT_BASE).body("result.resultCode", is("ERROR"));
     }
 
+    @Test
+    public void sendCertificateToRecipientErrorFromTS() {
+        IntegrationTestUtil.givenIntyg(intygsId, "ts-bas", personId1, false);
+
+        setErrorFromTS(true);
+        requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
+        requestTemplateRecipient.add("mottagare", "TRANSP");
+        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
+                .rootPath(RECIPIENT_BASE).
+                body("result.resultCode", is("ERROR"));
+    }
+
+    @Test
+    public void sendCertificateToRecipientTS() {
+        IntegrationTestUtil.givenIntyg(intygsId, "ts-bas", personId1, false);
+
+        requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
+        requestTemplateRecipient.add("mottagare", "TRANSP");
+        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
+                .rootPath(RECIPIENT_BASE).
+                body("result.resultCode", is("OK"));
+    }
+
     private void setFakeExceptionAtRegisterCertificateResponderStub(boolean active) {
         given().contentType(ContentType.JSON).queryParam("fakeException", active).expect().statusCode(204).when()
-                .post(baseUrl + "/fk-register-certificate-stub/certificates");
+        .post(baseUrl + "/fk-register-certificate-stub/certificates");
+    }
+
+    private void setErrorFromTS(boolean active) {
+        given().contentType(ContentType.JSON).queryParam("fakeException", active).expect().statusCode(204).when()
+                .post(baseUrl + "/ts-certificate-stub/certificates");
     }
 
     @After
     public void cleanup() {
         setFakeExceptionAtRegisterCertificateResponderStub(false);
+        setErrorFromTS(false);
         IntegrationTestUtil.deleteIntyg(intygsId);
     }
 

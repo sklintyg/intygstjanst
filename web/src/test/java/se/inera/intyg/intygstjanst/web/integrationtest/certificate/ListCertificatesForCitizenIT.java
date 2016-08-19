@@ -24,26 +24,18 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupFile;
+import org.junit.*;
+import org.stringtemplate.v4.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.response.Response;
 
-import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
-import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
-import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
+import se.inera.intyg.intygstjanst.web.integrationtest.*;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil.IntegrationTestCertificateType;
 
@@ -57,6 +49,7 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
 
     private List<String> intygsId_alltypes = Arrays.asList("luae_na_1", "luse_1", "luae_fs_1", "lisu_1");
 
+    @Override
     @Before
     public void setup() {
         cleanup();
@@ -79,7 +72,8 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("INFO"));
+                .rootPath(BASE).body("result.resultCode", is("INFO"))
+                .body("result.resultText", is("NOCONSENT"));
     }
 
     @Test
@@ -107,6 +101,28 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
                 .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0].intyg.size()", is(4)).extract().response();
 
         assertTrue(intygsId_alltypes.containsAll(extractIds(res)));
+    }
+
+    @Test
+    public void listCertificatesRevokeConsent() {
+        ST requestTemplate = getRequestTemplate(true);
+        IntegrationTestUtil.addConsent(personId);
+        IntegrationTestUtil.givenIntyg(intygsId_alltypes.get(0), "fk7263", personId, true);
+        requestTemplate.add("data", new ListParameters(personId, defaultType));
+
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then().statusCode(200)
+                .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0].intyg.size()", is(1));
+
+        // Eftersom intyget är markerat som borttaget av vården så ska detta städas bort då inte heller invånaren längre har åtkomst till det. När invånaren åter ger samtycke så är intyget borta.
+        IntegrationTestUtil.revokeConsent(personId);
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then().statusCode(200)
+                .rootPath(BASE).body("result.resultCode", is("INFO"))
+                .body("result.resultText", is("NOCONSENT"))
+                .body("intygsLista[0].intyg.size()", is(0));
+        IntegrationTestUtil.addConsent(personId);
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then().statusCode(200)
+                .rootPath(BASE).body("result.resultCode", is("OK"))
+                .body("intygsLista[0].intyg.size()", is(0));
     }
 
     @Test
@@ -162,7 +178,7 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
     }
 
     private List<String> extractIds(Response res) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         Integer size = res.xmlPath().get("Envelope.Body.ListCertificatesForCitizenResponse.intygsLista[0].intyg.size()");
         for (int i = 0; i < size; i++) {
             String path = "Envelope.Body.ListCertificatesForCitizenResponse.intygsLista[0].intyg[" + i + "].intygs-id.extension";

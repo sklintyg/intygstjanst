@@ -24,34 +24,28 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupFile;
+import org.junit.*;
+import org.stringtemplate.v4.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.response.Response;
 
-import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
-import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
-import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
+import se.inera.intyg.intygstjanst.web.integrationtest.*;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil.IntegrationTestCertificateType;
 
 public class ListCertificatesForCareIT extends BaseIntegrationTest {
     private ST requestTemplate;
     private String personId1 = "192703104321";
-    private List<String> intygsId = Arrays.asList("luae_na_1", "luse_1", "luae_fs_1", "lisu_1");
+    private List<String> intygsId = Arrays.asList("luae_na_1", "luse_1", "luae_fs_1", "lisu_1", "fk7263_deletedByCareGiver");
     private static final String BASE = "Envelope.Body.ListCertificatesForCareResponse.";
 
+    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
@@ -61,10 +55,9 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
         deleteIntyg();
     }
 
-    private void deleteIntyg() {
-        for (String intyg : intygsId) {
-            IntegrationTestUtil.deleteIntyg(intyg);
-        }
+    @After
+    public void deleteIntyg() {
+        intygsId.stream().forEach(id -> IntegrationTestUtil.deleteIntyg(id));
     }
 
     @Test
@@ -91,6 +84,8 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
         IntegrationTestUtil.registerCertificate(intygsId.get(1), personId1, IntegrationTestCertificateType.LUSE);
         IntegrationTestUtil.registerCertificate(intygsId.get(2), personId1, IntegrationTestCertificateType.LUAEFS);
         IntegrationTestUtil.registerCertificate(intygsId.get(3), personId1, IntegrationTestCertificateType.LISU);
+        // deletedByCareGiver should not be returned
+        IntegrationTestUtil.givenIntyg(intygsId.get(4), "fk7263", personId1, true);
         requestTemplate.add("data", new IntygsData(personId1));
 
         Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v2.0").then().statusCode(200)
@@ -100,7 +95,7 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
     }
 
     private List<String> extractIds(Response res) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         Integer size = res.xmlPath().get("Envelope.Body.ListCertificatesForCareResponse.intygsLista[0].intyg.size()");
         for (int i = 0; i < size; i++) {
             String path = "Envelope.Body.ListCertificatesForCareResponse.intygsLista[0].intyg[" + i + "].intygs-id.extension";
