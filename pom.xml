@@ -61,7 +61,6 @@
 
   <modules>
     <module>persistence</module>
-    <module>specifications</module>
     <module>web</module>
     <module>tools/liquibase-runner</module>
   </modules>
@@ -98,11 +97,6 @@
       <dependency>
         <groupId>se.inera.intyg.common</groupId>
         <artifactId>common-schemas</artifactId>
-        <version>${common.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>se.inera.intyg.common</groupId>
-        <artifactId>common-specifications</artifactId>
         <version>${common.version}</version>
       </dependency>
       <dependency>

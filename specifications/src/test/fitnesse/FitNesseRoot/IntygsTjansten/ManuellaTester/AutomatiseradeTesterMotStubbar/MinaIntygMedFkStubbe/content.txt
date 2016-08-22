@@ -1,3 +1,0 @@
-!4 Dessa tester förutsätter att Intygstjänsten är konfigurerad att gå mot test-stubbe för interaktionen med Försäkringskassan.
-
-!contents -R2 -g -p -f -h

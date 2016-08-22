@@ -1,5 +1,0 @@
-!*> '''Variables Defined'''
-!define fk.logiskAddress {2021005521}
-*!
-
-!contents -R2 -g -p -f -h

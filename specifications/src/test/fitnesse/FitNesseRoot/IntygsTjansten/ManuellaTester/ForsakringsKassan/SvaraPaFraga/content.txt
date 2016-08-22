@@ -1,3 +1,0 @@
-|Skicka svar|${fk.logiskAddress}|
-|vårdReferens|fkReferens|ämne|fråga|frågeTidpunkt|svar|svarsTidpunkt|lakarutlatandeId|signeringsTidpunkt|personnr|namn|resultat?|
-|123456789012344|130196056881|Ovrigt|Hej! Kan vi ses imorgon?|2013-08-05T14:30:00|Visst! Vilken tid?|2013-08-05T15:30:00|test-19121212-1212-intyg-11|2013-08-03T00:00:00|19121212-1212|Test Testorsson|OK|

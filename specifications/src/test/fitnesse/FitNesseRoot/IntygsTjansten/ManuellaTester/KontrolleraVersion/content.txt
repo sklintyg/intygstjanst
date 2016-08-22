@@ -1,3 +1,0 @@
-|kontrollera version|
-|version?|
-|${version}|

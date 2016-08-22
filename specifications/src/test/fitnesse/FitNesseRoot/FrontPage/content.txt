@@ -1,9 +1,0 @@
-!-FitNesse-! tester för Intygstjänsten.
-
-!3 Specifikationer
-Våra test specifikationer. Gör alla förändringar här.
-
- * IntygsTjansten.AutomatiseradeTester
- * IntygsTjansten.ManuellaTester
-
-!note Release ${FITNESSE_VERSION}
