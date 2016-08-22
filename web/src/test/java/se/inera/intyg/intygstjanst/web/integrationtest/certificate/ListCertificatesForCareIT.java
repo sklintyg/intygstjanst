@@ -73,9 +73,8 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
     public void listCertificateNotExists() {
         requestTemplate.add("data", new IntygsData(personId1));
 
-        Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v2.0").then().statusCode(200)
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v2.0").then().statusCode(200)
                 .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0]", is("")).extract().response();
-        System.out.println("RES: " + res.xmlPath().get("intygsLista"));
     }
 
     @Test
