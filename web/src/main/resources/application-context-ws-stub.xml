@@ -32,7 +32,6 @@
 
   <!-- ws endpoints -->
   <jaxws:endpoint address="/send-certificate-question-stub" implementor="se.inera.intyg.intygstjanst.web.integration.stub.SendMedicalCertificateQuestionResponderStub" />
-  <jaxws:endpoint address="/send-certificate-answer-stub" implementor="se.inera.intyg.intygstjanst.web.integration.stub.SendMedicalCertificateAnswerResponderStub" />
   <jaxws:endpoint address="/revoke-medical-certificate-stub" implementor="se.inera.intyg.intygstjanst.web.integration.stub.RevokeMedicalCertificateResponderStub" />
   <jaxws:endpoint address="/send-message-to-care-stub" implementor="se.inera.intyg.intygstjanst.web.integration.stub.SendMessageToCareResponderStub">
       <jaxws:schemaLocations>
