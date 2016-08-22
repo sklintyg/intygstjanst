@@ -2,6 +2,7 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v1;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import org.junit.*;
 import org.stringtemplate.v4.*;
@@ -39,6 +40,7 @@ public class GetMedicalCertificateForCareIT extends BaseIntegrationTest {
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
 
         givenRequest(INTYG_ID, personId).
+                body("result.resultCode", is("OK")).
                 body("meta.certificateId", is(INTYG_ID)).
                 body("meta.status.type", is("RECEIVED")).
                 body("lakarutlatande.patient.person-id.@extension", is(personId));
@@ -74,6 +76,13 @@ public class GetMedicalCertificateForCareIT extends BaseIntegrationTest {
                 body("result.resultCode", is("ERROR")).
                 body("result.errorId", is("APPLICATION_ERROR")).
                 body("result.resultText", is("Certificate 'getMedicalCertificateForCareITcertificateId' has been deleted by care giver"));
+    }
+
+    @Test
+    public void faultTransformerTest() {
+        givenRequest("</tag>", "190101010101").
+                body("result.resultCode", is("ERROR")).
+                body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse givenRequest(String intygId, String personId) {

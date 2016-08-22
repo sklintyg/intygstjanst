@@ -2,6 +2,7 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v1;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import org.junit.*;
 import org.stringtemplate.v4.*;
@@ -53,6 +54,13 @@ public class RegisterTSBasIT extends BaseIntegrationTest {
         givenRequest(INTYG_ID, personId).
                 body("resultat.resultCode", is("INFO")).
                 body("resultat.resultText", is("Certificate already exists"));
+    }
+
+    @Test
+    public void faultTransformerTest() {
+        givenRequest("</tag>", "190101010101").
+                body("resultat.resultCode", is("ERROR")).
+                body("resultat.resultText", startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse getTsBasRequest(String intygId, String personId) {

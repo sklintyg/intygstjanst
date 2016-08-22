@@ -2,6 +2,7 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v1;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertTrue;
 
 import org.custommonkey.xmlunit.*;
@@ -97,6 +98,7 @@ public class GetCertificateInsuranceProcessIT extends BaseIntegrationTest {
         IntegrationTestUtil.addConsent(PERSON_ID);
 
         givenRequest(INTYG_ID, PERSON_ID).
+                body("result.resultCode", is("OK")).
                 body("meta.certificateId", is(INTYG_ID)).
                 body("meta.status.type", is("RECEIVED")).
                 body("certificate.RegisterMedicalCertificate.lakarutlatande.lakarutlatande-id", is(INTYG_ID)).
@@ -135,6 +137,13 @@ public class GetCertificateInsuranceProcessIT extends BaseIntegrationTest {
         Diff diff = XMLUnit.compareXML(originalRequest, resultRequest);
         diff.overrideElementQualifier(new ElementNameAndAttributeQualifier("id"));
         assertTrue(diff.toString(), diff.similar());
+    }
+
+    @Test
+    public void faultTransformerTest() {
+        givenRequest("</tag>", PERSON_ID).
+                body("result.resultCode", is("ERROR")).
+                body("result.errorText", startsWith("Unmarshalling Error"));
     }
 
     private String getRegisterMedicalCertificateSubstring(String originalRequest) {

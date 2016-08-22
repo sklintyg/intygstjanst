@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
@@ -166,6 +167,20 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
                         "soap:Envelope/soap:Body/lc:ListCertificatesForCitizenResponse"))
                 .body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then()
                 .body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
+    }
+
+    @Test
+    public void faultTransformerTest() {
+        ST requestTemplate = getRequestTemplate(false);
+        requestTemplate.add("data", new ListParameters("<tag></tag>", defaultType));
+
+        given().body(requestTemplate.render()).
+                when().post("inera-certificate/list-certificates-for-citizen/v2.0").
+                then().statusCode(200).
+                rootPath(BASE).
+                body("result.resultCode", is("ERROR")).
+                body("result.resultText", startsWith("Unmarshalling Error")).
+                body("intygsLista.intyg.size()", is(0));
     }
 
     @After

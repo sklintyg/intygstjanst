@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import java.io.InputStream;
 
@@ -132,6 +133,19 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
         given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
                 .rootPath(RECIPIENT_BASE).
                 body("result.resultCode", is("OK"));
+    }
+
+    @Test
+    public void faultTransformerTest() throws Exception {
+        requestTemplateRecipient.add("data", new IntygsData("<tag></tag>", personId1));
+        requestTemplateRecipient.add("mottagare", "FKASSA");
+
+        given().body(requestTemplateRecipient.render()).
+                when().post("inera-certificate/send-certificate-to-recipient/v1.0").
+                then().statusCode(200)
+                .rootPath(RECIPIENT_BASE).
+                body("result.resultCode", is("ERROR")).
+                body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
     private void setFakeExceptionAtRegisterCertificateResponderStub(boolean active) {

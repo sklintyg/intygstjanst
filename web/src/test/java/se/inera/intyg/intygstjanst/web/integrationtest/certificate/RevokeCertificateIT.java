@@ -21,25 +21,20 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupFile;
+import org.junit.*;
+import org.stringtemplate.v4.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.http.ContentType;
 
-import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
-import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
-import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
+import se.inera.intyg.intygstjanst.web.integrationtest.*;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class RevokeCertificateIT extends BaseIntegrationTest {
@@ -50,6 +45,7 @@ public class RevokeCertificateIT extends BaseIntegrationTest {
     private static final String REVOKE_BASE = "Envelope.Body.RevokeCertificateResponse.";
     private final String baseUrl = "http://localhost:8080/inera-certificate";
 
+    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
@@ -113,6 +109,20 @@ public class RevokeCertificateIT extends BaseIntegrationTest {
                 post("inera-certificate/revoke-certificate-rivta/v1.0").
                 then().
                 body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
+    }
+
+    @Test
+    public void faultTransformerTest() {
+        ST requestTemplateForRevoke = new STGroupFile("integrationtests/revokecertificate/requests.stg").getInstanceOf("request");
+        requestTemplateForRevoke.add("data", new IntygsData("<tag></tag>", personId1));
+        given().body(requestTemplateForRevoke.render()).
+                when().
+                post("inera-certificate/revoke-certificate-rivta/v1.0").
+                then().
+                statusCode(200).
+                rootPath(REVOKE_BASE).
+                body("result.resultCode", is("ERROR")).
+                body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
     private void setFakeExceptionAtRegisterCertificateResponderStub(boolean active) {

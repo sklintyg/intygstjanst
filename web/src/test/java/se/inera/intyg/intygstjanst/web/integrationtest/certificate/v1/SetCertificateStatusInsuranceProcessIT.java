@@ -3,6 +3,7 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v1;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import org.joda.time.LocalDateTime;
 import org.junit.*;
@@ -90,6 +91,13 @@ public class SetCertificateStatusInsuranceProcessIT extends BaseIntegrationTest 
                 body("result.resultCode", is("ERROR")).
                 body("result.errorId", is("VALIDATION_ERROR")).
                 body("result.errorText", is("Certificate 'fit-intyg-finnsinte' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
+    }
+
+    @Test
+    public void faultTransformerTest() {
+        givenRequest("</tag>", "190101010101", "FK", CertificateState.SENT.name(), LocalDateTime.now()).
+                body("result.resultCode", is("ERROR")).
+                body("result.errorText", startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse givenRequest(String intygId, String personId, String target, String status, LocalDateTime timestamp) {

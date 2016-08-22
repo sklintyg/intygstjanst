@@ -2,6 +2,7 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v1;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import java.util.Arrays;
 import java.util.List;
@@ -83,6 +84,13 @@ public class ListCertificatesIT extends BaseIntegrationTest {
                 body("meta.size()", is(0)).
                 body("result.resultCode", is("INFO")).
                 body("result.infoText", is("NOCONSENT"));
+    }
+
+    @Test
+    public void faultTransformerTest() {
+        givenRequest("</tag>").
+                body("result.resultCode", is("ERROR")).
+                body("result.errorText", startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse givenRequest(String personId) {

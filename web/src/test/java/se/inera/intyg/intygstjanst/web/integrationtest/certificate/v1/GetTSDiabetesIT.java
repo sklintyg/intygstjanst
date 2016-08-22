@@ -2,6 +2,7 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v1;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import org.junit.*;
 import org.stringtemplate.v4.*;
@@ -84,6 +85,13 @@ public class GetTSDiabetesIT extends BaseIntegrationTest {
                 body("resultat.resultCode", is("ERROR")).
                 body("resultat.errorId", is("TECHNICAL_ERROR")).
                 body("resultat.resultText", is("Certificate 'getTSDiabetesITcertificateId' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
+    }
+
+    @Test
+    public void faultTransformerTest() {
+        givenRequest("</tag>", "190101010101").
+                body("resultat.resultCode", is("ERROR")).
+                body("resultat.resultText", startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse givenRequest(String intygId, String personId) {

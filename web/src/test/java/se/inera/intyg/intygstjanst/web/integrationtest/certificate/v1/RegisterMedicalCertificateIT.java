@@ -2,6 +2,7 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v1;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import org.junit.*;
 import org.stringtemplate.v4.*;
@@ -63,6 +64,13 @@ public class RegisterMedicalCertificateIT extends BaseIntegrationTest {
                 body("result.resultCode", is("ERROR")).
                 body("result.errorId", is("APPLICATION_ERROR")).
                 body("result.errorText", is("Invalid certificate ID"));
+    }
+
+    @Test
+    public void faultTransformerTest() {
+        givenRequest("</tag>", "190101010101", false).
+                body("result.resultCode", is("ERROR")).
+                body("result.errorText", startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse givenRequest(String intygId, String personId, boolean SmL) {

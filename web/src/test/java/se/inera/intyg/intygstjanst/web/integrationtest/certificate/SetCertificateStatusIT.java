@@ -21,24 +21,19 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupFile;
+import org.junit.*;
+import org.stringtemplate.v4.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 
-import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
-import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
-import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
+import se.inera.intyg.intygstjanst.web.integrationtest.*;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class SetCertificateStatusIT extends BaseIntegrationTest {
@@ -52,6 +47,7 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
     private static final String BASE = "Envelope.Body.SetCertificateStatusResponse.";
     private static final String GET_BASE = "Envelope.Body.GetCertificateResponse.";
 
+    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
@@ -108,6 +104,18 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
                 post("inera-certificate/set-certificate-status-rivta/v1.0").
                 then().
                 body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
+    }
+
+    @Test
+    public void faultTransformerTest() throws Exception {
+        requestTemplate.add("data", new IntygsData("<tag></tag>"));
+
+        given().body(requestTemplate.render()).
+                when().post("inera-certificate/set-certificate-status-rivta/v1.0").
+                then().statusCode(200).
+                rootPath(BASE).
+                body("result.resultCode", is("ERROR")).
+                body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
     @After

@@ -3,6 +3,7 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v1;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import org.junit.*;
 import org.stringtemplate.v4.*;
@@ -150,6 +151,13 @@ public class SendMedicalCertificateIT extends BaseIntegrationTest {
                 body("meta.status.size()", is(2)).
                 body("meta.status[0].type", anyOf(is("RECEIVED"), is("SENT"))).
                 body("meta.status[1].type", anyOf(is("RECEIVED"), is("SENT")));
+    }
+
+    @Test
+    public void faultTransformerTest() {
+        givenRequest("</tag>", "190101010101").
+                body("result.resultCode", is("ERROR")).
+                body("result.errorText", startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse givenRequest(String intygId, String personId) {
