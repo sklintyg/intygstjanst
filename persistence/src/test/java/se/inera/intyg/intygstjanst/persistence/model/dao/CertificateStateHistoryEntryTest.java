@@ -22,9 +22,9 @@ package se.inera.intyg.intygstjanst.persistence.model.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
-import org.joda.time.LocalDateTime;
 import org.junit.Test;
 
 /**

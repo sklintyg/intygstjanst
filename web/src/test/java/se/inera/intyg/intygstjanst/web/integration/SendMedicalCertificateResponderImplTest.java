@@ -29,10 +29,10 @@ import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ER
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -607,13 +607,13 @@ public class SendMedicalCertificateResponderImplTest {
         vardAdresseringsType.setHosPersonal(hosPersonal);
 
         sendType.setAdressVard(vardAdresseringsType);
-        sendType.setAvsantTidpunkt(new LocalDateTime());
+        sendType.setAvsantTidpunkt(LocalDateTime.now());
         sendType.setVardReferensId("MI");
 
         // Lakarutlatande
         LakarutlatandeEnkelType lakarutlatande = new LakarutlatandeEnkelType();
         lakarutlatande.setLakarutlatandeId(CERTIFICATE_ID);
-        lakarutlatande.setSigneringsTidpunkt(new LocalDateTime());
+        lakarutlatande.setSigneringsTidpunkt(LocalDateTime.now());
         PatientType patient = new PatientType();
         II patientIdHolder = new II();
         patientIdHolder.setRoot(PATIENT_ID_OID);

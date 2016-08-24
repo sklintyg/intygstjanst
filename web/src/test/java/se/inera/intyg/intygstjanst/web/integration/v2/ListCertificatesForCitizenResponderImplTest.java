@@ -27,10 +27,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -85,8 +85,8 @@ public class ListCertificatesForCitizenResponderImplTest {
     public void listCertificatesWithNoCertificates() throws Exception {
         Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
-        LocalDate fromDate = new LocalDate(2000, 1, 1);
-        LocalDate toDate = new LocalDate(2020, 12, 12);
+        LocalDate fromDate = LocalDate.of(2000, 1, 1);
+        LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         List<Certificate> result = Collections.emptyList();
 
@@ -121,8 +121,8 @@ public class ListCertificatesForCitizenResponderImplTest {
     public void listCertificatesArkiveradFalse() throws Exception {
         Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
-        LocalDate fromDate = new LocalDate(2000, 1, 1);
-        LocalDate toDate = new LocalDate(2020, 12, 12);
+        LocalDate fromDate = LocalDate.of(2000, 1, 1);
+        LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         Certificate certificate = new Certificate();
         certificate.addState(new CertificateStateHistoryEntry("MI", CertificateState.DELETED, LocalDateTime.now().minusDays(4)));
@@ -147,8 +147,8 @@ public class ListCertificatesForCitizenResponderImplTest {
     public void listCertificatesArkiveradTrue() throws Exception {
         Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
-        LocalDate fromDate = new LocalDate(2000, 1, 1);
-        LocalDate toDate = new LocalDate(2020, 12, 12);
+        LocalDate fromDate = LocalDate.of(2000, 1, 1);
+        LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         Certificate certificate = new Certificate();
         certificate.addState(new CertificateStateHistoryEntry("MI", CertificateState.DELETED, LocalDateTime.now().minusDays(4)));
@@ -174,8 +174,8 @@ public class ListCertificatesForCitizenResponderImplTest {
         final LocalDateTime statusTimestamp = LocalDateTime.now();
         Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
-        LocalDate fromDate = new LocalDate(2000, 1, 1);
-        LocalDate toDate = new LocalDate(2020, 12, 12);
+        LocalDate fromDate = LocalDate.of(2000, 1, 1);
+        LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         Certificate certificate = new Certificate();
         certificate.setStates(Arrays.asList(new CertificateStateHistoryEntry("FK", CertificateState.SENT, statusTimestamp)));

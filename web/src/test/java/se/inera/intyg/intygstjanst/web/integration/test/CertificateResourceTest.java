@@ -25,11 +25,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import org.joda.time.LocalDateTime;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.*;

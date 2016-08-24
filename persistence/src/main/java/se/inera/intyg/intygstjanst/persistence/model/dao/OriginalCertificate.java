@@ -20,20 +20,11 @@
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
 
 import se.inera.intyg.common.support.model.ModelException;
 
@@ -55,7 +46,7 @@ public class OriginalCertificate {
      * Time this certificate was received.
      */
     @Column(name = "received", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime")
     private LocalDateTime received;
 
     /**

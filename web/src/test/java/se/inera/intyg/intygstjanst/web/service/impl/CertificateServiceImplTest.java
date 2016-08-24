@@ -27,10 +27,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
@@ -130,8 +130,8 @@ public class CertificateServiceImplTest {
         assertEquals(CertificateState.RECEIVED, certificate.getStates().get(0).getState());
         assertEquals("HV", certificate.getStates().get(0).getTarget());
 
-        LocalDateTime aMinuteAgo = new LocalDateTime().minusMinutes(1);
-        LocalDateTime inAMinute = new LocalDateTime().plusMinutes(1);
+        LocalDateTime aMinuteAgo = LocalDateTime.now().minusMinutes(1);
+        LocalDateTime inAMinute = LocalDateTime.now().plusMinutes(1);
         assertTrue(certificate.getStates().get(0).getTimestamp().isAfter(aMinuteAgo));
         assertTrue(certificate.getStates().get(0).getTimestamp().isBefore(inAMinute));
 

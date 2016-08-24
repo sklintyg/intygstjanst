@@ -20,12 +20,9 @@
 package se.inera.intyg.intygstjanst.web.integration.converter;
 
 import java.io.StringWriter;
+import java.time.LocalDateTime;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
-import org.joda.time.LocalDateTime;
+import javax.xml.bind.*;
 
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.ObjectFactory;

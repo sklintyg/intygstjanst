@@ -24,12 +24,12 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import javax.xml.bind.*;
 import javax.xml.transform.stream.StreamSource;
 
-import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
@@ -92,7 +92,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     public void testRevokeCertificateWhichWasAlreadySentToForsakringskassan() throws Exception {
 
         Certificate certificate = new Certificate(CERTIFICATE_ID);
-        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TARGET, CertificateState.SENT, new LocalDateTime());
+        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TARGET, CertificateState.SENT, LocalDateTime.now());
         certificate.setStates(Collections.singletonList(historyEntry));
 
         when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
@@ -110,7 +110,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     public void testRevokeCertificateWithForsakringskassanReturningError() throws Exception {
 
         Certificate certificate = new Certificate(CERTIFICATE_ID);
-        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TARGET, CertificateState.SENT, new LocalDateTime());
+        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TARGET, CertificateState.SENT, LocalDateTime.now());
         certificate.setStates(Collections.singletonList(historyEntry));
 
         when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);

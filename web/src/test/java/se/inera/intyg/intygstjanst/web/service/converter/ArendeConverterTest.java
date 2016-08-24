@@ -19,7 +19,6 @@
 package se.inera.intyg.intygstjanst.web.service.converter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -29,9 +28,7 @@ import java.net.URL;
 import javax.xml.bind.*;
 import javax.xml.transform.stream.StreamSource;
 
-import org.joda.time.DateTimeUtils;
-import org.joda.time.LocalDateTime;
-import org.junit.*;
+import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import com.google.common.base.Charsets;
@@ -46,18 +43,7 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v2.IntygId;
 
 public class ArendeConverterTest {
 
-    private static final long FIXED_TIME_MILLIS = 1456329300599L;
     private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML = "SendMessageToCareTest/sendmessagetocare.xml";
-
-    @Before
-    public void setup() {
-        DateTimeUtils.setCurrentMillisFixed(FIXED_TIME_MILLIS);
-    }
-
-    @After
-    public void teardown() {
-        DateTimeUtils.setCurrentMillisSystem();
-    }
 
     @Test
     public void testConvertToXmlString() throws Exception{
@@ -74,7 +60,7 @@ public class ArendeConverterTest {
         assertEquals(sendMessageToCareType.getLogiskAdressMottagare(), sendMessageToCare.getLogiskAdressmottagare());
         assertEquals(sendMessageToCareType.getMeddelandeId(), sendMessageToCare.getMeddelandeId());
         assertEquals(sendMessageToCareType.getReferensId(), sendMessageToCare.getReferens());
-        assertTrue(new LocalDateTime().toLocalDate().equals(sendMessageToCare.getTimestamp().toLocalDate()));
+        assertNotNull(sendMessageToCare.getTimestamp());
         assertEquals(loadXmlMessageFromFile(), sendMessageToCare.getMeddelande());
     }
 
@@ -102,7 +88,7 @@ public class ArendeConverterTest {
         assertEquals(logiskAdressMottagare, arende.getLogiskAdressmottagare());
         assertEquals(meddelandeId, arende.getMeddelandeId());
         assertEquals(referensId, arende.getReferens());
-        assertEquals(FIXED_TIME_MILLIS, arende.getTimestamp().toDateTime().getMillis());
+        assertNotNull(arende.getTimestamp());
 
         // arende.meddelande should be a string representation of original request
         try {

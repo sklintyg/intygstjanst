@@ -26,7 +26,7 @@
   <parent>
     <groupId>se.inera.intyg.common</groupId>
     <artifactId>common-pom</artifactId>
-    <version>1.0.25</version>
+    <version>1.0.26</version>
   </parent>
 
   <groupId>se.inera.intyg.intygstjanst</groupId>
@@ -46,15 +46,15 @@
     <intygstyper.version.range>(,3.0.0]</intygstyper.version.range>
 
     <!-- Schemas -->
-    <rivta-clinicalprocess.version>2.0.RC5.1</rivta-clinicalprocess.version>
-    <rivta-insuranceprocess.version>3.1.0.1</rivta-insuranceprocess.version>
-    <rivta-itintegration-monitoring.version>1.0.0.1</rivta-itintegration-monitoring.version>
+    <rivta-clinicalprocess.version>2.0.RC5.2</rivta-clinicalprocess.version>
+    <rivta-insuranceprocess.version>3.1.0.2</rivta-insuranceprocess.version>
+    <rivta-itintegration-monitoring.version>1.0.0.2</rivta-itintegration-monitoring.version>
 
-    <intyg-infrastructure-directory-organization.version>1.1.RC5.1</intyg-infrastructure-directory-organization.version>
-    <intyg-clinicalprocess-healthcond-rehabilitation.version>1.0.0</intyg-clinicalprocess-healthcond-rehabilitation.version>
-    <intyg-clinicalprocess.version>1.0.1</intyg-clinicalprocess.version>
-    <intyg-insuranceprocess.version>1.0.1</intyg-insuranceprocess.version>
-    <intyg-transportstyrelsen.version>1.0.1</intyg-transportstyrelsen.version>
+    <intyg-infrastructure-directory-organization.version>1.1.RC5.2</intyg-infrastructure-directory-organization.version>
+    <intyg-clinicalprocess-healthcond-rehabilitation.version>1.0.1</intyg-clinicalprocess-healthcond-rehabilitation.version>
+    <intyg-clinicalprocess.version>1.0.2</intyg-clinicalprocess.version>
+    <intyg-insuranceprocess.version>1.0.2</intyg-insuranceprocess.version>
+    <intyg-transportstyrelsen.version>1.0.2</intyg-transportstyrelsen.version>
 
     <skip-coverage>true</skip-coverage>
   </properties>

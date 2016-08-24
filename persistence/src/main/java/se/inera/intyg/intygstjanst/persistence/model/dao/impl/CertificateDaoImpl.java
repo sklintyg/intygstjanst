@@ -18,13 +18,14 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 
-import org.joda.time.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -78,11 +79,11 @@ public class CertificateDaoImpl implements CertificateDao {
         }
 
         if (fromDate != null) {
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("signedDate"), fromDate.toLocalDateTime(LocalTime.MIDNIGHT)));
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("signedDate"), fromDate.atStartOfDay()));
         }
 
         if (toDate != null) {
-            predicates.add(criteriaBuilder.lessThan(root.get("signedDate"), toDate.plusDays(1).toLocalDateTime(LocalTime.MIDNIGHT)));
+            predicates.add(criteriaBuilder.lessThan(root.get("signedDate"), toDate.plusDays(1).atStartOfDay()));
         }
 
         query.where(predicates.toArray(new Predicate[predicates.size()]));

@@ -18,10 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.service.converter;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.Partial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,6 @@ import org.springframework.stereotype.Component;
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
 import se.inera.intyg.common.support.model.common.internal.Patient;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
-import se.inera.intyg.common.support.model.converter.util.PartialConverter;
 import se.inera.intyg.intygstjanst.persistence.model.builder.SjukfallCertificateBuilder;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 
@@ -42,7 +41,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 public class CertificateToSjukfallCertificateConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(CertificateToSjukfallCertificateConverter.class);
-
 
     private static final int WORK_CAPACITY_100 = 100;
     private static final int WORK_CAPACITY_75 = 75;
@@ -135,8 +133,8 @@ public class CertificateToSjukfallCertificateConverter {
             interval) {
         SjukfallCertificateWorkCapacity wc = new SjukfallCertificateWorkCapacity();
         wc.setCapacityPercentage(workCapacity);
-        wc.setFromDate(PartialConverter.partialToString(new Partial(interval.fromAsLocalDate())));
-        wc.setToDate(PartialConverter.partialToString(new Partial(interval.tomAsLocalDate())));
+        wc.setFromDate(interval.fromAsLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        wc.setToDate(interval.tomAsLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
         return wc;
     }
 

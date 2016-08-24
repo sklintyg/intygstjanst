@@ -21,9 +21,9 @@ package se.inera.intyg.intygstjanst.web.integrationtest.util;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
-import org.joda.time.LocalDateTime;
 import org.stringtemplate.v4.*;
 
 import se.inera.intyg.common.support.model.CertificateState;

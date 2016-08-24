@@ -22,7 +22,7 @@ package se.inera.intyg.tools.sjukfall
 import groovy.sql.Sql
 import groovyx.gpars.GParsPool
 
-import org.joda.time.LocalDateTime
+import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicInteger
 
 import org.apache.commons.dbcp2.BasicDataSource
@@ -39,7 +39,7 @@ class SkapaSjukfall {
     static void main(String[] args) {
 
         println "- Starting Intyg -> Sjukfall creation"
-        
+
         int numberOfThreads = args.length > 0 ? Integer.parseInt(args[0]) : 5
         long start = System.currentTimeMillis()
         def props = new Properties()
@@ -47,7 +47,7 @@ class SkapaSjukfall {
             props.load(stream)
         }
         def config = new ConfigSlurper().parse(props)
-        
+
         BasicDataSource dataSource =
             new BasicDataSource(driverClassName: config.dataSource.driver, url: config.dataSource.url,
                                 username: config.dataSource.username, password: config.dataSource.password,
@@ -60,9 +60,9 @@ class SkapaSjukfall {
 
 
         bootstrapSql.close()
-                
+
         println "- ${certificateIds.size()} candidates for being processed into sjukfall found"
-        
+
         final AtomicInteger totalCount = new AtomicInteger(0)
         final AtomicInteger errorCount = new AtomicInteger(0)
 
@@ -169,11 +169,11 @@ class SkapaSjukfall {
                 result.toString()
             }
         }
-         
+
         long end = System.currentTimeMillis()
-        
+
         println "- Done! ${totalCount} certificates processed into sjukfall with ${errorCount} errors in ${(int)((end-start) / 1000)} seconds"
-        
+
         if (results.size() > 0) {
             println " "
             println "id;message"
@@ -181,7 +181,7 @@ class SkapaSjukfall {
                 if (line) println line
             }
         }
-        
+
     }
-    
+
 }
