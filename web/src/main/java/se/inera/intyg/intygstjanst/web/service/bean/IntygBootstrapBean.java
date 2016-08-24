@@ -81,14 +81,15 @@ public class IntygBootstrapBean {
                 String moduleName = resource.getFilename().split("__")[0];
                 LOG.info("Bootstrapping certificate '{}' from module {}", resource.getFilename(), moduleName);
                 String xmlString = IOUtils.toString(resource.getInputStream());
-                bootstrapCertificate(xmlString, moduleRegistry.getModuleApi(moduleName).getUtlatandeFromXml(xmlString));
+                bootstrapCertificate(xmlString, moduleRegistry.getModuleApi(moduleName).getUtlatandeFromXml(xmlString),
+                        moduleRegistry.getModuleEntryPoint(moduleName).getDefaultRecipient());
             } catch (IOException | ModuleNotFoundException | ModuleException e) {
                 LOG.error("Could not bootstrap certificate in file '{}'", resource.getFilename(), e);
             }
         }
     }
 
-    private void bootstrapCertificate(String xmlString, Utlatande utlatande) {
+    private void bootstrapCertificate(String xmlString, Utlatande utlatande, String defaultRecipient) {
         transactionTemplate.execute((TransactionStatus status) -> {
             Certificate certificate = new Certificate(utlatande.getId());
             if (!entityManager.contains(certificate)) {
@@ -107,7 +108,7 @@ public class IntygBootstrapBean {
                 certificate.setStates(Arrays.asList(
                         new CertificateStateHistoryEntry("HV", CertificateState.RECEIVED,
                                 utlatande.getGrundData().getSigneringsdatum().plusMinutes(1)),
-                        new CertificateStateHistoryEntry("FK", CertificateState.SENT,
+                        new CertificateStateHistoryEntry(defaultRecipient, CertificateState.SENT,
                                 utlatande.getGrundData().getSigneringsdatum().plusMinutes(2))));
                 certificate.setType(utlatande.getTyp());
                 certificate.setValidFromDate(null);
