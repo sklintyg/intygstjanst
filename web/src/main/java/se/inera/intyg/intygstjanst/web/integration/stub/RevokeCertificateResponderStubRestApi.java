@@ -18,9 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 
 import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SchemaValidation
 public class RevokeCertificateResponderStubRestApi {
     @Qualifier("revokeCertificateClientStub")
-    @Autowired(required = true)
+    @Autowired(required = false)
     private RevokeCertificateResponderStub stub;
 
     @POST

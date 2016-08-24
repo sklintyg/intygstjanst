@@ -51,7 +51,7 @@ public class RevokeCertificateIT extends BaseIntegrationTest {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
         IntegrationTestUtil.deleteIntyg(intygsId);
         IntegrationTestUtil.deleteIntyg(intygsIdNotExists);
-        setFakeExceptionAtRegisterCertificateResponderStub(false);
+        setFakeExceptionAtRevokeCertificateResponderStub(false);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class RevokeCertificateIT extends BaseIntegrationTest {
 
     @Test
     public void revokeCertificateRecipientFailure() {
-        setFakeExceptionAtRegisterCertificateResponderStub(true);
+        setFakeExceptionAtRevokeCertificateResponderStub(true);
         IntegrationTestUtil.registerCertificate(intygsId, personId1);
         IntegrationTestUtil.sendCertificateToRecipient(intygsId, personId1);
         STGroup templateGroupForRevoke = new STGroupFile("integrationtests/revokecertificate/requests.stg");
@@ -125,7 +125,7 @@ public class RevokeCertificateIT extends BaseIntegrationTest {
                 body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
-    private void setFakeExceptionAtRegisterCertificateResponderStub(boolean active) {
+    private void setFakeExceptionAtRevokeCertificateResponderStub(boolean active) {
         given().contentType(ContentType.JSON).queryParam("fakeException", active).expect().statusCode(204).when()
                 .post(baseUrl + "/revoke-certificate-stub/revoke");
     }
@@ -133,7 +133,7 @@ public class RevokeCertificateIT extends BaseIntegrationTest {
     @After
     public void cleanup() {
         IntegrationTestUtil.deleteIntyg(intygsId);
-        setFakeExceptionAtRegisterCertificateResponderStub(false);
+        setFakeExceptionAtRevokeCertificateResponderStub(false);
     }
 
     @SuppressWarnings("unused")
