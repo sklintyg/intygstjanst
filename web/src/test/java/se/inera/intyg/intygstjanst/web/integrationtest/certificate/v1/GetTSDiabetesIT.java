@@ -50,7 +50,7 @@ public class GetTSDiabetesIT extends BaseIntegrationTest {
     public void getTSDiabetesDoesNotExist() {
         givenRequest("fit-intyg-finnsinte", "190101010101").
                 body("resultat.resultCode", is("ERROR")).
-                body("resultat.errorId", is("TECHNICAL_ERROR")).
+                body("resultat.errorId", is("VALIDATION_ERROR")).
                 body("resultat.resultText", is("Certificate 'fit-intyg-finnsinte' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
     }
 
@@ -62,7 +62,8 @@ public class GetTSDiabetesIT extends BaseIntegrationTest {
 
         givenRequest(INTYG_ID, personId).
                 body("intyg.intygsId", is(INTYG_ID)).
-                body("resultat.resultCode", is("INFO")).
+                body("resultat.resultCode", is("ERROR")).
+                body("resultat.errorId", is("REVOKED")).
                 body("resultat.resultText", is("Certificate 'getTSDiabetesITcertificateId' has been revoked"));
     }
 
@@ -83,7 +84,7 @@ public class GetTSDiabetesIT extends BaseIntegrationTest {
 
         givenRequest(INTYG_ID, "190101010101").
                 body("resultat.resultCode", is("ERROR")).
-                body("resultat.errorId", is("TECHNICAL_ERROR")).
+                body("resultat.errorId", is("VALIDATION_ERROR")).
                 body("resultat.resultText", is("Certificate 'getTSDiabetesITcertificateId' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
     }
 
