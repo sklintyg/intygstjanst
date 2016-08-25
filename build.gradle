@@ -78,7 +78,7 @@ configure(subprojects.findAll { ['intygstjanst-persistence', 'intygstjanst-web',
   }
 }
 
-project(':intygstjanst-persistence') {
+project(':intygstjanst-web') {
   afterEvaluate { project ->
     project.configurations.find{ it.name == 'compile' }.resolvedConfiguration.getFirstLevelModuleDependencies().find {
       if (it.moduleGroup == 'se.inera.intyg.common') {
