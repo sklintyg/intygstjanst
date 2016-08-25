@@ -33,17 +33,6 @@ gretty {
   //   reloadOnLibChange = false
 }
 
-// TODO: buildNumber must be taken from environment
-task createVersionPropertyFile(dependsOn: processResources) << {
-    def propertyFile = "${buildDir}/resources/main/version.properties"
-    ant.touch(file: propertyFile, mkdirs: "true")
-    ant.propertyfile(file: propertyFile) {
-        entry(key: 'project.version', default: rootProject.version)
-        entry(key: 'buildTime', default: new Date())
-        entry(key: 'buildNumber', default: '6a25a6bf58687fd2a9250e413ae8050cfe534c3f')
-    }
-}
-
 war.dependsOn createVersionPropertyFile
 
 buildscript {
@@ -59,25 +48,33 @@ buildscript {
 dependencies {
   compile project(':intygstjanst-persistence')
 
-  compile 'se.inera.intyg.common:common-support:0-SNAPSHOT'
-  compile 'se.inera.intyg.common:common-services:0-SNAPSHOT'
-  compile 'se.inera.intyg.common:logging-util:0-SNAPSHOT'
-  compile 'se.inera.intyg.common:common-schemas:0-SNAPSHOT'
-  compile 'se.inera.intyg.common:hsa-integration:0-SNAPSHOT'
   compile 'se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:2.0.RC5.1'
   compile 'se.riv.insuranceprocess.healthreporting:insuranceprocess-healthreporting-schemas:3.1.0.1'
   compile 'se.riv.itintegration.monitoring:itintegration-monitoring-schemas:1.0.0.1'
   compile 'se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:1.0.1'
   compile 'se.inera.intyg.insuranceprocess.healthreporting:intyg-insuranceprocess-healthreporting-schemas:1.0.1'
   compile 'se.inera.intyg.transportstyrelsen:intyg-transportstyrelsen-schemas:1.0.1'
-  compile 'se.inera.intyg.intygstyper:ts-bas:0-SNAPSHOT'
-  compile 'se.inera.intyg.intygstyper:ts-diabetes:0-SNAPSHOT'
-  compile 'se.inera.intyg.intygstyper:ts-parent:0-SNAPSHOT'
-  compile 'se.inera.intyg.intygstyper:fk-parent:0-SNAPSHOT'
-  compile 'se.inera.intyg.intygstyper:luse:0-SNAPSHOT'
-  compile 'se.inera.intyg.intygstyper:lisu:0-SNAPSHOT'
-  compile 'se.inera.intyg.intygstyper:luae_fs:0-SNAPSHOT'
-  compile 'se.inera.intyg.intygstyper:luae_na:0-SNAPSHOT'
+
+  compile "se.inera.intyg.common:common-support:${commonVersion}"
+  compile "se.inera.intyg.common:common-services:${commonVersion}"
+  compile "se.inera.intyg.common:logging-util:${commonVersion}"
+  compile "se.inera.intyg.common:common-schemas:${commonVersion}"
+  compile "se.inera.intyg.common:hsa-integration:${commonVersion}"
+
+  compile "se.inera.intyg.intygstyper:ts-bas:${typerVersion}"
+  compile "se.inera.intyg.intygstyper:ts-diabetes:${typerVersion}"
+  compile "se.inera.intyg.intygstyper:ts-parent:${typerVersion}"
+  compile "se.inera.intyg.intygstyper:fk-parent:${typerVersion}"
+  compile "se.inera.intyg.intygstyper:luse:${typerVersion}"
+  compile "se.inera.intyg.intygstyper:lisu:${typerVersion}"
+  compile "se.inera.intyg.intygstyper:luae_fs:${typerVersion}"
+  compile "se.inera.intyg.intygstyper:luae_na:${typerVersion}"
+  compile (group: 'se.inera.intyg.intygstyper', name:'fk7263', version: "${typerVersion}") {
+    exclude(module: 'insuranceprocess-healthreporting-schemas')
+    exclude(module: 'fk-vardgivare-sjukvard-schemas')
+    exclude(module: 'ServiceContracts_itintegration_monitoring')
+  }
+
   compile 'commons-io:commons-io:2.4'
   compile 'commons-lang:commons-lang:2.6'
   compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.4.4'
@@ -94,11 +91,6 @@ dependencies {
   compile 'org.springframework:spring-tx:4.2.2.RELEASE'
   compile 'se.riv.infrastructure.directory.organization:infrastructure-directory-organization-schemas:1.1.RC5.1'
   compile 'se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:1.0.0'
-  compile (group: 'se.inera.intyg.intygstyper', name:'fk7263', version: '0-SNAPSHOT') {
-    exclude(module: 'insuranceprocess-healthreporting-schemas')
-    exclude(module: 'fk-vardgivare-sjukvard-schemas')
-    exclude(module: 'ServiceContracts_itintegration_monitoring')
-  }
 
   testCompile 'org.springframework:spring-test:4.2.2.RELEASE'
   testCompile 'xmlunit:xmlunit:1.4'

@@ -6,8 +6,9 @@ sourceSets.main.output.resourcesDir = sourceSets.main.output.classesDir
 jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
 dependencies {
-  compile 'se.inera.intyg.common:common-support:0-SNAPSHOT'
-  compile 'se.inera.intyg.common:integration-util:0-SNAPSHOT'
+  compile "se.inera.intyg.common:common-support:${commonVersion}"
+  compile "se.inera.intyg.common:integration-util:${commonVersion}"
+
   compile 'com.google.guava:guava:14.0.1'
   compile 'joda-time:joda-time:2.2'
   compile 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final'
