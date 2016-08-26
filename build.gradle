@@ -55,7 +55,7 @@ subprojects {
   }
 }
 
-configure(subprojects.findAll { ['intygstjanst-persistence', 'intygstjanst-web', 'intygstjanst-specifications'].contains(it.name) }) {
+subprojects {
   uploadArchives {
     repositories.mavenDeployer {
       pom.whenConfigured {pom ->
@@ -78,7 +78,7 @@ configure(subprojects.findAll { ['intygstjanst-persistence', 'intygstjanst-web',
   }
 }
 
-project(':intygstjanst-web') {
+project(':intygstjanst-persistence') {
   afterEvaluate { project ->
     project.configurations.find{ it.name == 'compile' }.resolvedConfiguration.getFirstLevelModuleDependencies().find {
       if (it.moduleGroup == 'se.inera.intyg.common') {
