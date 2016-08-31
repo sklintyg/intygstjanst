@@ -75,7 +75,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
                     String.format("Unknown certificate ID: %s", intygsId)));
         } catch (CertificateRevokedException ex) {
             // return INFO if certificate is revoked
-            LOGGER.info("Certificate '%s' has been revoked.", intygsId);
+            LOGGER.info("Certificate '{}' has been revoked.", intygsId);
             response.setResult(ResultTypeUtil.infoResult(String.format("Certificate '%s' has been revoked.", intygsId)));
         } catch (RecipientUnknownException ex) {
             // return ERROR if recipient is unknwon
