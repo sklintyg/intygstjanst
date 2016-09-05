@@ -3,17 +3,10 @@ description = 'Intygstjänsten (FitNesse)'
 dependencies {
   compile project(':intygstjanst-persistence')
 
-  compile 'se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:2.0.RC5.1'
-  compile 'se.riv.insuranceprocess.healthreporting:insuranceprocess-healthreporting-schemas:3.1.0.1'
-  compile 'se.riv.itintegration.monitoring:itintegration-monitoring-schemas:1.0.0.1'
-  compile 'se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:1.0.1'
-  compile 'se.inera.intyg.insuranceprocess.healthreporting:intyg-insuranceprocess-healthreporting-schemas:1.0.1'
-
   compile "se.inera.intyg.common:common-specifications:${commonVersion}"
   compile "se.inera.intyg.intygstyper:fk7263:${typerVersion}"
 
   compile 'javax.jms:jms-api:1.1-rev-1'
-  compile 'joda-time:joda-time:2.2'
   compile 'org.apache.activemq:activemq-client:5.13.0'
   compile 'org.codehaus.groovy:groovy-all:2.4.3'
   compile 'org.fitnesse:fitnesse:20131110'

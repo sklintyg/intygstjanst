@@ -48,13 +48,6 @@ buildscript {
 dependencies {
   compile project(':intygstjanst-persistence')
 
-  compile 'se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:2.0.RC5.1'
-  compile 'se.riv.insuranceprocess.healthreporting:insuranceprocess-healthreporting-schemas:3.1.0.1'
-  compile 'se.riv.itintegration.monitoring:itintegration-monitoring-schemas:1.0.0.1'
-  compile 'se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:1.0.1'
-  compile 'se.inera.intyg.insuranceprocess.healthreporting:intyg-insuranceprocess-healthreporting-schemas:1.0.1'
-  compile 'se.inera.intyg.transportstyrelsen:intyg-transportstyrelsen-schemas:1.0.1'
-
   compile "se.inera.intyg.common:common-support:${commonVersion}"
   compile "se.inera.intyg.common:common-services:${commonVersion}"
   compile "se.inera.intyg.common:logging-util:${commonVersion}"
@@ -89,8 +82,8 @@ dependencies {
   compile 'org.springframework:spring-web:4.2.2.RELEASE'
   compile 'org.springframework:spring-webmvc:4.2.2.RELEASE'
   compile 'org.springframework:spring-tx:4.2.2.RELEASE'
-  compile 'se.riv.infrastructure.directory.organization:infrastructure-directory-organization-schemas:1.1.RC5.1'
-  compile 'se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:1.0.0'
+  compile 'se.riv.infrastructure.directory.organization:infrastructure-directory-organization-schemas:1.1.RC5.2'
+  compile 'se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:1.0.1'
 
   testCompile 'org.springframework:spring-test:4.2.2.RELEASE'
   testCompile 'xmlunit:xmlunit:1.4'
