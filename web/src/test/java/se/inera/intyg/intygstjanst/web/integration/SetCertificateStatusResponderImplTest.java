@@ -24,7 +24,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -60,7 +61,7 @@ public class SetCertificateStatusResponderImplTest {
     @Test
     public void testSetCertificateStatus() throws Exception {
 
-        LocalDateTime timestamp = new LocalDateTime(2013, 4, 26, 12, 0, 0);
+        LocalDateTime timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
 
         SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
         request.setCertificateId(CERTIFICATE_ID);
@@ -77,7 +78,7 @@ public class SetCertificateStatusResponderImplTest {
 
     @Test
     public void testSetCertificateStatusInvalidCertificate() throws Exception {
-        LocalDateTime timestamp = new LocalDateTime(2013, 4, 26, 12, 0, 0);
+        LocalDateTime timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
         doThrow(new InvalidCertificateException(CERTIFICATE_ID, new Personnummer("19001122-3344"))).when(certificateService).setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, "försäkringskassan", CertificateState.CANCELLED, timestamp);
 
         SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();

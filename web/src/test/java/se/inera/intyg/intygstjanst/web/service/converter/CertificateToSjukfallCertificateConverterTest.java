@@ -6,7 +6,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
+
 import org.junit.Test;
 
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;

@@ -1,3 +1,0 @@
-|Registrera Fk7263 Intyg|${fk.logiskAddress}|
-|personnummer|utfärdat|utfärdare|enhet|id|mall|resultat?|
-|19121212-1212|2013-09-03|En Läkare|Kir mott|test-19121212-1212-intyg-manual-L|L|OK|

@@ -18,13 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -97,7 +97,7 @@ public class Certificate {
      * Time this certificate was signed.
      */
     @Column(name = "SIGNED_DATE", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime")
     private LocalDateTime signedDate;
 
     /**

@@ -1,3 +1,0 @@
-Testfall för integration med Försäkringskassan.
-
-!contents -R2 -g -p -f -h

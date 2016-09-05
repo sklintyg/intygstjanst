@@ -20,7 +20,8 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

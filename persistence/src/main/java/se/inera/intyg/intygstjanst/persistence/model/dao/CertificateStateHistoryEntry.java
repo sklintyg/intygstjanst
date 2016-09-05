@@ -19,15 +19,15 @@
 
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import com.google.common.collect.Ordering;
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
-import se.inera.intyg.common.support.model.CertificateState;
+import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
+
+import org.hibernate.annotations.Type;
+
+import com.google.common.collect.Ordering;
+
+import se.inera.intyg.common.support.model.CertificateState;
 
 /**
  * @author andreaskaltenbach
@@ -43,7 +43,7 @@ public class CertificateStateHistoryEntry {
     private CertificateState state;
 
     @Column(name = "TIMESTAMP")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime")
     private LocalDateTime timestamp;
 
     private static final Ordering<LocalDateTime> ORDERING_DESC_TIME_NULL_LAST = Ordering.<LocalDateTime>natural().reverse().nullsFirst();
@@ -64,7 +64,7 @@ public class CertificateStateHistoryEntry {
         if (timestamp != null) {
             this.timestamp = timestamp;
         } else {
-            this.timestamp = new LocalDateTime();
+            this.timestamp = LocalDateTime.now();
         }
     }
 

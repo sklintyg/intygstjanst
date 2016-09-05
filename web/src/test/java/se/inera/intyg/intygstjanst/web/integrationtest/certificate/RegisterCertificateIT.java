@@ -21,23 +21,20 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
-
-import com.google.common.collect.ImmutableMap;
-import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupFile;
-
-import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
-
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
-import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import java.io.InputStream;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.*;
+import org.stringtemplate.v4.*;
+
+import com.google.common.collect.ImmutableMap;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
+
+import se.inera.intyg.intygstjanst.web.integrationtest.*;
+import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class RegisterCertificateIT extends BaseIntegrationTest {
 
@@ -52,18 +49,15 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
 
     private STGroup templateGroup;
 
+    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
 
-        templateGroup = new STGroupFile("integrationtests/register/requests.stg");
+        templateGroup = new STGroupFile("integrationtests/register/request_default.stg");
         requestTemplate = templateGroup.getInstanceOf("request");
 
-        deleteIntyg(intygsId);
-    }
-
-    private void deleteIntyg(String id) {
-        given().delete("inera-certificate/resources/certificate/" + id).then().statusCode(200);
+        IntegrationTestUtil.deleteIntyg(intygsId);
     }
 
     @Test
@@ -141,8 +135,29 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
                 body("result.resultCode", is("ERROR"));
     }
 
+    @Test
+    public void faultTransformerTest() {
+        requestTemplate.add("data", new IntygsData("<tag></tag>", personId1));
+
+        given().body(requestTemplate.render()).
+                when().
+                post("inera-certificate/register-certificate-se/v2.0").
+                then().
+                statusCode(200).
+                rootPath(BASE).
+                body("result.resultCode", is("ERROR")).
+                body("result.resultText", startsWith("Unmarshalling Error"));
+    }
+
+    @After
+    public void cleanup() {
+        IntegrationTestUtil.deleteIntyg(intygsId);
+    }
+
+    @SuppressWarnings("unused")
     private static class IntygsData {
         public final String intygsId;
+
         public final String personId;
 
         public IntygsData(String intygsId, String personId) {

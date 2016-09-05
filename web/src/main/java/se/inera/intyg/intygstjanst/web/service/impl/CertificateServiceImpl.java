@@ -18,10 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -253,7 +253,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
         // add initial RECEIVED state using current time as receiving timestamp
         CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(PartKod.HSVARD.getValue(), CertificateState.RECEIVED,
-                new LocalDateTime());
+                LocalDateTime.now());
         certificate.addState(state);
         certificateDao.store(certificate);
         storeOriginalCertificate(certificateHolder.getOriginalCertificate(), certificate);

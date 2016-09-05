@@ -26,9 +26,9 @@ import static org.mockito.Mockito.when;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
+import java.time.LocalDate;
 import java.util.*;
 
-import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
@@ -60,8 +60,8 @@ public class ListCertificatesResponderImplTest {
     public void listCertificatesWithNoCertificates() throws Exception {
         Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
-        LocalDate fromDate = new LocalDate(2000, 1, 1);
-        LocalDate toDate = new LocalDate(2020, 12, 12);
+        LocalDate fromDate = LocalDate.of(2000, 1, 1);
+        LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         List<Certificate> result = Collections.emptyList();
 
@@ -95,8 +95,8 @@ public class ListCertificatesResponderImplTest {
     public void testListCertificates() throws Exception {
         Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
-        LocalDate fromDate = new LocalDate(2000, 1, 1);
-        LocalDate toDate = new LocalDate(2020, 12, 12);
+        LocalDate fromDate = LocalDate.of(2000, 1, 1);
+        LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         Certificate deletedCertificate = new Certificate();
         deletedCertificate.addState(new CertificateStateHistoryEntry("MI", CertificateState.DELETED, null));
@@ -121,8 +121,8 @@ public class ListCertificatesResponderImplTest {
     public void testListCertificatesNoTypesReturnAll() throws Exception {
         Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
         List<String> certificateTypes = new ArrayList<>();
-        LocalDate fromDate = new LocalDate(2000, 1, 1);
-        LocalDate toDate = new LocalDate(2020, 12, 12);
+        LocalDate fromDate = LocalDate.of(2000, 1, 1);
+        LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         Certificate deletedCertificate = new Certificate();
         deletedCertificate.addState(new CertificateStateHistoryEntry("MI", CertificateState.DELETED, null));

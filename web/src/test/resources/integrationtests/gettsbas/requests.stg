@@ -1,0 +1,18 @@
+delimiters "$", "$"
+
+request(intygId, personId) ::= <<
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:local:se:intygstjanster:services:GetTSBasResponder:1" xmlns:urn2="urn:local:se:intygstjanster:services:types:1">
+   <soapenv:Header>
+      <urn:LogicalAddress>?</urn:LogicalAddress>
+   </soapenv:Header>
+   <soapenv:Body>
+      <urn1:GetTSBas>
+         <urn1:intygsId>$intygId$</urn1:intygsId>
+         <urn1:personId>
+            <urn2:root>root</urn2:root>
+            <urn2:extension>$personId$</urn2:extension>
+         </urn1:personId>
+      </urn1:GetTSBas>
+   </soapenv:Body>
+</soapenv:Envelope>
+>>

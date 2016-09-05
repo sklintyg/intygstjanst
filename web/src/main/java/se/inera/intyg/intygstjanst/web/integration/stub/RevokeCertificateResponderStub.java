@@ -19,23 +19,26 @@
 
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
+import javax.xml.ws.WebServiceProvider;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.v2.ResultTypeUtil;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
-import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.*;
+import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateType;
 
-@Transactional
-@Component
 @SchemaValidation
+@WebServiceProvider(targetNamespace = "urn:riv:clinicalprocess:healthcond:certificate:RevokeCertificateResponder:1")
 public class RevokeCertificateResponderStub implements RevokeCertificateResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RevokeCertificateResponderStub.class);
+
+    private boolean throwException = false;
 
     @Autowired
     private MedicalCertificatesStore store;
@@ -43,6 +46,12 @@ public class RevokeCertificateResponderStub implements RevokeCertificateResponde
     @Override
     public RevokeCertificateResponseType revokeCertificate(String logicalAddress, RevokeCertificateType request) {
         RevokeCertificateResponseType response = new RevokeCertificateResponseType();
+
+        if (throwException) {
+            LOGGER.debug("Throwing fake exception");
+            throw new RuntimeException();
+        }
+
         String id = request.getIntygsId().getExtension();
         String meddelande = request.getMeddelande();
 
@@ -51,5 +60,13 @@ public class RevokeCertificateResponderStub implements RevokeCertificateResponde
 
         response.setResult(ResultTypeUtil.okResult());
         return response;
+    }
+
+    public boolean isThrowException() {
+        return throwException;
+    }
+
+    public void setThrowException(boolean throwException) {
+        this.throwException = throwException;
     }
 }

@@ -22,24 +22,21 @@ import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.post;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import java.io.InputStream;
 import java.util.UUID;
 
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.*;
 
-import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
-import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
-import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
-
+import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
+
+import se.inera.intyg.intygstjanst.web.integrationtest.*;
 
 public class SendMessageToCareIT extends BaseIntegrationTest {
 
@@ -47,11 +44,12 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
 
     private ST requestTemplate;
 
+    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
 
-        STGroup templateGroup = new STGroupFile("integrationtests/arende/requests.stg");
+        STGroup templateGroup = new STGroupFile("integrationtests/arende/request_care.stg");
         requestTemplate = templateGroup.getInstanceOf("request");
     }
 
@@ -116,10 +114,9 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void messageNotFollowingXSDIsNotAccepted() throws Exception {
+    public void faultTransformerTest() throws Exception {
         String enhetsId = "<root>123456</root>"; // This brakes the XML Schema
-        String intygsId = "intyg-1";
-        requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
+        requestTemplate.add("data", new ArendeData("intyg-1", "KOMPL", "191212121212", enhetsId));
 
         given().
                 body(requestTemplate.render()).
@@ -128,9 +125,11 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
                 then().
                 statusCode(200).
                 rootPath(BASE).
-                body("result.resultCode", is("ERROR"));
+                body("result.resultCode", is("ERROR")).
+                body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
+    @SuppressWarnings("unused")
     private static class ArendeData {
         public final String intygsId;
         public final String arende;

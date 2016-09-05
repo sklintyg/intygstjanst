@@ -47,6 +47,22 @@
       </jaxrs:serviceBeans>
     </jaxrs:server>
   </beans>
+  
+  <beans profile="dev,testability-api">
+        <jaxrs:server address="/revoke-certificate-stub">
+            <jaxrs:serviceBeans>
+                <ref bean="revokeCertificateStubRestApi" />
+            </jaxrs:serviceBeans>
+            <jaxrs:providers>
+                <ref bean="jacksonJsonProvider" />
+            </jaxrs:providers>
+            <jaxrs:extensionMappings>
+                <entry key="json" value="application/json" />
+            </jaxrs:extensionMappings>
+        </jaxrs:server>
+
+        <bean id="revokeCertificateStubRestApi" class="se.inera.intyg.intygstjanst.web.integration.stub.RevokeCertificateResponderStubRestApi" />
+    </beans>
 
   <beans profile="dev,testability-api,it-fk-stub">
     <bean id="medicalCertificateStore" class="se.inera.intyg.common.support.stub.MedicalCertificatesStore"/>

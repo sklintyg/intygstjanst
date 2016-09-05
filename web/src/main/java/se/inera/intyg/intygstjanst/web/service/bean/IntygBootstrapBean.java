@@ -20,6 +20,7 @@
 package se.inera.intyg.intygstjanst.web.service.bean;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import javax.annotation.PostConstruct;
@@ -27,7 +28,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.io.IOUtils;
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +38,12 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
+import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.common.util.integration.integration.json.CustomObjectMapper;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
@@ -67,8 +70,63 @@ public class IntygBootstrapBean {
     }
 
     @PostConstruct
-    public void initData() throws IOException {
+    public void initData() {
+        bootstrapModuleCertificates();
+        bootstrapLocalCertificates();
+    }
 
+    private void bootstrapModuleCertificates() {
+        for (Resource resource : getResourceListing("classpath*:module-bootstrap-certificate/*.xml")) {
+            try {
+                String moduleName = resource.getFilename().split("__")[0];
+                LOG.info("Bootstrapping certificate '{}' from module {}", resource.getFilename(), moduleName);
+                String xmlString = IOUtils.toString(resource.getInputStream());
+                bootstrapCertificate(xmlString, moduleRegistry.getModuleApi(moduleName).getUtlatandeFromXml(xmlString),
+                        moduleRegistry.getModuleEntryPoint(moduleName).getDefaultRecipient());
+            } catch (IOException | ModuleNotFoundException | ModuleException e) {
+                LOG.error("Could not bootstrap certificate in file '{}'", resource.getFilename(), e);
+            }
+        }
+    }
+
+    private void bootstrapCertificate(String xmlString, Utlatande utlatande, String defaultRecipient) {
+        transactionTemplate.execute((TransactionStatus status) -> {
+            Certificate certificate = new Certificate(utlatande.getId());
+            if (!entityManager.contains(certificate)) {
+                certificate.setAdditionalInfo(null); // Should this be populated?
+                certificate.setCareGiverId(utlatande.getGrundData().getSkapadAv().getVardenhet().getVardgivare().getVardgivarid());
+                certificate.setCareUnitId(utlatande.getGrundData().getSkapadAv().getVardenhet().getEnhetsid());
+                certificate.setCareUnitName(utlatande.getGrundData().getSkapadAv().getVardenhet().getEnhetsnamn());
+                certificate.setCivicRegistrationNumber(utlatande.getGrundData().getPatient().getPersonId());
+                certificate.setDeletedByCareGiver(false);
+                OriginalCertificate originalCertificate;
+                originalCertificate = new OriginalCertificate(utlatande.getGrundData().getSigneringsdatum(),
+                        xmlString, certificate);
+                certificate.setOriginalCertificate(originalCertificate);
+                certificate.setSignedDate(utlatande.getGrundData().getSigneringsdatum());
+                certificate.setSigningDoctorName(utlatande.getGrundData().getSkapadAv().getFullstandigtNamn());
+                certificate.setStates(Arrays.asList(
+                        new CertificateStateHistoryEntry("HV", CertificateState.RECEIVED,
+                                utlatande.getGrundData().getSigneringsdatum().plusMinutes(1)),
+                        new CertificateStateHistoryEntry(defaultRecipient, CertificateState.SENT,
+                                utlatande.getGrundData().getSigneringsdatum().plusMinutes(2))));
+                certificate.setType(utlatande.getTyp());
+                certificate.setValidFromDate(null);
+                certificate.setValidToDate(null);
+                certificate.setWireTapped(false);
+
+                entityManager.persist(originalCertificate);
+                entityManager.persist(certificate);
+
+                if (isSjukfallsGrundandeIntyg(certificate.getType()) && certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
+                    entityManager.persist(certificateToSjukfallCertificateConverter.convertFk7263(certificate, utlatande));
+                }
+            }
+            return null;
+        });
+    }
+
+    private void bootstrapLocalCertificates() {
         List<Resource> metadataFiles = getResourceListing("bootstrap-intyg/*-metadata.json");
         List<Resource> contentFiles = getResourceListing("bootstrap-intyg/*-content.xml");
         Collections.sort(metadataFiles, new ResourceFilenameComparator());
@@ -124,11 +182,14 @@ public class IntygBootstrapBean {
 
     }
 
-    private List<Resource> getResourceListing(String classpathResourcePath) throws IOException {
-        PathMatchingResourcePatternResolver r = new PathMatchingResourcePatternResolver();
-        return Arrays.asList(r.getResources(classpathResourcePath));
+    private List<Resource> getResourceListing(String classpathResourcePath) {
+        try {
+            PathMatchingResourcePatternResolver r = new PathMatchingResourcePatternResolver();
+            return Arrays.asList(r.getResources(classpathResourcePath));
+        } catch (IOException e) {
+            return new ArrayList<>();
+        }
     }
-
 
     private void addSjukfall(final Resource metadata, final Resource content) {
         try {

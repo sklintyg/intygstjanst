@@ -24,8 +24,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.joda.time.LocalDateTime;
-import org.joda.time.format.DateTimeFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -67,7 +68,7 @@ public class PingForConfigurationResponderImplTest {
         assertNotNull(res);
         assertNotNull(res.getPingDateTime());
         // verify format of pingdatetime
-        assertNotNull(LocalDateTime.parse(res.getPingDateTime(), DateTimeFormat.forPattern("yyyyMMddHHmmss")));
+        assertNotNull(LocalDateTime.parse(res.getPingDateTime(), DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
         assertNotNull(res.getConfiguration());
 
         assertTrue(res.getConfiguration().stream().filter(r -> "buildNumber".equals(r.getName())).findAny().isPresent());

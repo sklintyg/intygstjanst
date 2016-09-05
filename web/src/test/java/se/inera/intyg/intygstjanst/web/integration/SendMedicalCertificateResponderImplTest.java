@@ -29,10 +29,10 @@ import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ER
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -176,20 +176,6 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateValidationError() throws Exception {
-        SendMedicalCertificateRequestType invalidRequest = createRequest();
-        invalidRequest.getSend().getLakarutlatande().setPatient(null);
-        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
-
-        assertEquals(ERROR, response.getResult().getResultCode());
-        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
-        assertEquals("Validation Error(s) found: No Patient element found!", response.getResult().getErrorText());
-
-        verify(recipientService, never()).listRecipients(createCertificateType());
-        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
-    }
-
-    @Test
     public void testSendMedicalCertificateServerException() throws Exception {
         when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
         when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(Arrays.asList(createFkRecipient()));
@@ -203,6 +189,363 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService).listRecipients(createCertificateType());
         verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateSaknadPatient() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getLakarutlatande().setPatient(null);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No Patient element found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateSaknatIntygId() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getLakarutlatande().setLakarutlatandeId(null);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No Lakarutlatande Id found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateTomtIntygId() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getLakarutlatande().setLakarutlatandeId("");
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No Lakarutlatande Id found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateFelaktigPatientIdKod() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getLakarutlatande().getPatient().getPersonId().setRoot("invalid");
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: Wrong o.i.d. for Patient Id! Should be 1.2.752.129.2.1.3.1 or 1.2.752.129.2.1.3.3",
+                response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateFelaktigtPatientId() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getLakarutlatande().getPatient().getPersonId().setExtension("invalid");
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: Wrong format for person-id! Valid format is YYYYMMDD-XXXX or YYYYMMDD+XXXX.",
+                response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificatePatientIdUtanSekelsiffror() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getLakarutlatande().getPatient().getPersonId().setExtension("121212-1212");
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: Wrong format for person-id! Valid format is YYYYMMDD-XXXX or YYYYMMDD+XXXX.",
+                response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificatePatientIdUtanBindestreckKorrigeras() throws Exception {
+        SendMedicalCertificateRequestType request = createRequest();
+        request.getSend().getLakarutlatande().getPatient().getPersonId().setExtension("191212121212");
+
+        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
+        when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(Arrays.asList(createFkRecipient()));
+
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), request);
+
+        assertEquals(OK, response.getResult().getResultCode());
+
+        verify(recipientService).listRecipients(createCertificateType());
+        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateSaknatPatientnamn() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getLakarutlatande().getPatient().setFullstandigtNamn(null);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No Patient fullstandigtNamn elements found or set!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateSaknadSigneringstidpunkt() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getLakarutlatande().setSigneringsTidpunkt(null);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No signeringstidpunkt found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateSaknadVardreferens() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().setVardReferensId(null);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No vardReferens found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateSaknadAvsantTidpunkt() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().setAvsantTidpunkt(null);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No avsantTidpunkt found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateSaknadAdressVard() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().setAdressVard(null);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No vardAdress element found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateSaknadHosPersonal() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getAdressVard().setHosPersonal(null);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No SkapadAvHosPersonal element found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateFelaktigPersonalIdKod() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getAdressVard().getHosPersonal().getPersonalId().setRoot("invalid");
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: Wrong o.i.d. for personalId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateTomtPersonalId() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getAdressVard().getHosPersonal().getPersonalId().setExtension("");
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No personal-id found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateSaknadEnhet() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getAdressVard().getHosPersonal().setEnhet(null);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No enhet element found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateSaknadEnhetId() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().setEnhetsId(null);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No enhets-id found!\n" +
+                "Wrong o.i.d. for enhetsId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateFelaktigEnhetIdKod() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getEnhetsId().setRoot("invalid");
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: Wrong o.i.d. for enhetsId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateTomtEnhetId() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getEnhetsId().setExtension("");
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No enhets-id found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateSaknatEnhetnamn() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().setEnhetsnamn(null);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No enhetsnamn found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateSaknadVardgivare() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().setVardgivare(null);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No vardgivare element found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateSaknatVardgivareId() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getVardgivare().setVardgivareId(null);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No vardgivare-id found!\n" +
+                "Wrong o.i.d. for vardgivareId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateFelaktigVardgivareIdKod() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getVardgivare().getVardgivareId().setRoot("invalid");
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: Wrong o.i.d. for vardgivareId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateTomtVardgivareId() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getVardgivare().getVardgivareId().setExtension("");
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No vardgivare-id found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendMedicalCertificateSaknatVardgivarenamn() throws Exception {
+        SendMedicalCertificateRequestType invalidRequest = createRequest();
+        invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getVardgivare().setVardgivarnamn(null);
+        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Validation Error(s) found: No vardgivarenamn found!", response.getResult().getErrorText());
+
+        verify(recipientService, never()).listRecipients(createCertificateType());
+        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
     }
 
     private Certificate createCertificate() {
@@ -264,13 +607,13 @@ public class SendMedicalCertificateResponderImplTest {
         vardAdresseringsType.setHosPersonal(hosPersonal);
 
         sendType.setAdressVard(vardAdresseringsType);
-        sendType.setAvsantTidpunkt(new LocalDateTime());
+        sendType.setAvsantTidpunkt(LocalDateTime.now());
         sendType.setVardReferensId("MI");
 
         // Lakarutlatande
         LakarutlatandeEnkelType lakarutlatande = new LakarutlatandeEnkelType();
         lakarutlatande.setLakarutlatandeId(CERTIFICATE_ID);
-        lakarutlatande.setSigneringsTidpunkt(new LocalDateTime());
+        lakarutlatande.setSigneringsTidpunkt(LocalDateTime.now());
         PatientType patient = new PatientType();
         II patientIdHolder = new II();
         patientIdHolder.setRoot(PATIENT_ID_OID);

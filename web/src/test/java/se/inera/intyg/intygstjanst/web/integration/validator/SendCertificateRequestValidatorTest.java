@@ -19,7 +19,8 @@
 
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -94,11 +95,11 @@ public class SendCertificateRequestValidatorTest {
         hosPersonal.setFullstandigtNamn("hospersonal namn");
         vardAdresseringsType.setHosPersonal(hosPersonal);
         sendType.setAdressVard(vardAdresseringsType);
-        sendType.setAvsantTidpunkt(new LocalDateTime());
+        sendType.setAvsantTidpunkt(LocalDateTime.now());
         sendType.setVardReferensId("MI");
         LakarutlatandeEnkelType lakarutlatande = new LakarutlatandeEnkelType();
         lakarutlatande.setLakarutlatandeId("certificateId");
-        lakarutlatande.setSigneringsTidpunkt(new LocalDateTime());
+        lakarutlatande.setSigneringsTidpunkt(LocalDateTime.now());
         PatientType patient = new PatientType();
         II patientIdHolder = new II();
         patientIdHolder.setRoot("1.2.752.129.2.1.3.1");

@@ -18,13 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
 
 import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
 
 /**
  * Created by eriklupander on 2016-02-02.
@@ -62,7 +62,7 @@ public class SjukfallCertificate {
      * Date and time when the certificate was signed.
      */
     @Column(name = "SIGNING_DATETIME", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime")
     private LocalDateTime signingDateTime;
 
     /**

@@ -22,19 +22,20 @@ package se.inera.intyg.intygstjanst.web.integration.validator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import iso.v21090.dt.v1.II;
-import org.joda.time.LocalDateTime;
-import org.junit.Before;
-import org.junit.Test;
-import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
-import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
-
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import iso.v21090.dt.v1.II;
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
+
 
 public class LakarutlatandeEnkelTypeValidatorTest {
-    
+
     private LakarutlatandeEnkelType lakarutlatande;
     private PatientType patient;
     private II patientId;

@@ -184,10 +184,33 @@ public class CertificateSenderServiceImplTest {
 
     @Test
     public void sendCertificateRevocationTest() {
+        final String meddelande = "anledning till makulering";
         SendMedicalCertificateQuestionResponseType sendMedicalCertificateQuestionResponse = new SendMedicalCertificateQuestionResponseType();
         sendMedicalCertificateQuestionResponse.setResult(ResultOfCallUtil.okResult());
         when(sendMedicalCertificateQuestionResponderInterface.sendMedicalCertificateQuestion(any(AttributedURIType.class),
                 any(SendMedicalCertificateQuestionType.class))).thenReturn(sendMedicalCertificateQuestionResponse );
+        RevokeType revokeData = new RevokeType();
+        revokeData.setLakarutlatande(new LakarutlatandeEnkelType());
+        revokeData.setMeddelande(meddelande);
+        senderService.sendCertificateRevocation(certificate, RECIPIENT_ID, revokeData);
+
+        verifyZeroInteractions(revokeMedicalCertificateResponderInterface);
+        verify(monitoringLogService).logCertificateRevokeSent(anyString(), anyString(), anyString(), anyString());
+        ArgumentCaptor<AttributedURIType> uriCaptor = ArgumentCaptor.forClass(AttributedURIType.class);
+        ArgumentCaptor<SendMedicalCertificateQuestionType> requestCaptor = ArgumentCaptor.forClass(SendMedicalCertificateQuestionType.class);
+        verify(sendMedicalCertificateQuestionResponderInterface).sendMedicalCertificateQuestion(uriCaptor.capture(), requestCaptor.capture());
+
+        assertEquals(RECIPIENT_LOGICALADDRESS, uriCaptor.getValue().getValue());
+        assertEquals(Amnetyp.MAKULERING_AV_LAKARINTYG, requestCaptor.getValue().getQuestion().getAmne());
+        assertEquals(meddelande, requestCaptor.getValue().getQuestion().getFraga().getMeddelandeText());
+    }
+
+    @Test
+    public void sendCertificateRevocationNoMessageTest() {
+        SendMedicalCertificateQuestionResponseType sendMedicalCertificateQuestionResponse = new SendMedicalCertificateQuestionResponseType();
+        sendMedicalCertificateQuestionResponse.setResult(ResultOfCallUtil.okResult());
+        when(sendMedicalCertificateQuestionResponderInterface.sendMedicalCertificateQuestion(any(AttributedURIType.class),
+                any(SendMedicalCertificateQuestionType.class))).thenReturn(sendMedicalCertificateQuestionResponse);
         RevokeType revokeData = new RevokeType();
         revokeData.setLakarutlatande(new LakarutlatandeEnkelType());
         senderService.sendCertificateRevocation(certificate, RECIPIENT_ID, revokeData);
@@ -200,6 +223,7 @@ public class CertificateSenderServiceImplTest {
 
         assertEquals(RECIPIENT_LOGICALADDRESS, uriCaptor.getValue().getValue());
         assertEquals(Amnetyp.MAKULERING_AV_LAKARINTYG, requestCaptor.getValue().getQuestion().getAmne());
+        assertEquals("meddelande saknas", requestCaptor.getValue().getQuestion().getFraga().getMeddelandeText());
     }
 
     @Test(expected = SubsystemCallException.class)
@@ -210,7 +234,7 @@ public class CertificateSenderServiceImplTest {
                 any(SendMedicalCertificateQuestionType.class))).thenReturn(sendMedicalCertificateQuestionResponse);
         RevokeType revokeData = new RevokeType();
         revokeData.setLakarutlatande(new LakarutlatandeEnkelType());
-        senderService.sendCertificateRevocation(certificate, RECIPIENT_ID, revokeData );
+        senderService.sendCertificateRevocation(certificate, RECIPIENT_ID, revokeData);
     }
 
     @Test

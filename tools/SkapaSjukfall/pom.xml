@@ -49,11 +49,6 @@
     </dependency>
 
     <dependency>
-      <artifactId>joda-time</artifactId>
-      <groupId>joda-time</groupId>
-    </dependency>
-
-    <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
     </dependency>

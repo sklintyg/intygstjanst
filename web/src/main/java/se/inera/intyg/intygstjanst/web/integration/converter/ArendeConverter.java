@@ -20,10 +20,9 @@
 package se.inera.intyg.intygstjanst.web.integration.converter;
 
 import java.io.StringWriter;
+import java.time.LocalDateTime;
 
 import javax.xml.bind.*;
-
-import org.joda.time.LocalDateTime;
 
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.ObjectFactory;
@@ -69,7 +68,7 @@ public final class ArendeConverter {
         return arende;
     }
 
-    private static String convertToXmlString(SendMessageToRecipientType source) throws JAXBException {
+    public static String convertToXmlString(SendMessageToRecipientType source) throws JAXBException {
         se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.ObjectFactory objectFactory = new se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.ObjectFactory();
         JAXBContext jaxbContext = JAXBContext
                 .newInstance(SendMessageToRecipientType.class);
