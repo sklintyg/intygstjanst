@@ -6,6 +6,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.junit.*;
 import org.stringtemplate.v4.*;
@@ -107,7 +108,7 @@ public class SetCertificateStatusInsuranceProcessIT extends BaseIntegrationTest 
         requestTemplate.add("personId", personId);
         requestTemplate.add("target", target);
         requestTemplate.add("status", status);
-        requestTemplate.add("timestamp", timestamp.toString());
+        requestTemplate.add("timestamp", timestamp.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
         return given().body(requestTemplate.render()).
                 when().
