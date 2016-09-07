@@ -30,7 +30,6 @@ import se.inera.intyg.common.support.integration.module.exception.CertificateRev
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.common.support.modules.support.api.exception.ExternalServiceCallException;
-import se.inera.intyg.common.util.logging.HashUtility;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
@@ -58,14 +57,13 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
             CertificateService.SendStatus sendStatus = certificateService.sendCertificate(personnummer, intygsId,
                     mottagareId);
 
-            final String mottagareIdHash = HashUtility.hash(mottagareId);
             if (sendStatus == CertificateService.SendStatus.ALREADY_SENT) {
                 response.setResult(ResultTypeUtil.infoResult(String.format("Certificate '%s' already sent to '%s'.", intygsId,
                         mottagareId)));
-                LOGGER.info("Certificate '{}' already sent to '{}'.", intygsId, mottagareIdHash);
+                LOGGER.info("Certificate '{}' already sent to '{}'.", intygsId, mottagareId);
             } else {
                 response.setResult(ResultTypeUtil.okResult());
-                LOGGER.info("Certificate '{}' sent to '{}'.", intygsId, mottagareIdHash);
+                LOGGER.info("Certificate '{}' sent to '{}'.", intygsId, mottagareId);
             }
 
         } catch (InvalidCertificateException ex) {
