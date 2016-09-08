@@ -21,11 +21,10 @@ package se.inera.intyg.intygstjanst.web.integrationtest.rehab;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
@@ -36,8 +35,6 @@ import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
  * Created by eriklupander on 2016-02-16.
  */
 public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ListActiveSickleavesForCareUnitIT.class);
 
     @Override
     @Before
@@ -82,6 +79,7 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
                 .expect()
                 .statusCode(200)
                 .body(BASE + "resultCode", is("ERROR"))
+                .body(BASE + "comment", is("No careUnitHsaId specified in request."))
                 .when()
                 .post("inera-certificate/list-active-sick-leaves-for-care-unit/v1.0");
     }
@@ -94,6 +92,17 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
                 .statusCode(200)
                 .body(BASE + "resultCode", is("OK"))
                 .body(BASE + "intygsLista.intygsData.size()", equalTo(0))
+                .when()
+                .post("inera-certificate/list-active-sick-leaves-for-care-unit/v1.0");
+    }
+
+    @Test
+    public void faultTransformerTest() {
+        given().with().body(REQUEST.replace("{{careUnitHsaId}}", "</tag>"))
+                .expect()
+                .statusCode(200)
+                .body(BASE + "resultCode", is("ERROR"))
+                .body(BASE + "comment", startsWith("Unmarshalling Error"))
                 .when()
                 .post("inera-certificate/list-active-sick-leaves-for-care-unit/v1.0");
     }
