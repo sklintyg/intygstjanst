@@ -2,10 +2,8 @@ rootProject.name = 'intygstjanst'
 
 include ':intygstjanst-persistence'
 include ':intygstjanst-web'
-include ':intygstjanst-specifications'
 include ':intygstjanst-liquibase-runner'
 
 project(':intygstjanst-persistence').projectDir = "$rootDir/persistence" as File
 project(':intygstjanst-web').projectDir = "$rootDir/web" as File
-project(':intygstjanst-specifications').projectDir = "$rootDir/specifications" as File
 project(':intygstjanst-liquibase-runner').projectDir = "$rootDir/tools/liquibase-runner" as File
