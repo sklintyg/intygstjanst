@@ -33,7 +33,7 @@ public class Arende {
      * The (system-wide) unique id for this entity.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long internReferens;
 
     @Column(name = "INTYGS_ID")

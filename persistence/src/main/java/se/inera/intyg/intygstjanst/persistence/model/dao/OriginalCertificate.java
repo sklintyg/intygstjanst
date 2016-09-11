@@ -39,7 +39,7 @@ public class OriginalCertificate {
      * Just needed for JPA compliance.
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     /**
