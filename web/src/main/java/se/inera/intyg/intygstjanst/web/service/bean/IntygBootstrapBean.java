@@ -20,7 +20,6 @@
 package se.inera.intyg.intygstjanst.web.service.bean;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import javax.annotation.PostConstruct;
@@ -170,7 +169,7 @@ public class IntygBootstrapBean {
                 try {
                     Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
                     String contentString = IOUtils.toString(content.getInputStream(), "UTF-8");
-                    OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), contentString, certificate);
+                    OriginalCertificate originalCertificate = new OriginalCertificate(certificate.getSignedDate(), contentString, certificate);
                     entityManager.persist(originalCertificate);
                     entityManager.persist(certificate);
                 } catch (Exception e) {

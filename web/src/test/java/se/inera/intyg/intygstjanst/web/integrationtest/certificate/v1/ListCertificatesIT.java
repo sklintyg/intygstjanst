@@ -5,6 +5,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -112,10 +113,10 @@ public class ListCertificatesIT extends BaseIntegrationTest {
             requestTemplate.add("certificateType", certificateType);
         }
         if (fromDate != null) {
-            requestTemplate.add("fromDate", fromDate.toString());
+            requestTemplate.add("fromDate", fromDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         }
         if (toDate != null) {
-            requestTemplate.add("toDate", toDate.toString());
+            requestTemplate.add("toDate", toDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         }
 
         return given().body(requestTemplate.render()).

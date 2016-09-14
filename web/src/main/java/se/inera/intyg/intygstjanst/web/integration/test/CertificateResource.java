@@ -22,6 +22,7 @@ package se.inera.intyg.intygstjanst.web.integration.test;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -166,7 +167,7 @@ public class CertificateResource {
                             .replace("CAREUNIT_NAME", certificateHolder.getCareUnitName())
                             .replace("CAREGIVER_ID", certificateHolder.getCareGiverId())
                             .replace("DOCTOR_NAME", certificateHolder.getSigningDoctorName())
-                            .replace("SIGNED_DATE", certificateHolder.getSignedDate().toString());
+                            .replace("SIGNED_DATE", certificateHolder.getSignedDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
                 }
             }
         });
