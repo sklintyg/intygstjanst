@@ -14,7 +14,10 @@ dependencies {
   compile "se.inera.intyg.common:common-support:${commonVersion}"
 
   compile 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
-  compile 'org.jadira.usertype:usertype.extended:4.0.0.GA'
+  compile ('org.jadira.usertype:usertype.extended:5.0.0.GA') {
+    exclude(module: 'hibernate-entitymanager')
+  }
+  compile 'org.hibernate:hibernate-entitymanager:4.3.11.Final'
   compile 'org.liquibase:liquibase-core:3.3.1'
   compile 'org.springframework.data:spring-data-jpa:1.9.0.RELEASE'
   compile "org.springframework:spring-tx:${springVersion}"
