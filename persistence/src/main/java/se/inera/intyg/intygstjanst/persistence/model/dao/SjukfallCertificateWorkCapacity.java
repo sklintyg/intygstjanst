@@ -18,7 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by eriklupander on 2016-02-02.
@@ -31,7 +35,7 @@ public class SjukfallCertificateWorkCapacity {
      * Just needed for JPA compliance.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "ID", nullable = false)
     private long id;
 
