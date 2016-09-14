@@ -8,7 +8,7 @@ ext.nexusPassword = System.properties['nexusPassword']
 ext {
   springVersion = "4.2.2.RELEASE"
 }
-  
+
 allprojects  {
   apply plugin: 'maven'
 
@@ -51,9 +51,14 @@ subprojects {
 
   jar.dependsOn(createVersionPropertyFile)
 
+  configurations {
+    buildtools
+  }
+
   dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.9.0'
+    buildtools "se.inera.intyg.common:common-build-tools:${commonVersion}"
   }
 }
 
@@ -77,6 +82,27 @@ subprojects {
         pom.dependencies.findAll {dep -> dep.groupId == 'se.inera.intyg.intygstyper' }.each { it.version = rootProject.resolvedTyperVersion }
       }
     }
+  }
+
+  task unzipBuildTools(type: Copy) {
+    description 'Extracts common-build-tools'
+    into "$buildDir/build-tools/"
+    from {
+      configurations.buildtools.collect { zipTree(it) }
+    }
+  }
+
+  if (project.hasProperty('codeQuality')) {
+    apply plugin: 'checkstyle'
+    checkstyle {
+      config = resources.text.fromFile("${buildDir}/build-tools/checkstyle/checkstyle.xml")
+      ignoreFailures = false
+      showViolations = true
+    }
+
+    checkstyleMain.dependsOn unzipBuildTools
+    checkstyleMain.source = "src/main/java"
+    checkstyleTest.enabled = false
   }
 }
 
