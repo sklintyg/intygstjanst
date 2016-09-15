@@ -9,6 +9,7 @@ test {
 
 // TODO: make run of integration tests configurable
 task integrationTest(type: Test) {
+  systemProperty "integration.tests.baseUrl", "http://localhost:8080/"
   include '**/*IT*'
 }
 
