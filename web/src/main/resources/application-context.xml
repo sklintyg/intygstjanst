@@ -47,10 +47,6 @@
     <bean id="moduleRegistry" class="se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl">
       <property name="origin" value="INTYGSTJANST"/>
     </bean>
-    
-<!--     <bean id="sendMessageToCareRepository" class="se.inera.intyg.intygstjanst.persistence.model.dao.SendMessageToCareRepository"> -->
-<!--     </bean> -->
-
     <bean id="RecipientService"
       class="se.inera.intyg.intygstjanst.web.service.impl.RecipientServiceImpl">
       <property name="recipients" ref="recipientService" />

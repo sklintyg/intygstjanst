@@ -38,8 +38,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
@@ -75,28 +73,25 @@ public class CertificateResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteCertificate(@PathParam("id") final String id) {
-        return transactionTemplate.execute(new TransactionCallback<Response>() {
-            @Override
-            public Response doInTransaction(TransactionStatus status) {
-                try {
-                    LOGGER.info("Deleting certificate {}", id);
-                    Certificate certificate = entityManager.find(Certificate.class, id);
-                    if (certificate != null) {
-                        entityManager.remove(certificate.getOriginalCertificate());
-                        entityManager.remove(certificate);
-                    }
-
-                    // Also delete any SjukfallCertificate
-                    SjukfallCertificate sjukfallCertificate = entityManager.find(SjukfallCertificate.class, id);
-                    if (sjukfallCertificate != null) {
-                        entityManager.remove(sjukfallCertificate);
-                    }
-                    return Response.ok().build();
-                } catch (Exception e) {
-                    status.setRollbackOnly();
-                    LOGGER.warn("delete certificate with id {} failed: {}", id, e);
-                    return Response.serverError().build();
+        return transactionTemplate.execute(status -> {
+            try {
+                LOGGER.info("Deleting certificate {}", id);
+                Certificate certificate = entityManager.find(Certificate.class, id);
+                if (certificate != null) {
+                    entityManager.remove(certificate.getOriginalCertificate());
+                    entityManager.remove(certificate);
                 }
+
+                // Also delete any SjukfallCertificate
+                SjukfallCertificate sjukfallCertificate = entityManager.find(SjukfallCertificate.class, id);
+                if (sjukfallCertificate != null) {
+                    entityManager.remove(sjukfallCertificate);
+                }
+                return Response.ok().build();
+            } catch (Exception e) {
+                status.setRollbackOnly();
+                LOGGER.warn("delete certificate with id {} failed: {}", id, e);
+                return Response.serverError().build();
             }
         });
     }
@@ -105,31 +100,29 @@ public class CertificateResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteAllCertificates() {
-        return transactionTemplate.execute(new TransactionCallback<Response>() {
-            @Override
-            public Response doInTransaction(TransactionStatus status) {
-                try {
-                    @SuppressWarnings("unchecked")
-                    List<Certificate> certificates = entityManager.createQuery("SELECT c FROM Certificate c").getResultList();
-                    for (Certificate certificate : certificates) {
-                        if (certificate.getOriginalCertificate() != null) {
-                            entityManager.remove(certificate.getOriginalCertificate());
-                        }
-                        entityManager.remove(certificate);
+        return transactionTemplate.execute(status -> {
+            try {
+                @SuppressWarnings("unchecked")
+                List<Certificate> certificates = entityManager.createQuery("SELECT c FROM Certificate c").getResultList();
+                for (Certificate certificate : certificates) {
+                    if (certificate.getOriginalCertificate() != null) {
+                        entityManager.remove(certificate.getOriginalCertificate());
                     }
-
-                    // Also delete any SjukfallCertificates
-                    List<SjukfallCertificate> sjukfallCertificates = entityManager.createQuery("SELECT c FROM SjukfallCertificate c", SjukfallCertificate.class).getResultList();
-                    for (SjukfallCertificate sjukfallCert : sjukfallCertificates) {
-                        entityManager.remove(sjukfallCert);
-                    }
-
-                    return Response.ok().build();
-                } catch (Exception e) {
-                    status.setRollbackOnly();
-                    LOGGER.warn("delete all certificates failed: {}", e);
-                    return Response.serverError().build();
+                    entityManager.remove(certificate);
                 }
+
+                // Also delete any SjukfallCertificates
+                List<SjukfallCertificate> sjukfallCertificates = entityManager
+                        .createQuery("SELECT c FROM SjukfallCertificate c", SjukfallCertificate.class).getResultList();
+                for (SjukfallCertificate sjukfallCert : sjukfallCertificates) {
+                    entityManager.remove(sjukfallCert);
+                }
+
+                return Response.ok().build();
+            } catch (Exception e) {
+                status.setRollbackOnly();
+                LOGGER.warn("delete all certificates failed: {}", e);
+                return Response.serverError().build();
             }
         });
     }
@@ -138,39 +131,36 @@ public class CertificateResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/")
     public Response insertCertificate(final CertificateHolder certificateHolder) {
-        return transactionTemplate.execute(new TransactionCallback<Response>() {
-            @Override
-            public Response doInTransaction(TransactionStatus status) {
-                Certificate certificate = ConverterUtil.toCertificate(certificateHolder);
-                try {
-                    LOGGER.info("insert certificate {} ({})", certificate.getId(), certificate.getType());
-                    OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), getXmlBody(certificateHolder), certificate);
-                    entityManager.persist(certificate);
-                    entityManager.persist(originalCertificate);
-                    return Response.ok().build();
-                } catch (Exception e) {
-                    status.setRollbackOnly();
-                    LOGGER.warn("insert certificate {} ({}) failed: {}", certificate.getId(), certificate.getType(), e);
-                    return Response.serverError().build();
-                }
-            }
-
-            private String getXmlBody(CertificateHolder certificateHolder) throws IOException {
-                if (StringUtils.isNotBlank(certificateHolder.getOriginalCertificate())) {
-                    return certificateHolder.getOriginalCertificate();
-                } else {
-                    File file = new ClassPathResource("content/intyg-" + certificateHolder.getType() + "-content.xml").getFile();
-                    return FileUtils.readFileToString(file)
-                            .replace("CERTIFICATE_ID", certificateHolder.getId())
-                            .replace("PATIENT_CRN", certificateHolder.getCivicRegistrationNumber().getPersonnummerWithoutDash())
-                            .replace("CAREUNIT_ID", certificateHolder.getCareUnitId())
-                            .replace("CAREUNIT_NAME", certificateHolder.getCareUnitName())
-                            .replace("CAREGIVER_ID", certificateHolder.getCareGiverId())
-                            .replace("DOCTOR_NAME", certificateHolder.getSigningDoctorName())
-                            .replace("SIGNED_DATE", certificateHolder.getSignedDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-                }
+        return transactionTemplate.execute(status -> {
+            Certificate certificate = ConverterUtil.toCertificate(certificateHolder);
+            try {
+                LOGGER.info("insert certificate {} ({})", certificate.getId(), certificate.getType());
+                OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), getXmlBody(certificateHolder), certificate);
+                entityManager.persist(certificate);
+                entityManager.persist(originalCertificate);
+                return Response.ok().build();
+            } catch (Exception e) {
+                status.setRollbackOnly();
+                LOGGER.warn("insert certificate {} ({}) failed: {}", certificate.getId(), certificate.getType(), e);
+                return Response.serverError().build();
             }
         });
+    }
+
+    private String getXmlBody(CertificateHolder certificateHolder) throws IOException {
+        if (StringUtils.isNotBlank(certificateHolder.getOriginalCertificate())) {
+            return certificateHolder.getOriginalCertificate();
+        } else {
+            File file = new ClassPathResource("content/intyg-" + certificateHolder.getType() + "-content.xml").getFile();
+            return FileUtils.readFileToString(file)
+                    .replace("CERTIFICATE_ID", certificateHolder.getId())
+                    .replace("PATIENT_CRN", certificateHolder.getCivicRegistrationNumber().getPersonnummerWithoutDash())
+                    .replace("CAREUNIT_ID", certificateHolder.getCareUnitId())
+                    .replace("CAREUNIT_NAME", certificateHolder.getCareUnitName())
+                    .replace("CAREGIVER_ID", certificateHolder.getCareGiverId())
+                    .replace("DOCTOR_NAME", certificateHolder.getSigningDoctorName())
+                    .replace("SIGNED_DATE", certificateHolder.getSignedDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        }
     }
 
 }
