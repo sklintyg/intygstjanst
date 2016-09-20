@@ -84,7 +84,7 @@
   <logger name="org.hibernate" level="error" />
   <logger name="org.hibernate.engine.jdbc.spi.SqlExceptionHelper" level="off" />
 
-  <logger name="org.apache.cxf" level="error" />
+  <logger name="org.apache.cxf" level="info" />
 
   <logger name="se.inera.intyg" level="debug" />
 
@@ -95,6 +95,7 @@
   <logger name="se.inera.intyg.intygstyper.ts_diabetes" level="debug" />
 
   <logger name="se.inera.certificate.modules.fkparent" level="debug" />
+
   <logger name="se.inera.certificate.modules.luse" level="debug" />
 
   <root>
