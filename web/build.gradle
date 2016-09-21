@@ -75,6 +75,7 @@ dependencies {
   compile "org.springframework:spring-jms:${springVersion}"
   compile 'se.riv.infrastructure.directory.organization:infrastructure-directory-organization-schemas:1.1.RC5.2'
   compile 'se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:1.0.2'
+  compile 'org.slf4j:log4j-over-slf4j:1.7.5'
 
   testCompile "org.springframework:spring-test:${springVersion}"
   testCompile 'xmlunit:xmlunit:1.4'
