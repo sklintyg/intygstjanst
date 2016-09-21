@@ -7,17 +7,26 @@
 - name: create release directory
   file: path={{ releases_folder }} state=directory
 
-- name: download intygstjanst-liquibase-runner-{{ version }}.jar
-  get_url: url=https://build-inera.nordicmedtest.se/nexus/content/repositories/{{ repo }}/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/{{ version }}/intygstjanst-liquibase-runner-{{ version }}.jar
-           dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.jar
+- name: download intygstjanst-liquibase-runner-{{ version }}.zip
+  get_url: url=https://build-inera.nordicmedtest.se/nexus/content/repositories/{{ repo }}/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/{{ version }}/intygstjanst-liquibase-runner-{{ version }}.zip
+           dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
   when: deploy_from_repo
 
-- name: copy intygstjanst-liquibase-runner-{{ version }}.jar
-  copy: src={{ inventory_dir }}/../tools/liquibase-runner/target/intygstjanst-liquibase-runner.jar dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.jar
+- name: copy intygstjanst-liquibase-runner-{{ version }}.zip
+  copy: src={{ inventory_dir }}/../tools/liquibase-runner/target/intygstjanst-liquibase-runner.zip dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
   when: not deploy_from_repo
 
+- name: Unzip liquibase-runner-{{ version }}.zip
+  command: unzip -od {{ releases_folder }} {{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
+  args:
+    creates: "{{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}/bin/liquibase-runner"
+
 - name: run liquibase update
-  command: java -jar {{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.jar --changeLogFile="changelog/changelog.xml" --username="{{ database_username }}" --password="{{ database_password }}" --url="{{ database_url }}" --driver="{{ database_driver }}" --contexts=none update
+  command: "{{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}/bin/intygstjanst-liquibase-runner --url={{ database_url }} --username={{ database_username }} --password={{ database_password }} update"
+  args:
+      chdir: "{{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}"
+  environment:
+      JAVA_HOME: "{{ java_home }}"
 
 - name: download intygstjanst-web-{{ version }}.war
   get_url: url=https://build-inera.nordicmedtest.se/nexus/content/repositories/{{ repo }}/se/inera/intyg/intygstjanst/intygstjanst-web/{{ version }}/intygstjanst-web-{{ version }}.war
