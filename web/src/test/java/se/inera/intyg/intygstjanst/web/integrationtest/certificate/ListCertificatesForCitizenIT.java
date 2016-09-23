@@ -59,9 +59,9 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
 
     private ST getRequestTemplate(boolean all) {
         STGroup templateGroup;
-        if(all){
+        if (all) {
             templateGroup = new STGroupFile("integrationtests/listcertificatesforcitizen/request_alltypes.stg");
-        }else{
+        } else {
             templateGroup = new STGroupFile("integrationtests/listcertificatesforcitizen/requests.stg");
         }
         return templateGroup.getInstanceOf("request");
@@ -98,7 +98,8 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         IntegrationTestUtil.registerCertificate(intygsId_alltypes.get(3), personId, IntegrationTestCertificateType.LISU);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
-        Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then().statusCode(200)
+        Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then()
+                .statusCode(200)
                 .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0].intyg.size()", is(4)).extract().response();
 
         assertTrue(intygsId_alltypes.containsAll(extractIds(res)));
@@ -114,7 +115,8 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then().statusCode(200)
                 .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0].intyg.size()", is(1));
 
-        // Eftersom intyget är markerat som borttaget av vården så ska detta städas bort då inte heller invånaren längre har åtkomst till det. När invånaren åter ger samtycke så är intyget borta.
+        // Eftersom intyget är markerat som borttaget av vården så ska detta städas bort då inte heller invånaren längre
+        // har åtkomst till det. När invånaren åter ger samtycke så är intyget borta.
         IntegrationTestUtil.revokeConsent(personId);
         given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then().statusCode(200)
                 .rootPath(BASE).body("result.resultCode", is("INFO"))
@@ -136,7 +138,8 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         IntegrationTestUtil.registerCertificate(intygsId_alltypes.get(3), personId, IntegrationTestCertificateType.LISU);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
-        Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then().statusCode(200)
+        Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then()
+                .statusCode(200)
                 .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0].intyg.size()", is(1)).extract().response();
 
         assertTrue(intygsId_alltypes.containsAll(extractIds(res)));
@@ -174,13 +177,9 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         ST requestTemplate = getRequestTemplate(false);
         requestTemplate.add("data", new ListParameters("<tag></tag>", defaultType));
 
-        given().body(requestTemplate.render()).
-                when().post("inera-certificate/list-certificates-for-citizen/v2.0").
-                then().statusCode(200).
-                rootPath(BASE).
-                body("result.resultCode", is("ERROR")).
-                body("result.resultText", startsWith("Unmarshalling Error")).
-                body("intygsLista.intyg.size()", is(0));
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then().statusCode(200)
+                .rootPath(BASE).body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"))
+                .body("intygsLista.intyg.size()", is(0));
     }
 
     @After

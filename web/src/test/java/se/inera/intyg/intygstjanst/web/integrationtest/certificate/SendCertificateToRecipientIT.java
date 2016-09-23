@@ -47,7 +47,6 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
     private STGroup templateGroupRecipient;
     private STGroup templateGroupRegister;
     private String personId1 = "192703104321";
-    private final String baseUrl = "http://localhost:8080/inera-certificate";
 
     private String intygsId = "123456";
 
@@ -87,14 +86,11 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
         requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
         requestTemplateRecipient.add("mottagare", "FKASSA");
 
-        given().
-                filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendCertificateToRecipientResponder:1"),
-                        "soap:Envelope/soap:Body/lc:SendCertificateToRecipientResponse")).
-                body(requestTemplateRecipient.render()).
-                when().
-                post("inera-certificate/send-certificate-to-recipient/v1.0").
-                then().
-                body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
+        given().filter(
+                new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendCertificateToRecipientResponder:1"),
+                        "soap:Envelope/soap:Body/lc:SendCertificateToRecipientResponse"))
+                .body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then()
+                .body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
     }
 
     @Test
@@ -120,8 +116,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
         requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
         requestTemplateRecipient.add("mottagare", "TRANSP");
         given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
-                .rootPath(RECIPIENT_BASE).
-                body("result.resultCode", is("ERROR"));
+                .rootPath(RECIPIENT_BASE).body("result.resultCode", is("ERROR"));
     }
 
     @Test
@@ -131,8 +126,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
         requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
         requestTemplateRecipient.add("mottagare", "TRANSP");
         given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
-                .rootPath(RECIPIENT_BASE).
-                body("result.resultCode", is("OK"));
+                .rootPath(RECIPIENT_BASE).body("result.resultCode", is("OK"));
     }
 
     @Test
@@ -140,22 +134,18 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
         requestTemplateRecipient.add("data", new IntygsData("<tag></tag>", personId1));
         requestTemplateRecipient.add("mottagare", "FKASSA");
 
-        given().body(requestTemplateRecipient.render()).
-                when().post("inera-certificate/send-certificate-to-recipient/v1.0").
-                then().statusCode(200)
-                .rootPath(RECIPIENT_BASE).
-                body("result.resultCode", is("ERROR")).
-                body("result.resultText", startsWith("Unmarshalling Error"));
+        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
+                .rootPath(RECIPIENT_BASE).body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
     private void setFakeExceptionAtRegisterCertificateResponderStub(boolean active) {
         given().contentType(ContentType.JSON).queryParam("fakeException", active).expect().statusCode(204).when()
-        .post(baseUrl + "/fk-register-certificate-stub/certificates");
+                .post("inera-certificate/fk-register-certificate-stub/certificates");
     }
 
     private void setErrorFromTS(boolean active) {
         given().contentType(ContentType.JSON).queryParam("fakeException", active).expect().statusCode(204).when()
-                .post(baseUrl + "/ts-certificate-stub/certificates");
+                .post("inera-certificate/ts-certificate-stub/certificates");
     }
 
     @After

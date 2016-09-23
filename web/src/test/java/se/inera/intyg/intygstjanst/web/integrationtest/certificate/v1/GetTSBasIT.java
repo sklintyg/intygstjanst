@@ -39,19 +39,15 @@ public class GetTSBasIT extends BaseIntegrationTest {
         final String personId = "190101010101";
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
 
-        givenRequest(INTYG_ID, personId).
-                body("resultat.resultCode", is("OK")).
-                body("intyg.intygsId", is(INTYG_ID)).
-                body("meta.status.type", is("RECEIVED")).
-                body("intyg.grundData.patient.personId.extension", is(personId));
+        givenRequest(INTYG_ID, personId).body("resultat.resultCode", is("OK")).body("intyg.intygsId", is(INTYG_ID))
+                .body("meta.status.type", is("RECEIVED")).body("intyg.grundData.patient.personId.extension", is(personId));
     }
 
     @Test
     public void getTSBasDoesNotExist() {
-        givenRequest("fit-intyg-finnsinte", "190101010101").
-                body("resultat.resultCode", is("ERROR")).
-                body("resultat.errorId", is("VALIDATION_ERROR")).
-                body("resultat.resultText", is("Certificate 'fit-intyg-finnsinte' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
+        givenRequest("fit-intyg-finnsinte", "190101010101").body("resultat.resultCode", is("ERROR")).body("resultat.errorId", is("VALIDATION_ERROR"))
+                .body("resultat.resultText", is(
+                        "Certificate 'fit-intyg-finnsinte' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
     }
 
     @Test
@@ -60,11 +56,8 @@ public class GetTSBasIT extends BaseIntegrationTest {
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
         IntegrationTestUtil.revokeMedicalCertificate(INTYG_ID, personId, "");
 
-        givenRequest(INTYG_ID, personId).
-                body("intyg.intygsId", is(INTYG_ID)).
-                body("resultat.resultCode", is("ERROR")).
-                body("resultat.errorId", is("REVOKED")).
-                body("resultat.resultText", is("Certificate 'getTSBasITcertificateId' has been revoked"));
+        givenRequest(INTYG_ID, personId).body("intyg.intygsId", is(INTYG_ID)).body("resultat.resultCode", is("ERROR"))
+                .body("resultat.errorId", is("REVOKED")).body("resultat.resultText", is("Certificate 'getTSBasITcertificateId' has been revoked"));
     }
 
     @Test
@@ -72,27 +65,23 @@ public class GetTSBasIT extends BaseIntegrationTest {
         final String personId = "190101010101";
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, true);
 
-        givenRequest(INTYG_ID, personId).
-                body("resultat.resultCode", is("ERROR")).
-                body("resultat.errorId", is("APPLICATION_ERROR")).
-                body("resultat.resultText", is("Certificate 'getTSBasITcertificateId' has been deleted by care giver"));
+        givenRequest(INTYG_ID, personId).body("resultat.resultCode", is("ERROR")).body("resultat.errorId", is("APPLICATION_ERROR"))
+                .body("resultat.resultText", is("Certificate 'getTSBasITcertificateId' has been deleted by care giver"));
     }
 
     @Test
     public void getTsBasWrongPerson() {
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, "19020202-0202", false);
 
-        givenRequest(INTYG_ID, "190101010101").
-                body("resultat.resultCode", is("ERROR")).
-                body("resultat.errorId", is("VALIDATION_ERROR")).
-                body("resultat.resultText", is("Certificate 'getTSBasITcertificateId' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
+        givenRequest(INTYG_ID, "190101010101").body("resultat.resultCode", is("ERROR")).body("resultat.errorId", is("VALIDATION_ERROR")).body(
+                "resultat.resultText",
+                is("Certificate 'getTSBasITcertificateId' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
     }
 
     @Test
     public void faultTransformerTest() {
-        givenRequest("</tag>", "190101010101").
-                body("resultat.resultCode", is("ERROR")).
-                body("resultat.resultText", startsWith("Unmarshalling Error"));
+        givenRequest("</tag>", "190101010101").body("resultat.resultCode", is("ERROR")).body("resultat.resultText",
+                startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse givenRequest(String intygId, String personId) {
@@ -100,11 +89,7 @@ public class GetTSBasIT extends BaseIntegrationTest {
         requestTemplate.add("intygId", intygId);
         requestTemplate.add("personId", personId);
 
-        return given().body(requestTemplate.render()).
-                when().
-                post("inera-certificate/get-ts-bas/v1.0").
-                then().
-                statusCode(200).
-                rootPath("Envelope.Body.GetTSBasResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/get-ts-bas/v1.0").then().statusCode(200)
+                .rootPath("Envelope.Body.GetTSBasResponse.");
     }
 }

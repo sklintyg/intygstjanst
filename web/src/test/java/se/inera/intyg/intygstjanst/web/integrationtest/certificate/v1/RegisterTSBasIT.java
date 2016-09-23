@@ -38,12 +38,9 @@ public class RegisterTSBasIT extends BaseIntegrationTest {
     public void registerTSBas() {
         final String personId = "190101010101";
 
-        givenRequest(INTYG_ID, personId).
-                body("resultat.resultCode", is("OK"));
+        givenRequest(INTYG_ID, personId).body("resultat.resultCode", is("OK"));
 
-        getTsBasRequest(INTYG_ID, personId).
-                body("resultat.resultCode", is("OK")).
-                body("meta.status.type", is("RECEIVED"));
+        getTsBasRequest(INTYG_ID, personId).body("resultat.resultCode", is("OK")).body("meta.status.type", is("RECEIVED"));
     }
 
     @Test
@@ -51,16 +48,13 @@ public class RegisterTSBasIT extends BaseIntegrationTest {
         final String personId = "190101010101";
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
 
-        givenRequest(INTYG_ID, personId).
-                body("resultat.resultCode", is("INFO")).
-                body("resultat.resultText", is("Certificate already exists"));
+        givenRequest(INTYG_ID, personId).body("resultat.resultCode", is("INFO")).body("resultat.resultText", is("Certificate already exists"));
     }
 
     @Test
     public void faultTransformerTest() {
-        givenRequest("</tag>", "190101010101").
-                body("resultat.resultCode", is("ERROR")).
-                body("resultat.resultText", startsWith("Unmarshalling Error"));
+        givenRequest("</tag>", "190101010101").body("resultat.resultCode", is("ERROR")).body("resultat.resultText",
+                startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse getTsBasRequest(String intygId, String personId) {
@@ -68,12 +62,8 @@ public class RegisterTSBasIT extends BaseIntegrationTest {
         requestTemplate.add("intygId", intygId);
         requestTemplate.add("personId", personId);
 
-        return given().body(requestTemplate.render()).
-                when().
-                post("inera-certificate/get-ts-bas/v1.0").
-                then().
-                statusCode(200).
-                rootPath("Envelope.Body.GetTSBasResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/get-ts-bas/v1.0").then().statusCode(200)
+                .rootPath("Envelope.Body.GetTSBasResponse.");
     }
 
     private ValidatableResponse givenRequest(String intygId, String personId) {
@@ -81,11 +71,7 @@ public class RegisterTSBasIT extends BaseIntegrationTest {
         requestTemplate.add("intygId", intygId);
         requestTemplate.add("personId", personId);
 
-        return given().body(requestTemplate.render()).
-                when().
-                post("inera-certificate/register-ts-bas/v1.0").
-                then().
-                statusCode(200).
-                rootPath("Envelope.Body.RegisterTSBasResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/register-ts-bas/v1.0").then().statusCode(200)
+                .rootPath("Envelope.Body.RegisterTSBasResponse.");
     }
 }

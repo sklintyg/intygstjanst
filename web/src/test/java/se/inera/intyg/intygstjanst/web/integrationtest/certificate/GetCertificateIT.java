@@ -36,26 +36,17 @@ public class GetCertificateIT extends BaseIntegrationTest {
     public void getCertificateWorks() {
         requestTemplate.add("data", new IntygsData(intygsId, tolvansId));
 
-        given().body(requestTemplate.render()).
-                when().
-                post("inera-certificate/get-certificate-se/v2.0").
-                then().
-                statusCode(200).
-                rootPath(BASE).
-                body("intyg.intygs-id.extension", is("intyg-10"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-se/v2.0").then().statusCode(200).rootPath(BASE)
+                .body("intyg.intygs-id.extension", is("intyg-10"));
     }
 
     @Test
     public void getCertificateDoesNotExist() {
         requestTemplate.add("data", new IntygsData("fit-intyg-finnsinte", tolvansId));
 
-        given().body(requestTemplate.render()).
-                when().post("inera-certificate/get-certificate-se/v2.0").
-                then().
-                statusCode(500).
-                rootPath("Envelope.Body.Fault").
-                body("faultcode", is("soap:Server")).
-                body("faultstring", is("Certificate with id fit-intyg-finnsinte is invalid or does not exist"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-se/v2.0").then().statusCode(500)
+                .rootPath("Envelope.Body.Fault").body("faultcode", is("soap:Server"))
+                .body("faultstring", is("Certificate with id fit-intyg-finnsinte is invalid or does not exist"));
     }
 
     @Test
@@ -63,14 +54,8 @@ public class GetCertificateIT extends BaseIntegrationTest {
         requestTemplate.add("data", new IntygsData("<root></root>", tolvansId)); // This brakes the XML Schema
 
         // GetCertificate does not have a fault transformer, SoapFault is expected
-        given().body(requestTemplate.render()).
-                when().
-                post("inera-certificate/get-certificate-se/v2.0").
-                then().
-                statusCode(500).
-                rootPath("Envelope.Body.Fault").
-                body("faultcode", is("soap:Client")).
-                body("faultstring", startsWith("Unmarshalling Error"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-se/v2.0").then().statusCode(500)
+                .rootPath("Envelope.Body.Fault").body("faultcode", is("soap:Client")).body("faultstring", startsWith("Unmarshalling Error"));
     }
 
     @SuppressWarnings("unused")

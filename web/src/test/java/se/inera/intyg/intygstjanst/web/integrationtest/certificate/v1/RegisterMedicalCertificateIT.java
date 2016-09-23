@@ -38,39 +38,30 @@ public class RegisterMedicalCertificateIT extends BaseIntegrationTest {
     public void registerMedicalCertificate() {
         final String personId = "19010101-0101";
 
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).
-                body("result.resultCode", is("ERROR")).
-                body("result.resultText", is("Certificate 'registerMedicalCertificateITcertificateId' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
-        givenRequest(INTYG_ID, personId, false).
-                body("result.resultCode", is("OK"));
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).
-                body("result.resultCode", is("OK")).
-                body("meta.certificateId", is(INTYG_ID)).
-                body("lakarutlatande.skapadAvHosPersonal.enhet.enhets-id.@extension", is("EnhetsId")).
-                body("lakarutlatande.skapadAvHosPersonal.enhet.vardgivare.vardgivare-id.@extension", is("Vardgivarid")).
-                body("meta.status.type", is("RECEIVED"));
+        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("result.resultCode", is("ERROR")).body("result.resultText", is(
+                "Certificate 'registerMedicalCertificateITcertificateId' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
+        givenRequest(INTYG_ID, personId, false).body("result.resultCode", is("OK"));
+        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("result.resultCode", is("OK")).body("meta.certificateId", is(INTYG_ID))
+                .body("lakarutlatande.skapadAvHosPersonal.enhet.enhets-id.@extension", is("EnhetsId"))
+                .body("lakarutlatande.skapadAvHosPersonal.enhet.vardgivare.vardgivare-id.@extension", is("Vardgivarid"))
+                .body("meta.status.type", is("RECEIVED"));
 
         // can not register again
-        givenRequest(INTYG_ID, personId, false).
-                body("result.resultCode", is("INFO")).
-                body("result.infoText", is("Certificate already exists"));
+        givenRequest(INTYG_ID, personId, false).body("result.resultCode", is("INFO")).body("result.infoText", is("Certificate already exists"));
     }
 
     @Test
     public void registerMedicalCertificateIdAlreadyExistOnOtherPerson() {
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, "19020202-0202", false);
 
-        givenRequest(INTYG_ID, "19010101-0101", false).
-                body("result.resultCode", is("ERROR")).
-                body("result.errorId", is("APPLICATION_ERROR")).
-                body("result.errorText", is("Invalid certificate ID"));
+        givenRequest(INTYG_ID, "19010101-0101", false).body("result.resultCode", is("ERROR")).body("result.errorId", is("APPLICATION_ERROR"))
+                .body("result.errorText", is("Invalid certificate ID"));
     }
 
     @Test
     public void faultTransformerTest() {
-        givenRequest("</tag>", "190101010101", false).
-                body("result.resultCode", is("ERROR")).
-                body("result.errorText", startsWith("Unmarshalling Error"));
+        givenRequest("</tag>", "190101010101", false).body("result.resultCode", is("ERROR")).body("result.errorText",
+                startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse givenRequest(String intygId, String personId, boolean SmL) {
@@ -78,12 +69,8 @@ public class RegisterMedicalCertificateIT extends BaseIntegrationTest {
         requestTemplate.add("intygId", intygId);
         requestTemplate.add("personId", personId);
 
-        return given().body(requestTemplate.render()).
-                when().
-                post("inera-certificate/register-certificate/v3.0").
-                then().
-                statusCode(200).
-                rootPath("Envelope.Body.RegisterMedicalCertificateResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate/v3.0").then().statusCode(200)
+                .rootPath("Envelope.Body.RegisterMedicalCertificateResponse.");
     }
 
     private ValidatableResponse getMedicalCertificateForCareRequest(String intygId, String personId) {
@@ -91,11 +78,7 @@ public class RegisterMedicalCertificateIT extends BaseIntegrationTest {
         requestTemplate.add("intygId", intygId);
         requestTemplate.add("personId", personId);
 
-        return given().body(requestTemplate.render()).
-                when().
-                post("inera-certificate/get-medical-certificate-for-care/v1.0").
-                then().
-                statusCode(200).
-                rootPath("Envelope.Body.GetMedicalCertificateForCareResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/get-medical-certificate-for-care/v1.0").then().statusCode(200)
+                .rootPath("Envelope.Body.GetMedicalCertificateForCareResponse.");
     }
 }

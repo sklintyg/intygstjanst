@@ -40,30 +40,24 @@ public class RevokeMedicalCertificateIT extends BaseIntegrationTest {
         final String personId = "190101010101";
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
 
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).
-                body("meta.status.size()", is(1)).
-                body("meta.status.type", is("RECEIVED"));
-        givenRequest(INTYG_ID, personId, "meddelande").
-                body("result.resultCode", is("OK"));
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).
-                body("meta.status.size()", is(2)).
-                body("meta.status[0].type", anyOf(is("RECEIVED"), is("CANCELLED"))).
-                body("meta.status[1].type", anyOf(is("RECEIVED"), is("CANCELLED")));
+        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
+        givenRequest(INTYG_ID, personId, "meddelande").body("result.resultCode", is("OK"));
+        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(2))
+                .body("meta.status[0].type", anyOf(is("RECEIVED"), is("CANCELLED")))
+                .body("meta.status[1].type", anyOf(is("RECEIVED"), is("CANCELLED")));
 
         // can not revoke when already revoked
-        givenRequest(INTYG_ID, personId, "meddelande").
-                body("result.resultCode", is("INFO")).
-                body("result.infoText", is("Certificate 'revokeMedicalCertificateITcertificateId' is already revoked."));
+        givenRequest(INTYG_ID, personId, "meddelande").body("result.resultCode", is("INFO")).body("result.infoText",
+                is("Certificate 'revokeMedicalCertificateITcertificateId' is already revoked."));
     }
 
     @Test
     public void revokeMedicalCertificateDoesNotExist() {
         final String personId = "190101010101";
 
-        givenRequest("fit-intyg-finnsinte", personId, "meddelande").
-                body("result.resultCode", is("ERROR")).
-                body("result.errorId", is("VALIDATION_ERROR")).
-                body("result.errorText", is("No certificate 'fit-intyg-finnsinte' found to revoke for patient '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'."));
+        givenRequest("fit-intyg-finnsinte", personId, "meddelande").body("result.resultCode", is("ERROR"))
+                .body("result.errorId", is("VALIDATION_ERROR")).body("result.errorText", is(
+                        "No certificate 'fit-intyg-finnsinte' found to revoke for patient '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'."));
     }
 
     @Test
@@ -71,22 +65,16 @@ public class RevokeMedicalCertificateIT extends BaseIntegrationTest {
         final String personId = "190101010101";
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
 
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).
-                body("meta.status.size()", is(1)).
-                body("meta.status.type", is("RECEIVED"));
-        givenRequest(INTYG_ID, personId, "meddelande", "blankstegRequest").
-                body("result.resultCode", is("OK"));
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).
-                body("meta.status.size()", is(2)).
-                body("meta.status[0].type", anyOf(is("RECEIVED"), is("CANCELLED"))).
-                body("meta.status[1].type", anyOf(is("RECEIVED"), is("CANCELLED")));
+        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
+        givenRequest(INTYG_ID, personId, "meddelande", "blankstegRequest").body("result.resultCode", is("OK"));
+        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(2))
+                .body("meta.status[0].type", anyOf(is("RECEIVED"), is("CANCELLED")))
+                .body("meta.status[1].type", anyOf(is("RECEIVED"), is("CANCELLED")));
     }
 
     @Test
     public void faultTransformerTest() {
-        givenRequest("</tag>", "190101010101", "").
-                body("result.resultCode", is("ERROR")).
-                body("result.errorText", startsWith("Unmarshalling Error"));
+        givenRequest("</tag>", "190101010101", "").body("result.resultCode", is("ERROR")).body("result.errorText", startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse givenRequest(String intygId, String personId, String meddelande) {
@@ -99,12 +87,8 @@ public class RevokeMedicalCertificateIT extends BaseIntegrationTest {
         requestTemplate.add("personId", personId);
         requestTemplate.add("meddelande", meddelande);
 
-        return given().body(requestTemplate.render()).
-                when().
-                post("inera-certificate/revoke-certificate/v1.0").
-                then().
-                statusCode(200).
-                rootPath("Envelope.Body.RevokeMedicalCertificateResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/revoke-certificate/v1.0").then().statusCode(200)
+                .rootPath("Envelope.Body.RevokeMedicalCertificateResponse.");
     }
 
     private ValidatableResponse getMedicalCertificateForCareRequest(String intygId, String personId) {
@@ -112,11 +96,7 @@ public class RevokeMedicalCertificateIT extends BaseIntegrationTest {
         requestTemplate.add("intygId", intygId);
         requestTemplate.add("personId", personId);
 
-        return given().body(requestTemplate.render()).
-                when().
-                post("inera-certificate/get-medical-certificate-for-care/v1.0").
-                then().
-                statusCode(200).
-                rootPath("Envelope.Body.GetMedicalCertificateForCareResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/get-medical-certificate-for-care/v1.0").then().statusCode(200)
+                .rootPath("Envelope.Body.GetMedicalCertificateForCareResponse.");
     }
 }

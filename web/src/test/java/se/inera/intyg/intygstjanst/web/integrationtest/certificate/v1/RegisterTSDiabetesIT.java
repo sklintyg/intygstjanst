@@ -38,12 +38,9 @@ public class RegisterTSDiabetesIT extends BaseIntegrationTest {
     public void registerTSDiabetes() {
         final String personId = "190101010101";
 
-        givenRequest(INTYG_ID, personId).
-                body("resultat.resultCode", is("OK"));
+        givenRequest(INTYG_ID, personId).body("resultat.resultCode", is("OK"));
 
-        getTsDiabetesRequest(INTYG_ID, personId).
-                body("resultat.resultCode", is("OK")).
-                body("meta.status.type", is("RECEIVED"));
+        getTsDiabetesRequest(INTYG_ID, personId).body("resultat.resultCode", is("OK")).body("meta.status.type", is("RECEIVED"));
     }
 
     @Test
@@ -51,16 +48,13 @@ public class RegisterTSDiabetesIT extends BaseIntegrationTest {
         final String personId = "190101010101";
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
 
-        givenRequest(INTYG_ID, personId).
-                body("resultat.resultCode", is("INFO")).
-                body("resultat.resultText", is("Certificate already exists"));
+        givenRequest(INTYG_ID, personId).body("resultat.resultCode", is("INFO")).body("resultat.resultText", is("Certificate already exists"));
     }
 
     @Test
     public void faultTransformerTest() {
-        givenRequest("</tag>", "190101010101").
-                body("resultat.resultCode", is("ERROR")).
-                body("resultat.resultText", startsWith("Unmarshalling Error"));
+        givenRequest("</tag>", "190101010101").body("resultat.resultCode", is("ERROR")).body("resultat.resultText",
+                startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse getTsDiabetesRequest(String intygId, String personId) {
@@ -68,12 +62,8 @@ public class RegisterTSDiabetesIT extends BaseIntegrationTest {
         requestTemplate.add("intygId", intygId);
         requestTemplate.add("personId", personId);
 
-        return given().body(requestTemplate.render()).
-                when().
-                post("inera-certificate/get-ts-diabetes/v1.0").
-                then().
-                statusCode(200).
-                rootPath("Envelope.Body.GetTSDiabetesResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/get-ts-diabetes/v1.0").then().statusCode(200)
+                .rootPath("Envelope.Body.GetTSDiabetesResponse.");
     }
 
     private ValidatableResponse givenRequest(String intygId, String personId) {
@@ -81,11 +71,7 @@ public class RegisterTSDiabetesIT extends BaseIntegrationTest {
         requestTemplate.add("intygId", intygId);
         requestTemplate.add("personId", personId);
 
-        return given().body(requestTemplate.render()).
-                when().
-                post("inera-certificate/register-ts-diabetes/v1.0").
-                then().
-                statusCode(200).
-                rootPath("Envelope.Body.RegisterTSDiabetesResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/register-ts-diabetes/v1.0").then().statusCode(200)
+                .rootPath("Envelope.Body.RegisterTSDiabetesResponse.");
     }
 }

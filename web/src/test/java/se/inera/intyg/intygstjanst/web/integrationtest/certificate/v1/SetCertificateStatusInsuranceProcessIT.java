@@ -45,15 +45,10 @@ public class SetCertificateStatusInsuranceProcessIT extends BaseIntegrationTest 
         final String status = CertificateState.SENT.name();
         IntegrationTestUtil.registerMedicalCertificate(INTYG_ID, personId);
 
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).
-                body("meta.status.size()", is(1)).
-                body("meta.status.type", is("RECEIVED"));
-        givenRequest(INTYG_ID, personId, "FK", status, LocalDateTime.now()).
-                body("result.resultCode", is("OK"));
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).
-                body("meta.status.size()", is(2)).
-                body("meta.status[0].type", anyOf(is("RECEIVED"), is(status))).
-                body("meta.status[1].type", anyOf(is("RECEIVED"), is(status)));
+        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
+        givenRequest(INTYG_ID, personId, "FK", status, LocalDateTime.now()).body("result.resultCode", is("OK"));
+        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(2))
+                .body("meta.status[0].type", anyOf(is("RECEIVED"), is(status))).body("meta.status[1].type", anyOf(is("RECEIVED"), is(status)));
     }
 
     @Test
@@ -62,44 +57,35 @@ public class SetCertificateStatusInsuranceProcessIT extends BaseIntegrationTest 
         final String status = CertificateState.SENT.name();
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
 
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).
-                body("meta.status.size()", is(1)).
-                body("meta.status.type", is("RECEIVED"));
+        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
         // mark as sent twice
-        givenRequest(INTYG_ID, personId, "FK", status, LocalDateTime.now()).
-                body("result.resultCode", is("OK"));
-        givenRequest(INTYG_ID, personId, "FK", status, LocalDateTime.now()).
-                body("result.resultCode", is("OK"));
+        givenRequest(INTYG_ID, personId, "FK", status, LocalDateTime.now()).body("result.resultCode", is("OK"));
+        givenRequest(INTYG_ID, personId, "FK", status, LocalDateTime.now()).body("result.resultCode", is("OK"));
         // find two status "sent"
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).
-                body("meta.status.size()", is(3)).
-                body("meta.status[0].type", anyOf(is("RECEIVED"), is(status))).
-                body("meta.status[1].type", anyOf(is("RECEIVED"), is(status))).
-                body("meta.status[2].type", anyOf(is("RECEIVED"), is(status)));
+        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(3))
+                .body("meta.status[0].type", anyOf(is("RECEIVED"), is(status))).body("meta.status[1].type", anyOf(is("RECEIVED"), is(status)))
+                .body("meta.status[2].type", anyOf(is("RECEIVED"), is(status)));
     }
 
     @Test
     public void setCertificateStatusCertificateDoesNotExist() {
-        givenRequest("fit-intyg-finnsinte", "190101010101", "FK", CertificateState.SENT.name(), LocalDateTime.now()).
-                body("result.resultCode", is("ERROR")).
-                body("result.errorId", is("VALIDATION_ERROR")).
-                body("result.errorText", is("Certificate 'fit-intyg-finnsinte' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
+        givenRequest("fit-intyg-finnsinte", "190101010101", "FK", CertificateState.SENT.name(), LocalDateTime.now())
+                .body("result.resultCode", is("ERROR")).body("result.errorId", is("VALIDATION_ERROR")).body("result.errorText", is(
+                        "Certificate 'fit-intyg-finnsinte' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
     }
 
     @Test
     public void setCertificateStatusWrongPerson() {
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, "19020202-0202", false);
-        givenRequest("fit-intyg-finnsinte", "190101010101", "FK", CertificateState.SENT.name(), LocalDateTime.now()).
-                body("result.resultCode", is("ERROR")).
-                body("result.errorId", is("VALIDATION_ERROR")).
-                body("result.errorText", is("Certificate 'fit-intyg-finnsinte' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
+        givenRequest("fit-intyg-finnsinte", "190101010101", "FK", CertificateState.SENT.name(), LocalDateTime.now())
+                .body("result.resultCode", is("ERROR")).body("result.errorId", is("VALIDATION_ERROR")).body("result.errorText", is(
+                        "Certificate 'fit-intyg-finnsinte' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
     }
 
     @Test
     public void faultTransformerTest() {
-        givenRequest("</tag>", "190101010101", "FK", CertificateState.SENT.name(), LocalDateTime.now()).
-                body("result.resultCode", is("ERROR")).
-                body("result.errorText", startsWith("Unmarshalling Error"));
+        givenRequest("</tag>", "190101010101", "FK", CertificateState.SENT.name(), LocalDateTime.now()).body("result.resultCode", is("ERROR"))
+                .body("result.errorText", startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse givenRequest(String intygId, String personId, String target, String status, LocalDateTime timestamp) {
@@ -110,12 +96,8 @@ public class SetCertificateStatusInsuranceProcessIT extends BaseIntegrationTest 
         requestTemplate.add("status", status);
         requestTemplate.add("timestamp", timestamp.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
-        return given().body(requestTemplate.render()).
-                when().
-                post("inera-certificate/set-certificate-status/v1.0").
-                then().
-                statusCode(200).
-                rootPath("Envelope.Body.SetCertificateStatusResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status/v1.0").then().statusCode(200)
+                .rootPath("Envelope.Body.SetCertificateStatusResponse.");
     }
 
     private ValidatableResponse getMedicalCertificateForCareRequest(String intygId, String personId) {
@@ -123,11 +105,7 @@ public class SetCertificateStatusInsuranceProcessIT extends BaseIntegrationTest 
         requestTemplate.add("intygId", intygId);
         requestTemplate.add("personId", personId);
 
-        return given().body(requestTemplate.render()).
-                when().
-                post("inera-certificate/get-medical-certificate-for-care/v1.0").
-                then().
-                statusCode(200).
-                rootPath("Envelope.Body.GetMedicalCertificateForCareResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/get-medical-certificate-for-care/v1.0").then().statusCode(200)
+                .rootPath("Envelope.Body.GetMedicalCertificateForCareResponse.");
     }
 }

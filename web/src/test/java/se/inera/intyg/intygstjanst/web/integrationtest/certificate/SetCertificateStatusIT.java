@@ -70,13 +70,9 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
 
         requestTemplateResult.add("data", new IntygsData(intygsId));
 
-        given().body(requestTemplateResult.render()).
-        when().
-        post("inera-certificate/get-certificate-se/v2.0").
-        then().
-        statusCode(200).
-        rootPath(GET_BASE).
-        body("intyg.status.status[0].code", is(status)).body("intyg.status.status[1].code", is(status)).extract().response();
+        given().body(requestTemplateResult.render()).when().post("inera-certificate/get-certificate-se/v2.0").then().statusCode(200)
+                .rootPath(GET_BASE).body("intyg.status.status[0].code", is(status)).body("intyg.status.status[1].code", is(status)).extract()
+                .response();
     }
 
     @Test
@@ -96,26 +92,19 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
 
         requestTemplate.add("data", new IntygsData(intygsId));
 
-        given().
-                filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SetCertificateStatusResponder:1"),
-                        "soap:Envelope/soap:Body/lc:SetCertificateStatusResponse")).
-                body(requestTemplate.render()).
-                when().
-                post("inera-certificate/set-certificate-status-rivta/v1.0").
-                then().
-                body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
+        given().filter(
+                new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SetCertificateStatusResponder:1"),
+                        "soap:Envelope/soap:Body/lc:SetCertificateStatusResponse"))
+                .body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v1.0").then()
+                .body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
     }
 
     @Test
     public void faultTransformerTest() throws Exception {
         requestTemplate.add("data", new IntygsData("<tag></tag>"));
 
-        given().body(requestTemplate.render()).
-                when().post("inera-certificate/set-certificate-status-rivta/v1.0").
-                then().statusCode(200).
-                rootPath(BASE).
-                body("result.resultCode", is("ERROR")).
-                body("result.resultText", startsWith("Unmarshalling Error"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v1.0").then().statusCode(200)
+                .rootPath(BASE).body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
     @After

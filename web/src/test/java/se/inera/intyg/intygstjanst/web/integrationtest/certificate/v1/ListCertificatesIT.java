@@ -46,11 +46,8 @@ public class ListCertificatesIT extends BaseIntegrationTest {
         IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", PERSON_ID, false);
         IntegrationTestUtil.addConsent(PERSON_ID);
 
-        givenRequest(PERSON_ID).
-                body("meta.size()", is(2)).
-                body("meta[0].certificateId", is(INTYG_IDS.get(0))).
-                body("meta[1].certificateId", is(INTYG_IDS.get(1))).
-                body("result.resultCode", is("OK"));
+        givenRequest(PERSON_ID).body("meta.size()", is(2)).body("meta[0].certificateId", is(INTYG_IDS.get(0)))
+                .body("meta[1].certificateId", is(INTYG_IDS.get(1))).body("result.resultCode", is("OK"));
     }
 
     @Test
@@ -59,10 +56,8 @@ public class ListCertificatesIT extends BaseIntegrationTest {
         IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", PERSON_ID, false);
         IntegrationTestUtil.addConsent(PERSON_ID);
 
-        givenCertificateTypeRequest(PERSON_ID, "fk7263").
-                body("meta.size()", is(1)).
-                body("meta[0].certificateId", is(INTYG_IDS.get(0))).
-                body("result.resultCode", is("OK"));
+        givenCertificateTypeRequest(PERSON_ID, "fk7263").body("meta.size()", is(1)).body("meta[0].certificateId", is(INTYG_IDS.get(0)))
+                .body("result.resultCode", is("OK"));
     }
 
     @Test
@@ -71,9 +66,8 @@ public class ListCertificatesIT extends BaseIntegrationTest {
         IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", PERSON_ID, false);
         IntegrationTestUtil.addConsent(PERSON_ID);
 
-        givenDateIntervalRequest(PERSON_ID, LocalDateTime.now(), LocalDateTime.now().plusDays(2)).
-                body("meta.size()", is(0)).
-                body("result.resultCode", is("OK"));
+        givenDateIntervalRequest(PERSON_ID, LocalDateTime.now(), LocalDateTime.now().plusDays(2)).body("meta.size()", is(0)).body("result.resultCode",
+                is("OK"));
     }
 
     @Test
@@ -81,17 +75,12 @@ public class ListCertificatesIT extends BaseIntegrationTest {
         IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", PERSON_ID, false);
         IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", PERSON_ID, false);
 
-        givenRequest(PERSON_ID).
-                body("meta.size()", is(0)).
-                body("result.resultCode", is("INFO")).
-                body("result.infoText", is("NOCONSENT"));
+        givenRequest(PERSON_ID).body("meta.size()", is(0)).body("result.resultCode", is("INFO")).body("result.infoText", is("NOCONSENT"));
     }
 
     @Test
     public void faultTransformerTest() {
-        givenRequest("</tag>").
-                body("result.resultCode", is("ERROR")).
-                body("result.errorText", startsWith("Unmarshalling Error"));
+        givenRequest("</tag>").body("result.resultCode", is("ERROR")).body("result.errorText", startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse givenRequest(String personId) {
@@ -119,11 +108,7 @@ public class ListCertificatesIT extends BaseIntegrationTest {
             requestTemplate.add("toDate", toDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         }
 
-        return given().body(requestTemplate.render()).
-                when().
-                post("inera-certificate/list-certificates/v1.0").
-                then().
-                statusCode(200).
-                rootPath("Envelope.Body.ListCertificatesResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates/v1.0").then().statusCode(200)
+                .rootPath("Envelope.Body.ListCertificatesResponse.");
     }
 }

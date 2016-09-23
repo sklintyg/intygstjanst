@@ -76,7 +76,7 @@ public class RegisterCertificateScenarioIT {
 
     private static ST getRequestTemplate(String path) {
         String base = "integrationtests/";
-        STGroup templateGroup = new STGroupFile(base+path);
+        STGroup templateGroup = new STGroupFile(base + path);
         ST registerTemplateForConsent = templateGroup.getInstanceOf("request");
         return registerTemplateForConsent;
     }
