@@ -23,7 +23,8 @@ gretty {
   }
   contextPath = '/inera-certificate'
   contextConfigFile = file("src/main/webapp/WEB-INF/jetty-web.xml")
-
+  scanInterval = 0
+  
   jvmArgs = [
     '-Dspring.profiles.active=dev',
     '-Drecipient.config.file=' + projectDir + '/recipient-dev.properties',
