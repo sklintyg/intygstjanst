@@ -43,16 +43,6 @@ gretty {
 
 war.dependsOn createVersionPropertyFile
 
-buildscript {
-  repositories {
-    jcenter()
-  }
-
-  dependencies {
-    classpath 'org.akhikhl.gretty:gretty:+'
-  }
-}
-
 dependencies {
   compile project(':intygstjanst-persistence')
 
