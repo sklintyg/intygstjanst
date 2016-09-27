@@ -33,8 +33,7 @@ import org.junit.Test;
 import org.stringtemplate.v4.*;
 
 import com.google.common.collect.ImmutableMap;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
+import com.jayway.restassured.http.ContentType;
 
 import se.inera.intyg.intygstjanst.web.integrationtest.*;
 
@@ -47,8 +46,6 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
     @Override
     @Before
     public void setup() {
-        RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
-
         STGroup templateGroup = new STGroupFile("integrationtests/arende/request_care.stg");
         requestTemplate = templateGroup.getInstanceOf("request");
     }
@@ -61,11 +58,11 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
         String intygsId = "intyg-1";
         requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/send-message-to-care/v1.0").then().statusCode(200).rootPath(BASE)
+        given().contentType(ContentType.XML).body(requestTemplate.render()).when().post("inera-certificate/send-message-to-care/v1.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("OK"));
 
         // Make sure that the final destination received the message
-        given().param("address", enhetsId).when().get("inera-certificate/send-message-to-care-stub-rest/byLogicalAddress")
+        given().contentType(ContentType.XML).param("address", enhetsId).when().get("inera-certificate/send-message-to-care-stub-rest/byLogicalAddress")
                 .then()
                 .body("messages[0].certificateId", is(intygsId));
     }
@@ -80,7 +77,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
 
         requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
 
-        given().filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendMessageToCareResponder:1"),
+        given().contentType(ContentType.XML).filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendMessageToCareResponder:1"),
                 "soap:Envelope/soap:Body/lc:SendMessageToCareResponse")).body(requestTemplate.render()).when()
                 .post("inera-certificate/send-message-to-care/v1.0").then()
                 .body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
@@ -92,7 +89,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
         String intygsId = "intyg-nonexistant";
         requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/send-message-to-care/v1.0").then().statusCode(200).rootPath(BASE)
+        given().contentType(ContentType.XML).body(requestTemplate.render()).when().post("inera-certificate/send-message-to-care/v1.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("ERROR"));
     }
 
@@ -101,7 +98,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
         String enhetsId = "<root>123456</root>"; // This brakes the XML Schema
         requestTemplate.add("data", new ArendeData("intyg-1", "KOMPL", "191212121212", enhetsId));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/send-message-to-care/v1.0").then().statusCode(200).rootPath(BASE)
+        given().contentType(ContentType.XML).body(requestTemplate.render()).when().post("inera-certificate/send-message-to-care/v1.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
