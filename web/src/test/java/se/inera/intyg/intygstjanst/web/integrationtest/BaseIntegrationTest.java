@@ -34,7 +34,7 @@ public abstract class BaseIntegrationTest {
      * Common setup for all tests
      */
     @Before
-    public void setup() {
+    public void setupBase() {
         RestAssured.reset();
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         RestAssured.baseURI = System.getProperty("integration.tests.baseUrl");

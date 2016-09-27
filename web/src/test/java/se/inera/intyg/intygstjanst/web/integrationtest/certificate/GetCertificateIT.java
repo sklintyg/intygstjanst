@@ -24,7 +24,6 @@ public class GetCertificateIT extends BaseIntegrationTest {
     private String tolvansId = "191212121212";
     private String intygsId = "intyg-10";
 
-    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();

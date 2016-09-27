@@ -21,7 +21,6 @@ public class GetTSDiabetesIT extends BaseIntegrationTest {
     private static final String INTYG_ID = "getTSDiabetesITcertificateId";
     private static final String INTYG_TYP = "ts-diabetes";
 
-    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();

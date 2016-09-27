@@ -36,7 +36,6 @@ import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
  */
 public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
 
-    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();

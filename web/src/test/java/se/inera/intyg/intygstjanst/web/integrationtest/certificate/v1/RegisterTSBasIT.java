@@ -21,7 +21,6 @@ public class RegisterTSBasIT extends BaseIntegrationTest {
     private static final String INTYG_ID = "registerTSBasITcertificateId";
     private static final String INTYG_TYP = "ts-bas";
 
-    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();

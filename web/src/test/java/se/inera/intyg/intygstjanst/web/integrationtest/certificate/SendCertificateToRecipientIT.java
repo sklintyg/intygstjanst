@@ -50,7 +50,6 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
 
     private String intygsId = "123456";
 
-    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();

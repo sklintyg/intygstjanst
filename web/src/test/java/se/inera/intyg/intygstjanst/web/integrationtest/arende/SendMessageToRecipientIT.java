@@ -43,7 +43,6 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
 
     private ST requestTemplate;
 
-    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();

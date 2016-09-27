@@ -21,19 +21,16 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupFile;
+import org.junit.*;
+import org.stringtemplate.v4.*;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 
+import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
-public class RegisterCertificateScenarioIT {
+public class RegisterCertificateScenarioIT extends BaseIntegrationTest {
     private String intygsId = "123456";
     private String personId = "192703104321";
     private static final String REGISTER_BASE = "Envelope.Body.RegisterCertificateResponse.";

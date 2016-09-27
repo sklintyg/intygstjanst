@@ -47,7 +47,6 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
     private static final String BASE = "Envelope.Body.SetCertificateStatusResponse.";
     private static final String GET_BASE = "Envelope.Body.GetCertificateResponse.";
 
-    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();

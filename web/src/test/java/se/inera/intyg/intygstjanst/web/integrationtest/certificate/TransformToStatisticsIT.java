@@ -49,7 +49,6 @@ public class TransformToStatisticsIT extends BaseIntegrationTest{
     @Autowired
     private IntygModuleRegistryImpl moduleRegistry;
 
-    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();

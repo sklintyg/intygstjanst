@@ -21,7 +21,6 @@ public class GetMedicalCertificateForCareIT extends BaseIntegrationTest {
     private static final String INTYG_ID = "getMedicalCertificateForCareITcertificateId";
     private static final String INTYG_TYP = "fk7263";
 
-    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();

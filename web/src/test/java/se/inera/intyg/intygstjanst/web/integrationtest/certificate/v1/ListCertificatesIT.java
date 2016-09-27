@@ -26,7 +26,6 @@ public class ListCertificatesIT extends BaseIntegrationTest {
     private static final List<String> INTYG_IDS = Arrays.asList("listCertificatesITfk7263certificateId", "listCertificatesITlusecertificateId");
     private static final String PERSON_ID = "19010101-0101";
 
-    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();

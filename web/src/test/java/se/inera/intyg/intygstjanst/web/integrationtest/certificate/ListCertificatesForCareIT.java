@@ -46,7 +46,6 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
     private List<String> intygsId = Arrays.asList("luae_na_1", "luse_1", "luae_fs_1", "lisu_1", "fk7263_deletedByCareGiver");
     private static final String BASE = "Envelope.Body.ListCertificatesForCareResponse.";
 
-    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();

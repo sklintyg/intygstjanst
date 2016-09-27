@@ -50,7 +50,6 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
 
     private List<String> intygsId_alltypes = Arrays.asList("luae_na_1", "luse_1", "luae_fs_1", "lisu_1");
 
-    @Override
     @Before
     public void setup() {
         cleanup();

@@ -44,7 +44,6 @@ public class RevokeCertificateIT extends BaseIntegrationTest {
     private String intygsIdNotExists = "123456t";
     private static final String REVOKE_BASE = "Envelope.Body.RevokeCertificateResponse.";
 
-    @Override
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
