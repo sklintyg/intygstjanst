@@ -46,6 +46,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
     @Override
     @Before
     public void setup() {
+        super.setup();
         STGroup templateGroup = new STGroupFile("integrationtests/arende/request_care.stg");
         requestTemplate = templateGroup.getInstanceOf("request");
     }
