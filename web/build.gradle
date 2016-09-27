@@ -66,6 +66,7 @@ dependencies {
   compile "org.springframework:spring-jms:${springVersion}"
   compile 'se.riv.infrastructure.directory.organization:infrastructure-directory-organization-schemas:1.1.RC5.3'
   compile 'se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:1.0.3'
+  compile "se.riv.itintegration.monitoring:itintegration-monitoring-schemas:1.0.0.3"
   compile "org.springframework:spring-webmvc:${springVersion}"
 
   testCompile "org.springframework:spring-test:${springVersion}"
