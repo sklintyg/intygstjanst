@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.integrationtest;
 
+import org.junit.After;
 import org.junit.Before;
 
 import com.jayway.restassured.RestAssured;
@@ -35,9 +36,13 @@ public abstract class BaseIntegrationTest {
      */
     @Before
     public void setupBase() {
-        RestAssured.reset();
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         RestAssured.baseURI = System.getProperty("integration.tests.baseUrl");
+    }
+
+    @After
+    public void cleanupBase() {
+        RestAssured.reset();
     }
 
 }
