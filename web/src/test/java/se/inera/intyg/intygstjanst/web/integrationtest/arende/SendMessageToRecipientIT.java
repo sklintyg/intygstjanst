@@ -27,8 +27,7 @@ import java.io.InputStream;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.stringtemplate.v4.*;
 
 import com.google.common.collect.ImmutableMap;
@@ -37,9 +36,13 @@ import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.internal.matcher.xml.XmlXsdMatcher;
 
 import se.inera.intyg.intygstjanst.web.integrationtest.*;
+import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class SendMessageToRecipientIT extends BaseIntegrationTest {
+
     private static final String BASE = "Envelope.Body.SendMessageToRecipientResponse.";
+    private static final String INTYG_ID = "sendMessageToRecipientITcertificateId";
+    private static final String PERSON_ID = "190101010101";
 
     private ST requestTemplate;
 
@@ -49,15 +52,21 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
 
         STGroup templateGroup = new STGroupFile("integrationtests/arende/request_recipient.stg");
         requestTemplate = templateGroup.getInstanceOf("request");
+        cleanup();
+    }
+
+    @After
+    public void cleanup() {
+        IntegrationTestUtil.deleteIntyg(INTYG_ID);
     }
 
     @Test
     public void messageGoesToCorrectEndDestination() throws Exception {
+        IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", PERSON_ID, false);
         post("inera-certificate/send-message-to-care-stub-rest/clear");
 
         String enhetsId = "123456";
-        String intygsId = "intyg-1";
-        requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
+        requestTemplate.add("data", new ArendeData(INTYG_ID, "KOMPL", PERSON_ID, enhetsId));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/send-message-to-recipient/v1.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("OK"));
@@ -65,18 +74,16 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
         // Make sure that the final destination received the message
         given().param("address", enhetsId).when().get("inera-certificate/send-message-to-care-stub-rest/byLogicalAddress")
                 .then()
-                .body("messages[0].certificateId", is(intygsId));
+                .body("messages[0].certificateId", is(INTYG_ID));
     }
 
     @Test
     public void responseRespectsSchema() throws Exception {
+        IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", PERSON_ID, false);
         final InputStream inputstream = ClasspathResourceResolver.load(null,
                 "interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_1.0.xsd");
 
-        String enhetsId = "123456";
-        String intygsId = "intyg-1";
-
-        requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
+        requestTemplate.add("data", new ArendeData(INTYG_ID, "KOMPL", PERSON_ID, "123456"));
 
         given().filter(
                 new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendMessageToRecipientResponder:1"),
@@ -87,9 +94,7 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
 
     @Test
     public void messageForNonExistantCertificateIsNotAccepted() throws Exception {
-        String enhetsId = "123456";
-        String intygsId = "intyg-nonexistant";
-        requestTemplate.add("data", new ArendeData(intygsId, "KOMPL", "191212121212", enhetsId));
+        requestTemplate.add("data", new ArendeData("intyg-nonexistant", "KOMPL", PERSON_ID, "123456"));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/send-message-to-recipient/v1.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("ERROR"));
@@ -98,7 +103,7 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
     @Test
     public void faultTransformerTest() throws Exception {
         String enhetsId = "<root>123456</root>"; // This brakes the XML Schema
-        requestTemplate.add("data", new ArendeData("intyg-1", "KOMPL", "191212121212", enhetsId));
+        requestTemplate.add("data", new ArendeData(INTYG_ID, "KOMPL", PERSON_ID, enhetsId));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/send-message-to-recipient/v1.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));

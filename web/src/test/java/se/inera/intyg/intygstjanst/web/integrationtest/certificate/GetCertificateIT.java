@@ -4,44 +4,50 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.stringtemplate.v4.*;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class GetCertificateIT extends BaseIntegrationTest {
 
     private static final String BASE = "Envelope.Body.GetCertificateResponse.";
+    private static final String INTYG_ID = "getCertificateITcertificateId";
+    private static final String PERSON_ID = "190101010101";
 
     private ST requestTemplate;
 
     private STGroup templateGroup;
-
-    private String tolvansId = "191212121212";
-    private String intygsId = "intyg-10";
 
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
         templateGroup = new STGroupFile("integrationtests/getcertificate/requests.stg");
         requestTemplate = templateGroup.getInstanceOf("request");
+        cleanup();
+    }
+
+    @After
+    public void cleanup() {
+        IntegrationTestUtil.deleteIntyg(INTYG_ID);
     }
 
     @Test
     public void getCertificateWorks() {
-        requestTemplate.add("data", new IntygsData(intygsId, tolvansId));
+        IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", PERSON_ID, false);
+        requestTemplate.add("data", new IntygsData(INTYG_ID, PERSON_ID));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-se/v2.0").then().statusCode(200).rootPath(BASE)
-                .body("intyg.intygs-id.extension", is("intyg-10"));
+                .body("intyg.intygs-id.extension", is(INTYG_ID));
     }
 
     @Test
     public void getCertificateDoesNotExist() {
-        requestTemplate.add("data", new IntygsData("fit-intyg-finnsinte", tolvansId));
+        requestTemplate.add("data", new IntygsData("fit-intyg-finnsinte", PERSON_ID));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-se/v2.0").then().statusCode(500)
                 .rootPath("Envelope.Body.Fault").body("faultcode", is("soap:Server"))
@@ -50,7 +56,7 @@ public class GetCertificateIT extends BaseIntegrationTest {
 
     @Test
     public void faultTransformerTest() {
-        requestTemplate.add("data", new IntygsData("<root></root>", tolvansId)); // This brakes the XML Schema
+        requestTemplate.add("data", new IntygsData("<root></root>", PERSON_ID)); // This brakes the XML Schema
 
         // GetCertificate does not have a fault transformer, SoapFault is expected
         given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-se/v2.0").then().statusCode(500)

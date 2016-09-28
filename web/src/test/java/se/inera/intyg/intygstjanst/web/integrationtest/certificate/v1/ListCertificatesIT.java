@@ -1,6 +1,7 @@
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v1;
 
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
@@ -45,8 +46,8 @@ public class ListCertificatesIT extends BaseIntegrationTest {
         IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", PERSON_ID, false);
         IntegrationTestUtil.addConsent(PERSON_ID);
 
-        givenRequest(PERSON_ID).body("meta.size()", is(2)).body("meta[0].certificateId", is(INTYG_IDS.get(0)))
-                .body("meta[1].certificateId", is(INTYG_IDS.get(1))).body("result.resultCode", is("OK"));
+        givenRequest(PERSON_ID).body("meta.size()", is(2)).body("meta[0].certificateId", anyOf(is(INTYG_IDS.get(0)), is(INTYG_IDS.get(1))))
+                .body("meta[1].certificateId", anyOf(is(INTYG_IDS.get(0)), is(INTYG_IDS.get(1)))).body("result.resultCode", is("OK"));
     }
 
     @Test
