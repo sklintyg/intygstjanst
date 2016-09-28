@@ -52,6 +52,7 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
 
     @After
     public void cleanup() {
+        INTYG_IDS.stream().forEach(id -> IntegrationTestUtil.deleteIntyg(id));
         IntegrationTestUtil.deleteCertificatesForUnit(CARE_UNIT_ID);
     }
 
