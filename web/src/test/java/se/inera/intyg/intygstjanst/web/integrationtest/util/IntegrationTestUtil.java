@@ -21,7 +21,9 @@ package se.inera.intyg.intygstjanst.web.integrationtest.util;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 import org.stringtemplate.v4.*;
@@ -40,6 +42,8 @@ public class IntegrationTestUtil {
     private static final String REVOKE_MEDICAL_BASE = "Envelope.Body.RevokeMedicalCertificateResponse.";
     private static final String SEND_BASE = "Envelope.Body.SendCertificateToRecipientResponse.";
     private static final String DEFAULT_FILE_PATH = "integrationtests/register/request_default.stg";
+    private static final String REGISTER_TEMPLATE_WITH_DATES = "listActiveSickLeaves";
+
     public enum IntegrationTestCertificateType{
         LUSE, LUAENA, LUAEFS, LISU
     }
@@ -115,6 +119,10 @@ public class IntegrationTestUtil {
         given().delete("inera-certificate/resources/certificate/" + id).then().statusCode(200);
     }
 
+    public static void deleteCertificatesForUnit(String careUnitId) {
+        given().delete("inera-certificate/resources/certificate/unit/" + careUnitId).then().statusCode(200);
+    }
+
     public static void givenIntyg(String intygId, String intygTyp, String personId, boolean deletedByCareGiver) {
         given().contentType("application/json;charset=utf-8").body(certificate(intygId, intygTyp, personId, deletedByCareGiver))
             .post("inera-certificate/resources/certificate/").then().statusCode(200);
@@ -155,6 +163,10 @@ public class IntegrationTestUtil {
         ST requestTemplateForRegister = getRequestTemplate("registermedicalcertificate/requests.stg", template);
         requestTemplateForRegister.add("intygId", intygsId);
         requestTemplateForRegister.add("personId", personId);
+        if (REGISTER_TEMPLATE_WITH_DATES.equals(template)) {
+            requestTemplateForRegister.add("fromDate", LocalDate.now().minusDays(2).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            requestTemplateForRegister.add("toDate", LocalDate.now().plusDays(2).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        }
         given().body(requestTemplateForRegister.render()).
         when().
         post("inera-certificate/register-certificate/v3.0").

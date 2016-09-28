@@ -70,6 +70,28 @@ public class CertificateResource {
     }
 
     @DELETE
+    @Path("/unit/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteCertificatesForUnit(@PathParam("id") String id) {
+        return transactionTemplate.execute(status -> {
+            try {
+                LOGGER.info("Deleting certificates for unit {}", id);
+                @SuppressWarnings("unchecked")
+                List<String> certificates = entityManager.createQuery("SELECT c.id FROM Certificate c WHERE c.careUnitId=:careUnitHsaId")
+                        .setParameter("careUnitHsaId", id).getResultList();
+                for (String certificate : certificates) {
+                    deleteCertificate(certificate);
+                }
+                return Response.ok().build();
+            } catch (Exception e) {
+                status.setRollbackOnly();
+                LOGGER.warn("delete certificates for unit {} failed: {}", id, e);
+                return Response.serverError().build();
+            }
+        });
+    }
+
+    @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteCertificate(@PathParam("id") final String id) {
