@@ -21,15 +21,22 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
 import java.io.StringReader;
 
 import javax.xml.bind.JAXB;
+import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.oclc.purl.dsdl.svrl.SchematronOutputType;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.base.Charsets;
+import com.helger.schematron.svrl.SVRLHelper;
+import com.helger.schematron.xslt.SchematronResourceSCH;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.http.ContentType;
@@ -56,14 +63,28 @@ public class TransformToStatisticsIT extends BaseIntegrationTest{
     }
 
     @Test
-    public void registerCertificateWorks() {
+    public void registerCertificateWorks() throws Exception {
         IntegrationTestUtil.registerMedicalCertificate(intygsId, personId1);
 
         XmlPath xml = given().contentType(ContentType.XML).accept(ContentType.XML).expect().statusCode(200).when().get("inera-certificate/resources/statisticsresource/"+intygsId).then().rootPath("RegisterCertificate")
         .body("intyg.intygs-id.extension", is(intygsId)).extract().body().xmlPath();
 
+        if (!validateFk7263OutputSchematron(xml.prettyPrint())) {
+            fail();
+        }
+
         RegisterCertificateType result = JAXB.unmarshal(new StringReader(xml.prettyPrint()), RegisterCertificateType.class);
         assertEquals(result.getIntyg().getPatient().getPersonId().getExtension(), personId1);
         assertEquals(intygsId, xml.get("RegisterCertificate.intyg.intygs-id.extension").toString());
+    }
+
+    private boolean validateFk7263OutputSchematron(String xml) throws Exception {
+        SchematronResourceSCH schematronResource = SchematronResourceSCH.fromClassPath("fk7263sit.sch");
+        if (!schematronResource.isValidSchematron()) {
+            throw new IllegalArgumentException("Invalid Schematron!");
+        }
+        SchematronOutputType result = schematronResource
+                .applySchematronValidationToSVRL((new StreamSource(new ByteArrayInputStream(xml.getBytes(Charsets.UTF_8)))));
+        return SVRLHelper.getAllFailedAssertions(result).size() == 0;
     }
 }
