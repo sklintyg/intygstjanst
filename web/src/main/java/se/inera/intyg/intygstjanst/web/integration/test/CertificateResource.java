@@ -70,6 +70,28 @@ public class CertificateResource {
     }
 
     @DELETE
+    @Path("/citizen/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteCertificatesForCitizen(@PathParam("id") String id) {
+        return transactionTemplate.execute(status -> {
+            try {
+                LOGGER.info("Deleting certificates for citizen {}", id);
+                @SuppressWarnings("unchecked")
+                List<String> certificates = entityManager.createQuery("SELECT c.id FROM Certificate c WHERE c.civicRegistrationNumber=:personId")
+                        .setParameter("personId", id).getResultList();
+                for (String certificate : certificates) {
+                    deleteCertificate(certificate);
+                }
+                return Response.ok().build();
+            } catch (Exception e) {
+                status.setRollbackOnly();
+                LOGGER.warn("delete certificates for citizen {} failed", id, e);
+                return Response.serverError().build();
+            }
+        });
+    }
+
+    @DELETE
     @Path("/unit/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteCertificatesForUnit(@PathParam("id") String id) {
@@ -85,7 +107,7 @@ public class CertificateResource {
                 return Response.ok().build();
             } catch (Exception e) {
                 status.setRollbackOnly();
-                LOGGER.warn("delete certificates for unit {} failed: {}", id, e);
+                LOGGER.warn("delete certificates for unit {} failed", id, e);
                 return Response.serverError().build();
             }
         });
@@ -112,7 +134,7 @@ public class CertificateResource {
                 return Response.ok().build();
             } catch (Exception e) {
                 status.setRollbackOnly();
-                LOGGER.warn("delete certificate with id {} failed: {}", id, e);
+                LOGGER.warn("delete certificate with id {} failed", id, e);
                 return Response.serverError().build();
             }
         });
@@ -143,7 +165,7 @@ public class CertificateResource {
                 return Response.ok().build();
             } catch (Exception e) {
                 status.setRollbackOnly();
-                LOGGER.warn("delete all certificates failed: {}", e);
+                LOGGER.warn("delete all certificates failed", e);
                 return Response.serverError().build();
             }
         });
@@ -163,7 +185,7 @@ public class CertificateResource {
                 return Response.ok().build();
             } catch (Exception e) {
                 status.setRollbackOnly();
-                LOGGER.warn("insert certificate {} ({}) failed: {}", certificate.getId(), certificate.getType(), e);
+                LOGGER.warn("insert certificate {} ({}) failed", certificate.getId(), certificate.getType(), e);
                 return Response.serverError().build();
             }
         });

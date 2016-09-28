@@ -188,6 +188,7 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
             IntegrationTestUtil.deleteIntyg(intyg);
         }
         IntegrationTestUtil.revokeConsent(personId);
+        IntegrationTestUtil.deleteCertificatesForCitizen(personId);
     }
 
     private List<String> extractIds(Response res) {

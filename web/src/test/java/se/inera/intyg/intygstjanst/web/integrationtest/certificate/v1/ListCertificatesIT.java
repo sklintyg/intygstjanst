@@ -38,6 +38,7 @@ public class ListCertificatesIT extends BaseIntegrationTest {
     public void cleanup() {
         INTYG_IDS.stream().forEach(id -> IntegrationTestUtil.deleteIntyg(id));
         IntegrationTestUtil.revokeConsent(PERSON_ID);
+        IntegrationTestUtil.deleteCertificatesForCitizen(PERSON_ID);
     }
 
     @Test

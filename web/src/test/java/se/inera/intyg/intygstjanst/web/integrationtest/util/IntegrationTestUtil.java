@@ -119,6 +119,10 @@ public class IntegrationTestUtil {
         given().delete("inera-certificate/resources/certificate/" + id).then().statusCode(200);
     }
 
+    public static void deleteCertificatesForCitizen(String personId) {
+        given().delete("inera-certificate/resources/certificate/citizen/" + personId).then().statusCode(200);
+    }
+
     public static void deleteCertificatesForUnit(String careUnitId) {
         given().delete("inera-certificate/resources/certificate/unit/" + careUnitId).then().statusCode(200);
     }
