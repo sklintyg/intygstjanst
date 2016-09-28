@@ -47,27 +47,6 @@ subprojects {
 
   jar.dependsOn(createVersionPropertyFile)
 
-  uploadArchives {
-    repositories.mavenDeployer {
-      pom.whenConfigured {pom ->
-        pom.dependencies.findAll {dep -> dep.groupId == 'se.inera.intyg.common' }.each { it.version = rootProject.resolvedCommonVersion }
-        pom.dependencies.findAll {dep -> dep.groupId == 'se.inera.intyg.intygstyper' }.each { it.version = rootProject.resolvedTyperVersion }
-      }
-      repository(url: "https://build-inera.nordicmedtest.se/nexus/content/repositories/releases") {
-        authentication(userName: System.properties['nexusUsername'], password: System.properties['nexusPassword'])
-      }
-    }
-  }
-
-  install {
-    repositories.mavenInstaller {
-      pom.whenConfigured {pom ->
-        pom.dependencies.findAll {dep -> dep.groupId == 'se.inera.intyg.common' }.each { it.version = rootProject.resolvedCommonVersion }
-        pom.dependencies.findAll {dep -> dep.groupId == 'se.inera.intyg.intygstyper' }.each { it.version = rootProject.resolvedTyperVersion }
-      }
-    }
-  }
-
   task unzipBuildTools(type: Copy) {
     description 'Extracts common-build-tools'
     into "$buildDir/build-tools/"
@@ -97,6 +76,27 @@ subprojects {
     test {
       jacoco {
         destinationFile = file("$buildDir/jacoco/test.exec")
+      }
+    }
+  }
+
+  uploadArchives {
+    repositories.mavenDeployer {
+      pom.whenConfigured {pom ->
+        pom.dependencies.findAll {dep -> dep.groupId == 'se.inera.intyg.common' }.each { it.version = rootProject.resolvedCommonVersion }
+        pom.dependencies.findAll {dep -> dep.groupId == 'se.inera.intyg.intygstyper' }.each { it.version = rootProject.resolvedTyperVersion }
+      }
+      repository(url: "https://build-inera.nordicmedtest.se/nexus/content/repositories/releases") {
+        authentication(userName: System.properties['nexusUsername'], password: System.properties['nexusPassword'])
+      }
+    }
+  }
+
+  install {
+    repositories.mavenInstaller {
+      pom.whenConfigured {pom ->
+        pom.dependencies.findAll {dep -> dep.groupId == 'se.inera.intyg.common' }.each { it.version = rootProject.resolvedCommonVersion }
+        pom.dependencies.findAll {dep -> dep.groupId == 'se.inera.intyg.intygstyper' }.each { it.version = rootProject.resolvedTyperVersion }
       }
     }
   }
