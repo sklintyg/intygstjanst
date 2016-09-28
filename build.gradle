@@ -20,13 +20,6 @@ subprojects {
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
 
-  repositories {
-    mavenLocal()
-    maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/" }
-    maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/" }
-    maven { url "http://repo.maven.apache.org/maven2" }
-  }
-
   task createVersionPropertyFile(dependsOn: processResources) {
     def propertyFile = "${buildDir}/resources/main/version.properties"
     def projectVersion = rootProject.version
@@ -53,16 +46,6 @@ subprojects {
   }
 
   jar.dependsOn(createVersionPropertyFile)
-
-  configurations {
-    buildtools
-  }
-
-  dependencies {
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.9.0'
-    buildtools "se.inera.intyg.common:common-build-tools:${commonVersion}"
-  }
 
   uploadArchives {
     repositories.mavenDeployer {
@@ -116,6 +99,23 @@ subprojects {
         destinationFile = file("$buildDir/jacoco/test.exec")
       }
     }
+  }
+
+  configurations {
+    buildtools
+  }
+
+  dependencies {
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.9.0'
+    buildtools "se.inera.intyg.common:common-build-tools:${commonVersion}"
+  }
+
+  repositories {
+    mavenLocal()
+    maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/" }
+    maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/" }
+    maven { url "http://repo.maven.apache.org/maven2" }
   }
 }
 
