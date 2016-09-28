@@ -32,13 +32,6 @@ gretty {
     '-Dcertificate.logback.file=' + projectDir + '/certificate-logback.xml',
     '-Dcertificate.config.file=' + projectDir + '/certificate-dev.properties'
   ]
-
-  // TODO: use?
-  //   debugSuspend = false
-  //   recompileOnSourceChange = false
-  //   reloadOnClassChange = false
-  //   reloadOnConfigChange = false
-  //   reloadOnLibChange = false
 }
 
 war.dependsOn createVersionPropertyFile
