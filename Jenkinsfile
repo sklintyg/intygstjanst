@@ -13,11 +13,11 @@ node {
 
 stage 'build'
 
-// node {
-//   withEnv(javaEnv()) {
-//     sh './gradlew clean install'
-//   }
-// }
+node {
+  withEnv(javaEnv()) {
+    sh './gradlew clean install'
+  }
+}
 
 stage 'deploy'
 
