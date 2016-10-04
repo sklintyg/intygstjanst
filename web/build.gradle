@@ -7,21 +7,14 @@ test {
   exclude '**/*IT*'
 }
 
-// TODO: make run of integration tests configurable
-task integrationTest(type: Test) {
+task restAssuredTest(type: Test) {
   outputs.upToDateWhen { false }
-  if (project.hasProperty('jenkins-build')) {
-    systemProperty "integration.tests.baseUrl", project.getProperty('baseUri')
-  } else {
-    systemProperty "integration.tests.baseUrl", "http://localhost:8080/"
-  }
+  systemProperty "integration.tests.baseUrl", System.properties['baseUrl'] ?: "http://localhost:8080/"
   include '**/*IT*'
 }
 
 gretty {
-  if (project.hasProperty('jenkins-build')) {
-    integrationTestTask = null
-  }
+  integrationTestTask = null
   contextPath = '/inera-certificate'
   contextConfigFile = file("src/main/webapp/WEB-INF/jetty-web.xml")
   scanInterval = 0
