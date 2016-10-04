@@ -15,7 +15,7 @@ stage 'build'
 
 node {
   withEnv(javaEnv()) {
-    sh './gradlew clean install'
+    sh './gradlew clean uploadArchives'
   }
 }
 
