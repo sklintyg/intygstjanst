@@ -26,7 +26,11 @@ stage('build') {
 stage('deploy') {
 
   node {
-    ansiblePlaybook extraVars: [version: "3.0.$BUILD_NUMBER", ansible_ssh_port: "22" ], installation: 'ansible-yum', inventory: 'ansible/hosts_test', playbook: 'ansible/deploy.yml', sudoUser: null
+    ansiblePlaybook extraVars: [version: "3.0.$BUILD_NUMBER", ansible_ssh_port: "22" ], \
+      installation: 'ansible-yum', \
+      inventory: 'ansible/hosts_test', \
+      playbook: 'ansible/deploy.yml', \
+      sudoUser: null
   }
 
 }
