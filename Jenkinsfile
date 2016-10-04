@@ -13,16 +13,16 @@ node {
 
 stage 'build'
 
-node {
-  withEnv(javaEnv()) {
-    sh './gradlew clean install'
-  }
-}
+// node {
+//   withEnv(javaEnv()) {
+//     sh './gradlew clean install'
+//   }
+// }
 
 stage 'test'
 
 node {
   withEnv(javaEnv()) {
-    sh './gradlew restAssuredTest'
+    sh './gradlew restAssuredTest -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/'
   }
 }
