@@ -15,7 +15,7 @@ stage 'build'
 
 node {
   withEnv(javaEnv()) {
-    sh './gradlew clean uploadArchives'
+    sh './gradlew clean uploadArchives -DnexusUsername=$NEXUS_USERNAME -DnexusPassword=$NEXUS_PASSWORD'
   }
 }
 
