@@ -2,7 +2,7 @@
 
 def javaEnv() {
   def javaHome = tool 'JDK8u66'
-  ["PATH=${env.PATH}:${javaHome}/bin", "JAVA_HOME=${javaHome}"]
+  ["PATH=${env.PATH}:${javaHome}/bin", "JAVA_HOME=${javaHome}", "baseUrl=http://intygstjanst.inera.nordicmedtest.se/"]
 }
 
 stage 'checkout'
@@ -23,6 +23,6 @@ stage 'test'
 
 node {
   withEnv(javaEnv()) {
-    sh './gradlew integrationTest'
+    sh './gradlew restAssuredTest'
   }
 }
