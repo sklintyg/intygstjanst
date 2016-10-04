@@ -13,16 +13,16 @@ node {
 
 stage 'build'
 
-node {
-  withEnv(javaEnv()) {
-    sh './gradlew clean install'
-  }
-}
+// node {
+//   withEnv(javaEnv()) {
+//     sh './gradlew clean install'
+//   }
+// }
 
 stage 'deploy'
 
 node {
-  ansiblePlaybook extras: 'version=3.0.$BUILD_NUMBER', installation: 'ansible-yum', inventory: 'ansible/hosts_test', playbook: 'ansible/deploy.yml', sudoUser: null
+  ansiblePlaybook extraVars: 'version="3.0.$BUILD_NUMBER"', installation: 'ansible-yum', inventory: 'ansible/hosts_test', playbook: 'ansible/deploy.yml', sudoUser: null
 }
 
 stage 'test'
