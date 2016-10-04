@@ -5,7 +5,7 @@ def javaEnv() {
   ["PATH=${env.PATH}:${javaHome}/bin", "JAVA_HOME=${javaHome}"]
 }
 
-stage 'checkout' {
+stage('checkout') {
 
   node {
     checkout scm
@@ -13,7 +13,7 @@ stage 'checkout' {
 
 }
 
-stage 'build' {
+stage('build') {
 
   node {
     withEnv(javaEnv()) {
@@ -23,7 +23,7 @@ stage 'build' {
 
 }
 
-stage 'deploy' {
+stage('deploy') {
 
   node {
     ansiblePlaybook extraVars: [version: "3.0.$BUILD_NUMBER", ansible_ssh_port: "22" ], installation: 'ansible-yum', inventory: 'ansible/hosts_test', playbook: 'ansible/deploy.yml', sudoUser: null
@@ -31,7 +31,7 @@ stage 'deploy' {
 
 }
 
-stage 'test' {
+stage('test') {
 
   node {
     withEnv(javaEnv()) {
