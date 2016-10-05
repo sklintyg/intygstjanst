@@ -7,7 +7,7 @@ import java.util.UUID
 
 class StoreCertificates extends Simulation {
 
-  val testpersonnummer = csv("data/testpersonnummer_skatteverket.cvs").circular
+  val testpersonnummer = csv("data/testpersonnummer_skatteverket.csv").circular
 
   val scn = scenario("Store Certificates")
     .feed(testpersonnummer)

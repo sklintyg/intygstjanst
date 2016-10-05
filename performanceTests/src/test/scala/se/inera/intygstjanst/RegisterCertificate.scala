@@ -12,8 +12,7 @@ class RegisterCertificate extends Simulation {
 
   val numberOfUsers = 100
 
-  val testpersonnummer = csv("data/intyg.csv").circular
-  val intyg = csv("data/intyg.csv").records
+  val testpersonnummer = csv("data/testpersonnummer_skatteverket.csv").circular
 
   def luse = exec(http("Register LUSE certificate ${intygsId} for user ${personNr}")
           .post("/register-certificate-se/v2.0")
@@ -31,8 +30,10 @@ class RegisterCertificate extends Simulation {
 
   val scn = scenario("Register Certificates")
     .feed(testpersonnummer)
-    //Give consent for current user
-    .exec(Utils.consent)
+    .exec(session => session.setAll(
+        "personNr" -> session("personNr").as[String].replace("-",""),
+        "intygsId" -> UUID.randomUUID()
+        ))
     .uniformRandomSwitch(
       lisu,
       luse)
