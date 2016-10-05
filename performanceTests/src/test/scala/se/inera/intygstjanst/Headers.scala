@@ -30,13 +30,17 @@ object Headers {
     "SOAPAction" -> "urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:1")
 
   val get_certificate = Map(
-            "Accept" -> """application/json, text/plain, */*""",
-            "Content-Type" -> """text/xml;charset=UTF-8""",
-            "SOAPAction" -> "urn:riv:insuranceprocess:healthreporting:GetCertificateResponder:1:GetCertificate")
+    "Accept" -> """application/json, text/plain, */*""",
+    "Content-Type" -> """text/xml;charset=UTF-8""",
+    "SOAPAction" -> "urn:riv:insuranceprocess:healthreporting:GetCertificateResponder:1:GetCertificate")
 
   val send_medical_certificate = Map(
-          "Accept" -> """application/json, text/plain, */*""",
-          "Content-Type" -> """text/xml;charset=UTF-8""",
-          "SOAPAction" -> "urn:riv:insuranceprocess:healthreporting:SendMedicalCertificateResponder:1:SendMedicalCertificate")
+    "Accept" -> """application/json, text/plain, */*""",
+    "Content-Type" -> """text/xml;charset=UTF-8""",
+    "SOAPAction" -> "urn:riv:insuranceprocess:healthreporting:SendMedicalCertificateResponder:1:SendMedicalCertificate")
 
+  val register_certificate = Map(
+    "Accept" -> """application/json, text/plain, */*""",
+    "Content-Type" -> """text/xml;charset=UTF-8""",
+    "SOAPAction" -> "urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:2:RegisterCertificate")
 }

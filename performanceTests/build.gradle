@@ -1,0 +1,38 @@
+ext {
+    gatlingVersion = '2.1.7'
+    gatlingBaseUrl =  System.properties['certificate.baseUrl'] ?: "http://localhost:8080/inera-certificate"
+    simulation = System.properties['gatlingSimulation']
+}
+
+apply plugin: 'scala'
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    performanceTests {
+        scala {
+            srcDirs = ['src/test/scala']
+        }
+    }
+}
+
+task gatling(dependsOn: 'compileTestScala') << {
+    javaexec {
+        main = 'io.gatling.app.Gatling'
+        classpath = sourceSets.test.output + sourceSets.test.runtimeClasspath
+        jvmArgs "-DbaseUrl=$gatlingBaseUrl"
+        args    '-sf', sourceSets.test.output,                          //source folder
+                '-bf', sourceSets.test.output.classesDir,               //target folder where gatling will compile the simulation
+                '-s' , "se.inera.intygstjanst.$simulation",   //The simulation to run
+                '-rf', 'build/reports/gatling'                          //place to put the report
+    }
+}
+
+dependencies {
+    testCompile group: 'io.gatling', name: 'gatling-app', version: gatlingVersion
+    testCompile group: 'io.gatling', name: 'gatling-recorder', version: gatlingVersion
+    testCompile group: 'io.gatling.highcharts', name: 'gatling-charts-highcharts', version: gatlingVersion
+    testCompile group: 'org.scalaj', name: 'scalaj-http_2.11', version: '2.2.0'
+}
