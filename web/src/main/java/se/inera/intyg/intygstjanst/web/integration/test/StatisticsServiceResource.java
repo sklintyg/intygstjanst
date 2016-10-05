@@ -18,10 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.test;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
@@ -32,14 +29,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class StatisticsServiceResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(StatisticsServiceResource.class);
 
-    @Autowired
+    @Autowired(required = false)
     private Receiver receiver;
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_XML)
     public String getMessages(@PathParam("id") String id) {
-        LOGGER.debug("Receiving id " + id);
+        if (receiver == null) {
+            LOGGER.error("No receiver found");
+            return null;
+        }
+        LOGGER.debug("Get message for id " + id);
         return receiver.getMessages().get(id);
     }
 
