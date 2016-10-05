@@ -6,25 +6,20 @@ def javaEnv() {
 }
 
 stage('checkout') {
-
   node {
     checkout scm
   }
-
 }
 
 stage('build') {
-
   node {
     withEnv(javaEnv()) {
       sh './gradlew clean uploadArchives -DnexusUsername=$NEXUS_USERNAME -DnexusPassword=$NEXUS_PASSWORD'
     }
   }
-
 }
 
 stage('deploy') {
-
   node {
     ansiblePlaybook extraVars: [version: "3.0.$BUILD_NUMBER", ansible_ssh_port: "22" ], \
       installation: 'ansible-yum', \
@@ -32,15 +27,12 @@ stage('deploy') {
       playbook: 'ansible/deploy.yml', \
       sudoUser: null
   }
-
 }
 
 stage('test') {
-
   node {
     withEnv(javaEnv()) {
       sh './gradlew restAssuredTest -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/'
     }
   }
-
 }
