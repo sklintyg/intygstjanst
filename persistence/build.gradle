@@ -6,23 +6,23 @@ sourceSets.main.output.resourcesDir = sourceSets.main.output.classesDir
 jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
 dependencies {
-  // TODO: these dependencies are put here to make sure that the persistence project depends on both
-  // common and intygstyper, so that the parent build.gradle can find a resolved dependency for the
-  // maven publishing. We cannot at the moment evaluate the resolved dependencies in the web project, 
-  // b/c of some evaluation order conflict with the war plugin. This workaround solves the problem.
-  compile "se.inera.intyg.intygstyper:fk-parent:${typerVersion}"
-  compile "se.inera.intyg.common:common-support:${commonVersion}"
+    // TODO: these dependencies are put here to make sure that the persistence project depends on both
+    // common and intygstyper, so that the parent build.gradle can find a resolved dependency for the
+    // maven publishing. We cannot at the moment evaluate the resolved dependencies in the web project,
+    // b/c of some evaluation order conflict with the war plugin. This workaround solves the problem.
+    compile "se.inera.intyg.intygstyper:fk-parent:${typerVersion}"
+    compile "se.inera.intyg.common:common-support:${commonVersion}"
 
-  compile 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
-  compile ('org.jadira.usertype:usertype.extended:5.0.0.GA') {
-    exclude(module: 'hibernate-entitymanager')
-  }
-  compile 'org.hibernate:hibernate-entitymanager:4.3.11.Final'
-  compile 'org.liquibase:liquibase-core:3.3.1'
-  compile 'org.springframework.data:spring-data-jpa:1.9.0.RELEASE'
-  compile "org.springframework:spring-tx:${springVersion}"
+    compile 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
+    compile ('org.jadira.usertype:usertype.extended:5.0.0.GA') {
+        exclude(module: 'hibernate-entitymanager')
+    }
+    compile 'org.hibernate:hibernate-entitymanager:4.3.11.Final'
+    compile 'org.liquibase:liquibase-core:3.3.1'
+    compile 'org.springframework.data:spring-data-jpa:1.9.0.RELEASE'
+    compile "org.springframework:spring-tx:${springVersion}"
 
-  testCompile "org.springframework:spring-test:${springVersion}"
+    testCompile "org.springframework:spring-test:${springVersion}"
 
-  testRuntime "com.h2database:h2:${h2Version}"
+    testRuntime "com.h2database:h2:${h2Version}"
 }
