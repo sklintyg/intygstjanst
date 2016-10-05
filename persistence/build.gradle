@@ -6,11 +6,6 @@ sourceSets.main.output.resourcesDir = sourceSets.main.output.classesDir
 jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
 dependencies {
-    // TODO: these dependencies are put here to make sure that the persistence project depends on both
-    // common and intygstyper, so that the parent build.gradle can find a resolved dependency for the
-    // maven publishing. We cannot at the moment evaluate the resolved dependencies in the web project,
-    // b/c of some evaluation order conflict with the war plugin. This workaround solves the problem.
-    compile "se.inera.intyg.intygstyper:fk-parent:${typerVersion}"
     compile "se.inera.intyg.common:common-support:${commonVersion}"
 
     compile 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
