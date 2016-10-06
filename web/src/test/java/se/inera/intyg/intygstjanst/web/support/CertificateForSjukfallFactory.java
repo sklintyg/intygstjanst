@@ -1,23 +1,27 @@
 package se.inera.intyg.intygstjanst.web.support;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDateTime;
-
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
-import se.inera.intyg.common.support.model.common.internal.*;
+import se.inera.intyg.common.support.model.common.internal.GrundData;
+import se.inera.intyg.common.support.model.common.internal.HoSPersonal;
+import se.inera.intyg.common.support.model.common.internal.Patient;
+import se.inera.intyg.common.support.model.common.internal.Vardenhet;
+import se.inera.intyg.common.support.model.common.internal.Vardgivare;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande;
+
+import java.time.LocalDateTime;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by eriklupander on 2016-02-15.
  */
 public class CertificateForSjukfallFactory {
 
-    private static final String CERT_ID = "cert-123";
+    private static final String CERT_ID = " cert-123 ";
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
     private static final String FNAME = "Tolvan";
     private static final String ENAME = "Tolvansson";
@@ -33,10 +37,10 @@ public class CertificateForSjukfallFactory {
     private static final String START_DATE_25 = "2016-05-01";
     private static final String END_DATE_25 = "2216-05-01";
 
-    private static final String DOC_ID = "doc-1";
-    private static final String CARE_UNIT_ID = "enhet-1";
+    private static final String DOC_ID = " doc-1 ";
+    private static final String CARE_UNIT_ID = " enhet-1 ";
     private static final String CARE_UNIT_NAME = "Enhet1";
-    private static final String CARE_GIVER_ID = "vardgivare-1";
+    private static final String CARE_GIVER_ID = " vardgivare-1 ";
 
     private Personnummer pNr = new Personnummer(PERSONNUMMER);
 
@@ -57,6 +61,8 @@ public class CertificateForSjukfallFactory {
     public Utlatande buildUtlatande() {
         Utlatande utlatande = mock(Utlatande.class);
         GrundData grundData = mock(GrundData.class);
+        Vardenhet vardenhet = mock(Vardenhet.class);
+        Vardgivare vardgivare = mock(Vardgivare.class);
 
         HoSPersonal hoSPersonal = mock(HoSPersonal.class);
         Patient patient = mock(Patient.class);
@@ -66,6 +72,10 @@ public class CertificateForSjukfallFactory {
         when(grundData.getSkapadAv()).thenReturn(hoSPersonal);
         when(hoSPersonal.getPersonId()).thenReturn(DOC_ID);
         when(hoSPersonal.getFullstandigtNamn()).thenReturn(DOC_NAME);
+        when(hoSPersonal.getVardenhet()).thenReturn(vardenhet);
+        when(vardenhet.getEnhetsid()).thenReturn(CARE_UNIT_ID);
+        when(vardenhet.getVardgivare()).thenReturn(vardgivare);
+        when(vardgivare.getVardgivarid()).thenReturn(CARE_GIVER_ID);
         when(patient.getFornamn()).thenReturn(FNAME);
         when(patient.getEfternamn()).thenReturn(ENAME);
 

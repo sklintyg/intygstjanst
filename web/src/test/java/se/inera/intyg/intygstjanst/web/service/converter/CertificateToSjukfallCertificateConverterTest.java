@@ -1,17 +1,16 @@
 package se.inera.intyg.intygstjanst.web.service.converter;
 
+import org.junit.Test;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande;
+
+import java.time.LocalDateTime;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
-
-import java.time.LocalDateTime;
-
-import org.junit.Test;
-
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande;
 
 /**
  * Created by eriklupander on 2016-02-04.
@@ -109,5 +108,26 @@ public class CertificateToSjukfallCertificateConverterTest {
         Utlatande utlatande = getFactoryInstance().buildUtlatande();
         when(utlatande.getDiagnosKod()).thenReturn("  ");
         assertFalse(testee.isConvertableFk7263(utlatande));
+    }
+
+    @Test
+    public void testTrimsIds() {
+        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+//        utlatande.getGrundData().getSkapadAv().setPersonId(" 19121212-1212 ");
+//        utlatande.getGrundData().getSkapadAv().getVardenhet().setEnhetsid(" enhet-1 ");
+//        utlatande.getGrundData().getSkapadAv().getVardenhet().getVardgivare().setVardgivarid(" vg-1 ");
+//        Personnummer pnr = new Personnummer(" 19121212-1212 ");
+//        utlatande.getGrundData().getPatient().setPersonId(pnr);
+
+        SjukfallCertificate sjukfallCertificate = testee.convertFk7263(getFactoryInstance().buildCert(), utlatande);
+        assertTrue(noTrimmableWhitespaces(sjukfallCertificate.getCareGiverId()));
+        assertTrue(noTrimmableWhitespaces(sjukfallCertificate.getCareUnitId()));
+        assertTrue(noTrimmableWhitespaces(sjukfallCertificate.getCivicRegistrationNumber()));
+        assertTrue(noTrimmableWhitespaces(sjukfallCertificate.getId()));
+
+    }
+
+    private boolean noTrimmableWhitespaces(String str) {
+        return str == null || (!str.startsWith(" ") && !str.endsWith(" "));
     }
 }

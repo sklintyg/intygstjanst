@@ -18,10 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.rehabstod;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitType;
@@ -31,6 +28,8 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallCertificateIntygsDataConverter;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsLista;
+
+import java.util.List;
 
 /**
  * Implements TjK for retrieving intygsdata for sjukfall.
@@ -56,16 +55,6 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
         }
 
         String careUnitHsaId = parameters.getEnhetsId().getExtension();
-
-        // Commented out for now - in Rehabstöd 1.0 we only use intyg on the same care unit with sub-units. Not across an
-        // entire care giver.
-
-//        String careGiverHsaId = hsaService.getHsaIdForCareGiverOfCareUnit(careUnitHsaId);
-//        if (careGiverHsaId == null) {
-//            response.setResultCode(ResultCodeEnum.ERROR);
-//            response.setComment("No caregiver hsaId could be found for careunit hsaId '" + careUnitHsaId + "'.");
-//            return response;
-//        }
 
         List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(careUnitHsaId);
         hsaIdList.add(careUnitHsaId);
