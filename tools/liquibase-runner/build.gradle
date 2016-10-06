@@ -9,9 +9,9 @@ startScripts << {
     def intygstjanstPersistenceDependency = configurations.runtime.filter { it.name.startsWith("intygstjanst-persistence") }.singleFile.name
 
     unixScript.text = unixScript.text.replaceAll(/"\$@"$/,
-            "--driver=com.mysql.jdbc.Driver --classpath=lib/${intygstjanstPersistenceDependency} --changeLogFile=changelog/changelog.xml \"\\\$@\"")
+        "--driver=com.mysql.jdbc.Driver --classpath=lib/${intygstjanstPersistenceDependency} --changeLogFile=changelog/changelog.xml \"\\\$@\"")
     windowsScript.text = windowsScript.text.replaceAll(/%CMD_LINE_ARGS%/,
-            "--driver=com.mysql.jdbc.Driver --classpath=lib/${intygstjanstPersistenceDependency} --changeLogFile=changelog/changelog.xml %CMD_LINE_ARGS%")
+        "--driver=com.mysql.jdbc.Driver --classpath=lib/${intygstjanstPersistenceDependency} --changeLogFile=changelog/changelog.xml %CMD_LINE_ARGS%")
 }
 
 artifacts {
@@ -22,9 +22,13 @@ configurations.runtime {
     transitive = false
 }
 
-dependencies {
-  runtime project(':intygstjanst-persistence')
+sonarqube {
+    skipProject = true
+}
 
-  runtime "mysql:mysql-connector-java:${mysqlVersion}"
-  runtime "org.liquibase:liquibase-core:3.3.5"
+dependencies {
+    runtime project(':intygstjanst-persistence')
+
+    runtime "mysql:mysql-connector-java:${mysqlVersion}"
+    runtime "org.liquibase:liquibase-core:${liquibaseVersion}"
 }

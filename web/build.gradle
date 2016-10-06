@@ -65,7 +65,10 @@ dependencies {
     testCompile 'com.jayway.restassured:rest-assured:2.8.0'
     testCompile 'com.jayway.restassured:json-schema-validator:2.8.0'
     testCompile 'org.antlr:ST4:4.0.8'
+    testCompile 'org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1'
 
+    testRuntime 'javax.servlet:servlet-api:2.5'
+    
     gretty "org.apache.activemq:activemq-client:${activeMqVersion}"
     gretty "org.apache.activemq:activemq-broker:${activeMqVersion}"
     gretty "com.h2database:h2:${h2Version}"
