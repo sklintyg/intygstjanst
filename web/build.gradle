@@ -57,14 +57,14 @@ dependencies {
     compile "se.riv.itintegration.monitoring:itintegration-monitoring-schemas:1.0.0.3"
     compile "org.springframework:spring-webmvc:${springVersion}"
 
+    compileOnly 'org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1'
+    compileOnly 'javax.servlet:servlet-api:2.5'
+
     testCompile "org.springframework:spring-test:${springVersion}"
     testCompile 'xmlunit:xmlunit:1.4'
     testCompile 'com.jayway.restassured:rest-assured:2.8.0'
     testCompile 'com.jayway.restassured:json-schema-validator:2.8.0'
     testCompile 'org.antlr:ST4:4.0.8'
-
-    providedCompile 'org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1'
-    providedCompile 'javax.servlet:servlet-api:2.5'
 
     gretty "org.apache.activemq:activemq-client:${activeMqVersion}"
     gretty "org.apache.activemq:activemq-broker:${activeMqVersion}"
