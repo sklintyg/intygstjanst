@@ -14,7 +14,8 @@ stage('checkout') {
 stage('build') {
     node {
         withEnv(javaEnv()) {
-            sh './gradlew clean uploadArchives -DnexusUsername=$NEXUS_USERNAME -DnexusPassword=$NEXUS_PASSWORD -Dorg.ajoberstar.grgit.auth.username=$GITHUB_USERNAME -Dorg.ajoberstar.grgit.auth.password=$GITHUB_PASSWORD'
+            // TODO: återaktivera clean
+            sh './gradlew uploadArchives tagRelease -DnexusUsername=$NEXUS_USERNAME -DnexusPassword=$NEXUS_PASSWORD -Dorg.ajoberstar.grgit.auth.username=$GITHUB_USERNAME -Dorg.ajoberstar.grgit.auth.password=$GITHUB_PASSWORD'
         }
     }
 }
