@@ -152,7 +152,7 @@ task tagRelease {
             name = version
             message = "Release of ${version}"
         }
-        //grgit.push(tags: true)
+        grgit.push(tags: true)
     }
 }
 
