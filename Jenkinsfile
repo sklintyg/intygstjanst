@@ -29,7 +29,7 @@ stage('deploy') {
     }
 }
 
-stage('integrationtests') {
+stage('integration tests') {
     node {
         withEnv(javaEnv()) {
             sh './gradlew restAssuredTest -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/'
