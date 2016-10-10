@@ -13,7 +13,7 @@
   when: deploy_from_repo|bool
 
 - name: copy intygstjanst-liquibase-runner-{{ version }}.zip
-  copy: src={{ inventory_dir }}/../tools/liquibase-runner/build/libs/intygstjanst-liquibase-runner-{{ version }}.zip dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
+  copy: src={{ inventory_dir }}/../tools/liquibase-runner/build/distributions/intygstjanst-liquibase-runner-{{ version }}.zip dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
   when: not deploy_from_repo|bool
 
 - name: Unzip liquibase-runner-{{ version }}.zip
