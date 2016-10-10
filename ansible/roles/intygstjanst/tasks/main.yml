@@ -10,11 +10,11 @@
 - name: download intygstjanst-liquibase-runner-{{ version }}.zip
   get_url: url=https://build-inera.nordicmedtest.se/nexus/content/repositories/{{ repo }}/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/{{ version }}/intygstjanst-liquibase-runner-{{ version }}.zip
            dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
-  when: deploy_from_repo
+  when: deploy_from_repo|bool
 
 - name: copy intygstjanst-liquibase-runner-{{ version }}.zip
   copy: src={{ inventory_dir }}/../tools/liquibase-runner/build/libs/intygstjanst-liquibase-runner-{{ version }}.zip dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
-  when: not deploy_from_repo
+  when: not deploy_from_repo|bool
 
 - name: Unzip liquibase-runner-{{ version }}.zip
   command: unzip -od {{ releases_folder }} {{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
@@ -32,11 +32,11 @@
   get_url: url=https://build-inera.nordicmedtest.se/nexus/content/repositories/{{ repo }}/se/inera/intyg/intygstjanst/intygstjanst-web/{{ version }}/intygstjanst-web-{{ version }}.war
            dest={{ releases_folder }}/intygstjanst-web-{{ version }}.war
            timeout=120
-  when: deploy_from_repo
+  when: deploy_from_repo|bool
 
 - name: copy intygstjanst-web-{{ version }}.war
   copy: src={{ inventory_dir }}/../web/build/libs/intygstjanst-web-{{ version }}.war dest={{ releases_folder }}/intygstjanst-web-{{ version }}.war
-  when: not deploy_from_repo
+  when: not deploy_from_repo|bool
 
 - name: remove old version of unpacked war
   file: state=absent
