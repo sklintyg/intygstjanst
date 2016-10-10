@@ -14,15 +14,14 @@ stage('checkout') {
 stage('build') {
     node {
         withEnv(javaEnv()) {
-            // TODO: återaktivera clean
-            sh './gradlew uploadArchives tagRelease -DnexusUsername=$NEXUS_USERNAME -DnexusPassword=$NEXUS_PASSWORD -DgithubUser=$GITHUB_USERNAME -DgithubPassword=$GITHUB_PASSWORD --stacktrace'
+            sh './gradlew --refresh-dependencies clean build sonarqube -PcodeQuality'
         }
     }
 }
 
 stage('deploy') {
     node {
-        ansiblePlaybook extraVars: [version: "3.0.$BUILD_NUMBER", ansible_ssh_port: "22" ], \
+        ansiblePlaybook extraVars: [version: "3.0.$BUILD_NUMBER", ansible_ssh_port: "22", deploy_from_repo: "false"], \
             installation: 'ansible-yum', \
             inventory: 'ansible/hosts_test', \
             playbook: 'ansible/deploy.yml', \
@@ -30,10 +29,19 @@ stage('deploy') {
     }
 }
 
-stage('test') {
+stage('integrationtests') {
     node {
         withEnv(javaEnv()) {
             sh './gradlew restAssuredTest -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/'
+        }
+    }
+}
+
+stage('tag and upload') {
+    node {
+        withEnv(javaEnv()) {
+            sh './gradlew uploadArchives tagRelease -DnexusUsername=$NEXUS_USERNAME -DnexusPassword=$NEXUS_PASSWORD \
+                -DgithubUser=$GITHUB_USERNAME -DgithubPassword=$GITHUB_PASSWORD'
         }
     }
 }

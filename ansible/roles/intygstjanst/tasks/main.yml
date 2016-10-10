@@ -13,7 +13,7 @@
   when: deploy_from_repo
 
 - name: copy intygstjanst-liquibase-runner-{{ version }}.zip
-  copy: src={{ inventory_dir }}/../tools/liquibase-runner/target/intygstjanst-liquibase-runner.zip dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
+  copy: src={{ inventory_dir }}/../tools/liquibase-runner/build/libs/intygstjanst-liquibase-runner-{{ version }}.zip dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
   when: not deploy_from_repo
 
 - name: Unzip liquibase-runner-{{ version }}.zip
@@ -35,7 +35,7 @@
   when: deploy_from_repo
 
 - name: copy intygstjanst-web-{{ version }}.war
-  copy: src={{ inventory_dir }}/../web/target/intygstjanst.war dest={{ releases_folder }}/intygstjanst-web-{{ version }}.war
+  copy: src={{ inventory_dir }}/../web/build/libs/intygstjanst-web-{{ version }}.war dest={{ releases_folder }}/intygstjanst-web-{{ version }}.war
   when: not deploy_from_repo
 
 - name: remove old version of unpacked war
