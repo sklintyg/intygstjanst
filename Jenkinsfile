@@ -1,5 +1,9 @@
 #!groovy
 
+def buildVersion  = "3.0.${BUILD_NUMBER}"
+def commonVersion = "3.0.+"
+def typerVersion  = "3.0.+"
+
 def javaEnv() {
     def javaHome = tool 'JDK8u66'
     ["PATH=${env.PATH}:${javaHome}/bin", "JAVA_HOME=${javaHome}"]
@@ -21,7 +25,8 @@ stage('build') {
     node {
         try {
             withEnv(javaEnv()) {
-                sh './gradlew --refresh-dependencies clean build sonarqube -PcodeQuality -DgruntColors=false'
+                sh "./gradlew --refresh-dependencies clean build sonarqube -PcodeQuality -DgruntColors=false \
+                    -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DtyperVersion=${typerVersion}"
             }
         } catch (e) {
             currentBuild.result = "FAILED"
@@ -34,7 +39,7 @@ stage('build') {
 stage('deploy') {
     node {
         try {
-            ansiblePlaybook extraVars: [version: "3.0.$BUILD_NUMBER", ansible_ssh_port: "22", deploy_from_repo: "false"], \
+            ansiblePlaybook extraVars: [version: buildVersion, ansible_ssh_port: "22", deploy_from_repo: "false"], \
                 installation: 'ansible-yum', \
                 inventory: 'ansible/hosts_test', \
                 playbook: 'ansible/deploy.yml', \
@@ -51,7 +56,7 @@ stage('integration tests') {
     node {
         try {
             withEnv(javaEnv()) {
-                sh './gradlew restAssuredTest -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/'
+                sh "./gradlew restAssuredTest -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/"
             }
         } catch (e) {
             currentBuild.result = "FAILED"
@@ -65,8 +70,8 @@ stage('tag and upload') {
     node {
         try {
             withEnv(javaEnv()) {
-                sh './gradlew uploadArchives tagRelease -DnexusUsername=$NEXUS_USERNAME -DnexusPassword=$NEXUS_PASSWORD \
-                    -DgithubUser=$GITHUB_USERNAME -DgithubPassword=$GITHUB_PASSWORD'
+                sh "./gradlew uploadArchives tagRelease -DnexusUsername=$NEXUS_USERNAME -DnexusPassword=$NEXUS_PASSWORD -DgithubUser=$GITHUB_USERNAME \
+                    -DgithubPassword=$GITHUB_PASSWORD -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DtyperVersion=${typerVersion}"
             }
         } catch (e) {
             currentBuild.result = "FAILED"
