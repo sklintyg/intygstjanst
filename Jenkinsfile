@@ -56,7 +56,8 @@ stage('integration tests') {
     node {
         try {
             withEnv(javaEnv()) {
-                sh "./gradlew restAssuredTest -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/"
+                sh "./gradlew restAssuredTest -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/ \
+                    -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DtyperVersion=${typerVersion}"
             }
         } catch (e) {
             currentBuild.result = "FAILED"
