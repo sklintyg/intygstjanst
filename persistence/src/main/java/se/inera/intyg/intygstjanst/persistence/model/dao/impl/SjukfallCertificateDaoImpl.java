@@ -19,20 +19,19 @@
 
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
-
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import java.util.stream.Collectors;
 
 /**
  * Uses JPQL to query {@link SjukfallCertificate} a list of sjukfall related intyg.
@@ -53,17 +52,19 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
 
         // First, get personnummer for all patients having a currently ongoing intyg.
         List<String> personNummerList = entityManager.createQuery(
-                "SELECT DISTINCT sc.civicRegistrationNumber FROM SjukfallCertificate sc JOIN "
+                "SELECT sc.civicRegistrationNumber FROM SjukfallCertificate sc JOIN "
                 + "sc.sjukfallCertificateWorkCapacity scwc WHERE "
                 + "    sc.careUnitId IN (:careUnitHsaId) "
                 + "AND scwc.fromDate <= :today "
                 + "AND scwc.toDate >= :today "
-                + "AND sc.deleted = FALSE "
-                + "ORDER BY sc.civicRegistrationNumber", String.class)
+                + "AND sc.deleted = FALSE", String.class)
 
                 .setParameter("careUnitHsaId", careUnitHsaIds)
                 .setParameter("today", today)
                 .getResultList();
+
+        // Perform the DISTINCT and SORT programatically.
+        personNummerList = personNummerList.stream().distinct().sorted().collect(Collectors.toList());
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Get personnr with active intyg on enhet {} (with mottagningar) returned {} items.", careUnitHsaIds, personNummerList.size());
@@ -80,8 +81,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                 + "JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc "
                 + "WHERE sc.civicRegistrationNumber IN (:personNummerList) "
                 + "AND sc.careUnitId IN (:careUnitHsaIds) "
-                + "AND sc.deleted = FALSE "
-                + "ORDER BY sc.civicRegistrationNumber",
+                + "AND sc.deleted = FALSE",
                 SjukfallCertificate.class)
 
                 .setParameter("careUnitHsaIds", careUnitHsaIds)
@@ -92,7 +92,9 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
             LOG.debug("Read {} SjukfallCertificate for belonging to unit {}",
                     resultList.size(), careUnitHsaIds);
         }
-        return resultList;
+        return resultList.stream()
+                .sorted((a ,b) -> a.getCivicRegistrationNumber().compareTo(b.getCivicRegistrationNumber()))
+                .collect(Collectors.toList());
     }
 
     @Override
