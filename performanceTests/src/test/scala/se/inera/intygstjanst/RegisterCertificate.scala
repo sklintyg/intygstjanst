@@ -12,7 +12,7 @@ class RegisterCertificate extends Simulation {
 
   val numberOfUsers = 100
 
-  val testpersonnummer = csv("data/testpersonnummer_skatteverket.csv").circular
+  val testpersonnummer = csv("data/testpersonnummerSkatteverket.csv").circular
 
   def luse = exec(http("Register LUSE certificate ${intygsId} for user ${personNr}")
           .post("/register-certificate-se/v2.0")
@@ -40,9 +40,5 @@ class RegisterCertificate extends Simulation {
 
   setUp(scn.inject(rampUsers(numberOfUsers) over (120 seconds)).protocols(Conf.httpConf))
 
-  after {
-    var result = Utils.clean()
-    println(if (result.code == 200) "Succesfully cleaned database" else "Error while cleaning")
-  }
 }
 

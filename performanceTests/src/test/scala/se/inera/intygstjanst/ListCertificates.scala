@@ -38,10 +38,5 @@ class ListCertificates extends Simulation {
 
   setUp(preload.inject(atOnceUsers(1)).protocols(Conf.httpConf),
       scn.inject(rampUsers(numberOfUsers) over (120 seconds)).protocols(Conf.httpConf))
-
-  after {
-    var result = Utils.clean()
-    println(if (result.code == 200) "Succesfully cleaned database" else "Error while cleaning")
-  }
 }
 
