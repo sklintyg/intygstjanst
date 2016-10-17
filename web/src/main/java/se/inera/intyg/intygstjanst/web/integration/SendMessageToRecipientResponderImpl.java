@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.v2.ResultTypeUtil;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToRecipientValidator;
 import se.inera.intyg.intygstjanst.web.service.ArendeService;
@@ -61,11 +62,17 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
     public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress, SendMessageToRecipientType parameters) {
         LOG.debug("Send message to recipient request received. logicalAddress={} messageId={}", logicalAddress, parameters != null ? parameters.getMeddelandeId() : "N/A");
 
-        List<String> validationErrors = validator.validate(parameters);
-        if (CollectionUtils.isNotEmpty(validationErrors)) {
-            LOG.warn("Invalid parameters: ", validationErrors.toString());
+        try {
+            List<String> validationErrors = validator.validate(parameters);
+            if (CollectionUtils.isNotEmpty(validationErrors)) {
+                LOG.warn("Invalid parameters: ", validationErrors.toString());
+                SendMessageToRecipientResponseType resp = new SendMessageToRecipientResponseType();
+                resp.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, validationErrors.toString()));
+                return resp;
+            }
+        } catch (InvalidCertificateException e) {
             SendMessageToRecipientResponseType resp = new SendMessageToRecipientResponseType();
-            resp.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, validationErrors.toString()));
+            resp.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "Intyg does not exist"));
             return resp;
         }
 

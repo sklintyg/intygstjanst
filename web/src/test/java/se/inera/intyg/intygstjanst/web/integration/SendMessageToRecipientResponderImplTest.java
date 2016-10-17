@@ -21,6 +21,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.v2.ResultTypeUtil;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToRecipientValidator;
 import se.inera.intyg.intygstjanst.web.service.ArendeService;
@@ -79,6 +80,15 @@ public class SendMessageToRecipientResponderImplTest {
     }
 
     @Test
+    public void sendMessageToRecipientCertificateDoesNotExistTest() throws Exception {
+        when(validator.validate(any(SendMessageToRecipientType.class))).thenThrow(new InvalidCertificateException("intygId", null));
+        SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
+        assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
+        assertEquals(ErrorIdType.APPLICATION_ERROR, res.getResult().getErrorId());
+        assertInvocations(never(), never(), never());
+    }
+
+    @Test
     public void sendMessageToRecipientResponderClientErrorTest() throws Exception {
         final String clientErrorText = "something wrong";
         setupClientResponse(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, clientErrorText));
@@ -106,7 +116,7 @@ public class SendMessageToRecipientResponderImplTest {
         return parameters;
     }
 
-    private void setupValidatorError() {
+    private void setupValidatorError() throws InvalidCertificateException {
         when(validator.validate(any(SendMessageToRecipientType.class))).thenReturn(Arrays.asList(""));
     }
 
@@ -118,7 +128,7 @@ public class SendMessageToRecipientResponderImplTest {
 
     private void assertInvocations(VerificationMode monitoringLogInvocation,
             VerificationMode arendeServiceInvocation,
-            VerificationMode sendMessageToRecipientClientInvocation) throws JAXBException {
+            VerificationMode sendMessageToRecipientClientInvocation) throws JAXBException, InvalidCertificateException {
         verify(validator).validate(any(SendMessageToRecipientType.class)); // always call validator
         verify(arendeService, arendeServiceInvocation).processIncomingMessage(any(Arende.class));
         verify(monitoringLog, monitoringLogInvocation).logSendMessageToRecipient(anyString(), anyString());

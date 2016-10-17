@@ -37,9 +37,7 @@ import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientType;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.Amneskod;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.IntygId;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
+import se.riv.clinicalprocess.healthcond.certificate.types.v2.*;
 import se.riv.clinicalprocess.healthcond.certificate.v2.MeddelandeReferens;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -201,11 +199,10 @@ public class SendMessageToRecipientValidatorTest {
         assertFalse(validationErrors.isEmpty());
     }
 
-    @Test
+    @Test(expected = InvalidCertificateException.class)
     public void certificateDoesNotExistTest() throws Exception {
         when(certificateService.getCertificateForCare(INTYG_ID)).thenThrow(new InvalidCertificateException("not found", null));
-        List<String> validationErrors = validator.validate(buildOkMessage(PATIENT_CRN));
-        assertFalse(validationErrors.isEmpty());
+        validator.validate(buildOkMessage(PATIENT_CRN));
     }
 
     @Test

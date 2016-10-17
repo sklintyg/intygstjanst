@@ -42,7 +42,7 @@ public class SendMessageToRecipientValidator {
     @Autowired
     private ArendeRepository messageRepository;
 
-    public List<String> validate(SendMessageToRecipientType message) {
+    public List<String> validate(SendMessageToRecipientType message) throws InvalidCertificateException {
         List<String> validationErrors = new ArrayList<>();
 
         Amneskod amne = validateAmneskod(message, validationErrors);
@@ -104,15 +104,11 @@ public class SendMessageToRecipientValidator {
         }
     }
 
-    private void validateCertificate(SendMessageToRecipientType message, List<String> validationErrors) {
-        try {
-            Personnummer messageCRN = new Personnummer(message.getPatientPersonId().getExtension());
-            Certificate certificate = certificateService.getCertificateForCare(message.getIntygsId().getExtension());
-            if (!messageCRN.equals(certificate.getCivicRegistrationNumber())) {
-                validationErrors.add("PatientPersonId is not consistent with certificate");
-            }
-        } catch (InvalidCertificateException e) {
-            validationErrors.add("Intyg does not exist");
+    private void validateCertificate(SendMessageToRecipientType message, List<String> validationErrors) throws InvalidCertificateException {
+        Personnummer messageCRN = new Personnummer(message.getPatientPersonId().getExtension());
+        Certificate certificate = certificateService.getCertificateForCare(message.getIntygsId().getExtension());
+        if (!messageCRN.equals(certificate.getCivicRegistrationNumber())) {
+            validationErrors.add("PatientPersonId is not consistent with certificate");
         }
     }
 
