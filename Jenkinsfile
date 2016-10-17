@@ -1,8 +1,8 @@
 #!groovy
 
-def buildVersion  = "3.0.${BUILD_NUMBER}"
+def buildVersion = "3.0.${BUILD_NUMBER}"
 def commonVersion = "3.0.+"
-def typerVersion  = "3.0.+"
+def typerVersion = "3.0.+"
 
 stage('checkout') {
     node {
@@ -20,19 +20,19 @@ stage('build') {
 stage('deploy') {
     node {
         util.run {
-            ansiblePlaybook extraVars: [version: buildVersion, ansible_ssh_port: "22", deploy_from_repo: "false"], \
-                installation: 'ansible-yum', \
-                inventory: 'ansible/hosts_test', \
-                playbook: 'ansible/deploy.yml', \
-                sudoUser: null
+            ansiblePlaybook extraVars: [version: buildVersion, ansible_ssh_port: "22", deploy_from_repo: "false"],  \
+                 installation: 'ansible-yum',  \
+                 inventory: 'ansible/hosts_test',  \
+                 playbook: 'ansible/deploy.yml',  \
+                 sudoUser: null
         }
     }
 }
 
-stage('integration tests') {
+stage('restAssured') {
     node {
         shgradle "restAssuredTest -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/ \
-                 -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DtyperVersion=${typerVersion}"
+                  -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DtyperVersion=${typerVersion}"
     }
 }
 
