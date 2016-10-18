@@ -22,7 +22,7 @@ package se.inera.intyg.intygstjanst.web.integration.validator;
 import org.springframework.util.StringUtils;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType;
-import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.validator.VardAdresseringsTypeValidator;
+import se.inera.intyg.intygstyper.fk7263.schemas.insuranceprocess.healthreporting.validator.VardAdresseringsTypeValidator;
 
 import java.util.ArrayList;
 import java.util.List;

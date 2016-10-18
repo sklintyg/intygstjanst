@@ -34,6 +34,8 @@ war.dependsOn createVersionPropertyFile
 dependencies {
     compile project(':intygstjanst-persistence')
 
+    compile "se.inera.intyg.insuranceprocess.healthreporting:intyg-insuranceprocess-healthreporting-schemas:1.0.3"
+
     compile "se.inera.intyg.common:hsa-integration:${commonVersion}"
 
     compile "se.inera.intyg.intygstyper:ts-bas:${typerVersion}"
@@ -45,7 +47,6 @@ dependencies {
     compile "se.inera.intyg.intygstyper:luae_fs:${typerVersion}"
     compile "se.inera.intyg.intygstyper:luae_na:${typerVersion}"
     compile ("se.inera.intyg.intygstyper:fk7263:${typerVersion}") {
-        exclude(module: 'insuranceprocess-healthreporting-schemas')
         exclude(module: 'fk-vardgivare-sjukvard-schemas')
         exclude(module: 'ServiceContracts_itintegration_monitoring')
     }

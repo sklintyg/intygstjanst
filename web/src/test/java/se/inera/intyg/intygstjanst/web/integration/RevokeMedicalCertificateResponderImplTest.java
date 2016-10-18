@@ -54,38 +54,42 @@ import se.inera.intyg.intygstjanst.web.service.*;
 @RunWith(MockitoJUnitRunner.class)
 public class RevokeMedicalCertificateResponderImplTest {
 
-    protected static final String CERTIFICATE_ID = "intygs-id-1234567890";
-    protected static final Personnummer PERSONNUMMER = new Personnummer("19121212-1212");
-    protected static final String TARGET = "FK";
+    private static final String CERTIFICATE_ID = "intygs-id-1234567890";
+    private static final Personnummer PERSONNUMMER = new Personnummer("19121212-1212");
+    private static final String TARGET = "FK";
 
-    protected static final AttributedURIType ADDRESS = new AttributedURIType();
+    private static final AttributedURIType ADDRESS = new AttributedURIType();
 
     @Mock
-    protected CertificateSenderService certificateSenderService;
+    private CertificateSenderService certificateSenderService;
 
     @Mock
     private MonitoringLogService monitoringLogService;
 
     @Mock
-    protected CertificateService certificateService;
+    private CertificateService certificateService;
 
     @Mock
-    protected StatisticsService statisticsService;
+    private StatisticsService statisticsService;
 
     @Mock
-    protected SjukfallCertificateService sjukfallCertificateService;
+    private SjukfallCertificateService sjukfallCertificateService;
 
     @InjectMocks
-    protected RevokeMedicalCertificateResponderInterface responder = new RevokeMedicalCertificateResponderImpl();
+    private RevokeMedicalCertificateResponderInterface responder = new RevokeMedicalCertificateResponderImpl();
 
-    protected RevokeMedicalCertificateRequestType revokeRequest() throws Exception {
-        // read request from file
-        JAXBContext jaxbContext = JAXBContext.newInstance(RevokeMedicalCertificateRequestType.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        JAXBElement<RevokeMedicalCertificateRequestType> request = unmarshaller.unmarshal(
-                new StreamSource(new ClassPathResource("revoke-medical-certificate/revoke-medical-certificate-request.xml").getInputStream()),
-                RevokeMedicalCertificateRequestType.class);
-        return request.getValue();
+    private RevokeMedicalCertificateRequestType cachedRevokeRequest;
+
+    private RevokeMedicalCertificateRequestType revokeRequest() throws Exception {
+        if (cachedRevokeRequest == null) {
+            JAXBContext jaxbContext = JAXBContext.newInstance(RevokeMedicalCertificateRequestType.class);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            JAXBElement<RevokeMedicalCertificateRequestType> request = unmarshaller.unmarshal(
+                    new StreamSource(new ClassPathResource("revoke-medical-certificate/revoke-medical-certificate-request.xml").getInputStream()),
+                    RevokeMedicalCertificateRequestType.class);
+            cachedRevokeRequest = request.getValue();
+        }
+        return cachedRevokeRequest;
     }
 
     @Test
