@@ -35,6 +35,7 @@ dependencies {
     compile project(':intygstjanst-persistence')
 
     compile "se.inera.intyg.insuranceprocess.healthreporting:intyg-insuranceprocess-healthreporting-schemas:1.0.3"
+    compile "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:2.0.RC6.1"
 
     compile "se.inera.intyg.common:hsa-integration:${commonVersion}"
 
