@@ -46,10 +46,7 @@ dependencies {
     compile "se.inera.intyg.intygstyper:lisu:${typerVersion}"
     compile "se.inera.intyg.intygstyper:luae_fs:${typerVersion}"
     compile "se.inera.intyg.intygstyper:luae_na:${typerVersion}"
-    compile ("se.inera.intyg.intygstyper:fk7263:${typerVersion}") {
-        exclude(module: 'fk-vardgivare-sjukvard-schemas')
-        exclude(module: 'ServiceContracts_itintegration_monitoring')
-    }
+    compile "se.inera.intyg.intygstyper:fk7263:${typerVersion}"
 
     compile 'commons-io:commons-io:2.4'
     compile "org.springframework:spring-jms:${springVersion}"
