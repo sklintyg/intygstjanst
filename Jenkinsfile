@@ -12,8 +12,13 @@ stage('checkout') {
 
 stage('build') {
     node {
-        shgradle "--refresh-dependencies clean build sonarqube -PcodeQuality -DgruntColors=false \
+        try {
+            shgradle "--refresh-dependencies clean build testReport sonarqube -PcodeQuality -DgruntColors=false \
                   -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DtyperVersion=${typerVersion}"
+        } finally {
+            publishHTML allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'build/reports/allTests', \
+                reportFiles: 'index.html', reportName: 'JUnit results'
+        }
     }
 }
 
@@ -32,7 +37,7 @@ stage('restAssured') {
             shgradle "restAssuredTest -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/ \
                   -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DtyperVersion=${typerVersion}"
         } finally {
-            publishHTML allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'web/build/reports/tests/restAssuredTest', \
+            publishHTML allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'web/build/reports/tests/restAssuredTest', \
                 reportFiles: 'index.html', reportName: 'RestAssured results'
         }
     }
