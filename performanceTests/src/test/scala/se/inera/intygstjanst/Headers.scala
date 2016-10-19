@@ -19,6 +19,11 @@ object Headers {
     "Content-Type" -> """text/xml;charset=UTF-8""",
     "SOAPAction" -> "urn:riv:insuranceprocess:healthreporting:ListCertificatesResponder:1:ListCertificates")
 
+  val list_active_sick_leaves = Map(
+    "Accept" -> """application/json, text/plain, */*""",
+    "Content-Type" -> """text/xml;charset=UTF-8""",
+    "SOAPAction" -> "urn:riv:clinicalprocess:healthcond:rehabilitation:ListActiveSickLeavesForCareUnitResponder:1:ListActiveSickLeavesForCareUnit")
+
   val set_consent = Map(
     "Accept" -> """application/json, text/plain, */*""",
     "Content-Type" -> """text/xml;charset=UTF-8""",
