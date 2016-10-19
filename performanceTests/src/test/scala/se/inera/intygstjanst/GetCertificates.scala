@@ -6,7 +6,6 @@ import io.gatling.core.session._
 import io.gatling.http.request.Body
 import scala.concurrent.duration._
 import collection.mutable.{ HashMap, MultiMap, Set }
-import java.util.UUID
 
 class GetCertificates extends Simulation {
 
@@ -14,6 +13,10 @@ class GetCertificates extends Simulation {
 
   val testpersonnummer = csv("data/intyg.csv").circular
   val intyg = csv("data/intyg.csv").records
+
+  before {
+    Utils.clean()
+  }
 
   val scn = scenario("Get Certificates")
     .feed(testpersonnummer)
@@ -38,5 +41,9 @@ class GetCertificates extends Simulation {
 
   setUp(preload.inject(atOnceUsers(1)).protocols(Conf.httpConf),
     scn.inject(rampUsers(numberOfUsers) over (120 seconds)).protocols(Conf.httpConf))
+
+  after {
+    Utils.clean()
+  }
 }
 

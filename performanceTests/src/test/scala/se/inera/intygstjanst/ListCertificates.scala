@@ -4,7 +4,6 @@ import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
 import io.gatling.http.request.Body
 import scala.concurrent.duration._
-import java.util.UUID
 
 class ListCertificates extends Simulation {
 
@@ -12,6 +11,10 @@ class ListCertificates extends Simulation {
 
   val testpersonnummer = csv("data/intyg.csv").circular
   val intyg = csv("data/intyg.csv").records
+
+  before {
+    Utils.clean()
+  }
 
   val preload = scenario("Preload database")
     .foreach(intyg, "record") {
@@ -37,6 +40,10 @@ class ListCertificates extends Simulation {
     .pause(2 seconds)
 
   setUp(preload.inject(atOnceUsers(1)).protocols(Conf.httpConf),
-      scn.inject(rampUsers(numberOfUsers) over (120 seconds)).protocols(Conf.httpConf))
+      scn.inject(nothingFor(5 seconds), rampUsers(numberOfUsers) over (120 seconds)).protocols(Conf.httpConf))
+
+  after {
+    Utils.clean()
+  }
 }
 
