@@ -20,19 +20,21 @@ stage('build') {
 stage('deploy') {
     node {
         util.run {
-            ansiblePlaybook extraVars: [version: buildVersion, ansible_ssh_port: "22", deploy_from_repo: "false"],  \
-                 installation: 'ansible-yum',  \
-                 inventory: 'ansible/hosts_test',  \
-                 playbook: 'ansible/deploy.yml',  \
-                 sudoUser: null
+            ansiblePlaybook extraVars: [version: buildVersion, ansible_ssh_port: "22", deploy_from_repo: "false"], \
+                installation: 'ansible-yum', inventory: 'ansible/hosts_test', playbook: 'ansible/deploy.yml'
         }
     }
 }
 
 stage('restAssured') {
     node {
-        shgradle "restAssuredTest -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/ \
+        try {
+            shgradle "restAssuredTest -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/ \
                   -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DtyperVersion=${typerVersion}"
+        } finally {
+            publishHTML allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'web/build/reports/tests/restAssuredTest', \
+                reportFiles: 'index.html', reportName: 'RestAssured results'
+        }
     }
 }
 
