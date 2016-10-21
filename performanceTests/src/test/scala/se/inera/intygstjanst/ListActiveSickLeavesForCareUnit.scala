@@ -33,7 +33,7 @@ class ListActiveSickLeavesForCareUnit extends Simulation {
 
   val scn = scenario("List Active Sick Leaves For Care Unit")
     .feed(testenheter)
-    .repeat(100) {
+    .repeat(10) {
       exec(http("List active sick leaves for ${enhetsId}")
         .post("/list-active-sick-leaves-for-care-unit/v1.0")
         .headers(Headers.list_active_sick_leaves)
