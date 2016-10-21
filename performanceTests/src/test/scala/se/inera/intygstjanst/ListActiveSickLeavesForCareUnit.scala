@@ -33,17 +33,18 @@ class ListActiveSickLeavesForCareUnit extends Simulation {
 
   val scn = scenario("List Active Sick Leaves For Care Unit")
     .feed(testenheter)
-    .exec(http("List active sick leaves for ${enhetsId}")
-      .post("/list-active-sick-leaves-for-care-unit/v1.0")
-      .headers(Headers.list_active_sick_leaves)
-      .body(ELFileBody("request-bodies/list-active-sick-leaves.xml"))
-      .check(
-        status.is(200),
-        // Response should contain intygsData elements if successful
-        substring(":intygsData>")))
+    .repeat(100) {
+      exec(http("List active sick leaves for ${enhetsId}")
+        .post("/list-active-sick-leaves-for-care-unit/v1.0")
+        .headers(Headers.list_active_sick_leaves)
+        .body(ELFileBody("request-bodies/list-active-sick-leaves.xml"))
+        .check(status.is(200),
+          // Response should contain intygsData elements if successful
+          substring(":intygsData>")))
+  }
 
   setUp(preload.inject(atOnceUsers(1)).protocols(Conf.httpConf),
-      scn.inject(nothingFor(5 seconds), rampUsers(numberOfUsers) over (120 seconds)).protocols(Conf.httpConf))
+      scn.inject(nothingFor(5 seconds), rampUsers(numberOfUsers) over (30 seconds)).protocols(Conf.httpConf))
 
   after {
     Utils.clean()
