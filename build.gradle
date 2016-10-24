@@ -9,6 +9,7 @@ ext {
     liquibaseVersion = "3.3.5"
 }
 
+
 allprojects  {
     group = 'se.inera.intyg.intygstjanst'
     version = System.properties['buildVersion'] ?: '0-SNAPSHOT'
