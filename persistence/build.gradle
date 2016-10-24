@@ -8,10 +8,10 @@ jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 dependencies {
     compile "se.inera.intyg.common:common-support:${commonVersion}"
 
-    compile 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
-    compile 'org.jadira.usertype:usertype.extended:5.0.0.GA'
+    compile "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:${jpaHibernateVersion}.Final"
+    compile "org.jadira.usertype:usertype.extended:${jadiraUserTypeVersion}.GA"
     compile "org.liquibase:liquibase-core:${liquibaseVersion}"
-    compile 'org.springframework.data:spring-data-jpa:1.9.0.RELEASE'
+    compile "org.springframework.data:spring-data-jpa:${springDataVersion}.RELEASE"
     compile "org.springframework:spring-tx:${springVersion}"
 
     testCompile "org.springframework:spring-test:${springVersion}"
