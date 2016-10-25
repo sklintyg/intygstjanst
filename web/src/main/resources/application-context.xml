@@ -92,6 +92,7 @@
       <bean id="IntygBootstrapBean"
         class="se.inera.intyg.intygstjanst.web.service.bean.IntygBootstrapBean" />
     </beans>
-
   </beans>
+
+  <!--  Note - caching is enabled/disabled through hsa-services-config.xml and the caching-enabled profile -->
 </beans>

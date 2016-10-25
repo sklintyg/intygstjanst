@@ -21,7 +21,7 @@ gretty {
 
     jvmArgs = [
         "-Dcatalina.base=${buildDir}/catalina.base",
-        "-Dspring.profiles.active=dev",
+        "-Dspring.profiles.active=dev,caching-enabled",
         "-Drecipient.config.file=${projectDir}/recipient-dev.properties",
         "-Dcredentials.file=${projectDir}/certificate-credentials.properties",
         "-Dcertificate.logback.file=${projectDir}/certificate-logback.xml",
