@@ -11,7 +11,7 @@ activemq_username: ""
 activemq_password: ""
 
 # Spring profiles
-profiles: test,it-fk-stub,it-ts-stub,testability-api,wc-hsa-stub
+profiles: test,it-fk-stub,it-ts-stub,testability-api,wc-hsa-stub,caching-enabled
 
 # Tomcat
 tomcat_service: tomcat-intygstjanst

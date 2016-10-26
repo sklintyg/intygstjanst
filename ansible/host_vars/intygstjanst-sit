@@ -7,7 +7,7 @@ activemq_username: "nmt"
 activemq_password: "nmtpass"
 
 # Spring profiles
-profiles: test,it-fk-stub,it-ts-stub,testability-api,wc-hsa-stub
+profiles: test,it-fk-stub,it-ts-stub,testability-api,wc-hsa-stub,caching-enabled
 
 deploy_from_repo: false
 
