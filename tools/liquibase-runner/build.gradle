@@ -5,13 +5,15 @@ apply plugin: 'application'
 mainClassName = "liquibase.integration.commandline.Main"
 applicationDefaultJvmArgs = ["-Dfile.encoding=utf8"]
 
-startScripts << {
-    def intygstjanstPersistenceDependency = configurations.runtime.filter { it.name.startsWith("intygstjanst-persistence") }.singleFile.name
+startScripts {
+    doLast {
+        def intygstjanstPersistenceDependency = configurations.runtime.filter { it.name.startsWith("intygstjanst-persistence") }.singleFile.name
 
-    unixScript.text = unixScript.text.replaceAll(/"\$@"$/,
-        "--driver=com.mysql.jdbc.Driver --classpath=lib/${intygstjanstPersistenceDependency} --changeLogFile=changelog/changelog.xml \"\\\$@\"")
-    windowsScript.text = windowsScript.text.replaceAll(/%CMD_LINE_ARGS%/,
-        "--driver=com.mysql.jdbc.Driver --classpath=lib/${intygstjanstPersistenceDependency} --changeLogFile=changelog/changelog.xml %CMD_LINE_ARGS%")
+        unixScript.text = unixScript.text.replaceAll(/"\$@"$/,
+            "--driver=com.mysql.jdbc.Driver --classpath=lib/${intygstjanstPersistenceDependency} --changeLogFile=changelog/changelog.xml \"\\\$@\"")
+        windowsScript.text = windowsScript.text.replaceAll(/%CMD_LINE_ARGS%/,
+            "--driver=com.mysql.jdbc.Driver --classpath=lib/${intygstjanstPersistenceDependency} --changeLogFile=changelog/changelog.xml %CMD_LINE_ARGS%")
+    }
 }
 
 artifacts {

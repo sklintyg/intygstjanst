@@ -190,11 +190,7 @@ sonarqube {
         property "sonar.projectKey", "intygstjansten"
         property "sonar.host.url", System.properties['sonarUrl'] ?: "https://build-inera.nordicmedtest.se/sonar"
         property "sonar.test.exclusions", "src/test/**"
-        property "sonar.exclusions", [
-            "**/stub/**",
-            "**/exception/**",
-            "**/*Exception*.java"
-            ]
+        property "sonar.exclusions", ["**/stub/**", "**/exception/**", "**/*Exception*.java"]
     }
 }
 
