@@ -53,11 +53,12 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         // First, get personnummer for all patients having a currently ongoing intyg.
         List<String> personNummerList = entityManager.createQuery(
                 "SELECT sc.civicRegistrationNumber FROM SjukfallCertificate sc JOIN "
-                + "sc.sjukfallCertificateWorkCapacity scwc WHERE "
-                + "    sc.careUnitId IN (:careUnitHsaId) "
-                + "AND scwc.fromDate <= :today "
-                + "AND scwc.toDate >= :today "
-                + "AND sc.deleted = FALSE", String.class)
+                        + "sc.sjukfallCertificateWorkCapacity scwc WHERE "
+                        + "    sc.careUnitId IN (:careUnitHsaId) "
+                        + "AND scwc.fromDate <= :today "
+                        + "AND scwc.toDate >= :today "
+                        + "AND sc.deleted = FALSE",
+                String.class)
 
                 .setParameter("careUnitHsaId", careUnitHsaIds)
                 .setParameter("today", today)
@@ -72,16 +73,16 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
 
         // if no personnummer found, return empty list
         if (personNummerList.isEmpty()) {
-           return new ArrayList<>();
+            return new ArrayList<>();
         }
 
         // Then, fetch all SjukfallCertificates for these persons on the designated units.
         List<SjukfallCertificate> resultList = entityManager.createQuery(
                 "SELECT DISTINCT sc FROM SjukfallCertificate sc "
-                + "JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc "
-                + "WHERE sc.civicRegistrationNumber IN (:personNummerList) "
-                + "AND sc.careUnitId IN (:careUnitHsaIds) "
-                + "AND sc.deleted = FALSE",
+                        + "JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc "
+                        + "WHERE sc.civicRegistrationNumber IN (:personNummerList) "
+                        + "AND sc.careUnitId IN (:careUnitHsaIds) "
+                        + "AND sc.deleted = FALSE",
                 SjukfallCertificate.class)
 
                 .setParameter("careUnitHsaIds", careUnitHsaIds)
@@ -93,7 +94,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                     resultList.size(), careUnitHsaIds);
         }
         return resultList.stream()
-                .sorted((a ,b) -> a.getCivicRegistrationNumber().compareTo(b.getCivicRegistrationNumber()))
+                .sorted((a, b) -> a.getCivicRegistrationNumber().compareTo(b.getCivicRegistrationNumber()))
                 .collect(Collectors.toList());
     }
 

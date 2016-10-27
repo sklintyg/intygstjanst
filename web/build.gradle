@@ -67,7 +67,7 @@ dependencies {
     testCompile "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
 
     testRuntime "javax.servlet:servlet-api:${javaxServletApiVersion}"
-    
+
     gretty "org.apache.activemq:activemq-client:${activeMqVersion}"
     gretty "org.apache.activemq:activemq-broker:${activeMqVersion}"
     gretty "com.h2database:h2:${h2Version}"
