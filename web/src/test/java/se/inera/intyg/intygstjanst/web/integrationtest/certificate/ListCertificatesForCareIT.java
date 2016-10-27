@@ -84,7 +84,7 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
         IntegrationTestUtil.registerCertificate(intygsId.get(0), personId1, IntegrationTestCertificateType.LUAENA);
         IntegrationTestUtil.registerCertificate(intygsId.get(1), personId1, IntegrationTestCertificateType.LUSE);
         IntegrationTestUtil.registerCertificate(intygsId.get(2), personId1, IntegrationTestCertificateType.LUAEFS);
-        IntegrationTestUtil.registerCertificate(intygsId.get(3), personId1, IntegrationTestCertificateType.LISU);
+        IntegrationTestUtil.registerCertificate(intygsId.get(3), personId1, IntegrationTestCertificateType.LISJP);
         // deletedByCareGiver should not be returned
         IntegrationTestUtil.givenIntyg(intygsId.get(4), "fk7263", personId1, true);
         requestTemplate.add("data", new IntygsData(personId1));

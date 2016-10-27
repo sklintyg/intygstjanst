@@ -6,11 +6,11 @@
             <ns3:extension>CERTIFICATE_ID</ns3:extension>
         </ns4:intygs-id>
         <ns4:typ>
-            <ns3:code>LISU</ns3:code>
+            <ns3:code>LISJP</ns3:code>
             <ns3:codeSystem>b64ea353-e8f6-4832-b563-fc7d46f29548</ns3:codeSystem>
-            <ns3:displayName>Läkarintyg för sjukpenning utökat</ns3:displayName>
+            <ns3:displayName>Läkarintyg för sjukpenning</ns3:displayName>
         </ns4:typ>
-        <ns4:version>0.9</ns4:version>
+        <ns4:version>1.0</ns4:version>
         <ns4:patient>
             <ns4:person-id>
                 <ns3:root>1.2.752.129.2.1.3.1</ns3:root>
@@ -98,6 +98,7 @@
             <ns4:delsvar id="1.3">Annat underlag</ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="28">
+            <instans>1</instans>
             <ns4:delsvar id="28.1">
                 <ns3:cv>
                     <ns3:code>NUVARANDE_ARBETE</ns3:code>
@@ -110,7 +111,6 @@
             <ns4:delsvar id="29.1">defenestrist</ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="6">
-            <ns4:instans>1</ns4:instans>
             <ns4:delsvar id="6.2">
                 <ns3:cv>
                     <ns3:code>Z60</ns3:code>
@@ -205,9 +205,6 @@
         <ns4:svar id="34">
             <ns4:delsvar id="34.1">true</ns4:delsvar>
         </ns4:svar>
-        <ns4:svar id="23">
-            <ns4:delsvar id="23.1">Allt eller inget</ns4:delsvar>
-        </ns4:svar>
         <ns4:svar id="39">
             <ns4:delsvar id="39.1">
                 <ns3:cv>
@@ -218,13 +215,14 @@
             </ns4:delsvar>
             <ns4:delsvar id="39.3">
                 <ns3:cv>
-                    <ns3:code>60_DAGAR</ns3:code>
+                    <ns3:code>SEXTIO_DGR</ns3:code>
                     <ns3:codeSystem>KV_FKMU_0007</ns3:codeSystem>
                     <ns3:displayName>60 dagar</ns3:displayName>
                 </ns3:cv>
             </ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="40">
+            <instans>1</instans>
             <ns4:delsvar id="40.1">
                 <ns3:cv>
                     <ns3:code>KONFLIKTHANTERING</ns3:code>

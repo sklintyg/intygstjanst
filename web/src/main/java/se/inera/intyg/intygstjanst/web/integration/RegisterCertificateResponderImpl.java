@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Throwables;
 
-import se.inera.intyg.intygstyper.fkparent.support.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
@@ -39,6 +38,7 @@ import se.inera.intyg.common.support.modules.support.api.*;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.common.support.modules.support.api.dto.ValidateXmlResponse;
 import se.inera.intyg.common.util.logging.LogMarkers;
+import se.inera.intyg.intygstyper.fkparent.support.ResultTypeUtil;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.*;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.DatePeriodType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
@@ -140,7 +140,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     }
 
     private String getIntygsTyp(RegisterCertificateType certificateType) {
-        return certificateType.getIntyg().getTyp().getCode().toLowerCase();
+        return moduleRegistry.getModuleIdFromExternalId(certificateType.getIntyg().getTyp().getCode());
     }
 
     private CertificateHolder toCertificateHolder(Intyg intyg, String type, String originalCertificate) {

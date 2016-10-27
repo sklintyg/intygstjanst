@@ -94,7 +94,7 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         IntegrationTestUtil.registerCertificate(intygsId_alltypes.get(0), personId, IntegrationTestCertificateType.LUAENA);
         IntegrationTestUtil.registerCertificate(intygsId_alltypes.get(1), personId, IntegrationTestCertificateType.LUSE);
         IntegrationTestUtil.registerCertificate(intygsId_alltypes.get(2), personId, IntegrationTestCertificateType.LUAEFS);
-        IntegrationTestUtil.registerCertificate(intygsId_alltypes.get(3), personId, IntegrationTestCertificateType.LISU);
+        IntegrationTestUtil.registerCertificate(intygsId_alltypes.get(3), personId, IntegrationTestCertificateType.LISJP);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then()
@@ -134,7 +134,7 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         IntegrationTestUtil.registerCertificate(intygsId_alltypes.get(0), personId, IntegrationTestCertificateType.LUAENA);
         IntegrationTestUtil.registerCertificate(intygsId_alltypes.get(1), personId, IntegrationTestCertificateType.LUSE);
         IntegrationTestUtil.registerCertificate(intygsId_alltypes.get(2), personId, IntegrationTestCertificateType.LUAEFS);
-        IntegrationTestUtil.registerCertificate(intygsId_alltypes.get(3), personId, IntegrationTestCertificateType.LISU);
+        IntegrationTestUtil.registerCertificate(intygsId_alltypes.get(3), personId, IntegrationTestCertificateType.LISJP);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then()

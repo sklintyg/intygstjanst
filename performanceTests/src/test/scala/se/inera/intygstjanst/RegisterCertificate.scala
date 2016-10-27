@@ -21,10 +21,10 @@ class RegisterCertificate extends Simulation {
           .check(
             status.is(200)))
 
-  def lisu = exec(http("Register LISU certificate ${intygsId} for user ${personNr}")
+  def lisjp = exec(http("Register LISJP certificate ${intygsId} for user ${personNr}")
           .post("/register-certificate-se/v2.0")
           .headers(Headers.register_certificate)
-          .body(ELFileBody("request-bodies/register-lisu.xml"))
+          .body(ELFileBody("request-bodies/register-lisjp.xml"))
           .check(
                   status.is(200)))
 
@@ -35,7 +35,7 @@ class RegisterCertificate extends Simulation {
         "intygsId" -> UUID.randomUUID()
         ))
     .uniformRandomSwitch(
-      lisu,
+      lisjp,
       luse)
 
   setUp(scn.inject(rampUsers(numberOfUsers) over (120 seconds)).protocols(Conf.httpConf))

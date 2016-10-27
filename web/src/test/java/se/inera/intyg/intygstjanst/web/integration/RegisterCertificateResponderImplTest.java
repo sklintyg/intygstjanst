@@ -72,6 +72,7 @@ public class RegisterCertificateResponderImplTest {
     @Before
     public void setUp() throws Exception {
         when(moduleRegistry.getModuleApi(INTYGSTYP.toLowerCase())).thenReturn(moduleApi);
+        when(moduleRegistry.getModuleIdFromExternalId(INTYGSTYP)).thenReturn(INTYGSTYP.toLowerCase());
         when(moduleApi.validateXml(anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.VALID, new ArrayList<>()));
         responder.initializeJaxbContext();
     }

@@ -45,7 +45,7 @@ public class IntegrationTestUtil {
     private static final String REGISTER_TEMPLATE_WITH_DATES = "listActiveSickLeaves";
 
     public enum IntegrationTestCertificateType{
-        LUSE, LUAENA, LUAEFS, LISU
+        LUSE, LUAENA, LUAEFS, LISJP
     }
 
     public static void registerCertificate(String intygsId, String personId, IntegrationTestCertificateType type) {
@@ -56,8 +56,8 @@ public class IntegrationTestUtil {
     private static String getFilePath(IntegrationTestCertificateType type) {
         String baseUrl = "integrationtests/register/";
         switch(type){
-        case LISU:
-            return baseUrl+"request_lisu.stg";
+        case LISJP:
+            return baseUrl+"request_lisjp.stg";
         case LUSE:
             return baseUrl+"request_luse.stg";
         case LUAEFS:
