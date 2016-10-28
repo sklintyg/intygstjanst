@@ -43,7 +43,7 @@ import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil.
 public class ListCertificatesForCareIT extends BaseIntegrationTest {
     private ST requestTemplate;
     private String personId1 = "192703104321";
-    private List<String> intygsId = Arrays.asList("luae_na_1", "luse_1", "luae_fs_1", "lisu_1", "fk7263_deletedByCareGiver");
+    private List<String> intygsId = Arrays.asList("luae_na_1", "luse_1", "luae_fs_1", "lisjp_1", "fk7263_deletedByCareGiver");
     private static final String BASE = "Envelope.Body.ListCertificatesForCareResponse.";
     private static final String CARE_UNIT_ID = "SE2321000016-H489";
 

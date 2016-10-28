@@ -20,21 +20,13 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-import javax.jms.JMSException;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import javax.jms.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -90,7 +82,7 @@ public class StatisticsServiceImplTest {
 
     @Test
     public void serviceSendsDocumentAndIdForRevoke() throws Exception {
-        final String type = "lisu";
+        final String type = "lisjp";
         final String xmlBody = "xml body";
         org.springframework.test.util.ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
         ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
