@@ -44,7 +44,7 @@ dependencies {
     compile "se.inera.intyg.intygstyper:ts-parent:${typerVersion}"
     compile "se.inera.intyg.intygstyper:fk-parent:${typerVersion}"
     compile "se.inera.intyg.intygstyper:luse:${typerVersion}"
-    compile "se.inera.intyg.intygstyper:lisu:${typerVersion}"
+    compile "se.inera.intyg.intygstyper:lisjp:${typerVersion}"
     compile "se.inera.intyg.intygstyper:luae_fs:${typerVersion}"
     compile "se.inera.intyg.intygstyper:luae_na:${typerVersion}"
     compile "se.inera.intyg.intygstyper:fk7263:${typerVersion}"
