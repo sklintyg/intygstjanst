@@ -2,24 +2,22 @@ ext {
     commonVersion = System.properties['commonVersion'] ?: '0-SNAPSHOT'
     typerVersion = System.properties['typerVersion'] ?: '0-SNAPSHOT'
 
-    intygInsuranceprocessSchemasVersion = "1.0.4"
-    rivtaClinicalprocessSchemasVersion = "2.0.RC6.2"
     intygHealthcondRehabilitationSchemasVersion = "1.0.4"
-    rivtaDirectoryOrganizationSchemasVersion = "1.1.RC5.4"
+    intygInsuranceprocessSchemasVersion = "1.0.4"
     rivtaItintegrationMonitoringSchemasVersion = "1.0.0.4"
-    springVersion = "4.2.2.RELEASE"
+
     activeMqVersion = "5.13.4"
-    liquibaseVersion = "3.3.5"
-    commonsIoVersion = "2.4"
     geronimoJmsVersion = "1.1.1"
-    javaxServletApiVersion = "2.5"
-    xmlUnitVersion = "1.4"
-    restassuredVersion = "2.8.0"
+    jadiraUserTypeVersion = "5.0.0.GA"
+    servletApiVersion = "2.5"
+    jpaHibernateVersion = "1.0.0.Final"
     jsonSchemaValidatorVersion = "2.8.0"
+    liquibaseVersion = "3.3.5"
+    restassuredVersion = "2.8.0"
+    springDataVersion = "1.9.0.RELEASE"
+    springVersion = "4.2.2.RELEASE"
     stAntlr4Version = "4.0.8"
-    jpaHibernateVersion = "1.0.0"
-    jadiraUserTypeVersion = "5.0.0"
-    springDataVersion = "1.9.0"
+    xmlUnitVersion = "1.4"
 
     mockitoVersion = "1.9.0"
     mysqlVersion = "5.1.39"
@@ -100,7 +98,7 @@ subprojects {
     dependencies {
         buildtools "se.inera.intyg.common:common-build-tools:${commonVersion}"
 
-        testCompile 'junit:junit:4.+'
+        testCompile "junit:junit:4.+"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
     }
 

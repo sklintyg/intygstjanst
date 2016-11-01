@@ -35,7 +35,6 @@ dependencies {
     compile project(':intygstjanst-persistence')
 
     compile "se.inera.intyg.insuranceprocess.healthreporting:intyg-insuranceprocess-healthreporting-schemas:${intygInsuranceprocessSchemasVersion}"
-    compile "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
 
     compile "se.inera.intyg.common:hsa-integration:${commonVersion}"
 
@@ -49,15 +48,13 @@ dependencies {
     compile "se.inera.intyg.intygstyper:luae_na:${typerVersion}"
     compile "se.inera.intyg.intygstyper:fk7263:${typerVersion}"
 
-    compile "commons-io:commons-io:${commonsIoVersion}"
     compile "org.springframework:spring-jms:${springVersion}"
-    compile 'se.riv.infrastructure.directory.organization:infrastructure-directory-organization-schemas:${rivtaDirectoryOrganizationSchemasVersion}'
     compile "se.riv.itintegration.monitoring:itintegration-monitoring-schemas:${rivtaItintegrationMonitoringSchemasVersion}"
     compile "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"
     compile "org.springframework:spring-webmvc:${springVersion}"
 
     compileOnly "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
-    compileOnly "javax.servlet:servlet-api:${javaxServletApiVersion}"
+    compileOnly "javax.servlet:servlet-api:${servletApiVersion}"
 
     testCompile "org.springframework:spring-test:${springVersion}"
     testCompile "xmlunit:xmlunit:${xmlUnitVersion}"
@@ -66,7 +63,7 @@ dependencies {
     testCompile "org.antlr:ST4:${stAntlr4Version}"
     testCompile "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
 
-    testRuntime "javax.servlet:servlet-api:${javaxServletApiVersion}"
+    testRuntime "javax.servlet:servlet-api:${servletApiVersion}"
 
     gretty "org.apache.activemq:activemq-client:${activeMqVersion}"
     gretty "org.apache.activemq:activemq-broker:${activeMqVersion}"
