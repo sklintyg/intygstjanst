@@ -1,0 +1,11 @@
+[intygstjanst-tomcat]
+intygstjanst-test-webcert ansible_ssh_host=87.238.57.182 ansible_ssh_user=inera ansible_ssh_port=21022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
+
+[intygstjanst-mysql]
+intygstjanst-test-webcert ansible_ssh_host=87.238.57.182 ansible_ssh_user=inera ansible_ssh_port=21022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
+
+[tomcat:children]
+intygstjanst-tomcat
+
+[mysql:children]
+intygstjanst-mysql
