@@ -46,9 +46,10 @@ dependencies {
     compile "se.inera.intyg.intygstyper:luae_fs:${typerVersion}"
     compile "se.inera.intyg.intygstyper:luae_na:${typerVersion}"
 
-    compile "org.springframework:spring-jms:${springVersion}"
     compile "se.riv.itintegration.monitoring:itintegration-monitoring-schemas:${rivtaItintegrationMonitoringSchemasVersion}"
     compile "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"
+
+    compile "org.springframework:spring-jms:${springVersion}"
     compile "org.springframework:spring-webmvc:${springVersion}"
 
     compileOnly "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
