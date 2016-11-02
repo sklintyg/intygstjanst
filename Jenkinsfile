@@ -50,3 +50,8 @@ stage('tag and upload') {
         shgradle "uploadArchives tagRelease -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DtyperVersion=${typerVersion}"
     }
 }
+
+stage('propagate') {
+    build job: 'intyg-webcert-pipeline', wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH], [$class: 'StringParameterValue', name: 'INTYGSTJANST_VERSION', value: buildVersion]]
+    build job: 'intyg-minaintyg-pipeline', wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH], [$class: 'StringParameterValue', name: 'INTYGSTJANST_VERSION', value: buildVersion]]
+}
