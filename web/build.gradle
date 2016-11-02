@@ -63,6 +63,7 @@ dependencies {
     testCompile "org.antlr:ST4:${stAntlr4Version}"
     testCompile "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
 
+    testRuntime "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     testRuntime "javax.servlet:servlet-api:${servletApiVersion}"
 
     gretty "org.apache.activemq:activemq-client:${activeMqVersion}"
