@@ -42,7 +42,7 @@ import se.riv.clinicalprocess.healthcond.certificate.v2.MeddelandeReferens;
 @Component
 public class SendMessageToCareValidator {
     public enum Amneskod {
-        KOMPLT, ARBTID, AVSTMN, KONTKT, OVRIGT, PAMINN
+        KOMPLT, AVSTMN, KONTKT, OVRIGT, PAMINN
     }
 
     public enum ErrorCode {

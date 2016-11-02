@@ -45,7 +45,7 @@ public class SendMessageToCareValidatorTest {
     @Test
     public void testValidationOfAmne() {
         List<String> validationErrors = new ArrayList<>();
-        String subject = SendMessageToCareValidator.Amneskod.ARBTID.toString();
+        String subject = SendMessageToCareValidator.Amneskod.AVSTMN.toString();
         validator.validateMessageSubject(subject, validationErrors);
         assertTrue(validationErrors.isEmpty());
     }
@@ -134,12 +134,12 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationOkWhenEverythingIsPerfect() throws Exception {
-        SendMessageToCareType sendMessageToCareType = buildSendMessageCareType("originalMessageId", Amneskod.ARBTID.toString());
+        SendMessageToCareType sendMessageToCareType = buildSendMessageCareType("originalMessageId", Amneskod.AVSTMN.toString());
         sendMessageToCareType.setMeddelandeId("meddelande-id");
         sendMessageToCareType.setSistaDatumForSvar(null);
         sendMessageToCareType.setPaminnelseMeddelandeId(null);
         String referencedMeddelandeId = sendMessageToCareType.getSvarPa().getMeddelandeId();
-        Arende referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, Amneskod.ARBTID.toString());
+        Arende referencedMessage = buildSendMessageToCare(sendMessageToCareType, referencedMeddelandeId, Amneskod.AVSTMN.toString());
         when(arendeRepository.findByMeddelandeId(referencedMeddelandeId)).thenReturn(referencedMessage);
 
         String certificateId = sendMessageToCareType.getIntygsId().getExtension();
