@@ -18,7 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.test;
 
-import javax.ws.rs.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
@@ -31,6 +37,18 @@ public class StatisticsServiceResource {
 
     @Autowired(required = false)
     private Receiver receiver;
+
+    @GET
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<String> getAllMessages() {
+        if (receiver == null) {
+            LOGGER.error("No receiver found");
+            return null;
+        }
+        LOGGER.debug("Get all messages");
+        return receiver.getMessages().values().stream().collect(Collectors.toList());
+    }
 
     @GET
     @Path("/{id}")

@@ -19,15 +19,22 @@
 package se.inera.intyg.intygstjanst.web.service.converter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 
-import javax.xml.bind.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -45,11 +52,17 @@ public class ArendeConverterTest {
 
     private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML = "SendMessageToCareTest/sendmessagetocare.xml";
 
+    @Before
+    public void setup() {
+        XMLUnit.setIgnoreWhitespace(true);
+    }
+
     @Test
     public void testConvertToXmlString() throws Exception{
         String xmlResult = ArendeConverter.convertToXmlString(getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML));
         String fileXml = loadXmlMessageFromFile();
-        assertEquals(fileXml, xmlResult);
+        Diff diff = XMLUnit.compareXML(fileXml, xmlResult);
+        assertTrue(diff.toString(), diff.similar());
     }
 
     @Test
@@ -61,7 +74,8 @@ public class ArendeConverterTest {
         assertEquals(sendMessageToCareType.getMeddelandeId(), sendMessageToCare.getMeddelandeId());
         assertEquals(sendMessageToCareType.getReferensId(), sendMessageToCare.getReferens());
         assertNotNull(sendMessageToCare.getTimestamp());
-        assertEquals(loadXmlMessageFromFile(), sendMessageToCare.getMeddelande());
+        Diff diff = XMLUnit.compareXML(loadXmlMessageFromFile(), sendMessageToCare.getMeddelande());
+        assertTrue(diff.toString(), diff.similar());
     }
 
     @Test
@@ -108,7 +122,7 @@ public class ArendeConverterTest {
 
     private String loadXmlMessageFromFile() throws IOException {
         String fileXml = Resources.toString(getResource(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML), Charsets.UTF_8);
-        return fileXml.replaceAll("[\\r\\n\\t ]", "");
+        return fileXml.replaceAll("[\\n\\t]", "");
     }
 
     private SendMessageToCareType getSendMessageToCareTypeFromFile(String fileName) throws Exception {

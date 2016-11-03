@@ -42,6 +42,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private static final String CREATED = "created";
     private static final String REVOKED = "revoked";
+    private static final String MESSAGE_SENT = "message-sent";
     private static final String CERTIFICATE_ID = "certificate-id";
     private static final String ACTION = "action";
 
@@ -60,7 +61,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public boolean created(String certificateXml, String certificateId, String certificateType, String careUnitId) {
         boolean rc = true;
         if (enabled) {
-            rc = doSend(CREATED, certificateXml, certificateId, certificateType, careUnitId);
+            rc = doSend(CREATED, certificateXml, certificateId);
             if (rc) {
                 monitoringLogService.logStatisticsSent(certificateId, certificateType, careUnitId);
             }
@@ -72,8 +73,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public boolean revoked(Certificate certificate) {
         boolean rc = true;
         if (enabled) {
-             rc = doSend(REVOKED, certificate.getOriginalCertificate().getDocument(), certificate.getId(), certificate.getType(),
-             certificate.getCareUnitName());
+             rc = doSend(REVOKED, certificate.getOriginalCertificate().getDocument(), certificate.getId());
             if (rc) {
                 monitoringLogService.logStatisticsRevoked(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
             }
@@ -81,10 +81,22 @@ public class StatisticsServiceImpl implements StatisticsService {
         return rc;
     }
 
-    private boolean doSend(String type, String certificateXml, String certificateId, String certificateType, String careUnitId) {
+    @Override
+    public boolean messageSent(String xml, String certificateId, String topic) {
+        boolean rc = true;
+        if (enabled) {
+            rc = doSend(MESSAGE_SENT, xml, certificateId);
+        }
+        if (rc) {
+            monitoringLogService.logStatisticsMessageSent(certificateId, topic);
+        }
+        return rc;
+    }
+
+    private boolean doSend(String type, String certificateXml, String certificateId) {
         try {
             if (jmsTemplate == null) {
-                LOG.error("Failure sending certificate '{}' type '{}' to statistics, no JmsTemplate configured", certificateId, type);
+                LOG.error("Failure sending '{}' type with certificate-id '{}' to statistics, no JmsTemplate configured", type, certificateId);
                 return false;
             }
 
@@ -92,7 +104,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             jmsTemplate.send(messageCreator);
             return true;
         } catch (JmsException e) {
-            LOG.error("Failure sending certificate '{}' type '{}'to statistics", certificateId, type, e);
+            LOG.error("Failure sending '{}' type with certificate id '{}'to statistics", type, certificateId, e);
             return false;
         }
     }
