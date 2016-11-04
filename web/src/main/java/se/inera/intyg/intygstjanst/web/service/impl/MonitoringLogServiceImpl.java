@@ -91,7 +91,7 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
 
     @Override
     public void logStatisticsMessageSent(String certificateId, String topic) {
-        logEvent(MonitoringEvent.STATISTICS_MESSAGE_SENT, certificateId, topic);
+        logEvent(MonitoringEvent.STATISTICS_MESSAGE_SENT, topic, certificateId);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
         CONSENT_REVOKED("Consent revoked by citizen '{}'"),
         STATISTICS_SENT("Certificate '{}' with type '{}', care unit '{}' - sent to statistics"),
         STATISTICS_REVOKED("Certificate '{}' with type '{}', care unit '{}' - revoke sent to statistics"),
-        STATISTICS_MESSAGE_SENT("Message '{}' with topic '{}' for certificate '{}' - sent to statistics"),
+        STATISTICS_MESSAGE_SENT("Message with topic '{}' for certificate '{}' - sent to statistics"),
         SEND_MESSAGE_TO_CARE_RECEIVED("Message with id '{}', care unit recipient '{}' - was received and forwarded to its recipient."),
         SEND_MESSAGE_TO_RECIPIENT("Message with id '{}' sent to recipient '{}'");
 
