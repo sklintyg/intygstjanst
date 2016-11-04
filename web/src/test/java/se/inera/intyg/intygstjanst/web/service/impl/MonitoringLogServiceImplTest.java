@@ -46,6 +46,7 @@ public class MonitoringLogServiceImplTest {
     private static final String CITIZEN = "CITIZEN";
     private static final String STATUS = "STATUS";
     private static final String MESSAGE_ID = "MESSAGE_ID";
+    private static final String TOPIC = "TOPIC";
 
     @Mock
     private Appender<ILoggingEvent> mockAppender;
@@ -147,6 +148,12 @@ public class MonitoringLogServiceImplTest {
     public void shouldLogStatisticsRevoked() {
         logService.logStatisticsRevoked(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
         verifyLog(Level.INFO, "STATISTICS_REVOKED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - revoke sent to statistics");
+    }
+
+    @Test
+    public void shouldLogStatisticsMessageSent() {
+        logService.logStatisticsMessageSent(CERTIFICATE_ID, TOPIC);
+        verifyLog(Level.INFO, "STATISTICS_MESSAGE_SENT Message with topic 'TOPIC' for certificate 'CERTIFICATE_ID' - sent to statistics");
     }
 
     @Test
