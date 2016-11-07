@@ -41,7 +41,7 @@ public final class ArendeConverter {
         Marshaller marshaller = jaxbContext.createMarshaller();
         StringWriter stringWriter = new StringWriter();
         marshaller.marshal(objectFactory.createSendMessageToCare(sendMessageToCareType), stringWriter);
-        return stringWriter.toString().replaceAll("[\\n\\t ]", "");
+        return stringWriter.toString().replaceAll("[\\n\\t]", "");
     }
 
     public static Arende convertSendMessageToCare(SendMessageToCareType sendMessageToCareType) throws JAXBException {

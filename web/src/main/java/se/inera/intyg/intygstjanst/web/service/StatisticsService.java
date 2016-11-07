@@ -26,4 +26,6 @@ public interface StatisticsService {
     boolean created(String certificateXml, String certificateId, String certificateType, String careUnitId);
 
     boolean revoked(Certificate certificate);
+
+    boolean messageSent(String xml, String certificateId, String topic);
 }

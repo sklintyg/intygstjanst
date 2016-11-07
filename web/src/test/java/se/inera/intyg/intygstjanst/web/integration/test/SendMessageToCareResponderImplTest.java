@@ -28,6 +28,7 @@ import se.inera.intyg.intygstjanst.web.integration.SendMessageToCareResponderImp
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator;
 import se.inera.intyg.intygstjanst.web.service.ArendeService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.*;
 import se.riv.clinicalprocess.healthcond.certificate.v2.*;
 
@@ -48,6 +49,9 @@ public class SendMessageToCareResponderImplTest {
     @Mock
     private MonitoringLogService logService;
 
+    @Mock
+    private StatisticsService statisticsService;
+
     @InjectMocks
     private SendMessageToCareResponderImpl responder;
 
@@ -59,6 +63,7 @@ public class SendMessageToCareResponderImplTest {
         SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, buildSendMessageToCareType());
         assertEquals(ResultCodeType.OK, responseType.getResult().getResultCode());
         verify(fwdResponder).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
+        verify(statisticsService, times(1)).messageSent(anyString(), anyString(), anyString());
         verify(sendMessageToCareService).processIncomingMessage((any(Arende.class)));
         verify(logService).logSendMessageToCareReceived(anyString(), anyString());
     }
@@ -73,6 +78,7 @@ public class SendMessageToCareResponderImplTest {
         assertEquals(ResultCodeType.INFO, responseType.getResult().getResultCode());
         assertEquals(clientInfoText, responseType.getResult().getResultText());
         verify(fwdResponder).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
+        verify(statisticsService, times(1)).messageSent(anyString(), anyString(), anyString());
         verify(sendMessageToCareService).processIncomingMessage((any(Arende.class)));
         verify(logService).logSendMessageToCareReceived(anyString(), anyString());
     }
@@ -86,6 +92,7 @@ public class SendMessageToCareResponderImplTest {
         assertEquals(ErrorIdType.VALIDATION_ERROR, responseType.getResult().getErrorId());
         assertEquals("Validation of SendMessageToCareType failed for message with meddelandeid 4: [fel]", responseType.getResult().getResultText());
         verify(fwdResponder, never()).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
+        verify(statisticsService, times(0)).messageSent(anyString(), anyString(), anyString());
         verify(sendMessageToCareService, never()).processIncomingMessage((any(Arende.class)));
         verify(logService, never()).logSendMessageToCareReceived(anyString(), anyString());
     }
@@ -103,6 +110,7 @@ public class SendMessageToCareResponderImplTest {
         assertEquals(clientErrorId, responseType.getResult().getErrorId());
         assertEquals(clientErrorText, responseType.getResult().getResultText());
         verify(fwdResponder, times(1)).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
+        verify(statisticsService, times(0)).messageSent(anyString(), anyString(), anyString());
         verify(sendMessageToCareService, never()).processIncomingMessage((any(Arende.class)));
         verify(logService, never()).logSendMessageToCareReceived(anyString(), anyString());
     }
@@ -116,6 +124,7 @@ public class SendMessageToCareResponderImplTest {
         SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, buildSendMessageToCareType());
         assertEquals(ResultCodeType.OK, responseType.getResult().getResultCode());
         verify(fwdResponder).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
+        verify(statisticsService, times(1)).messageSent(anyString(), anyString(), anyString());
         verify(sendMessageToCareService).processIncomingMessage((any(Arende.class)));
         verify(logService).logSendMessageToCareReceived(anyString(), anyString());
     }

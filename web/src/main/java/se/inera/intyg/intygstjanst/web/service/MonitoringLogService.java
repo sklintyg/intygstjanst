@@ -33,6 +33,7 @@ public interface MonitoringLogService {
     void logConsentRevoked(Personnummer citizenId);
     void logStatisticsSent(String certificateId, String certificateType, String careUnit);
     void logStatisticsRevoked(String certificateId, String certificateType, String careUnit);
+    void logStatisticsMessageSent(String certificateId, String topic);
     void logSendMessageToCareReceived(String messageId, String careUnit);
     void logSendMessageToRecipient(String messageId, String recipient);
 }

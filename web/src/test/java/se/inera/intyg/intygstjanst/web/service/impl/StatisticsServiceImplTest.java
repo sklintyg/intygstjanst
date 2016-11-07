@@ -20,13 +20,21 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import javax.jms.*;
+import javax.jms.JMSException;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -36,6 +44,8 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v2.IntygId;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StatisticsServiceImplTest {
@@ -106,5 +116,25 @@ public class StatisticsServiceImplTest {
         captor.getValue().createMessage(session);
         verify(message).setStringProperty("action", "revoked");
         verify(message).setStringProperty("certificate-id", "The id");
+    }
+
+    @Test
+    public void serviceSendsDocumentAndIdForMessageSent() throws Exception {
+        final String messageBody = "Message body";
+        final String certificateId = "Certificate-id";
+
+        org.springframework.test.util.ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
+        ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
+
+        TextMessage message = mock(TextMessage.class);
+        Session session = mock(Session.class);
+        when(session.createTextMessage(messageBody)).thenReturn(message);
+
+        serviceImpl.messageSent(messageBody, certificateId, "topic");
+
+        verify(template, only()).send(captor.capture());
+        captor.getValue().createMessage(session);
+        verify(message).setStringProperty("action", "message-sent");
+        verify(message).setStringProperty("certificate-id", "Certificate-id");
     }
 }

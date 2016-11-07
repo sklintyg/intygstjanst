@@ -26,12 +26,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import se.inera.intyg.intygstyper.fkparent.support.ResultTypeUtil;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator;
 import se.inera.intyg.intygstjanst.web.service.ArendeService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.*;
+import se.inera.intyg.intygstjanst.web.service.StatisticsService;
+import se.inera.intyg.intygstyper.fkparent.support.ResultTypeUtil;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
 
@@ -44,6 +48,9 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
 
     @Autowired
     private ArendeService arendeService;
+
+    @Autowired
+    protected StatisticsService statisticsService;
 
     @Autowired
     private SendMessageToCareValidator validator;
@@ -69,7 +76,9 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
         if (response.getResult().getResultCode() != ResultCodeType.ERROR) {
             logService.logSendMessageToCareReceived(parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());
             try {
-                arendeService.processIncomingMessage(ArendeConverter.convertSendMessageToCare(parameters));
+                Arende arende = ArendeConverter.convertSendMessageToCare(parameters);
+                statisticsService.messageSent(arende.getMeddelande(), arende.getIntygsId(), arende.getAmne());
+                arendeService.processIncomingMessage(arende);
             } catch (Exception e) {
                 LOGGER.error("Could not save information about request of type SendMessageToCareType with meddelande id "
                         + parameters.getMeddelandeId() + ": " + e.getMessage());
