@@ -51,7 +51,7 @@ stage('tag and upload') {
     }
 }
 
-stage('deployit') {
+stage('deploy test-IT') {
     node {
         util.run {
             ansiblePlaybook extraVars: [version: buildVersion, ansible_ssh_port: "22", deploy_from_repo: "false"],  \
