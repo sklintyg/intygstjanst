@@ -230,7 +230,9 @@
                     <ns3:displayName>Konflikthantering</ns3:displayName>
                 </ns3:cv>
             </ns4:delsvar>
-            <ns4:delsvar id="40.2">Det är alltid bra</ns4:delsvar>
+        </ns4:svar>
+        <ns4:svar id="44">
+            <ns4:delsvar id="44.1">Det är alltid bra</ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="25">
             <ns4:delsvar id="25.1">Övrigt står här</ns4:delsvar>
