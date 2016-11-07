@@ -10,11 +10,11 @@ ext {
     activeMqVersion = "5.13.4"
     geronimoJmsVersion = "1.1.1"
     jadiraUserTypeVersion = "5.0.0.GA"
-    servletApiVersion = "2.5"
     jpaHibernateVersion = "1.0.0.Final"
     jsonSchemaValidatorVersion = "2.8.0"
     liquibaseVersion = "3.3.5"
     restassuredVersion = "2.8.0"
+    servletApiVersion = "2.5"
     springDataVersion = "1.9.0.RELEASE"
     springVersion = "4.2.2.RELEASE"
     stAntlr4Version = "4.0.8"
@@ -80,7 +80,7 @@ apply from: file("codequality.gradle")
 buildscript {
     dependencies {
         classpath 'se.inera.intyg:gradle-intyg-plugin:1.0.+'
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.+"
+        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.+'
         classpath 'org.ajoberstar:gradle-git:1.+'
         classpath 'org.akhikhl.gretty:gretty:+'
     }
