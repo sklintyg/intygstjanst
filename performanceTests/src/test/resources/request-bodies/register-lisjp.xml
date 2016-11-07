@@ -209,7 +209,6 @@
                   <ns3:codeSystem>KV_FKMU_0004</ns3:codeSystem>
                 </ns3:cv>
               </delsvar>
-              <delsvar id="40.2">Beskrivning övriga åtgärder</delsvar>
             </svar>
             <svar id="40">
               <instans>2</instans>
@@ -219,7 +218,9 @@
                   <ns3:codeSystem>KV_FKMU_0004</ns3:codeSystem>
                 </ns3:cv>
               </delsvar>
-              <delsvar id="40.2">Jobbar bra om man inte stör honom</delsvar>
+            </svar>
+            <svar id="44">
+              <delsvar id="44.1">Jobbar bra om man inte stör honom</delsvar>
             </svar>
           </ns2:intyg>
         </ns2:RegisterCertificate>
