@@ -55,9 +55,9 @@ stage('deploy test-IT') {
     node {
         util.run {
             ansiblePlaybook extraVars: [version: buildVersion, ansible_ssh_port: "22", deploy_from_repo: "false"],  \
-                 installation: 'ansible-yum', inventory: 'ansible/hosts_test_minaintyg', playbook: 'intygstjanst/ansible/deploy.yml'
+                 installation: 'ansible-yum', inventory: 'ansible/hosts_test_minaintyg', playbook: 'ansible/deploy.yml'
             ansiblePlaybook extraVars: [version: buildVersion, ansible_ssh_port: "22", deploy_from_repo: "false"],  \
-                 installation: 'ansible-yum', inventory: 'ansible/hosts_test_webcert', playbook: 'intygstjanst/ansible/deploy.yml'
+                 installation: 'ansible-yum', inventory: 'ansible/hosts_test_webcert', playbook: 'ansible/deploy.yml'
         }
         
     }
