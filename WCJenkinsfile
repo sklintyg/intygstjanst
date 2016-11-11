@@ -1,0 +1,30 @@
+#!groovy
+
+def baseVersion = "3.1."
+
+stage('checkout') {
+    node {
+        git url: "https://github.com/sklintyg/intygstjanst.git", branch: GIT_BRANCH
+        util.run { checkout scm }
+    }
+}
+
+stage('deploy test-IT') {
+    node {
+        withEnv(["BASE_VERSION=${baseVersion}"]) {
+            def revision = sh (
+                script: 'curl -ks https://build-inera.nordicmedtest.se/nexus/service/local/repositories/releases/content/se/inera/intyg/intygstjanst/intygstjanst-web/maven-metadata.xml | sed -nr "s/^.*version>${BASE_VERSION}([0-9]+)<.*$/\\1/p" | sort -nr | head -n 1',
+                returnStdout: true
+            ).trim()
+
+            util.run {
+                ansiblePlaybook extraVars: [version: buildVersion, ansible_ssh_port: "22", deploy_from_repo: "false"],  \
+                     installation: 'ansible-yum', inventory: 'ansible/hosts_test_webcert', playbook: 'ansible/deploy.yml'
+            }
+        }
+    }
+}
+
+stage('propagate') {
+    build job: 'intyg-webcert-pipeline', wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
+}
