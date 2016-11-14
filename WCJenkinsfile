@@ -20,6 +20,7 @@ stage('deploy test-IT') {
             util.run {
                 ansiblePlaybook extraVars: [version: "${baseVersion}${revision}", ansible_ssh_port: "22", deploy_from_repo: "true"],  \
                      installation: 'ansible-yum', inventory: 'ansible/hosts_test_webcert', playbook: 'ansible/deploy.yml'
+                util.waitForServer('https://webcert.inera.nordicmedtest.se/inera-certificate/version.jsp')
             }
         }
     }
