@@ -134,7 +134,6 @@
             <ns4:delsvar id="5.1">Bakgrund</ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="6">
-            <ns4:instans>1</ns4:instans>
             <ns4:delsvar id="6.2">
                 <ns3:cv>
                     <ns3:code>J22</ns3:code>
