@@ -22,7 +22,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import se.inera.intyg.common.support.integration.module.exception.*;
+import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -50,8 +51,6 @@ public interface CertificateService {
      * @param toDate
      *            optional to date filter
      * @return list of matching certificates or empty list if no such certificates can be found
-     * @throws MissingConsentException
-     *             if the patient has not given consent for accessing her certificates
      */
     List<Certificate> listCertificatesForCitizen(Personnummer civicRegistrationNumber, List<String> certificateTypes, LocalDate fromDate,
             LocalDate toDate);
@@ -76,7 +75,6 @@ public interface CertificateService {
      * @param certificateId
      *            the certificate ID
      * @return the certificate information or null if the requested certificate does not exist
-     * @throws MissingConsentException
      *             if the patient has not given consent for accessing her certificates
      * @throws InvalidCertificateException
      *             if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
@@ -121,7 +119,7 @@ public interface CertificateService {
 
     void setCertificateState(Personnummer civicRegistrationNumber, String certificateId, String target, CertificateState state,
             LocalDateTime timestamp)
-            throws InvalidCertificateException;
+                    throws InvalidCertificateException;
 
     void setCertificateState(String certificateId, String target, CertificateState state, LocalDateTime timestamp)
             throws InvalidCertificateException;
@@ -141,5 +139,7 @@ public interface CertificateService {
      */
     Certificate revokeCertificate(Personnummer civicRegistrationNumber, String certificateId)
             throws InvalidCertificateException, CertificateRevokedException;
+
+    void revokeCertificateForStatistics(Certificate certificate);
 
 }

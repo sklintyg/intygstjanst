@@ -44,8 +44,6 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.IntygId;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StatisticsServiceImplTest {
@@ -67,7 +65,7 @@ public class StatisticsServiceImplTest {
 
     @Test
     public void disabledServiceDoesNothingOnRevoked() {
-        serviceImpl.revoked(null);
+        serviceImpl.revoked(null,null,null,null);
         verify(template, never()).send(any(MessageCreator.class));
     }
 
@@ -110,7 +108,7 @@ public class StatisticsServiceImplTest {
         Session session = mock(Session.class);
         when(session.createTextMessage(xmlBody)).thenReturn(message);
 
-        serviceImpl.revoked(certificate);
+        serviceImpl.revoked(certificate.getOriginalCertificate().getDocument(), certificate.getId(), certificate.getType(), "unit");
 
         verify(template, only()).send(captor.capture());
         captor.getValue().createMessage(session);

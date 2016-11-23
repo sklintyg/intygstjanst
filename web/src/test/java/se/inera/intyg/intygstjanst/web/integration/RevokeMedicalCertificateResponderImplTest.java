@@ -21,18 +21,23 @@ package se.inera.intyg.intygstjanst.web.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 
-import javax.xml.bind.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
@@ -49,7 +54,11 @@ import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
-import se.inera.intyg.intygstjanst.web.service.*;
+import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
+import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RevokeMedicalCertificateResponderImplTest {
@@ -106,7 +115,7 @@ public class RevokeMedicalCertificateResponderImplTest {
         verify(certificateSenderService).sendCertificateRevocation(certificate, TARGET, revokeRequest().getRevoke());
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
-        Mockito.verify(statisticsService, Mockito.only()).revoked(certificate);
+        Mockito.verify(certificateService, Mockito.times(1)).revokeCertificateForStatistics(certificate);
         Mockito.verify(sjukfallCertificateService, Mockito.only()).revoked(certificate);
     }
 
@@ -136,7 +145,7 @@ public class RevokeMedicalCertificateResponderImplTest {
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
-        Mockito.verify(statisticsService, Mockito.only()).revoked(certificate);
+        Mockito.verify(certificateService, times(1)).revokeCertificateForStatistics(certificate);
         Mockito.verify(sjukfallCertificateService, Mockito.only()).revoked(certificate);
     }
 

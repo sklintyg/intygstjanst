@@ -39,7 +39,11 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
 import se.inera.intyg.intygstjanst.web.integration.validator.RevokeRequestValidator;
-import se.inera.intyg.intygstjanst.web.service.*;
+import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
+import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
 public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCertificateResponderInterface {
 
@@ -80,7 +84,8 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
                     .distinct()
                     .forEach(recipient -> senderService.sendCertificateRevocation(certificate, recipient, request.getRevoke()));
 
-            statisticsService.revoked(certificate);
+            certificateService.revokeCertificateForStatistics(certificate);
+
             sjukfallCertificateService.revoked(certificate);
 
             monitoringLogService.logCertificateRevoked(certificate.getId(), certificate.getType(), certificate.getCareUnitId());

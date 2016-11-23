@@ -33,7 +33,6 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
@@ -70,12 +69,12 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public boolean revoked(Certificate certificate) {
+    public boolean revoked(String certificateXml, String certificateId, String certificateType, String careUnitId) {
         boolean rc = true;
         if (enabled) {
-             rc = doSend(REVOKED, certificate.getOriginalCertificate().getDocument(), certificate.getId());
+            rc = doSend(REVOKED, certificateXml, certificateId);
             if (rc) {
-                monitoringLogService.logStatisticsRevoked(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
+                monitoringLogService.logStatisticsRevoked(certificateId, certificateType, careUnitId);
             }
         }
         return rc;
