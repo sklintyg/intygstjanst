@@ -7,12 +7,12 @@ applicationDefaultJvmArgs = ["-Dfile.encoding=utf8"]
 
 startScripts {
     doLast {
-        def intygstjanstPersistenceDependency = configurations.runtime.filter { it.name.startsWith("intygstjanst-persistence") }.singleFile.name
+        def persistenceDependency = configurations.runtime.filter { it.name.startsWith("intygstjanst-persistence") }.singleFile.name
 
         unixScript.text = unixScript.text.replaceAll(/for s in \"\$\{@\}\"/,
-            'for s in --driver=com.mysql.jdbc.Driver --classpath=lib/' + webcertPersistenceDependency + ' --changeLogFile=changelog/changelog.xml "\\${@}"')
+            'for s in --driver=com.mysql.jdbc.Driver --classpath=lib/' + persistenceDependency + ' --changeLogFile=changelog/changelog.xml "\\${@}"')
         windowsScript.text = windowsScript.text.replaceAll(/%CMD_LINE_ARGS%/,
-            "--driver=com.mysql.jdbc.Driver --classpath=lib/${intygstjanstPersistenceDependency} --changeLogFile=changelog/changelog.xml %CMD_LINE_ARGS%")
+            "--driver=com.mysql.jdbc.Driver --classpath=lib/${persistenceDependency} --changeLogFile=changelog/changelog.xml %CMD_LINE_ARGS%")
     }
 }
 
