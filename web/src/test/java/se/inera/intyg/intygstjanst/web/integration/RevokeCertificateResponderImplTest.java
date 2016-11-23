@@ -24,9 +24,15 @@ import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
-import se.inera.intyg.intygstjanst.web.service.*;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
+import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
-import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.*;
+import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
@@ -78,7 +84,7 @@ public class RevokeCertificateResponderImplTest {
 
         assertEquals(ResultCodeType.OK, resp.getResult().getResultCode());
         verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
-        verify(statisticsService, times(1)).revoked(any());
+        verify(certificateService, times(1)).revokeCertificateForStatistics(any());
         verify(sjukfallCertificateService, times(1)).revoked(any());
         verify(monitoringService, times(1)).logCertificateRevoked(eq(certificateId), anyString(), any());
         verify(revokeInterface, times(2)).revokeCertificate(eq(logicalAddress), any());
@@ -103,7 +109,7 @@ public class RevokeCertificateResponderImplTest {
 
         assertEquals(ResultCodeType.OK, resp.getResult().getResultCode());
         verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
-        verify(statisticsService, times(1)).revoked(any());
+        verify(certificateService, times(1)).revokeCertificateForStatistics(any());
         verify(sjukfallCertificateService, times(1)).revoked(any());
         verify(monitoringService, times(1)).logCertificateRevoked(eq(certificateId), anyString(), any());
         verify(revokeInterface, times(0)).revokeCertificate(eq(logicalAddress), any());
@@ -129,7 +135,7 @@ public class RevokeCertificateResponderImplTest {
         assertEquals(ResultCodeType.ERROR, resp.getResult().getResultCode());
         assertEquals(ErrorIdType.APPLICATION_ERROR, resp.getResult().getErrorId());
         verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
-        verify(statisticsService, times(0)).revoked(any());
+        verify(certificateService, times(0)).revokeCertificateForStatistics(any());
         verify(sjukfallCertificateService, times(0)).revoked(any());
         verify(monitoringService, times(0)).logCertificateRevoked(eq(certificateId), anyString(), any());
         verify(revokeInterface, times(0)).revokeCertificate(eq(logicalAddress), any());
@@ -156,7 +162,7 @@ public class RevokeCertificateResponderImplTest {
         assertNotNull(resp.getResult().getResultText());
         assertNotEquals("", resp.getResult().getResultText());
         verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
-        verify(statisticsService, times(0)).revoked(any());
+        verify(certificateService, times(0)).revokeCertificateForStatistics(any());
         verify(sjukfallCertificateService, times(0)).revoked(any());
         verify(monitoringService, times(0)).logCertificateRevoked(eq(certificateId), anyString(), any());
         verify(revokeInterface, times(0)).revokeCertificate(eq(logicalAddress), any());

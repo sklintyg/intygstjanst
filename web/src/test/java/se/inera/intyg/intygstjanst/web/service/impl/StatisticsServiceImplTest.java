@@ -65,7 +65,7 @@ public class StatisticsServiceImplTest {
 
     @Test
     public void disabledServiceDoesNothingOnRevoked() {
-        serviceImpl.revoked(null);
+        serviceImpl.revoked(null,null,null,null);
         verify(template, never()).send(any(MessageCreator.class));
     }
 
@@ -108,7 +108,7 @@ public class StatisticsServiceImplTest {
         Session session = mock(Session.class);
         when(session.createTextMessage(xmlBody)).thenReturn(message);
 
-        serviceImpl.revoked(certificate);
+        serviceImpl.revoked(certificate.getOriginalCertificate().getDocument(), certificate.getId(), certificate.getType(), "unit");
 
         verify(template, only()).send(captor.capture());
         captor.getValue().createMessage(session);

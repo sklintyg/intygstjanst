@@ -34,18 +34,31 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Throwables;
 
 import se.inera.intyg.common.support.common.enumerations.PartKod;
-import se.inera.intyg.common.support.integration.module.exception.*;
+import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
+import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.common.support.modules.support.api.*;
+import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
+import se.inera.intyg.common.support.modules.support.api.ModuleApi;
+import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
-import se.inera.intyg.intygstjanst.persistence.model.dao.*;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
-import se.inera.intyg.intygstjanst.web.service.*;
+import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.ConsentService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
+import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
 /**
  * @author andreaskaltenbach
@@ -237,6 +250,21 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             LOG.error("Module not found for certificate of type {}", certificateHolder.getType());
             throw Throwables.propagate(e);
         }
+    }
+
+    @Override
+    public void revokeCertificateForStatistics(Certificate certificate) {
+        String certificateXml;
+        try {
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
+            certificateXml = moduleApi.transformToStatisticsService(certificate.getOriginalCertificate().getDocument());
+        } catch (ModuleNotFoundException | ModuleException e) {
+            LOG.error("Module not found for certificate of type {}", certificate.getType());
+            throw Throwables.propagate(e);
+        }
+        statisticsService.revoked(certificateXml, certificate.getId(), certificate.getType(),
+                certificate.getCareUnitId());
+
     }
 
     @VisibleForTesting

@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.utils.v2.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
@@ -38,7 +37,7 @@ import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
-import se.inera.intyg.intygstjanst.web.service.StatisticsService;
+import se.inera.intyg.intygstyper.fkparent.support.ResultTypeUtil;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateType;
@@ -54,9 +53,6 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
 
     @Autowired
     private CertificateService certificateService;
-
-    @Autowired
-    private StatisticsService statisticsService;
 
     @Autowired
     private SjukfallCertificateService sjukfallCertificateService;
@@ -111,7 +107,7 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
                     }
                 });
 
-        statisticsService.revoked(certificate);
+        certificateService.revokeCertificateForStatistics(certificate);
         sjukfallCertificateService.revoked(certificate);
     }
 }
