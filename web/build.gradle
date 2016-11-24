@@ -36,7 +36,7 @@ dependencies {
 
     compile "se.inera.intyg.insuranceprocess.healthreporting:intyg-insuranceprocess-healthreporting-schemas:${intygInsuranceprocessSchemasVersion}"
 
-    compile "se.inera.intyg.common:hsa-integration:${commonVersion}"
+    compile "se.inera.intyg.infra:hsa-integration:${infraVersion}"
 
     compile "se.inera.intyg.intygstyper:fk7263:${typerVersion}"
     compile "se.inera.intyg.intygstyper:ts-bas:${typerVersion}"

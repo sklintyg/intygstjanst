@@ -24,13 +24,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.annotations.VisibleForTesting;
 
 import se.inera.intyg.common.support.common.enumerations.PartKod;
-import se.inera.intyg.common.support.common.util.StringUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
@@ -82,7 +82,7 @@ public class SendMessageToCareValidator {
 
     @VisibleForTesting
     void validateMeddelandeId(String meddelandeId, List<String> validationErrors) {
-        if (StringUtil.isNullOrEmpty(meddelandeId) || messageRepository.findByMeddelandeId(meddelandeId) != null) {
+        if (StringUtils.isEmpty(meddelandeId) || messageRepository.findByMeddelandeId(meddelandeId) != null) {
             validationErrors.add(ErrorCode.MEDDELANDE_ID_NOT_UNIQUE_ERROR.toString());
             validationErrors.add("Meddelande-id is not a GUID");
         }

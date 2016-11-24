@@ -47,7 +47,7 @@
       </jaxrs:serviceBeans>
     </jaxrs:server>
   </beans>
-  
+
   <beans profile="dev,testability-api">
         <jaxrs:server address="/revoke-certificate-stub">
             <jaxrs:serviceBeans>
