@@ -1,5 +1,4 @@
 ---
-# file: host_vars/intygstjanst-demo
 
 # Configuration repository
 environment_name: "demo"

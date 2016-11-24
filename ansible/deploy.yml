@@ -2,10 +2,8 @@
 # This playbook deploys Intygstjansten 
 
 - hosts: intygstjanst-tomcat
-  sudo: yes 
+  become: yes 
   vars: 
-    # repo - values: snapshots or releases
-    repo: releases
     version: 3.0.0-b42
     config_version: master
 

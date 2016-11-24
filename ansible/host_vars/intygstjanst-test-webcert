@@ -1,5 +1,4 @@
 ---
-# file: host_vars/intygstjanst-test-webcert
 
 # Configuration repository
 environment_name: "test"

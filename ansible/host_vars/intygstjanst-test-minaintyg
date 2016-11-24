@@ -1,5 +1,4 @@
 ---
-# file: host_vars/intygstjanst-test-minaintyg
 
 # Configuration repository
 environment_name: "test"
