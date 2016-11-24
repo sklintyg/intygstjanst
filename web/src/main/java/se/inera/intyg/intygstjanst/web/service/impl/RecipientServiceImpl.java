@@ -96,7 +96,7 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         HashMap<String, RecipientBuilder> recipientMap = new HashMap<>();
 
         for (String key : recipients.stringPropertyNames()) {
