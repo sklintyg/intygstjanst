@@ -55,3 +55,7 @@ stage('propagate') {
     build job: 'intyg-deploy-it-webcert', wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
     build job: 'intyg-deploy-it-minaintyg', wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
 }
+
+stage('notify') {
+    notifySuccess
+}
