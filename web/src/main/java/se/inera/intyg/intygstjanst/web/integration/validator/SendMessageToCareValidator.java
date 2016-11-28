@@ -159,8 +159,8 @@ public class SendMessageToCareValidator {
 
     @VisibleForTesting
     void validatePaminnelse(SendMessageToCareType message, List<String> validationErrors) {
-        boolean paminnelseSubjectMissing = (!message.getAmne().getCode().equals(Amneskod.PAMINN.toString())) && (message.getPaminnelseMeddelandeId() != null);
-        boolean paminnelseIdMissing = message.getAmne().getCode().equals(Amneskod.PAMINN.toString()) && (message.getPaminnelseMeddelandeId() == null);
+        boolean paminnelseSubjectMissing = !message.getAmne().getCode().equals(Amneskod.PAMINN.toString()) && message.getPaminnelseMeddelandeId() != null;
+        boolean paminnelseIdMissing = message.getAmne().getCode().equals(Amneskod.PAMINN.toString()) && message.getPaminnelseMeddelandeId() == null;
         if (paminnelseSubjectMissing || paminnelseIdMissing) {
             validationErrors.add(ErrorCode.PAMINNELSE_ID_INCONSISTENCY_ERROR.toString());
         }
@@ -176,7 +176,7 @@ public class SendMessageToCareValidator {
     }
 
     private boolean isPaminnelse(SendMessageToCareType sendMessageToCareType) {
-        return sendMessageToCareType.getAmne().getCode().equals(Amneskod.PAMINN.toString()) && (sendMessageToCareType.getPaminnelseMeddelandeId() != null);
+        return sendMessageToCareType.getAmne().getCode().equals(Amneskod.PAMINN.toString()) && sendMessageToCareType.getPaminnelseMeddelandeId() != null;
     }
 
     private boolean messageIsAnAnswer(SendMessageToCareType sendMessageToCareType) {

@@ -62,6 +62,7 @@ public class OriginalCertificate {
     private Certificate certificate;
 
     public OriginalCertificate() {
+        // default constructor for hibernate
     }
 
     public OriginalCertificate(LocalDateTime received, String document, Certificate certificate) {

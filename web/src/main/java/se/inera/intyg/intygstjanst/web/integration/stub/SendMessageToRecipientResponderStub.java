@@ -56,7 +56,7 @@ public class SendMessageToRecipientResponderStub implements SendMessageToRecipie
             response.setResult(resultType);
             return response;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error: {}", e);
             throw e;
         }
         response.setResult(resultType);

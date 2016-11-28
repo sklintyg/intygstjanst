@@ -56,6 +56,7 @@ public class CertificateStateHistoryEntry {
     };
 
     public CertificateStateHistoryEntry() {
+        // default constructor for hibernate
     }
 
     public CertificateStateHistoryEntry(String target, CertificateState state, LocalDateTime timestamp) {

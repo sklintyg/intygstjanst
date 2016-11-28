@@ -36,6 +36,7 @@ public class Consent {
     private String civicRegistrationNumber;
 
     public Consent() {
+        // default constructor for hibernate
     }
 
     public Consent(Personnummer civicRegistrationNumber) {

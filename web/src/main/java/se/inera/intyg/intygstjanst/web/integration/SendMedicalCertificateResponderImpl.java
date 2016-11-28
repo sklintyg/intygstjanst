@@ -117,7 +117,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             return response;
         } catch (ServerException ex) {
             Throwable cause = ex.getCause();
-            String message = (cause instanceof ExternalServiceCallException) ? cause.getMessage() : ex.getMessage();
+            String message = cause instanceof ExternalServiceCallException ? cause.getMessage() : ex.getMessage();
             // return ERROR if certificate couldn't be sent
             LOGGER.error("Certificate '{}' couldn't be sent: {}", safeGetCertificateId(request), message);
             response.setResult(ResultOfCallUtil.applicationErrorResult("Certificate couldn't be sent to recipient"));

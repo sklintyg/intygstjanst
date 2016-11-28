@@ -92,11 +92,7 @@ public class GetCertificateResponderImplTest {
         CertificateHolder holder = new CertificateHolder();
         holder.setDeletedByCareGiver(deletedByCareGiver);
         holder.setOriginalCertificate("<registerCertificateType xmlns:ns2=\"urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:2\"><ns2:intyg></ns2:intyg></registerCertificateType>");
-        CertificateStateHolder certificateState = new CertificateStateHolder();
-        certificateState.setState(CertificateState.SENT);
-        certificateState.setTarget("FK");
-        certificateState.setTimestamp(TIMESTAMP);
-        holder.setCertificateStates(Arrays.asList(certificateState));
+        holder.setCertificateStates(Arrays.asList(new CertificateStateHolder("FK", CertificateState.SENT, TIMESTAMP)));
         return holder;
     }
 }

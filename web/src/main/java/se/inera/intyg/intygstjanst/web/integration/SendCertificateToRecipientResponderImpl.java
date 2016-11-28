@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import se.inera.intyg.intygstyper.fkparent.support.ResultTypeUtil;
 import se.inera.intyg.common.support.common.enumerations.PartKod;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -33,6 +32,7 @@ import se.inera.intyg.common.support.modules.support.api.exception.ExternalServi
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstyper.fkparent.support.ResultTypeUtil;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v1.*;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
 
@@ -82,7 +82,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
                     String.format("Unknown recipient ID: %s", mottagareId)));
         } catch (ServerException ex) {
             Throwable cause = ex.getCause();
-            String message = (cause instanceof ExternalServiceCallException) ? cause.getMessage() : ex.getMessage();
+            String message = cause instanceof ExternalServiceCallException ? cause.getMessage() : ex.getMessage();
             // return ERROR if certificate couldn't be sent
             LOGGER.error("Certificate '{}' couldn't be sent to '{}': {}", intygsId, mottagareId, message);
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.TECHNICAL_ERROR,
