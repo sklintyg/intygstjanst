@@ -57,5 +57,7 @@ stage('propagate') {
 }
 
 stage('notify') {
-    notifySuccess
+    node {
+        util.notifySuccess()
+    }
 }
