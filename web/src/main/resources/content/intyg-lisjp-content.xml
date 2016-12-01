@@ -100,7 +100,7 @@
             <ns4:delsvar id="1.3">Annat underlag</ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="28">
-            <instans>1</instans>
+            <ns4:instans>1</ns4:instans>
             <ns4:delsvar id="28.1">
                 <ns3:cv>
                     <ns3:code>NUVARANDE_ARBETE</ns3:code>
@@ -224,7 +224,7 @@
             </ns4:delsvar>
         </ns4:svar>
         <ns4:svar id="40">
-            <instans>1</instans>
+            <ns4:instans>1</ns4:instans>
             <ns4:delsvar id="40.1">
                 <ns3:cv>
                     <ns3:code>KONFLIKTHANTERING</ns3:code>
