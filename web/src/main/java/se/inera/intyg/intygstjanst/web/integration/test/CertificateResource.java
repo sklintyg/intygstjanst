@@ -203,7 +203,7 @@ public class CertificateResource {
                     .replace("CAREUNIT_NAME", certificateHolder.getCareUnitName())
                     .replace("CAREGIVER_ID", certificateHolder.getCareGiverId())
                     .replace("DOCTOR_NAME", certificateHolder.getSigningDoctorName())
-                    .replace("SIGNED_DATE", certificateHolder.getSignedDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                    .replace("SIGNED_DATE", certificateHolder.getSignedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
         }
     }
 
