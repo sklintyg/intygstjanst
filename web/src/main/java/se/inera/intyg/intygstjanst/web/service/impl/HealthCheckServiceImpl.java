@@ -121,7 +121,7 @@ public class HealthCheckServiceImpl implements HealthCheckService {
         return new Status(stopWatch.getTime(), ok);
     }
 
-    public final class Status {
+    public static final class Status {
         private final long measurement;
         private final boolean ok;
         private Map<String, String> additionalValues = null;

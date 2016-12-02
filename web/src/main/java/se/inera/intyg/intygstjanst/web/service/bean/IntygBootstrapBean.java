@@ -140,7 +140,7 @@ public class IntygBootstrapBean {
         }
     }
 
-    private class ResourceFilenameComparator implements Comparator<Resource> {
+    private static class ResourceFilenameComparator implements Comparator<Resource> {
         @Override
         public int compare(Resource arg0, Resource arg1) {
             String[] firstObjectsStrings = arg0.getFilename().split("-");
