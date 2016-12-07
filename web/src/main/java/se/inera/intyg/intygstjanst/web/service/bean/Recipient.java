@@ -22,7 +22,7 @@ package se.inera.intyg.intygstjanst.web.service.bean;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notEmpty;
 
-import liquibase.util.StringUtils;
+import com.google.common.base.Joiner;
 
 import java.util.Arrays;
 import java.util.List;
@@ -101,7 +101,7 @@ public class Recipient {
         return "logicalAddress: " + logicalAddress
                 + " name: " + name
                 + " id: " + id
-                + " certificateTypes: " + StringUtils.join(certificateTypes, SEPARATOR);
+                + " certificateTypes: " + Joiner.on(SEPARATOR).join(certificateTypes);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class Recipient {
         result = prime * result + id.hashCode();
         result = prime * result + logicalAddress.hashCode();
         result = prime * result + name.hashCode();
-        result = prime * result + StringUtils.join(certificateTypes, SEPARATOR).hashCode();
+        result = prime * result + Joiner.on(SEPARATOR).join(certificateTypes).hashCode();
 
         return result;
     }
@@ -135,8 +135,8 @@ public class Recipient {
         } else if (!name.equals(other.name)) {
             return false;
         } else {
-            String one = StringUtils.join(certificateTypes, SEPARATOR);
-            String two = StringUtils.join(other.certificateTypes, SEPARATOR);
+            String one = Joiner.on(SEPARATOR).join(certificateTypes);
+            String two = Joiner.on(SEPARATOR).join(other.certificateTypes);
             return one.equals(two);
         }
     }

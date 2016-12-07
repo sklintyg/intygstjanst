@@ -19,7 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service.builder;
 
-import liquibase.util.StringUtils;
+import com.google.common.base.Joiner;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
 import java.util.List;
@@ -77,7 +77,7 @@ public class RecipientBuilder {
     }
 
     public void setCertificateTypes(List<String> certificateTypes) {
-        this.certificateTypes = StringUtils.join(certificateTypes, Recipient.SEPARATOR);
+        this.certificateTypes = Joiner.on(Recipient.SEPARATOR).join(certificateTypes);
     }
 
 }
