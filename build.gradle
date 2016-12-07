@@ -5,7 +5,7 @@ ext {
 
     intygHealthcondRehabilitationSchemasVersion = "1.0.4"
     intygInsuranceprocessSchemasVersion = "1.0.4"
-    rivtaClinicalprocessSchemasVersion = "2.0.RC6.2"
+    rivtaClinicalprocessSchemasVersion = "2.0"
     rivtaItintegrationMonitoringSchemasVersion = "1.0.0.4"
 
     activeMqVersion = "5.13.4"
