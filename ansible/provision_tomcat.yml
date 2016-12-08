@@ -1,7 +1,8 @@
 ---
 # This playbook provisions the resources needed by tomcat hosts of intygstjansten 
 
-- hosts: intygstjanst-tomcat
+- hosts: tomcat
+  serial: 1
   become: yes 
   
   roles:

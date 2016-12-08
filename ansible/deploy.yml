@@ -1,10 +1,10 @@
 ---
 # This playbook deploys Intygstjansten 
 
-- hosts: intygstjanst-tomcat
+- hosts: tomcat
+  serial: 1
   become: yes 
   vars: 
-    version: 3.0.0-b42
     config_version: master
 
   roles:

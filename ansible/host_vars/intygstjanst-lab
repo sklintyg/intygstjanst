@@ -4,16 +4,5 @@
 environment_name: "lab"
 config_etc_folder: "{{ config_folder }}/{{ environment_name }}"
 
-# ActiveMQ configuration
-activemq_broker_url: "vm://localhost:61616"
-activemq_username: ""
-activemq_password: ""
-
 # Spring profiles
 profiles: test,it-fk-stub,it-ts-stub,testability-api,wc-hsa-stub,caching-enabled
-
-# Tomcat
-tomcat_service: tomcat-intygstjanst
-tomcat_home: "{{ inera_root }}/{{ tomcat_service }}"
-inera_tomcat_folder: "/var/lib/{{ tomcat_service }}"
-webapps_folder: "{{ inera_tomcat_folder }}/webapps"
