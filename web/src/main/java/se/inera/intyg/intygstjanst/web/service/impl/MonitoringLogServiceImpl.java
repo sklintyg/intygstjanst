@@ -128,7 +128,7 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
         SEND_MESSAGE_TO_CARE_RECEIVED("Message with id '{}', care unit recipient '{}' - was received and forwarded to its recipient."),
         SEND_MESSAGE_TO_RECIPIENT("Message with id '{}' sent to recipient '{}'");
 
-        private String msg;
+        private final String msg;
 
         MonitoringEvent(String msg) {
             this.msg = msg;

@@ -18,17 +18,18 @@
  */
 package se.inera.intyg.intygstjanst.web.service.converter;
 
-import org.junit.Test;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande;
-
-import java.time.LocalDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
+
+import java.time.LocalDateTime;
+
+import org.junit.Test;
+
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande;
 
 /**
  * Created by eriklupander on 2016-02-04.
@@ -80,6 +81,7 @@ public class CertificateToSjukfallCertificateConverterTest {
         assertEquals(NAME, sjukfallCertificate.getPatientName());
         assertEquals(PERSONNUMMER, sjukfallCertificate.getCivicRegistrationNumber());
 
+        assertEquals(4, sjukfallCertificate.getSjukfallCertificateWorkCapacity().size());
         assertEquals(START_DATE_100, sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(0).getFromDate());
         assertEquals(END_DATE_100, sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(0).getToDate());
         assertEquals(START_DATE_75, sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(1).getFromDate());
@@ -93,6 +95,33 @@ public class CertificateToSjukfallCertificateConverterTest {
         assertEquals(new Integer(75), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(1).getCapacityPercentage());
         assertEquals(new Integer(50), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(2).getCapacityPercentage());
         assertEquals(new Integer(25), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(3).getCapacityPercentage());
+    }
+
+    @Test
+    public void testConvertOnlyOneSjukfallCertificateWorkCapacity() {
+        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        when(utlatande.getNedsattMed75()).thenReturn(null);
+        when(utlatande.getNedsattMed50()).thenReturn(null);
+        when(utlatande.getNedsattMed25()).thenReturn(null);
+        SjukfallCertificate sjukfallCertificate = testee.convertFk7263(getFactoryInstance().buildCert(), utlatande);
+        assertEquals(CERT_ID, sjukfallCertificate.getId());
+        assertEquals(CERT_TYPE, sjukfallCertificate.getType());
+
+        assertEquals(CERT_SIGNING_DATETIME, sjukfallCertificate.getSigningDateTime());
+
+        assertEquals(CARE_GIVER_ID, sjukfallCertificate.getCareGiverId());
+        assertEquals(CARE_UNIT_ID, sjukfallCertificate.getCareUnitId());
+        assertEquals(CARE_UNIT_NAME, sjukfallCertificate.getCareUnitName());
+
+        assertEquals(DOC_ID, sjukfallCertificate.getSigningDoctorId());
+        assertEquals(DOC_NAME, sjukfallCertificate.getSigningDoctorName());
+        assertEquals(NAME, sjukfallCertificate.getPatientName());
+        assertEquals(PERSONNUMMER, sjukfallCertificate.getCivicRegistrationNumber());
+
+        assertEquals(1, sjukfallCertificate.getSjukfallCertificateWorkCapacity().size());
+        assertEquals(START_DATE_100, sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(0).getFromDate());
+        assertEquals(END_DATE_100, sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(0).getToDate());
+        assertEquals(new Integer(100), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(0).getCapacityPercentage());
     }
 
     @Test
@@ -131,11 +160,6 @@ public class CertificateToSjukfallCertificateConverterTest {
     @Test
     public void testTrimsIds() {
         Utlatande utlatande = getFactoryInstance().buildUtlatande();
-//        utlatande.getGrundData().getSkapadAv().setPersonId(" 19121212-1212 ");
-//        utlatande.getGrundData().getSkapadAv().getVardenhet().setEnhetsid(" enhet-1 ");
-//        utlatande.getGrundData().getSkapadAv().getVardenhet().getVardgivare().setVardgivarid(" vg-1 ");
-//        Personnummer pnr = new Personnummer(" 19121212-1212 ");
-//        utlatande.getGrundData().getPatient().setPersonId(pnr);
 
         SjukfallCertificate sjukfallCertificate = testee.convertFk7263(getFactoryInstance().buildCert(), utlatande);
         assertTrue(noTrimmableWhitespaces(sjukfallCertificate.getCareGiverId()));

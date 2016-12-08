@@ -19,25 +19,21 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-import javax.jms.JMSException;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import javax.jms.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
@@ -49,13 +45,13 @@ import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 public class StatisticsServiceImplTest {
 
     @Mock
-    private JmsTemplate template = mock(JmsTemplate.class);
+    private JmsTemplate template;
 
     @Mock
     private MonitoringLogService monitoringLogService;
 
     @InjectMocks
-    private StatisticsServiceImpl serviceImpl = new StatisticsServiceImpl();
+    private StatisticsServiceImpl serviceImpl;
 
     @Test
     public void disabledServiceDoesNothingOnCreated() {
@@ -73,26 +69,28 @@ public class StatisticsServiceImplTest {
     public void serviceSendsDocumentAndIdForCreate() throws JMSException {
         final String xml = "The document";
         final String id = "The id";
-        org.springframework.test.util.ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
+        ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
         ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
 
         TextMessage message = mock(TextMessage.class);
         Session session = mock(Session.class);
         when(session.createTextMessage(xml)).thenReturn(message);
 
-        serviceImpl.created(xml, id, "luse", "unit");
+        boolean created = serviceImpl.created(xml, id, "luse", "unit");
 
+        assertTrue(created);
         verify(template, only()).send(captor.capture());
         captor.getValue().createMessage(session);
         verify(message).setStringProperty("action", "created");
-        verify(message).setStringProperty("certificate-id", "The id");
+        verify(message).setStringProperty("certificate-id", id);
+        verify(monitoringLogService, only()).logStatisticsSent(id, "luse", "unit");
     }
 
     @Test
     public void serviceSendsDocumentAndIdForRevoke() throws Exception {
         final String type = "lisjp";
         final String xmlBody = "xml body";
-        org.springframework.test.util.ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
+        ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
         ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
         ModuleApi moduleApi = mock(ModuleApi.class);
         when(moduleApi.getUtlatandeFromXml(xmlBody)).thenReturn(mock(Utlatande.class));
@@ -108,12 +106,14 @@ public class StatisticsServiceImplTest {
         Session session = mock(Session.class);
         when(session.createTextMessage(xmlBody)).thenReturn(message);
 
-        serviceImpl.revoked(certificate.getOriginalCertificate().getDocument(), certificate.getId(), certificate.getType(), "unit");
+        boolean revoked = serviceImpl.revoked(certificate.getOriginalCertificate().getDocument(), certificate.getId(), certificate.getType(), "unit");
 
+        assertTrue(revoked);
         verify(template, only()).send(captor.capture());
         captor.getValue().createMessage(session);
         verify(message).setStringProperty("action", "revoked");
         verify(message).setStringProperty("certificate-id", "The id");
+        verify(monitoringLogService, only()).logStatisticsRevoked("The id", certificate.getType(), "unit");
     }
 
     @Test
@@ -121,18 +121,52 @@ public class StatisticsServiceImplTest {
         final String messageBody = "Message body";
         final String certificateId = "Certificate-id";
 
-        org.springframework.test.util.ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
+        ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
         ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
 
         TextMessage message = mock(TextMessage.class);
         Session session = mock(Session.class);
         when(session.createTextMessage(messageBody)).thenReturn(message);
 
-        serviceImpl.messageSent(messageBody, certificateId, "topic");
+        boolean messageSent = serviceImpl.messageSent(messageBody, certificateId, "topic");
 
+        assertTrue(messageSent);
         verify(template, only()).send(captor.capture());
         captor.getValue().createMessage(session);
         verify(message).setStringProperty("action", "message-sent");
-        verify(message).setStringProperty("certificate-id", "Certificate-id");
+        verify(message).setStringProperty("certificate-id", certificateId);
+        verify(monitoringLogService, only()).logStatisticsMessageSent(certificateId, "topic");
+    }
+
+    @Test
+    public void testNoJmsTemplateConfigured() throws JMSException {
+        ReflectionTestUtils.setField(serviceImpl, "jmsTemplate", null);
+        ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
+
+        TextMessage message = mock(TextMessage.class);
+        Session session = mock(Session.class);
+        when(session.createTextMessage("The document")).thenReturn(message);
+
+        boolean created = serviceImpl.created("The document", "The id", "luse", "unit");
+
+        assertFalse(created);
+        verifyZeroInteractions(template);
+        verifyZeroInteractions(monitoringLogService);
+    }
+
+    @Test
+    public void testJmsTemplateThrowsJmsException() throws JMSException {
+        ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
+        doThrow(mock(JmsException.class)).when(template).send(any(MessageCreator.class));
+
+        TextMessage message = mock(TextMessage.class);
+        Session session = mock(Session.class);
+        when(session.createTextMessage("The document")).thenReturn(message);
+
+        boolean created = serviceImpl.created("The document", "The id", "luse", "unit");
+
+        assertFalse(created);
+        verify(template, only()).send(any(MessageCreator.class));
+        verifyZeroInteractions(monitoringLogService);
     }
 }
