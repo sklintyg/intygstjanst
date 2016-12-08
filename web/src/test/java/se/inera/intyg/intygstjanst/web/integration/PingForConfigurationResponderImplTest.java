@@ -50,7 +50,7 @@ public class PingForConfigurationResponderImplTest {
     private HealthCheckDao healthCheckDao;
 
     @InjectMocks
-    private HealthCheckServiceImpl statusCreater;
+    private HealthCheckServiceImpl statusCreator;
 
     @Mock
     private HealthCheckService healthCheck;
@@ -114,11 +114,11 @@ public class PingForConfigurationResponderImplTest {
     }
 
     private Status okStatus() {
-        return statusCreater.getUptime();
+        return statusCreator.getUptime();
     }
 
     private Status nonOkStatus() {
         when(healthCheckDao.checkTimeFromDb()).thenReturn(false);
-        return statusCreater.getDbStatus();
+        return statusCreator.getDbStatus();
     }
 }
