@@ -10,12 +10,10 @@ deploy_from_repo: true
 profiles: test
 
 # Configuration repository
-environment_name: "test"
 config_repository: https://github.com/sklintyg/intygstjanst-konfiguration.git
 config_folder: "{{ inera_root }}/intygstjanst-konfiguration"
 gitcrypt_key_name: "git-crypt4.key"
 gitcrypt_key_file: "./{{ gitcrypt_key_name }}"
-config_etc_folder: "{{ config_folder }}/{{ environment_name }}"
 
 # Tomcat installation
 tomcat_service: "{{ inventory_hostname }}-tomcat"
