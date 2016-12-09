@@ -34,7 +34,7 @@
            timeout=120
   when: deploy_from_repo|bool
 
-- name: Copy intygstjanst-web-{{ version }}.war
+- name: Copy intygstjanst-web-{{ version }}.war from THIS machine when not deploying from remote repo
   copy: src={{ inventory_dir }}/../web/build/libs/intygstjanst-web-{{ version }}.war dest={{ releases_folder }}/intygstjanst-web-{{ version }}.war
   when: not deploy_from_repo|bool
 
@@ -48,9 +48,6 @@
 
 - name: Deploy intygstjanst-web-{{ version }}.war as inera-certificate.war
   command: cp {{ releases_folder }}/intygstjanst-web-{{ version }}.war {{ webapps_folder }}/inera-certificate.war
-
-- name: Create version file
-  template: src=version.txt.j2 dest={{ webapps_folder }}/version.txt
 
 - name: Fetch configuration repo to get new branches
   command: chdir={{ config_folder }} git fetch origin

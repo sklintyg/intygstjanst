@@ -1,11 +1,5 @@
-[intygstjanst-tomcat]
+[tomcat]
 intygstjanst-lab ansible_ssh_host=intygspoc.inera.nordicmedtest.se ansible_ssh_user=inera ansible_ssh_port=13022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 
-[intygstjanst-mysql]
+[mysql]
 intygstjanst-lab ansible_ssh_host=intygspoc.inera.nordicmedtest.se ansible_ssh_user=inera ansible_ssh_port=13022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
-
-[tomcat:children]
-intygstjanst-tomcat
-
-[mysql:children]
-intygstjanst-mysql

@@ -1,7 +1,7 @@
 ---
 # This playbook provisions mysql for Intygstjansten 
 
-- hosts: intygstjanst-mysql
+- hosts: mysql
   become: yes 
 
   roles:
