@@ -3,8 +3,9 @@
 
 - hosts: tomcat
   serial: 1
-  become: yes 
-  vars: 
+  become: yes
+  vars:
+    version: 3.1.358
     config_version: master
 
   roles:

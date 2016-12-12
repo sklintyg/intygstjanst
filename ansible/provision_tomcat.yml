@@ -1,10 +1,10 @@
 ---
-# This playbook provisions the resources needed by tomcat hosts of intygstjansten 
+# This playbook provisions the resources needed by tomcat hosts of intygstjansten
 
 - hosts: tomcat
   serial: 1
-  become: yes 
-  
+  become: yes
+
   roles:
     - intygstjanst-systemvariabler
     - intygstjanst-resurser
