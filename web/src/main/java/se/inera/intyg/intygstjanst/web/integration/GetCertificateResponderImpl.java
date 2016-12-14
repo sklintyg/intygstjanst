@@ -30,12 +30,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Throwables;
 
-import se.inera.intyg.intygstyper.fkparent.model.converter.CertificateStateHolderConverter;
+import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
-import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v1.*;
+import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v1.GetCertificateResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v1.GetCertificateResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v1.GetCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.RegisterCertificateType;
 
 @SchemaValidation

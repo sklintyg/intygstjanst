@@ -38,13 +38,13 @@ dependencies {
 
     compile "se.inera.intyg.infra:hsa-integration:${infraVersion}"
 
-    compile "se.inera.intyg.intygstyper:fk7263:${typerVersion}"
-    compile "se.inera.intyg.intygstyper:ts-bas:${typerVersion}"
-    compile "se.inera.intyg.intygstyper:ts-diabetes:${typerVersion}"
-    compile "se.inera.intyg.intygstyper:luse:${typerVersion}"
-    compile "se.inera.intyg.intygstyper:lisjp:${typerVersion}"
-    compile "se.inera.intyg.intygstyper:luae_fs:${typerVersion}"
-    compile "se.inera.intyg.intygstyper:luae_na:${typerVersion}"
+    compile "se.inera.intyg.common:fk7263:${commonVersion}"
+    compile "se.inera.intyg.common:ts-bas:${commonVersion}"
+    compile "se.inera.intyg.common:ts-diabetes:${commonVersion}"
+    compile "se.inera.intyg.common:luse:${commonVersion}"
+    compile "se.inera.intyg.common:lisjp:${commonVersion}"
+    compile "se.inera.intyg.common:luae_fs:${commonVersion}"
+    compile "se.inera.intyg.common:luae_na:${commonVersion}"
 
     compile "se.riv.itintegration.monitoring:itintegration-monitoring-schemas:${rivtaItintegrationMonitoringSchemasVersion}"
     compile "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"

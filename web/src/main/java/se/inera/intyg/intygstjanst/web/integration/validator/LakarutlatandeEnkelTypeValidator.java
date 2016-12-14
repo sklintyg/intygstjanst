@@ -23,7 +23,7 @@ import java.util.List;
 
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
-import se.inera.intyg.intygstyper.fk7263.schemas.insuranceprocess.healthreporting.validator.PatientValidator;
+import se.inera.intyg.common.fk7263.schemas.insuranceprocess.healthreporting.validator.PatientValidator;
 
 /**
  * @author andreaskaltenbach

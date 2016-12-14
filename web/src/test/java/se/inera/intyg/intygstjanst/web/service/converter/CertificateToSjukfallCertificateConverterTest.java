@@ -28,8 +28,8 @@ import java.time.LocalDateTime;
 
 import org.junit.Test;
 
+import se.inera.intyg.common.fk7263.model.internal.Utlatande;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande;
 
 /**
  * Created by eriklupander on 2016-02-04.
@@ -61,7 +61,7 @@ public class CertificateToSjukfallCertificateConverterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testThrowsExceptionWhenNonFk7263Type() {
-        testee.convertFk7263(getFactoryInstance().buildCert(), new se.inera.intyg.intygstyper.ts_bas.model.internal.Utlatande());
+        testee.convertFk7263(getFactoryInstance().buildCert(), new se.inera.intyg.common.ts_bas.model.internal.Utlatande());
     }
 
     @Test
@@ -133,7 +133,7 @@ public class CertificateToSjukfallCertificateConverterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsConvertableFk7263ThrowsExceptionWhenNonFk7263Type() {
-        assertTrue(testee.isConvertableFk7263(new se.inera.intyg.intygstyper.ts_bas.model.internal.Utlatande()));
+        assertTrue(testee.isConvertableFk7263(new se.inera.intyg.common.ts_bas.model.internal.Utlatande()));
     }
 
     @Test
