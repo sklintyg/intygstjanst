@@ -5,7 +5,7 @@ environment_name: "test"
 config_etc_folder: "{{ config_folder }}/{{ environment_name }}"
 
 # Spring profiles
-profiles: test,it-fk-stub,it-ts-stub,testability-api,wc-hsa-stub,caching-enabled
+profiles: test,it-fk-stub,it-ts-stub,testability-api,wc-hsa-stub
 
 # ActiveMQ configuration
 activemq_username: "nmt"
