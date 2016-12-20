@@ -37,7 +37,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import se.inera.intyg.common.fk7263.model.internal.Utlatande;
+import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
@@ -96,7 +96,7 @@ public class SjukfallCertificateServiceImplTest {
 
     @Test
     public void testNoStoreIfNoDiagnosKod() throws ModuleNotFoundException, IOException {
-        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        Fk7263Utlatande utlatande = getFactoryInstance().buildUtlatande();
         utlatande.setDiagnosKod(null);
         when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
@@ -109,7 +109,7 @@ public class SjukfallCertificateServiceImplTest {
 
     @Test
     public void testOk() throws ModuleNotFoundException, IOException {
-        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        Fk7263Utlatande utlatande = getFactoryInstance().buildUtlatande();
         when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
         when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(true);
@@ -130,7 +130,7 @@ public class SjukfallCertificateServiceImplTest {
 
     @Test
     public void testRevoke() throws ModuleNotFoundException, IOException {
-        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        Fk7263Utlatande utlatande = getFactoryInstance().buildUtlatande();
         when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
         when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(true);
@@ -141,7 +141,7 @@ public class SjukfallCertificateServiceImplTest {
 
     @Test
     public void testRevokeReturnsFalseIfUnparsableUtlatande() throws ModuleNotFoundException, IOException {
-        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        Fk7263Utlatande utlatande = getFactoryInstance().buildUtlatande();
         when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
         when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(false);

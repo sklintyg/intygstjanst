@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 
-import se.inera.intyg.common.fk7263.model.internal.Utlatande;
+import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
 import se.inera.intyg.common.support.model.common.internal.GrundData;
 import se.inera.intyg.common.support.model.common.internal.HoSPersonal;
@@ -76,8 +76,8 @@ public class CertificateForSjukfallFactory {
     }
 
     // TODOO Merge the code below with code from CertToSjukfall converter test. To utility
-    public Utlatande buildUtlatande() {
-        Utlatande utlatande = mock(Utlatande.class);
+    public Fk7263Utlatande buildUtlatande() {
+        Fk7263Utlatande utlatande = mock(Fk7263Utlatande.class);
         GrundData grundData = mock(GrundData.class);
         Vardenhet vardenhet = mock(Vardenhet.class);
         Vardgivare vardgivare = mock(Vardgivare.class);

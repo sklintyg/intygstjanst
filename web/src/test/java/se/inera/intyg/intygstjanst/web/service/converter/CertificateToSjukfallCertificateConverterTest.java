@@ -28,7 +28,8 @@ import java.time.LocalDateTime;
 
 import org.junit.Test;
 
-import se.inera.intyg.common.fk7263.model.internal.Utlatande;
+import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
+import se.inera.intyg.common.ts_bas.model.internal.TsBasUtlatande;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 
 /**
@@ -61,7 +62,7 @@ public class CertificateToSjukfallCertificateConverterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testThrowsExceptionWhenNonFk7263Type() {
-        testee.convertFk7263(getFactoryInstance().buildCert(), new se.inera.intyg.common.ts_bas.model.internal.Utlatande());
+        testee.convertFk7263(getFactoryInstance().buildCert(), new TsBasUtlatande());
     }
 
     @Test
@@ -99,7 +100,7 @@ public class CertificateToSjukfallCertificateConverterTest {
 
     @Test
     public void testConvertOnlyOneSjukfallCertificateWorkCapacity() {
-        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        Fk7263Utlatande utlatande = getFactoryInstance().buildUtlatande();
         when(utlatande.getNedsattMed75()).thenReturn(null);
         when(utlatande.getNedsattMed50()).thenReturn(null);
         when(utlatande.getNedsattMed25()).thenReturn(null);
@@ -126,40 +127,40 @@ public class CertificateToSjukfallCertificateConverterTest {
 
     @Test
     public void testIsConvertableFk7263() {
-        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        Fk7263Utlatande utlatande = getFactoryInstance().buildUtlatande();
         when(utlatande.getDiagnosKod()).thenReturn("J91");
         assertTrue(testee.isConvertableFk7263(utlatande));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsConvertableFk7263ThrowsExceptionWhenNonFk7263Type() {
-        assertTrue(testee.isConvertableFk7263(new se.inera.intyg.common.ts_bas.model.internal.Utlatande()));
+        assertTrue(testee.isConvertableFk7263(new TsBasUtlatande()));
     }
 
     @Test
     public void testIsConvertableFk7263WhenIsSmittskydd() {
-        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        Fk7263Utlatande utlatande = getFactoryInstance().buildUtlatande();
         when(utlatande.isAvstangningSmittskydd()).thenReturn(true);
         assertFalse(testee.isConvertableFk7263(utlatande));
     }
 
     @Test
     public void testIsConvertableFk7263DiagnosisNull() {
-        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        Fk7263Utlatande utlatande = getFactoryInstance().buildUtlatande();
         when(utlatande.getDiagnosKod()).thenReturn(null);
         assertFalse(testee.isConvertableFk7263(utlatande));
     }
 
     @Test
     public void testIsConvertableFk7263DiagnosisEmpty() {
-        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        Fk7263Utlatande utlatande = getFactoryInstance().buildUtlatande();
         when(utlatande.getDiagnosKod()).thenReturn("  ");
         assertFalse(testee.isConvertableFk7263(utlatande));
     }
 
     @Test
     public void testTrimsIds() {
-        Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        Fk7263Utlatande utlatande = getFactoryInstance().buildUtlatande();
 
         SjukfallCertificate sjukfallCertificate = testee.convertFk7263(getFactoryInstance().buildCert(), utlatande);
         assertTrue(noTrimmableWhitespaces(sjukfallCertificate.getCareGiverId()));

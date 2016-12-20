@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
 import se.inera.intyg.common.support.model.common.internal.Patient;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
@@ -64,11 +65,11 @@ public class CertificateToSjukfallCertificateConverter {
      */
     public SjukfallCertificate convertFk7263(Certificate certificate, Utlatande utlatande) {
 
-        if (!(utlatande instanceof se.inera.intyg.common.fk7263.model.internal.Utlatande)) {
+        if (!(utlatande instanceof Fk7263Utlatande)) {
             throw new IllegalArgumentException("Cannot convert " + utlatande.getClass().getName() + " to SjukfallCertificate");
         }
 
-        se.inera.intyg.common.fk7263.model.internal.Utlatande fkUtlatande = (se.inera.intyg.common.fk7263.model.internal.Utlatande) utlatande;
+        Fk7263Utlatande fkUtlatande = (Fk7263Utlatande) utlatande;
 
         return new SjukfallCertificateBuilder(StringUtils.trimToEmpty(certificate.getId()))
                 .careGiverId(StringUtils.trimToEmpty(certificate.getCareGiverId()))
@@ -89,7 +90,7 @@ public class CertificateToSjukfallCertificateConverter {
                 .build();
     }
 
-    private List<SjukfallCertificateWorkCapacity> buildWorkCapacities(se.inera.intyg.common.fk7263.model.internal.Utlatande fkUtlatande) {
+    private List<SjukfallCertificateWorkCapacity> buildWorkCapacities(Fk7263Utlatande fkUtlatande) {
         List<SjukfallCertificateWorkCapacity> workCapacities = new ArrayList<>();
         if (fkUtlatande.getNedsattMed100() != null) {
             workCapacities.add(buildWorkCapacity(WORK_CAPACITY_100, fkUtlatande.getNedsattMed100()));
@@ -142,11 +143,11 @@ public class CertificateToSjukfallCertificateConverter {
     }
 
     public boolean isConvertableFk7263(Utlatande utlatande) {
-        if (!(utlatande instanceof se.inera.intyg.common.fk7263.model.internal.Utlatande)) {
+        if (!(utlatande instanceof Fk7263Utlatande)) {
             throw new IllegalArgumentException("Cannot validate " + utlatande.getClass().getName() + " to SjukfallCertificate, not of fk7263 type.");
         }
 
-        se.inera.intyg.common.fk7263.model.internal.Utlatande fkUtlatande = (se.inera.intyg.common.fk7263.model.internal.Utlatande) utlatande;
+        Fk7263Utlatande fkUtlatande = (Fk7263Utlatande) utlatande;
 
         if (fkUtlatande.isAvstangningSmittskydd()) {
             LOG.debug("Intyg {} is not a valid SjukfallCertificate, is smittskydd.");
