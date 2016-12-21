@@ -26,15 +26,20 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.*;
-import org.stringtemplate.v4.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 
 import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.http.ContentType;
 
-import se.inera.intyg.intygstjanst.web.integrationtest.*;
+import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
+import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class RevokeCertificateIT extends BaseIntegrationTest {
@@ -49,25 +54,12 @@ public class RevokeCertificateIT extends BaseIntegrationTest {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
         IntegrationTestUtil.deleteIntyg(intygsId);
         IntegrationTestUtil.deleteIntyg(intygsIdNotExists);
-        setFakeExceptionAtRevokeCertificateResponderStub(false);
     }
 
     @Test
     public void revokeCertificateWorks() {
         IntegrationTestUtil.registerCertificate(intygsId, personId1);
         IntegrationTestUtil.revokeCertificate(intygsId, personId1);
-    }
-
-    @Test
-    public void revokeCertificateRecipientFailure() {
-        setFakeExceptionAtRevokeCertificateResponderStub(true);
-        IntegrationTestUtil.registerCertificate(intygsId, personId1);
-        IntegrationTestUtil.sendCertificateToRecipient(intygsId, personId1);
-        STGroup templateGroupForRevoke = new STGroupFile("integrationtests/revokecertificate/requests.stg");
-        ST requestTemplateForRevoke = templateGroupForRevoke.getInstanceOf("request");
-        requestTemplateForRevoke.add("data", new IntygsData(intygsId, personId1));
-        given().body(requestTemplateForRevoke.render()).when().post("inera-certificate/revoke-certificate-rivta/v1.0").then().statusCode(200)
-                .rootPath(REVOKE_BASE).body("result.resultCode", is("ERROR"));
     }
 
     @Test
@@ -103,15 +95,9 @@ public class RevokeCertificateIT extends BaseIntegrationTest {
                 .rootPath(REVOKE_BASE).body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
-    private void setFakeExceptionAtRevokeCertificateResponderStub(boolean active) {
-        given().contentType(ContentType.JSON).queryParam("fakeException", active).expect().statusCode(204).when()
-                .post("inera-certificate/revoke-certificate-stub/revoke");
-    }
-
     @After
     public void cleanup() {
         IntegrationTestUtil.deleteIntyg(intygsId);
-        setFakeExceptionAtRevokeCertificateResponderStub(false);
     }
 
     @SuppressWarnings("unused")

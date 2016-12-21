@@ -26,15 +26,20 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.*;
-import org.stringtemplate.v4.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 
 import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.http.ContentType;
 
-import se.inera.intyg.intygstjanst.web.integrationtest.*;
+import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
+import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class SendCertificateToRecipientIT extends BaseIntegrationTest {
@@ -60,7 +65,6 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
         requestTemplateRegister = templateGroupRegister.getInstanceOf("request");
 
         IntegrationTestUtil.deleteIntyg(intygsId);
-        setFakeExceptionAtRegisterCertificateResponderStub(false);
     }
 
     @Test
@@ -93,32 +97,6 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void sendCertificateToRecipientFailureAtRecipientWorks() {
-        setFakeExceptionAtRegisterCertificateResponderStub(true);
-
-        requestTemplateRegister.add("data", new IntygsData(intygsId, personId1));
-        given().body(requestTemplateRegister.render()).when().post("inera-certificate/register-certificate-se/v2.0").then().statusCode(200)
-                .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
-
-        requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
-        requestTemplateRecipient.add("mottagare", "FKASSA");
-
-        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
-                .rootPath(RECIPIENT_BASE).body("result.resultCode", is("ERROR"));
-    }
-
-    @Test
-    public void sendCertificateToRecipientErrorFromTS() {
-        IntegrationTestUtil.givenIntyg(intygsId, "ts-bas", personId1, false);
-
-        setErrorFromTS(true);
-        requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
-        requestTemplateRecipient.add("mottagare", "TRANSP");
-        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
-                .rootPath(RECIPIENT_BASE).body("result.resultCode", is("ERROR"));
-    }
-
-    @Test
     public void sendCertificateToRecipientTS() {
         IntegrationTestUtil.givenIntyg(intygsId, "ts-bas", personId1, false);
 
@@ -137,20 +115,8 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
                 .rootPath(RECIPIENT_BASE).body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
-    private void setFakeExceptionAtRegisterCertificateResponderStub(boolean active) {
-        given().contentType(ContentType.JSON).queryParam("fakeException", active).expect().statusCode(204).when()
-                .post("inera-certificate/fk-register-certificate-stub/certificates");
-    }
-
-    private void setErrorFromTS(boolean active) {
-        given().contentType(ContentType.JSON).queryParam("fakeException", active).expect().statusCode(204).when()
-                .post("inera-certificate/ts-certificate-stub/certificates");
-    }
-
     @After
     public void cleanup() {
-        setFakeExceptionAtRegisterCertificateResponderStub(false);
-        setErrorFromTS(false);
         IntegrationTestUtil.deleteIntyg(intygsId);
     }
 

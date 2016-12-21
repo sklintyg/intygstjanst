@@ -38,19 +38,12 @@ public class RevokeCertificateResponderStub implements RevokeCertificateResponde
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RevokeCertificateResponderStub.class);
 
-    private boolean throwException = false;
-
     @Autowired
     private MedicalCertificatesStore store;
 
     @Override
     public RevokeCertificateResponseType revokeCertificate(String logicalAddress, RevokeCertificateType request) {
         RevokeCertificateResponseType response = new RevokeCertificateResponseType();
-
-        if (throwException) {
-            LOGGER.debug("Throwing fake exception");
-            throw new RuntimeException();
-        }
 
         String id = request.getIntygsId().getExtension();
         String meddelande = request.getMeddelande();
@@ -62,11 +55,4 @@ public class RevokeCertificateResponderStub implements RevokeCertificateResponde
         return response;
     }
 
-    public boolean isThrowException() {
-        return throwException;
-    }
-
-    public void setThrowException(boolean throwException) {
-        this.throwException = throwException;
-    }
 }

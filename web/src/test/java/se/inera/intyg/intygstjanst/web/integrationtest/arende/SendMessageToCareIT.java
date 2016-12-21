@@ -19,7 +19,6 @@
 package se.inera.intyg.intygstjanst.web.integrationtest.arende;
 
 import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.post;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
@@ -28,13 +27,19 @@ import java.io.InputStream;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.*;
-import org.stringtemplate.v4.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 
 import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.http.ContentType;
 
-import se.inera.intyg.intygstjanst.web.integrationtest.*;
+import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
+import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class SendMessageToCareIT extends BaseIntegrationTest {
@@ -58,8 +63,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void messageGoesToCorrectEndDestination() throws Exception {
-        post("inera-certificate/send-message-to-care-stub-rest/clear");
+    public void sendMessageToCareOk() throws Exception {
         IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", PERSON_ID, false);
         String enhetsId = "123456";
 
@@ -67,11 +71,6 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
 
         given().contentType(ContentType.XML).body(requestTemplate.render()).when().post("inera-certificate/send-message-to-care/v1.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("OK"));
-
-        // Make sure that the final destination received the message
-        given().contentType(ContentType.XML).param("address", enhetsId).when().get("inera-certificate/send-message-to-care-stub-rest/byLogicalAddress")
-                .then()
-                .body("messages[0].certificateId", is(INTYG_ID));
     }
 
     @Test
