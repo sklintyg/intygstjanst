@@ -30,6 +30,7 @@ import javax.xml.bind.JAXB;
 import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.oclc.purl.dsdl.svrl.SchematronOutputType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,7 @@ public class TransformToStatisticsIT extends BaseIntegrationTest{
         IntegrationTestUtil.deleteIntyg(intygsId);
     }
 
+    @Ignore
     @Test
     public void registerCertificateWorks() throws Exception {
         IntegrationTestUtil.registerMedicalCertificate(intygsId, personId1);
