@@ -34,8 +34,9 @@ import org.springframework.jms.core.JmsTemplate;
 public class Receiver {
 
 	private static final String CERTIFICATE_ID = "certificate-id";
+    private static final long TIMEOUT = 5000;
 
-	@Autowired
+    @Autowired
 	@Qualifier("jmsProducerTemplate")
 	private JmsTemplate jmsTemplate;
 
@@ -49,7 +50,7 @@ public class Receiver {
 		return jmsTemplate.execute(session -> {
 			Map<String, String> storage = new HashMap<>();
 
-			Message rawMessage = session.createConsumer(queue).receive(5000L);
+			Message rawMessage = session.createConsumer(queue).receive(TIMEOUT);
 			String certificateId = rawMessage.getStringProperty(CERTIFICATE_ID);
 			storage.put(certificateId, ((TextMessage) rawMessage).getText());
 
