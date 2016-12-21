@@ -33,32 +33,32 @@ import org.springframework.jms.core.JmsTemplate;
 
 public class Receiver {
 
-	private static final String CERTIFICATE_ID = "certificate-id";
+    private static final String CERTIFICATE_ID = "certificate-id";
     private static final long TIMEOUT = 5000;
 
     @Autowired
-	@Qualifier("jmsProducerTemplate")
-	private JmsTemplate jmsTemplate;
+    @Qualifier("jmsProducerTemplate")
+    private JmsTemplate jmsTemplate;
 
-	@Autowired
-	@Qualifier("statisticsQueue")
-	private Queue queue;
+    @Autowired
+    @Qualifier("statisticsQueue")
+    private Queue queue;
 
-	private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
 
-	public Map<String, String> getMessages() {
-		return jmsTemplate.execute(session -> {
-			Map<String, String> storage = new HashMap<>();
+    public Map<String, String> getMessages() {
+        return jmsTemplate.execute(session -> {
+                Map<String, String> storage = new HashMap<>();
 
-			Message rawMessage = session.createConsumer(queue).receive(TIMEOUT);
-			String certificateId = rawMessage.getStringProperty(CERTIFICATE_ID);
-			storage.put(certificateId, ((TextMessage) rawMessage).getText());
+                Message rawMessage = session.createConsumer(queue).receive(TIMEOUT);
+                String certificateId = rawMessage.getStringProperty(CERTIFICATE_ID);
+                storage.put(certificateId, ((TextMessage) rawMessage).getText());
 
-			LOG.info("Received intyg {}", certificateId);
+                LOG.info("Received intyg {}", certificateId);
 
-			session.commit();
-			return storage;
-		});
-	}
+                session.commit();
+                return storage;
+            });
+    }
 
 }
