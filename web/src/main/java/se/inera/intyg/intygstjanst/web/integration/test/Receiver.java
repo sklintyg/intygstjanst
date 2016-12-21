@@ -21,37 +21,43 @@ package se.inera.intyg.intygstjanst.web.integration.test;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageListener;
+import javax.jms.Queue;
 import javax.jms.TextMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jms.core.JmsTemplate;
 
-import com.google.common.base.Throwables;
+public class Receiver {
 
-public class Receiver implements MessageListener {
+	private static final String CERTIFICATE_ID = "certificate-id";
 
-    private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
-    public static final String CERTIFICATE_ID = "certificate-id";
-    private Map<String, String> storage = new HashMap<String, String>();
+	@Autowired
+	@Qualifier("jmsProducerTemplate")
+	private JmsTemplate jmsTemplate;
 
-    @Override
-    public void onMessage(Message rawMessage) {
-        try {
-            String doc = ((TextMessage) rawMessage).getText();
-            String certificateId = rawMessage.getStringProperty(CERTIFICATE_ID);
-            storage.put(certificateId, doc);
-            LOG.info("Received intyg {}", certificateId);
-        } catch (JMSException e) {
-            Throwables.propagate(e);
-            LOG.info("Receiver: Could not receive intyg via JMS.");
-        }
-    }
+	@Autowired
+	@Qualifier("statisticsQueue")
+	private Queue queue;
 
-    public Map<String, String> getMessages() {
-        return storage;
-    }
+	private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
+
+	public Map<String, String> getMessages() {
+		return jmsTemplate.execute(session -> {
+			Map<String, String> storage = new HashMap<>();
+
+			Message rawMessage = session.createConsumer(queue).receive(5000L);
+			String certificateId = rawMessage.getStringProperty(CERTIFICATE_ID);
+			storage.put(certificateId, ((TextMessage) rawMessage).getText());
+
+			LOG.info("Received intyg {}", certificateId);
+
+			session.commit();
+			return storage;
+		});
+	}
 
 }

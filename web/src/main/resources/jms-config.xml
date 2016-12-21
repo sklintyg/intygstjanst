@@ -18,23 +18,18 @@
   <beans>
     <bean id="jmsProducerTemplate" class="org.springframework.jms.core.JmsTemplate">
       <property name="connectionFactory" ref="jmsFactory" />
-      <property name="defaultDestination" ref="queue" />
+      <property name="defaultDestination" ref="statisticsQueue" />
     </bean>
     <bean id="jmsFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
       <property name="jndiName" value="java:comp/env/jms/ConnectionFactory" />
     </bean>
-    <bean id="queue" class="org.springframework.jndi.JndiObjectFactoryBean">
+    <bean id="statisticsQueue" class="org.springframework.jndi.JndiObjectFactoryBean">
       <property name="jndiName" value="java:comp/env/jms/Queue" />
     </bean>
   </beans>
 
   <beans profile="dev,test">
     <bean id="jmsreceiver" class="se.inera.intyg.intygstjanst.web.integration.test.Receiver"/>
-    <bean id="jmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-      <property name="connectionFactory" ref="jmsFactory"/>
-      <property name="destination" ref="queue"/>
-      <property name="messageListener" ref="jmsreceiver"/>
-    </bean>
   </beans>
 
 </beans>
