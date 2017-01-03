@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.jms.Message;
+import javax.jms.MessageConsumer;
 import javax.jms.Queue;
 import javax.jms.TextMessage;
 
@@ -34,7 +35,7 @@ import org.springframework.jms.core.JmsTemplate;
 public class Receiver {
 
     private static final String CERTIFICATE_ID = "certificate-id";
-    private static final long TIMEOUT = 5000;
+    private static final long TIMEOUT = 3000;
 
     @Autowired
     @Qualifier("jmsProducerTemplate")
@@ -50,15 +51,18 @@ public class Receiver {
         return jmsTemplate.execute(session -> {
                 Map<String, String> storage = new HashMap<>();
 
-                Message rawMessage = session.createConsumer(queue).receive(TIMEOUT);
-                String certificateId = rawMessage.getStringProperty(CERTIFICATE_ID);
-                storage.put(certificateId, ((TextMessage) rawMessage).getText());
+                MessageConsumer consumer = session.createConsumer(queue);
+                Message rawMessage;
+                while ((rawMessage = consumer.receive(TIMEOUT)) != null) {
+                    String certificateId = rawMessage.getStringProperty(CERTIFICATE_ID);
+                    storage.put(certificateId, ((TextMessage) rawMessage).getText());
+                }
 
-                LOG.info("Received intyg {}", certificateId);
+                LOG.info("Received {} intyg", storage.keySet().size());
 
-                session.commit();
+                consumer.close();
                 return storage;
-            });
+            }, true);
     }
 
 }

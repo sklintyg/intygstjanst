@@ -25,12 +25,12 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
+import java.util.UUID;
 
 import javax.xml.bind.JAXB;
 import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.oclc.purl.dsdl.svrl.SchematronOutputType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.Regi
 
 public class TransformToStatisticsIT extends BaseIntegrationTest{
 
-    private String intygsId = "1234589";
+    private String intygsId = UUID.randomUUID().toString();
     private String personId1 = "192703104321";
 
     @SuppressWarnings("unused")
@@ -63,7 +63,6 @@ public class TransformToStatisticsIT extends BaseIntegrationTest{
         IntegrationTestUtil.deleteIntyg(intygsId);
     }
 
-    @Ignore
     @Test
     public void registerCertificateWorks() throws Exception {
         IntegrationTestUtil.registerMedicalCertificate(intygsId, personId1);
