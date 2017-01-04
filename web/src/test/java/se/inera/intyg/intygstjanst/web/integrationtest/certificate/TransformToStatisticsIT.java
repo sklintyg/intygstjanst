@@ -67,8 +67,10 @@ public class TransformToStatisticsIT extends BaseIntegrationTest{
     public void registerCertificateWorks() throws Exception {
         IntegrationTestUtil.registerMedicalCertificate(intygsId, personId1);
 
-        XmlPath xml = given().contentType(ContentType.XML).accept(ContentType.XML).expect().statusCode(200).when().get("inera-certificate/resources/statisticsresource/"+intygsId).then().rootPath("RegisterCertificate")
-        .body("intyg.intygs-id.extension", is(intygsId)).extract().body().xmlPath();
+        XmlPath xml = given().contentType(ContentType.XML).pathParams("id", intygsId, "action", "created").accept(ContentType.XML).expect()
+                .statusCode(200).when()
+                .get("inera-certificate/resources/statisticsresource/{id}/{action}").then().rootPath("RegisterCertificate")
+                .body("intyg.intygs-id.extension", is(intygsId)).extract().body().xmlPath();
 
         if (!validateFk7263OutputSchematron(xml.prettyPrint())) {
             fail();

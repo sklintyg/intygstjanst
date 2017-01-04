@@ -51,15 +51,15 @@ public class StatisticsServiceResource {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/{id}/{action}")
     @Produces(MediaType.APPLICATION_XML)
-    public String getMessages(@PathParam("id") String id) {
+    public String getMessage(@PathParam("id") String id, @PathParam("action") String action) {
         if (receiver == null) {
             LOGGER.error("No receiver found");
             return null;
         }
-        LOGGER.debug("Get message for id " + id);
-        return receiver.getMessages().get(id);
+        LOGGER.debug("Get {}-message for id {}", action, id);
+        return receiver.getMessages().get(Receiver.generateKey(id, action));
     }
 
 }

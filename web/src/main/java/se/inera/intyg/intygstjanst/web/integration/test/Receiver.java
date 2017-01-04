@@ -32,9 +32,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.JmsTemplate;
 
+import com.google.common.base.Joiner;
+
 public class Receiver {
 
     private static final String CERTIFICATE_ID = "certificate-id";
+    private static final String ACTION = "action";
     private static final long TIMEOUT = 3000;
 
     @Autowired
@@ -55,14 +58,19 @@ public class Receiver {
                 Message rawMessage;
                 while ((rawMessage = consumer.receive(TIMEOUT)) != null) {
                     String certificateId = rawMessage.getStringProperty(CERTIFICATE_ID);
-                    storage.put(certificateId, ((TextMessage) rawMessage).getText());
+                    String action = rawMessage.getStringProperty(ACTION);
+                    storage.put(generateKey(certificateId, action), ((TextMessage) rawMessage).getText());
                 }
 
-                LOG.info("Received {} intyg", storage.keySet().size());
+                LOG.info("Received {} messages", storage.keySet().size());
 
                 consumer.close();
                 return storage;
             }, true);
+    }
+
+    public static String generateKey(String certificateId, String action) {
+        return Joiner.on("-").join(certificateId, action);
     }
 
 }
