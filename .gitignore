@@ -19,3 +19,4 @@ specifications/src/test/fitnesse/FitNesseRoot/ErrorLogs/
 dependency-reduced-pom.xml
 build
 .gradle
+activemq-data
