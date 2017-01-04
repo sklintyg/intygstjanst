@@ -47,6 +47,7 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
 
     private static final String BASE = "Envelope.Body.SendMessageToRecipientResponse.";
     private static final String INTYG_ID = "sendMessageToRecipientITcertificateId";
+    private static final String INTYG_ID_NON_EXISTANT = "intyg-nonexistant";
     private static final String PERSON_ID = "190101010101";
 
     private ST requestTemplate;
@@ -63,6 +64,7 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
     @After
     public void cleanup() {
         IntegrationTestUtil.deleteIntyg(INTYG_ID);
+        IntegrationTestUtil.deleteIntyg(INTYG_ID_NON_EXISTANT);
     }
 
     @Test
@@ -93,7 +95,7 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
 
     @Test
     public void messageForNonExistantCertificateIsNotAccepted() throws Exception {
-        requestTemplate.add("data", new ArendeData("intyg-nonexistant", "KOMPL", PERSON_ID, "123456"));
+        requestTemplate.add("data", new ArendeData(INTYG_ID_NON_EXISTANT, "KOMPL", PERSON_ID, "123456"));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/send-message-to-recipient/v1.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("ERROR"));
