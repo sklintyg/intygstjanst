@@ -18,6 +18,24 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
+import se.inera.intyg.common.lisjp.model.internal.LisjpUtlatande;
+import se.inera.intyg.common.support.model.common.internal.Utlatande;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.common.support.modules.support.api.ModuleApi;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
+
+import java.io.IOException;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -29,28 +47,14 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
 
-import java.io.IOException;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
-import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.common.support.modules.support.api.ModuleApi;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
-import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
-
 /**
  * Created by eriklupander on 2016-02-05.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class SjukfallCertificateServiceImplTest {
+
+    public static final String INTYG_TYPE_FK7263 = "fk7263";
+    public static final String INTYG_TYPE_LISJP = "lisjp";
 
     @Mock
     private IntygModuleRegistry moduleRegistry;
@@ -68,7 +72,7 @@ public class SjukfallCertificateServiceImplTest {
 
     @Test
     public void testDoesNothingIfNotFk7263() {
-        Certificate certificate = getFactoryInstance().buildCert();
+        Certificate certificate = getFactoryInstance().buildCert("other");
         certificate.setType("other");
         testee.created(certificate);
         verifyZeroInteractions(sjukfallCertificateDao);
@@ -80,7 +84,7 @@ public class SjukfallCertificateServiceImplTest {
         when(moduleApi.getUtlatandeFromJson(any())).thenThrow(IOException.class);
         when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(false);
 
-        boolean result = testee.created(getFactoryInstance().buildCert());
+        boolean result = testee.created(getFactoryInstance().buildCert(INTYG_TYPE_FK7263));
         assertFalse(result);
         verify(sjukfallCertificateDao, times(0)).store(any(SjukfallCertificate.class));
     }
@@ -89,39 +93,56 @@ public class SjukfallCertificateServiceImplTest {
     public void testNoStoreIfModuleWasntFound() throws ModuleNotFoundException, IOException {
 
         when(moduleRegistry.getModuleApi(anyString())).thenThrow(ModuleNotFoundException.class);
-        boolean result = testee.created(getFactoryInstance().buildCert());
+        boolean result = testee.created(getFactoryInstance().buildCert(INTYG_TYPE_FK7263));
         assertFalse(result);
         verify(sjukfallCertificateDao, times(0)).store(any(SjukfallCertificate.class));
     }
 
     @Test
     public void testNoStoreIfNoDiagnosKod() throws ModuleNotFoundException, IOException {
-        Fk7263Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        Fk7263Utlatande utlatande = getFactoryInstance().buildFk7263Utlatande();
         utlatande.setDiagnosKod(null);
         when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
         when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(false);
 
-        boolean result = testee.created(getFactoryInstance().buildCert());
+        boolean result = testee.created(getFactoryInstance().buildCert(INTYG_TYPE_FK7263));
         assertFalse(result);
         verify(sjukfallCertificateDao, times(0)).store(any(SjukfallCertificate.class));
     }
 
     @Test
-    public void testOk() throws ModuleNotFoundException, IOException {
-        Fk7263Utlatande utlatande = getFactoryInstance().buildUtlatande();
+    public void testFk7263Ok() throws ModuleNotFoundException, IOException {
+        Fk7263Utlatande utlatande = getFactoryInstance().buildFk7263Utlatande();
         when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
         when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(true);
+        when(certificateToSjukfallCertificateConverter.isConvertableLisjp(any())).thenReturn(false);
+        when(certificateToSjukfallCertificateConverter.convertFk7263(any(Certificate.class), any(Utlatande.class))).thenReturn(mock(SjukfallCertificate.class));
 
-        boolean result = testee.created(getFactoryInstance().buildCert());
+        boolean result = testee.created(getFactoryInstance().buildCert(INTYG_TYPE_FK7263));
+        assertTrue(result);
+        verify(sjukfallCertificateDao, times(1)).store(any(SjukfallCertificate.class));
+    }
+
+    @Test
+    public void testLisjpOk() throws ModuleNotFoundException, IOException {
+        LisjpUtlatande utlatande = getFactoryInstance().buildLisjpUtlatande();
+        when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
+        when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
+        when(certificateToSjukfallCertificateConverter.isConvertableLisjp(any())).thenReturn(true);
+        when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(false);
+        when(certificateToSjukfallCertificateConverter.convertLisjp(any(Certificate.class), any(Utlatande.class))).thenReturn(mock(SjukfallCertificate.class));
+
+
+        boolean result = testee.created(getFactoryInstance().buildCert(INTYG_TYPE_LISJP));
         assertTrue(result);
         verify(sjukfallCertificateDao, times(1)).store(any(SjukfallCertificate.class));
     }
 
     @Test
     public void testRevokeNotFk7263() throws ModuleNotFoundException, IOException {
-        Certificate certificate = getFactoryInstance().buildCert();
+        Certificate certificate = getFactoryInstance().buildCert(INTYG_TYPE_FK7263);
         certificate.setType("other");
         boolean revoked = testee.revoked(certificate);
         assertFalse(revoked);
@@ -129,24 +150,50 @@ public class SjukfallCertificateServiceImplTest {
     }
 
     @Test
-    public void testRevoke() throws ModuleNotFoundException, IOException {
-        Fk7263Utlatande utlatande = getFactoryInstance().buildUtlatande();
+    public void testRevokeSmittskyddLisjp() throws ModuleNotFoundException, IOException {
+        Certificate certificate = getFactoryInstance().buildCert(INTYG_TYPE_LISJP);
+        LisjpUtlatande utlatande = getFactoryInstance().buildLisjpUtlatande();
+
+        when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
+        when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
+        when(certificateToSjukfallCertificateConverter.isConvertableLisjp(any())).thenReturn(false);
+        when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(false);
+        boolean revoked = testee.revoked(certificate);
+        assertFalse(revoked);
+        verify(sjukfallCertificateDao, times(0)).revoke(anyString());
+    }
+
+    @Test
+    public void testRevokeFk7263() throws ModuleNotFoundException, IOException {
+        Fk7263Utlatande utlatande = getFactoryInstance().buildFk7263Utlatande();
         when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
         when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(true);
-        boolean revoked = testee.revoked(getFactoryInstance().buildCert());
+        boolean revoked = testee.revoked(getFactoryInstance().buildCert(INTYG_TYPE_FK7263));
+        assertTrue(revoked);
+        verify(sjukfallCertificateDao).revoke(anyString());
+    }
+
+    @Test
+    public void testRevokeLisjp() throws ModuleNotFoundException, IOException {
+        LisjpUtlatande utlatande = getFactoryInstance().buildLisjpUtlatande();
+        when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
+        when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
+        when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(false);
+        when(certificateToSjukfallCertificateConverter.isConvertableLisjp(any())).thenReturn(true);
+        boolean revoked = testee.revoked(getFactoryInstance().buildCert(INTYG_TYPE_LISJP));
         assertTrue(revoked);
         verify(sjukfallCertificateDao).revoke(anyString());
     }
 
     @Test
     public void testRevokeReturnsFalseIfUnparsableUtlatande() throws ModuleNotFoundException, IOException {
-        Fk7263Utlatande utlatande = getFactoryInstance().buildUtlatande();
+        Fk7263Utlatande utlatande = getFactoryInstance().buildFk7263Utlatande();
         when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
         when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(false);
 
-        boolean result = testee.created(getFactoryInstance().buildCert());
+        boolean result = testee.created(getFactoryInstance().buildCert(INTYG_TYPE_FK7263));
         assertFalse(result);
         verify(sjukfallCertificateDao, times(0)).revoke(anyString());
     }

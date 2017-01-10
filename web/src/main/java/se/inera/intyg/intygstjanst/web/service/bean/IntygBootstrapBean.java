@@ -18,17 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.service.bean;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +28,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-
 import se.inera.intyg.common.fk7263.support.Fk7263EntryPoint;
+import se.inera.intyg.common.lisjp.support.LisjpEntryPoint;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
@@ -53,6 +42,16 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistory
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
+
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class IntygBootstrapBean {
 
@@ -123,8 +122,14 @@ public class IntygBootstrapBean {
                 entityManager.persist(originalCertificate);
                 entityManager.persist(certificate);
 
-                if (isSjukfallsGrundandeIntyg(certificate.getType()) && certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
-                    entityManager.persist(certificateToSjukfallCertificateConverter.convertFk7263(certificate, utlatande));
+                // Handle sjukfall creation for applicable intygstyper (fk7273, lisjp)
+                if (isSjukfallsGrundandeIntyg(certificate.getType())) {
+                    if (certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
+                        entityManager.persist(certificateToSjukfallCertificateConverter.convertFk7263(certificate, utlatande));
+                    }
+                    if (certificateToSjukfallCertificateConverter.isConvertableLisjp(utlatande)) {
+                        entityManager.persist(certificateToSjukfallCertificateConverter.convertLisjp(certificate, utlatande));
+                    }
                 }
             }
             return null;
@@ -216,6 +221,10 @@ public class IntygBootstrapBean {
                             SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertFk7263(certificate, utlatande);
                             entityManager.persist(sjukfallCertificate);
                         }
+                        if (certificateToSjukfallCertificateConverter.isConvertableLisjp(utlatande)) {
+                            SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertLisjp(certificate, utlatande);
+                            entityManager.persist(sjukfallCertificate);
+                        }
                     } catch (Exception e) {
                         status.setRollbackOnly();
                         LOG.error("Loading of Sjukfall intyg failed for {}: {}", metadata.getFilename(), e);
@@ -229,7 +238,7 @@ public class IntygBootstrapBean {
     }
 
     private boolean isSjukfallsGrundandeIntyg(String type) {
-        return Fk7263EntryPoint.MODULE_ID.equalsIgnoreCase(type);
+        return Fk7263EntryPoint.MODULE_ID.equalsIgnoreCase(type) || LisjpEntryPoint.MODULE_ID.equalsIgnoreCase(type);
     }
 
 }

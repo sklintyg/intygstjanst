@@ -18,21 +18,26 @@
  */
 package se.inera.intyg.intygstjanst.web.support;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDateTime;
-
+import com.google.common.collect.ImmutableList;
 import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
+import se.inera.intyg.common.fkparent.model.internal.Diagnos;
+import se.inera.intyg.common.lisjp.model.internal.LisjpUtlatande;
+import se.inera.intyg.common.lisjp.model.internal.Sjukskrivning;
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
 import se.inera.intyg.common.support.model.common.internal.GrundData;
 import se.inera.intyg.common.support.model.common.internal.HoSPersonal;
 import se.inera.intyg.common.support.model.common.internal.Patient;
+import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.model.common.internal.Vardenhet;
 import se.inera.intyg.common.support.model.common.internal.Vardgivare;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+
+import java.time.LocalDateTime;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by eriklupander on 2016-02-15.
@@ -45,7 +50,8 @@ public class CertificateForSjukfallFactory {
     private static final String ENAME = "Tolvansson";
     private static final String PERSONNUMMER = "19121212-1212";
     private static final String DOC_NAME = "Doc Name";
-    private static final String CERT_TYPE = "fk7263";
+    private static final String CERT_TYPE_FK7263 = "fk7263";
+    private static final String CERT_TYPE_LISJP = "lisjp";
     private static final String START_DATE_100 = "2016-02-01";
     private static final String END_DATE_100 = "2216-02-01";
     private static final String START_DATE_75 = "2016-03-01";
@@ -76,14 +82,52 @@ public class CertificateForSjukfallFactory {
     }
 
     // TODOO Merge the code below with code from CertToSjukfall converter test. To utility
-    public Fk7263Utlatande buildUtlatande() {
+    public Fk7263Utlatande buildFk7263Utlatande() {
         Fk7263Utlatande utlatande = mock(Fk7263Utlatande.class);
+        mockGrundData(utlatande);
+
+        when(utlatande.getNedsattMed100()).thenReturn(new InternalLocalDateInterval(START_DATE_100, END_DATE_100));
+        when(utlatande.getNedsattMed75()).thenReturn(new InternalLocalDateInterval(START_DATE_75, END_DATE_75));
+        when(utlatande.getNedsattMed50()).thenReturn(new InternalLocalDateInterval(START_DATE_50, END_DATE_50));
+        when(utlatande.getNedsattMed25()).thenReturn(new InternalLocalDateInterval(START_DATE_25, END_DATE_25));
+
+        return utlatande;
+    }
+
+    public Certificate buildCert(String intygsTyp) {
+        Certificate cert = new Certificate(CERT_ID);
+        cert.setType(intygsTyp);
+        cert.setSignedDate(CERT_SIGNING_DATETIME);
+        cert.setSigningDoctorName(DOC_NAME);
+        cert.setCivicRegistrationNumber(pNr);
+        cert.setCareGiverId(CARE_GIVER_ID);
+        cert.setCareUnitId(CARE_UNIT_ID);
+        cert.setCareUnitName(CARE_UNIT_NAME);
+        cert.setOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "XML", cert));
+        return cert;
+    }
+
+    public LisjpUtlatande buildLisjpUtlatande() {
+        LisjpUtlatande utlatande = mock(LisjpUtlatande.class);
+
+        mockGrundData(utlatande);
+        when(utlatande.getDiagnoser()).thenReturn(ImmutableList.of(Diagnos.create("J22", "", "", "")));
+        when(utlatande.getSjukskrivningar()).thenReturn(ImmutableList.of(
+                Sjukskrivning.create(Sjukskrivning.SjukskrivningsGrad.HELT_NEDSATT, new InternalLocalDateInterval(START_DATE_100, END_DATE_100)),
+                Sjukskrivning.create(Sjukskrivning.SjukskrivningsGrad.NEDSATT_3_4, new InternalLocalDateInterval(START_DATE_75, END_DATE_75)),
+                Sjukskrivning.create(Sjukskrivning.SjukskrivningsGrad.NEDSATT_HALFTEN, new InternalLocalDateInterval(START_DATE_50, END_DATE_50)),
+                Sjukskrivning.create(Sjukskrivning.SjukskrivningsGrad.NEDSATT_1_4, new InternalLocalDateInterval(START_DATE_25, END_DATE_25)))
+        );
+
+        return utlatande;
+    }
+
+    private void mockGrundData(Utlatande utlatande) {
+        HoSPersonal hoSPersonal = mock(HoSPersonal.class);
+        Patient patient = mock(Patient.class);
         GrundData grundData = mock(GrundData.class);
         Vardenhet vardenhet = mock(Vardenhet.class);
         Vardgivare vardgivare = mock(Vardgivare.class);
-
-        HoSPersonal hoSPersonal = mock(HoSPersonal.class);
-        Patient patient = mock(Patient.class);
 
         when(utlatande.getGrundData()).thenReturn(grundData);
         when(grundData.getPatient()).thenReturn(patient);
@@ -96,26 +140,6 @@ public class CertificateForSjukfallFactory {
         when(vardgivare.getVardgivarid()).thenReturn(CARE_GIVER_ID);
         when(patient.getFornamn()).thenReturn(FNAME);
         when(patient.getEfternamn()).thenReturn(ENAME);
-
-        when(utlatande.getNedsattMed100()).thenReturn(new InternalLocalDateInterval(START_DATE_100, END_DATE_100));
-        when(utlatande.getNedsattMed75()).thenReturn(new InternalLocalDateInterval(START_DATE_75, END_DATE_75));
-        when(utlatande.getNedsattMed50()).thenReturn(new InternalLocalDateInterval(START_DATE_50, END_DATE_50));
-        when(utlatande.getNedsattMed25()).thenReturn(new InternalLocalDateInterval(START_DATE_25, END_DATE_25));
-
-        return utlatande;
-    }
-
-    public Certificate buildCert() {
-        Certificate cert = new Certificate(CERT_ID);
-        cert.setType(CERT_TYPE);
-        cert.setSignedDate(CERT_SIGNING_DATETIME);
-        cert.setSigningDoctorName(DOC_NAME);
-        cert.setCivicRegistrationNumber(pNr);
-        cert.setCareGiverId(CARE_GIVER_ID);
-        cert.setCareUnitId(CARE_UNIT_ID);
-        cert.setCareUnitName(CARE_UNIT_NAME);
-        cert.setOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "XML", cert));
-        return cert;
     }
 
 }

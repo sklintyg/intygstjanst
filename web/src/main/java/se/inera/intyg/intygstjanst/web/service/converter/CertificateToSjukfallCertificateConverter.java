@@ -18,16 +18,14 @@
  */
 package se.inera.intyg.intygstjanst.web.service.converter;
 
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
 import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
+import se.inera.intyg.common.fkparent.model.internal.Diagnos;
+import se.inera.intyg.common.lisjp.model.internal.LisjpUtlatande;
+import se.inera.intyg.common.lisjp.model.internal.Sjukskrivning;
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
 import se.inera.intyg.common.support.model.common.internal.Patient;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
@@ -35,6 +33,10 @@ import se.inera.intyg.intygstjanst.persistence.model.builder.SjukfallCertificate
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
+
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Converts a (fk7263) Certificate to a CertificateSjukfall.
@@ -55,13 +57,14 @@ public class CertificateToSjukfallCertificateConverter {
      * Converts a fk7263 certificate into a SjukfallCertificate.
      *
      * @param certificate
-     *      fk7263 cert
+     *            fk7263 cert
      * @param utlatande
-     *      fk7263 Utlatande (will perform instanceof check internally)
+     *            fk7263 Utlatande (will perform instanceof check internally)
      * @return
-     *      A SjukfallCertificate
+     *         A SjukfallCertificate
      * @throws
-     *      IllegalArgumentException if fk7263 check fails.
+     *             IllegalArgumentException
+     *             if fk7263 check fails.
      */
     public SjukfallCertificate convertFk7263(Certificate certificate, Utlatande utlatande) {
 
@@ -85,12 +88,71 @@ public class CertificateToSjukfallCertificateConverter {
                 .signingDateTime(certificate.getSignedDate())
                 .certificateType(certificate.getType())
                 .deleted(certificate.isRevoked())
-                .workCapacities(buildWorkCapacities(fkUtlatande))
+                .workCapacities(buildWorkCapacitiesFk7263(fkUtlatande))
 
                 .build();
     }
 
-    private List<SjukfallCertificateWorkCapacity> buildWorkCapacities(Fk7263Utlatande fkUtlatande) {
+    /**
+     * Converts a fk7263 certificate into a SjukfallCertificate.
+     *
+     * @param certificate
+     *            fk7263 cert
+     * @param utlatande
+     *            fk7263 Utlatande (will perform instanceof check internally)
+     * @return
+     *         A SjukfallCertificate
+     * @throws
+     *             IllegalArgumentException
+     *             if fk7263 check fails.
+     */
+    public SjukfallCertificate convertLisjp(Certificate certificate, Utlatande utlatande) {
+
+        if (!(utlatande instanceof LisjpUtlatande)) {
+            throw new IllegalArgumentException("Cannot convert " + utlatande.getClass().getName() + " to SjukfallCertificate");
+        }
+
+        LisjpUtlatande lisjpUtlatande = (LisjpUtlatande) utlatande;
+
+        return new SjukfallCertificateBuilder(StringUtils.trimToEmpty(certificate.getId()))
+                .careGiverId(StringUtils.trimToEmpty(certificate.getCareGiverId()))
+                .careUnitId(StringUtils.trimToEmpty(certificate.getCareUnitId()))
+                .careUnitName(certificate.getCareUnitName())
+                .certificateType(certificate.getType())
+                .civicRegistrationNumber(StringUtils.trimToEmpty(certificate.getCivicRegistrationNumber().getPersonnummer()))
+                .signingDoctorName(certificate.getSigningDoctorName())
+                .patientName(getPatientName(lisjpUtlatande.getGrundData().getPatient()))
+                .diagnoseCode(lisjpUtlatande.getDiagnoser().get(0).getDiagnosKod())
+                .signingDoctorId(StringUtils.trimToEmpty(lisjpUtlatande.getGrundData().getSkapadAv().getPersonId()))
+                .signingDoctorName(lisjpUtlatande.getGrundData().getSkapadAv().getFullstandigtNamn())
+                .signingDateTime(certificate.getSignedDate())
+                .certificateType(certificate.getType())
+                .deleted(certificate.isRevoked())
+                .workCapacities(buildWorkCapacitiesLisjp(lisjpUtlatande))
+
+                .build();
+    }
+
+    private List<SjukfallCertificateWorkCapacity> buildWorkCapacitiesLisjp(LisjpUtlatande lisjpUtlatande) {
+        List<SjukfallCertificateWorkCapacity> workCapacities = new ArrayList<>();
+        lisjpUtlatande.getSjukskrivningar().stream().forEach(sjukskrivning -> {
+            if (sjukskrivning.getSjukskrivningsgrad() == Sjukskrivning.SjukskrivningsGrad.HELT_NEDSATT) {
+                workCapacities.add(buildWorkCapacity(WORK_CAPACITY_100, sjukskrivning.getPeriod()));
+            }
+            if (sjukskrivning.getSjukskrivningsgrad() == Sjukskrivning.SjukskrivningsGrad.NEDSATT_3_4) {
+                workCapacities.add(buildWorkCapacity(WORK_CAPACITY_75, sjukskrivning.getPeriod()));
+            }
+            if (sjukskrivning.getSjukskrivningsgrad() == Sjukskrivning.SjukskrivningsGrad.NEDSATT_HALFTEN) {
+                workCapacities.add(buildWorkCapacity(WORK_CAPACITY_50, sjukskrivning.getPeriod()));
+            }
+            if (sjukskrivning.getSjukskrivningsgrad() == Sjukskrivning.SjukskrivningsGrad.NEDSATT_1_4) {
+                workCapacities.add(buildWorkCapacity(WORK_CAPACITY_25, sjukskrivning.getPeriod()));
+            }
+        });
+        return workCapacities;
+    }
+
+    private List<SjukfallCertificateWorkCapacity> buildWorkCapacitiesFk7263(Fk7263Utlatande fkUtlatande) {
         List<SjukfallCertificateWorkCapacity> workCapacities = new ArrayList<>();
         if (fkUtlatande.getNedsattMed100() != null) {
             workCapacities.add(buildWorkCapacity(WORK_CAPACITY_100, fkUtlatande.getNedsattMed100()));
@@ -133,8 +195,7 @@ public class CertificateToSjukfallCertificateConverter {
         return name.trim();
     }
 
-    private SjukfallCertificateWorkCapacity buildWorkCapacity(Integer workCapacity, InternalLocalDateInterval
-            interval) {
+    private SjukfallCertificateWorkCapacity buildWorkCapacity(Integer workCapacity, InternalLocalDateInterval interval) {
         SjukfallCertificateWorkCapacity wc = new SjukfallCertificateWorkCapacity();
         wc.setCapacityPercentage(workCapacity);
         wc.setFromDate(interval.fromAsLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
@@ -143,19 +204,40 @@ public class CertificateToSjukfallCertificateConverter {
     }
 
     public boolean isConvertableFk7263(Utlatande utlatande) {
-        if (!(utlatande instanceof Fk7263Utlatande)) {
-            throw new IllegalArgumentException("Cannot validate " + utlatande.getClass().getName() + " to SjukfallCertificate, not of fk7263 type.");
+        if (utlatande == null || !(utlatande instanceof Fk7263Utlatande)) {
+            return false;
         }
 
         Fk7263Utlatande fkUtlatande = (Fk7263Utlatande) utlatande;
 
         if (fkUtlatande.isAvstangningSmittskydd()) {
-            LOG.debug("Intyg {} is not a valid SjukfallCertificate, is smittskydd.");
+            LOG.debug("Intyg {} is not a valid SjukfallCertificate, is smittskydd.", fkUtlatande.getId());
             return false;
         }
 
         if (fkUtlatande.getDiagnosKod() == null || fkUtlatande.getDiagnosKod().trim().equals("")) {
-            LOG.debug("Intyg {} is not a valid SjukfallCertificate, has no diagnoseCode.");
+            LOG.debug("Intyg {} is not a valid SjukfallCertificate, has no diagnoseCode.", fkUtlatande.getId());
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean isConvertableLisjp(Utlatande utlatande) {
+
+        if (utlatande == null || !(utlatande instanceof LisjpUtlatande)) {
+            return false;
+        }
+
+        LisjpUtlatande lisjpUtlatande = (LisjpUtlatande) utlatande;
+        if (lisjpUtlatande.getAvstangningSmittskydd() != null && lisjpUtlatande.getAvstangningSmittskydd()) {
+            LOG.debug("Intyg {} is not a valid SjukfallCertificate, is smittskydd.", lisjpUtlatande.getId());
+            return false;
+        }
+
+        Diagnos diagnos = lisjpUtlatande.getDiagnoser().stream().findFirst().orElse(null);
+        if (diagnos == null || diagnos.getDiagnosKod() == null || diagnos.getDiagnosKod().trim().equals("")) {
+            LOG.debug("Intyg {} is not a valid SjukfallCertificate, has no diagnoseCode.", lisjpUtlatande.getId());
             return false;
         }
 
