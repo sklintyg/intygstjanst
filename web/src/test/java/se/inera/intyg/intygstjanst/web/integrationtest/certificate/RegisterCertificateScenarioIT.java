@@ -44,7 +44,7 @@ public class RegisterCertificateScenarioIT extends BaseIntegrationTest {
 
     @Test
     public void runScenarioRegisterCertificate() {
-        IntegrationTestUtil.registerCertificate(intygsId, personId);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId, personId);
         IntegrationTestUtil.sendCertificateToRecipient(intygsId, personId);
         IntegrationTestUtil.revokeCertificate(intygsId, personId);
     }

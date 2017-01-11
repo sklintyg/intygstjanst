@@ -58,13 +58,13 @@ public class RevokeCertificateIT extends BaseIntegrationTest {
 
     @Test
     public void revokeCertificateWorks() {
-        IntegrationTestUtil.registerCertificate(intygsId, personId1);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId, personId1);
         IntegrationTestUtil.revokeCertificate(intygsId, personId1);
     }
 
     @Test
     public void revokeCertificateNotExists() {
-        IntegrationTestUtil.registerCertificate(intygsId, personId1);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId, personId1);
         STGroup templateGroupForRevoke = new STGroupFile("integrationtests/revokecertificate/requests.stg");
         ST requestTemplateForRevoke = templateGroupForRevoke.getInstanceOf("request");
         requestTemplateForRevoke.add("data", new IntygsData(intygsIdNotExists, personId1));

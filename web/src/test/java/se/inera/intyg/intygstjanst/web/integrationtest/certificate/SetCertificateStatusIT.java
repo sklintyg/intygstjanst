@@ -61,7 +61,7 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
 
     @Test
     public void setCertificateStatusWorks() {
-        IntegrationTestUtil.registerCertificate(intygsId, personId);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId, personId);
         requestTemplate.add("data", new IntygsData(intygsId));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v1.0").then().statusCode(200)
@@ -76,7 +76,7 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
 
     @Test
     public void setCertificateStatusIntygNotExists() {
-        IntegrationTestUtil.registerCertificate(intygsId, personId);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId, personId);
         requestTemplate.add("data", new IntygsData(intygsIdNotExists));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v1.0").then().statusCode(200)

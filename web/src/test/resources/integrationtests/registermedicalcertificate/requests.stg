@@ -738,7 +738,7 @@ listActiveSickLeaves(intygId, personId, fromDate, toDate) ::= <<
                <urn2:fullstandigtNamn>Abra Kadabra</urn2:fullstandigtNamn>
                <urn2:forskrivarkod>1234567</urn2:forskrivarkod>
                <urn2:enhet>
-                  <urn2:enhets-id  root="1.2.752.129.2.1.4.1" extension="centrum-vast"/>
+                  <urn2:enhets-id  root="1.2.752.129.2.1.4.1" extension="linkoping"/>
                   <urn2:arbetsplatskod  root="1.2.752.29.4.71" extension="123456789011"/>
                   <urn2:enhetsnamn>Kir Mott</urn2:enhetsnamn>
                   <urn2:postadress>gatan 1</urn2:postadress>
@@ -747,7 +747,7 @@ listActiveSickLeaves(intygId, personId, fromDate, toDate) ::= <<
                   <urn2:telefonnummer>015053524</urn2:telefonnummer>
                   <urn2:epost>abc@gmail.com</urn2:epost>
                   <urn2:vardgivare>
-                     <urn2:vardgivare-id root="1.2.752.129.2.1.4.1" extension="Vardgivarid"/>
+                     <urn2:vardgivare-id root="1.2.752.129.2.1.4.1" extension="ostergotland"/>
                      <urn2:vardgivarnamn>Landstinget Norrland</urn2:vardgivarnamn>
                   </urn2:vardgivare>
                </urn2:enhet>
