@@ -18,15 +18,21 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Throwables;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
+
 import se.inera.intyg.common.support.common.enumerations.PartKod;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
@@ -53,10 +59,6 @@ import se.inera.intyg.intygstjanst.web.service.ConsentService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @author andreaskaltenbach
@@ -307,7 +309,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     private void assertConsent(Personnummer civicRegistrationNumber) {
-        if (civicRegistrationNumber == null || StringUtils.isEmpty(civicRegistrationNumber.getPersonnummer())) {
+        if (civicRegistrationNumber == null || Strings.isNullOrEmpty(civicRegistrationNumber.getPersonnummer())) {
             throw new IllegalArgumentException("Invalid/missing civicRegistrationNumber");
         }
 

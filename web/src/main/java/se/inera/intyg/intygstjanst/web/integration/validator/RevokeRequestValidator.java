@@ -21,7 +21,7 @@ package se.inera.intyg.intygstjanst.web.integration.validator;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.util.StringUtils;
+import com.google.common.base.Strings;
 
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 import se.inera.intyg.common.fk7263.schemas.insuranceprocess.healthreporting.validator.VardAdresseringsTypeValidator;
@@ -37,7 +37,7 @@ public class RevokeRequestValidator {
 
     public void validateAndCorrect() throws CertificateValidationException {
         // First, validate properties at Revoke request level
-        if (StringUtils.isEmpty(revokeRequest.getVardReferensId())) {
+        if (Strings.isNullOrEmpty(revokeRequest.getVardReferensId())) {
             validationErrors.add("No vardReferens found!");
         }
         if (revokeRequest.getAvsantTidpunkt() == null) {

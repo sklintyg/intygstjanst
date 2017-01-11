@@ -22,7 +22,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -117,16 +116,16 @@ public class CertificateToSjukfallCertificateConverter {
 
         LisjpUtlatande lisjpUtlatande = (LisjpUtlatande) utlatande;
 
-        return new SjukfallCertificateBuilder(StringUtils.trimToEmpty(certificate.getId()))
-                .careGiverId(StringUtils.trimToEmpty(certificate.getCareGiverId()))
-                .careUnitId(StringUtils.trimToEmpty(certificate.getCareUnitId()))
+        return new SjukfallCertificateBuilder(Strings.nullToEmpty(certificate.getId()).trim())
+                .careGiverId(Strings.nullToEmpty(certificate.getCareGiverId()).trim())
+                .careUnitId(Strings.nullToEmpty(certificate.getCareUnitId()).trim())
                 .careUnitName(certificate.getCareUnitName())
                 .certificateType(certificate.getType())
-                .civicRegistrationNumber(StringUtils.trimToEmpty(certificate.getCivicRegistrationNumber().getPersonnummer()))
+                .civicRegistrationNumber(Strings.nullToEmpty(certificate.getCivicRegistrationNumber().getPersonnummer()).trim())
                 .signingDoctorName(certificate.getSigningDoctorName())
                 .patientName(getPatientName(lisjpUtlatande.getGrundData().getPatient()))
                 .diagnoseCode(lisjpUtlatande.getDiagnoser().get(0).getDiagnosKod())
-                .signingDoctorId(StringUtils.trimToEmpty(lisjpUtlatande.getGrundData().getSkapadAv().getPersonId()))
+                .signingDoctorId(Strings.nullToEmpty(lisjpUtlatande.getGrundData().getSkapadAv().getPersonId()).trim())
                 .signingDoctorName(lisjpUtlatande.getGrundData().getSkapadAv().getFullstandigtNamn())
                 .signingDateTime(certificate.getSignedDate())
                 .certificateType(certificate.getType())
