@@ -21,13 +21,16 @@ package se.inera.intyg.intygstjanst.web.integration.validator;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Strings;
+
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
-import se.inera.intyg.intygstjanst.persistence.model.dao.*;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.Amneskod;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientType;
@@ -65,7 +68,7 @@ public class SendMessageToRecipientValidator {
 
     private void validatePaminnelseMeddelandeId(SendMessageToRecipientType message, Amneskod amne, List<String> validationErrors) {
         boolean isPaminnelse = Amneskod.PAMINN.equals(amne);
-        boolean paminnelseMeddelandeIdPresent = StringUtils.isNotEmpty(message.getPaminnelseMeddelandeId());
+        boolean paminnelseMeddelandeIdPresent = !Strings.isNullOrEmpty(message.getPaminnelseMeddelandeId());
         if (paminnelseMeddelandeIdPresent && !isPaminnelse) {
             validationErrors.add("paminnelseMeddelandeId should only be present if amne is PAMINN");
         } else if (isPaminnelse && !paminnelseMeddelandeIdPresent) {

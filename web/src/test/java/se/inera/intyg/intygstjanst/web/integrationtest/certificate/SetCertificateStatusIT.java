@@ -23,17 +23,23 @@ import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
-import java.io.InputStream;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 
-import org.apache.commons.io.IOUtils;
-import org.junit.*;
-import org.stringtemplate.v4.*;
-
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 
-import se.inera.intyg.intygstjanst.web.integrationtest.*;
+import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
+import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class SetCertificateStatusIT extends BaseIntegrationTest {
@@ -86,8 +92,8 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
 
     @Test
     public void responseRespectsSchema() throws Exception {
-        final InputStream inputstream = ClasspathResourceResolver.load(null,
-                "interactions/SetCertificateStatusInteraction/SetCertificateStatusResponder_1.0.xsd");
+        final String xsdString = Resources.toString(
+                new ClassPathResource("interactions/SetCertificateStatusInteraction/SetCertificateStatusResponder_1.0.xsd").getURL(), Charsets.UTF_8);
 
         requestTemplate.add("data", new IntygsData(intygsId));
 
@@ -95,7 +101,7 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
                 new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SetCertificateStatusResponder:1"),
                         "soap:Envelope/soap:Body/lc:SetCertificateStatusResponse"))
                 .body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v1.0").then()
-                .body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
+                .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
     @Test

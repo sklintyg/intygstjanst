@@ -24,19 +24,28 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertTrue;
 
-import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import org.apache.commons.io.IOUtils;
-import org.junit.*;
-import org.stringtemplate.v4.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.response.Response;
 
-import se.inera.intyg.intygstjanst.web.integrationtest.*;
+import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
+import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil.IntegrationTestCertificateType;
 
@@ -159,8 +168,8 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
     @Test
     public void responseRespectsSchema() throws Exception {
         ST requestTemplate = getRequestTemplate(false);
-        final InputStream inputstream = ClasspathResourceResolver.load(null,
-                "interactions/ListCertificatesForCitizenInteraction/ListCertificatesForCitizenResponder_2.0.xsd");
+        final String xsdString = Resources.toString(
+                new ClassPathResource("interactions/ListCertificatesForCitizenInteraction/ListCertificatesForCitizenResponder_2.0.xsd").getURL(), Charsets.UTF_8);
 
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
@@ -168,7 +177,7 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
                 new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCitizenResponder:2"),
                         "soap:Envelope/soap:Body/lc:ListCertificatesForCitizenResponse"))
                 .body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then()
-                .body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
+                .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
     @Test

@@ -23,17 +23,17 @@ import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
-import java.io.InputStream;
-
-import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 
@@ -76,15 +76,15 @@ public class RevokeCertificateIT extends BaseIntegrationTest {
     public void responseRespectsSchema() throws Exception {
         STGroup templateGroupForRevoke = new STGroupFile("integrationtests/revokecertificate/requests.stg");
         ST requestTemplateForRevoke = templateGroupForRevoke.getInstanceOf("request");
-        final InputStream inputstream = ClasspathResourceResolver.load(null,
-                "interactions/RevokeCertificateInteraction/RevokeCertificateResponder_1.0.xsd");
+        final String xsdString = Resources.toString(
+                new ClassPathResource("interactions/RevokeCertificateInteraction/RevokeCertificateResponder_1.0.xsd").getURL(), Charsets.UTF_8);
 
         requestTemplateForRevoke.add("data", new IntygsData(intygsIdNotExists, personId1));
 
         given().filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:RevokeCertificateResponder:1"),
                 "soap:Envelope/soap:Body/lc:RevokeCertificateResponse")).body(requestTemplateForRevoke.render()).when()
                 .post("inera-certificate/revoke-certificate-rivta/v1.0").then()
-                .body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
+                .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
     @Test

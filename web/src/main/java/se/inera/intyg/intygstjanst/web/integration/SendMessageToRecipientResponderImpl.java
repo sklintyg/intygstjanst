@@ -22,7 +22,6 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +64,7 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
 
         try {
             List<String> validationErrors = validator.validate(parameters);
-            if (CollectionUtils.isNotEmpty(validationErrors)) {
+            if (!validationErrors.isEmpty()) {
                 LOG.warn("Invalid parameters: ", validationErrors.toString());
                 SendMessageToRecipientResponseType resp = new SendMessageToRecipientResponseType();
                 resp.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, validationErrors.toString()));

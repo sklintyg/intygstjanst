@@ -22,18 +22,19 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
-import java.io.InputStream;
 import java.util.UUID;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.internal.matcher.xml.XmlXsdMatcher;
@@ -81,8 +82,8 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
     @Test
     public void responseRespectsSchema() throws Exception {
         IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", PERSON_ID, false);
-        final InputStream inputstream = ClasspathResourceResolver.load(null,
-                "interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_1.0.xsd");
+        final String xsdString = Resources.toString(
+                new ClassPathResource("interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_1.0.xsd").getURL(), Charsets.UTF_8);
 
         requestTemplate.add("data", new ArendeData(INTYG_ID, "KOMPL", PERSON_ID, "123456"));
 
@@ -90,7 +91,7 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
                 new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendMessageToRecipientResponder:1"),
                         "soap:Envelope/soap:Body/lc:SendMessageToRecipientResponse"))
                 .body(requestTemplate.render()).when().post("inera-certificate/send-message-to-recipient/v1.0").then()
-                .body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
+                .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
     @Test

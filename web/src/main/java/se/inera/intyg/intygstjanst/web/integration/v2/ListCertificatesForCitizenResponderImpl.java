@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +95,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
     }
 
     private List<String> toStringList(List<TypAvIntyg> intygTyp) {
-        if (CollectionUtils.isEmpty(intygTyp)) {
+        if (intygTyp == null) {
             return new ArrayList<>();
         }
         return intygTyp.stream().map(TypAvIntyg::getCode).collect(Collectors.toList());

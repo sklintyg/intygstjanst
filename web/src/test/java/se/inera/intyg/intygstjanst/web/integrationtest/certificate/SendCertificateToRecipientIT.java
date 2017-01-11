@@ -23,17 +23,17 @@ import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
-import java.io.InputStream;
-
-import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 
@@ -83,8 +83,8 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
 
     @Test
     public void responseRespectsSchema() throws Exception {
-        final InputStream inputstream = ClasspathResourceResolver.load(null,
-                "interactions/SendCertificateToRecipientInteraction/SendCertificateToRecipientResponder_1.0.xsd");
+        final String xsdString = Resources.toString(
+                new ClassPathResource("interactions/SendCertificateToRecipientInteraction/SendCertificateToRecipientResponder_1.0.xsd").getURL(), Charsets.UTF_8);
 
         requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
         requestTemplateRecipient.add("mottagare", "FKASSA");
@@ -93,7 +93,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
                 new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendCertificateToRecipientResponder:1"),
                         "soap:Envelope/soap:Body/lc:SendCertificateToRecipientResponse"))
                 .body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then()
-                .body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
+                .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
     @Test

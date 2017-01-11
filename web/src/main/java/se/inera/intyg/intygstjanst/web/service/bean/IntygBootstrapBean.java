@@ -18,7 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.service.bean;
 
-import org.apache.commons.io.IOUtils;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +38,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+
 import se.inera.intyg.common.fk7263.support.Fk7263EntryPoint;
 import se.inera.intyg.common.lisjp.support.LisjpEntryPoint;
 import se.inera.intyg.common.support.model.CertificateState;
@@ -42,16 +56,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistory
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
-
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 public class IntygBootstrapBean {
 
@@ -84,7 +88,7 @@ public class IntygBootstrapBean {
             try {
                 String moduleName = resource.getFilename().split("__")[0];
                 LOG.info("Bootstrapping certificate '{}' from module {}", resource.getFilename(), moduleName);
-                String xmlString = IOUtils.toString(resource.getInputStream());
+                String xmlString = Resources.toString(resource.getURL(), Charsets.UTF_8);
                 bootstrapCertificate(xmlString, moduleRegistry.getModuleApi(moduleName).getUtlatandeFromXml(xmlString),
                         moduleRegistry.getModuleEntryPoint(moduleName).getDefaultRecipient());
             } catch (IOException | ModuleNotFoundException | ModuleException e) {
@@ -179,7 +183,7 @@ public class IntygBootstrapBean {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 try {
                     Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
-                    String contentString = IOUtils.toString(content.getInputStream(), "UTF-8");
+                    String contentString = Resources.toString(content.getURL(), Charsets.UTF_8);
                     OriginalCertificate originalCertificate = new OriginalCertificate(certificate.getSignedDate(), contentString, certificate);
                     entityManager.persist(originalCertificate);
                     entityManager.persist(certificate);
@@ -212,7 +216,7 @@ public class IntygBootstrapBean {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     try {
-                        String contentString = IOUtils.toString(content.getInputStream(), "UTF-8");
+                        String contentString = Resources.toString(content.getURL(), Charsets.UTF_8);
 
                         ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
                         Utlatande utlatande = moduleApi.getUtlatandeFromXml(contentString);

@@ -23,17 +23,23 @@ import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
-import java.io.InputStream;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 
-import org.apache.commons.io.IOUtils;
-import org.junit.*;
-import org.stringtemplate.v4.*;
-
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 
-import se.inera.intyg.intygstjanst.web.integrationtest.*;
+import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
+import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class RegisterCertificateIT extends BaseIntegrationTest {
@@ -69,15 +75,15 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
 
     @Test
     public void responseRespectsSchema() throws Exception {
-        final InputStream inputstream = ClasspathResourceResolver.load(null,
-                "interactions/RegisterCertificateInteraction/RegisterCertificateResponder_2.0.xsd");
+        final String xsdString = Resources.toString(
+                new ClassPathResource("interactions/RegisterCertificateInteraction/RegisterCertificateResponder_2.0.xsd").getURL(), Charsets.UTF_8);
 
         requestTemplate.add("data", new IntygsData(intygsId, personId1));
 
         given().filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:2"),
                 "soap:Envelope/soap:Body/lc:RegisterCertificateResponse")).body(requestTemplate.render()).when()
                 .post("inera-certificate/register-certificate-se/v2.0").then()
-                .body(matchesXsd(IOUtils.toString(inputstream)).with(new ClasspathResourceResolver()));
+                .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
     @Test

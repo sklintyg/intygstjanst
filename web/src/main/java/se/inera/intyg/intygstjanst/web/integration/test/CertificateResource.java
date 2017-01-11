@@ -18,7 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.test;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -26,12 +25,16 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +42,14 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
+import com.google.common.io.Resources;
+
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
-import se.inera.intyg.intygstjanst.persistence.model.dao.*;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 
 /**
@@ -191,11 +200,10 @@ public class CertificateResource {
     }
 
     private String getXmlBody(CertificateHolder certificateHolder) throws IOException {
-        if (StringUtils.isNotBlank(certificateHolder.getOriginalCertificate())) {
+        if (!Strings.nullToEmpty(certificateHolder.getOriginalCertificate()).trim().isEmpty()) {
             return certificateHolder.getOriginalCertificate();
         } else {
-            File file = new ClassPathResource("content/intyg-" + certificateHolder.getType() + "-content.xml").getFile();
-            return FileUtils.readFileToString(file)
+            return Resources.toString(new ClassPathResource("content/intyg-" + certificateHolder.getType() + "-content.xml").getURL(), Charsets.UTF_8)
                     .replace("CERTIFICATE_ID", certificateHolder.getId())
                     .replace("PATIENT_CRN", certificateHolder.getCivicRegistrationNumber().getPersonnummerWithoutDash())
                     .replace("CAREUNIT_ID", certificateHolder.getCareUnitId())

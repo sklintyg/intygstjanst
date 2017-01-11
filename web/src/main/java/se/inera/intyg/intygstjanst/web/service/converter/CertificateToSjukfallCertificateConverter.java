@@ -18,10 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.service.converter;
 
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.google.common.base.Strings;
+
 import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
 import se.inera.intyg.common.fkparent.model.internal.Diagnos;
 import se.inera.intyg.common.lisjp.model.internal.LisjpUtlatande;
@@ -33,10 +40,6 @@ import se.inera.intyg.intygstjanst.persistence.model.builder.SjukfallCertificate
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
-
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Converts a (fk7263) Certificate to a CertificateSjukfall.
@@ -74,16 +77,16 @@ public class CertificateToSjukfallCertificateConverter {
 
         Fk7263Utlatande fkUtlatande = (Fk7263Utlatande) utlatande;
 
-        return new SjukfallCertificateBuilder(StringUtils.trimToEmpty(certificate.getId()))
-                .careGiverId(StringUtils.trimToEmpty(certificate.getCareGiverId()))
-                .careUnitId(StringUtils.trimToEmpty(certificate.getCareUnitId()))
+        return new SjukfallCertificateBuilder(Strings.nullToEmpty(certificate.getId()).trim())
+                .careGiverId(Strings.nullToEmpty(certificate.getCareGiverId()).trim())
+                .careUnitId(Strings.nullToEmpty(certificate.getCareUnitId()).trim())
                 .careUnitName(certificate.getCareUnitName())
                 .certificateType(certificate.getType())
-                .civicRegistrationNumber(StringUtils.trimToEmpty(certificate.getCivicRegistrationNumber().getPersonnummer()))
+                .civicRegistrationNumber(Strings.nullToEmpty(certificate.getCivicRegistrationNumber().getPersonnummer()).trim())
                 .signingDoctorName(certificate.getSigningDoctorName())
                 .patientName(getPatientName(fkUtlatande.getGrundData().getPatient()))
                 .diagnoseCode(fkUtlatande.getDiagnosKod())
-                .signingDoctorId(StringUtils.trimToEmpty(fkUtlatande.getGrundData().getSkapadAv().getPersonId()))
+                .signingDoctorId(Strings.nullToEmpty(fkUtlatande.getGrundData().getSkapadAv().getPersonId()).trim())
                 .signingDoctorName(fkUtlatande.getGrundData().getSkapadAv().getFullstandigtNamn())
                 .signingDateTime(certificate.getSignedDate())
                 .certificateType(certificate.getType())

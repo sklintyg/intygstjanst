@@ -19,16 +19,20 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-import javax.jms.*;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import com.google.common.base.Stopwatch;
 
 import se.inera.intyg.intygstjanst.persistence.model.dao.HealthCheckDao;
 import se.inera.intyg.intygstjanst.web.service.HealthCheckService;
@@ -61,8 +65,7 @@ public class HealthCheckServiceImpl implements HealthCheckService {
     @Override
     public Status getDbStatus() {
         boolean ok;
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+        Stopwatch stopWatch = Stopwatch.createStarted();
         ok = healthCheckDao.checkTimeFromDb();
         stopWatch.stop();
         Status status = createStatus(ok, stopWatch);
@@ -78,8 +81,7 @@ public class HealthCheckServiceImpl implements HealthCheckService {
     @Override
     public Status getJMSStatus() {
         boolean ok;
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+        Stopwatch stopWatch = Stopwatch.createStarted();
         ok = checkJmsConnection();
         stopWatch.stop();
         Status status = createStatus(ok, stopWatch);
@@ -116,8 +118,8 @@ public class HealthCheckServiceImpl implements HealthCheckService {
         LOGGER.info("Operation {} completed with result {} in {} ms", operation, result, status.getMeasurement());
     }
 
-    private Status createStatus(boolean ok, StopWatch stopWatch) {
-        return new Status(stopWatch.getTime(), ok);
+    private Status createStatus(boolean ok, Stopwatch stopWatch) {
+        return new Status(stopWatch.elapsed(TimeUnit.MILLISECONDS), ok);
     }
 
     public static final class Status {

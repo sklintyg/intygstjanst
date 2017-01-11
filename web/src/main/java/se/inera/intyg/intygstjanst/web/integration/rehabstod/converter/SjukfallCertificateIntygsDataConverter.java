@@ -18,7 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.rehabstod.converter;
 
-import org.apache.commons.lang3.StringUtils;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.google.common.base.Strings;
+
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
@@ -30,11 +36,6 @@ import se.riv.clinicalprocess.healthcond.rehabilitation.v1.HosPersonal;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsData;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.Patient;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.Vardgivare;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Converts a list of {@link SjukfallCertificate} into a list of {@link IntygsData}.
@@ -49,7 +50,7 @@ public class SjukfallCertificateIntygsDataConverter {
         for (SjukfallCertificate sc : sjukfallCertificates) {
             IntygsData intygsData = new IntygsData();
 
-            intygsData.setIntygsId(StringUtils.trimToEmpty(sc.getId()));
+            intygsData.setIntygsId(Strings.nullToEmpty(sc.getId()).trim());
             intygsData.setSigneringsTidpunkt(sc.getSigningDateTime());
             intygsData.setPatient(buildPatient(sc.getCivicRegistrationNumber(), sc.getPatientName()));
             intygsData.setDiagnoskod(sc.getDiagnoseCode());
@@ -74,7 +75,7 @@ public class SjukfallCertificateIntygsDataConverter {
     private Vardgivare buildVardgivare(String vardgivarId) {
         Vardgivare vardgivare = new Vardgivare();
         HsaId hsaId = new HsaId();
-        hsaId.setExtension(StringUtils.trimToEmpty(vardgivarId));
+        hsaId.setExtension(Strings.nullToEmpty(vardgivarId).trim());
         vardgivare.setVardgivarId(hsaId);
         return vardgivare;
     }
@@ -97,7 +98,7 @@ public class SjukfallCertificateIntygsDataConverter {
     private Patient buildPatient(String pnr, String namn) {
         Patient patient = new Patient();
         PersonId personId = new PersonId();
-        personId.setExtension(StringUtils.trimToEmpty(pnr));
+        personId.setExtension(Strings.nullToEmpty(pnr).trim());
         patient.setPersonId(personId);
         patient.setFullstandigtNamn(namn);
         return patient;
@@ -106,7 +107,7 @@ public class SjukfallCertificateIntygsDataConverter {
     private Enhet buildEnhet(String hsaId, String hsaName, Vardgivare vardgivare) {
         Enhet enhet = new Enhet();
         HsaId hsaIdType = new HsaId();
-        hsaIdType.setExtension(StringUtils.trimToEmpty(hsaId));
+        hsaIdType.setExtension(Strings.nullToEmpty(hsaId).trim());
         enhet.setEnhetsId(hsaIdType);
         enhet.setEnhetsnamn(hsaName);
         enhet.setVardgivare(vardgivare);
@@ -118,7 +119,7 @@ public class SjukfallCertificateIntygsDataConverter {
         hosPerson.setEnhet(enhet);
         hosPerson.setFullstandigtNamn(namn);
         HsaId hsaIdType = new HsaId();
-        hsaIdType.setExtension(StringUtils.trimToEmpty(hsaId));
+        hsaIdType.setExtension(Strings.nullToEmpty(hsaId).trim());
         hosPerson.setPersonalId(hsaIdType);
         return hosPerson;
     }
