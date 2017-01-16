@@ -71,7 +71,7 @@
 - name: Update configuration to {{ config_version }}
   git:
     repo: {{ config_repository }}
-    dest: {{ config_folder }}
+    dest: "{{ config_folder }}"
     version: {{ config_version }}
 
 - name: Start tomcat
