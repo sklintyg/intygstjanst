@@ -14,19 +14,19 @@
 - name: Download intygstjanst-liquibase-runner-{{ version }}.zip
   get_url:
     url: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/{{ version }}/intygstjanst-liquibase-runner-{{ version }}.zip
-    dest: {{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
+    dest: "{{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip"
   when: deploy_from_repo|bool
 
 - name: Copy intygstjanst-liquibase-runner-{{ version }}.zip
   copy:
-    src: {{ playbook_dir }}/../tools/liquibase-runner/build/distributions/intygstjanst-liquibase-runner-{{ version }}.zip
-    dest: {{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
+    src: "{{ playbook_dir }}/../tools/liquibase-runner/build/distributions/intygstjanst-liquibase-runner-{{ version }}.zip"
+    dest: "{{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip"
   when: not deploy_from_repo|bool
 
 - name: Unzip liquibase-runner-{{ version }}.zip
   unarchive:
-    src: {{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
-    dest: {{ releases_folder }}
+    src: "{{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip"
+    dest: "{{ releases_folder }}"
     remote_src: yes
     creates: "{{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}/bin/liquibase-runner"
 
@@ -40,14 +40,14 @@
 - name: Download intygstjanst-web-{{ version }}.war
   get_url:
     url: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/intygstjanst/intygstjanst-web/{{ version }}/intygstjanst-web-{{ version }}.war
-    dest: {{ releases_folder }}/intygstjanst-web-{{ version }}.war
+    dest: "{{ releases_folder }}/intygstjanst-web-{{ version }}.war"
     timeout: 120
   when: deploy_from_repo|bool
 
 - name: Copy intygstjanst-web-{{ version }}.war from THIS machine when not deploying from remote repo
   copy:
-    src: {{ playbook_dir }}/../web/build/libs/intygstjanst-web-{{ version }}.war
-    dest: {{ releases_folder }}/intygstjanst-web-{{ version }}.war
+    src: "{{ playbook_dir }}/../web/build/libs/intygstjanst-web-{{ version }}.war"
+    dest: "{{ releases_folder }}/intygstjanst-web-{{ version }}.war"
   when: not deploy_from_repo|bool
 
 - name: Remove old version of unpacked war
