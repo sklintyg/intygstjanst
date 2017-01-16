@@ -1,5 +1,5 @@
-{% if hostvars[host]['localhost_url'] is defined %}
-ENV_CFG="-Dspring.profiles.active={{ profiles }} -Dlocalhost.url={{ localhost_url }}
+{% if localhost_url is defined %}
+ENV_CFG="-Dspring.profiles.active={{ profiles }} -Dlocalhost.url={{ localhost_url }}"
 {% else %}
 ENV_CFG="-Dspring.profiles.active={{ profiles }}"
 {% endif %}
