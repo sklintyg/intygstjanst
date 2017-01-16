@@ -1,25 +1,34 @@
 ---
 
 - name: Stop tomcat
-  service: name={{ tomcat_service }} state=stopped pattern={{ tomcat_service }}
+  service:
+    name: {{ tomcat_service }}
+    state: stopped
+    pattern: {{ tomcat_service }}
 
 - name: Create release directory
-  file: path={{ releases_folder }} state=directory
+  file:
+    path: {{ releases_folder }}
+    state: directory
 
 - name: Download intygstjanst-liquibase-runner-{{ version }}.zip
-  get_url: url=https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/{{ version }}/intygstjanst-liquibase-runner-{{ version }}.zip
-           dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
+  get_url:
+    url: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/{{ version }}/intygstjanst-liquibase-runner-{{ version }}.zip
+    dest: {{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
   when: deploy_from_repo|bool
 
 - name: Copy intygstjanst-liquibase-runner-{{ version }}.zip
-  copy: src={{ playbook_dir }}/../tools/liquibase-runner/build/distributions/intygstjanst-liquibase-runner-{{ version }}.zip dest={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
+  copy:
+    src: {{ playbook_dir }}/../tools/liquibase-runner/build/distributions/intygstjanst-liquibase-runner-{{ version }}.zip
+    dest: {{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
   when: not deploy_from_repo|bool
 
 - name: Unzip liquibase-runner-{{ version }}.zip
-  unarchive: src={{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
-             dest={{ releases_folder }}
-             remote_src=yes
-             creates="{{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}/bin/liquibase-runner"
+  unarchive:
+    src: {{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip
+    dest: {{ releases_folder }}
+    remote_src: yes
+    creates: "{{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}/bin/liquibase-runner"
 
 - name: Run liquibase update
   command: "{{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}/bin/intygstjanst-liquibase-runner --url={{ database_url }} --username={{ database_username }} --password={{ database_password }} update"
@@ -29,33 +38,44 @@
       JAVA_HOME: "{{ java_home }}"
 
 - name: Download intygstjanst-web-{{ version }}.war
-  get_url: url=https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/intygstjanst/intygstjanst-web/{{ version }}/intygstjanst-web-{{ version }}.war
-           dest={{ releases_folder }}/intygstjanst-web-{{ version }}.war
-           timeout=120
+  get_url:
+    url: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/intygstjanst/intygstjanst-web/{{ version }}/intygstjanst-web-{{ version }}.war
+    dest: {{ releases_folder }}/intygstjanst-web-{{ version }}.war
+    timeout: 120
   when: deploy_from_repo|bool
 
 - name: Copy intygstjanst-web-{{ version }}.war from THIS machine when not deploying from remote repo
-  copy: src={{ playbook_dir }}/../web/build/libs/intygstjanst-web-{{ version }}.war dest={{ releases_folder }}/intygstjanst-web-{{ version }}.war
+  copy:
+    src: {{ playbook_dir }}/../web/build/libs/intygstjanst-web-{{ version }}.war
+    dest: {{ releases_folder }}/intygstjanst-web-{{ version }}.war
   when: not deploy_from_repo|bool
 
 - name: Remove old version of unpacked war
-  file: state=absent
-      path={{ webapps_folder }}/inera-certificate
+  file:
+    state: absent
+    path: {{ webapps_folder }}/inera-certificate
 
 - name: Remove old version of war
-  file: state=absent
-      path={{ webapps_folder }}/inera-certificate.war
+  file:
+    state: absent
+    path: {{ webapps_folder }}/inera-certificate.war
 
 - name: Deploy intygstjanst-web-{{ version }}.war as inera-certificate.war
-  command: cp {{ releases_folder }}/intygstjanst-web-{{ version }}.war {{ webapps_folder }}/inera-certificate.war
+  command: "cp {{ releases_folder }}/intygstjanst-web-{{ version }}.war {{ webapps_folder }}/inera-certificate.war"
 
 - name: Fetch configuration repo to get new branches
-  command: chdir={{ config_folder }} git fetch origin
-
+  command: git fetch origin
+    args:
+      chdir: {{ config_folder }}
+        
 - name: Update configuration to {{ config_version }}
-  git: repo={{ config_repository }}
-       dest={{ config_folder }}
-       version={{ config_version }}
+  git:
+    repo: {{ config_repository }}
+    dest: {{ config_folder }}
+    version: {{ config_version }}
 
 - name: Start tomcat
-  service: name={{ tomcat_service }} state=restarted pattern={{ tomcat_service }}
+  service:
+    name: {{ tomcat_service }}
+    state: restarted
+    pattern: {{ tomcat_service }}
