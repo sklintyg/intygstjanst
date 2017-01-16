@@ -53,12 +53,12 @@
 - name: Remove old version of unpacked war
   file:
     state: absent
-    path: {{ webapps_folder }}/inera-certificate
+    path: "{{ webapps_folder }}/inera-certificate"
 
 - name: Remove old version of war
   file:
     state: absent
-    path: {{ webapps_folder }}/inera-certificate.war
+    path: "{{ webapps_folder }}/inera-certificate.war"
 
 - name: Deploy intygstjanst-web-{{ version }}.war as inera-certificate.war
   command: "cp {{ releases_folder }}/intygstjanst-web-{{ version }}.war {{ webapps_folder }}/inera-certificate.war"
