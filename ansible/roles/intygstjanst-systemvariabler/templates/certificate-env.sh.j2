@@ -1,4 +1,8 @@
+{% if hostvars[host]['localhost_url'] is defined %}
+ENV_CFG="-Dspring.profiles.active={{ profiles }} -Dlocalhost.url={{ localhost_url }}
+{% else %}
 ENV_CFG="-Dspring.profiles.active={{ profiles }}"
+{% endif %}
 JVM_CFG="-Xms1024m -Xmx1024m -Dfile.encoding=UTF-8"
 DEBUG_CFG="-XX:-HeapDumpOnOutOfMemoryError -XX:HeapDumpPath={{ inera_tomcat_folder }}"
 CREDENTIALS_CFG="-Dcredentials.file={{ config_etc_folder }}/credentials.properties"

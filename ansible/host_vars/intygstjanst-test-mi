@@ -6,6 +6,7 @@ config_etc_folder: "{{ config_folder }}/{{ environment_name }}"
 
 # Spring profiles
 profiles: test,it-fk-stub,it-ts-stub,testability-api,wc-hsa-stub
+localhost_url: http://localhost:18008
 
 # ActiveMQ configuration
 activemq_username: "nmt"
