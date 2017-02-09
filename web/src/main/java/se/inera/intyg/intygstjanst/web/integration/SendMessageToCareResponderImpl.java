@@ -64,14 +64,16 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
         List<String> validationErrors = validator.validateSendMessageToCare(parameters);
         if (!validationErrors.isEmpty()) {
             SendMessageToCareResponseType response = new SendMessageToCareResponseType();
-            String resultText = "Validation of SendMessageToCareType failed for message with meddelandeid " + parameters.getMeddelandeId() + ": "
+            String resultText = "Validation of SendMessageToCareType failed for message with meddelandeid " + parameters.getMeddelandeId()
+                    + ": "
                     + validationErrors.toString();
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, resultText));
             LOGGER.error(resultText);
             return response;
         }
 
-        SendMessageToCareResponseType response = sendMessageToCareResponder.sendMessageToCare(parameters.getLogiskAdressMottagare(), parameters);
+        SendMessageToCareResponseType response = sendMessageToCareResponder.sendMessageToCare(parameters.getLogiskAdressMottagare(),
+                parameters);
 
         if (response.getResult().getResultCode() != ResultCodeType.ERROR) {
             logService.logSendMessageToCareReceived(parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());

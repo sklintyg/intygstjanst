@@ -90,7 +90,8 @@ public class SendMessageToCareResponderStubRestApi {
     @Path("/byLogicalAddress")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMessagesForLogicalAddress(@QueryParam("address") String address) {
-        Map<String, Set<SendMessageToCareStorage.MessageKey>> messageIds = ImmutableMap.of("messages", storage.getMessagesIdsForLogicalAddress(address));
+        Map<String, Set<SendMessageToCareStorage.MessageKey>> messageIds = ImmutableMap.of("messages",
+                storage.getMessagesIdsForLogicalAddress(address));
         try {
             return Response.ok(new ObjectMapper().writeValueAsString(messageIds)).build();
         } catch (JsonProcessingException e) {

@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
 
+// CHECKSTYLE:OFF LineLength
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.InnehallType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType;
@@ -54,6 +55,7 @@ import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+// CHECKSTYLE:ON LineLength
 
 /**
  * @author andreaskaltenbach
@@ -177,7 +179,8 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
         AttributedURIType logicalAddress = getLogicalAddress(recipientId);
 
-        RevokeMedicalCertificateResponseType sendResponse = revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(logicalAddress,
+        RevokeMedicalCertificateResponseType sendResponse = revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(
+                logicalAddress,
                 request);
 
         if (sendResponse.getResult().getResultCode() != OK) {
@@ -186,7 +189,8 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             LOGGER.error(message);
             throw new SubsystemCallException(recipientId, message);
         } else {
-            monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(), recipientId);
+            monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(),
+                    recipientId);
         }
     }
 

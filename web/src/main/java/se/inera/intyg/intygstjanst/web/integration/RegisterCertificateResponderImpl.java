@@ -134,7 +134,8 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, "Certificate already exists"));
         String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
         String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
-        LOGGER.error(LogMarkers.VALIDATION, "Failed to create Certificate with id " + certificateId + " issued by " + issuedBy + ": Certificate ID already exists for another person.");
+        LOGGER.error(LogMarkers.VALIDATION, "Failed to create Certificate with id " + certificateId + " issued by " + issuedBy
+                + ": Certificate ID already exists for another person.");
         return response;
     }
 

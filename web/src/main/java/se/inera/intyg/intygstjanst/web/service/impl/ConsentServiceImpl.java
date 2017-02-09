@@ -67,7 +67,8 @@ public class ConsentServiceImpl implements ConsentService {
             try {
                 certificateDao.removeCertificatesDeletedByCareGiver(civicRegistrationNumber);
             } catch (PersistenceException e) {
-                LOGGER.error("Failed to remove certificates deleted by care giver for citizen {}", Personnummer.getPnrHashSafe(civicRegistrationNumber));
+                LOGGER.error("Failed to remove certificates deleted by care giver for citizen {}",
+                        Personnummer.getPnrHashSafe(civicRegistrationNumber));
             }
         }
     }

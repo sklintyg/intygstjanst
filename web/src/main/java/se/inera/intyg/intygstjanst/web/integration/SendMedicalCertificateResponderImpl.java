@@ -45,7 +45,6 @@ import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
-
 public class SendMedicalCertificateResponderImpl implements SendMedicalCertificateResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SendMedicalCertificateResponderImpl.class);
@@ -69,9 +68,9 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             String certificateId = request.getSend().getLakarutlatande().getLakarutlatandeId();
 
             // Comment 2015-02-13 by Magnus Ekstrand:
-            //   Lookup recipient based on the certificate type. This works if and only if a certificate
-            //   type only have one recipient. If in a future a certificate type can be sent to multiple
-            //   recipients, other mechanisms must be implemented to determine correct recipient.
+            // Lookup recipient based on the certificate type. This works if and only if a certificate
+            // type only have one recipient. If in a future a certificate type can be sent to multiple
+            // recipients, other mechanisms must be implemented to determine correct recipient.
             Certificate certificate = certificateService.getCertificateForCare(certificateId);
             Recipient recipient = lookupRecipient(certificate);
 
@@ -140,11 +139,15 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
         String errorMsg = "";
 
         if (recipients.isEmpty()) {
-            errorMsg = String.format("No recipient was found for certificate of type %s. Maybe this is a missed configuration.", certificateType.getCertificateTypeId());
+            errorMsg = String.format("No recipient was found for certificate of type %s. Maybe this is a missed configuration.",
+                    certificateType.getCertificateTypeId());
         }
 
         if (recipients.size() > 1) {
-            errorMsg = String.format("Multiple recipients were found for certificate of type %s. Unable to decide recipient. Maybe this is a missed configuration.", certificateType.getCertificateTypeId());
+            errorMsg = String.format(
+                    "Multiple recipients were found for certificate of type %s. Unable to decide recipient. "
+                    + "Maybe this is a missed configuration.",
+                    certificateType.getCertificateTypeId());
         }
 
         LOGGER.error(LogMarkers.VALIDATION, errorMsg);

@@ -18,7 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 
-
 /**
  * @author andreaskaltenbach
  */
@@ -51,7 +49,8 @@ public class ListCertificatesResponderImpl implements ListCertificatesResponderI
 
         try {
             List<Certificate> certificates = certificateService.listCertificatesForCitizen(
-                    new Personnummer(parameters.getNationalIdentityNumber()), parameters.getCertificateType(), parameters.getFromDate(), parameters.getToDate());
+                    new Personnummer(parameters.getNationalIdentityNumber()), parameters.getCertificateType(), parameters.getFromDate(),
+                    parameters.getToDate());
             for (Certificate certificate : certificates) {
                 if (parameters.getCertificateType().isEmpty() || !(certificate.isDeleted() || certificate.isRevoked())) {
                     response.getMeta().add(ModelConverter.toCertificateMetaType(ConverterUtil.toCertificateHolder(certificate)));

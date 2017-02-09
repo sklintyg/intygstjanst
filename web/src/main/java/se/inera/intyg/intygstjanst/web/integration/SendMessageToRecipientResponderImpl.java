@@ -60,7 +60,8 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
 
     @Override
     public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress, SendMessageToRecipientType parameters) {
-        LOG.debug("Send message to recipient request received. logicalAddress={} messageId={}", logicalAddress, parameters != null ? parameters.getMeddelandeId() : "N/A");
+        LOG.debug("Send message to recipient request received. logicalAddress={} messageId={}", logicalAddress,
+                parameters != null ? parameters.getMeddelandeId() : "N/A");
 
         try {
             List<String> validationErrors = validator.validate(parameters);
@@ -76,7 +77,8 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
             return resp;
         }
 
-        SendMessageToRecipientResponseType response = sendMessageToRecipientResponder.sendMessageToRecipient(parameters.getLogiskAdressMottagare(), parameters);
+        SendMessageToRecipientResponseType response = sendMessageToRecipientResponder
+                .sendMessageToRecipient(parameters.getLogiskAdressMottagare(), parameters);
         if (response.getResult().getResultCode() != ResultCodeType.ERROR) {
             monitoringLog.logSendMessageToRecipient(parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());
             try {

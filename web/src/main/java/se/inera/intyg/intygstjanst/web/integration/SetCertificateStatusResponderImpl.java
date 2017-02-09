@@ -32,7 +32,6 @@ import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 
-
 /**
  * @author andreaskaltenbach
  */
@@ -46,12 +45,14 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
     private MonitoringLogService monitoringLogService;
 
     @Override
-    public SetCertificateStatusResponseType setCertificateStatus(AttributedURIType logicalAddress, SetCertificateStatusRequestType request) {
+    public SetCertificateStatusResponseType setCertificateStatus(AttributedURIType logicalAddress,
+            SetCertificateStatusRequestType request) {
 
         SetCertificateStatusResponseType response = new SetCertificateStatusResponseType();
 
         try {
-            certificateService.setCertificateState(new Personnummer(request.getNationalIdentityNumber()), request.getCertificateId(), request.getTarget(), CertificateState.valueOf(request.getStatus().name()), request.getTimestamp());
+            certificateService.setCertificateState(new Personnummer(request.getNationalIdentityNumber()), request.getCertificateId(),
+                    request.getTarget(), CertificateState.valueOf(request.getStatus().name()), request.getTimestamp());
             response.setResult(ResultOfCallUtil.okResult());
             monitoringLogService.logCertificateStatusChanged(request.getCertificateId(), request.getStatus().name());
         } catch (InvalidCertificateException e) {

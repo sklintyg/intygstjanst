@@ -105,7 +105,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     @Override
     @Transactional(readOnly = true, noRollbackFor = { PersistenceException.class })
-    public Certificate getCertificateForCitizen(Personnummer civicRegistrationNumber, String certificateId) throws InvalidCertificateException,
+    public Certificate getCertificateForCitizen(Personnummer civicRegistrationNumber, String certificateId)
+            throws InvalidCertificateException,
             CertificateRevokedException {
 
         assertConsent(civicRegistrationNumber);
@@ -228,7 +229,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     @Override
     @Transactional
-    public void certificateReceived(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException, InvalidCertificateException {
+    public void certificateReceived(CertificateHolder certificateHolder)
+            throws CertificateAlreadyExistsException, InvalidCertificateException {
         LOG.debug("Certificate received {}", certificateHolder.getId());
         Certificate certificate = storeCertificate(certificateHolder);
         LOG.debug("Certificate stored {}", certificateHolder.getId());
@@ -289,7 +291,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     @Override
     @Transactional(readOnly = true, noRollbackFor = { PersistenceException.class })
-    public CertificateHolder getCertificate(String certificateId, Personnummer personId, boolean checkConsent) throws InvalidCertificateException {
+    public CertificateHolder getCertificate(String certificateId, Personnummer personId, boolean checkConsent)
+            throws InvalidCertificateException {
         if (checkConsent && personId != null && !consentService.isConsent(personId)) {
             throw new MissingConsentException(personId);
         }

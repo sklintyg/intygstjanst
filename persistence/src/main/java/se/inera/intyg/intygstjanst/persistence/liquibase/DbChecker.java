@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.inera.intyg.intygstjanst.persistence.liquibase;
+
 import liquibase.Liquibase;
 import liquibase.changelog.ChangeSet;
 import liquibase.database.Database;
@@ -46,7 +47,8 @@ public class DbChecker {
                 for (ChangeSet changeSet : changeSets) {
                     errors.append('>').append(changeSet.toString()).append('\n');
                 }
-                throw new Error("Database version mismatch. Check liquibase status. Errors:\n" + errors.toString() + database.getDatabaseProductName() + ", " + database);
+                throw new Error("Database version mismatch. Check liquibase status. Errors:\n" + errors.toString()
+                        + database.getDatabaseProductName() + ", " + database);
             }
         } catch (liquibase.exception.LiquibaseException e) {
             throw new Error("Database not ok, aborting startup.", e);

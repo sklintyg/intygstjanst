@@ -184,7 +184,8 @@ public class IntygBootstrapBean {
                 try {
                     Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
                     String contentString = Resources.toString(content.getURL(), Charsets.UTF_8);
-                    OriginalCertificate originalCertificate = new OriginalCertificate(certificate.getSignedDate(), contentString, certificate);
+                    OriginalCertificate originalCertificate = new OriginalCertificate(certificate.getSignedDate(), contentString,
+                            certificate);
                     entityManager.persist(originalCertificate);
                     entityManager.persist(certificate);
                 } catch (Exception e) {
@@ -222,11 +223,13 @@ public class IntygBootstrapBean {
                         Utlatande utlatande = moduleApi.getUtlatandeFromXml(contentString);
 
                         if (certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
-                            SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertFk7263(certificate, utlatande);
+                            SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertFk7263(certificate,
+                                    utlatande);
                             entityManager.persist(sjukfallCertificate);
                         }
                         if (certificateToSjukfallCertificateConverter.isConvertableLisjp(utlatande)) {
-                            SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertLisjp(certificate, utlatande);
+                            SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertLisjp(certificate,
+                                    utlatande);
                             entityManager.persist(sjukfallCertificate);
                         }
                     } catch (Exception e) {

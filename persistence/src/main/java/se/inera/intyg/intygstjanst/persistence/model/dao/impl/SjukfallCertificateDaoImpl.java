@@ -67,7 +67,8 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         personNummerList = personNummerList.stream().distinct().sorted().collect(Collectors.toList());
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Get personnr with active intyg on enhet {} (with mottagningar) returned {} items.", careUnitHsaIds, personNummerList.size());
+            LOG.debug("Get personnr with active intyg on enhet {} (with mottagningar) returned {} items.", careUnitHsaIds,
+                    personNummerList.size());
         }
 
         // if no personnummer found, return empty list

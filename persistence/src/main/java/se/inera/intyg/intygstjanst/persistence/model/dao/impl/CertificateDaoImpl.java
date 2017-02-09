@@ -66,7 +66,8 @@ public class CertificateDaoImpl implements CertificateDao {
         List<Predicate> predicates = new ArrayList<>();
 
         // meta data has to match civic registration number
-        predicates.add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), DaoUtil.formatPnrForPersistence(civicRegistrationNumber)));
+        predicates
+                .add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), DaoUtil.formatPnrForPersistence(civicRegistrationNumber)));
 
         // filter by certificate types
         if (types != null && !types.isEmpty()) {
@@ -127,7 +128,8 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
-    public void updateStatus(String id, Personnummer civicRegistrationNumber, CertificateState state, String target, LocalDateTime timestamp)
+    public void updateStatus(String id, Personnummer civicRegistrationNumber, CertificateState state, String target,
+            LocalDateTime timestamp)
             throws PersistenceException {
 
         Certificate certificate = entityManager.find(Certificate.class, id);

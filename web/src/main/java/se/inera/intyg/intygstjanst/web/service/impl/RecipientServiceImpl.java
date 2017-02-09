@@ -60,7 +60,8 @@ public class RecipientServiceImpl implements RecipientService, InitializingBean 
         return recipientList.stream()
                 .filter(r -> r.getLogicalAddress().equals(logicalAddress))
                 .findFirst()
-                .orElseThrow(() -> new RecipientUnknownException(String.format("No recipient found for logical address: %s", logicalAddress)));
+                .orElseThrow(
+                        () -> new RecipientUnknownException(String.format("No recipient found for logical address: %s", logicalAddress)));
     }
 
     @Override

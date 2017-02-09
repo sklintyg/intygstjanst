@@ -113,7 +113,8 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
         } catch (SubsystemCallException e) {
             LOGGER.warn("Encountered an exception when sending a revocation to subsystem '" + e.getSubsystemId() + "'");
             response.setResult(
-                    ResultOfCallUtil.failResult("Informing subsystem '" + e.getSubsystemId() + "' about revoked certificate resulted in error"));
+                    ResultOfCallUtil
+                            .failResult("Informing subsystem '" + e.getSubsystemId() + "' about revoked certificate resulted in error"));
             return response;
         }
 

@@ -34,7 +34,6 @@ import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.riv.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 
-
 public class GetRecipientsForCertificateResponderImpl implements GetRecipientsForCertificateResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetRecipientsForCertificateResponderImpl.class);
@@ -43,7 +42,8 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
     private RecipientService recipientService;
 
     @Override
-    public GetRecipientsForCertificateResponseType getRecipientsForCertificate(String logicalAddress, GetRecipientsForCertificateType request) {
+    public GetRecipientsForCertificateResponseType getRecipientsForCertificate(String logicalAddress,
+            GetRecipientsForCertificateType request) {
         String certTypeStr = request.getCertificateType().trim();
         CertificateType certificateType = new CertificateType(certTypeStr);
         GetRecipientsForCertificateResponseType response = new GetRecipientsForCertificateResponseType();
@@ -59,7 +59,8 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
 
         if (response.getRecipient().isEmpty()) {
             LOGGER.error("No recipients found for type {}", certTypeStr);
-            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, String.format("No recipients found for certificate type: %s", certTypeStr)));
+            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR,
+                    String.format("No recipients found for certificate type: %s", certTypeStr)));
         } else {
             LOGGER.debug("{} recipient(s) found for {}", recipients.size(), certTypeStr);
             response.setResult(ResultTypeUtil.okResult());

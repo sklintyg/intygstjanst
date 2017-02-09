@@ -68,7 +68,8 @@ public final class ArendeConverter {
     }
 
     public static String convertToXmlString(SendMessageToRecipientType source) throws JAXBException {
-        se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.ObjectFactory objectFactory = new se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.ObjectFactory();
+        se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.ObjectFactory objectFactory =
+                new se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.ObjectFactory();
         JAXBContext jaxbContext = JAXBContext
                 .newInstance(SendMessageToRecipientType.class);
         Marshaller marshaller = jaxbContext.createMarshaller();

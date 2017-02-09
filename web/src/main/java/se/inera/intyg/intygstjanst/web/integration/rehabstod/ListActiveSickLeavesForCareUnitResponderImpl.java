@@ -19,6 +19,7 @@
 package se.inera.intyg.intygstjanst.web.integration.rehabstod;
 
 import org.springframework.beans.factory.annotation.Autowired;
+// CHECKSTYLE:OFF LineLength
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitType;
@@ -28,6 +29,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallCertificateIntygsDataConverter;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsLista;
+// CHECKSTYLE:ON LineLength
 
 import java.util.List;
 
@@ -45,7 +47,8 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
     private SjukfallCertificateDao sjukfallCertificateDao;
 
     @Override
-    public ListActiveSickLeavesForCareUnitResponseType listActiveSickLeavesForCareUnit(String logicalAddress, ListActiveSickLeavesForCareUnitType parameters) {
+    public ListActiveSickLeavesForCareUnitResponseType listActiveSickLeavesForCareUnit(String logicalAddress,
+            ListActiveSickLeavesForCareUnitType parameters) {
         ListActiveSickLeavesForCareUnitResponseType response = new ListActiveSickLeavesForCareUnitResponseType();
 
         if (hasNoCareUnitId(parameters)) {
@@ -59,18 +62,20 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
         List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(careUnitHsaId);
         hsaIdList.add(careUnitHsaId);
 
-        List<SjukfallCertificate> activeSjukfallCertificateForCareUnits = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(hsaIdList);
+        List<SjukfallCertificate> activeSjukfallCertificateForCareUnits = sjukfallCertificateDao
+                .findActiveSjukfallCertificateForCareUnits(hsaIdList);
 
         response.setResultCode(ResultCodeEnum.OK);
         IntygsLista intygsLista = new IntygsLista();
-        intygsLista.getIntygsData().addAll(new SjukfallCertificateIntygsDataConverter().buildIntygsData(activeSjukfallCertificateForCareUnits));
+        intygsLista.getIntygsData()
+                .addAll(new SjukfallCertificateIntygsDataConverter().buildIntygsData(activeSjukfallCertificateForCareUnits));
         response.setIntygsLista(intygsLista);
         return response;
     }
 
     private boolean hasNoCareUnitId(ListActiveSickLeavesForCareUnitType parameters) {
-        return parameters.getEnhetsId() == null || parameters.getEnhetsId().getExtension() == null || parameters.getEnhetsId().getExtension().trim().length() == 0;
+        return parameters.getEnhetsId() == null || parameters.getEnhetsId().getExtension() == null
+                || parameters.getEnhetsId().getExtension().trim().length() == 0;
     }
-
 
 }

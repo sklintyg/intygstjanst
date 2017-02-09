@@ -217,7 +217,7 @@ public class CertificateToSjukfallCertificateConverter {
             return false;
         }
 
-        if (fkUtlatande.getDiagnosKod() == null || fkUtlatande.getDiagnosKod().trim().equals("")) {
+        if (fkUtlatande.getDiagnosKod() == null || "".equals(fkUtlatande.getDiagnosKod().trim())) {
             LOG.debug("Intyg {} is not a valid SjukfallCertificate, has no diagnoseCode.", fkUtlatande.getId());
             return false;
         }
@@ -238,7 +238,7 @@ public class CertificateToSjukfallCertificateConverter {
         }
 
         Diagnos diagnos = lisjpUtlatande.getDiagnoser().stream().findFirst().orElse(null);
-        if (diagnos == null || diagnos.getDiagnosKod() == null || diagnos.getDiagnosKod().trim().equals("")) {
+        if (diagnos == null || diagnos.getDiagnosKod() == null || "".equals(diagnos.getDiagnosKod().trim())) {
             LOG.debug("Intyg {} is not a valid SjukfallCertificate, has no diagnoseCode.", lisjpUtlatande.getId());
             return false;
         }

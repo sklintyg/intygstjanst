@@ -85,7 +85,8 @@ public class CertificateResource {
             try {
                 LOGGER.info("Deleting certificates for citizen {}", id);
                 @SuppressWarnings("unchecked")
-                List<String> certificates = entityManager.createQuery("SELECT c.id FROM Certificate c WHERE c.civicRegistrationNumber=:personId")
+                List<String> certificates = entityManager
+                        .createQuery("SELECT c.id FROM Certificate c WHERE c.civicRegistrationNumber=:personId")
                         .setParameter("personId", id).getResultList();
                 for (String certificate : certificates) {
                     deleteCertificate(certificate);
@@ -187,7 +188,8 @@ public class CertificateResource {
             Certificate certificate = ConverterUtil.toCertificate(certificateHolder);
             try {
                 LOGGER.info("insert certificate {} ({})", certificate.getId(), certificate.getType());
-                OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), getXmlBody(certificateHolder), certificate);
+                OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), getXmlBody(certificateHolder),
+                        certificate);
                 entityManager.persist(certificate);
                 entityManager.persist(originalCertificate);
                 return Response.ok().build();
@@ -203,7 +205,8 @@ public class CertificateResource {
         if (!Strings.nullToEmpty(certificateHolder.getOriginalCertificate()).trim().isEmpty()) {
             return certificateHolder.getOriginalCertificate();
         } else {
-            return Resources.toString(new ClassPathResource("content/intyg-" + certificateHolder.getType() + "-content.xml").getURL(), Charsets.UTF_8)
+            return Resources.toString(new ClassPathResource("content/intyg-" + certificateHolder.getType() + "-content.xml").getURL(),
+                    Charsets.UTF_8)
                     .replace("CERTIFICATE_ID", certificateHolder.getId())
                     .replace("PATIENT_CRN", certificateHolder.getCivicRegistrationNumber().getPersonnummerWithoutDash())
                     .replace("CAREUNIT_ID", certificateHolder.getCareUnitId())

@@ -92,7 +92,8 @@ public class SjukfallCertResource {
             public Response doInTransaction(TransactionStatus status) {
                 try {
                     @SuppressWarnings("unchecked")
-                    List<SjukfallCertificate> certificates = entityManager.createQuery("SELECT sc FROM SjukfallCertificate sc").getResultList();
+                    List<SjukfallCertificate> certificates = entityManager.createQuery("SELECT sc FROM SjukfallCertificate sc")
+                            .getResultList();
                     for (SjukfallCertificate sjukfallCert : certificates) {
                         entityManager.remove(sjukfallCert);
                     }

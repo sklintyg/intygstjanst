@@ -31,12 +31,13 @@ import org.w3.wsaddressing10.AttributedURIType;
 
 import com.google.common.base.Throwables;
 
+// CHECKSTYLE:OFF LineLength
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.rivtabp20.v1.SendMedicalCertificateQuestionResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.*;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
-
+// CHECKSTYLE:ON LineLength
 
 /**
  * @author par.wenaker
@@ -61,7 +62,8 @@ public class SendMedicalCertificateQuestionResponderStub implements SendMedicalC
     }
 
     @Override
-    public SendMedicalCertificateQuestionResponseType sendMedicalCertificateQuestion(AttributedURIType logicalAddress, SendMedicalCertificateQuestionType request) {
+    public SendMedicalCertificateQuestionResponseType sendMedicalCertificateQuestion(AttributedURIType logicalAddress,
+            SendMedicalCertificateQuestionType request) {
 
         SendMedicalCertificateQuestionResponseType response = new SendMedicalCertificateQuestionResponseType();
 

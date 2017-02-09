@@ -63,7 +63,8 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
     private IntygModuleRegistryImpl moduleRegistry;
 
     @Override
-    public ListCertificatesForCitizenResponseType listCertificatesForCitizen(String logicalAddress, ListCertificatesForCitizenType parameters) {
+    public ListCertificatesForCitizenResponseType listCertificatesForCitizen(String logicalAddress,
+            ListCertificatesForCitizenType parameters) {
         LOGGER.debug("List certificates for citizen. arkiverade={}", parameters.isArkiverade());
         ListCertificatesForCitizenResponseType response = new ListCertificatesForCitizenResponseType();
         response.setIntygsLista(new ListaType());

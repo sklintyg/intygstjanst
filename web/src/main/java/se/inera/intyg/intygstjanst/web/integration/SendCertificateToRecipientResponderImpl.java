@@ -46,7 +46,8 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
     private CertificateService certificateService;
 
     @Override
-    public SendCertificateToRecipientResponseType sendCertificateToRecipient(String logicalAddress, SendCertificateToRecipientType request) {
+    public SendCertificateToRecipientResponseType sendCertificateToRecipient(String logicalAddress,
+            SendCertificateToRecipientType request) {
 
         SendCertificateToRecipientResponseType response = new SendCertificateToRecipientResponseType();
 

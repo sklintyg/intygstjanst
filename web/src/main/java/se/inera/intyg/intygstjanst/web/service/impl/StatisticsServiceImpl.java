@@ -96,7 +96,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     private boolean sendIntygDataPointToStatistik(String actionType, String certificateXml, String certificateId, String certificateType) {
         try {
             if (jmsTemplate == null) {
-                LOG.error("Failure sending '{}' type with certificate id '{}' to statistics, no JmsTemplate configured", actionType, certificateId);
+                LOG.error("Failure sending '{}' type with certificate id '{}' to statistics, no JmsTemplate configured", actionType,
+                        certificateId);
                 return false;
             }
 

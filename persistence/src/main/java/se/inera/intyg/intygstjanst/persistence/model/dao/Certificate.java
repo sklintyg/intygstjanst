@@ -287,7 +287,8 @@ public class Certificate {
     /**
      * Check if this certificate is currently deleted ("arkiverad") by the citizen.
      *
-     * @return <code>true</code> if the latest {@link CertificateState} of either type <code>DELETED</code> or <code>RESTORED</code> is <code>DELETED</code>, otherwise return <code>false</code>.
+     * @return <code>true</code> if the latest {@link CertificateState} of either type <code>DELETED</code> or
+     *         <code>RESTORED</code> is <code>DELETED</code>, otherwise return <code>false</code>.
      */
     public boolean isDeleted() {
         for (CertificateStateHistoryEntry state : getStates()) {
