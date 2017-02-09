@@ -34,10 +34,15 @@ import org.springframework.jms.core.JmsTemplate;
 
 import com.google.common.base.Joiner;
 
+/**
+ * Class for consuming JMS messages sent to statistik (ST). Meant to be used for integration testing purposes.
+ */
 public class Receiver {
 
     private static final String CERTIFICATE_ID = "certificate-id";
+    private static final String MESSAGE_ID = "message-id";
     private static final String ACTION = "action";
+    private static final String FK_MESSAGE_ACTION = "message-sent";
     private static final long TIMEOUT = 3000;
 
     @Autowired
@@ -52,21 +57,26 @@ public class Receiver {
 
     public Map<String, String> getMessages() {
         return jmsTemplate.execute(session -> {
-                Map<String, String> storage = new HashMap<>();
+            Map<String, String> storage = new HashMap<>();
 
-                MessageConsumer consumer = session.createConsumer(queue);
-                Message rawMessage;
-                while ((rawMessage = consumer.receive(TIMEOUT)) != null) {
-                    String certificateId = rawMessage.getStringProperty(CERTIFICATE_ID);
-                    String action = rawMessage.getStringProperty(ACTION);
-                    storage.put(generateKey(certificateId, action), ((TextMessage) rawMessage).getText());
+            MessageConsumer consumer = session.createConsumer(queue);
+            Message rawMessage;
+            while ((rawMessage = consumer.receive(TIMEOUT)) != null) {
+                String action = rawMessage.getStringProperty(ACTION);
+                String id;
+                if (action.equals(FK_MESSAGE_ACTION)) {
+                    id = rawMessage.getStringProperty(MESSAGE_ID);
+                } else {
+                    id = rawMessage.getStringProperty(CERTIFICATE_ID);
                 }
+                storage.put(generateKey(id, action), ((TextMessage) rawMessage).getText());
+            }
 
-                LOG.info("Received {} messages", storage.keySet().size());
+            LOG.info("Received {} messages", storage.keySet().size());
 
-                consumer.close();
-                return storage;
-            }, true);
+            consumer.close();
+            return storage;
+        }, true);
     }
 
     public static String generateKey(String certificateId, String action) {

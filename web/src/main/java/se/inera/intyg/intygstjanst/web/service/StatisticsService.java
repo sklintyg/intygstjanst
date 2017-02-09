@@ -20,9 +20,37 @@ package se.inera.intyg.intygstjanst.web.service;
 
 public interface StatisticsService {
 
+    /**
+     * Sends data to Statistik (ST) about a created certificate (intyg), returning true if successfully sent, false
+     * otherwise.
+     *
+     * @param certificateXml
+     * @param certificateId
+     * @param certificateType
+     * @param careUnitId
+     * @return
+     */
     boolean created(String certificateXml, String certificateId, String certificateType, String careUnitId);
 
+    /**
+     * Sends data to Statistic (ST) about a revoked certificate (intyg), returning true if successfully sent,
+     * false otherwise.
+     *
+     * @param certificateXml
+     * @param certificateId
+     * @param certificateType
+     * @param careUnitId
+     * @return
+     */
     boolean revoked(String certificateXml, String certificateId, String certificateType, String careUnitId);
 
+    /**
+     * Sends data to Statistik (ST) about a sent message, returning true if data was successfully sent, false otherwise.
+     *
+     * @param xml
+     * @param certificateId
+     * @param topic
+     * @return
+     */
     boolean messageSent(String xml, String certificateId, String topic);
 }

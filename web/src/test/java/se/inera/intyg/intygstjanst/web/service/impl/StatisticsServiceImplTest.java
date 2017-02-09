@@ -21,13 +21,23 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
-import javax.jms.*;
+import javax.jms.JMSException;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
@@ -60,7 +70,7 @@ public class StatisticsServiceImplTest {
 
     @Test
     public void disabledServiceDoesNothingOnRevoked() {
-        serviceImpl.revoked(null,null,null,null);
+        serviceImpl.revoked(null, null, null, null);
         verify(template, never()).send(any(MessageCreator.class));
     }
 
@@ -68,6 +78,7 @@ public class StatisticsServiceImplTest {
     public void serviceSendsDocumentAndIdForCreate() throws JMSException {
         final String xml = "The document";
         final String id = "The id";
+        final String type = "the type of the certificate";
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
         ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
 
@@ -75,20 +86,22 @@ public class StatisticsServiceImplTest {
         Session session = mock(Session.class);
         when(session.createTextMessage(xml)).thenReturn(message);
 
-        boolean created = serviceImpl.created(xml, id, "luse", "unit");
+        boolean created = serviceImpl.created(xml, id, type, "unit");
 
         assertTrue(created);
         verify(template, only()).send(captor.capture());
         captor.getValue().createMessage(session);
         verify(message).setStringProperty("action", "created");
         verify(message).setStringProperty("certificate-id", id);
-        verify(monitoringLogService, only()).logStatisticsSent(id, "luse", "unit");
+        verify(message).setStringProperty("certificate-type", type);
+        verify(monitoringLogService, only()).logStatisticsSent(id, type, "unit");
     }
 
     @Test
     public void serviceSendsDocumentAndIdForRevoke() throws Exception {
         final String type = "lisjp";
         final String xmlBody = "xml body";
+        final String id = "The id";
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
         ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
         ModuleApi moduleApi = mock(ModuleApi.class);
@@ -98,7 +111,7 @@ public class StatisticsServiceImplTest {
         OriginalCertificate originalCertificate = mock(OriginalCertificate.class);
         when(originalCertificate.getDocument()).thenReturn(xmlBody);
         when(certificate.getOriginalCertificate()).thenReturn(originalCertificate);
-        when(certificate.getId()).thenReturn("The id");
+        when(certificate.getId()).thenReturn(id);
         when(certificate.getType()).thenReturn(type);
 
         TextMessage message = mock(TextMessage.class);
@@ -111,14 +124,15 @@ public class StatisticsServiceImplTest {
         verify(template, only()).send(captor.capture());
         captor.getValue().createMessage(session);
         verify(message).setStringProperty("action", "revoked");
-        verify(message).setStringProperty("certificate-id", "The id");
-        verify(monitoringLogService, only()).logStatisticsRevoked("The id", certificate.getType(), "unit");
+        verify(message).setStringProperty("certificate-id", id);
+        verify(message).setStringProperty("certificate-type", type);
+        verify(monitoringLogService, only()).logStatisticsRevoked(id, certificate.getType(), "unit");
     }
 
     @Test
     public void serviceSendsDocumentAndIdForMessageSent() throws Exception {
         final String messageBody = "Message body";
-        final String certificateId = "Certificate-id";
+        final String messageId = "This is the id of the message";
 
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
         ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
@@ -127,14 +141,14 @@ public class StatisticsServiceImplTest {
         Session session = mock(Session.class);
         when(session.createTextMessage(messageBody)).thenReturn(message);
 
-        boolean messageSent = serviceImpl.messageSent(messageBody, certificateId, "topic");
+        boolean messageSent = serviceImpl.messageSent(messageBody, messageId, "topic");
 
         assertTrue(messageSent);
         verify(template, only()).send(captor.capture());
         captor.getValue().createMessage(session);
         verify(message).setStringProperty("action", "message-sent");
-        verify(message).setStringProperty("certificate-id", certificateId);
-        verify(monitoringLogService, only()).logStatisticsMessageSent(certificateId, "topic");
+        verify(message).setStringProperty("message-id", messageId);
+        verify(monitoringLogService, only()).logStatisticsMessageSent(messageId, "topic");
     }
 
     @Test

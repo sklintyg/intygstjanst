@@ -42,6 +42,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     private static final String REVOKED = "revoked";
     private static final String MESSAGE_SENT = "message-sent";
     private static final String CERTIFICATE_ID = "certificate-id";
+    private static final String CERTIFICATE_TYPE = "certificate-type";
+    private static final String MESSAGE_ID = "message-id";
     private static final String ACTION = "action";
 
     private static final Logger LOG = LoggerFactory.getLogger(StatisticsServiceImpl.class);
@@ -59,7 +61,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public boolean created(String certificateXml, String certificateId, String certificateType, String careUnitId) {
         boolean rc = true;
         if (enabled) {
-            rc = doSend(CREATED, certificateXml, certificateId);
+            rc = sendIntygDataPointToStatistik(CREATED, certificateXml, certificateId, certificateType);
             if (rc) {
                 monitoringLogService.logStatisticsSent(certificateId, certificateType, careUnitId);
             }
@@ -71,7 +73,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public boolean revoked(String certificateXml, String certificateId, String certificateType, String careUnitId) {
         boolean rc = true;
         if (enabled) {
-            rc = doSend(REVOKED, certificateXml, certificateId);
+            rc = sendIntygDataPointToStatistik(REVOKED, certificateXml, certificateId, certificateType);
             if (rc) {
                 monitoringLogService.logStatisticsRevoked(certificateId, certificateType, careUnitId);
             }
@@ -83,7 +85,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public boolean messageSent(String xml, String certificateId, String topic) {
         boolean rc = true;
         if (enabled) {
-            rc = doSend(MESSAGE_SENT, xml, certificateId);
+            rc = sendFkMessageDataPointToStatistik(MESSAGE_SENT, xml, certificateId);
         }
         if (rc) {
             monitoringLogService.logStatisticsMessageSent(certificateId, topic);
@@ -91,39 +93,52 @@ public class StatisticsServiceImpl implements StatisticsService {
         return rc;
     }
 
-    private boolean doSend(String type, String certificateXml, String certificateId) {
+    private boolean sendIntygDataPointToStatistik(String actionType, String certificateXml, String certificateId, String certificateType) {
         try {
             if (jmsTemplate == null) {
-                LOG.error("Failure sending '{}' type with certificate-id '{}' to statistics, no JmsTemplate configured", type, certificateId);
+                LOG.error("Failure sending '{}' type with certificate id '{}' to statistics, no JmsTemplate configured", actionType, certificateId);
                 return false;
             }
 
-            MessageCreator messageCreator = new MC(type, certificateXml, certificateId);
+            MessageCreator messageCreator = new MessageCreator() {
+                @Override
+                public Message createMessage(Session session) throws JMSException {
+                    TextMessage message = session.createTextMessage(certificateXml);
+                    message.setStringProperty(ACTION, actionType);
+                    message.setStringProperty(CERTIFICATE_ID, certificateId);
+                    message.setStringProperty(CERTIFICATE_TYPE, certificateType);
+                    return message;
+                }
+            };
             jmsTemplate.send(messageCreator);
             return true;
         } catch (JmsException e) {
-            LOG.error("Failure sending '{}' type with certificate id '{}'to statistics", type, certificateId, e);
+            LOG.error("Failure sending '{}' type with certificate id '{}'to statistics", actionType, certificateId, e);
             return false;
         }
     }
 
-    private static final class MC implements MessageCreator {
-        private final String certificateXml;
-        private final String type;
-        private final String certificateId;
+    private boolean sendFkMessageDataPointToStatistik(String actionType, String messageXml, String messageId) {
+        try {
+            if (jmsTemplate == null) {
+                LOG.error("Failure sending '{}' type with message id '{}' to statistics, no JmsTemplate configured", actionType, messageId);
+                return false;
+            }
 
-        MC(String type, String certificateXml, String certificateId) {
-            this.type = type;
-            this.certificateXml = certificateXml;
-            this.certificateId = certificateId;
-        }
-
-        @Override
-        public Message createMessage(Session session) throws JMSException {
-            TextMessage message = session.createTextMessage(certificateXml);
-            message.setStringProperty(ACTION, type);
-            message.setStringProperty(CERTIFICATE_ID, certificateId);
-            return message;
+            MessageCreator messageCreator = new MessageCreator() {
+                @Override
+                public Message createMessage(Session session) throws JMSException {
+                    TextMessage message = session.createTextMessage(messageXml);
+                    message.setStringProperty(ACTION, actionType);
+                    message.setStringProperty(MESSAGE_ID, messageId);
+                    return message;
+                }
+            };
+            jmsTemplate.send(messageCreator);
+            return true;
+        } catch (JmsException e) {
+            LOG.error("Failure sending '{}' type with message id '{}'to statistics", actionType, messageId, e);
+            return false;
         }
     }
 }
