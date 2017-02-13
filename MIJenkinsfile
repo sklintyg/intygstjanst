@@ -28,5 +28,5 @@ stage('deploy test-IT') {
 }
 
 stage('propagate') {
-    build job: "${buildRoot}-minaintyg-pipeline", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
+    build job: "${buildRoot}-minaintyg", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
 }
