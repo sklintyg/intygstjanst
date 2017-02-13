@@ -1,6 +1,7 @@
 #!groovy
 
-def baseVersion = "3.1.*"
+def baseVersion = "3.2.*"
+def buildRoot = JOB_BASE_NAME.replaceAll(/-.*/, "") // Keep everything up to the first dash
 
 stage('checkout') {
     node {
@@ -27,5 +28,5 @@ stage('deploy test-IT') {
 }
 
 stage('propagate') {
-    build job: 'intyg-webcert-pipeline', wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
+    build job: "${buildRoot}-webcert-pipeline", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
 }
