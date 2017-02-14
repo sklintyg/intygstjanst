@@ -1,6 +1,7 @@
 #!groovy
 
 def buildVersion = "3.1.${BUILD_NUMBER}"
+def buildRoot = JOB_BASE_NAME.replaceAll(/-.*/, "") // Keep everything up to the first dash
 def commonVersion = "3.1.+"
 def infraVersion = "3.1.+"
 
@@ -52,8 +53,8 @@ stage('tag and upload') {
 }
 
 stage('propagate') {
-    build job: 'intyg-deploy-it-webcert', wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
-    build job: 'intyg-deploy-it-minaintyg', wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
+    build job: "${buildRoot}-deploy-it-webcert", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
+    build job: "${buildRoot}-deploy-it-minaintyg", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
 }
 
 stage('notify') {
