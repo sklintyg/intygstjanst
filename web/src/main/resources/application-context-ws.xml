@@ -264,6 +264,22 @@
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
 
+  <!-- TjK for ListSickLeavesForCare. Consider moving to separate xml file and import -->
+  <jaxws:endpoint address="/list-sickleaves-for-care/v1.0"
+      implementor="se.inera.intyg.intygstjanst.web.integration.ListSickLeavesForCareResponderImpl">
+    <jaxws:outFaultInterceptors>
+      <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
+        <constructor-arg value="transform/clinicalprocess-healthcond-certificate/list-sickleaves-for-care-transform.xslt"/>
+      </bean>
+    </jaxws:outFaultInterceptors>
+    <jaxws:schemaLocations>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_1.0.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_2.0.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/interactions/ListSickLeavesForCareInteraction/ListSickLeavesForCareResponder_1.0.xsd</jaxws:schemaLocation>
+    </jaxws:schemaLocations>
+  </jaxws:endpoint>
+  
+
   <beans profile="!dev">
     <http:conduit
             name="\{urn:riv:(clinicalprocess:healthcond|insuranceprocess:healthreporting):.*.http-conduit">

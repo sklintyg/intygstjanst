@@ -31,10 +31,11 @@ war.dependsOn createVersionPropertyFile
 
 dependencies {
     compile project(':intygstjanst-persistence')
-
+    compile "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:0-SNAPSHOT"
     compile "se.inera.intyg.insuranceprocess.healthreporting:intyg-insuranceprocess-healthreporting-schemas:${intygInsuranceprocessSchemasVersion}"
 
     compile "se.inera.intyg.infra:hsa-integration:${infraVersion}"
+    compile "se.inera.intyg.infra:sjukfall-engine:${infraVersion}"
 
     compile "se.inera.intyg.common:fk7263:${commonVersion}"
     compile "se.inera.intyg.common:ts-bas:${commonVersion}"
@@ -46,7 +47,7 @@ dependencies {
 
     compile "se.riv.itintegration.monitoring:itintegration-monitoring-schemas:${rivtaItintegrationMonitoringSchemasVersion}"
     compile "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"
-
+    
     compile "org.springframework:spring-jms:${springVersion}"
     compile "org.springframework:spring-webmvc:${springVersion}"
 
@@ -60,7 +61,7 @@ dependencies {
     testCompile "org.antlr:ST4:${stAntlr4Version}"
     testCompile "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
 
-    testRuntime "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
+  //  testRuntime "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:0-SNAPSHOT"
     testRuntime "javax.servlet:servlet-api:${servletApiVersion}"
 
     gretty "org.apache.activemq:activemq-client:${activeMqVersion}"
