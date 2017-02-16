@@ -17,14 +17,12 @@ gretty {
     contextConfigFile = file("src/main/webapp/WEB-INF/jetty-web.xml")
     scanInterval = 0
 
-    jvmArgs = [
-        "-Dcatalina.base=${buildDir}/catalina.base",
-        "-Dspring.profiles.active=dev,caching-enabled,wc-hsa-stub",
-        "-Drecipient.config.file=${projectDir}/recipient-dev.properties",
-        "-Dcredentials.file=${projectDir}/certificate-credentials.properties",
-        "-Dcertificate.logback.file=${projectDir}/certificate-logback.xml",
-        "-Dcertificate.config.file=${projectDir}/certificate-dev.properties"
-        ]
+    jvmArgs = ["-Dcatalina.base=${buildDir}/catalina.base",
+               "-Dspring.profiles.active=dev,caching-enabled,wc-hsa-stub",
+               "-Drecipient.config.file=${projectDir}/recipient-dev.properties",
+               "-Dcredentials.file=${projectDir}/certificate-credentials.properties",
+               "-Dcertificate.logback.file=${projectDir}/certificate-logback.xml",
+               "-Dcertificate.config.file=${projectDir}/certificate-dev.properties"]
 }
 
 war.dependsOn createVersionPropertyFile
