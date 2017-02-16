@@ -48,9 +48,9 @@ public interface StatisticsService {
      * Sends data to Statistik (ST) about a sent message, returning true if data was successfully sent, false otherwise.
      *
      * @param xml
-     * @param certificateId
+     * @param messageId
      * @param topic
      * @return
      */
-    boolean messageSent(String xml, String certificateId, String topic);
+    boolean messageSent(String xml, String messageId, String topic);
 }
