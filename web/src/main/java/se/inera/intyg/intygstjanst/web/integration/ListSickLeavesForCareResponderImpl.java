@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.infra.sjukfall.dto.Formaga;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
-import se.inera.intyg.infra.sjukfall.dto.LangdIntervall;
 import se.inera.intyg.infra.sjukfall.dto.Sjukfall;
-import se.inera.intyg.infra.sjukfall.services.SjukfallService;
+import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
@@ -17,8 +16,9 @@ import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareType;
-import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Patient;
+import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.PatientEnkel;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.SjukfallLista;
+import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukskrivningsgrad;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
@@ -40,7 +40,7 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
     private HsaService hsaService;
 
     @Autowired
-    private SjukfallService sjukfallService;
+    private SjukfallEngineService sjukfallEngineService;
 
     @Autowired
     private SjukfallCertificateDao sjukfallCertificateDao;
@@ -53,30 +53,30 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
 
         List<SjukfallCertificate> certificates = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(hsaIdList);
 
-        IntygParametrar sjukfallEngineParams = new IntygParametrar(null, new LangdIntervall(Integer.toString(params.getMinstaSjukskrivningslangd().intValue()), "999"), params.getMaxIntygsGlapp().intValue(), LocalDate.now());
-        List<Sjukfall> sjukfall = sjukfallService.beraknaSjukfall(convert(certificates), sjukfallEngineParams);
+        IntygParametrar sjukfallEngineParams = new IntygParametrar(params.getMaxDagarMellanIntyg(), LocalDate.now());
+        List<Sjukfall> sjukfall = sjukfallEngineService.beraknaSjukfall(convert(certificates), sjukfallEngineParams);
 
         SjukfallLista sjukfallLista = new SjukfallLista();
-        sjukfallLista.getSjukfall().addAll(toSjukfall(sjukfall, params.getMinstaSjukskrivningslangd().intValue()));
+        sjukfallLista.getSjukfall().addAll(toSjukfall(sjukfall, params.getMinstaSjukskrivningslangd()));
 
         ListSickLeavesForCareResponseType responseType = new ListSickLeavesForCareResponseType();
         ResultType resultType = new ResultType();
         resultType.setResultCode(ResultCodeType.OK);
         responseType.setResult(resultType);
-        responseType.setIntygsLista(sjukfallLista);
+        responseType.setSjukfallLista(sjukfallLista);
         return responseType;
     }
 
     private List<se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall> toSjukfall(List<Sjukfall> sjukfallList, int minstaSjukskrivningslangd) {
          return sjukfallList.stream().map(sf -> {
              se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall sjukfall = new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall();
-             sjukfall.setDiagnoskod(sf.getDiagnosKod().getId());
+             sjukfall.setDiagnoskod(sf.getDiagnosKod().getCleanedCode());
 
              HsaId enhetId = new HsaId();
-             enhetId.setExtension(sf.getLakare().getVardenhet().getId());
-             sjukfall.setEnhetId(enhetId);
+             enhetId.setExtension(sf.getVardenhet().getId());
+             sjukfall.setEnhetsId(enhetId);
 
-             Patient patient = new Patient();
+             PatientEnkel patient = new PatientEnkel();
              PersonId personId = new PersonId();
              personId.setExtension(sf.getPatient().getId());
              patient.setPersonId(personId);
@@ -85,11 +85,19 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
 
              HsaId lakareHsaId = new HsaId();
              lakareHsaId.setExtension(sf.getLakare().getId());
-             sjukfall.setSkapadAv(lakareHsaId);
+             sjukfall.setPersonalId(lakareHsaId);
 
              sjukfall.setStartdatum(sf.getStart());
              sjukfall.setSlutdatum(sf.getSlut());
              sjukfall.setBrytdatum(sf.getStart().plusDays(minstaSjukskrivningslangd));
+
+             sjukfall.setAntalIntyg(sf.getIntyg());
+             sjukfall.setSjukskrivningslangd(sf.getDagar());
+
+             Sjukskrivningsgrad sjukskrivningsGrad = new Sjukskrivningsgrad();
+             sjukskrivningsGrad.setAktivGrad(sf.getAktivGrad());
+             sjukskrivningsGrad.getGrader().addAll(sf.getGrader());
+             sjukfall.setSjukskrivningsgrad(sjukskrivningsGrad);
              
              return sjukfall;
          }).collect(Collectors.toList());
