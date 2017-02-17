@@ -1,28 +1,26 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import se.inera.intyg.infra.sjukfall.dto.Formaga;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.Sjukfall;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
+import se.inera.intyg.intygstjanst.web.exception.ServerException;
+import se.inera.intyg.intygstjanst.web.integration.converter.SjukfallCertificateConverter;
+import se.inera.intyg.intygstjanst.web.integration.converter.SjukfallConverter;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareType;
-import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.PatientEnkel;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.SjukfallLista;
-import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukskrivningsgrad;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
-import se.riv.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
-import se.riv.clinicalprocess.healthcond.certificate.v1.ResultType;
+import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -45,90 +43,67 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
     @Autowired
     private SjukfallCertificateDao sjukfallCertificateDao;
 
+    @Autowired
+    private SjukfallConverter sjukfallConverter;
+
+    @Autowired
+    private SjukfallCertificateConverter sjukfallCertificateConverter;
+
     @Override
     public ListSickLeavesForCareResponseType listSickLeavesForCare(String logicalAddress, ListSickLeavesForCareType params) {
 
-        List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(params.getEnhetsId().getExtension());
-        hsaIdList.add(params.getEnhetsId().getExtension());
-
-        List<SjukfallCertificate> certificates = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(hsaIdList);
-
-        IntygParametrar sjukfallEngineParams = new IntygParametrar(params.getMaxDagarMellanIntyg(), LocalDate.now());
-        List<Sjukfall> sjukfall = sjukfallEngineService.beraknaSjukfall(convert(certificates), sjukfallEngineParams);
-
-        SjukfallLista sjukfallLista = new SjukfallLista();
-        sjukfallLista.getSjukfall().addAll(toSjukfall(sjukfall, params.getMinstaSjukskrivningslangd()));
-
         ListSickLeavesForCareResponseType responseType = new ListSickLeavesForCareResponseType();
-        ResultType resultType = new ResultType();
-        resultType.setResultCode(ResultCodeType.OK);
-        responseType.setResult(resultType);
-        responseType.setSjukfallLista(sjukfallLista);
-        return responseType;
-    }
 
-    private List<se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall> toSjukfall(List<Sjukfall> sjukfallList, int minstaSjukskrivningslangd) {
-         return sjukfallList.stream().map(sf -> {
-             se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall sjukfall = new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall();
-             sjukfall.setDiagnoskod(sf.getDiagnosKod().getCleanedCode());
+        try {
+            if (params.getEnhetsId() == null || StringUtils.isEmpty(params.getEnhetsId().getExtension())) {
+                throw new ServerException("Request to ListSickLeavesForCare is missing required parameter 'enhets-id'");
+            }
 
-             HsaId enhetId = new HsaId();
-             enhetId.setExtension(sf.getVardenhet().getId());
-             sjukfall.setEnhetsId(enhetId);
+            if (params.getMaxDagarMellanIntyg() < 0) {
+                throw new ServerException("Request to ListSickLeavesForCare has invalid value for parameter 'maxDagarMellanIntyg', must be >= 0, was " + params.getMaxDagarMellanIntyg());
+            }
 
-             PatientEnkel patient = new PatientEnkel();
-             PersonId personId = new PersonId();
-             personId.setExtension(sf.getPatient().getId());
-             patient.setPersonId(personId);
-             patient.setFullstandigtNamn(sf.getPatient().getNamn());
-             sjukfall.setPatient(patient);
+            int maxSjukskrivningslangd = params.getMaxSjukskrivningslangd() != null ? params.getMaxSjukskrivningslangd() : Integer.MAX_VALUE;
+            int minstaSjukskrivningslangd = params.getMinstaSjukskrivningslangd() != null ? params.getMinstaSjukskrivningslangd() : 0;
 
-             HsaId lakareHsaId = new HsaId();
-             lakareHsaId.setExtension(sf.getLakare().getId());
-             sjukfall.setPersonalId(lakareHsaId);
+            // Set up list of enhet hsaId's to query for.
+            List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(params.getEnhetsId().getExtension());
+            hsaIdList.add(params.getEnhetsId().getExtension());
 
-             sjukfall.setStartdatum(sf.getStart());
-             sjukfall.setSlutdatum(sf.getSlut());
-             sjukfall.setBrytdatum(sf.getStart().plusDays(minstaSjukskrivningslangd));
+            // Load sjukfallCertificates from DAO
+            List<SjukfallCertificate> certificates = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(hsaIdList);
 
-             sjukfall.setAntalIntyg(sf.getIntyg());
-             sjukfall.setSjukskrivningslangd(sf.getDagar());
+            // Convert to the IntygData format that the SjukfallEngine accepts.
+            List<IntygData> intygDataList = sjukfallCertificateConverter.convert(certificates);
 
-             Sjukskrivningsgrad sjukskrivningsGrad = new Sjukskrivningsgrad();
-             sjukskrivningsGrad.setAktivGrad(sf.getAktivGrad());
-             sjukskrivningsGrad.getGrader().addAll(sf.getGrader());
-             sjukfall.setSjukskrivningsgrad(sjukskrivningsGrad);
-             
-             return sjukfall;
-         }).collect(Collectors.toList());
-    }
+            // Feed the intygdata into the sjukfallengine
+            IntygParametrar sjukfallEngineParams = new IntygParametrar(params.getMaxDagarMellanIntyg(), LocalDate.now());
+            List<Sjukfall> sjukfall = sjukfallEngineService.beraknaSjukfall(intygDataList, sjukfallEngineParams);
 
-    private List<IntygData> convert(List<SjukfallCertificate> list) {
-        return list.stream().map(sc -> {
-            IntygData intyg = new IntygData();
-            intyg.setIntygId(intyg.getIntygId());
-            intyg.setEnkeltIntyg(false);
-            intyg.setFormagor(buildFormaga(sc.getSjukfallCertificateWorkCapacity()));
-            intyg.setDiagnosKod(sc.getDiagnoseCode());
-            intyg.setLakareId(sc.getSigningDoctorId());
-            intyg.setLakareNamn(sc.getSigningDoctorName());
-            intyg.setSigneringsTidpunkt(sc.getSigningDateTime());
-            intyg.setPatientId(sc.getCivicRegistrationNumber());
-            intyg.setPatientNamn(sc.getPatientName());
-            intyg.setVardenhetId(sc.getCareUnitId());
-            intyg.setVardenhetNamn(sc.getCareUnitName());
-            return intyg;
-        }).collect(Collectors.toList());
-    }
+            // Perform post-processing filtering of sjukskrivningslängder and läkare.
+            sjukfall = sjukfall.stream()
+                    .filter(sf -> sf.getDagar() >= minstaSjukskrivningslangd)
+                    .filter(sf -> sf.getDagar() < maxSjukskrivningslangd)
+                    .filter(sf -> params.getLakareId() == null || sf.getLakare().getId().equals(params.getLakareId().getExtension()))
+                    .collect(Collectors.toList());
 
-    private List<Formaga> buildFormaga(List<SjukfallCertificateWorkCapacity> workCapacities) {
+            // Transform the output of the sjukfallengine into rivta TjK format and build the response object.
+            SjukfallLista sjukfallLista = new SjukfallLista();
+            sjukfallLista.getSjukfall().addAll(sjukfallConverter.toSjukfall(sjukfall, minstaSjukskrivningslangd));
 
-        return workCapacities.stream()
-                .map(this::buildFormaga)
-                .collect(Collectors.toList());
-    }
 
-    private Formaga buildFormaga(SjukfallCertificateWorkCapacity wc) {
-        return new Formaga(LocalDate.parse(wc.getFromDate()), LocalDate.parse(wc.getToDate()), wc.getCapacityPercentage());
+            ResultType resultType = new ResultType();
+            resultType.setResultCode(ResultCodeType.OK);
+            responseType.setResult(resultType);
+            responseType.setSjukfallLista(sjukfallLista);
+            return responseType;
+        } catch (ServerException e) {
+            LOGGER.error("Caught ServerException serving ListSickLeavesForCare: " +  e.getMessage());
+            ResultType resultType = new ResultType();
+            resultType.setResultCode(ResultCodeType.ERROR);
+            responseType.setComment(e.getMessage());
+            responseType.setResult(resultType);
+            return responseType;
+        }
     }
 }

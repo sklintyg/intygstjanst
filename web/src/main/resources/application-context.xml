@@ -52,7 +52,7 @@
       <property name="recipients" ref="recipientService" />
     </bean>
 
-    <bean id="sjukfallEngineService" class="se.inera.intyg.infra.sjukfall.services.SjukfallServiceImpl"/>
+    <bean id="sjukfallEngineService" class="se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl"/>
 
     <context:property-placeholder
       location="classpath:default.properties, classpath:version.properties"
