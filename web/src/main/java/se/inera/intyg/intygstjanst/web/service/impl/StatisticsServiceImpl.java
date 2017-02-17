@@ -82,13 +82,13 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public boolean messageSent(String xml, String certificateId, String topic) {
+    public boolean messageSent(String xml, String messageId, String topic) {
         boolean rc = true;
         if (enabled) {
-            rc = sendFkMessageDataPointToStatistik(MESSAGE_SENT, xml, certificateId);
+            rc = sendFkMessageDataPointToStatistik(MESSAGE_SENT, xml, messageId);
         }
         if (rc) {
-            monitoringLogService.logStatisticsMessageSent(certificateId, topic);
+            monitoringLogService.logStatisticsMessageSent(messageId, topic);
         }
         return rc;
     }
