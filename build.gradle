@@ -33,7 +33,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'se.inera.intyg:gradle-intyg-plugin:1.0.+'
+        classpath 'se.inera.intyg:gradle-intyg-plugin:1.0.15'
         classpath 'org.akhikhl.gretty:gretty:+'
     }
 }
@@ -49,6 +49,8 @@ allprojects {
     apply plugin: 'maven'
 
     dependencies {
+        compile "com.google.code.findbugs:jsr305:3.0.0"
+
         testCompile "junit:junit:4.+"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
     }
