@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 import java.time.LocalDateTime;
 
+import javax.annotation.Nonnull;
 import javax.persistence.*;
 
 import org.hibernate.annotations.Type;
@@ -49,7 +50,7 @@ public class CertificateStateHistoryEntry {
 
     static final Ordering<CertificateStateHistoryEntry> BY_TIMESTAMP_DESC = new Ordering<CertificateStateHistoryEntry>() {
         @Override
-        public int compare(CertificateStateHistoryEntry left, CertificateStateHistoryEntry right) {
+        public int compare(@Nonnull CertificateStateHistoryEntry left, @Nonnull CertificateStateHistoryEntry right) {
             return ORDERING_DESC_TIME_NULL_LAST.compare(left.timestamp, right.timestamp);
         }
     };

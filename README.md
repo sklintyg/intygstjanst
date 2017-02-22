@@ -5,38 +5,30 @@ Intygstjänsten är den underliggande tjänsten för [Mina intyg](https://github
 Här hittar du grundläggande instruktioner för hur man kommer igång med projektet. Mer detaljerade instruktioner för att sätta upp sin utvecklingsmiljö och liknande hittar du på projektets [Wiki för utveckling](https://github.com/sklintyg/common/wiki).
 
 ### Bygg projektet
-Intygstjänsten byggs med hjälp av Maven enligt följande:
+Intygstjänsten byggs med hjälp av Gradle enligt följande:
 ```
 $ git clone https://github.com/sklintyg/intygstjanst.git
-
 $ cd intygstjanst
-$ mvn install
+$ ./gradlew build
 ```
 
 ### Starta webbapplikationen
 Webbapplikationen kan startas med Jetty enligt följande:
 ```
-$ cd web
-$ mvn jetty:run
-$ open http://localhost:8080/inera-certificate/
+$ ./gradlew appRun
 ```
 
 ### Visa databasen
-Man kan även komma åt H2-databasen som startas:
-```
-$ open http://localhost:8082/
-```
+Man kan även komma åt H2-databasen som startas lokalt via http://localhost:8082/
 
-### Kör FitNesse
-För att köra FitNesse-testerna måste man starta FitNesse wiki:
+### Kör RestAssured
+RestAssured körs mot en lokal instans av Intygstjänsten via:
 ```
-$ cd ../specifications
-$ mvn verify -Pwiki
-$ open http://localhost:9123/
+$ ./gradlew restAssuredTest
 ```
 
 ## Licens
-Copyright (C) 2014 Inera AB (http://www.inera.se)
+Copyright (C) 2017 Inera AB (http://www.inera.se)
 
 Webcert is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 

@@ -40,6 +40,8 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.S
 import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 @SchemaValidation
 public class SendMessageToRecipientResponderImpl implements SendMessageToRecipientResponderInterface {
 
@@ -60,9 +62,10 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
 
     @Override
     public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress, SendMessageToRecipientType parameters) {
-        LOG.debug("Send message to recipient request received. logicalAddress={} messageId={}", logicalAddress,
-                parameters != null ? parameters.getMeddelandeId() : "N/A");
+        checkNotNull(parameters);
 
+        LOG.debug("Send message to recipient request received. logicalAddress={} messageId={}", logicalAddress,
+                parameters.getMeddelandeId());
         try {
             List<String> validationErrors = validator.validate(parameters);
             if (!validationErrors.isEmpty()) {

@@ -8,6 +8,6 @@
 - name: Create mysql user
   mysql_user:
     name: "{{ database_username }}"
-    password: "{{ database_username }}"
+    password: "{{ database_password }}"
     priv: "*.*:ALL"
     state: present
