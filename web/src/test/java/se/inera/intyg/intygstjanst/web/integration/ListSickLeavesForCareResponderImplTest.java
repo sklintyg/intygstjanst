@@ -35,9 +35,11 @@ import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.util.SjukfallCertTestHelper;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareType;
+import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +79,7 @@ public class ListSickLeavesForCareResponderImplTest {
     @Before
     public void init() {
         enhetsId = new HsaId();
-        enhetsId.setExtension(SjukfallCertTestHelper.HSA_ID_1);
+        enhetsId.setExtension(SjukfallCertTestHelper.CARE_UNIT_ID_1);
 
         lakareId = new HsaId();
         lakareId.setExtension(SjukfallCertTestHelper.DOCTOR_HSA_ID);
@@ -91,6 +93,29 @@ public class ListSickLeavesForCareResponderImplTest {
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
         assertEquals(ResultCodeType.OK , response.getResult().getResultCode());
         assertEquals(1, response.getSjukfallLista().getSjukfall().size());
+        Sjukfall sjukfall = response.getSjukfallLista().getSjukfall().get(0);
+        
+        assertEquals(SjukfallCertTestHelper.CARE_UNIT_ID_1, sjukfall.getEnhetsId().getExtension());
+        assertEquals(SjukfallCertTestHelper.DOCTOR_HSA_ID, sjukfall.getPersonalId().getExtension());
+        assertEquals(SjukfallCertTestHelper.PERSONNUMMER, sjukfall.getPersonId().getExtension());
+        assertEquals(SjukfallCertTestHelper.PATIENT_NAME, sjukfall.getPatientFullstandigtNamn());
+        assertEquals(SjukfallCertTestHelper.DIAGNOSE_CODE, sjukfall.getDiagnoskod().getCode());
+        assertEquals(1, sjukfall.getAntalIntyg());
+        assertEquals(75, sjukfall.getSjukskrivningsgrad().getAktivGrad());
+        assertEquals(2, sjukfall.getSjukskrivningsgrad().getGrader().getGrad().size());
+
+
+
+        // Order is important
+        assertEquals(100, sjukfall.getSjukskrivningsgrad().getGrader().getGrad().get(0).intValue());
+        assertEquals(75, sjukfall.getSjukskrivningsgrad().getGrader().getGrad().get(1).intValue());
+
+        assertEquals(LocalDate.now().minusWeeks(3), sjukfall.getStartdatum());
+        assertEquals(LocalDate.now().plusWeeks(1), sjukfall.getSlutdatum());
+
+        // The test data is minus three weeks -> plus one week, which including "today" is 4 weeks + 1 day
+        assertEquals(29, sjukfall.getSjukskrivningslangd());
+
     }
 
     @Test
@@ -171,7 +196,7 @@ public class ListSickLeavesForCareResponderImplTest {
         ListSickLeavesForCareType params = new ListSickLeavesForCareType();
         params.setEnhetsId(careUnitId);
         params.setMaxDagarMellanIntyg(maxDagarMellanIntyg);
-        params.setLakareId(doctorId);
+        params.setPersonalId(doctorId);
         return params;
     }
 
@@ -179,7 +204,7 @@ public class ListSickLeavesForCareResponderImplTest {
         ListSickLeavesForCareType params = new ListSickLeavesForCareType();
         params.setEnhetsId(careUnitId);
         params.setMaxDagarMellanIntyg(maxDagarMellanIntyg);
-        params.setLakareId(doctorId);
+        params.setPersonalId(doctorId);
         params.setMinstaSjukskrivningslangd(minSjukskrivningslangd);
         params.setMaxSjukskrivningslangd(maxSjukskrivningslangd);
         return params;

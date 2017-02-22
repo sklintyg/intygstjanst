@@ -84,7 +84,7 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
             sjukfall = sjukfall.stream()
                     .filter(sf -> sf.getDagar() >= minstaSjukskrivningslangd)
                     .filter(sf -> sf.getDagar() < maxSjukskrivningslangd)
-                    .filter(sf -> params.getLakareId() == null || sf.getLakare().getId().equals(params.getLakareId().getExtension()))
+                    .filter(sf -> params.getPersonalId() == null || sf.getLakare().getId().equals(params.getPersonalId().getExtension()))
                     .collect(Collectors.toList());
 
             // Transform the output of the sjukfallengine into rivta TjK format and build the response object.
@@ -101,7 +101,7 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
             LOGGER.error("Caught ServerException serving ListSickLeavesForCare: " +  e.getMessage());
             ResultType resultType = new ResultType();
             resultType.setResultCode(ResultCodeType.ERROR);
-            responseType.setComment(e.getMessage());
+            resultType.setResultText(e.getMessage());
             responseType.setResult(resultType);
             return responseType;
         }

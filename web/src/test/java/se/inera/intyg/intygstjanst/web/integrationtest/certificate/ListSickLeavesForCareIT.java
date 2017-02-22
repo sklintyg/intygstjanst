@@ -100,14 +100,14 @@ public class ListSickLeavesForCareIT extends BaseIntegrationTest {
         public final int minstaSjukskrivningslangd;
         public final int maxSjukskrivningslangd;
         public final int maxDagarMellanIntyg;
-        public final String lakareId;
+        public final String personalId;
 
-        public Params(String enhetsId, int minstaSjukskrivningslangd, int maxSjukskrivningslangd, int maxDagarMellanIntyg, String lakareId) {
+        public Params(String enhetsId, int minstaSjukskrivningslangd, int maxSjukskrivningslangd, int maxDagarMellanIntyg, String personalId) {
             this.enhetsId = enhetsId;
             this.minstaSjukskrivningslangd = minstaSjukskrivningslangd;
             this.maxSjukskrivningslangd = maxSjukskrivningslangd;
             this.maxDagarMellanIntyg = maxDagarMellanIntyg;
-            this.lakareId = lakareId;
+            this.personalId = personalId;
         }
     }
 }

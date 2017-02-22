@@ -14,19 +14,21 @@ import java.util.UUID;
  */
 public class SjukfallCertTestHelper {
 
-    public static final String HSA_ID_1 = "careunit-1";
+    public static final String CARE_UNIT_ID_1 = "careunit-1";
     public static final String DOCTOR_HSA_ID = "doctor-1";
 
-    private static final String CARE_GIVER_1_ID = "caregiver-1";
-    private static final String CARE_UNIT_NAME = "careunit-name-1";
-    private static final String PERSONNUMMER = "191212121212";
+    public static final String CARE_GIVER_1_ID = "caregiver-1";
+    public static final String CARE_UNIT_NAME = "careunit-name-1";
+    public static final String PERSONNUMMER = "191212121212";
 
-    private static final String DOCTOR_NAME = "doctor-name-1";
+    public static final String DOCTOR_NAME = "doctor-name-1";
     private static final String FK7263 = "fk7263";
+    public static final String PATIENT_NAME = "Tolvan Tolvansson";
+    public static final String DIAGNOSE_CODE = "M16";
 
     public List<SjukfallCertificate> intygsList() {
         List<SjukfallCertificate> certList = new ArrayList<>();
-        certList.add(buildSjukfallCertificate(HSA_ID_1, CARE_GIVER_1_ID, defaultWorkCapacities(), false));
+        certList.add(buildSjukfallCertificate(CARE_UNIT_ID_1, CARE_GIVER_1_ID, defaultWorkCapacities(), false));
         return certList;
     }
 
@@ -37,8 +39,8 @@ public class SjukfallCertTestHelper {
         sc.setCareGiverId(careGiverId);
         sc.setCareUnitName(CARE_UNIT_NAME);
         sc.setCivicRegistrationNumber(PERSONNUMMER);
-        sc.setDiagnoseCode("M16");
-        sc.setPatientName("Tolvan Tolvansson");
+        sc.setDiagnoseCode(DIAGNOSE_CODE);
+        sc.setPatientName(PATIENT_NAME);
         sc.setSigningDoctorId(DOCTOR_HSA_ID);
         sc.setSigningDoctorName(DOCTOR_NAME);
         sc.setType(FK7263);
