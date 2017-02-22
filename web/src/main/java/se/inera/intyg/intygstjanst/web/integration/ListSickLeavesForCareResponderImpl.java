@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCareResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ListSickLeavesForCareResponderImpl.class);
+    private static final int MAX_LEN = Integer.MAX_VALUE;
 
     @Autowired
     private HsaService hsaService;
@@ -60,10 +61,11 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
             }
 
             if (params.getMaxDagarMellanIntyg() < 0) {
-                throw new ServerException("Request to ListSickLeavesForCare has invalid value for parameter 'maxDagarMellanIntyg', must be >= 0, was " + params.getMaxDagarMellanIntyg());
+                throw new ServerException("Request to ListSickLeavesForCare has invalid value for parameter 'maxDagarMellanIntyg', "
+                        + "must be >= 0, was " + params.getMaxDagarMellanIntyg());
             }
 
-            int maxSjukskrivningslangd = params.getMaxSjukskrivningslangd() != null ? params.getMaxSjukskrivningslangd() : Integer.MAX_VALUE;
+            int maxSjukskrivningslangd = params.getMaxSjukskrivningslangd() != null ? params.getMaxSjukskrivningslangd() : MAX_LEN;
             int minstaSjukskrivningslangd = params.getMinstaSjukskrivningslangd() != null ? params.getMinstaSjukskrivningslangd() : 0;
 
             // Set up list of enhet hsaId's to query for.

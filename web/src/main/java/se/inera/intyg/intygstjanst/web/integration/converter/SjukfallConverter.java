@@ -20,7 +20,8 @@ public class SjukfallConverter {
 
     public List<Sjukfall> toSjukfall(List<se.inera.intyg.infra.sjukfall.dto.Sjukfall> sjukfallList, int minstaSjukskrivningslangd) {
         return sjukfallList.stream().map(sf -> {
-            se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall sjukfall = new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall();
+            se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall sjukfall =
+                    new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall();
             CVType diagnosKod = new CVType();
             diagnosKod.setCode(sf.getDiagnosKod().getCleanedCode());
             sjukfall.setDiagnoskod(diagnosKod);
