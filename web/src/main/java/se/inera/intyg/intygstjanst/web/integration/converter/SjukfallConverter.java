@@ -13,12 +13,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * Converts the output format from infra/sjukfall/engine {@link se.inera.intyg.infra.sjukfall.dto.Sjukfall} to
+ * our rivta published service contract format {@link Sjukfall}.
+ *
  * Created by eriklupander on 2017-02-17.
  */
 @Service
 public class SjukfallConverter {
 
-    public List<Sjukfall> toSjukfall(List<se.inera.intyg.infra.sjukfall.dto.Sjukfall> sjukfallList, int minstaSjukskrivningslangd) {
+    private static final String KODVERK_SAMORDNINGSNUMMER = "1.2.752.129.2.1.3.3";
+    private static final String KODVERK_PERSONNUMMER = "1.2.752.129.2.1.3.1";
+    private static final String KODVERK_HSAID = "1.2.752.129.2.1.4.1";
+
+    public List<Sjukfall> toSjukfall(List<se.inera.intyg.infra.sjukfall.dto.Sjukfall> sjukfallList) {
         return sjukfallList.stream().map(sf -> {
             se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall sjukfall =
                     new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall();
@@ -28,7 +35,7 @@ public class SjukfallConverter {
 
             HsaId enhetId = new HsaId();
             enhetId.setExtension(sf.getVardenhet().getId());
-            enhetId.setRoot("1.2.752.129.2.1.4.1");
+            enhetId.setRoot(KODVERK_HSAID);
             sjukfall.setEnhetsId(enhetId);
 
             Personnummer pnr = new Personnummer(sf.getPatient().getId());
@@ -36,7 +43,7 @@ public class SjukfallConverter {
             sjukfall.setPatientFullstandigtNamn(sf.getPatient().getNamn());
 
             HsaId lakareHsaId = new HsaId();
-            lakareHsaId.setRoot("1.2.752.129.2.1.4.1");
+            lakareHsaId.setRoot(KODVERK_HSAID);
             lakareHsaId.setExtension(sf.getLakare().getId());
             sjukfall.setPersonalId(lakareHsaId);
 
@@ -60,7 +67,7 @@ public class SjukfallConverter {
 
     private PersonId buildPersonId(Personnummer pnr) {
         PersonId personId = new PersonId();
-        personId.setRoot(pnr.isSamordningsNummer() ? "1.2.752.129.2.1.3.3" : "1.2.752.129.2.1.3.1");
+        personId.setRoot(pnr.isSamordningsNummer() ? KODVERK_SAMORDNINGSNUMMER : KODVERK_PERSONNUMMER);
 
         try {
             personId.setExtension(pnr.getNormalizedPnr());

@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * Converts JPA entity model {@link SjukfallCertificate} to the
+ * infra/sjukfall/engine {@link IntygData} format.
+ *
  * Created by eriklupander on 2017-02-17.
  */
 @Service

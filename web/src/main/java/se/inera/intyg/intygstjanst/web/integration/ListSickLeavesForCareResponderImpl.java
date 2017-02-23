@@ -91,7 +91,7 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
 
             // Transform the output of the sjukfallengine into rivta TjK format and build the response object.
             SjukfallLista sjukfallLista = new SjukfallLista();
-            sjukfallLista.getSjukfall().addAll(sjukfallConverter.toSjukfall(sjukfall, minstaSjukskrivningslangd));
+            sjukfallLista.getSjukfall().addAll(sjukfallConverter.toSjukfall(sjukfall));
 
 
             ResultType resultType = new ResultType();
@@ -100,7 +100,7 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
             responseType.setSjukfallLista(sjukfallLista);
             return responseType;
         } catch (ServerException e) {
-            LOGGER.error("Caught ServerException serving ListSickLeavesForCare: " +  e.getMessage());
+            LOGGER.error("Caught ServerException serving ListSickLeavesForCare: " + e.getMessage());
             ResultType resultType = new ResultType();
             resultType.setResultCode(ResultCodeType.ERROR);
             resultType.setResultText(e.getMessage());
