@@ -48,4 +48,9 @@ object Headers {
     "Accept" -> """application/json, text/plain, */*""",
     "Content-Type" -> """text/xml;charset=UTF-8""",
     "SOAPAction" -> "urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:2:RegisterCertificate")
+
+  val list_sick_leaves = Map(
+    "Accept" -> """application/json, text/plain, */*""",
+    "Content-Type" -> """text/xml;charset=UTF-8""",
+    "SOAPAction" -> "urn:riv:clinicalprocess:healthcond:certificate:ListSickLeavesForCareResponder:1:ListSickLeavesForCare")
 }
