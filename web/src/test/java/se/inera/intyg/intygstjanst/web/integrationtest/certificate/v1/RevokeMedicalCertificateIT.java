@@ -57,9 +57,9 @@ public class RevokeMedicalCertificateIT extends BaseIntegrationTest {
         final String personId = "190101010101";
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
 
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
+        getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
         givenRequest(INTYG_ID, personId, "meddelande").body("result.resultCode", is("OK"));
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(2))
+        getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(2))
                 .body("meta.status[0].type", anyOf(is("RECEIVED"), is("CANCELLED")))
                 .body("meta.status[1].type", anyOf(is("RECEIVED"), is("CANCELLED")));
 
@@ -82,9 +82,9 @@ public class RevokeMedicalCertificateIT extends BaseIntegrationTest {
         final String personId = "190101010101";
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
 
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
+        getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
         givenRequest(INTYG_ID, personId, "meddelande", "blankstegRequest").body("result.resultCode", is("OK"));
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(2))
+        getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(2))
                 .body("meta.status[0].type", anyOf(is("RECEIVED"), is("CANCELLED")))
                 .body("meta.status[1].type", anyOf(is("RECEIVED"), is("CANCELLED")));
     }
@@ -108,12 +108,12 @@ public class RevokeMedicalCertificateIT extends BaseIntegrationTest {
                 .rootPath("Envelope.Body.RevokeMedicalCertificateResponse.");
     }
 
-    private ValidatableResponse getMedicalCertificateForCareRequest(String intygId, String personId) {
-        ST requestTemplate = new STGroupFile("integrationtests/getmedicalcertificateforcare/requests.stg").getInstanceOf("request");
+    private ValidatableResponse getMedicalCertificateRequest(String intygId, String personId) {
+        ST requestTemplate = new STGroupFile("integrationtests/getmedicalcertificate/requests.stg").getInstanceOf("request");
         requestTemplate.add("intygId", intygId);
         requestTemplate.add("personId", personId);
 
-        return given().body(requestTemplate.render()).when().post("inera-certificate/get-medical-certificate-for-care/v1.0").then().statusCode(200)
-                .rootPath("Envelope.Body.GetMedicalCertificateForCareResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/get-medical-certificate/v1.0").then().statusCode(200)
+                .rootPath("Envelope.Body.GetMedicalCertificateResponse.");
     }
 }

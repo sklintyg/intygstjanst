@@ -1,0 +1,16 @@
+delimiters "$", "$"
+
+request(intygId, personId) ::= <<
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:clinicalprocess:healthcond:certificate:GetMedicalCertificateResponder:1" xmlns:urn2="urn:riv:clinicalprocess:healthcond:certificate:types:2">
+   <soapenv:Header>
+      <urn:LogicalAddress>1</urn:LogicalAddress>
+   </soapenv:Header>
+   <soapenv:Body>
+      <urn1:GetMedicalCertificateRequest>
+         <urn1:certificateId>$intygId$</urn1:certificateId>
+         <urn1:nationalIdentityNumber>$personId$</urn1:nationalIdentityNumber>
+         <urn1:part>HSVARD</urn1:part>
+      </urn1:GetMedicalCertificateRequest>
+   </soapenv:Body>
+</soapenv:Envelope>
+>>

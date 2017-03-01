@@ -62,9 +62,9 @@ public class SetCertificateStatusInsuranceProcessIT extends BaseIntegrationTest 
         final String status = CertificateState.SENT.name();
         IntegrationTestUtil.registerMedicalCertificate(INTYG_ID, personId);
 
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
+        getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
         givenRequest(INTYG_ID, personId, "FK", status, LocalDateTime.now()).body("result.resultCode", is("OK"));
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(2))
+        getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(2))
                 .body("meta.status[0].type", anyOf(is("RECEIVED"), is(status))).body("meta.status[1].type", anyOf(is("RECEIVED"), is(status)));
     }
 
@@ -74,12 +74,12 @@ public class SetCertificateStatusInsuranceProcessIT extends BaseIntegrationTest 
         final String status = CertificateState.SENT.name();
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
 
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
+        getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
         // mark as sent twice
         givenRequest(INTYG_ID, personId, "FK", status, LocalDateTime.now()).body("result.resultCode", is("OK"));
         givenRequest(INTYG_ID, personId, "FK", status, LocalDateTime.now()).body("result.resultCode", is("OK"));
         // find two status "sent"
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("meta.status.size()", is(3))
+        getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(3))
                 .body("meta.status[0].type", anyOf(is("RECEIVED"), is(status))).body("meta.status[1].type", anyOf(is("RECEIVED"), is(status)))
                 .body("meta.status[2].type", anyOf(is("RECEIVED"), is(status)));
     }
@@ -117,12 +117,12 @@ public class SetCertificateStatusInsuranceProcessIT extends BaseIntegrationTest 
                 .rootPath("Envelope.Body.SetCertificateStatusResponse.");
     }
 
-    private ValidatableResponse getMedicalCertificateForCareRequest(String intygId, String personId) {
-        ST requestTemplate = new STGroupFile("integrationtests/getmedicalcertificateforcare/requests.stg").getInstanceOf("request");
+    private ValidatableResponse getMedicalCertificateRequest(String intygId, String personId) {
+        ST requestTemplate = new STGroupFile("integrationtests/getmedicalcertificate/requests.stg").getInstanceOf("request");
         requestTemplate.add("intygId", intygId);
         requestTemplate.add("personId", personId);
 
-        return given().body(requestTemplate.render()).when().post("inera-certificate/get-medical-certificate-for-care/v1.0").then().statusCode(200)
-                .rootPath("Envelope.Body.GetMedicalCertificateForCareResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/get-medical-certificate/v1.0").then().statusCode(200)
+                .rootPath("Envelope.Body.GetMedicalCertificateResponse.");
     }
 }

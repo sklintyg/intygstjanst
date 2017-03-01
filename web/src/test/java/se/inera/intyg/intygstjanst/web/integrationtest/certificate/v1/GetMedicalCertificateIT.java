@@ -32,17 +32,17 @@ import com.jayway.restassured.response.ValidatableResponse;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
-public class GetMedicalCertificateForCareIT extends BaseIntegrationTest {
+public class GetMedicalCertificateIT extends BaseIntegrationTest {
 
     private STGroup templateGroup;
 
-    private static final String INTYG_ID = "getMedicalCertificateForCareITcertificateId";
+    private static final String INTYG_ID = "getMedicalCertificateITcertificateId";
     private static final String INTYG_TYP = "fk7263";
 
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
-        templateGroup = new STGroupFile("integrationtests/getmedicalcertificateforcare/requests.stg");
+        templateGroup = new STGroupFile("integrationtests/getmedicalcertificate/requests.stg");
         cleanup();
     }
 
@@ -52,7 +52,7 @@ public class GetMedicalCertificateForCareIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void getMedicalCertificateForCare() {
+    public void getMedicalCertificate() {
         final String personId = "190101010101";
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
 
@@ -61,30 +61,30 @@ public class GetMedicalCertificateForCareIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void getMedicalCertificateForCareCertificateDoesNotExist() {
+    public void getMedicalCertificateCertificateDoesNotExist() {
         givenRequest("fit-intyg-finnsinte", "190101010101").body("result.resultCode", is("ERROR")).body("result.errorId", is("VALIDATION_ERROR"))
                 .body("result.resultText", is(
                         "Certificate 'fit-intyg-finnsinte' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
     }
 
     @Test
-    public void getMedicalCertificateForCareRevoked() {
+    public void getMedicalCertificateRevoked() {
         final String personId = "190101010101";
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
         IntegrationTestUtil.revokeMedicalCertificate(INTYG_ID, personId, "");
 
         givenRequest(INTYG_ID, personId).body("meta.certificateId", is(INTYG_ID)).body("result.resultCode", is("ERROR"))
                 .body("result.errorId", is("REVOKED"))
-                .body("result.resultText", is("Certificate 'getMedicalCertificateForCareITcertificateId' has been revoked"));
+                .body("result.resultText", is("Certificate 'getMedicalCertificateITcertificateId' has been revoked"));
     }
 
     @Test
-    public void getMedicalCertificateForCareDeletedByCareGiver() {
+    public void getMedicalCertificateDeletedByCareGiver() {
         final String personId = "190101010101";
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, true);
 
         givenRequest(INTYG_ID, personId).body("result.resultCode", is("ERROR")).body("result.errorId", is("APPLICATION_ERROR"))
-                .body("result.resultText", is("Certificate 'getMedicalCertificateForCareITcertificateId' has been deleted by care giver"));
+                .body("result.resultText", is("Certificate 'getMedicalCertificateITcertificateId' has been deleted by care giver"));
     }
 
     @Test
@@ -97,7 +97,7 @@ public class GetMedicalCertificateForCareIT extends BaseIntegrationTest {
         requestTemplate.add("intygId", intygId);
         requestTemplate.add("personId", personId);
 
-        return given().body(requestTemplate.render()).when().post("inera-certificate/get-medical-certificate-for-care/v1.0").then().statusCode(200)
-                .rootPath("Envelope.Body.GetMedicalCertificateForCareResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/get-medical-certificate/v1.0").then().statusCode(200)
+                .rootPath("Envelope.Body.GetMedicalCertificateResponse.");
     }
 }

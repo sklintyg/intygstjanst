@@ -55,10 +55,10 @@ public class RegisterMedicalCertificateIT extends BaseIntegrationTest {
     public void registerMedicalCertificate() {
         final String personId = "19010101-0101";
 
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("result.resultCode", is("ERROR")).body("result.resultText", is(
+        getMedicalCertificateRequest(INTYG_ID, personId).body("result.resultCode", is("ERROR")).body("result.resultText", is(
                 "Certificate 'registerMedicalCertificateITcertificateId' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
         givenRequest(INTYG_ID, personId, false).body("result.resultCode", is("OK"));
-        getMedicalCertificateForCareRequest(INTYG_ID, personId).body("result.resultCode", is("OK")).body("meta.certificateId", is(INTYG_ID))
+        getMedicalCertificateRequest(INTYG_ID, personId).body("result.resultCode", is("OK")).body("meta.certificateId", is(INTYG_ID))
                 .body("lakarutlatande.skapadAvHosPersonal.enhet.enhets-id.@extension", is("EnhetsId"))
                 .body("lakarutlatande.skapadAvHosPersonal.enhet.vardgivare.vardgivare-id.@extension", is("Vardgivarid"))
                 .body("meta.status.type", is("RECEIVED"));
@@ -90,12 +90,12 @@ public class RegisterMedicalCertificateIT extends BaseIntegrationTest {
                 .rootPath("Envelope.Body.RegisterMedicalCertificateResponse.");
     }
 
-    private ValidatableResponse getMedicalCertificateForCareRequest(String intygId, String personId) {
-        ST requestTemplate = new STGroupFile("integrationtests/getmedicalcertificateforcare/requests.stg").getInstanceOf("request");
+    private ValidatableResponse getMedicalCertificateRequest(String intygId, String personId) {
+        ST requestTemplate = new STGroupFile("integrationtests/getmedicalcertificate/requests.stg").getInstanceOf("request");
         requestTemplate.add("intygId", intygId);
         requestTemplate.add("personId", personId);
 
-        return given().body(requestTemplate.render()).when().post("inera-certificate/get-medical-certificate-for-care/v1.0").then().statusCode(200)
-                .rootPath("Envelope.Body.GetMedicalCertificateForCareResponse.");
+        return given().body(requestTemplate.render()).when().post("inera-certificate/get-medical-certificate/v1.0").then().statusCode(200)
+                .rootPath("Envelope.Body.GetMedicalCertificateResponse.");
     }
 }
