@@ -24,7 +24,7 @@ import org.stringtemplate.v4.STGroupFile;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
-import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

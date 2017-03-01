@@ -1,7 +1,8 @@
 package se.inera.intyg.intygstjanst.web.integration.converter;
 
 import org.springframework.stereotype.Service;
-import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.common.support.validate.SamordningsnummerValidator;
+import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukskrivningsgrad;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukskrivningsgrader;
@@ -67,7 +68,7 @@ public class SjukfallConverter {
 
     private PersonId buildPersonId(Personnummer pnr) {
         PersonId personId = new PersonId();
-        personId.setRoot(pnr.isSamordningsNummer() ? KODVERK_SAMORDNINGSNUMMER : KODVERK_PERSONNUMMER);
+        personId.setRoot(SamordningsnummerValidator.isSamordningsNummer(pnr) ? KODVERK_SAMORDNINGSNUMMER : KODVERK_PERSONNUMMER);
 
         try {
             personId.setExtension(pnr.getNormalizedPnr());

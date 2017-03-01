@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
 
 public class DaoUtilTest {

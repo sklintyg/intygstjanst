@@ -18,7 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 /**
  * @author andreaskaltenbach

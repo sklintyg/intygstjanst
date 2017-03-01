@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.common.support.modules.support.api.dto.Personnummer;
+import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 
 /**
