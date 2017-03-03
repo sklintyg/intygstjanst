@@ -30,7 +30,8 @@ public class SjukfallConverter {
         return sjukfallList.stream().map(sf -> {
             se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall sjukfall =
                     new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall();
-            se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Diagnoskod diagnoskod = new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Diagnoskod();
+            se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Diagnoskod diagnoskod =
+                    new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Diagnoskod();
 
             diagnoskod.setCode(sf.getDiagnosKod().getCleanedCode());
             sjukfall.setDiagnoskod(diagnoskod);

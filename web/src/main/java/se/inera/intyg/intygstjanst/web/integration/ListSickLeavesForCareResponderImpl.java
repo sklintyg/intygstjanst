@@ -89,8 +89,8 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
             sjukfall = sjukfall.stream()
                     .filter(sf -> sf.getDagar() >= minstaSjukskrivningslangd)
                     .filter(sf -> sf.getDagar() < maxSjukskrivningslangd)
-                    .filter(sf -> lakareList == null || lakareList.size() == 0 ||
-                            lakareList.stream()
+                    .filter(sf -> lakareList == null || lakareList.size() == 0
+                            || lakareList.stream()
                                     .map(id -> id.getExtension())
                                     .anyMatch(extension -> extension.equals(sf.getLakare().getId()))
                     )
