@@ -3,10 +3,10 @@ package se.inera.intyg.intygstjanst.web.integration.converter;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.validate.SamordningsnummerValidator;
 import se.inera.intyg.schemas.contract.Personnummer;
+
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukskrivningsgrad;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukskrivningsgrader;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.CVType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
 
@@ -30,9 +30,10 @@ public class SjukfallConverter {
         return sjukfallList.stream().map(sf -> {
             se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall sjukfall =
                     new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall();
-            CVType diagnosKod = new CVType();
-            diagnosKod.setCode(sf.getDiagnosKod().getCleanedCode());
-            sjukfall.setDiagnoskod(diagnosKod);
+            se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Diagnoskod diagnoskod = new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Diagnoskod();
+
+            diagnoskod.setCode(sf.getDiagnosKod().getCleanedCode());
+            sjukfall.setDiagnoskod(diagnoskod);
 
             HsaId enhetId = new HsaId();
             enhetId.setExtension(sf.getVardenhet().getId());

@@ -196,7 +196,7 @@ public class ListSickLeavesForCareResponderImplTest {
         ListSickLeavesForCareType params = new ListSickLeavesForCareType();
         params.setEnhetsId(careUnitId);
         params.setMaxDagarMellanIntyg(maxDagarMellanIntyg);
-        params.setPersonalId(doctorId);
+        params.getPersonalId().add(doctorId);
         return params;
     }
 
@@ -204,7 +204,7 @@ public class ListSickLeavesForCareResponderImplTest {
         ListSickLeavesForCareType params = new ListSickLeavesForCareType();
         params.setEnhetsId(careUnitId);
         params.setMaxDagarMellanIntyg(maxDagarMellanIntyg);
-        params.setPersonalId(doctorId);
+        params.getPersonalId().add(doctorId);
         params.setMinstaSjukskrivningslangd(minSjukskrivningslangd);
         params.setMaxSjukskrivningslangd(maxSjukskrivningslangd);
         return params;

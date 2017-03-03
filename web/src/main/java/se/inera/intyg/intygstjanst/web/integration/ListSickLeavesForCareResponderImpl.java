@@ -19,11 +19,13 @@ import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Li
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.SjukfallLista;
+import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -83,10 +85,15 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
             List<Sjukfall> sjukfall = sjukfallEngineService.beraknaSjukfall(intygDataList, sjukfallEngineParams);
 
             // Perform post-processing filtering of sjukskrivningslängder and läkare.
+            List<HsaId> lakareList = params.getPersonalId().stream().filter(Objects::nonNull).collect(Collectors.toList());
             sjukfall = sjukfall.stream()
                     .filter(sf -> sf.getDagar() >= minstaSjukskrivningslangd)
                     .filter(sf -> sf.getDagar() < maxSjukskrivningslangd)
-                    .filter(sf -> params.getPersonalId() == null || sf.getLakare().getId().equals(params.getPersonalId().getExtension()))
+                    .filter(sf -> lakareList == null || lakareList.size() == 0 ||
+                            lakareList.stream()
+                                    .map(id -> id.getExtension())
+                                    .anyMatch(extension -> extension.equals(sf.getLakare().getId()))
+                    )
                     .collect(Collectors.toList());
 
             // Transform the output of the sjukfallengine into rivta TjK format and build the response object.
