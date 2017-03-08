@@ -36,8 +36,8 @@ import se.inera.intyg.intygstjanst.web.integration.util.SjukfallCertTestHelper;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

@@ -19,9 +19,9 @@ import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Li
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.SjukfallLista;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 import java.time.LocalDate;
 import java.util.List;
