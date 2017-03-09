@@ -15,13 +15,12 @@ stage('deploy') {
             util.run {
                 sh (script: "start_openconnect.sh eorsgren /home/jenkins/pwd")
 
-                sh (
                 def itVersion = sh (
                     script: 'curl -ks "https://build-inera.nordicmedtest.se/nexus/service/local/lucene/search?a=intygstjanst-web&v=${BASE_VERSION}&repositoryId=releases" | sed -nr "/^.*latestRelease>([0-9.]+)<.*/{s//\\1/p;q}"',
                                     returnStdout: true
                                     ).trim()
 
-                ansiblePlaybook extraVars: [version: "${itVersion}", ansible_ssh_port: "22", deploy_from_repo: "true"],  \
+                ansiblePlaybook extraVars: [version: "${itVersion}", ansible_ssh_port: "22", deploy_from_repo: "true"], \
                     installation: 'ansible-yum', inventory: 'ansible/inventory/intygstjanst/demo', playbook: 'ansible/deploy.yml'
 
                 util.waitForServer('https://demo.intygstjanst.intygstjanster.se/version.jsp')
