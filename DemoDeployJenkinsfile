@@ -13,6 +13,7 @@ stage('deploy') {
     node {
         withEnv(["BASE_VERSION=${baseVersion}"]) {
             util.run {
+                sh (script: "echo $PATH")
                 sh (script: "start_openconnect.sh eorsgren /home/jenkins/pwd")
 
                 def itVersion = sh (
