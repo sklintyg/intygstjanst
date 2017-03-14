@@ -23,7 +23,7 @@ stage('deploy') {
                                     inventory: 'ansible/inventory/intygstjanst/demo',
                                     playbook: 'ansible/deploy.yml')
 
-                    util.waitForServer('https://demo.intygstjanst.intygstjanster.se/version.jsp')
+                    util.waitForServer('https://demo.intygstjanst.intygstjanster.se/inera-certificate/version.jsp')
                 })
         }
     }
