@@ -78,9 +78,10 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             ModuleApi api = moduleRegistry.getModuleApi(intygsTyp);
             String xml = xmlToString(registerCertificate);
             ValidateXmlResponse validationResponse = api.validateXml(xml);
+            String additionalInfo = api.getAdditionalInfo(registerCertificate.getIntyg());
 
             if (!validationResponse.hasErrorMessages()) {
-                return storeIntyg(registerCertificate, intygsTyp, xml);
+                return storeIntyg(registerCertificate, intygsTyp, xml, additionalInfo);
             } else {
                 String validationErrors = String.join(";", validationResponse.getValidationErrors());
                 return makeValidationErrorResult(validationErrors);
@@ -103,9 +104,9 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     }
 
     private RegisterCertificateResponseType storeIntyg(final RegisterCertificateType registerCertificate, final String intygsTyp,
-            final String xml) throws CertificateAlreadyExistsException, InvalidCertificateException {
+            final String xml, final String additionalInfo) throws CertificateAlreadyExistsException, InvalidCertificateException {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
-        CertificateHolder certificateHolder = toCertificateHolder(registerCertificate.getIntyg(), intygsTyp, xml);
+        CertificateHolder certificateHolder = toCertificateHolder(registerCertificate.getIntyg(), intygsTyp, xml, additionalInfo);
         moduleContainer.certificateReceived(certificateHolder);
         response.setResult(ResultTypeUtil.okResult());
         return response;
@@ -150,7 +151,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         return moduleRegistry.getModuleIdFromExternalId(certificateType.getIntyg().getTyp().getCode());
     }
 
-    private CertificateHolder toCertificateHolder(Intyg intyg, String type, String originalCertificate) {
+    private CertificateHolder toCertificateHolder(Intyg intyg, String type, String originalCertificate, String additionalInfo) {
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId(intyg.getIntygsId().getExtension());
         certificateHolder.setCareUnitId(intyg.getSkapadAv().getEnhet().getEnhetsId().getExtension());
@@ -161,6 +162,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         certificateHolder.setSignedDate(intyg.getSigneringstidpunkt());
         certificateHolder.setType(type);
         certificateHolder.setOriginalCertificate(originalCertificate);
+        certificateHolder.setAdditionalInfo(additionalInfo);
         return certificateHolder;
     }
 
