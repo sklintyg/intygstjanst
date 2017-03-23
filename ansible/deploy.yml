@@ -5,8 +5,6 @@
   become: yes
   environment:
     "{{ proxy_env }}"
-  vars:
-    config_version: master
 
   roles:
     - intygstjanst
