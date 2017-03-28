@@ -39,16 +39,16 @@ import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.common.support.modules.support.api.dto.ValidateXmlResponse;
 import se.inera.intyg.common.util.logging.LogMarkers;
+import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.ObjectFactory;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.RegisterCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.RegisterCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v2.RegisterCertificateType;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.DatePeriodType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.Intyg;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.DatePeriodType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 
 @SchemaValidation
 public class RegisterCertificateResponderImpl implements RegisterCertificateResponderInterface {

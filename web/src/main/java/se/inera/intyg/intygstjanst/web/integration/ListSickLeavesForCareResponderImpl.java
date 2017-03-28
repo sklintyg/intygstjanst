@@ -1,10 +1,16 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.Sjukfall;
@@ -20,13 +26,6 @@ import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Li
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.SjukfallLista;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
-import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
-import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Created by eriklupander on 2017-02-15.
@@ -92,26 +91,24 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
                     .filter(sf -> lakareList == null || lakareList.size() == 0
                             || lakareList.stream()
                                     .map(id -> id.getExtension())
-                                    .anyMatch(extension -> extension.equals(sf.getLakare().getId()))
-                    )
+                                    .anyMatch(extension -> extension.equals(sf.getLakare().getId())))
                     .collect(Collectors.toList());
 
             // Transform the output of the sjukfallengine into rivta TjK format and build the response object.
             SjukfallLista sjukfallLista = new SjukfallLista();
             sjukfallLista.getSjukfall().addAll(sjukfallConverter.toSjukfall(sjukfall));
 
-
-            ResultType resultType = new ResultType();
-            resultType.setResultCode(ResultCodeType.OK);
-            responseType.setResult(resultType);
+            // ResultType resultType = new ResultType();
+            // resultType.setResultCode(ResultCodeType.OK);
+            // responseType.setResult(resultType);
             responseType.setSjukfallLista(sjukfallLista);
             return responseType;
         } catch (ServerException e) {
             LOGGER.error("Caught ServerException serving ListSickLeavesForCare: " + e.getMessage());
-            ResultType resultType = new ResultType();
-            resultType.setResultCode(ResultCodeType.ERROR);
-            resultType.setResultText(e.getMessage());
-            responseType.setResult(resultType);
+            // ResultType resultType = new ResultType();
+            // resultType.setResultCode(ResultCodeType.ERROR);
+            // resultType.setResultText(e.getMessage());
+            // responseType.setResult(resultType);
             return responseType;
         }
     }

@@ -34,15 +34,17 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.schemas.contract.Personnummer;
-import se.inera.intyg.intygstjanst.persistence.model.dao.*;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.integration.util.SendMessageToCareUtil;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.Amneskod;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.ErrorCode;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType.Komplettering;
-import se.riv.clinicalprocess.healthcond.certificate.v2.MeddelandeReferens;
+import se.riv.clinicalprocess.healthcond.certificate.v3.MeddelandeReferens;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendMessageToCareValidatorTest {
@@ -95,7 +97,8 @@ public class SendMessageToCareValidatorTest {
     @Test
     public void testThatValidationOKIfCertificateExistsButCivicRegistrationNumberIsCorrect() throws Exception {
         List<String> validationErrors = new ArrayList<>();
-        SendMessageToCareType message = SendMessageToCareUtil.getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
+        SendMessageToCareType message = SendMessageToCareUtil
+                .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         validateCertificateAndCivicRegistrationNumberConsistency(validationErrors, message.getPatientPersonId().getExtension(), message);
         assertTrue(validationErrors.isEmpty());
     }
@@ -170,8 +173,6 @@ public class SendMessageToCareValidatorTest {
         assertTrue(res.isEmpty());
     }
 
-    // ----------- ERROR CASES------------------------------------------------------------------------------
-
     @Test
     public void testThatValidationFailsIfPartCodeIsInvalid() throws Exception {
         List<String> validationErrors = new ArrayList<>();
@@ -210,7 +211,8 @@ public class SendMessageToCareValidatorTest {
     @Test
     public void testThatValidationFailsIfCertificateDoesNotExist() throws Exception {
         List<String> validationErrors = new ArrayList<>();
-        SendMessageToCareType message = SendMessageToCareUtil.getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
+        SendMessageToCareType message = SendMessageToCareUtil
+                .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         String certificateId = message.getIntygsId().getExtension();
         String civicRegistrationNumber = message.getPatientPersonId().getExtension();
         when(certificateService.getCertificateForCare(certificateId)).thenReturn(null);
@@ -222,7 +224,8 @@ public class SendMessageToCareValidatorTest {
     @Test
     public void testThatValidationFailsIfCertificateExistsButCivicRegistrationNumberIsWrong() throws Exception {
         List<String> validationErrors = new ArrayList<>();
-        SendMessageToCareType message = SendMessageToCareUtil.getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
+        SendMessageToCareType message = SendMessageToCareUtil
+                .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         validateCertificateAndCivicRegistrationNumberConsistency(validationErrors, "101010-1010", message);
         assertFalse(validationErrors.isEmpty());
         assertTrue(validationErrors.get(0).contains(ErrorCode.CIVIC_REGISTRATION_NUMBER_INCONSISTENCY_ERROR.toString()));
@@ -340,7 +343,7 @@ public class SendMessageToCareValidatorTest {
         MeddelandeReferens meddelandeReferens = new MeddelandeReferens();
         meddelandeReferens.setMeddelandeId(meddelandeId);
         sendMessageToCareType.setSvarPa(meddelandeReferens);
-        sendMessageToCareType.setAmne(new se.riv.clinicalprocess.healthcond.certificate.types.v2.Amneskod());
+        sendMessageToCareType.setAmne(new se.riv.clinicalprocess.healthcond.certificate.types.v3.Amneskod());
         sendMessageToCareType.getAmne().setCode(amne);
         return sendMessageToCareType;
     }

@@ -39,7 +39,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType.Komplettering;
-import se.riv.clinicalprocess.healthcond.certificate.v2.MeddelandeReferens;
+import se.riv.clinicalprocess.healthcond.certificate.v3.MeddelandeReferens;
 
 @Component
 public class SendMessageToCareValidator {

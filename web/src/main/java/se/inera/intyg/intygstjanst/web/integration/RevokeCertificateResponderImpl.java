@@ -40,7 +40,7 @@ import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 
 @Transactional
 @SchemaValidation

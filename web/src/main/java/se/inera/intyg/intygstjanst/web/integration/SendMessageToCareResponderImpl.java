@@ -36,8 +36,8 @@ import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
 @SchemaValidation
 public class SendMessageToCareResponderImpl implements SendMessageToCareResponderInterface {

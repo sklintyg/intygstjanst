@@ -50,11 +50,11 @@ import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil.IntegrationTestCertificateType;
 
 public class ListCertificatesForCareIT extends BaseIntegrationTest {
+    private static final String BASE = "Envelope.Body.ListCertificatesForCareResponse.";
+    private static final String CARE_UNIT_ID = "SE2321000016-H489";
     private ST requestTemplate;
     private String personId1 = "192703104321";
     private List<String> intygsId = Arrays.asList("luae_na_1", "luse_1", "luae_fs_1", "lisjp_1", "fk7263_deletedByCareGiver");
-    private static final String BASE = "Envelope.Body.ListCertificatesForCareResponse.";
-    private static final String CARE_UNIT_ID = "SE2321000016-H489";
 
     @Before
     public void setup() {
@@ -75,16 +75,16 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
     public void listCertificateForCareWorks() {
         requestTemplate.add("data", new IntygsData(personId1));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v2.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v3.0").then().statusCode(200)
+                .rootPath(BASE);
     }
 
     @Test
     public void listCertificateNotExists() {
         requestTemplate.add("data", new IntygsData(personId1));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v2.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0]", is("")).extract().response();
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v3.0").then().statusCode(200)
+                .rootPath(BASE).body("intygsLista[0]", is("")).extract().response();
     }
 
     @Test
@@ -97,8 +97,8 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
         IntegrationTestUtil.givenIntyg(intygsId.get(4), "fk7263", personId1, true);
         requestTemplate.add("data", new IntygsData(personId1));
 
-        Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v2.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0].intyg.size()", is(4)).extract().response();
+        Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v3.0").then()
+                .statusCode(200).rootPath(BASE).body("intygsLista[0].intyg.size()", is(4)).extract().response();
 
         assertTrue(intygsId.containsAll(extractIds(res)));
     }
@@ -116,14 +116,16 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
     @Test
     public void responseRespectsSchema() throws Exception {
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/ListCertificatesForCareInteraction/ListCertificatesForCareResponder_2.0.xsd").getURL(), Charsets.UTF_8);
+                new ClassPathResource("interactions/ListCertificatesForCareInteraction/ListCertificatesForCareResponder_3.0.xsd").getURL(),
+                Charsets.UTF_8);
 
         requestTemplate.add("data", new IntygsData(personId1));
 
         given().filter(
-                new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCareResponder:2"),
+                new BodyExtractorFilter(
+                        ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCareResponder:3"),
                         "soap:Envelope/soap:Body/lc:ListCertificatesForCareResponse"))
-                .body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v2.0").then()
+                .body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v3.0").then()
                 .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
@@ -131,8 +133,8 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
     public void faultTransformerTest() {
         requestTemplate.add("data", new IntygsData("<tag></tag>"));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v2.0").then().statusCode(200).rootPath(BASE)
-                .body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"))
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v3.0").then().statusCode(200)
+                .rootPath(BASE)
                 .body("intygsLista.intyg.size()", is(0));
     }
 

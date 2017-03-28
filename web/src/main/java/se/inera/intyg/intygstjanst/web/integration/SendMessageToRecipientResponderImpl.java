@@ -37,8 +37,8 @@ import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

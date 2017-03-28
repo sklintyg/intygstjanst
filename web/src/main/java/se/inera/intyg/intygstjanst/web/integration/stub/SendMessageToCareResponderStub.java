@@ -31,9 +31,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.*;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @Component
 @Transactional

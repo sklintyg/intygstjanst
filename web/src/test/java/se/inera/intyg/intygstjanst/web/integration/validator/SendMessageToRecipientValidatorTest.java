@@ -32,12 +32,16 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.schemas.contract.Personnummer;
-import se.inera.intyg.intygstjanst.persistence.model.dao.*;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientType;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.*;
-import se.riv.clinicalprocess.healthcond.certificate.v2.MeddelandeReferens;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.Amneskod;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
+import se.riv.clinicalprocess.healthcond.certificate.v3.MeddelandeReferens;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendMessageToRecipientValidatorTest {

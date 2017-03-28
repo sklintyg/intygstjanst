@@ -29,9 +29,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.*;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @SchemaValidation
 public class SendMessageToRecipientResponderStub implements SendMessageToRecipientResponderInterface {
@@ -81,17 +83,18 @@ public class SendMessageToRecipientResponderStub implements SendMessageToRecipie
         return storage.getMessagesForCertificateId(intygsIdNo1);
     }
 
-//    private static final Logger LOG = LoggerFactory.getLogger(SendMessageToRecipientResponderStub.class);
-//
-//    @Override
-//    public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress, SendMessageToRecipientType parameters) {
-//        LOG.info("\n*********************************************************************************\n"
-//                + " SendMessageToRecipient to address '{}' recieved for intyg '{}' meddelandeId '{}'.\n"
-//                + "*********************************************************************************",
-//                logicalAddress, parameters.getIntygsId().getExtension(), parameters.getMeddelandeId());
-//        SendMessageToRecipientResponseType response = new SendMessageToRecipientResponseType();
-//        response.setResult(ResultTypeUtil.okResult());
-//        return response;
-//    }
+    // private static final Logger LOG = LoggerFactory.getLogger(SendMessageToRecipientResponderStub.class);
+    //
+    // @Override
+    // public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress,
+    // SendMessageToRecipientType parameters) {
+    // LOG.info("\n*********************************************************************************\n"
+    // + " SendMessageToRecipient to address '{}' recieved for intyg '{}' meddelandeId '{}'.\n"
+    // + "*********************************************************************************",
+    // logicalAddress, parameters.getIntygsId().getExtension(), parameters.getMeddelandeId());
+    // SendMessageToRecipientResponseType response = new SendMessageToRecipientResponseType();
+    // response.setResult(ResultTypeUtil.okResult());
+    // return response;
+    // }
 
 }

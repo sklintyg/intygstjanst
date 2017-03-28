@@ -22,9 +22,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType.ERROR;
-import static se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType.INFO;
-import static se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType.OK;
+import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.ERROR;
+import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.INFO;
+import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.OK;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,17 +34,21 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v1.*;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.*;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
+import se.inera.intyg.schemas.contract.Personnummer;
+import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v1.SendCertificateToRecipientResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v1.SendCertificateToRecipientResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v1.SendCertificateToRecipientType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.Part;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 
-@RunWith( MockitoJUnitRunner.class )
+@RunWith(MockitoJUnitRunner.class)
 public class SendCertificateToRecipientResponderImplTest {
 
     private static final Personnummer PERSONNUMMER = new Personnummer("19121212-1212");
@@ -89,7 +93,8 @@ public class SendCertificateToRecipientResponderImplTest {
 
     @Test
     public void testSendCertificateToRecipientInvalidCertificate() throws Exception {
-        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "TS")).thenThrow(new InvalidCertificateException(CERTIFICATE_ID, PERSONNUMMER));
+        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "TS"))
+                .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, PERSONNUMMER));
 
         SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
 
@@ -101,7 +106,8 @@ public class SendCertificateToRecipientResponderImplTest {
 
     @Test
     public void testSendCertificateToRecipientCertificateRevoked() throws Exception {
-        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "TS")).thenThrow(new CertificateRevokedException(CERTIFICATE_ID));
+        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "TS"))
+                .thenThrow(new CertificateRevokedException(CERTIFICATE_ID));
 
         SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
 

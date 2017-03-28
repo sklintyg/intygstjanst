@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.integration.v2;
+package se.inera.intyg.intygstjanst.web.integration.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -25,7 +25,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,16 +40,17 @@ import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v2.*;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
-import se.riv.clinicalprocess.healthcond.certificate.v2.Intyg;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
+import se.inera.intyg.schemas.contract.Personnummer;
+import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.ListCertificatesForCareResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.ListCertificatesForCareResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.ListCertificatesForCareType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListCertificatesForCareResponderImplTest {
@@ -90,7 +93,7 @@ public class ListCertificatesForCareResponderImplTest {
         verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
 
         assertEquals(0, response.getIntygsLista().getIntyg().size());
-        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        // assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     @Test
@@ -115,7 +118,7 @@ public class ListCertificatesForCareResponderImplTest {
         verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
 
         assertEquals(2, response.getIntygsLista().getIntyg().size());
-        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        // assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     @Test
@@ -143,7 +146,7 @@ public class ListCertificatesForCareResponderImplTest {
 
         // We only return Intyg that are not deletedByCaregiver
         assertEquals(1, response.getIntygsLista().getIntyg().size());
-        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        // assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     private HsaId createHsaId(String id) {
@@ -153,7 +156,8 @@ public class ListCertificatesForCareResponderImplTest {
         return hsaId;
     }
 
-    private ListCertificatesForCareType createListCertificatesRequest(Personnummer civicRegistrationNumber, HsaId vardgivarId, HsaId enhet) {
+    private ListCertificatesForCareType createListCertificatesRequest(Personnummer civicRegistrationNumber, HsaId vardgivarId,
+            HsaId enhet) {
         ListCertificatesForCareType parameters = new ListCertificatesForCareType();
         parameters.setPersonId(new PersonId());
         parameters.getPersonId().setExtension(civicRegistrationNumber.getPersonnummer());

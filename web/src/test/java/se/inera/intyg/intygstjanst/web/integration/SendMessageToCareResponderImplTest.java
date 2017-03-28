@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.integration.test;
+package se.inera.intyg.intygstjanst.web.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -42,7 +42,6 @@ import org.springframework.core.io.ClassPathResource;
 
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
-import se.inera.intyg.intygstjanst.web.integration.SendMessageToCareResponderImpl;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator;
 import se.inera.intyg.intygstjanst.web.service.ArendeService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
@@ -50,15 +49,14 @@ import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendMessageToCareResponderImplTest {
-    private static String ENHET_1_ID = "ENHET_1_ID";
     private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML = "SendMessageToCareTest/sendmessagetocare.xml";
-
+    private static String ENHET_1_ID = "ENHET_1_ID";
     @Mock
     private SendMessageToCareValidator validator;
 
@@ -112,7 +110,8 @@ public class SendMessageToCareResponderImplTest {
         SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, buildSendMessageToCareType());
         assertEquals(ResultCodeType.ERROR, responseType.getResult().getResultCode());
         assertEquals(ErrorIdType.VALIDATION_ERROR, responseType.getResult().getErrorId());
-        assertEquals("Validation of SendMessageToCareType failed for message with meddelandeid 4: [fel]", responseType.getResult().getResultText());
+        assertEquals("Validation of SendMessageToCareType failed for message with meddelandeid 4: [fel]",
+                responseType.getResult().getResultText());
         verify(fwdResponder, never()).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
         verify(statisticsService, times(0)).messageSent(anyString(), anyString(), anyString());
         verify(sendMessageToCareService, never()).processIncomingMessage((any(Arende.class)));

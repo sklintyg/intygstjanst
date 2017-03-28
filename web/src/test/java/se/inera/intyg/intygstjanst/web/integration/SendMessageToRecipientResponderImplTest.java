@@ -47,11 +47,11 @@ import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientType;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.Amneskod;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.IntygId;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.Amneskod;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendMessageToRecipientResponderImplTest {
@@ -145,7 +145,8 @@ public class SendMessageToRecipientResponderImplTest {
     private void setupClientResponse(ResultType result) {
         SendMessageToRecipientResponseType response = new SendMessageToRecipientResponseType();
         response.setResult(result);
-        when(sendMessageToRecipientResponder.sendMessageToRecipient(anyString(), any(SendMessageToRecipientType.class))).thenReturn(response);
+        when(sendMessageToRecipientResponder.sendMessageToRecipient(anyString(), any(SendMessageToRecipientType.class)))
+                .thenReturn(response);
     }
 
     private void assertInvocations(VerificationMode monitoringLogInvocation,
@@ -154,7 +155,8 @@ public class SendMessageToRecipientResponderImplTest {
         verify(validator).validate(any(SendMessageToRecipientType.class)); // always call validator
         verify(arendeService, arendeServiceInvocation).processIncomingMessage(any(Arende.class));
         verify(monitoringLog, monitoringLogInvocation).logSendMessageToRecipient(anyString(), anyString());
-        verify(sendMessageToRecipientResponder, sendMessageToRecipientClientInvocation).sendMessageToRecipient(eq(LOGICAL_ADDRESS_RECIPIENT),
+        verify(sendMessageToRecipientResponder, sendMessageToRecipientClientInvocation).sendMessageToRecipient(
+                eq(LOGICAL_ADDRESS_RECIPIENT),
                 any(SendMessageToRecipientType.class));
     }
 }

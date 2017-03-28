@@ -18,10 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v3;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
@@ -40,10 +45,6 @@ import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.
 import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.v3.ListaType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @SchemaValidation
 public class ListCertificatesForCitizenResponderImpl implements ListCertificatesForCitizenResponderInterface {
@@ -79,9 +80,9 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
             monitoringLogService.logCertificateListedByCitizen(personnummer);
         } catch (ModuleNotFoundException | ModuleException e) {
             LOGGER.error(e.getMessage());
-        } catch (MissingConsentException ex) {
-            
-        }
+         } catch (MissingConsentException ex) {
+            LOGGER.warn("Could not find consent to list certificates for citizen");
+         }
 
         return response;
     }

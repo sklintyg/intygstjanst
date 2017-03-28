@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.integration;
+package se.inera.intyg.intygstjanst.web.integration.v2;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -36,10 +36,14 @@ import se.inera.intyg.common.support.common.enumerations.PartKod;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
-import se.inera.intyg.common.support.modules.support.api.*;
+import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
+import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
+import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
-import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v1.*;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.IntygId;
+import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetCertificateResponderImplTest {
@@ -90,7 +94,8 @@ public class GetCertificateResponderImplTest {
     private CertificateHolder createResponse(boolean deletedByCareGiver) {
         CertificateHolder holder = new CertificateHolder();
         holder.setDeletedByCareGiver(deletedByCareGiver);
-        holder.setOriginalCertificate("<registerCertificateType xmlns:ns2=\"urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:2\"><ns2:intyg></ns2:intyg></registerCertificateType>");
+        holder.setOriginalCertificate(
+                "<registerCertificateType xmlns:ns2=\"urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:2\"><ns2:intyg></ns2:intyg></registerCertificateType>");
         holder.setCertificateStates(Arrays.asList(new CertificateStateHolder("FK", CertificateState.SENT, TIMESTAMP)));
         return holder;
     }

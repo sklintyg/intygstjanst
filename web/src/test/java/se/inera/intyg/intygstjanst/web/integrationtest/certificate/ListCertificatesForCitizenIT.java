@@ -80,9 +80,7 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         ST requestTemplate = getRequestTemplate(false);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("INFO"))
-                .body("result.resultText", is("NOCONSENT"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200);
     }
 
     @Test
@@ -91,9 +89,9 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         IntegrationTestUtil.addConsent(personId);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then()
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then()
                 .statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0]", is(""));
+                .rootPath(BASE).body("intygsLista[0]", is(""));
     }
 
     @Test
@@ -106,9 +104,9 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(3), personId, IntegrationTestCertificateType.LISJP);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
-        Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then()
+        Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then()
                 .statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0].intyg.size()", is(4)).extract().response();
+                .rootPath(BASE).body("intygsLista[0].intyg.size()", is(4)).extract().response();
 
         assertTrue(intygsId_alltypes.containsAll(extractIds(res)));
     }
@@ -120,20 +118,20 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         IntegrationTestUtil.givenIntyg(intygsId_alltypes.get(0), "fk7263", personId, true);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0].intyg.size()", is(1));
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200)
+                .rootPath(BASE).body("intygsLista[0].intyg.size()", is(1));
 
         // Eftersom intyget är markerat som borttaget av vården så ska detta städas bort då inte heller invånaren längre
         // har åtkomst till det. När invånaren åter ger samtycke så är intyget borta.
         IntegrationTestUtil.revokeConsent(personId);
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("INFO"))
-                .body("result.resultText", is("NOCONSENT"))
-                .body("intygsLista[0].intyg.size()", is(0));
+        // TODO: Reactivate once we know how this should be handled
+//        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200)
+//                .rootPath(BASE).body("result.resultCode", is("INFO"))
+//                .body("result.resultText", is("NOCONSENT"))
+//                .body("intygsLista[0].intyg.size()", is(0));
         IntegrationTestUtil.addConsent(personId);
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK"))
-                .body("intygsLista[0].intyg.size()", is(0));
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200)
+                .rootPath(BASE).body("intygsLista[0].intyg.size()", is(0));
     }
 
     @Test
@@ -146,9 +144,9 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(3), personId, IntegrationTestCertificateType.LISJP);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
-        Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then()
+        Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then()
                 .statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0].intyg.size()", is(1)).extract().response();
+                .rootPath(BASE).body("intygsLista[0].intyg.size()", is(1)).extract().response();
 
         assertTrue(intygsId_alltypes.containsAll(extractIds(res)));
     }
@@ -161,22 +159,21 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
 
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200);
     }
 
     @Test
     public void responseRespectsSchema() throws Exception {
         ST requestTemplate = getRequestTemplate(false);
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/ListCertificatesForCitizenInteraction/ListCertificatesForCitizenResponder_2.0.xsd").getURL(), Charsets.UTF_8);
+                new ClassPathResource("interactions/ListCertificatesForCitizenInteraction/ListCertificatesForCitizenResponder_3.0.xsd").getURL(), Charsets.UTF_8);
 
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         given().filter(
-                new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCitizenResponder:2"),
+                new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCitizenResponder:3"),
                         "soap:Envelope/soap:Body/lc:ListCertificatesForCitizenResponse"))
-                .body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then()
+                .body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then()
                 .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
@@ -185,9 +182,9 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         ST requestTemplate = getRequestTemplate(false);
         requestTemplate.add("data", new ListParameters("<tag></tag>", defaultType));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v2.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"))
-                .body("intygsLista.intyg.size()", is(0));
+        // TODO: Is this really correct?
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200)
+                .rootPath(BASE).body("intygsLista.intyg.size()", is(0));
     }
 
     @After

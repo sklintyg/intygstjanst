@@ -36,9 +36,9 @@ import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtab
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusRequestType;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 /**
  * @author andreaskaltenbach
@@ -71,14 +71,17 @@ public class SetCertificateStatusResponderImplTest {
 
         responder.setCertificateStatus(null, request);
 
-        verify(certificateService).setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, "försäkringskassan", CertificateState.CANCELLED, timestamp);
+        verify(certificateService).setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, "försäkringskassan",
+                CertificateState.CANCELLED, timestamp);
         verify(monitoringLogService).logCertificateStatusChanged(CERTIFICATE_ID, "CANCELLED");
     }
 
     @Test
     public void testSetCertificateStatusInvalidCertificate() throws Exception {
         LocalDateTime timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
-        doThrow(new InvalidCertificateException(CERTIFICATE_ID, new Personnummer("19001122-3344"))).when(certificateService).setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, "försäkringskassan", CertificateState.CANCELLED, timestamp);
+        doThrow(new InvalidCertificateException(CERTIFICATE_ID, new Personnummer("19001122-3344"))).when(certificateService)
+                .setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, "försäkringskassan", CertificateState.CANCELLED,
+                        timestamp);
 
         SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
         request.setCertificateId(CERTIFICATE_ID);
@@ -89,7 +92,8 @@ public class SetCertificateStatusResponderImplTest {
 
         responder.setCertificateStatus(null, request);
 
-        verify(certificateService).setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, "försäkringskassan", CertificateState.CANCELLED, timestamp);
+        verify(certificateService).setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, "försäkringskassan",
+                CertificateState.CANCELLED, timestamp);
         verify(monitoringLogService, never()).logCertificateStatusChanged(anyString(), anyString());
     }
 }

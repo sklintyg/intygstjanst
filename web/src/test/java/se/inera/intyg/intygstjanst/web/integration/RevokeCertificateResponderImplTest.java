@@ -39,7 +39,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
@@ -48,13 +47,14 @@ import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v1.RevokeCertificateType;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.IntygId;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ErrorIdType;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RevokeCertificateResponderImplTest {

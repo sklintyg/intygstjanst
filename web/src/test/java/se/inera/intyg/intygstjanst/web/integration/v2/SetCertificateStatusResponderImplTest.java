@@ -35,9 +35,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.riv.clinicalprocess.healthcond.certificate.setCertificateStatus.v1.*;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.*;
-import se.riv.clinicalprocess.healthcond.certificate.v2.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.setCertificateStatus.v1.SetCertificateStatusResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.setCertificateStatus.v1.SetCertificateStatusResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.setCertificateStatus.v1.SetCertificateStatusType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.Part;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.Statuskod;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SetCertificateStatusResponderImplTest {
@@ -71,7 +75,8 @@ public class SetCertificateStatusResponderImplTest {
         SetCertificateStatusResponseType response = responder.setCertificateStatus(null, request);
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
 
-        verify(certificateService, never()).setCertificateState(anyString(), anyString(), any(CertificateState.class), any(LocalDateTime.class));
+        verify(certificateService, never()).setCertificateState(anyString(), anyString(), any(CertificateState.class),
+                any(LocalDateTime.class));
         verify(monitoringLogService, never()).logCertificateStatusChanged(anyString(), anyString());
     }
 
@@ -83,7 +88,8 @@ public class SetCertificateStatusResponderImplTest {
         SetCertificateStatusResponseType response = responder.setCertificateStatus(null, request);
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
 
-        verify(certificateService, never()).setCertificateState(anyString(), anyString(), any(CertificateState.class), any(LocalDateTime.class));
+        verify(certificateService, never()).setCertificateState(anyString(), anyString(), any(CertificateState.class),
+                any(LocalDateTime.class));
         verify(monitoringLogService, never()).logCertificateStatusChanged(anyString(), anyString());
     }
 

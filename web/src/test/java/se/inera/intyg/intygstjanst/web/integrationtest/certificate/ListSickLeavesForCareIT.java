@@ -18,11 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static org.hamcrest.core.Is.is;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -31,23 +30,23 @@ import org.springframework.core.io.ClassPathResource;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
+
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
+
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
-import static org.hamcrest.Matchers.startsWith;
-import static org.hamcrest.core.Is.is;
-
 public class ListSickLeavesForCareIT extends BaseIntegrationTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ListSickLeavesForCareIT.class);
-
-    private ST requestTemplate;
     private static final String BASE = "Envelope.Body.ListSickLeavesForCareResponse.";
     private static final String CARE_UNIT_ID = "centrum-vast";
-    
+    private ST requestTemplate;
     private Params defaultParams;
 
     @Before
@@ -64,23 +63,20 @@ public class ListSickLeavesForCareIT extends BaseIntegrationTest {
     public void listCertificateForCareWorks() {
         requestTemplate.add("data", defaultParams);
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-sickleaves-for-care/v1.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK"));
-
-        
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-sickleaves-for-care/v1.0").then().statusCode(200);
     }
-
-   
 
     @Test
     public void responseRespectsSchema() throws Exception {
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/ListSickLeavesForCareInteraction/ListSickLeavesForCareResponder_1.0.xsd").getURL(), Charsets.UTF_8);
+                new ClassPathResource("interactions/ListSickLeavesForCareInteraction/ListSickLeavesForCareResponder_1.0.xsd").getURL(),
+                Charsets.UTF_8);
         LOGGER.error(xsdString);
         requestTemplate.add("data", defaultParams);
 
         given().filter(
-                new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:ListSickLeavesForCareResponder:1"),
+                new BodyExtractorFilter(
+                        ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:ListSickLeavesForCareResponder:1"),
                         "soap:Envelope/soap:Body/lc:ListSickLeavesForCareResponse"))
                 .body(requestTemplate.render()).when().post("inera-certificate/list-sickleaves-for-care/v1.0").then()
                 .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
@@ -90,9 +86,8 @@ public class ListSickLeavesForCareIT extends BaseIntegrationTest {
     public void faultTransformerTest() {
         requestTemplate.add("data", new Params("<tag></tag>", 0, 100, 5, "<another-tag></another-tag"));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-sickleaves-for-care/v1.0").then().statusCode(200).rootPath(BASE)
-                .body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"))
-                .body("sjukfallLista.sjukfall.size()", is(0));
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-sickleaves-for-care/v1.0").then().statusCode(200)
+                .rootPath(BASE).body("sjukfallLista.sjukfall.size()", is(0));
     }
 
     private static class Params {
@@ -102,7 +97,8 @@ public class ListSickLeavesForCareIT extends BaseIntegrationTest {
         public final int maxDagarMellanIntyg;
         public final String personalId;
 
-        public Params(String enhetsId, int minstaSjukskrivningslangd, int maxSjukskrivningslangd, int maxDagarMellanIntyg, String personalId) {
+        public Params(String enhetsId, int minstaSjukskrivningslangd, int maxSjukskrivningslangd, int maxDagarMellanIntyg,
+                String personalId) {
             this.enhetsId = enhetsId;
             this.minstaSjukskrivningslangd = minstaSjukskrivningslangd;
             this.maxSjukskrivningslangd = maxSjukskrivningslangd;

@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.inera.intyg.intygstjanst.web.service.converter;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -45,12 +46,16 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientType;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.Amneskod;
-import se.riv.clinicalprocess.healthcond.certificate.types.v2.IntygId;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.Amneskod;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 
 public class ArendeConverterTest {
 
     private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML = "SendMessageToCareTest/sendmessagetocare.xml";
+
+    private static URL getResource(String href) {
+        return Thread.currentThread().getContextClassLoader().getResource(href);
+    }
 
     @Before
     public void setup() {
@@ -58,15 +63,16 @@ public class ArendeConverterTest {
     }
 
     @Test
-    public void testConvertToXmlString() throws Exception{
-        String xmlResult = ArendeConverter.convertToXmlString(getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML));
+    public void testConvertToXmlString() throws Exception {
+        String xmlResult = ArendeConverter
+                .convertToXmlString(getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML));
         String fileXml = loadXmlMessageFromFile();
         Diff diff = XMLUnit.compareXML(fileXml, xmlResult);
         assertTrue(diff.toString(), diff.similar());
     }
 
     @Test
-    public void testConvertToSendMessageToCare() throws Exception{
+    public void testConvertToSendMessageToCare() throws Exception {
         SendMessageToCareType sendMessageToCareType = getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         Arende sendMessageToCare = ArendeConverter.convertSendMessageToCare(sendMessageToCareType);
         assertEquals(sendMessageToCareType.getIntygsId().getExtension(), sendMessageToCare.getIntygsId());
@@ -110,7 +116,8 @@ public class ArendeConverterTest {
                     .newInstance(SendMessageToRecipientType.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             @SuppressWarnings("unchecked")
-            JAXBElement<SendMessageToRecipientType> jaxbMeddelande = (JAXBElement<SendMessageToRecipientType>) unmarshaller.unmarshal(new StringReader(arende.getMeddelande()));
+            JAXBElement<SendMessageToRecipientType> jaxbMeddelande = (JAXBElement<SendMessageToRecipientType>) unmarshaller
+                    .unmarshal(new StringReader(arende.getMeddelande()));
 
             assertNotNull(jaxbMeddelande.getValue());
             assertEquals(intygsId, jaxbMeddelande.getValue().getIntygsId().getExtension());
@@ -131,10 +138,6 @@ public class ArendeConverterTest {
         return unmarshaller.unmarshal(
                 new StreamSource(new ClassPathResource(fileName).getInputStream()),
                 SendMessageToCareType.class).getValue();
-    }
-
-    private static URL getResource(String href) {
-        return Thread.currentThread().getContextClassLoader().getResource(href);
     }
 
 }
