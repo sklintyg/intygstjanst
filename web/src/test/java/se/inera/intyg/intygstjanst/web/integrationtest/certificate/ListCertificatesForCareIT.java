@@ -76,7 +76,7 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
         requestTemplate.add("data", new IntygsData(personId1));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v3.0").then().statusCode(200)
-                .rootPath(BASE);
+                .rootPath(BASE).body("result.resultCode", is("OK"));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
         requestTemplate.add("data", new IntygsData(personId1));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v3.0").then().statusCode(200)
-                .rootPath(BASE).body("intygsLista[0]", is("")).extract().response();
+                .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0]", is("")).extract().response();
     }
 
     @Test
@@ -97,8 +97,8 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
         IntegrationTestUtil.givenIntyg(intygsId.get(4), "fk7263", personId1, true);
         requestTemplate.add("data", new IntygsData(personId1));
 
-        Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v3.0").then()
-                .statusCode(200).rootPath(BASE).body("intygsLista[0].intyg.size()", is(4)).extract().response();
+        Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v3.0").then().statusCode(200)
+                .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0].intyg.size()", is(4)).extract().response();
 
         assertTrue(intygsId.containsAll(extractIds(res)));
     }
@@ -133,8 +133,8 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
     public void faultTransformerTest() {
         requestTemplate.add("data", new IntygsData("<tag></tag>"));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v3.0").then().statusCode(200)
-                .rootPath(BASE)
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v3.0").then().statusCode(200).rootPath(BASE)
+                .body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"))
                 .body("intygsLista.intyg.size()", is(0));
     }
 

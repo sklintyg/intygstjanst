@@ -26,6 +26,8 @@ import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Li
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.SjukfallLista;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 /**
  * Created by eriklupander on 2017-02-15.
@@ -98,17 +100,17 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
             SjukfallLista sjukfallLista = new SjukfallLista();
             sjukfallLista.getSjukfall().addAll(sjukfallConverter.toSjukfall(sjukfall));
 
-            // ResultType resultType = new ResultType();
-            // resultType.setResultCode(ResultCodeType.OK);
-            // responseType.setResult(resultType);
+            ResultType resultType = new ResultType();
+            resultType.setResultCode(ResultCodeType.OK);
+            responseType.setResult(resultType);
             responseType.setSjukfallLista(sjukfallLista);
             return responseType;
         } catch (ServerException e) {
             LOGGER.error("Caught ServerException serving ListSickLeavesForCare: " + e.getMessage());
-            // ResultType resultType = new ResultType();
-            // resultType.setResultCode(ResultCodeType.ERROR);
-            // resultType.setResultText(e.getMessage());
-            // responseType.setResult(resultType);
+            ResultType resultType = new ResultType();
+            resultType.setResultCode(ResultCodeType.ERROR);
+            resultType.setResultText(e.getMessage());
+            responseType.setResult(resultType);
             return responseType;
         }
     }

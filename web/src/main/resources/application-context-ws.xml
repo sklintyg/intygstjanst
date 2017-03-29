@@ -163,8 +163,8 @@
       </bean>
     </jaxws:outFaultInterceptors>
     <jaxws:schemaLocations>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_2.0.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.0.xsd</jaxws:schemaLocation>
         <jaxws:schemaLocation>classpath:/interactions/RegisterCertificateInteraction/RegisterCertificateResponder_2.0.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
@@ -186,7 +186,7 @@
     <jaxws:schemaLocations>
         <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.0.xsd</jaxws:schemaLocation>
         <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.0.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/interactions/ListCertificatesForCitizenInteraction/ListCertificatesForCitizenResponder_3.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/interactions/ListCertificatesForCitizenInteraction/ListCertificatesForCitizenResponder_2.0.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 

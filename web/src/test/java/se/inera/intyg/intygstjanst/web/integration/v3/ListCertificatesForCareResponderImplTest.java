@@ -51,6 +51,7 @@ import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListCertificatesForCareResponderImplTest {
@@ -93,7 +94,7 @@ public class ListCertificatesForCareResponderImplTest {
         verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
 
         assertEquals(0, response.getIntygsLista().getIntyg().size());
-        // assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     @Test
@@ -118,7 +119,7 @@ public class ListCertificatesForCareResponderImplTest {
         verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
 
         assertEquals(2, response.getIntygsLista().getIntyg().size());
-        // assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     @Test
@@ -146,7 +147,7 @@ public class ListCertificatesForCareResponderImplTest {
 
         // We only return Intyg that are not deletedByCaregiver
         assertEquals(1, response.getIntygsLista().getIntyg().size());
-        // assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     private HsaId createHsaId(String id) {

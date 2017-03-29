@@ -93,7 +93,7 @@ public class ListSickLeavesForCareResponderImplTest {
                 .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
-//        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
         assertEquals(1, response.getSjukfallLista().getSjukfall().size());
         Sjukfall sjukfall = response.getSjukfallLista().getSjukfall().get(0);
 
@@ -125,7 +125,7 @@ public class ListSickLeavesForCareResponderImplTest {
                 .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, lakareId));
-//        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
         assertEquals(1, response.getSjukfallLista().getSjukfall().size());
     }
 
@@ -136,7 +136,7 @@ public class ListSickLeavesForCareResponderImplTest {
                 .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, lakareId));
-//        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
         assertEquals(0, response.getSjukfallLista().getSjukfall().size());
     }
 
@@ -147,7 +147,7 @@ public class ListSickLeavesForCareResponderImplTest {
                 .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null, 100, 200));
-//        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
         assertEquals(0, response.getSjukfallLista().getSjukfall().size());
     }
 
@@ -158,7 +158,7 @@ public class ListSickLeavesForCareResponderImplTest {
                 .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null, 1, 2));
-//        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
         assertEquals(0, response.getSjukfallLista().getSjukfall().size());
     }
 
@@ -168,27 +168,27 @@ public class ListSickLeavesForCareResponderImplTest {
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyListOf(String.class))).thenReturn(new ArrayList<>());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
-//        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
         assertEquals(0, response.getSjukfallLista().getSjukfall().size());
     }
 
     @Test
     public void testListSickLeavesForCareWithNullEnhetsIdReturnsError() {
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, null, null));
-//        assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
     }
 
     @Test
     public void testListSickLeavesForCareWithEmptyEnhetsIdReturnsError() {
         enhetsId.setExtension("");
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
-//        assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
     }
 
     @Test
     public void testListSickLeavesForCareWithNegativeGlappReturnsError() {
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(-1, enhetsId, null));
-//        assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
     }
 
     private List<SjukfallCertificate> buildSjukfallCertificates() {

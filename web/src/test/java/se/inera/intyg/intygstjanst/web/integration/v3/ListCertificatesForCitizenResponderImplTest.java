@@ -105,7 +105,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
 
         assertEquals(0, response.getIntygsLista().getIntyg().size());
-//        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     @Test
@@ -119,8 +119,8 @@ public class ListCertificatesForCitizenResponderImplTest {
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
         assertEquals(0, response.getIntygsLista().getIntyg().size());
-//        assertEquals(ResultCodeType.INFO, response.getResult().getResultCode());
-//        assertEquals("NOCONSENT", response.getResult().getResultText());
+        assertEquals(ResultCodeType.INFO, response.getResult().getResultCode());
+        assertEquals("NOCONSENT", response.getResult().getResultText());
     }
 
     @Test
@@ -147,7 +147,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         verify(moduleApi).getUtlatandeFromXml(anyString());
 
         assertEquals(1, response.getIntygsLista().getIntyg().size());
-//        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     @Test
@@ -174,7 +174,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         verify(moduleApi).getUtlatandeFromXml(anyString());
 
         assertEquals(1, response.getIntygsLista().getIntyg().size());
-//        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     @Test
@@ -197,7 +197,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
         assertEquals(1, response.getIntygsLista().getIntyg().size());
-//        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
         assertEquals(1, response.getIntygsLista().getIntyg().get(0).getStatus().size());
         assertEquals("FKASSA", response.getIntygsLista().getIntyg().get(0).getStatus().get(0).getPart().getCode());
         assertNotNull(response.getIntygsLista().getIntyg().get(0).getStatus().get(0).getPart().getCodeSystem());

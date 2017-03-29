@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
+import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
@@ -77,12 +78,13 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
                     response.getIntygsLista().getIntyg().add(convert(certificate));
                 }
             }
+            response.setResult(ResultTypeUtil.okResult());
             monitoringLogService.logCertificateListedByCitizen(personnummer);
         } catch (ModuleNotFoundException | ModuleException e) {
             LOGGER.error(e.getMessage());
-         } catch (MissingConsentException ex) {
-            LOGGER.warn("Could not find consent to list certificates for citizen");
-         }
+        } catch (MissingConsentException ex) {
+            response.setResult(ResultTypeUtil.infoResult("NOCONSENT"));
+        }
 
         return response;
     }

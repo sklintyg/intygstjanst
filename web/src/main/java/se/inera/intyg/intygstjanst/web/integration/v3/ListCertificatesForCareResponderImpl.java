@@ -18,11 +18,16 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v3;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
+import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
@@ -37,10 +42,8 @@ import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.
 import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.ListCertificatesForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.ListCertificatesForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.ListaType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @SchemaValidation
 public class ListCertificatesForCareResponderImpl implements ListCertificatesForCareResponderInterface {
@@ -67,8 +70,8 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
 
             List<Certificate> certificates = certificateService.listCertificatesForCare(personnummer,
                     parameters.getEnhetsId().stream()
-                        .map(e -> e.getExtension())
-                        .collect(Collectors.toList()));
+                            .map(HsaId::getExtension)
+                            .collect(Collectors.toList()));
 
             for (Certificate certificate : certificates) {
                 // If the certificate is deleted by the care giver it is not returned. Note that both revoked and
@@ -77,7 +80,7 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
                     response.getIntygsLista().getIntyg().add(convert(certificate));
                 }
             }
-
+            response.setResult(ResultTypeUtil.okResult());
             monitoringLogService.logCertificateListedByCare(personnummer);
 
         } catch (ModuleNotFoundException | ModuleException e) {

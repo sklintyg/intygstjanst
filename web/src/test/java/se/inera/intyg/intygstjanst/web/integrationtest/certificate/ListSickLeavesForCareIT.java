@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -56,14 +57,15 @@ public class ListSickLeavesForCareIT extends BaseIntegrationTest {
         STGroup templateGroup = new STGroupFile("integrationtests/listsickleavesforcare/requests.stg");
         requestTemplate = templateGroup.getInstanceOf("request");
 
-        defaultParams = new Params(CARE_UNIT_ID, 0, Integer.MAX_VALUE, 5, null);
+        defaultParams = new Params(CARE_UNIT_ID, 0, Integer.MAX_VALUE, 5, "hsaid");
     }
 
     @Test
     public void listCertificateForCareWorks() {
         requestTemplate.add("data", defaultParams);
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-sickleaves-for-care/v1.0").then().statusCode(200);
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-sickleaves-for-care/v1.0").then().statusCode(200)
+                .rootPath(BASE).body("result.resultCode", is("OK"));
     }
 
     @Test
@@ -87,7 +89,9 @@ public class ListSickLeavesForCareIT extends BaseIntegrationTest {
         requestTemplate.add("data", new Params("<tag></tag>", 0, 100, 5, "<another-tag></another-tag"));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/list-sickleaves-for-care/v1.0").then().statusCode(200)
-                .rootPath(BASE).body("sjukfallLista.sjukfall.size()", is(0));
+                .rootPath(BASE)
+                .body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"))
+                .body("sjukfallLista.sjukfall.size()", is(0));
     }
 
     private static class Params {
