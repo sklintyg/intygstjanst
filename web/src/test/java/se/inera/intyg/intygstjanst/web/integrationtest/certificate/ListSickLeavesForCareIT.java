@@ -64,8 +64,7 @@ public class ListSickLeavesForCareIT extends BaseIntegrationTest {
     public void listCertificateForCareWorks() {
         requestTemplate.add("data", defaultParams);
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-sickleaves-for-care/v1.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-sickleaves-for-care/v1.0").then().statusCode(200);
     }
 
     @Test
@@ -88,10 +87,8 @@ public class ListSickLeavesForCareIT extends BaseIntegrationTest {
     public void faultTransformerTest() {
         requestTemplate.add("data", new Params("<tag></tag>", 0, 100, 5, "<another-tag></another-tag"));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-sickleaves-for-care/v1.0").then().statusCode(200)
-                .rootPath(BASE)
-                .body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"))
-                .body("sjukfallLista.sjukfall.size()", is(0));
+        given().body(requestTemplate.render()).when().post("inera-certificate/list-sickleaves-for-care/v1.0").then().statusCode(500)
+                .rootPath("Envelope.Body.Fault").body("faultcode", is("soap:Client")).body("faultstring", startsWith("Unmarshalling Error"));
     }
 
     private static class Params {

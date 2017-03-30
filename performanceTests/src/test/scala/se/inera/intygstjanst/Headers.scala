@@ -37,7 +37,7 @@ object Headers {
   val get_certificate = Map(
     "Accept" -> """application/json, text/plain, */*""",
     "Content-Type" -> """text/xml;charset=UTF-8""",
-    "SOAPAction" -> "urn:riv:insuranceprocess:healthreporting:GetCertificateResponder:1:GetCertificate")
+    "SOAPAction" -> "urn:riv:insuranceprocess:healthreporting:GetCertificateResponder:2:GetCertificate")
 
   val send_medical_certificate = Map(
     "Accept" -> """application/json, text/plain, */*""",
@@ -47,7 +47,7 @@ object Headers {
   val register_certificate = Map(
     "Accept" -> """application/json, text/plain, */*""",
     "Content-Type" -> """text/xml;charset=UTF-8""",
-    "SOAPAction" -> "urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:2:RegisterCertificate")
+    "SOAPAction" -> "urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3:RegisterCertificate")
 
   val list_sick_leaves = Map(
     "Accept" -> """application/json, text/plain, */*""",

@@ -36,7 +36,7 @@ import org.springframework.core.io.ClassPathResource;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArendeServiceImplTest {

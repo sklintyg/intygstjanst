@@ -73,7 +73,7 @@ public class IntegrationTestUtil {
     }
 
     private static void executeRegisterCertificate(ST requestTemplateForConsent) {
-        given().body(requestTemplateForConsent.render()).when().post("inera-certificate/register-certificate-se/v2.0").then().statusCode(200)
+        given().body(requestTemplateForConsent.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200)
                 .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
     }
 
@@ -137,7 +137,7 @@ public class IntegrationTestUtil {
     public static void revokeCertificate(String intygsId, String personId) {
         ST requestTemplateForRevoke = getRequestTemplate("revokecertificate/requests.stg");
         requestTemplateForRevoke.add("data", new IntygsData(intygsId, personId));
-        given().body(requestTemplateForRevoke.render()).when().post("inera-certificate/revoke-certificate-rivta/v1.0").then().statusCode(200)
+        given().body(requestTemplateForRevoke.render()).when().post("inera-certificate/revoke-certificate-rivta/v2.0").then().statusCode(200)
                 .rootPath(REVOKE_BASE).body("result.resultCode", is("OK"));
 
     }
@@ -171,7 +171,7 @@ public class IntegrationTestUtil {
         requestTemplateRecipient.add("data", new IntygsData(intygsId, personId));
         requestTemplateRecipient.add("mottagare", "FKASSA");
 
-        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
+        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v2.0").then().statusCode(200)
                 .rootPath(SEND_BASE).body("result.resultCode", is("OK"));
     }
 

@@ -94,7 +94,6 @@ public class ListCertificatesForCareResponderImplTest {
         verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
 
         assertEquals(0, response.getIntygsLista().getIntyg().size());
-        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     @Test
@@ -119,7 +118,6 @@ public class ListCertificatesForCareResponderImplTest {
         verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
 
         assertEquals(2, response.getIntygsLista().getIntyg().size());
-        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     @Test
@@ -147,7 +145,6 @@ public class ListCertificatesForCareResponderImplTest {
 
         // We only return Intyg that are not deletedByCaregiver
         assertEquals(1, response.getIntygsLista().getIntyg().size());
-        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     private HsaId createHsaId(String id) {

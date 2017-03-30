@@ -24,9 +24,9 @@ import java.time.LocalDateTime;
 import javax.xml.bind.*;
 
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.ObjectFactory;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.SendMessageToRecipientType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.ObjectFactory;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 
 public final class ArendeConverter {
 
@@ -68,8 +68,8 @@ public final class ArendeConverter {
     }
 
     public static String convertToXmlString(SendMessageToRecipientType source) throws JAXBException {
-        se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.ObjectFactory objectFactory =
-                new se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v1.ObjectFactory();
+        se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.ObjectFactory objectFactory =
+                new se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.ObjectFactory();
         JAXBContext jaxbContext = JAXBContext
                 .newInstance(SendMessageToRecipientType.class);
         Marshaller marshaller = jaxbContext.createMarshaller();

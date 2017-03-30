@@ -35,24 +35,24 @@
   <jaxws:endpoint address="/revoke-medical-certificate-stub" implementor="se.inera.intyg.intygstjanst.web.integration.stub.RevokeMedicalCertificateResponderStub" />
   <jaxws:endpoint address="/send-message-to-care-stub" implementor="se.inera.intyg.intygstjanst.web.integration.stub.SendMessageToCareResponderStub">
       <jaxws:schemaLocations>
-          <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_2.0.xsd</jaxws:schemaLocation>
-          <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_2.0.xsd</jaxws:schemaLocation>
-          <jaxws:schemaLocation>classpath:/interactions/SendMessageToCareInteraction/SendMessageToCareResponder_1.0.xsd</jaxws:schemaLocation>
+          <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.0.xsd</jaxws:schemaLocation>
+          <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.0.xsd</jaxws:schemaLocation>
+          <jaxws:schemaLocation>classpath:/interactions/SendMessageToCareInteraction/SendMessageToCareResponder_2.0.xsd</jaxws:schemaLocation>
       </jaxws:schemaLocations>
   </jaxws:endpoint>
   <jaxws:endpoint address="/send-message-to-recipient-stub" implementor="se.inera.intyg.intygstjanst.web.integration.stub.SendMessageToRecipientResponderStub">
       <jaxws:schemaLocations>
-          <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_2.0.xsd</jaxws:schemaLocation>
-          <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_2.0.xsd</jaxws:schemaLocation>
-          <jaxws:schemaLocation>classpath:/interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_1.0.xsd</jaxws:schemaLocation>
+          <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.0.xsd</jaxws:schemaLocation>
+          <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.0.xsd</jaxws:schemaLocation>
+          <jaxws:schemaLocation>classpath:/interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_2.0.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
   <bean id="revokeCertificateClientStub" class="se.inera.intyg.intygstjanst.web.integration.stub.RevokeCertificateResponderStub"/>
   <jaxws:endpoint address="/revoke-certificate-rivta-stub" implementor="#revokeCertificateClientStub">
       <jaxws:schemaLocations>
-          <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_2.0.xsd</jaxws:schemaLocation>
-          <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_2.0.xsd</jaxws:schemaLocation>
-          <jaxws:schemaLocation>classpath:/interactions/RevokeCertificateInteraction/RevokeCertificateResponder_1.0.xsd</jaxws:schemaLocation>
+          <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.0.xsd</jaxws:schemaLocation>
+          <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.0.xsd</jaxws:schemaLocation>
+          <jaxws:schemaLocation>classpath:/interactions/RevokeCertificateInteraction/RevokeCertificateResponder_2.0.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 </beans>

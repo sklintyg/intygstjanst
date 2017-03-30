@@ -71,28 +71,28 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
     public void sendCertificateToRecipientWorks() {
 
         requestTemplateRegister.add("data", new IntygsData(intygsId, personId1));
-        given().body(requestTemplateRegister.render()).when().post("inera-certificate/register-certificate-se/v2.0").then().statusCode(200)
+        given().body(requestTemplateRegister.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200)
                 .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
 
         requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
         requestTemplateRecipient.add("mottagare", "FKASSA");
 
-        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
+        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v2.0").then().statusCode(200)
                 .rootPath(RECIPIENT_BASE).body("result.resultCode", is("OK"));
     }
 
     @Test
     public void responseRespectsSchema() throws Exception {
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/SendCertificateToRecipientInteraction/SendCertificateToRecipientResponder_1.0.xsd").getURL(), Charsets.UTF_8);
+                new ClassPathResource("interactions/SendCertificateToRecipientInteraction/SendCertificateToRecipientResponder_2.0.xsd").getURL(), Charsets.UTF_8);
 
         requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
         requestTemplateRecipient.add("mottagare", "FKASSA");
 
         given().filter(
-                new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendCertificateToRecipientResponder:1"),
+                new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendCertificateToRecipientResponder:2"),
                         "soap:Envelope/soap:Body/lc:SendCertificateToRecipientResponse"))
-                .body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then()
+                .body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v2.0").then()
                 .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
@@ -102,7 +102,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
 
         requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
         requestTemplateRecipient.add("mottagare", "TRANSP");
-        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
+        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v2.0").then().statusCode(200)
                 .rootPath(RECIPIENT_BASE).body("result.resultCode", is("OK"));
     }
 
@@ -111,7 +111,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
         requestTemplateRecipient.add("data", new IntygsData("<tag></tag>", personId1));
         requestTemplateRecipient.add("mottagare", "FKASSA");
 
-        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v1.0").then().statusCode(200)
+        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v2.0").then().statusCode(200)
                 .rootPath(RECIPIENT_BASE).body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
     }
 

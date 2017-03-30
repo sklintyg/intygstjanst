@@ -1,7 +1,7 @@
 delimiters "$", "$"
 
 request(data) ::= <<
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:clinicalprocess:healthcond:certificate:SetCertificateStatusResponder:1" xmlns:urn2="urn:riv:clinicalprocess:healthcond:certificate:types:2">
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:clinicalprocess:healthcond:certificate:SetCertificateStatusResponder:2" xmlns:urn2="urn:riv:clinicalprocess:healthcond:certificate:types:3">
    <soapenv:Header>
       <urn:LogicalAddress>fk</urn:LogicalAddress>
    </soapenv:Header>

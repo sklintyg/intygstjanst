@@ -80,7 +80,6 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
                     response.getIntygsLista().getIntyg().add(convert(certificate));
                 }
             }
-            response.setResult(ResultTypeUtil.okResult());
             monitoringLogService.logCertificateListedByCare(personnummer);
 
         } catch (ModuleNotFoundException | ModuleException e) {

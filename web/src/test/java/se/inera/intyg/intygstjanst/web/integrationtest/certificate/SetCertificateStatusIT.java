@@ -70,7 +70,7 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
         IntegrationTestUtil.registerCertificateFromTemplate(intygsId, personId);
         requestTemplate.add("data", new IntygsData(intygsId));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v1.0").then().statusCode(200)
+        given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v2.0").then().statusCode(200)
                 .rootPath(BASE).body("result.resultCode", is("OK"));
 
         requestTemplateResult.add("data", new IntygsData(intygsId));
@@ -85,7 +85,7 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
         IntegrationTestUtil.registerCertificateFromTemplate(intygsId, personId);
         requestTemplate.add("data", new IntygsData(intygsIdNotExists));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v1.0").then().statusCode(200)
+        given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v2.0").then().statusCode(200)
                 .rootPath(BASE).body("result.resultCode", is("ERROR"));
 
     }
@@ -93,14 +93,14 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
     @Test
     public void responseRespectsSchema() throws Exception {
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/SetCertificateStatusInteraction/SetCertificateStatusResponder_1.0.xsd").getURL(), Charsets.UTF_8);
+                new ClassPathResource("interactions/SetCertificateStatusInteraction/SetCertificateStatusResponder_2.0.xsd").getURL(), Charsets.UTF_8);
 
         requestTemplate.add("data", new IntygsData(intygsId));
 
         given().filter(
-                new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SetCertificateStatusResponder:1"),
+                new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SetCertificateStatusResponder:2"),
                         "soap:Envelope/soap:Body/lc:SetCertificateStatusResponse"))
-                .body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v1.0").then()
+                .body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v2.0").then()
                 .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
@@ -108,7 +108,7 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
     public void faultTransformerTest() throws Exception {
         requestTemplate.add("data", new IntygsData("<tag></tag>"));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v1.0").then().statusCode(200)
+        given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v2.0").then().statusCode(200)
                 .rootPath(BASE).body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
     }
 

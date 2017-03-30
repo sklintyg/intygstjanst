@@ -54,7 +54,7 @@ public class RegisterCertificateScenarioIT extends BaseIntegrationTest {
         ST requestTemplateForRegister = getRequestTemplate("register/request_default.stg");
         requestTemplateForRegister.add("data", new IntygsData(intygsId, personId));
 
-        given().body(requestTemplateForRegister.render()).when().post("inera-certificate/register-certificate-se/v2.0").then().statusCode(200)
+        given().body(requestTemplateForRegister.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200)
                 .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
 
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();

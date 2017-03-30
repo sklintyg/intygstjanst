@@ -15,14 +15,14 @@ class RegisterCertificate extends Simulation {
   val testpersonnummer = csv("data/testpersonnummerSkatteverket.csv").circular
 
   def luse = exec(http("Register LUSE certificate ${intygsId} for user ${personNr}")
-          .post("/register-certificate-se/v2.0")
+          .post("/register-certificate-se/v3.0")
           .headers(Headers.register_certificate)
           .body(ELFileBody("request-bodies/register-luse.xml"))
           .check(
             status.is(200)))
 
   def lisjp = exec(http("Register LISJP certificate ${intygsId} for user ${personNr}")
-          .post("/register-certificate-se/v2.0")
+          .post("/register-certificate-se/v3.0")
           .headers(Headers.register_certificate)
           .body(ELFileBody("request-bodies/register-lisjp.xml"))
           .check(

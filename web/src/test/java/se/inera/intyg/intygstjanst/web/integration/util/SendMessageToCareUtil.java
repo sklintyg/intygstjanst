@@ -24,7 +24,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.springframework.core.io.ClassPathResource;
 
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 
 public class SendMessageToCareUtil {
 

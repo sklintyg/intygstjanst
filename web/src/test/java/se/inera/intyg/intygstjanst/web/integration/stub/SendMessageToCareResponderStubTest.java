@@ -27,7 +27,7 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import se.inera.intyg.intygstjanst.web.integration.util.SendMessageToCareUtil;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v1.SendMessageToCareType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 
  @RunWith(MockitoJUnitRunner.class)
 public class SendMessageToCareResponderStubTest {

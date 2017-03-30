@@ -72,7 +72,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
 
         requestTemplate.add("data", new ArendeData(INTYG_ID, "KOMPL", PERSON_ID, enhetsId));
 
-        given().contentType(ContentType.XML).body(requestTemplate.render()).when().post("inera-certificate/send-message-to-care/v1.0").then().statusCode(200).rootPath(BASE)
+        given().contentType(ContentType.XML).body(requestTemplate.render()).when().post("inera-certificate/send-message-to-care/v2.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("OK"));
     }
 
@@ -80,13 +80,13 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
     public void responseRespectsSchema() throws Exception {
         IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", PERSON_ID, false);
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/SendMessageToCareInteraction/SendMessageToCareResponder_1.0.xsd").getURL(), Charsets.UTF_8);
+                new ClassPathResource("interactions/SendMessageToCareInteraction/SendMessageToCareResponder_2.0.xsd").getURL(), Charsets.UTF_8);
 
         requestTemplate.add("data", new ArendeData(INTYG_ID, "KOMPL", PERSON_ID, "123456"));
 
-        given().contentType(ContentType.XML).filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendMessageToCareResponder:1"),
+        given().contentType(ContentType.XML).filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendMessageToCareResponder:2"),
                 "soap:Envelope/soap:Body/lc:SendMessageToCareResponse")).body(requestTemplate.render()).when()
-                .post("inera-certificate/send-message-to-care/v1.0").then()
+                .post("inera-certificate/send-message-to-care/v2.0").then()
                 .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
@@ -94,7 +94,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
     public void messageForNonExistantCertificateIsNotAccepted() throws Exception {
         requestTemplate.add("data", new ArendeData(INTYG_ID_NON_EXISTANT, "KOMPL", PERSON_ID, "123456"));
 
-        given().contentType(ContentType.XML).body(requestTemplate.render()).when().post("inera-certificate/send-message-to-care/v1.0").then().statusCode(200).rootPath(BASE)
+        given().contentType(ContentType.XML).body(requestTemplate.render()).when().post("inera-certificate/send-message-to-care/v2.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("ERROR"));
     }
 
@@ -103,7 +103,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
         String enhetsId = "<root>123456</root>"; // This brakes the XML Schema
         requestTemplate.add("data", new ArendeData(INTYG_ID, "KOMPL", PERSON_ID, enhetsId));
 
-        given().contentType(ContentType.XML).body(requestTemplate.render()).when().post("inera-certificate/send-message-to-care/v1.0").then().statusCode(200).rootPath(BASE)
+        given().contentType(ContentType.XML).body(requestTemplate.render()).when().post("inera-certificate/send-message-to-care/v2.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
