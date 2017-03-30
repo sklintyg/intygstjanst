@@ -20,7 +20,9 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,10 +30,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
 import se.inera.intyg.intygstjanst.web.service.ConsentService;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConsentServiceImplTest {

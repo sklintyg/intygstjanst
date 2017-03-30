@@ -18,24 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
-import se.inera.intyg.common.lisjp.model.internal.LisjpUtlatande;
-import se.inera.intyg.common.support.model.common.internal.Utlatande;
-import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.common.support.modules.support.api.ModuleApi;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
-import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
-
-import java.io.IOException;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -46,6 +28,25 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
+
+import java.io.IOException;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
+import se.inera.intyg.common.lisjp.model.internal.LisjpUtlatande;
+import se.inera.intyg.common.support.model.common.internal.Utlatande;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.common.support.modules.support.api.ModuleApi;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
 
 /**
  * Created by eriklupander on 2016-02-05.
@@ -118,7 +119,8 @@ public class SjukfallCertificateServiceImplTest {
         when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
         when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(true);
         when(certificateToSjukfallCertificateConverter.isConvertableLisjp(any())).thenReturn(false);
-        when(certificateToSjukfallCertificateConverter.convertFk7263(any(Certificate.class), any(Utlatande.class))).thenReturn(mock(SjukfallCertificate.class));
+        when(certificateToSjukfallCertificateConverter.convertFk7263(any(Certificate.class), any(Utlatande.class)))
+                .thenReturn(mock(SjukfallCertificate.class));
 
         boolean result = testee.created(getFactoryInstance().buildCert(INTYG_TYPE_FK7263));
         assertTrue(result);
@@ -132,8 +134,8 @@ public class SjukfallCertificateServiceImplTest {
         when(moduleApi.getUtlatandeFromJson(any())).thenReturn(utlatande);
         when(certificateToSjukfallCertificateConverter.isConvertableLisjp(any())).thenReturn(true);
         when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(false);
-        when(certificateToSjukfallCertificateConverter.convertLisjp(any(Certificate.class), any(Utlatande.class))).thenReturn(mock(SjukfallCertificate.class));
-
+        when(certificateToSjukfallCertificateConverter.convertLisjp(any(Certificate.class), any(Utlatande.class)))
+                .thenReturn(mock(SjukfallCertificate.class));
 
         boolean result = testee.created(getFactoryInstance().buildCert(INTYG_TYPE_LISJP));
         assertTrue(result);

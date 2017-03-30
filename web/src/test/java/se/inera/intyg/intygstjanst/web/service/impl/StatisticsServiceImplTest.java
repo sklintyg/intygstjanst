@@ -118,7 +118,8 @@ public class StatisticsServiceImplTest {
         Session session = mock(Session.class);
         when(session.createTextMessage(xmlBody)).thenReturn(message);
 
-        boolean revoked = serviceImpl.revoked(certificate.getOriginalCertificate().getDocument(), certificate.getId(), certificate.getType(), "unit");
+        boolean revoked = serviceImpl.revoked(certificate.getOriginalCertificate().getDocument(), certificate.getId(),
+                certificate.getType(), "unit");
 
         assertTrue(revoked);
         verify(template, only()).send(captor.capture());

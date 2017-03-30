@@ -30,13 +30,18 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.Arrays;
 
-import javax.xml.bind.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
@@ -47,7 +52,9 @@ import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.*;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.rivtabp20.v1.SendMedicalCertificateQuestionResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
@@ -59,8 +66,13 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.dto.TransportModelVersion;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.web.exception.*;
-import se.inera.intyg.intygstjanst.web.service.*;
+import se.inera.intyg.intygstjanst.web.exception.MissingModuleException;
+import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.exception.ServerException;
+import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
@@ -80,38 +92,27 @@ public class CertificateSenderServiceImplTest {
     private static final String RECIPIENT_LOGICALADDRESS = "FKORG";
     private static final String RECIPIENT_DEFAULT_LOGICALADDRESS = "FKORG-DEFAULT";
     private static final String RECIPIENT_CERTIFICATETYPES = "fk7263";
-
+    private static Certificate certificate = CertificateFactory.buildCertificate(CERTIFICATE_ID, CERTIFICATE_TYPE);
     @Mock
     private RecipientService recipientService;
-
     @Mock
     private CertificateService certificateService;
-
     @Mock
     private IntygModuleRegistry moduleRegistry;
-
     @Mock
     private ModuleEntryPoint moduleEntryPoint;
-
     @Mock
     private ModuleApi moduleApi;
-
     @Mock
     private RegisterMedicalCertificateResponderInterface registerClient;
-
     @Mock
     private SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
-
     @Mock
     private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponderInterface;
-
     @Mock
     private MonitoringLogService monitoringLogService;
-
     @InjectMocks
     private CertificateSenderServiceImpl senderService = new CertificateSenderServiceImpl();
-
-    private static Certificate certificate = CertificateFactory.buildCertificate(CERTIFICATE_ID, CERTIFICATE_TYPE);
 
     private static Recipient createRecipient() {
         RecipientBuilder builder = new RecipientBuilder();
@@ -125,8 +126,10 @@ public class CertificateSenderServiceImplTest {
 
     public RegisterMedicalCertificateType request() throws IOException, JAXBException {
         Unmarshaller unmarshaller = JAXBContext.newInstance(RegisterMedicalCertificateResponseType.class).createUnmarshaller();
-        return unmarshaller.unmarshal(new StreamSource(new ClassPathResource("CertificateSenderServiceImplTest/utlatande.xml").getInputStream()),
-                RegisterMedicalCertificateType.class).getValue();
+        return unmarshaller
+                .unmarshal(new StreamSource(new ClassPathResource("CertificateSenderServiceImplTest/utlatande.xml").getInputStream()),
+                        RegisterMedicalCertificateType.class)
+                .getValue();
     }
 
     @Before
@@ -139,7 +142,8 @@ public class CertificateSenderServiceImplTest {
 
     @Before
     public void setupRecipientService() throws RecipientUnknownException {
-        when(recipientService.getVersion(RECIPIENT_LOGICALADDRESS, CERTIFICATE_TYPE)).thenReturn(TransportModelVersion.LEGACY_LAKARUTLATANDE);
+        when(recipientService.getVersion(RECIPIENT_LOGICALADDRESS, CERTIFICATE_TYPE))
+                .thenReturn(TransportModelVersion.LEGACY_LAKARUTLATANDE);
         when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(createRecipient());
         when(recipientService.getRecipientForLogicalAddress(RECIPIENT_LOGICALADDRESS)).thenReturn(createRecipient());
         when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(Arrays.asList(createRecipient()));
@@ -160,7 +164,8 @@ public class CertificateSenderServiceImplTest {
     @Test(expected = ServerException.class)
     public void testSendWithFailingModule() throws Exception {
         // web service call fails
-        doThrow(new ModuleException("")).when(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_LOGICALADDRESS), eq(RECIPIENT_ID));
+        doThrow(new ModuleException("")).when(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_LOGICALADDRESS),
+                eq(RECIPIENT_ID));
         senderService.sendCertificate(certificate, RECIPIENT_ID);
     }
 
@@ -187,7 +192,7 @@ public class CertificateSenderServiceImplTest {
         SendMedicalCertificateQuestionResponseType sendMedicalCertificateQuestionResponse = new SendMedicalCertificateQuestionResponseType();
         sendMedicalCertificateQuestionResponse.setResult(ResultOfCallUtil.okResult());
         when(sendMedicalCertificateQuestionResponderInterface.sendMedicalCertificateQuestion(any(AttributedURIType.class),
-                any(SendMedicalCertificateQuestionType.class))).thenReturn(sendMedicalCertificateQuestionResponse );
+                any(SendMedicalCertificateQuestionType.class))).thenReturn(sendMedicalCertificateQuestionResponse);
         RevokeType revokeData = new RevokeType();
         revokeData.setLakarutlatande(new LakarutlatandeEnkelType());
         revokeData.setMeddelande(meddelande);
@@ -196,8 +201,10 @@ public class CertificateSenderServiceImplTest {
         verifyZeroInteractions(revokeMedicalCertificateResponderInterface);
         verify(monitoringLogService).logCertificateRevokeSent(anyString(), anyString(), anyString(), anyString());
         ArgumentCaptor<AttributedURIType> uriCaptor = ArgumentCaptor.forClass(AttributedURIType.class);
-        ArgumentCaptor<SendMedicalCertificateQuestionType> requestCaptor = ArgumentCaptor.forClass(SendMedicalCertificateQuestionType.class);
-        verify(sendMedicalCertificateQuestionResponderInterface).sendMedicalCertificateQuestion(uriCaptor.capture(), requestCaptor.capture());
+        ArgumentCaptor<SendMedicalCertificateQuestionType> requestCaptor = ArgumentCaptor
+                .forClass(SendMedicalCertificateQuestionType.class);
+        verify(sendMedicalCertificateQuestionResponderInterface).sendMedicalCertificateQuestion(uriCaptor.capture(),
+                requestCaptor.capture());
 
         assertEquals(RECIPIENT_LOGICALADDRESS, uriCaptor.getValue().getValue());
         assertEquals(Amnetyp.MAKULERING_AV_LAKARINTYG, requestCaptor.getValue().getQuestion().getAmne());
@@ -217,8 +224,10 @@ public class CertificateSenderServiceImplTest {
         verifyZeroInteractions(revokeMedicalCertificateResponderInterface);
         verify(monitoringLogService).logCertificateRevokeSent(anyString(), anyString(), anyString(), anyString());
         ArgumentCaptor<AttributedURIType> uriCaptor = ArgumentCaptor.forClass(AttributedURIType.class);
-        ArgumentCaptor<SendMedicalCertificateQuestionType> requestCaptor = ArgumentCaptor.forClass(SendMedicalCertificateQuestionType.class);
-        verify(sendMedicalCertificateQuestionResponderInterface).sendMedicalCertificateQuestion(uriCaptor.capture(), requestCaptor.capture());
+        ArgumentCaptor<SendMedicalCertificateQuestionType> requestCaptor = ArgumentCaptor
+                .forClass(SendMedicalCertificateQuestionType.class);
+        verify(sendMedicalCertificateQuestionResponderInterface).sendMedicalCertificateQuestion(uriCaptor.capture(),
+                requestCaptor.capture());
 
         assertEquals(RECIPIENT_LOGICALADDRESS, uriCaptor.getValue().getValue());
         assertEquals(Amnetyp.MAKULERING_AV_LAKARINTYG, requestCaptor.getValue().getQuestion().getAmne());
@@ -252,7 +261,8 @@ public class CertificateSenderServiceImplTest {
         verifyZeroInteractions(sendMedicalCertificateQuestionResponderInterface);
         verify(monitoringLogService).logCertificateRevokeSent(anyString(), anyString(), anyString(), anyString());
         ArgumentCaptor<AttributedURIType> uriCaptor = ArgumentCaptor.forClass(AttributedURIType.class);
-        ArgumentCaptor<RevokeMedicalCertificateRequestType> requestCaptor = ArgumentCaptor.forClass(RevokeMedicalCertificateRequestType.class);
+        ArgumentCaptor<RevokeMedicalCertificateRequestType> requestCaptor = ArgumentCaptor
+                .forClass(RevokeMedicalCertificateRequestType.class);
         verify(revokeMedicalCertificateResponderInterface).revokeMedicalCertificate(uriCaptor.capture(), requestCaptor.capture());
 
         assertEquals(RECIPIENT_LOGICALADDRESS, uriCaptor.getValue().getValue());

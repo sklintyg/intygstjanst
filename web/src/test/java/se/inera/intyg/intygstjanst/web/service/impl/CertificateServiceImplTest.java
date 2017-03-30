@@ -24,32 +24,51 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import se.inera.intyg.common.support.integration.module.exception.*;
+import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
+import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
-import se.inera.intyg.intygstjanst.persistence.model.dao.*;
-import se.inera.intyg.intygstjanst.web.service.*;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
+import se.inera.intyg.intygstjanst.web.service.ConsentService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
+import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 /**
  * @author andreaskaltenbach
@@ -148,7 +167,8 @@ public class CertificateServiceImplTest {
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId("id");
         certificateHolder.setOriginalCertificate("original");
-        when(certificateDao.getCertificate(any(Personnummer.class), anyString())).thenThrow((new PersistenceException(CERTIFICATE_ID, null)));
+        when(certificateDao.getCertificate(any(Personnummer.class), anyString()))
+                .thenThrow((new PersistenceException(CERTIFICATE_ID, null)));
 
         certificateService.storeCertificate(certificateHolder);
     }
@@ -215,7 +235,8 @@ public class CertificateServiceImplTest {
     @Test(expected = CertificateRevokedException.class)
     public void testSendRevokedCertificate() throws Exception {
         Certificate revokedCertificate = new Certificate(CERTIFICATE_ID);
-        revokedCertificate.setStates(Arrays.asList(new CertificateStateHistoryEntry("target", CertificateState.CANCELLED, LocalDateTime.now())));
+        revokedCertificate
+                .setStates(Arrays.asList(new CertificateStateHistoryEntry("target", CertificateState.CANCELLED, LocalDateTime.now())));
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(revokedCertificate);
         certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fk");
     }
@@ -387,7 +408,8 @@ public class CertificateServiceImplTest {
         final String target = "FK";
         final CertificateState state = CertificateState.SENT;
         final LocalDateTime timestamp = LocalDateTime.now();
-        doThrow(new PersistenceException(CERTIFICATE_ID, PERSONNUMMER)).when(certificateDao).updateStatus(CERTIFICATE_ID, PERSONNUMMER, state, target,
+        doThrow(new PersistenceException(CERTIFICATE_ID, PERSONNUMMER)).when(certificateDao).updateStatus(CERTIFICATE_ID, PERSONNUMMER,
+                state, target,
                 timestamp);
         certificateService.setCertificateState(PERSONNUMMER, CERTIFICATE_ID, target, state, timestamp);
     }
