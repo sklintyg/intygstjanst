@@ -6,9 +6,9 @@
   "validFromDate" : "2012-12-23",
   "validToDate" : "2013-12-23",
   "careUnitId": "centrum-vast",
-  "states": [{"state":"RECEIVED", "target":"HV", "timestamp":"2012-12-23T21:00:00.000"},
-             {"state":"SENT", "target" : "FK", "timestamp" : "2012-12-23T21:00:00.000"},
-             {"state":"CANCELLED", "target" : "HV", "timestamp" : "2012-12-24T21:00:00.000"}
+  "states": [{"state":"RECEIVED", "target":"HSVARD", "timestamp":"2012-12-23T21:00:00.000"},
+             {"state":"SENT", "target" : "FKASSA", "timestamp" : "2012-12-23T21:00:00.000"},
+             {"state":"CANCELLED", "target" : "HSVARD", "timestamp" : "2012-12-24T21:00:00.000"}
             ],
   "careUnitName": "Centrum Väst Mott",
   "careGiverId": "vastmanland"

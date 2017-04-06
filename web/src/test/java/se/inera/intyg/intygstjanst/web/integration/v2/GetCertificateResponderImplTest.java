@@ -32,7 +32,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import se.inera.intyg.common.support.common.enumerations.PartKod;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
@@ -65,7 +64,7 @@ public class GetCertificateResponderImplTest {
         assertNotNull(res.getIntyg());
         assertEquals(1, res.getIntyg().getStatus().size());
         assertEquals(StatusKod.SENTTO.name(), res.getIntyg().getStatus().get(0).getStatus().getCode());
-        assertEquals(PartKod.FKASSA.name(), res.getIntyg().getStatus().get(0).getPart().getCode());
+        assertEquals("FKASSA", res.getIntyg().getStatus().get(0).getPart().getCode());
         assertEquals(TIMESTAMP, res.getIntyg().getStatus().get(0).getTidpunkt());
         verify(moduleContainer).getCertificate(intygId, null, false);
     }
@@ -96,7 +95,7 @@ public class GetCertificateResponderImplTest {
         holder.setDeletedByCareGiver(deletedByCareGiver);
         holder.setOriginalCertificate(
                 "<registerCertificateType xmlns:ns2=\"urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3\"><ns2:intyg></ns2:intyg></registerCertificateType>");
-        holder.setCertificateStates(Arrays.asList(new CertificateStateHolder("FK", CertificateState.SENT, TIMESTAMP)));
+        holder.setCertificateStates(Arrays.asList(new CertificateStateHolder("FKASSA", CertificateState.SENT, TIMESTAMP)));
         return holder;
     }
 }

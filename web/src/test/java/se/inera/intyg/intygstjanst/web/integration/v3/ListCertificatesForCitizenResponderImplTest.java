@@ -158,7 +158,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         Certificate certificate = new Certificate();
-        certificate.addState(new CertificateStateHistoryEntry("MI", CertificateState.DELETED, LocalDateTime.now().minusDays(4)));
+        certificate.addState(new CertificateStateHistoryEntry("INVANA", CertificateState.DELETED, LocalDateTime.now().minusDays(4)));
         Certificate certificate2 = new Certificate();
         List<Certificate> result = Arrays.asList(certificate, certificate2);
 
@@ -186,7 +186,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         Certificate certificate = new Certificate();
-        certificate.setStates(Arrays.asList(new CertificateStateHistoryEntry("FK", CertificateState.SENT, statusTimestamp)));
+        certificate.setStates(Arrays.asList(new CertificateStateHistoryEntry("FKASSA", CertificateState.SENT, statusTimestamp)));
         List<Certificate> result = Arrays.asList(certificate);
 
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);

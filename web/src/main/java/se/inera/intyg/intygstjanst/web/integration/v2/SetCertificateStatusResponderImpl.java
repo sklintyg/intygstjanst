@@ -20,18 +20,18 @@ package se.inera.intyg.intygstjanst.web.integration.v2;
 
 import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import se.inera.intyg.common.support.common.enumerations.PartKod;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
+import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.riv.clinicalprocess.healthcond.certificate.setCertificateStatus.v2.SetCertificateStatusResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.setCertificateStatus.v2.SetCertificateStatusResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.setCertificateStatus.v2.SetCertificateStatusType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
 
 @SchemaValidation
 public class SetCertificateStatusResponderImpl implements SetCertificateStatusResponderInterface {
@@ -42,18 +42,21 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
     @Autowired
     private MonitoringLogService monitoringLogService;
 
+    @Autowired
+    private RecipientService recipientService;
+
     @Override
     public SetCertificateStatusResponseType setCertificateStatus(String logicalAddress, SetCertificateStatusType parameters) {
         SetCertificateStatusResponseType response = new SetCertificateStatusResponseType();
 
         try {
             String certificateId = parameters.getIntygsId().getExtension();
-            String target = PartKod.valueOf(parameters.getPart().getCode()).getValue();
+            String target = recipientService.getRecipient(parameters.getPart().getCode()).getId();
             CertificateState certificateState = StatusKod.valueOf(parameters.getStatus().getCode()).toCertificateState();
             certificateService.setCertificateState(certificateId, target, certificateState, parameters.getTidpunkt());
             response.setResult(ResultTypeUtil.okResult());
             monitoringLogService.logCertificateStatusChanged(certificateId, certificateState.name());
-        } catch (IllegalArgumentException | InvalidCertificateException e) {
+        } catch (RecipientUnknownException | InvalidCertificateException  | IllegalArgumentException e) {
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, e.getMessage()));
         }
 

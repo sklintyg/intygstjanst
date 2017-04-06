@@ -18,13 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.web.service.bean;
 
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notEmpty;
-
 import com.google.common.base.Joiner;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.notEmpty;
 
 /**
  * Recipient object.
@@ -36,10 +36,14 @@ public class Recipient {
 
     public static final String SEPARATOR = ",";
 
-    private final String logicalAddress;
-    private final String name;
-    private final String id;
-    private final List<String> certificateTypes;
+    private String logicalAddress;
+    private String name;
+    private String id;
+    private List<String> certificateTypes;
+    private boolean active;
+
+    public Recipient() {
+    }
 
     /**
      * Constructor for recipient object.
@@ -48,7 +52,7 @@ public class Recipient {
      * @param id a recipient's identifier
      * @param certificateTypes a comma-separated string of the type of certificates this recipient support
      */
-    public Recipient(String logicalAddress, String name, String id, String certificateTypes) {
+    public Recipient(String logicalAddress, String name, String id, String certificateTypes, boolean active) {
         hasText(logicalAddress, "logicalAddress must not be empty");
         hasText(name, "name must not be empty");
         hasText(id, "id must not be empty");
@@ -58,6 +62,8 @@ public class Recipient {
         this.name = name;
         this.id = id;
         this.certificateTypes = Arrays.asList(certificateTypes.split(SEPARATOR));
+        this.active = active;
+
     }
 
     /**
@@ -67,7 +73,7 @@ public class Recipient {
      * @param id a recipient's identifier
      * @param certificateTypes a list of the type of certificates this recipient support
      */
-    public Recipient(String logicalAddress, String name, String id, List<String> certificateTypes) {
+    public Recipient(String logicalAddress, String name, String id, List<String> certificateTypes, boolean active) {
         hasText(logicalAddress, "logicalAddress must not be empty");
         hasText(name, "name must not be empty");
         hasText(id, "id must not be empty");
@@ -77,6 +83,8 @@ public class Recipient {
         this.name = name;
         this.id = id;
         this.certificateTypes = certificateTypes;
+        this.active = active;
+
     }
 
     public String getLogicalAddress() {
@@ -95,12 +103,17 @@ public class Recipient {
         return certificateTypes;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
     @Override
     public String toString() {
         return "logicalAddress: " + logicalAddress
                 + " name: " + name
                 + " id: " + id
-                + " certificateTypes: " + Joiner.on(SEPARATOR).join(certificateTypes);
+                + " certificateTypes: " + Joiner.on(SEPARATOR).join(certificateTypes)
+                + " active: " + active;
     }
 
     @Override
@@ -111,7 +124,6 @@ public class Recipient {
         result = prime * result + logicalAddress.hashCode();
         result = prime * result + name.hashCode();
         result = prime * result + Joiner.on(SEPARATOR).join(certificateTypes).hashCode();
-
         return result;
     }
 
@@ -132,6 +144,8 @@ public class Recipient {
         } else if (!logicalAddress.equals(other.logicalAddress)) {
             return false;
         } else if (!name.equals(other.name)) {
+            return false;
+        } else if (!active == other.active) {
             return false;
         } else {
             String one = Joiner.on(SEPARATOR).join(certificateTypes);

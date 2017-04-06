@@ -36,8 +36,10 @@ public class RecipientBuilder {
     private String id;
     private String certificateTypes;
 
+    private boolean active;
+
     public Recipient build() {
-        return new Recipient(logicalAddress, name, id, certificateTypes);
+        return new Recipient(logicalAddress, name, id, certificateTypes, active);
     }
 
     public String getLogicalAddress() {
@@ -77,6 +79,14 @@ public class RecipientBuilder {
 
     public void setCertificateTypes(List<String> certificateTypes) {
         this.certificateTypes = Joiner.on(Recipient.SEPARATOR).join(certificateTypes);
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
 }

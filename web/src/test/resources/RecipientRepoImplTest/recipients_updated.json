@@ -1,0 +1,63 @@
+[{
+    "id": "FKASSA",
+    "name": "Försäkringskassan",
+    "logicalAddress": "FKORG",
+    "certificateTypes": [
+      "fk7263",
+      "luse",
+      "lisjp"
+    ],
+    "active" : true
+},
+  {
+    "id" : "TRANSP",
+    "name" : "Transportstyrelsen",
+    "logicalAddress" : "tsTestAdress",
+    "certificateTypes" : [
+      "ts-bas",
+      "ts-diabetes"
+    ],
+    "active" : true
+  },
+  {
+    "id" : "AFA",
+    "name" : "Afa försäkringar",
+    "logicalAddress" : "afaTestAdress",
+    "certificateTypes" : [
+      "ts-bas",
+      "ts-diabetes",
+      "fk7263"
+    ],
+    "active" : true
+  },
+  {
+    "id" : "HSVARD",
+    "name" : "Hälso- och sjukvården",
+    "logicalAddress" : "hsvardAdress",
+    "certificateTypes" : [
+      "ts-bas",
+      "ts-diabetes",
+      "fk7263",
+      "lisjp",
+      "luse",
+      "luae_na",
+      "luae_fs"
+    ],
+    "active" : true
+  },
+  {
+    "id" : "INVANA",
+    "name" : "Invånaren",
+    "logicalAddress" : "miAdress",
+    "certificateTypes" : [
+      "ts-bas",
+      "ts-diabetes",
+      "fk7263",
+      "lisjp",
+      "luse",
+      "luae_na",
+      "luae_fs"
+    ],
+    "active" : true
+  }
+]

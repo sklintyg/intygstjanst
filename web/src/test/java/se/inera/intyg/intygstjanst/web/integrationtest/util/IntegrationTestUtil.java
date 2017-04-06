@@ -207,7 +207,7 @@ public class IntegrationTestUtil {
         certificate.setCareUnitName("CareUnitName");
         certificate.setSigningDoctorName("Singing Doctor");
         certificate.setCivicRegistrationNumber(new Personnummer(personId));
-        certificate.setCertificateStates(Arrays.asList(new CertificateStateHolder("HV", CertificateState.RECEIVED, LocalDateTime.now())));
+        certificate.setCertificateStates(Arrays.asList(new CertificateStateHolder("HSVARD", CertificateState.RECEIVED, LocalDateTime.now())));
         certificate.setDeletedByCareGiver(deletedByCareGiver);
         return certificate;
     }

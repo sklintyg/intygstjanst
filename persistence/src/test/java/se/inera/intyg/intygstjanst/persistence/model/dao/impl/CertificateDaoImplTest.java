@@ -243,7 +243,7 @@ public class CertificateDaoImplTest {
 
     @Test(expected = PersistenceException.class)
     public void testUpdateStatusForWrongCertificate() throws PersistenceException {
-        certificateDao.updateStatus("<unknownCertId>", new Personnummer("<unknownPersonnummer>"), CertificateState.SENT, "fk",
+        certificateDao.updateStatus("<unknownCertId>", new Personnummer("<unknownPersonnummer>"), CertificateState.SENT, "FKASSA",
                 null);
     }
 
@@ -275,14 +275,14 @@ public class CertificateDaoImplTest {
         assertEquals(0, certificate.getStates().size());
 
         try {
-            certificateDao.updateStatus(CERTIFICATE_ID, new Personnummer("another patient"), RECEIVED, "fk", null);
+            certificateDao.updateStatus(CERTIFICATE_ID, new Personnummer("another patient"), RECEIVED, "FKASSA", null);
             fail("Exception expected.");
         } catch (PersistenceException e) {
             // Empty
         }
 
         assertEquals(0, certificate.getStates().size());
-        certificateDao.updateStatus(CERTIFICATE_ID, CIVIC_REGISTRATION_NUMBER, RECEIVED, "fk", null);
+        certificateDao.updateStatus(CERTIFICATE_ID, CIVIC_REGISTRATION_NUMBER, RECEIVED, "FKASSA", null);
         assertEquals(1, certificate.getStates().size());
     }
 
@@ -295,11 +295,11 @@ public class CertificateDaoImplTest {
 
         assertEquals(0, certificate.getStates().size());
 
-        certificateDao.updateStatus(CERTIFICATE_ID, CIVIC_REGISTRATION_NUMBER, DELETED, "fk", null);
+        certificateDao.updateStatus(CERTIFICATE_ID, CIVIC_REGISTRATION_NUMBER, DELETED, "FKASSA", null);
 
         assertEquals(1, certificate.getStates().size());
         assertEquals(DELETED, certificate.getStates().get(0).getState());
-        assertEquals("fk", certificate.getStates().get(0).getTarget());
+        assertEquals("FKASSA", certificate.getStates().get(0).getTarget());
         assertNotNull(certificate.getStates().get(0).getTimestamp());
     }
 
@@ -312,17 +312,17 @@ public class CertificateDaoImplTest {
 
         assertEquals(0, certificate.getStates().size());
 
-        certificateDao.updateStatus(CERTIFICATE_ID, new Personnummer("190011223344"), DELETED, "fk", null);
+        certificateDao.updateStatus(CERTIFICATE_ID, new Personnummer("190011223344"), DELETED, "FKASSA", null);
 
         assertEquals(1, certificate.getStates().size());
         assertEquals(DELETED, certificate.getStates().get(0).getState());
-        assertEquals("fk", certificate.getStates().get(0).getTarget());
+        assertEquals("FKASSA", certificate.getStates().get(0).getTarget());
         assertNotNull(certificate.getStates().get(0).getTimestamp());
     }
 
     @Test(expected = PersistenceException.class)
     public void testUpdateStatusNoPnrForWrongCertificate() throws PersistenceException {
-        certificateDao.updateStatus("<unknownCertId>", CertificateState.SENT, "fk", null);
+        certificateDao.updateStatus("<unknownCertId>", CertificateState.SENT, "FKASSA", null);
     }
 
     @Test
@@ -332,11 +332,11 @@ public class CertificateDaoImplTest {
 
         assertEquals(0, certificate.getStates().size());
 
-        certificateDao.updateStatus(CERTIFICATE_ID, DELETED, "fk", null);
+        certificateDao.updateStatus(CERTIFICATE_ID, DELETED, "FKASSA", null);
 
         assertEquals(1, certificate.getStates().size());
         assertEquals(DELETED, certificate.getStates().get(0).getState());
-        assertEquals("fk", certificate.getStates().get(0).getTarget());
+        assertEquals("FKASSA", certificate.getStates().get(0).getTarget());
         assertNotNull(certificate.getStates().get(0).getTimestamp());
     }
 
@@ -350,9 +350,9 @@ public class CertificateDaoImplTest {
         LocalDateTime lastWeek = LocalDateTime.now().minusWeeks(1);
         LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
 
-        certificateDao.updateStatus(CERTIFICATE_ID, CIVIC_REGISTRATION_NUMBER, DELETED, "fk", lastWeek);
-        certificateDao.updateStatus(CERTIFICATE_ID, CIVIC_REGISTRATION_NUMBER, SENT, "fk", lastMonth);
-        certificateDao.updateStatus(CERTIFICATE_ID, CIVIC_REGISTRATION_NUMBER, RESTORED, "fk", yesterday);
+        certificateDao.updateStatus(CERTIFICATE_ID, CIVIC_REGISTRATION_NUMBER, DELETED, "FKASSA", lastWeek);
+        certificateDao.updateStatus(CERTIFICATE_ID, CIVIC_REGISTRATION_NUMBER, SENT, "FKASSA", lastMonth);
+        certificateDao.updateStatus(CERTIFICATE_ID, CIVIC_REGISTRATION_NUMBER, RESTORED, "FKASSA", yesterday);
 
         entityManager.flush();
         entityManager.clear();

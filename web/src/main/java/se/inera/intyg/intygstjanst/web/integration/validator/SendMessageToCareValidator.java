@@ -18,28 +18,26 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType.Komplettering;
+import se.riv.clinicalprocess.healthcond.certificate.v3.MeddelandeReferens;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.schemas.contract.Personnummer;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
-
-import se.inera.intyg.common.support.common.enumerations.PartKod;
-import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.schemas.contract.Personnummer;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType.Komplettering;
-import se.riv.clinicalprocess.healthcond.certificate.v3.MeddelandeReferens;
 
 @Component
 public class SendMessageToCareValidator {
@@ -67,6 +65,9 @@ public class SendMessageToCareValidator {
     private CertificateService certificateService;
 
     @Autowired
+    private RecipientService recipientService;
+
+    @Autowired
     private ArendeRepository messageRepository;
 
     public List<String> validateSendMessageToCare(SendMessageToCareType sendMessageToCareType) {
@@ -88,8 +89,8 @@ public class SendMessageToCareValidator {
     @VisibleForTesting
     void validateSkickatAv(String code, List<String> validationErrors) {
         try {
-            PartKod.valueOf(code);
-        } catch (IllegalArgumentException | NullPointerException e) {
+            recipientService.getRecipient(code);
+        } catch (RecipientUnknownException | NullPointerException e) {
             validationErrors.add("SkickatAv part code " + code + " is not valid");
         }
     }

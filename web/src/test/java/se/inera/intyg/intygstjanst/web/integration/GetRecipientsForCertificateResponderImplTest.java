@@ -18,27 +18,30 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.*;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponderInterface;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponseType;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateType;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.riv.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetRecipientsForCertificateResponderImplTest {
@@ -56,7 +59,8 @@ public class GetRecipientsForCertificateResponderImplTest {
         final String intygTyp = "intygTyp";
         final String recipientId = "recipientId";
         final String recipientName = "recipientName";
-        when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(Arrays.asList(new Recipient("logicalAddress", recipientName, recipientId, "certificateTypes")));
+        when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(Arrays
+                .asList(new Recipient("logicalAddress", recipientName, recipientId, "certificateTypes", true)));
         GetRecipientsForCertificateResponseType res = responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRequest(intygTyp));
         assertNotNull(res);
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());

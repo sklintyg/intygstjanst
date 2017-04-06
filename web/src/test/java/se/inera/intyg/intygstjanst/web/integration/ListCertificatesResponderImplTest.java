@@ -99,9 +99,9 @@ public class ListCertificatesResponderImplTest {
         LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         Certificate deletedCertificate = new Certificate();
-        deletedCertificate.addState(new CertificateStateHistoryEntry("MI", CertificateState.DELETED, null));
+        deletedCertificate.addState(new CertificateStateHistoryEntry("INVANA", CertificateState.DELETED, null));
         Certificate revokedCertificate = new Certificate();
-        revokedCertificate.addState(new CertificateStateHistoryEntry("HV", CertificateState.CANCELLED, null));
+        revokedCertificate.addState(new CertificateStateHistoryEntry("HSVARD", CertificateState.CANCELLED, null));
         List<Certificate> result = Arrays.asList(new Certificate(), deletedCertificate, revokedCertificate);
 
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
@@ -125,9 +125,9 @@ public class ListCertificatesResponderImplTest {
         LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         Certificate deletedCertificate = new Certificate();
-        deletedCertificate.addState(new CertificateStateHistoryEntry("MI", CertificateState.DELETED, null));
+        deletedCertificate.addState(new CertificateStateHistoryEntry("INVANA", CertificateState.DELETED, null));
         Certificate revokedCertificate = new Certificate();
-        revokedCertificate.addState(new CertificateStateHistoryEntry("HV", CertificateState.CANCELLED, null));
+        revokedCertificate.addState(new CertificateStateHistoryEntry("HSVARD", CertificateState.CANCELLED, null));
         List<Certificate> result = Arrays.asList(new Certificate(), deletedCertificate, revokedCertificate);
 
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);

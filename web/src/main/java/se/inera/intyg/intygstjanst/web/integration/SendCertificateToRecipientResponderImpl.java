@@ -22,8 +22,6 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import se.inera.intyg.common.support.common.enumerations.PartKod;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -51,7 +49,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
 
         SendCertificateToRecipientResponseType response = new SendCertificateToRecipientResponseType();
 
-        final String mottagareId = PartKod.valueOf(request.getMottagare().getCode()).getValue();
+        final String mottagareId = request.getMottagare().getCode();
         final Personnummer personnummer = new Personnummer(request.getPatientPersonId().getExtension());
         final String intygsId = request.getIntygsId().getExtension();
         try {

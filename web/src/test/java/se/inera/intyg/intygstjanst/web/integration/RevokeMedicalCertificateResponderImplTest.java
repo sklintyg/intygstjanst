@@ -64,7 +64,7 @@ public class RevokeMedicalCertificateResponderImplTest {
 
     private static final String CERTIFICATE_ID = "intygs-id-1234567890";
     private static final Personnummer PERSONNUMMER = new Personnummer("19121212-1212");
-    private static final String TARGET = "FK";
+    private static final String TARGET = "FKASSA";
 
     private static final AttributedURIType ADDRESS = new AttributedURIType();
 

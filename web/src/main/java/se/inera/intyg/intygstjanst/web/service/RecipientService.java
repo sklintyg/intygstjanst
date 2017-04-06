@@ -18,13 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.service;
 
-import java.util.List;
-import java.util.Set;
-
-import se.inera.intyg.common.support.modules.support.api.dto.TransportModelVersion;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+
+import java.util.List;
 
 public interface RecipientService {
 
@@ -62,23 +60,12 @@ public interface RecipientService {
      */
     List<Recipient> listRecipients(CertificateType certificateType);
 
-    /**
-     * List the {@link CertificateType}[s] the specified {@link Recipient} accepts.
-     *
-     * @param recipient
-     *            {@link Recipient}
-     * @return a List of Strings representing the accepted types
-     */
-    Set<CertificateType> listCertificateTypes(Recipient recipient);
+    Recipient getPrimaryRecipientFkassa();
 
-    /**
-     * Get the {@link TransportModelVersion} for a specific logicalAddress and certificateType.
-     *
-     * @param logicalAddress String
-     * @param certificateType String
-     *
-     * @return the accepted {@link TransportModelVersion}
-     */
-    TransportModelVersion getVersion(String logicalAddress, String certificateType) throws RecipientUnknownException;
+    Recipient getPrimaryRecipientHsvard();
+
+    Recipient getPrimaryRecipientInvana();
+
+    Recipient getPrimaryRecipientTransp();
 
 }

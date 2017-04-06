@@ -52,6 +52,10 @@
       implementor="se.inera.intyg.intygstjanst.web.integration.GetRecipientsForCertificateResponderImpl">
   </jaxws:endpoint>
 
+  <jaxws:endpoint address="/list-known-recipients/v1.0"
+      implementor="se.inera.intyg.intygstjanst.web.integration.ListKnownRecipientsResponderImpl">
+  </jaxws:endpoint>
+
   <jaxws:endpoint address="/list-certificates/v1.0"
                   implementor="se.inera.intyg.intygstjanst.web.integration.ListCertificatesResponderImpl">
     <jaxws:outFaultInterceptors>

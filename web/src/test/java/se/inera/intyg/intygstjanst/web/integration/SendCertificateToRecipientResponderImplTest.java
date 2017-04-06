@@ -71,29 +71,29 @@ public class SendCertificateToRecipientResponderImplTest {
 
     @Test
     public void testSendCertificateToRecipient() throws Exception {
-        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "TS")).thenReturn(CertificateService.SendStatus.OK);
+        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID)).thenReturn(CertificateService.SendStatus.OK);
         SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
 
         assertEquals(OK, response.getResult().getResultCode());
-        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "TS");
+        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
     }
 
     @Test
     public void testSendCertificateToRecipientAlreadySent() throws Exception {
-        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "FK")).thenReturn(CertificateService.SendStatus.ALREADY_SENT);
+        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "FKASSA")).thenReturn(CertificateService.SendStatus.ALREADY_SENT);
 
         SendCertificateToRecipientType request = createRequest();
         request.getMottagare().setCode("FKASSA");
         SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
 
         assertEquals(INFO, response.getResult().getResultCode());
-        assertEquals("Certificate 'Intygs-id-1234567890' already sent to 'FK'.", response.getResult().getResultText());
-        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "FK");
+        assertEquals("Certificate 'Intygs-id-1234567890' already sent to 'FKASSA'.", response.getResult().getResultText());
+        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "FKASSA");
     }
 
     @Test
     public void testSendCertificateToRecipientInvalidCertificate() throws Exception {
-        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "TS"))
+        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID))
                 .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, PERSONNUMMER));
 
         SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
@@ -101,43 +101,43 @@ public class SendCertificateToRecipientResponderImplTest {
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdType.APPLICATION_ERROR, response.getResult().getErrorId());
         assertEquals("Unknown certificate ID: Intygs-id-1234567890", response.getResult().getResultText());
-        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "TS");
+        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
     }
 
     @Test
     public void testSendCertificateToRecipientCertificateRevoked() throws Exception {
-        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "TS"))
+        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID))
                 .thenThrow(new CertificateRevokedException(CERTIFICATE_ID));
 
         SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
 
         assertEquals(INFO, response.getResult().getResultCode());
         assertEquals("Certificate 'Intygs-id-1234567890' has been revoked.", response.getResult().getResultText());
-        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "TS");
+        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
     }
 
     @Test
     public void testSendCertificateToRecipientRecipientUnknown() throws Exception {
-        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "TS")).thenThrow(new RecipientUnknownException(""));
+        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID)).thenThrow(new RecipientUnknownException(""));
 
         SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
 
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdType.APPLICATION_ERROR, response.getResult().getErrorId());
-        assertEquals("Unknown recipient ID: TS", response.getResult().getResultText());
-        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "TS");
+        assertEquals("Unknown recipient ID: TRANSP", response.getResult().getResultText());
+        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
     }
 
     @Test
     public void testSendCertificateToRecipientServerException() throws Exception {
-        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "TS")).thenThrow(new ServerException());
+        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID)).thenThrow(new ServerException());
 
         SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
 
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdType.TECHNICAL_ERROR, response.getResult().getErrorId());
         assertEquals("Certificate 'Intygs-id-1234567890' couldn't be sent to recipient", response.getResult().getResultText());
-        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "TS");
+        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
     }
 
     private SendCertificateToRecipientType createRequest() {

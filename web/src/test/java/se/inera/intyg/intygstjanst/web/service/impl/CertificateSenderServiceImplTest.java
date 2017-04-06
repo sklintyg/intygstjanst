@@ -18,6 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -26,15 +27,12 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.util.Arrays;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +43,6 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
-
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.rivtabp20.v3.RegisterMedicalCertificateResponderInterface;
@@ -63,7 +60,6 @@ import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
-import se.inera.intyg.common.support.modules.support.api.dto.TransportModelVersion;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.MissingModuleException;
@@ -78,6 +74,19 @@ import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.intyg.intygstjanst.web.support.CertificateFactory;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+import java.io.IOException;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
+
 /**
  * @author andreaskaltenbach
  */
@@ -87,7 +96,7 @@ public class CertificateSenderServiceImplTest {
     private static final String CERTIFICATE_ID = "123456";
     private static final String CERTIFICATE_TYPE = "fk7263";
 
-    private static final String RECIPIENT_ID = "FK";
+    private static final String RECIPIENT_ID = "FKASSA";
     private static final String RECIPIENT_NAME = "Försäkringskassan";
     private static final String RECIPIENT_LOGICALADDRESS = "FKORG";
     private static final String RECIPIENT_DEFAULT_LOGICALADDRESS = "FKORG-DEFAULT";
@@ -120,6 +129,7 @@ public class CertificateSenderServiceImplTest {
         builder.setName(RECIPIENT_NAME);
         builder.setLogicalAddress(RECIPIENT_LOGICALADDRESS);
         builder.setCertificateTypes(RECIPIENT_CERTIFICATETYPES);
+        builder.setActive(true);
 
         return builder.build();
     }
@@ -142,11 +152,10 @@ public class CertificateSenderServiceImplTest {
 
     @Before
     public void setupRecipientService() throws RecipientUnknownException {
-        when(recipientService.getVersion(RECIPIENT_LOGICALADDRESS, CERTIFICATE_TYPE))
-                .thenReturn(TransportModelVersion.LEGACY_LAKARUTLATANDE);
         when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(createRecipient());
         when(recipientService.getRecipientForLogicalAddress(RECIPIENT_LOGICALADDRESS)).thenReturn(createRecipient());
         when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(Arrays.asList(createRecipient()));
+        when(recipientService.getPrimaryRecipientFkassa()).thenReturn(createRecipient());
     }
 
     @Test

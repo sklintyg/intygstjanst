@@ -7,17 +7,17 @@
     "states": [
         {
             "state": "RECEIVED",
-            "target": "HV",
+            "target": "HSVARD",
             "timestamp": "2014-08-05T13:28:03.227"
         },
         {
             "state": "SENT",
-            "target": "TS",
+            "target": "TRANSP",
             "timestamp": "2014-08-05T13:28:07.227"
         },
         {
             "state": "CANCELLED",
-            "target": "HV",
+            "target": "HSVARD",
             "timestamp": "2014-08-06T13:28:07.227"
         }
     ],

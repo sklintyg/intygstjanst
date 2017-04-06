@@ -18,34 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
-import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.inera.intyg.intygstjanst.web.service.RecipientService;
-import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
-import se.inera.intyg.intygstjanst.web.service.StatisticsService;
+import se.inera.intyg.intygstjanst.web.service.*;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface;
@@ -55,6 +38,12 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+import java.util.Arrays;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RevokeCertificateResponderImplTest {
@@ -90,7 +79,8 @@ public class RevokeCertificateResponderImplTest {
                 .thenReturn(createCertificate(certificateId, new CertificateStateHistoryEntry("target1", CertificateState.SENT, null),
                         new CertificateStateHistoryEntry("target2", CertificateState.SENT, null),
                         new CertificateStateHistoryEntry("target1", CertificateState.SENT, null)));
-        when(recipientService.getRecipient(anyString())).thenReturn(new Recipient(logicalAddress, "name", "id", "types"));
+        when(recipientService.getRecipient(anyString()))
+                .thenReturn(new Recipient(logicalAddress, "name", "id", "types", true));
 
         RevokeCertificateType request = new RevokeCertificateType();
         request.setIntygsId(new IntygId());
@@ -115,7 +105,8 @@ public class RevokeCertificateResponderImplTest {
         final String logicalAddress = "logicalAddress";
 
         when(certificateService.revokeCertificate(any(), eq(certificateId))).thenReturn(createCertificate(certificateId));
-        when(recipientService.getRecipient(anyString())).thenReturn(new Recipient(logicalAddress, "name", "id", "types"));
+        when(recipientService.getRecipient(anyString()))
+                .thenReturn(new Recipient(logicalAddress, "name", "id", "types", true));
 
         RevokeCertificateType request = new RevokeCertificateType();
         request.setIntygsId(new IntygId());

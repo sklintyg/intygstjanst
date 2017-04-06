@@ -25,8 +25,10 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -37,18 +39,24 @@ import se.inera.intyg.common.support.integration.module.exception.InvalidCertifi
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.schemas.contract.Personnummer;
+import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.integration.util.SendMessageToCareUtil;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.Amneskod;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.ErrorCode;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType.Komplettering;
 import se.riv.clinicalprocess.healthcond.certificate.v3.MeddelandeReferens;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendMessageToCareValidatorTest {
-    private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML = "SendMessageToCareTest/sendmessagetocare.xml";
+    private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML =
+            "SendMessageToCareTest/sendmessagetocare.xml";
+    private static final Recipient FKASSA =
+            new Recipient("FKORG", "Föräkringskassa", "FKASSA", Arrays.asList("fk7263"), true);
 
     @Mock
     private CertificateService certificateService;
@@ -59,8 +67,16 @@ public class SendMessageToCareValidatorTest {
     @Mock
     private ArendeRepository arendeRepository;
 
+    @Mock
+    RecipientService recipientService;
+
     @InjectMocks
     private SendMessageToCareValidator validator;
+
+    @Before
+    public void setupRecipientService() {
+        when(recipientService.getPrimaryRecipientFkassa()).thenReturn(FKASSA);
+    }
 
     @Test
     public void testValidationOfAmne() {
@@ -170,11 +186,12 @@ public class SendMessageToCareValidatorTest {
         when(certificateService.getCertificateForCare(certificateId)).thenReturn(certificate);
 
         List<String> res = validator.validateSendMessageToCare(sendMessageToCareType);
-        assertTrue(res.isEmpty());
+        assertTrue(String.format("Validation errors: %s", res), res.isEmpty());
     }
 
     @Test
     public void testThatValidationFailsIfPartCodeIsInvalid() throws Exception {
+        when(recipientService.getRecipient(eq("FK"))).thenThrow(new RecipientUnknownException("Unknown recipient"));
         List<String> validationErrors = new ArrayList<>();
         validator.validateSkickatAv("FK", validationErrors);
         assertFalse(validationErrors.isEmpty());

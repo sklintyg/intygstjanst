@@ -32,7 +32,6 @@
     <context:property-placeholder
       location="file:${credentials.file}, file:${certificate.config.file}"
       order="1" ignore-resource-not-found="false" ignore-unresolvable="true" />
-    <util:properties location="file:${recipient.config.file}" id="recipientService" />
   </beans>
 
   <beans profile="dev,test,local">
@@ -40,16 +39,11 @@
     <context:property-placeholder
       location="file:${credentials.file}, file:${certificate.config.file}"
       order="1" ignore-resource-not-found="true" ignore-unresolvable="true" />
-    <util:properties location="file:${recipient.config.file}" id="recipientService" />
   </beans>
 
   <beans>
     <bean id="moduleRegistry" class="se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl">
       <property name="origin" value="INTYGSTJANST"/>
-    </bean>
-    <bean id="RecipientService"
-      class="se.inera.intyg.intygstjanst.web.service.impl.RecipientServiceImpl">
-      <property name="recipients" ref="recipientService" />
     </bean>
 
     <bean id="sjukfallEngineService" class="se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl"/>
@@ -80,6 +74,8 @@
 
     <context:annotation-config />
     <context:component-scan base-package="se.inera.intyg.intygstjanst.web" />
+
+    <bean id="recipientService" class="se.inera.intyg.intygstjanst.web.service.impl.RecipientServiceImpl" />
 
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
       <property name="basenames">

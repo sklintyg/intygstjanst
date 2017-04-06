@@ -320,4 +320,12 @@
 		</createIndex>
 	</changeSet>
 
+  <changeSet id="35" author="ef">
+    <sql>
+      update CERTIFICATE_STATE set TARGET='HSVARD' where TARGET='HV';
+      update CERTIFICATE_STATE set TARGET='FKASSA' where TARGET='FK';
+      update CERTIFICATE_STATE set TARGET='INVANA' where TARGET='MI';
+      update CERTIFICATE_STATE set TARGET='TRANSP' where TARGET='TS';
+    </sql>
+  </changeSet>
 </databaseChangeLog>

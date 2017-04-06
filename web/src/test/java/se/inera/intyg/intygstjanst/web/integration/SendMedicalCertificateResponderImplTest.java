@@ -568,7 +568,8 @@ public class SendMedicalCertificateResponderImplTest {
         return new Recipient(FK_RECIPIENT_LOGICALADDRESS,
                 FK_RECIPIENT_NAME,
                 FK_RECIPIENT_ID,
-                FK_RECIPIENT_CERTIFICATETYPES);
+                FK_RECIPIENT_CERTIFICATETYPES,
+                true);
     }
 
     private SendMedicalCertificateRequestType createRequest() {

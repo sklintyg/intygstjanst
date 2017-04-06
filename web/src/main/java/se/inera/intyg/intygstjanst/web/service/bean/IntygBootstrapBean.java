@@ -114,7 +114,7 @@ public class IntygBootstrapBean {
                 certificate.setSignedDate(utlatande.getGrundData().getSigneringsdatum());
                 certificate.setSigningDoctorName(utlatande.getGrundData().getSkapadAv().getFullstandigtNamn());
                 certificate.setStates(Arrays.asList(
-                        new CertificateStateHistoryEntry("HV", CertificateState.RECEIVED,
+                        new CertificateStateHistoryEntry("HSVARD", CertificateState.RECEIVED,
                                 utlatande.getGrundData().getSigneringsdatum().plusMinutes(1)),
                         new CertificateStateHistoryEntry(defaultRecipient, CertificateState.SENT,
                                 utlatande.getGrundData().getSigneringsdatum().plusMinutes(2))));

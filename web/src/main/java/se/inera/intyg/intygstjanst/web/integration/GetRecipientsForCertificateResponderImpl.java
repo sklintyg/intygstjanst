@@ -51,10 +51,12 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
         List<Recipient> recipients = recipientService.listRecipients(certificateType);
 
         for (Recipient r : recipients) {
-            RecipientType recipientType = new RecipientType();
-            recipientType.setId(r.getId());
-            recipientType.setName(r.getName());
-            response.getRecipient().add(recipientType);
+            if (r.isActive()) {
+                RecipientType recipientType = new RecipientType();
+                recipientType.setId(r.getId());
+                recipientType.setName(r.getName());
+                response.getRecipient().add(recipientType);
+            }
         }
 
         if (response.getRecipient().isEmpty()) {

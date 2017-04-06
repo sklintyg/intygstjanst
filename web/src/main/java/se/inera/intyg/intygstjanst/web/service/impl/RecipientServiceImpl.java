@@ -18,116 +18,63 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.InitializingBean;
-
-import se.inera.intyg.common.support.modules.support.api.dto.TransportModelVersion;
+import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
-import se.inera.intyg.intygstjanst.web.service.bean.*;
-import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.inera.intyg.intygstjanst.web.service.repo.RecipientRepo;
 
-public class RecipientServiceImpl implements RecipientService, InitializingBean {
+import java.util.List;
+import java.util.stream.Collectors;
 
-    private List<Recipient> recipientList;
-    private Map<Recipient, Set<CertificateType>> certificateTypesForRecipient;
-    private Properties recipients;
+public class RecipientServiceImpl implements RecipientService {
 
-    /**
-     * Keeps track of the TransportModelVersion supported by a certain combination of Logical Address and
-     * CertificateType.
-     */
-    private Map<RecipientCertificateType, TransportModelVersion> supportedTransportModelVersion;
-
-    public RecipientServiceImpl() {
-        recipientList = new ArrayList<>();
-        certificateTypesForRecipient = new HashMap<>();
-        supportedTransportModelVersion = new HashMap<>();
-    }
-
-    public Properties getRecipients() {
-        return recipients;
-    }
-
-    public void setRecipients(Properties recipients) {
-        this.recipients = recipients;
-    }
+    @Autowired
+    private RecipientRepo recipientRepo;
 
     @Override
     public Recipient getRecipientForLogicalAddress(String logicalAddress) throws RecipientUnknownException {
-        return recipientList.stream()
-                .filter(r -> r.getLogicalAddress().equals(logicalAddress))
-                .findFirst()
-                .orElseThrow(
-                        () -> new RecipientUnknownException(String.format("No recipient found for logical address: %s", logicalAddress)));
+        return recipientRepo.getRecipientForLogicalAddress(logicalAddress);
     }
 
     @Override
     public Recipient getRecipient(String recipientId) throws RecipientUnknownException {
-        return recipientList.stream()
-                .filter(r -> r.getId().equals(recipientId))
-                .findFirst()
-                .orElseThrow(() -> new RecipientUnknownException(String.format("No recipient found for recipient id: %s", recipientId)));
+        return recipientRepo.getRecipient(recipientId);
     }
 
     @Override
     public List<Recipient> listRecipients() {
-        return recipientList;
+        return recipientRepo.listRecipients();
     }
 
     @Override
     public List<Recipient> listRecipients(CertificateType certificateType) {
-        return recipientList.stream()
+        // Filter out HSVARD and INVANA recipients, as these are in fact Webcert/intygstjansten and Mina intyg)
+        return recipientRepo.listRecipients().stream()
+                .filter(r -> !getPrimaryRecipientHsvard().getId().equals(r.getId())
+                        && !getPrimaryRecipientInvana().getId().equals(r.getId()))
                 .filter(r -> r.getCertificateTypes().contains(certificateType.getCertificateTypeId()))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Set<CertificateType> listCertificateTypes(Recipient recipient) {
-        return certificateTypesForRecipient.get(recipient);
+    public Recipient getPrimaryRecipientFkassa() {
+        return recipientRepo.getRecipientFkassa();
     }
 
     @Override
-    public TransportModelVersion getVersion(String logicalAddress, String certificateType) throws RecipientUnknownException {
-        String recipientId = getRecipientForLogicalAddress(logicalAddress).getId();
-        return supportedTransportModelVersion.get(new RecipientCertificateType(recipientId, certificateType));
+    public Recipient getPrimaryRecipientHsvard() {
+        return recipientRepo.getRecipientHsvard();
     }
 
     @Override
-    public void afterPropertiesSet() {
-        HashMap<String, RecipientBuilder> recipientMap = new HashMap<>();
+    public Recipient getPrimaryRecipientInvana() {
+        return recipientRepo.getRecipientInvana();
+    }
 
-        for (String key : recipients.stringPropertyNames()) {
-            String value = recipients.getProperty(key);
-            String[] keyParts = key.split("\\.");
-            switch (keyParts[0]) {
-            case "recipient":
-                String id = keyParts[1];
-                if (recipientMap.get(id) == null) {
-                    recipientMap.put(id, new RecipientBuilder().setId(id));
-                }
-                if ("name".equals(keyParts[2])) {
-                    recipientMap.get(id).setName(value);
-                } else if ("logicalAddress".equals(keyParts[2])) {
-                    recipientMap.get(id).setLogicalAddress(value);
-                } else if ("certificateType".equals(keyParts[2])) {
-                    recipientMap.get(id).setCertificateTypes(value);
-                }
-                break;
-            case "recipient-transport-model-version":
-                String recipientId = keyParts[1];
-                String certType = keyParts[2];
-                supportedTransportModelVersion.put(new RecipientCertificateType(recipientId, certType),
-                        TransportModelVersion.valueOf(value));
-                break;
-            default:
-            }
-        }
-
-        for (RecipientBuilder builder : recipientMap.values()) {
-            recipientList.add(builder.build());
-        }
+    @Override
+    public Recipient getPrimaryRecipientTransp() {
+        return recipientRepo.getRecipientTransp();
     }
 }

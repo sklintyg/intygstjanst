@@ -31,7 +31,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificaterespo
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.common.support.modules.support.api.exception.ExternalServiceCallException;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
 import se.inera.intyg.common.util.logging.LogMarkers;
@@ -44,6 +43,7 @@ import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 public class SendMedicalCertificateResponderImpl implements SendMedicalCertificateResponderInterface {
 
@@ -146,7 +146,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
         if (recipients.size() > 1) {
             errorMsg = String.format(
                     "Multiple recipients were found for certificate of type %s. Unable to decide recipient. "
-                    + "Maybe this is a missed configuration.",
+                            + "Maybe this is a missed configuration.",
                     certificateType.getCertificateTypeId());
         }
 

@@ -17,18 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
-
-import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
-
-import java.time.LocalDateTime;
-
+// CHECKSTYLE:OFF LineLength
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
-
-// CHECKSTYLE:OFF LineLength
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.InnehallType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType;
@@ -40,7 +34,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequest
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.QuestionToFkType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
-import se.inera.intyg.common.support.common.enumerations.PartKod;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
@@ -55,6 +48,11 @@ import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+
+import java.time.LocalDateTime;
+
+import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
+
 // CHECKSTYLE:ON LineLength
 
 /**
@@ -93,8 +91,8 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
             } else {
                 Recipient recipient = recipientService.getRecipient(recipientId);
-                // Check that the recipient is valid for certType
-                if (recipientService.listRecipients(certType).contains(recipient)) {
+                // Check that the recipient is valid for certType and is active
+                if (recipientService.listRecipients(certType).contains(recipient) && recipient.isActive()) {
                     logicalAddress = recipient.getLogicalAddress();
                 } else {
                     LOGGER.error("Recipient {} is not available for certificate type {}", recipientId, certType.toString());
@@ -126,7 +124,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     @Override
     public void sendCertificateRevocation(Certificate certificate, String recipientId, RevokeType revokeData) {
-        if (recipientId.equals(PartKod.FKASSA.getValue())) {
+        if (recipientId.equals(recipientService.getPrimaryRecipientFkassa().getId())) {
             useFKRevocationStrategy(certificate, revokeData);
         } else {
             useDefaultRevocationStrategy(certificate, revokeData, recipientId);
@@ -155,7 +153,8 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
         question.getFraga().setSigneringsTidpunkt(signTs);
         question.setLakarutlatande(revokeData.getLakarutlatande());
 
-        AttributedURIType logicalAddress = getLogicalAddress(PartKod.FKASSA.getValue());
+        AttributedURIType logicalAddress = new AttributedURIType();
+        logicalAddress.setValue(recipientService.getPrimaryRecipientFkassa().getLogicalAddress());
 
         SendMedicalCertificateQuestionType parameters = new SendMedicalCertificateQuestionType();
         parameters.setQuestion(question);
@@ -167,9 +166,10 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
             String message = "Failed to send question to Försäkringskassan for revoking certificate '" + intygId
                     + "'. Info from forsakringskassan: " + sendResponse.getResult().getInfoText();
             LOGGER.error(message);
-            throw new SubsystemCallException(PartKod.FKASSA.getValue(), message);
+            throw new SubsystemCallException(recipientService.getPrimaryRecipientFkassa().getId(), message);
         } else {
-            monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(), "FK");
+            monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(),
+                    certificate.getCareUnitId(), "FKASSA");
         }
     }
 

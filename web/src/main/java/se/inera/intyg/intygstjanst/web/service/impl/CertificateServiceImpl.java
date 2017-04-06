@@ -18,22 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
-
-import se.inera.intyg.common.support.common.enumerations.PartKod;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -44,7 +37,6 @@ import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -53,12 +45,12 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistory
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
-import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
-import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.inera.intyg.intygstjanst.web.service.ConsentService;
-import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
-import se.inera.intyg.intygstjanst.web.service.StatisticsService;
+import se.inera.intyg.intygstjanst.web.service.*;
+import se.inera.intyg.schemas.contract.Personnummer;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author andreaskaltenbach
@@ -67,6 +59,9 @@ import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 public class CertificateServiceImpl implements CertificateService, ModuleContainerApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(CertificateServiceImpl.class);
+
+    @Autowired
+    private RecipientService recipientService;
 
     @Autowired
     private CertificateDao certificateDao;
@@ -222,7 +217,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             throw new CertificateRevokedException(certificateId);
         }
 
-        setCertificateState(civicRegistrationNumber, certificateId, PartKod.HSVARD.getValue(), CertificateState.CANCELLED, null);
+        setCertificateState(civicRegistrationNumber, certificateId,
+                recipientService.getPrimaryRecipientHsvard().getId(), CertificateState.CANCELLED, null);
 
         return certificate;
     }
@@ -281,8 +277,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         }
 
         // add initial RECEIVED state using current time as receiving timestamp
-        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(PartKod.HSVARD.getValue(), CertificateState.RECEIVED,
-                LocalDateTime.now());
+        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(
+                recipientService.getPrimaryRecipientHsvard().getId(), CertificateState.RECEIVED, LocalDateTime.now());
         certificate.addState(state);
         certificateDao.store(certificate);
         storeOriginalCertificate(certificateHolder.getOriginalCertificate(), certificate);

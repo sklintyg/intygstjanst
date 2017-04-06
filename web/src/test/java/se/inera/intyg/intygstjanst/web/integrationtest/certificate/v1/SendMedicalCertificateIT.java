@@ -57,14 +57,21 @@ public class SendMedicalCertificateIT extends BaseIntegrationTest {
         final String personId = "19010101-0101";
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
 
-        getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
+        getMedicalCertificateRequest(INTYG_ID, personId)
+                .body("meta.status.size()", is(1))
+                .body("meta.status.type", is("RECEIVED"));
+
         givenRequest(INTYG_ID, personId).body("result.resultCode", is("OK"));
-        getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(2))
-                .body("meta.status[0].type", anyOf(is("RECEIVED"), is("SENT"))).body("meta.status[1].type", anyOf(is("RECEIVED"), is("SENT")));
+
+        getMedicalCertificateRequest(INTYG_ID, personId)
+                .body("meta.status.size()", is(2))
+                .body("meta.status[0].type", anyOf(is("RECEIVED"), is("SENT")))
+                .body("meta.status[1].type", anyOf(is("RECEIVED"), is("SENT")));
 
         // can not send when already sent
-        givenRequest(INTYG_ID, personId).body("result.resultCode", is("INFO")).body("result.infoText",
-                is("Certificate 'sendMedicalCertificateITcertificateId' is already sent."));
+        givenRequest(INTYG_ID, personId)
+                .body("result.resultCode", is("INFO"))
+                .body("result.infoText", is("Certificate 'sendMedicalCertificateITcertificateId' is already sent."));
     }
 
     @Test
@@ -74,8 +81,10 @@ public class SendMedicalCertificateIT extends BaseIntegrationTest {
 
         givenRequest(INTYG_ID, personId).body("result.resultCode", is("OK"));
 
-        getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(2))
-                .body("meta.status[0].type", anyOf(is("RECEIVED"), is("SENT"))).body("meta.status[1].type", anyOf(is("RECEIVED"), is("SENT")));
+        getMedicalCertificateRequest(INTYG_ID, personId)
+                .body("meta.status.size()", is(2))
+                .body("meta.status[0].type", anyOf(is("RECEIVED"), is("SENT")))
+                .body("meta.status[1].type", anyOf(is("RECEIVED"), is("SENT")));
     }
 
     /**
@@ -93,8 +102,10 @@ public class SendMedicalCertificateIT extends BaseIntegrationTest {
 
         givenRequest(INTYG_ID, personId).body("result.resultCode", is("OK"));
 
-        getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(2))
-                .body("meta.status[0].type", anyOf(is("RECEIVED"), is("SENT"))).body("meta.status[1].type", anyOf(is("RECEIVED"), is("SENT")));
+        getMedicalCertificateRequest(INTYG_ID, personId)
+                .body("meta.status.size()", is(2))
+                .body("meta.status[0].type", anyOf(is("RECEIVED"), is("SENT")))
+                .body("meta.status[1].type", anyOf(is("RECEIVED"), is("SENT")));
     }
 
     /**
@@ -107,8 +118,10 @@ public class SendMedicalCertificateIT extends BaseIntegrationTest {
 
         givenRequest(INTYG_ID, personId).body("result.resultCode", is("OK"));
 
-        getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(2))
-                .body("meta.status[0].type", anyOf(is("RECEIVED"), is("SENT"))).body("meta.status[1].type", anyOf(is("RECEIVED"), is("SENT")));
+        getMedicalCertificateRequest(INTYG_ID, personId)
+                .body("meta.status.size()", is(2))
+                .body("meta.status[0].type", anyOf(is("RECEIVED"), is("SENT")))
+                .body("meta.status[1].type", anyOf(is("RECEIVED"), is("SENT")));
     }
 
     @Test
@@ -123,7 +136,9 @@ public class SendMedicalCertificateIT extends BaseIntegrationTest {
 
     @Test
     public void sendMedicalCertificateDoesNotExist() {
-        givenRequest(INTYG_ID, "19010101-0101").body("result.resultCode", is("ERROR")).body("result.errorText", is(
+        givenRequest(INTYG_ID, "19010101-0101").
+                body("result.resultCode", is("ERROR"))
+                .body("result.errorText", is(
                 "No certificate 'sendMedicalCertificateITcertificateId' found to send for patient '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'."));
     }
 
@@ -132,7 +147,9 @@ public class SendMedicalCertificateIT extends BaseIntegrationTest {
         final String personId = "19010101-0101";
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, "19020202-0202", false);
 
-        givenRequest(INTYG_ID, personId).body("result.resultCode", is("ERROR")).body("result.errorText", is(
+        givenRequest(INTYG_ID, personId)
+                .body("result.resultCode", is("ERROR"))
+                .body("result.errorText", is(
                 "No certificate 'sendMedicalCertificateITcertificateId' found to send for patient '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'."));
     }
 
@@ -141,15 +158,23 @@ public class SendMedicalCertificateIT extends BaseIntegrationTest {
         final String personId = "19010101-0101";
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
 
-        getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
+        getMedicalCertificateRequest(INTYG_ID, personId)
+                .body("meta.status.size()", is(1))
+                .body("meta.status.type", is("RECEIVED"));
+
         givenRequest(INTYG_ID, personId, "blankstegRequest").body("result.resultCode", is("OK"));
-        getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(2))
-                .body("meta.status[0].type", anyOf(is("RECEIVED"), is("SENT"))).body("meta.status[1].type", anyOf(is("RECEIVED"), is("SENT")));
+
+        getMedicalCertificateRequest(INTYG_ID, personId)
+                .body("meta.status.size()", is(2))
+                .body("meta.status[0].type", anyOf(is("RECEIVED"), is("SENT")))
+                .body("meta.status[1].type", anyOf(is("RECEIVED"), is("SENT")));
     }
 
     @Test
     public void faultTransformerTest() {
-        givenRequest("</tag>", "190101010101").body("result.resultCode", is("ERROR")).body("result.errorText", startsWith("Unmarshalling Error"));
+        givenRequest("</tag>", "190101010101")
+                .body("result.resultCode", is("ERROR"))
+                .body("result.errorText", startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse givenRequest(String intygId, String personId) {
@@ -161,16 +186,21 @@ public class SendMedicalCertificateIT extends BaseIntegrationTest {
         requestTemplate.add("intygId", intygId);
         requestTemplate.add("personId", personId);
 
-        return given().body(requestTemplate.render()).when().post("inera-certificate/send-certificate/v1.0").then().statusCode(200)
+        return given().body(requestTemplate.render())
+                .when().post("inera-certificate/send-certificate/v1.0")
+                .then().statusCode(200)
                 .rootPath("Envelope.Body.SendMedicalCertificateResponse.");
     }
 
     private ValidatableResponse getMedicalCertificateRequest(String intygId, String personId) {
-        ST requestTemplate = new STGroupFile("integrationtests/getmedicalcertificate/requests.stg").getInstanceOf("request");
+        ST requestTemplate = new STGroupFile("integrationtests/getmedicalcertificate/requests.stg")
+                .getInstanceOf("request");
         requestTemplate.add("intygId", intygId);
         requestTemplate.add("personId", personId);
 
-        return given().body(requestTemplate.render()).when().post("inera-certificate/get-medical-certificate/v1.0").then().statusCode(200)
+        return given().body(requestTemplate.render())
+                .when().post("inera-certificate/get-medical-certificate/v1.0")
+                .then().statusCode(200)
                 .rootPath("Envelope.Body.GetMedicalCertificateResponse.");
     }
 }

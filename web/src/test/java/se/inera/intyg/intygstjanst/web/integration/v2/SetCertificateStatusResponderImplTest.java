@@ -18,21 +18,14 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v2;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
-import java.time.LocalDateTime;
-
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
 import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.riv.clinicalprocess.healthcond.certificate.setCertificateStatus.v2.SetCertificateStatusResponderInterface;
@@ -42,9 +35,24 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Part;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Statuskod;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SetCertificateStatusResponderImplTest {
+    private static final Recipient FKASSA =
+            new Recipient("FKORG", "Föräkringskassa", "FKASSA", Arrays.asList("fk7263"), true);
 
     @Mock
     private CertificateService certificateService;
@@ -52,8 +60,17 @@ public class SetCertificateStatusResponderImplTest {
     @Mock
     private MonitoringLogService monitoringLogService;
 
+    @Mock
+    private RecipientService recipientService;
+
     @InjectMocks
     private SetCertificateStatusResponderInterface responder = new SetCertificateStatusResponderImpl();
+
+    @Before
+    public void setupRecipientService() throws RecipientUnknownException {
+        when(recipientService.getRecipient(eq("FKASSA"))).thenReturn(FKASSA);
+        when(recipientService.getRecipient(eq("part"))).thenThrow(new RecipientUnknownException("Unknown"));
+    }
 
     @Test
     public void setCertificateStatusTest() throws Exception {
@@ -63,12 +80,12 @@ public class SetCertificateStatusResponderImplTest {
         SetCertificateStatusResponseType response = responder.setCertificateStatus(null, request);
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
 
-        verify(certificateService).setCertificateState(intygId, "FK", CertificateState.SENT, timestamp);
+        verify(certificateService).setCertificateState(intygId, "FKASSA", CertificateState.SENT, timestamp);
         verify(monitoringLogService).logCertificateStatusChanged(intygId, "SENT");
     }
 
     @Test
-    public void setCertificateStatusIllegalPartTest() throws Exception {
+    public void setCertificateStatusIllegalRecipientTest() throws Exception {
         final String intygId = "intygId";
         final LocalDateTime timestamp = LocalDateTime.now();
         SetCertificateStatusType request = createRequest(intygId, "part", "SENTTO", timestamp);

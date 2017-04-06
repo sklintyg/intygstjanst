@@ -9,12 +9,12 @@
     "states": [
         {
             "state": "RECEIVED",
-            "target": "HV",
+            "target": "HSVARD",
             "timestamp": "2015-12-23T14:30:03.227"
         },
         {
             "state": "SENT",
-            "target": "FK",
+            "target": "FKASSA",
             "timestamp": "2015-12-23T14:31:03.227"
         }
     ],
