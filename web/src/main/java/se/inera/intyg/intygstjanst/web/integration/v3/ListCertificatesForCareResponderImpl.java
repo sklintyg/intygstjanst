@@ -64,36 +64,42 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
         response.setIntygsLista(new ListaType());
         response.getIntygsLista().getIntyg();
 
-        try {
-            final Personnummer personnummer = new Personnummer(parameters.getPersonId().getExtension());
+        final Personnummer personnummer = new Personnummer(parameters.getPersonId().getExtension());
 
-            List<Certificate> certificates = certificateService.listCertificatesForCare(personnummer,
-                    parameters.getEnhetsId().stream()
-                            .map(HsaId::getExtension)
-                            .collect(Collectors.toList()));
+        List<Certificate> certificates = certificateService.listCertificatesForCare(personnummer,
+                parameters.getEnhetsId().stream().map(HsaId::getExtension).collect(Collectors.toList()));
 
-            for (Certificate certificate : certificates) {
-                // If the certificate is deleted by the care giver it is not returned. Note that both revoked and
-                // archived certificates are returned
-                if (!certificate.isDeletedByCareGiver()) {
-                    response.getIntygsLista().getIntyg().add(convert(certificate));
+        for (Certificate certificate : certificates) {
+            // If the certificate is deleted by the care giver it is not returned.
+            // Note that both revoked and archived certificates are returned
+            if (!certificate.isDeletedByCareGiver()) {
+                Intyg intyg = convert(certificate);
+                if (intyg != null) {
+                    // Add all certificates that were successfully converted.
+                    // We are trying to provide callee with as much data as possible.
+                    response.getIntygsLista().getIntyg().add(intyg);
                 }
             }
-            monitoringLogService.logCertificateListedByCare(personnummer);
+        }
+        monitoringLogService.logCertificateListedByCare(personnummer);
+
+        return response;
+    }
+
+    private Intyg convert(Certificate certificate) {
+        try {
+            CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
+
+            // Unified handling of all certificate types, maintaining a simple module api
+            Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
+            intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates()));
+            return intyg;
 
         } catch (ModuleNotFoundException | ModuleException e) {
             LOGGER.error(e.getMessage());
         }
-        return response;
-    }
 
-    private Intyg convert(Certificate certificate) throws ModuleNotFoundException, ModuleException {
-        CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
-
-        ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
-        // Unified handling of all certificate types, maintaining a simple module api
-        Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
-        intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates()));
-        return intyg;
+        return null;
     }
 }

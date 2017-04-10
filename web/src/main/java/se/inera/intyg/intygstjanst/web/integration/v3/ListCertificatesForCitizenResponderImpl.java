@@ -73,15 +73,21 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
             final Personnummer personnummer = new Personnummer(parameters.getPersonId().getExtension());
             List<Certificate> certificates = certificateService.listCertificatesForCitizen(
                     personnummer, toStringList(parameters.getIntygTyp()), parameters.getFromDatum(), parameters.getTomDatum());
+
             for (Certificate certificate : certificates) {
                 if (certificateMatchesArkiveradeParameter(parameters.isArkiverade(), certificate)) {
-                    response.getIntygsLista().getIntyg().add(convert(certificate));
+                    Intyg intyg = convert(certificate);
+                    if (intyg != null) {
+                        // Add all certificates that were successfully converted.
+                        // We are trying to provide callee with as much data as possible.
+                        response.getIntygsLista().getIntyg().add(intyg);
+                    }
                 }
             }
+
             response.setResult(ResultTypeUtil.okResult());
             monitoringLogService.logCertificateListedByCitizen(personnummer);
-        } catch (ModuleNotFoundException | ModuleException e) {
-            LOGGER.error(e.getMessage());
+
         } catch (MissingConsentException ex) {
             response.setResult(ResultTypeUtil.infoResult("NOCONSENT"));
         }
@@ -100,13 +106,21 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         return intygTyp.stream().map(TypAvIntyg::getCode).collect(Collectors.toList());
     }
 
-    private Intyg convert(Certificate certificate) throws ModuleNotFoundException, ModuleException {
-        CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
-        ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
-        // Unified handling of all certificate types, maintaining a simple module api
-        Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
-        intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates()));
-        return intyg;
+    private Intyg convert(Certificate certificate) {
+        try {
+            CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
+
+            // Unified handling of all certificate types, maintaining a simple module api
+            Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
+            intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates()));
+            return intyg;
+
+        } catch (ModuleNotFoundException | ModuleException e) {
+            LOGGER.error(e.getMessage());
+        }
+
+        return null;
     }
 
 }
