@@ -29,11 +29,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
+import se.inera.intyg.intygstjanst.web.integration.util.CertificateStateFilterUtil;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -48,6 +50,8 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 public class ListCertificatesForCareResponderImpl implements ListCertificatesForCareResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ListCertificatesForCareResponderImpl.class);
+
+    private static final String HSVARD_PARTKOD = "HSVARD";
 
     @Autowired
     private CertificateService certificateService;
@@ -89,11 +93,13 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
     private Intyg convert(Certificate certificate) {
         try {
             CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
-
+            ModuleEntryPoint moduleEntryPoint = moduleRegistry.getModuleEntryPoint(certificateHolder.getType());
+            ModuleApi moduleApi = moduleEntryPoint.getModuleApi();
             // Unified handling of all certificate types, maintaining a simple module api
             Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
-            intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates()));
+            intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
+                    .filter(ch -> CertificateStateFilterUtil.filter(ch, HSVARD_PARTKOD, moduleEntryPoint.getDefaultRecipient()))
+                    .collect(Collectors.toList())));
             return intyg;
 
         } catch (ModuleNotFoundException | ModuleException e) {

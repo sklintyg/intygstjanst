@@ -43,6 +43,7 @@ import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertif
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.Part;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetCertificateResponderImplTest {
@@ -87,6 +88,9 @@ public class GetCertificateResponderImplTest {
         GetCertificateType parameters = new GetCertificateType();
         parameters.setIntygsId(new IntygId());
         parameters.getIntygsId().setExtension(id);
+        Part part = new Part();
+        part.setCode("FKASSA");
+        parameters.setPart(part);
         return parameters;
     }
 

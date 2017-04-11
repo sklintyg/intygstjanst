@@ -32,11 +32,13 @@ import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
+import se.inera.intyg.intygstjanst.web.integration.util.CertificateStateFilterUtil;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -76,7 +78,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
 
             for (Certificate certificate : certificates) {
                 if (certificateMatchesArkiveradeParameter(parameters.isArkiverade(), certificate)) {
-                    Intyg intyg = convert(certificate);
+                    Intyg intyg = convert(certificate, parameters.getPart().getCode());
                     if (intyg != null) {
                         // Add all certificates that were successfully converted.
                         // We are trying to provide callee with as much data as possible.
@@ -106,14 +108,16 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         return intygTyp.stream().map(TypAvIntyg::getCode).collect(Collectors.toList());
     }
 
-    private Intyg convert(Certificate certificate) {
+    private Intyg convert(Certificate certificate, String part) {
         try {
             CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
-
+            ModuleEntryPoint moduleEntryPoint = moduleRegistry.getModuleEntryPoint(certificateHolder.getType());
+            ModuleApi moduleApi = moduleEntryPoint.getModuleApi();
             // Unified handling of all certificate types, maintaining a simple module api
             Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
-            intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates()));
+            intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
+                    .filter(ch -> CertificateStateFilterUtil.filter(ch, part, moduleEntryPoint.getDefaultRecipient()))
+                    .collect(Collectors.toList())));
             return intyg;
 
         } catch (ModuleNotFoundException | ModuleException e) {

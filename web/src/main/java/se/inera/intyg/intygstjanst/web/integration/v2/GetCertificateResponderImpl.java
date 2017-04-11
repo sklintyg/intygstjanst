@@ -18,28 +18,35 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v2;
 
-import com.google.common.base.Throwables;
+import java.io.StringReader;
+import java.util.stream.Collectors;
+
+import javax.xml.bind.JAXB;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.common.base.Throwables;
+
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
+import se.inera.intyg.intygstjanst.web.integration.util.CertificateStateFilterUtil;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
 
-import javax.xml.bind.JAXB;
-import java.io.StringReader;
-
 @SchemaValidation
 public class GetCertificateResponderImpl implements GetCertificateResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetCertificateResponderImpl.class);
+
+    private static final String SMI_DEFAULT_RECIPIENT = "FKKASSA";
 
     @Autowired
     private ModuleContainerApi moduleContainer;
@@ -55,7 +62,7 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
             if (certificate.isDeletedByCareGiver()) {
                 throw new ServerException("Certificate with id " + certificateId + " is deleted from intygstjansten");
             } else {
-                setCertificateBody(certificate, response);
+                setCertificateBody(certificate, response, request.getPart().getCode());
             }
         } catch (InvalidCertificateException e) {
             throw new ServerException("Certificate with id " + certificateId + " is invalid or does not exist");
@@ -63,14 +70,18 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
         return response;
     }
 
-    protected void setCertificateBody(CertificateHolder certificate, GetCertificateResponseType response) {
+    protected void setCertificateBody(CertificateHolder certificateHolder, GetCertificateResponseType response, String part) {
         try {
-            RegisterCertificateType jaxbObject = JAXB.unmarshal(new StringReader(certificate.getOriginalCertificate()),
+            RegisterCertificateType jaxbObject = JAXB.unmarshal(new StringReader(certificateHolder.getOriginalCertificate()),
                     RegisterCertificateType.class);
             response.setIntyg(jaxbObject.getIntyg());
-            response.getIntyg().getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificate.getCertificateStates()));
+            response.getIntyg().getStatus()
+                    .addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
+                            .filter(ch -> CertificateStateFilterUtil.filter(ch, part, SMI_DEFAULT_RECIPIENT))
+                            .collect(Collectors.toList())));
         } catch (Exception e) {
-            LOGGER.error("Error while converting in GetCertificate for id: {} with stacktrace: {}", certificate.getId(), e.getStackTrace());
+            LOGGER.error("Error while converting in GetCertificate for id: {} with stacktrace: {}", certificateHolder.getId(),
+                    e.getStackTrace());
             Throwables.propagate(e);
         }
     }

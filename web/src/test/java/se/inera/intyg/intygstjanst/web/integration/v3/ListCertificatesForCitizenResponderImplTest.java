@@ -46,6 +46,7 @@ import se.inera.intyg.common.support.model.StatusKod;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -56,6 +57,7 @@ import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.v3.ListCertificatesForCitizenResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.v3.ListCertificatesForCitizenResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.v3.ListCertificatesForCitizenType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.Part;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
@@ -63,6 +65,8 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListCertificatesForCitizenResponderImplTest {
+
+    private static final String DEFAULT_RECIPIENT = "FK";
 
     @Mock
     private CertificateService certificateService;
@@ -74,6 +78,9 @@ public class ListCertificatesForCitizenResponderImplTest {
     private IntygModuleRegistryImpl moduleRegistry;
 
     @Mock
+    private ModuleEntryPoint moduleEntryPoint;
+
+    @Mock
     private ModuleApi moduleApi;
 
     @InjectMocks
@@ -81,7 +88,9 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     @Before
     public void setup() throws ModuleNotFoundException, ModuleException {
-        when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
+        when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
+        when(moduleEntryPoint.getDefaultRecipient()).thenReturn(DEFAULT_RECIPIENT);
+        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(mock(Utlatande.class));
         when(moduleApi.getIntygFromUtlatande(any(Utlatande.class))).thenReturn(new Intyg());
     }
@@ -222,6 +231,9 @@ public class ListCertificatesForCitizenResponderImplTest {
         parameters.setFromDatum(fromDate);
         parameters.setTomDatum(toDate);
         parameters.setArkiverade(arkiverad);
+        Part part = new Part();
+        part.setCode("FKASSA");
+        parameters.setPart(part);
 
         return parameters;
     }
