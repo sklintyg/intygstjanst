@@ -50,6 +50,8 @@ public class GetCertificateResponderImplTest {
 
     private static final String LOGICAL_ADDRESS = "logicalAddress";
     private static final LocalDateTime TIMESTAMP = LocalDateTime.now();
+    private static final String FKASSA_RECIPIENT_ID = "FKASSA";
+    private static final String MINA_INTYG_RECIPIENT_ID = "INVANA";
 
     @Mock
     private ModuleContainerApi moduleContainer;
@@ -84,22 +86,57 @@ public class GetCertificateResponderImplTest {
         responder.getCertificate(LOGICAL_ADDRESS, createRequest(intygId));
     }
 
+    @Test
+    public void statusesAreFilteredDifferentlyForFkAndMinaIntyg() throws Exception {
+        // See INTYG-3629
+        // Given
+        final String intygId = "intyg-1";
+        CertificateHolder mockedReturnValue = createResponse(false,
+                new CertificateStateHolder(MINA_INTYG_RECIPIENT_ID, CertificateState.DELETED, TIMESTAMP));
+
+        // When
+        when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(mockedReturnValue);
+        GetCertificateResponseType fromFk = responder.getCertificate(LOGICAL_ADDRESS,
+                createRequest(intygId, FKASSA_RECIPIENT_ID));
+        when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(mockedReturnValue);
+        GetCertificateResponseType fromMinaIntyg = responder.getCertificate(LOGICAL_ADDRESS,
+                createRequest(intygId, MINA_INTYG_RECIPIENT_ID));
+
+        // Then
+        assertNotNull(fromFk.getIntyg());
+        assertEquals(0, fromFk.getIntyg().getStatus().size());
+
+        assertNotNull(fromMinaIntyg.getIntyg());
+        assertEquals(1, fromMinaIntyg.getIntyg().getStatus().size());
+        assertEquals(StatusKod.DELETE.name(), fromMinaIntyg.getIntyg().getStatus().get(0).getStatus().getCode());
+        assertEquals(MINA_INTYG_RECIPIENT_ID, fromMinaIntyg.getIntyg().getStatus().get(0).getPart().getCode());
+        assertEquals(TIMESTAMP, fromMinaIntyg.getIntyg().getStatus().get(0).getTidpunkt());
+    }
+
     private GetCertificateType createRequest(String id) {
+        return createRequest(id, FKASSA_RECIPIENT_ID);
+    }
+
+    private GetCertificateType createRequest(String id, String part) {
         GetCertificateType parameters = new GetCertificateType();
         parameters.setIntygsId(new IntygId());
         parameters.getIntygsId().setExtension(id);
-        Part part = new Part();
-        part.setCode("FKASSA");
-        parameters.setPart(part);
+        Part p = new Part();
+        p.setCode(part);
+        parameters.setPart(p);
         return parameters;
     }
 
     private CertificateHolder createResponse(boolean deletedByCareGiver) {
+        return createResponse(deletedByCareGiver, new CertificateStateHolder(FKASSA_RECIPIENT_ID, CertificateState.SENT, TIMESTAMP));
+    }
+
+    private CertificateHolder createResponse(boolean deletedByCareGiver, CertificateStateHolder... statusItems) {
         CertificateHolder holder = new CertificateHolder();
         holder.setDeletedByCareGiver(deletedByCareGiver);
         holder.setOriginalCertificate(
                 "<registerCertificateType xmlns:ns2=\"urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3\"><ns2:intyg></ns2:intyg></registerCertificateType>");
-        holder.setCertificateStates(Arrays.asList(new CertificateStateHolder("FKASSA", CertificateState.SENT, TIMESTAMP)));
+        holder.setCertificateStates(Arrays.asList(statusItems));
         return holder;
     }
 }

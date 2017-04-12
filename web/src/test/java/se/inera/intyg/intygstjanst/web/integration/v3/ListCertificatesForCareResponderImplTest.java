@@ -19,12 +19,15 @@
 package se.inera.intyg.intygstjanst.web.integration.v3;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +39,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.common.support.model.StatusKod;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
@@ -43,6 +48,7 @@ import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -52,11 +58,13 @@ import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
+import se.riv.clinicalprocess.healthcond.certificate.v3.IntygsStatus;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListCertificatesForCareResponderImplTest {
 
-    private static final String DEFAULT_RECIPIENT = "FK";
+    private static final String FKASSA_RECIPIENT_ID = "FKASSA";
+    private static final String OTHER_RECIPIENT_ID = "someotherId";
 
     @Mock
     private CertificateService certificateService;
@@ -79,7 +87,7 @@ public class ListCertificatesForCareResponderImplTest {
     @Before
     public void setup() throws ModuleNotFoundException, ModuleException {
         when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
-        when(moduleEntryPoint.getDefaultRecipient()).thenReturn(DEFAULT_RECIPIENT);
+        when(moduleEntryPoint.getDefaultRecipient()).thenReturn(OTHER_RECIPIENT_ID);
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(mock(Utlatande.class));
         when(moduleApi.getIntygFromUtlatande(any(Utlatande.class))).thenReturn(new Intyg());
@@ -152,6 +160,59 @@ public class ListCertificatesForCareResponderImplTest {
 
         // We only return Intyg that are not deletedByCaregiver
         assertEquals(1, response.getIntygsLista().getIntyg().size());
+    }
+
+    @Test
+    public void statusesAreFilteredForCare() {
+        // Given
+        List<String> careUnit = Collections.singletonList("enhet");
+        LocalDateTime firstStatusSaved = LocalDateTime.of(2017, 4, 7, 15, 15);
+        LocalDateTime[] timestamps = {
+                firstStatusSaved,
+                firstStatusSaved.plusHours(1),
+                firstStatusSaved.plusHours(2),
+                firstStatusSaved.plusHours(3),
+                firstStatusSaved.plusHours(4),
+                firstStatusSaved.plusHours(5),
+        };
+        Personnummer pnr = new Personnummer("19121212-1212");
+        List<String> certificateTypes = Collections.singletonList("fk7263");
+        LocalDate fromDate = LocalDate.of(2000, 1, 1);
+        LocalDate toDate = LocalDate.of(2020, 12, 12);
+
+        Certificate certificate = new Certificate();
+        certificate.setStates(Arrays.asList(
+                new CertificateStateHistoryEntry(FKASSA_RECIPIENT_ID, CertificateState.SENT, timestamps[0]),
+                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.SENT, timestamps[1]),
+                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.DELETED, timestamps[3]),
+                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.RESTORED, timestamps[4]),
+                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.CANCELLED, timestamps[5])));
+        List<Certificate> result = Arrays.asList(certificate);
+
+        when(certificateService.listCertificatesForCare(pnr, careUnit)).thenReturn(result);
+
+        ListCertificatesForCareType parameters = createListCertificatesRequest(pnr, createHsaId("vardgivare"),
+                createHsaId("enhet"));
+
+        ListCertificatesForCareResponseType response = responder.listCertificatesForCare(null, parameters);
+
+        // Then
+        assertEquals(1, response.getIntygsLista().getIntyg().size());
+        assertEquals(2, response.getIntygsLista().getIntyg().get(0).getStatus().size());
+
+        IntygsStatus status = response.getIntygsLista().getIntyg().get(0).getStatus().get(0);
+        assertEquals(OTHER_RECIPIENT_ID, status.getPart().getCode());
+        assertNotNull(status.getPart().getCodeSystem());
+        assertEquals(timestamps[5], status.getTidpunkt());
+        assertEquals(StatusKod.CANCEL.name(), status.getStatus().getCode());
+        assertNotNull(status.getStatus().getCodeSystem());
+
+        status = response.getIntygsLista().getIntyg().get(0).getStatus().get(1);
+        assertEquals(OTHER_RECIPIENT_ID, status.getPart().getCode());
+        assertNotNull(status.getPart().getCodeSystem());
+        assertEquals(timestamps[1], status.getTidpunkt());
+        assertEquals(StatusKod.SENTTO.name(), status.getStatus().getCode());
+        assertNotNull(status.getStatus().getCodeSystem());
     }
 
     private HsaId createHsaId(String id) {
