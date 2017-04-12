@@ -23,6 +23,15 @@
     "active" : true
   },
   {
+    "id" : "FBA",
+    "name" : "F\u00F6rs\u00E4kringsbolaget AB",
+    "logicalAddress" : "Test",
+    "certificateTypes" : [
+      "lisjp"
+    ],
+    "active" : true
+  },
+  {
     "id" : "HSVARD",
     "name" : "Hälso- och sjukvården",
     "logicalAddress" : "hsvardAdress",
