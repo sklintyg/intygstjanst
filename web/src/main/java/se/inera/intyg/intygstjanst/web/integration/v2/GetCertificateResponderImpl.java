@@ -18,18 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v2;
 
-import java.io.StringReader;
-import java.util.stream.Collectors;
-
-import javax.xml.bind.JAXB;
-
+import com.google.common.base.Throwables;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.common.base.Throwables;
-
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
@@ -41,12 +34,16 @@ import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertif
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
 
+import javax.xml.bind.JAXB;
+import java.io.StringReader;
+import java.util.stream.Collectors;
+
 @SchemaValidation
 public class GetCertificateResponderImpl implements GetCertificateResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetCertificateResponderImpl.class);
 
-    private static final String SMI_DEFAULT_RECIPIENT = "FKKASSA";
+    private static final String SMI_DEFAULT_RECIPIENT = "FKASSA";
 
     @Autowired
     private ModuleContainerApi moduleContainer;
