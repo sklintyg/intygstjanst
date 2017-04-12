@@ -25,7 +25,7 @@
   {
     "id" : "FBA",
     "name" : "F\u00F6rs\u00E4kringsbolaget AB",
-    "logicalAddress" : "Test",
+    "logicalAddress" : "fail-adress",
     "certificateTypes" : [
       "lisjp"
     ],
