@@ -25,7 +25,7 @@
     url: http://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-j2ee-management_1.1_spec/1.0.1/geronimo-j2ee-management_1.1_spec-1.0.1.jar
     dest: "{{ tomcat_lib }}/geronimo-j2ee-management_1.1_spec-1.0.1.jar"
     
-- name: Download mysql-connector-java-5.1.26.jar
+- name: Download mysql-connector-java-5.1.40.jar
   get_url:
     url: http://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.40/mysql-connector-java-5.1.40.jar
     dest: "{{ tomcat_lib }}/mysql-connector-java-5.1.40.jar"
