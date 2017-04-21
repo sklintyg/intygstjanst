@@ -1,8 +1,7 @@
 package se.inera.intyg.intygstjanst.web.service.repo;
 
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,9 +101,9 @@ public class RecipientRepoImpl implements RecipientRepo {
         LOG.info("Performing scheduled recipient update.");
         ObjectMapper objectMapper = new ObjectMapper();
 
-        try {
+        try (FileInputStream fis = new FileInputStream(recipientFile)) {
             Recipient[] recipientArray = objectMapper
-                    .readValue(Files.newInputStream(Paths.get(recipientFile)), Recipient[].class);
+                    .readValue(fis, Recipient[].class);
 
             Stream.of(recipientArray)
                     .filter(r -> !recipientMap.containsKey(r.getId()) || !recipientMap.get(r.getId()).equals(r))

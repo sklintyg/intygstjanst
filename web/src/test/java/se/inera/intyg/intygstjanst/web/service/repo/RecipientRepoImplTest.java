@@ -22,6 +22,7 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -53,10 +54,10 @@ public class RecipientRepoImplTest {
 
         injectRecipientFile(recipientFile);
 
-        String path = new ClassPathResource("/RecipientRepoImplTest/" + recipientFile).getURI().getPath();
+        URI uri = new ClassPathResource("/RecipientRepoImplTest/" + recipientFile).getURI();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        Recipient[] rec = objectMapper.readValue(Files.newInputStream(Paths.get(path)),
+        Recipient[] rec = objectMapper.readValue(Files.newInputStream(Paths.get(uri)),
                 Recipient[].class);
         allRecipients = Arrays.asList(rec);
 
