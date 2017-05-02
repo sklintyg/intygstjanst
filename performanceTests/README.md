@@ -30,58 +30,45 @@ I mappen src/test/resources/request-bodies finns xml-filer med SOAP-requests fö
 Lagrar 1000 intyg, 10 per testperson, från csv-filen med personnummer.
 Tömmer inte databasen efter körning, använd RemoveTestData för att tömma.
 
-- mvn test -DsimulationClass=se.inera.intygstjanst.StoreCertificates
+- gradle gatling -DgatlingSimulation=StoreCertificates
 
 ### GetCertificates
 Preloadar databasen med personer och intyg.
 Lägger in medgivande och hämtar ut specifika intyg för en testperson.
 Tömmer databasen efter körning.
 
-- mvn test -DsimulationClass=se.inera.intygstjanst.GetCertificates
+- gradle gatling -DgatlingSimulation=GetCertificates
 
 ### ListCertificates
 Preloadar databasen med personer och intyg.
 Lägger in medgivande och listar ut intyg.
 Tömmer databasen efter körning.
 
-- mvn test -DsimulationClass=se.inera.intygstjanst.ListCertificates
+- gradle gatling -DgatlingSimulation=ListCertificates
 
 ### RemoveTestData
 Man kan även tömma databasen genom att köra:
 
-- mvn test -DsimulationClass=se.inera.webcert.RemoveTestData
+- gradle gatling -DgatlingSimulation=RemoveTestData
 
 ### Testpersonnummer
 Testpersonnummer används primärt mot demo/QA eller annan miljö där PU-tjänstens testmiljö är aktiv.
 
-Simulationen SkrivSigneraSkickaIntyg nyttjar cirkulärt dessa personnummer för att mata in olika patienter för varje 
-iteration som skall författa och signera ett intyg.
-
 ## Hur startar jag en simulering
 
 ### Välj målmiljö
-Ett alternativ är att öppna pom.xml och redigera element under <properties>
+Ett alternativ är att öppna build.gradle och redigera gatlingBaseUrl i ext-blocket
 
-- <baseUrl>http://localhost:8080/inera-certificate</baseUrl>
+- "http://localhost:8080/inera-certificate"
 
-Alternativt kan man ange -DbaseUrl=....... på kommandoraden.
+Alternativt kan man ange -Dcertificate.baseUrl=....... på kommandoraden.
 
 ### Exekvering från command-line
+Testerna körs genom att ge:
 
-Från command-line fungerar följande:
+- gradle gatling -DgatlingSimulation=TEST
 
-- Lägga in intyg i databasen
-  mvn test -DsimulationClass=se.inera.intygstjanst.StoreCertificates
-  
-- Medgivande och lista intyg
-  mvn test -DsimulationClass=se.inera.intygstjanst.ListCertificates
-  
-- Medgivande och hämtning av specifika intyg med hjälp av intygsid och personnummer
-  mvn test -DsimulationClass=se.inera.intygstjanst.GetCertificates
-  
-- Tömma databasen
-  mvn test -DsimulationClass=se.inera.intygstjanst.RemoveTestData
- 
+där TEST är namnet på den test-class som ska exekveras.
 
 
 ## Hur följer jag upp utfallet?
