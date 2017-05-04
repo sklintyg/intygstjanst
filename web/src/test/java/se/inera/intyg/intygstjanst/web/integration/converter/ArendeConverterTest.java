@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.service.converter;
+package se.inera.intyg.intygstjanst.web.integration.converter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -26,6 +26,9 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -43,13 +46,16 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
-import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Amneskod;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 
 public class ArendeConverterTest {
+
+    private static final long FIXED_TIME_NANO = 1456329300599000L;
+    private static final Instant FIXED_TIME_INSTANT = Instant.ofEpochSecond(FIXED_TIME_NANO / 1_000_000, FIXED_TIME_NANO % 1_000_000);
+    private static final Clock FIXED_CLOCK = Clock.fixed(FIXED_TIME_INSTANT, ZoneId.systemDefault());
 
     private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML = "SendMessageToCareTest/sendmessagetocare.xml";
 
@@ -59,6 +65,7 @@ public class ArendeConverterTest {
 
     @Before
     public void setup() {
+        ArendeConverter.setMockSystemClock(FIXED_CLOCK);
         XMLUnit.setIgnoreWhitespace(true);
     }
 
@@ -79,7 +86,8 @@ public class ArendeConverterTest {
         assertEquals(sendMessageToCareType.getLogiskAdressMottagare(), sendMessageToCare.getLogiskAdressmottagare());
         assertEquals(sendMessageToCareType.getMeddelandeId(), sendMessageToCare.getMeddelandeId());
         assertEquals(sendMessageToCareType.getReferensId(), sendMessageToCare.getReferens());
-        assertNotNull(sendMessageToCare.getTimestamp());
+        assertEquals(FIXED_TIME_INSTANT,
+                sendMessageToCare.getTimestamp().toInstant(ZoneId.systemDefault().getRules().getOffset(FIXED_TIME_INSTANT)));
         Diff diff = XMLUnit.compareXML(loadXmlMessageFromFile(), sendMessageToCare.getMeddelande());
         assertTrue(diff.toString(), diff.similar());
     }
@@ -108,7 +116,7 @@ public class ArendeConverterTest {
         assertEquals(logiskAdressMottagare, arende.getLogiskAdressmottagare());
         assertEquals(meddelandeId, arende.getMeddelandeId());
         assertEquals(referensId, arende.getReferens());
-        assertNotNull(arende.getTimestamp());
+        assertEquals(FIXED_TIME_INSTANT, arende.getTimestamp().toInstant(ZoneId.systemDefault().getRules().getOffset(FIXED_TIME_INSTANT)));
 
         // arende.meddelande should be a string representation of original request
         try {

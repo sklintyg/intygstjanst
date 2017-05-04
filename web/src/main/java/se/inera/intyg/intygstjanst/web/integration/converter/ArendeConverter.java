@@ -19,10 +19,12 @@
 package se.inera.intyg.intygstjanst.web.integration.converter;
 
 import java.io.StringWriter;
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 import javax.xml.bind.*;
 
+import com.google.common.annotations.VisibleForTesting;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.ObjectFactory;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
@@ -30,7 +32,14 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.S
 
 public final class ArendeConverter {
 
+    private static Clock systemClock = Clock.systemDefaultZone();
+
     private ArendeConverter() {
+    }
+
+    @VisibleForTesting
+    static void setMockSystemClock(Clock systemClock) {
+        ArendeConverter.systemClock = systemClock;
     }
 
     public static String convertToXmlString(SendMessageToCareType sendMessageToCareType) throws JAXBException {
@@ -48,7 +57,7 @@ public final class ArendeConverter {
         arende.setIntygsId(sendMessageToCareType.getIntygsId().getExtension());
         arende.setMeddelandeId(sendMessageToCareType.getMeddelandeId());
         arende.setReferens(sendMessageToCareType.getReferensId());
-        arende.setTimeStamp(LocalDateTime.now());
+        arende.setTimeStamp(LocalDateTime.now(systemClock));
         arende.setLogiskAdressmottagare(sendMessageToCareType.getLogiskAdressMottagare());
         arende.setAmne(sendMessageToCareType.getAmne().getCode());
         arende.setMeddelande(convertToXmlString(sendMessageToCareType));
@@ -60,7 +69,7 @@ public final class ArendeConverter {
         arende.setIntygsId(source.getIntygsId().getExtension());
         arende.setMeddelandeId(source.getMeddelandeId());
         arende.setReferens(source.getReferensId());
-        arende.setTimeStamp(LocalDateTime.now());
+        arende.setTimeStamp(LocalDateTime.now(systemClock));
         arende.setLogiskAdressmottagare(source.getLogiskAdressMottagare());
         arende.setAmne(source.getAmne().getCode());
         arende.setMeddelande(convertToXmlString(source));
