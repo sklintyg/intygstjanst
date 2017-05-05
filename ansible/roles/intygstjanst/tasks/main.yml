@@ -13,7 +13,7 @@
 
 - name: Download intygstjanst-liquibase-runner-{{ version }}.zip
   get_url:
-    url: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/{{ version }}/intygstjanst-liquibase-runner-{{ version }}.zip
+    url: https://build-inera.nordicmedtest.se/nexus/repository/releases/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/{{ version }}/intygstjanst-liquibase-runner-{{ version }}.zip
     dest: "{{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip"
   when: deploy_from_repo|bool
 
@@ -39,7 +39,7 @@
 
 - name: Download intygstjanst-web-{{ version }}.war
   get_url:
-    url: https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/se/inera/intyg/intygstjanst/intygstjanst-web/{{ version }}/intygstjanst-web-{{ version }}.war
+    url: https://build-inera.nordicmedtest.se/nexus/repository/releases/se/inera/intyg/intygstjanst/intygstjanst-web/{{ version }}/intygstjanst-web-{{ version }}.war
     dest: "{{ releases_folder }}/intygstjanst-web-{{ version }}.war"
     timeout: 120
   when: deploy_from_repo|bool
