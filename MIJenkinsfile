@@ -13,7 +13,7 @@ stage('checkout') {
 stage('deploy test-IT') {
     node {
         util.run {
-            def itVersion = util.latestVersion("intygstjanst-web", baseVersion)
+            def itVersion = util.latestVersion("se/inera/intyg/intygstjanst/intygstjanst-web", baseVersion)
 
             ansiblePlaybook(extraVars: [version: "${itVersion}", ansible_ssh_port: "22", deploy_from_repo: "true"],
                             installation: 'ansible-yum', inventory: 'ansible/inventory/intygstjanst/test-mi', playbook: 'ansible/deploy.yml')
