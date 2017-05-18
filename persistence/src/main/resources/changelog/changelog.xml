@@ -11,321 +11,341 @@
 	program. If not, see <http://www.gnu.org/licenses/>. -->
 
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd"
-	logicalFilePath="classpath:changelog/changelog.xml">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd"
+    logicalFilePath="classpath:changelog/changelog.xml">
 
-	<changeSet id="1" author="me">
-		<createTable tableName="CERTIFICATE">
-			<column name="ID" type="varchar(255)">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="CERTIFICATE_TYPE" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="CIVIC_REGISTRATION_NUMBER" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="CARE_UNIT_NAME" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="SIGNING_DOCTOR_NAME" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="SIGNED_DATE" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="VALID_FROM_DATE" type="varchar(10)">
-				<constraints nullable="false" />
-			</column>
-			<column name="VALID_TO_DATE" type="varchar(10)">
-				<constraints nullable="false" />
-			</column>
-			<column name="DELETED" type="boolean" />
-			<column name="DOCUMENT" type="blob">
-				<constraints nullable="false" />
-			</column>
-		</createTable>
-
-		<createTable tableName="CERTIFICATE_STATE">
-			<column name="CERTIFICATE_ID" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="TARGET" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="STATE" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="TIMESTAMP" type="datetime">
-				<constraints nullable="false" />
-			</column>
-		</createTable>
-		<addForeignKeyConstraint baseColumnNames="CERTIFICATE_ID"
-			baseTableName="CERTIFICATE_STATE" constraintName="CERT_STATE_FK"
-			referencedColumnNames="ID" referencedTableName="CERTIFICATE" />
-	</changeSet>
-	<changeSet id="2" author="me">
-		<createTable tableName="CONSENT">
-			<column name="CIVIC_REGISTRATION_NUMBER" type="varchar(255)">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-		</createTable>
-	</changeSet>
-
-	<changeSet id="3" author="me">
-		<createIndex indexName="IDX_CERTIFICATE_CIVIC_REGISTRATION_NUMBER"
-			tableName="CERTIFICATE" unique="false">
-			<column name="CIVIC_REGISTRATION_NUMBER" />
-		</createIndex>
-	</changeSet>
-
-	<changeSet id="4" author="me">
-		<createTable tableName="ORIGINAL_CERTIFICATE">
-			<column name="ID" type="bigint" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="RECEIVED" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="DOCUMENT" type="blob">
-				<constraints nullable="false" />
-			</column>
-		</createTable>
-	</changeSet>
-
-	<changeSet id="5" author="me">
-		<addColumn tableName="ORIGINAL_CERTIFICATE">
-			<column name="CERTIFICATE_ID" type="varchar(255)">
-				<constraints nullable="true" />
-			</column>
-		</addColumn>
-		<addForeignKeyConstraint baseColumnNames="CERTIFICATE_ID"
-			baseTableName="ORIGINAL_CERTIFICATE" constraintName="FK_ORIGINAL_CERTIFICATE_CERTIFICATE"
-			referencedColumnNames="ID" referencedTableName="CERTIFICATE" />
-	</changeSet>
-
-	<changeSet id="6" author="me">
-		<addColumn tableName="CERTIFICATE">
-			<column name="CARE_UNIT_ID" type="varchar(255)" defaultValue="x">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<!-- Use the following changeset in raw SQL when running on MySQL, since 
-		Liquibase emits multiple ALTER TABLE statements that are hightly inefficient 
-		on MySQL -->
-	<changeSet id="7-mysql" dbms="mysql" author="bb">
-		<sql>
-			alter table CERTIFICATE
-			add CARE_GIVER_ID varchar(255) not null default 'x',
-			add WIRETAPPED boolean not null default false,
-			add DELETED_BY_CARE_GIVER boolean not null default false,
-			modify VALID_FROM_DATE varchar(10) null,
-			modify VALID_TO_DATE varchar(10) null,
-			add ADDITIONAL_INFO varchar(255) null;
-		</sql>
-	</changeSet>
-
-	<!-- Use the corresponding liquibase changeset otherwise -->
-	<changeSet id="7-not-mysql" dbms="!mysql" author="bb">
-		<addColumn tableName="CERTIFICATE">
-			<column name="CARE_GIVER_ID" type="varchar(255)" defaultValue="x">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-		<addColumn tableName="CERTIFICATE">
-			<column name="WIRETAPPED" type="boolean" defaultValueBoolean="false">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-		<addColumn tableName="CERTIFICATE">
-			<column name="DELETED_BY_CARE_GIVER" type="boolean"
-				defaultValueBoolean="false">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-		<dropNotNullConstraint tableName="CERTIFICATE"
-			columnName="VALID_FROM_DATE" columnDataType="varchar(10)" />
-		<dropNotNullConstraint tableName="CERTIFICATE"
-			columnName="VALID_TO_DATE" columnDataType="varchar(10)" />
-		<addColumn tableName="CERTIFICATE">
-			<column name="ADDITIONAL_INFO" type="varchar(255)">
-				<constraints nullable="true" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="8" author="ans">
-		<createIndex indexName="IDX_CERTIFICATE_STATE_STATE"
-			tableName="CERTIFICATE_STATE" unique="false">
-			<column name="STATE" />
-		</createIndex>
-	</changeSet>
-
-	<changeSet id="9" author="el">
-
-		<createTable tableName="SJUKFALL_CERT">
-			<column name="ID" type="varchar(255)">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="CERTIFICATE_TYPE" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="CIVIC_REGISTRATION_NUMBER" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="PATIENT_FIRST_NAME" type="varchar(255)">
-				<constraints nullable="true" />
-			</column>
-			<column name="PATIENT_LAST_NAME" type="varchar(255)">
-				<constraints nullable="true" />
-			</column>
-			<column name="CARE_UNIT_ID" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="CARE_UNIT_NAME" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="CARE_GIVER_ID" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="SIGNING_DOCTOR_ID" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="SIGNING_DOCTOR_NAME" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="DIAGNOSE_CODE" type="varchar(64)">
-				<constraints nullable="false" />
-			</column>
-			<column name="DELETED" type="boolean" />
-		</createTable>
-
-
-		<createTable tableName="SJUKFALL_CERT_WORK_CAPACITY">
-			<column name="ID" type="bigint" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="CERTIFICATE_ID" type="varchar(255)">
-				<constraints nullable="true" />
-			</column>
-			<column name="CAPACITY_PERCENTAGE" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="FROM_DATE" type="varchar(10)">
-				<constraints nullable="false" />
-			</column>
-			<column name="TO_DATE" type="varchar(10)">
-				<constraints nullable="false" />
-			</column>
-		</createTable>
-
-		<addForeignKeyConstraint baseColumnNames="CERTIFICATE_ID"
-			baseTableName="SJUKFALL_CERT_WORK_CAPACITY" constraintName="SJUKFALL_CERT_STATE_FK"
-			referencedColumnNames="ID" referencedTableName="SJUKFALL_CERT" />
-
-	</changeSet>
-
-	<changeSet id="10" author="el">
-		<addColumn tableName="SJUKFALL_CERT">
-			<column name="SIGNING_DATETIME" type="datetime">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="11" author="kol">
-		<!-- initial creation of tables -->
-
-		<createTable tableName="ARENDE">
-			<column name="internReferens" type="bigint">
-				<constraints unique="true" nullable="false" />
-			</column>
-			<column name="INTYGS_ID" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="REFERENS_ID" type="varchar(255)">
-				<constraints nullable="true" />
-			</column>
-			<column name="MEDDELANDE_ID" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="AMNE" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="LOGISK_ADRESSMOTTAGARE" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="MEDDELANDE_DATA" type="text">
-				<constraints nullable="true" />
-			</column>
-			<column name="TIMESTAMP" type="datetime">
-        <constraints nullable="false" />
+  <changeSet id="1" author="me">
+    <createTable tableName="CERTIFICATE">
+      <column name="ID" type="varchar(255)">
+        <constraints primaryKey="true" nullable="false"/>
       </column>
-		</createTable>
+      <column name="CERTIFICATE_TYPE" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CIVIC_REGISTRATION_NUMBER" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CARE_UNIT_NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="SIGNING_DOCTOR_NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="SIGNED_DATE" type="datetime">
+        <constraints nullable="false"/>
+      </column>
+      <column name="VALID_FROM_DATE" type="varchar(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="VALID_TO_DATE" type="varchar(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="DELETED" type="boolean"/>
+      <column name="DOCUMENT" type="blob">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
 
-		<!-- Add auto incremented id column to table -->
-		<addAutoIncrement columnDataType="bigint" columnName="internReferens"
-			incrementBy="1" startWith="1" tableName="ARENDE" />
-	</changeSet>
+    <createTable tableName="CERTIFICATE_STATE">
+      <column name="CERTIFICATE_ID" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="TARGET" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="STATE" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="TIMESTAMP" type="datetime">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <addForeignKeyConstraint baseColumnNames="CERTIFICATE_ID"
+        baseTableName="CERTIFICATE_STATE" constraintName="CERT_STATE_FK"
+        referencedColumnNames="ID" referencedTableName="CERTIFICATE"/>
+  </changeSet>
+  <changeSet id="2" author="me">
+    <createTable tableName="CONSENT">
+      <column name="CIVIC_REGISTRATION_NUMBER" type="varchar(255)">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="3" author="me">
+    <createIndex indexName="IDX_CERTIFICATE_CIVIC_REGISTRATION_NUMBER"
+        tableName="CERTIFICATE" unique="false">
+      <column name="CIVIC_REGISTRATION_NUMBER"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="4" author="me">
+    <createTable tableName="ORIGINAL_CERTIFICATE">
+      <column name="ID" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="RECEIVED" type="datetime">
+        <constraints nullable="false"/>
+      </column>
+      <column name="DOCUMENT" type="blob">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="5" author="me">
+    <addColumn tableName="ORIGINAL_CERTIFICATE">
+      <column name="CERTIFICATE_ID" type="varchar(255)">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+    <addForeignKeyConstraint baseColumnNames="CERTIFICATE_ID"
+        baseTableName="ORIGINAL_CERTIFICATE" constraintName="FK_ORIGINAL_CERTIFICATE_CERTIFICATE"
+        referencedColumnNames="ID" referencedTableName="CERTIFICATE"/>
+  </changeSet>
+
+  <changeSet id="6" author="me">
+    <addColumn tableName="CERTIFICATE">
+      <column name="CARE_UNIT_ID" type="varchar(255)" defaultValue="x">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <!-- Use the following changeset in raw SQL when running on MySQL, since
+    Liquibase emits multiple ALTER TABLE statements that are hightly inefficient
+    on MySQL -->
+  <changeSet id="7-mysql" dbms="mysql" author="bb">
+    <sql>
+      alter table CERTIFICATE add CARE_GIVER_ID varchar(255) not null default 'x', add WIRETAPPED boolean not null
+      default false, add DELETED_BY_CARE_GIVER boolean not null default false, modify VALID_FROM_DATE varchar(10) null,
+      modify VALID_TO_DATE varchar(10) null, add ADDITIONAL_INFO varchar(255) null;
+    </sql>
+  </changeSet>
+
+  <!-- Use the corresponding liquibase changeset otherwise -->
+  <changeSet id="7-not-mysql" dbms="!mysql" author="bb">
+    <addColumn tableName="CERTIFICATE">
+      <column name="CARE_GIVER_ID" type="varchar(255)" defaultValue="x">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <addColumn tableName="CERTIFICATE">
+      <column name="WIRETAPPED" type="boolean" defaultValueBoolean="false">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <addColumn tableName="CERTIFICATE">
+      <column name="DELETED_BY_CARE_GIVER" type="boolean"
+          defaultValueBoolean="false">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <dropNotNullConstraint tableName="CERTIFICATE"
+        columnName="VALID_FROM_DATE" columnDataType="varchar(10)"/>
+    <dropNotNullConstraint tableName="CERTIFICATE"
+        columnName="VALID_TO_DATE" columnDataType="varchar(10)"/>
+    <addColumn tableName="CERTIFICATE">
+      <column name="ADDITIONAL_INFO" type="varchar(255)">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="8" author="ans">
+    <createIndex indexName="IDX_CERTIFICATE_STATE_STATE"
+        tableName="CERTIFICATE_STATE" unique="false">
+      <column name="STATE"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="9" author="el">
+
+    <createTable tableName="SJUKFALL_CERT">
+      <column name="ID" type="varchar(255)">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="CERTIFICATE_TYPE" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CIVIC_REGISTRATION_NUMBER" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="PATIENT_FIRST_NAME" type="varchar(255)">
+        <constraints nullable="true"/>
+      </column>
+      <column name="PATIENT_LAST_NAME" type="varchar(255)">
+        <constraints nullable="true"/>
+      </column>
+      <column name="CARE_UNIT_ID" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CARE_UNIT_NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CARE_GIVER_ID" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="SIGNING_DOCTOR_ID" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="SIGNING_DOCTOR_NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="DIAGNOSE_CODE" type="varchar(64)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="DELETED" type="boolean"/>
+    </createTable>
+
+    <createTable tableName="SJUKFALL_CERT_WORK_CAPACITY">
+      <column name="ID" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="CERTIFICATE_ID" type="varchar(255)">
+        <constraints nullable="true"/>
+      </column>
+      <column name="CAPACITY_PERCENTAGE" type="int">
+        <constraints nullable="false"/>
+      </column>
+      <column name="FROM_DATE" type="varchar(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="TO_DATE" type="varchar(10)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint baseColumnNames="CERTIFICATE_ID"
+        baseTableName="SJUKFALL_CERT_WORK_CAPACITY" constraintName="SJUKFALL_CERT_STATE_FK"
+        referencedColumnNames="ID" referencedTableName="SJUKFALL_CERT"/>
+
+  </changeSet>
+
+  <changeSet id="10" author="el">
+    <addColumn tableName="SJUKFALL_CERT">
+      <column name="SIGNING_DATETIME" type="datetime">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="11" author="kol">
+    <!-- initial creation of tables -->
+
+    <createTable tableName="ARENDE">
+      <column name="internReferens" type="bigint">
+        <constraints unique="true" nullable="false"/>
+      </column>
+      <column name="INTYGS_ID" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="REFERENS_ID" type="varchar(255)">
+        <constraints nullable="true"/>
+      </column>
+      <column name="MEDDELANDE_ID" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="AMNE" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="LOGISK_ADRESSMOTTAGARE" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="MEDDELANDE_DATA" type="text">
+        <constraints nullable="true"/>
+      </column>
+      <column name="TIMESTAMP" type="datetime">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <!-- Add auto incremented id column to table -->
+    <addAutoIncrement columnDataType="bigint" columnName="internReferens"
+        incrementBy="1" startWith="1" tableName="ARENDE"/>
+  </changeSet>
 
   <changeSet id="12" author="ef">
     <sql>update CERTIFICATE_STATE set TARGET='HV' where (STATE='CANCELLED' or STATE='RECEIVED');</sql>
   </changeSet>
 
-	<changeSet id="13" author="me">
-		<renameColumn tableName="SJUKFALL_CERT" oldColumnName="PATIENT_LAST_NAME" newColumnName="PATIENT_NAME" columnDataType="varchar(255)"/>
-		<dropColumn tableName="SJUKFALL_CERT" columnName="PATIENT_FIRST_NAME" />
-	</changeSet>
+  <changeSet id="13" author="me">
+    <renameColumn tableName="SJUKFALL_CERT" oldColumnName="PATIENT_LAST_NAME" newColumnName="PATIENT_NAME" columnDataType="varchar(255)"/>
+    <dropColumn tableName="SJUKFALL_CERT" columnName="PATIENT_FIRST_NAME"/>
+  </changeSet>
 
   <changeSet id="29" author="kja">
     <addUniqueConstraint
-      columnNames="MEDDELANDE_ID"
-      tableName="ARENDE" />
+        columnNames="MEDDELANDE_ID"
+        tableName="ARENDE"/>
   </changeSet>
 
   <changeSet id="30" author="mn">
-    <sql>insert into CERTIFICATE_STATE(CERTIFICATE_ID, TARGET, STATE, TIMESTAMP) SELECT ID, 'MI', 'DELETED', now() from CERTIFICATE where DELETED=1;</sql>
+    <sql>insert into CERTIFICATE_STATE(CERTIFICATE_ID, TARGET, STATE, TIMESTAMP) SELECT ID, 'MI', 'DELETED', now() from
+      CERTIFICATE where DELETED=1;
+    </sql>
   </changeSet>
 
   <changeSet id="31" author="mn">
-    <dropColumn tableName="CERTIFICATE" columnName="DOCUMENT" />
+    <dropColumn tableName="CERTIFICATE" columnName="DOCUMENT"/>
   </changeSet>
 
   <changeSet id="32" author="mn">
-    <dropColumn tableName="CERTIFICATE" columnName="DELETED" />
+    <dropColumn tableName="CERTIFICATE" columnName="DELETED"/>
   </changeSet>
-	
-	<changeSet id="33" author="el">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<indexExists tableName="SJUKFALL_CERT" indexName="IDX_SJUKFALL_CERT_UNIT_ID"/>
-			</not>
-		</preConditions>
-		<createIndex tableName="SJUKFALL_CERT" indexName="IDX_SJUKFALL_CERT_UNIT_ID">
-			<column name="CARE_UNIT_ID"></column>
-		</createIndex>
-	</changeSet>
 
-	<changeSet id="34" author="el">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<indexExists tableName="SJUKFALL_CERT" indexName="IDX_SJUKFALL_CERT_CIVIC_REGISTRATION_NUMBER"/>
-			</not>
-		</preConditions>
-		<createIndex tableName="SJUKFALL_CERT" indexName="IDX_SJUKFALL_CERT_CIVIC_REGISTRATION_NUMBER">
-			<column name="CIVIC_REGISTRATION_NUMBER"></column>
-		</createIndex>
-	</changeSet>
+  <changeSet id="33" author="el">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <indexExists tableName="SJUKFALL_CERT" indexName="IDX_SJUKFALL_CERT_UNIT_ID"/>
+      </not>
+    </preConditions>
+    <createIndex tableName="SJUKFALL_CERT" indexName="IDX_SJUKFALL_CERT_UNIT_ID">
+      <column name="CARE_UNIT_ID"></column>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="34" author="el">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <indexExists tableName="SJUKFALL_CERT" indexName="IDX_SJUKFALL_CERT_CIVIC_REGISTRATION_NUMBER"/>
+      </not>
+    </preConditions>
+    <createIndex tableName="SJUKFALL_CERT" indexName="IDX_SJUKFALL_CERT_CIVIC_REGISTRATION_NUMBER">
+      <column name="CIVIC_REGISTRATION_NUMBER"></column>
+    </createIndex>
+  </changeSet>
 
   <changeSet id="35" author="ef">
     <sql>
-      update CERTIFICATE_STATE set TARGET='HSVARD' where TARGET='HV';
-      update CERTIFICATE_STATE set TARGET='FKASSA' where TARGET='FK';
-      update CERTIFICATE_STATE set TARGET='INVANA' where TARGET='MI';
-      update CERTIFICATE_STATE set TARGET='TRANSP' where TARGET='TS';
+      update CERTIFICATE_STATE set TARGET='HSVARD' where TARGET='HV'; update CERTIFICATE_STATE set TARGET='FKASSA' where
+      TARGET='FK'; update CERTIFICATE_STATE set TARGET='INVANA' where TARGET='MI'; update CERTIFICATE_STATE set
+      TARGET='TRANSP' where TARGET='TS';
     </sql>
+  </changeSet>
+
+  <changeSet id="36" author="el">
+    <createTable tableName="RELATION">
+      <column name="ID" type="bigint">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="FROM_INTYG_ID" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="TO_INTYG_ID" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="RELATION_KOD" type="varchar(32)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CREATED_DATE" type="datetime">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <!-- Add auto incremented id column to table -->
+    <addAutoIncrement columnDataType="bigint" columnName="ID"
+        incrementBy="1" startWith="1" tableName="RELATION"/>
   </changeSet>
 </databaseChangeLog>

@@ -37,15 +37,24 @@ import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
+import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
-import se.inera.intyg.intygstjanst.web.service.*;
+import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.ConsentService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.RelationService;
+import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
+import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 import java.time.LocalDate;
@@ -65,6 +74,9 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     @Autowired
     private CertificateDao certificateDao;
+
+    @Autowired
+    private RelationService relationService;
 
     @Autowired
     private IntygModuleRegistryImpl moduleRegistry;
@@ -282,6 +294,11 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         certificate.addState(state);
         certificateDao.store(certificate);
         storeOriginalCertificate(certificateHolder.getOriginalCertificate(), certificate);
+        if (certificateHolder.getCertificateRelation() != null) {
+            CertificateRelation rel = certificateHolder.getCertificateRelation();
+            relationService.storeRelation(
+                    new Relation(certificateHolder.getId(), rel.getTillIntygsId(), rel.getRelationKod().value(), LocalDateTime.now()));
+        }
         return certificate;
     }
 

@@ -56,6 +56,15 @@
       implementor="se.inera.intyg.intygstjanst.web.integration.ListKnownRecipientsResponderImpl">
   </jaxws:endpoint>
 
+  <jaxws:endpoint address="/list-relations-for-certificate/v1.0"
+      implementor="se.inera.intyg.intygstjanst.web.integration.ListRelationsForCertificateResponderImpl">
+    <jaxws:schemaLocations>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.0.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.0.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/interactions/ListRelationsForCertificateInteraction/ListRelationsForCertificateResponder_1.0.xsd</jaxws:schemaLocation>
+    </jaxws:schemaLocations>
+  </jaxws:endpoint>
+
   <jaxws:endpoint address="/list-certificates/v1.0"
                   implementor="se.inera.intyg.intygstjanst.web.integration.ListCertificatesResponderImpl">
     <jaxws:outFaultInterceptors>

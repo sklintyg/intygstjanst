@@ -18,24 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -54,21 +37,42 @@ import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
+import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
-
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.web.service.ConsentService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.RelationService;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.schemas.contract.Personnummer;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * @author andreaskaltenbach
@@ -100,6 +104,9 @@ public class CertificateServiceImplTest {
 
     @Mock
     private RecipientServiceImpl recipientService;
+
+    @Mock
+    private RelationService relationService;
 
     @Mock
     private MonitoringLogService monitoringLogService;
@@ -137,6 +144,8 @@ public class CertificateServiceImplTest {
     public void setup() {
         when(recipientService.getPrimaryRecipientHsvard()).thenReturn(
                 new Recipient("TEST", "Hälso- och sjukvården", HSVARD_ID, "fk7263", true));
+
+        doNothing().when(relationService).storeRelation(any(Relation.class));
     }
 
     @Test
@@ -144,6 +153,7 @@ public class CertificateServiceImplTest {
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId("id");
         certificateHolder.setOriginalCertificate("original");
+        certificateHolder.setCertificateRelation(new CertificateRelation("id", "id-0", RelationKod.ERSATT, LocalDateTime.now()));
 
         ArgumentCaptor<OriginalCertificate> originalCertificateCaptor = ArgumentCaptor
                 .forClass(OriginalCertificate.class);
@@ -162,6 +172,7 @@ public class CertificateServiceImplTest {
         assertTrue(certificate.getStates().get(0).getTimestamp().isBefore(inAMinute));
 
         verify(certificateDao).store(certificate);
+        verify(relationService).storeRelation(any(Relation.class));
 
         OriginalCertificate originalCertificate = originalCertificateCaptor.getValue();
         assertEquals(certificate, originalCertificate.getCertificate());

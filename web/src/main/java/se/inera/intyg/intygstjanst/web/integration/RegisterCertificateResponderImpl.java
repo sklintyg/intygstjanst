@@ -18,20 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import java.io.StringWriter;
-
-import javax.annotation.PostConstruct;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-
+import com.google.common.base.Throwables;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.common.base.Throwables;
-
+import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -39,6 +31,7 @@ import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
+import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.common.support.modules.support.api.dto.ValidateXmlResponse;
 import se.inera.intyg.common.util.logging.LogMarkers;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -49,6 +42,15 @@ import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.Regi
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.DatePeriodType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Relation;
+
+import javax.annotation.PostConstruct;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import java.io.StringWriter;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @SchemaValidation
 public class RegisterCertificateResponderImpl implements RegisterCertificateResponderInterface {
@@ -163,7 +165,15 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         certificateHolder.setType(type);
         certificateHolder.setOriginalCertificate(originalCertificate);
         certificateHolder.setAdditionalInfo(additionalInfo);
+        certificateHolder.setCertificateRelation(convertRelation(intyg.getIntygsId().getExtension(), intyg.getRelation()));
         return certificateHolder;
     }
 
+    private CertificateRelation convertRelation(String intygsId, List<Relation> relations) {
+        if (relations != null && relations.size() > 0) {
+            return new CertificateRelation(intygsId, relations.get(0).getIntygsId().getExtension(),
+                    RelationKod.fromValue(relations.get(0).getTyp().getCode()), LocalDateTime.now());
+        }
+        return null;
+    }
 }
