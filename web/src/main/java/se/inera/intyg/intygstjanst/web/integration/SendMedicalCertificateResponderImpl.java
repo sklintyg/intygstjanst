@@ -67,12 +67,11 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
 
             String certificateId = request.getSend().getLakarutlatande().getLakarutlatandeId();
 
-            // Comment 2015-02-13 by Magnus Ekstrand:
-            // Lookup recipient based on the certificate type. This works if and only if a certificate
-            // type only have one recipient. If in a future a certificate type can be sent to multiple
-            // recipients, other mechanisms must be implemented to determine correct recipient.
-            Certificate certificate = certificateService.getCertificateForCare(certificateId);
-            Recipient recipient = lookupRecipient(certificate);
+            // Try fetching the certificate to ensure it exists and is correct.
+            certificateService.getCertificateForCare(certificateId);
+
+            // According to the TKB, SendMedicalCertificate is only used to send certificates to Försäkringskassan.
+            Recipient recipient = recipientService.getPrimaryRecipientFkassa();
 
             // Send certificate to recipient
             SendStatus status = certificateService.sendCertificate(personnummer, certificateId, recipient.getId());
@@ -84,7 +83,6 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
                 response.setResult(ResultOfCallUtil.okResult());
                 LOGGER.info(certificateId + " sent to " + recipient.getId());
             }
-
             return response;
 
         } catch (InvalidCertificateException e) {
@@ -121,37 +119,6 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             response.setResult(ResultOfCallUtil.applicationErrorResult("Certificate couldn't be sent to recipient"));
             return response;
         }
-
-    }
-
-    private Recipient lookupRecipient(Certificate certificate) throws RecipientUnknownException {
-        return lookupRecipient(new CertificateType(certificate.getType()));
-    }
-
-    private Recipient lookupRecipient(CertificateType certificateType) throws RecipientUnknownException {
-
-        List<Recipient> recipients = recipientService.listRecipients(certificateType);
-
-        if (recipients.size() == 1) {
-            return recipients.get(0);
-        }
-
-        String errorMsg = "";
-
-        if (recipients.isEmpty()) {
-            errorMsg = String.format("No recipient was found for certificate of type %s. Maybe this is a missed configuration.",
-                    certificateType.getCertificateTypeId());
-        }
-
-        if (recipients.size() > 1) {
-            errorMsg = String.format(
-                    "Multiple recipients were found for certificate of type %s. Unable to decide recipient. "
-                            + "Maybe this is a missed configuration.",
-                    certificateType.getCertificateTypeId());
-        }
-
-        LOGGER.error(LogMarkers.VALIDATION, errorMsg);
-        throw new RecipientUnknownException(errorMsg);
     }
 
     private String safeGetCertificateId(SendMedicalCertificateRequestType request) {
