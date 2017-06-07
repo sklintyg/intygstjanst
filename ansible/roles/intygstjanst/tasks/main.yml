@@ -61,11 +61,26 @@
     dest: "{{ webapps_folder }}/inera-certificate.war"
     remote_src: True
 
+- name: Remove intygstjanst-liquibase-runner-{{ version }}.zip from releases
+  file:
+    state: absent
+    path: "{{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}.zip"
+
+- name: Remove unzipped intygstjanst-liquibase-runner-{{ version }} from releases
+  file:
+    state: absent
+    path: "{{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}/bin/liquibase-runner"
+
+- name: Remove intygstjanst-web-{{ version }}.war from releases (as it is now deployed to tomcat)
+  file:
+    state: absent
+    path: "{{ releases_folder }}/intygstjanst-web-{{ version }}.war"
+
 - name: Fetch configuration repo to get new branches
   command: git fetch origin
   args:
     chdir: "{{ config_folder }}"
-        
+
 - name: Update configuration to {{ config_version }}
   git:
     repo: "{{ config_repository }}"
