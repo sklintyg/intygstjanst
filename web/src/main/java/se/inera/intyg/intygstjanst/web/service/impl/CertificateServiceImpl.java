@@ -297,7 +297,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         if (certificateHolder.getCertificateRelation() != null) {
             CertificateRelation rel = certificateHolder.getCertificateRelation();
             relationService.storeRelation(
-                    new Relation(certificateHolder.getId(), rel.getTillIntygsId(), rel.getRelationKod().value(), LocalDateTime.now()));
+                    new Relation(certificateHolder.getId(), rel.getToIntygsId(), rel.getRelationKod().value(), LocalDateTime.now()));
         }
         return certificate;
     }
