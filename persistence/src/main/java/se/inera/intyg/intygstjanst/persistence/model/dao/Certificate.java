@@ -144,12 +144,10 @@ public class Certificate {
     private Collection<CertificateStateHistoryEntry> states = new ArrayList<>();
 
     /**
-     * Constructor that takes an id and a document.
+     * Constructor that takes an id
      *
      * @param id
      *            the id
-     * @param document
-     *            the document
      */
     public Certificate(String id) {
         this.id = id;
