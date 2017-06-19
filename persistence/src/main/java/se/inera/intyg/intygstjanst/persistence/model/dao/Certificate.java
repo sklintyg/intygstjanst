@@ -25,6 +25,8 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.annotations.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -42,6 +44,9 @@ import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
 @Table(name = "CERTIFICATE")
 @XmlRootElement
 public class Certificate {
+
+    private static final int DEFAULT_VARCHAR_LENGTH = 255;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Certificate.class);
 
     /**
      * Id of the certificate.
@@ -115,7 +120,7 @@ public class Certificate {
     /**
      * Additional information.
      */
-    @Column(name = "ADDITIONAL_INFO", nullable = true)
+    @Column(name = "ADDITIONAL_INFO", nullable = true, length = DEFAULT_VARCHAR_LENGTH)
     private String additionalInfo;
 
     /**
@@ -155,6 +160,15 @@ public class Certificate {
      */
     public Certificate() {
         // Empty
+    }
+
+    @PrePersist
+    public void prePersist() {
+        // We need to make sure the additionalInfo is of correct size
+        if (additionalInfo != null && additionalInfo.length() > DEFAULT_VARCHAR_LENGTH) {
+            LOGGER.warn("AdditionalInfo too large for column for certificate of id {} and type {}", id, type);
+            additionalInfo = additionalInfo.substring(0, DEFAULT_VARCHAR_LENGTH);
+        }
     }
 
     /**
