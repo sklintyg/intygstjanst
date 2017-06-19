@@ -144,7 +144,7 @@ public class Certificate {
     private Collection<CertificateStateHistoryEntry> states = new ArrayList<>();
 
     /**
-     * Constructor that takes an id
+     * Constructor that takes an id.
      *
      * @param id
      *            the id
