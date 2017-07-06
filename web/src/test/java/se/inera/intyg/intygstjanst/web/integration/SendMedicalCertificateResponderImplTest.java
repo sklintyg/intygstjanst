@@ -18,6 +18,38 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import iso.v21090.dt.v1.II;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.w3.wsaddressing10.AttributedURIType;
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.rivtabp20.v1.SendMedicalCertificateResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.EnhetType;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.ErrorIdEnum;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.HosPersonalType;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
+import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType;
+import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.web.exception.ServerException;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.inera.intyg.schemas.contract.Personnummer;
+
+import java.time.LocalDateTime;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -26,33 +58,6 @@ import static org.mockito.Mockito.when;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ERROR;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
-
-import java.time.LocalDateTime;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.w3.wsaddressing10.AttributedURIType;
-
-import iso.v21090.dt.v1.II;
-import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
-import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.rivtabp20.v1.SendMedicalCertificateResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.*;
-import se.inera.ifv.insuranceprocess.healthreporting.v2.*;
-import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
-import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.schemas.contract.Personnummer;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.web.exception.ServerException;
-import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
-import se.inera.intyg.intygstjanst.web.service.RecipientService;
-import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
-import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendMedicalCertificateResponderImplTest {
@@ -262,19 +267,20 @@ public class SendMedicalCertificateResponderImplTest {
         verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
     }
 
-    @Test
-    public void testSendMedicalCertificateSaknatPatientnamn() throws Exception {
-        SendMedicalCertificateRequestType invalidRequest = createRequest();
-        invalidRequest.getSend().getLakarutlatande().getPatient().setFullstandigtNamn(null);
-        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
-
-        assertEquals(ERROR, response.getResult().getResultCode());
-        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
-        assertEquals("Validation Error(s) found: No Patient fullstandigtNamn elements found or set!", response.getResult().getErrorText());
-
-        verify(recipientService, never()).getPrimaryRecipientFkassa();
-        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
-    }
+    // INTYG-4086, namn skall ej längre skickas med.
+//    @Test
+//    public void testSendMedicalCertificateSaknatPatientnamn() throws Exception {
+//        SendMedicalCertificateRequestType invalidRequest = createRequest();
+//        invalidRequest.getSend().getLakarutlatande().getPatient().setFullstandigtNamn(null);
+//        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+//
+//        assertEquals(ERROR, response.getResult().getResultCode());
+//        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+//        assertEquals("Validation Error(s) found: No Patient fullstandigtNamn elements found or set!", response.getResult().getErrorText());
+//
+//        verify(recipientService, never()).getPrimaryRecipientFkassa();
+//        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+//    }
 
     @Test
     public void testSendMedicalCertificateSaknadSigneringstidpunkt() throws Exception {

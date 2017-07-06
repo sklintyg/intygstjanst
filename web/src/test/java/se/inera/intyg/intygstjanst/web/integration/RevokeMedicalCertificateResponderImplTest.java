@@ -18,20 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDateTime;
-import java.util.Collections;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -40,7 +26,6 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
-
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
@@ -49,7 +34,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
@@ -58,6 +42,20 @@ import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
+import se.inera.intyg.schemas.contract.Personnummer;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+import java.time.LocalDateTime;
+import java.util.Collections;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RevokeMedicalCertificateResponderImplTest {
@@ -272,19 +270,20 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
     }
 
-    @Test
-    public void testRevokeMedicalCertificateSaknatPatientnamn() throws Exception {
-        RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
-        invalidRequest.getRevoke().getLakarutlatande().getPatient().setFullstandigtNamn(null);
-        RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
-
-        assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
-        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
-        assertEquals("Validation Error(s) found: No Patient fullstandigtNamn elements found or set!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
-    }
+    // INTYG-4086: Namn ej oblig.
+//    @Test
+//    public void testRevokeMedicalCertificateSaknatPatientnamn() throws Exception {
+//        RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
+//        invalidRequest.getRevoke().getLakarutlatande().getPatient().setFullstandigtNamn(null);
+//        RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
+//
+//        assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
+//        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+//        assertEquals("Validation Error(s) found: No Patient fullstandigtNamn elements found or set!", response.getResult().getErrorText());
+//        Mockito.verifyZeroInteractions(statisticsService);
+//        Mockito.verifyZeroInteractions(sjukfallCertificateService);
+//        Mockito.verifyZeroInteractions(certificateService);
+//    }
 
     @Test
     public void testRevokeMedicalCertificateSaknatSigneringsdatum() throws Exception {

@@ -29,6 +29,7 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,7 +95,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                     resultList.size(), careUnitHsaIds);
         }
         return resultList.stream()
-                .sorted((a, b) -> a.getCivicRegistrationNumber().compareTo(b.getCivicRegistrationNumber()))
+                .sorted(Comparator.comparing(SjukfallCertificate::getCivicRegistrationNumber))
                 .collect(Collectors.toList());
     }
 
