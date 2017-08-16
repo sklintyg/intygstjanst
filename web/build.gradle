@@ -42,6 +42,8 @@ dependencies {
     compile "se.inera.intyg.common:lisjp:${commonVersion}"
     compile "se.inera.intyg.common:luae_fs:${commonVersion}"
     compile "se.inera.intyg.common:luae_na:${commonVersion}"
+    compile "se.inera.intyg.common:db:${commonVersion}"
+    compile "se.inera.intyg.common:doi:${commonVersion}"
 
     compile "se.riv.itintegration.monitoring:itintegration-monitoring-schemas:${rivtaItintegrationMonitoringSchemasVersion}"
     compile "se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:1.0.7-beta3"
