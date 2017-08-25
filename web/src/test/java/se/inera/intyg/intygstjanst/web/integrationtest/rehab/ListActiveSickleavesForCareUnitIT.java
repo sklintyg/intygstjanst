@@ -76,6 +76,27 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
             "   </soapenv:Body>\n" +
             "</soapenv:Envelope>";
 
+    private static final String REQUEST_WITH_PATIENTID = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:riv:itintegration:registry:1\" xmlns:urn1=\"urn:riv:clinicalprocess:healthcond:rehabilitation:ListActiveSickLeavesForCareUnitResponder:1\" xmlns:urn2=\"urn:riv:clinicalprocess:healthcond:certificate:types:2\">\n"
+            +
+            "   <soapenv:Header>\n" +
+            "      <urn:LogicalAddress>1</urn:LogicalAddress>\n" +
+            "   </soapenv:Header>\n" +
+            "   <soapenv:Body>\n" +
+            "      <urn1:ListActiveSickLeavesForCareUnit>\n" +
+            "         <urn1:enhets-id>\n" +
+            "            <urn2:root>1.2.752.129.2.1.4.1</urn2:root>\n" +
+            "            <urn2:extension>{{careUnitHsaId}}</urn2:extension>\n" +
+            "         </urn1:enhets-id>\n" +
+            "         <urn1:person-id>\n" +
+            "            <urn2:root></urn2:root>\n" +
+            "            <urn2:extension>{{patientId}}</urn2:extension>\n" +
+            "         </urn1:person-id>\n" +
+            "         <!--You may enter ANY elements at this point-->\n" +
+            "      </urn1:ListActiveSickLeavesForCareUnit>\n" +
+            "   </soapenv:Body>\n" +
+            "</soapenv:Envelope>";
+
+
     private static final String BASE = "Envelope.Body.ListActiveSickLeavesForCareUnitResponse.";
 
     @Test
@@ -94,6 +115,26 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
                 .body(BASE + "intygsLista.intygsData[1].patient.personId.extension", is(PERSON_ID))
                 .body(BASE + "intygsLista.intygsData[2].patient.personId.extension", is(PERSON_ID))
                 .body(BASE + "intygsLista.intygsData[3].patient.personId.extension", is(PERSON_ID_2_DASHED))
+                .when()
+                .post("inera-certificate/list-active-sick-leaves-for-care-unit/v1.0");
+    }
+
+    @Test
+    public void testReadIntygsDataWithPatient() {
+        IntegrationTestUtil.registerMedicalCertificate(INTYG_IDS.get(0), PERSON_ID, REGISTER_TEMPLATE_Fk7263);
+        IntegrationTestUtil.registerMedicalCertificate(INTYG_IDS.get(1), PERSON_ID, REGISTER_TEMPLATE_Fk7263);
+        IntegrationTestUtil.registerMedicalCertificate(INTYG_IDS.get(2), PERSON_ID, REGISTER_TEMPLATE_Fk7263);
+        IntegrationTestUtil.registerCertificateWithDateParameters(INTYG_IDS.get(3), PERSON_ID_2, IntegrationTestUtil.IntegrationTestCertificateType.LISJP);
+
+        given().with().body(REQUEST_WITH_PATIENTID
+                .replace("{{careUnitHsaId}}", CARE_UNIT_ID)
+                .replace("{{patientId}}", PERSON_ID_2_DASHED))
+
+                .expect()
+                .statusCode(200)
+                .body(BASE + "resultCode", is("OK"))
+                .body(BASE + "intygsLista.intygsData.size()", equalTo(1))
+                .body(BASE + "intygsLista.intygsData[0].patient.personId.extension", is(PERSON_ID_2_DASHED))
                 .when()
                 .post("inera-certificate/list-active-sick-leaves-for-care-unit/v1.0");
     }
