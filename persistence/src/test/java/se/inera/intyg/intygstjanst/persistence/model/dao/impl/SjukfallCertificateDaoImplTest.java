@@ -18,17 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +25,22 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * DAO test, uses @ContextConfiguration e.g. real DB.
@@ -54,7 +57,7 @@ public class SjukfallCertificateDaoImplTest {
 
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
     private static final String CARE_UNIT_NAME = "careunit-name-1";
-    private static final String PERSONNUMMER = "191212121212";
+    private static final String PERSONNUMMER = "19121212-1212";
     private static final String DOCTOR_HSA_ID = "doctor-1";
     private static final String DOCTOR_NAME = "doctor-name-1";
     private static final String FK7263 = "fk7263";
@@ -75,6 +78,15 @@ public class SjukfallCertificateDaoImplTest {
     public void testFindActiveSjukfallCertificates() {
         buildDefaultSjukfallCertificates();
         List<SjukfallCertificate> resultList = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(Arrays.asList(HSA_ID_1));
+        assertNotNull(resultList);
+        assertEquals(1, resultList.size());
+        assertEquals(3, resultList.get(0).getSjukfallCertificateWorkCapacity().size());
+    }
+
+    @Test
+    public void testFindActiveSjukfallCertificatesForPatient() {
+        buildDefaultSjukfallCertificates();
+        List<SjukfallCertificate> resultList = sjukfallCertificateDao.findActiveSjukfallCertificateForPersonOnCareUnits(Arrays.asList(HSA_ID_1), PERSONNUMMER);
         assertNotNull(resultList);
         assertEquals(1, resultList.size());
         assertEquals(3, resultList.get(0).getSjukfallCertificateWorkCapacity().size());
@@ -147,6 +159,9 @@ public class SjukfallCertificateDaoImplTest {
         sc.setSigningDoctorName(DOCTOR_NAME);
         sc.setType(FK7263);
         sc.setDeleted(deleted);
+        sc.setEmployment("STUDERANDE,ARBETSSOKANDE");
+        sc.setBiDiagnoseCode1("J21");
+        sc.setBiDiagnoseCode2("J22");
         return sc;
     }
 

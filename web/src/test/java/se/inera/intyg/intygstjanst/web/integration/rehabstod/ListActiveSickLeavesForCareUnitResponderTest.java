@@ -18,25 +18,30 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.rehabstod;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ResultCodeEnum;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
+import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by eriklupander on 2016-02-04.
@@ -79,5 +84,55 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
         ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
         assertNotNull(responseType);
         assertEquals(ResultCodeEnum.OK, responseType.getResultCode());
+    }
+
+    @Test
+    public void testHandlesPersonnummerWithoutDash() {
+        when(hsaService.getHsaIdForUnderenheter(HSA_ID)).thenReturn(new ArrayList<>());
+
+        ListActiveSickLeavesForCareUnitType params = new ListActiveSickLeavesForCareUnitType();
+        params.setEnhetsId(hsaId);
+        PersonId patientId = new PersonId();
+        patientId.setExtension("191212121212");
+        params.setPersonId(patientId);
+
+        ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
+        assertNotNull(responseType);
+        assertEquals(ResultCodeEnum.OK, responseType.getResultCode());
+
+        verify(sjukfallCertificateDao, times(1))
+                .findActiveSjukfallCertificateForPersonOnCareUnits(Arrays.asList("enhet-1"),
+                        "19121212-1212");
+    }
+
+
+    @Test
+    public void testNullPatientIdExtensionRunsExpectedDaoMethod() {
+        when(hsaService.getHsaIdForUnderenheter(HSA_ID)).thenReturn(new ArrayList<>());
+
+        ListActiveSickLeavesForCareUnitType params = new ListActiveSickLeavesForCareUnitType();
+        params.setEnhetsId(hsaId);
+        PersonId patientId = new PersonId();
+        patientId.setExtension(null);
+        params.setPersonId(patientId);
+
+        ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
+        verify(sjukfallCertificateDao, times(1)).findActiveSjukfallCertificateForCareUnits(anyList());
+        verify(sjukfallCertificateDao, times(0)).findActiveSjukfallCertificateForPersonOnCareUnits(anyList(), anyString());
+    }
+
+    @Test
+    public void testEmptyStringPatientIdExtensionRunsExpectedDaoMethod() {
+        when(hsaService.getHsaIdForUnderenheter(HSA_ID)).thenReturn(new ArrayList<>());
+
+        ListActiveSickLeavesForCareUnitType params = new ListActiveSickLeavesForCareUnitType();
+        params.setEnhetsId(hsaId);
+        PersonId patientId = new PersonId();
+        patientId.setExtension(" ");
+        params.setPersonId(patientId);
+
+        ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
+        verify(sjukfallCertificateDao, times(1)).findActiveSjukfallCertificateForCareUnits(anyList());
+        verify(sjukfallCertificateDao, times(0)).findActiveSjukfallCertificateForPersonOnCareUnits(anyList(), anyString());
     }
 }

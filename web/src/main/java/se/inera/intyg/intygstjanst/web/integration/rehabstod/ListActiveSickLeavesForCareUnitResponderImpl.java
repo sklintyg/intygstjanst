@@ -18,6 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.rehabstod;
 
+import com.google.common.base.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 // CHECKSTYLE:OFF LineLength
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitResponderInterface;
@@ -28,6 +29,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallCertificateIntygsDataConverter;
+import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsLista;
 // CHECKSTYLE:ON LineLength
 
@@ -58,15 +60,20 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
         }
 
         String careUnitHsaId = parameters.getEnhetsId().getExtension();
-        String personnummer = parameters.getPersonId() != null ? parameters.getPersonId().getExtension() : null;
+        String personnummer = parameters.getPersonId() != null && parameters.getPersonId().getExtension() != null
+                ? parameters.getPersonId().getExtension().trim()
+                : null;
+
 
         List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(careUnitHsaId);
         hsaIdList.add(careUnitHsaId);
 
-        List<SjukfallCertificate> activeSjukfallCertificateForCareUnits = null;
-        if (personnummer != null) {
+        List<SjukfallCertificate> activeSjukfallCertificateForCareUnits;
+        if (!Strings.isNullOrEmpty(personnummer)) {
+            Personnummer pnr = Personnummer.createValidatedPersonnummerWithDash(personnummer)
+                    .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
             activeSjukfallCertificateForCareUnits = sjukfallCertificateDao
-                    .findActiveSjukfallCertificateForPersonOnCareUnits(hsaIdList, personnummer);
+                    .findActiveSjukfallCertificateForPersonOnCareUnits(hsaIdList, pnr.getPersonnummer());
         } else {
             activeSjukfallCertificateForCareUnits = sjukfallCertificateDao
                     .findActiveSjukfallCertificateForCareUnits(hsaIdList);
