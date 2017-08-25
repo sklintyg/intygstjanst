@@ -18,16 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.service.converter;
 
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import com.google.common.base.Strings;
-
 import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
 import se.inera.intyg.common.fkparent.model.internal.Diagnos;
 import se.inera.intyg.common.lisjp.model.internal.LisjpUtlatande;
@@ -39,6 +33,12 @@ import se.inera.intyg.intygstjanst.persistence.model.builder.SjukfallCertificate
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
+
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Converts a (fk7263) Certificate to a CertificateSjukfall.
@@ -54,6 +54,11 @@ public class CertificateToSjukfallCertificateConverter {
     private static final int WORK_CAPACITY_75 = 75;
     private static final int WORK_CAPACITY_50 = 50;
     private static final int WORK_CAPACITY_25 = 25;
+
+    // Ur kodverk KV_FKMU_0002
+    private static final String NUVARANDE_ARBETE = "NUVARANDE_ARBETE";
+    private static final String ARBETSSOKANDE = "ARBETSSOKANDE";
+    private static final String FORALDRALEDIG = "FORALDRALEDIG";
 
     /**
      * Converts a fk7263 certificate into a SjukfallCertificate.
@@ -91,8 +96,23 @@ public class CertificateToSjukfallCertificateConverter {
                 .certificateType(certificate.getType())
                 .deleted(certificate.isRevoked())
                 .workCapacities(buildWorkCapacitiesFk7263(fkUtlatande))
-
+                .employment(buildFk7263Sysselsattning(fkUtlatande))
                 .build();
+    }
+
+    // NUVARANDE_ARBETE|ARBETSSOKANDE|FORALDRALEDIG|STUDIER
+    private String buildFk7263Sysselsattning(Fk7263Utlatande fkUtlatande) {
+        List<String> sysselsattningar = new ArrayList<>();
+        if (fkUtlatande.isNuvarandeArbete()) {
+            sysselsattningar.add(NUVARANDE_ARBETE);
+        }
+        if (fkUtlatande.isArbetsloshet()) {
+            sysselsattningar.add(ARBETSSOKANDE);
+        }
+        if (fkUtlatande.isForaldrarledighet()) {
+            sysselsattningar.add(FORALDRALEDIG);
+        }
+        return sysselsattningar.stream().collect(Collectors.joining(","));
     }
 
     /**
@@ -116,7 +136,7 @@ public class CertificateToSjukfallCertificateConverter {
 
         LisjpUtlatande lisjpUtlatande = (LisjpUtlatande) utlatande;
 
-        return new SjukfallCertificateBuilder(Strings.nullToEmpty(certificate.getId()).trim())
+        SjukfallCertificate sc = new SjukfallCertificateBuilder(Strings.nullToEmpty(certificate.getId()).trim())
                 .careGiverId(Strings.nullToEmpty(certificate.getCareGiverId()).trim())
                 .careUnitId(Strings.nullToEmpty(certificate.getCareUnitId()).trim())
                 .careUnitName(certificate.getCareUnitName())
@@ -131,8 +151,25 @@ public class CertificateToSjukfallCertificateConverter {
                 .certificateType(certificate.getType())
                 .deleted(certificate.isRevoked())
                 .workCapacities(buildWorkCapacitiesLisjp(lisjpUtlatande))
-
+                .employment(lisjpUtlatande.getSysselsattning() != null ? lisjpUtlatande.getSysselsattning()
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .map(s -> s.getTyp().getId())
+                        .collect(Collectors.joining(",")) : null)
                 .build();
+
+        if (lisjpUtlatande.getDiagnoser().size() > 1) {
+            for (int a = 1; a < lisjpUtlatande.getDiagnoser().size(); a++) {
+                if (a == 1) {
+                    sc.setBiDiagnoseCode1(lisjpUtlatande.getDiagnoser().get(a).getDiagnosKod());
+                }
+                if (a == 2) {
+                    sc.setBiDiagnoseCode2(lisjpUtlatande.getDiagnoser().get(a).getDiagnosKod());
+                }
+            }
+        }
+
+        return sc;
     }
 
     private List<SjukfallCertificateWorkCapacity> buildWorkCapacitiesLisjp(LisjpUtlatande lisjpUtlatande) {

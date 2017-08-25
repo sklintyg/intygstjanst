@@ -43,6 +43,13 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(SjukfallCertificateDaoImpl.class);
 
+    private static final String BASE_QUERY = "SELECT sc.civicRegistrationNumber FROM SjukfallCertificate sc JOIN "
+            + "sc.sjukfallCertificateWorkCapacity scwc WHERE "
+            + "    sc.careUnitId IN (:careUnitHsaId) "
+            + "AND scwc.fromDate <= :today "
+            + "AND scwc.toDate >= :today "
+            + "AND sc.deleted = FALSE";
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -52,20 +59,35 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
 
         // First, get personnummer for all patients having a currently ongoing intyg.
         List<String> personNummerList = entityManager.createQuery(
-                "SELECT sc.civicRegistrationNumber FROM SjukfallCertificate sc JOIN "
-                        + "sc.sjukfallCertificateWorkCapacity scwc WHERE "
-                        + "    sc.careUnitId IN (:careUnitHsaId) "
-                        + "AND scwc.fromDate <= :today "
-                        + "AND scwc.toDate >= :today "
-                        + "AND sc.deleted = FALSE",
+                BASE_QUERY,
                 String.class)
-
                 .setParameter("careUnitHsaId", careUnitHsaIds)
                 .setParameter("today", today)
                 .getResultList();
 
+        return querySjukfallCertificatesForUnitsAndPersonnummer(careUnitHsaIds, personNummerList);
+    }
+
+    @Override
+    public List<SjukfallCertificate> findActiveSjukfallCertificateForPersonOnCareUnits(List<String> careUnitHsaIds, String personnummer) {
+        String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
+
+        List<String> personNummerList = entityManager.createQuery(
+                BASE_QUERY + " AND sc.civicRegistrationNumber = :civicRegistrationNumber",
+                String.class)
+                .setParameter("careUnitHsaId", careUnitHsaIds)
+                .setParameter("today", today)
+                .setParameter("civicRegistrationNumber", personnummer)
+                .getResultList();
+
+        return querySjukfallCertificatesForUnitsAndPersonnummer(careUnitHsaIds, personNummerList);
+
+    }
+
+    private List<SjukfallCertificate> querySjukfallCertificatesForUnitsAndPersonnummer(List<String> careUnitHsaIds,
+            List<String> pnrList) {
         // Perform the DISTINCT and SORT programatically.
-        personNummerList = personNummerList.stream().distinct().sorted().collect(Collectors.toList());
+        List<String> personNummerList = pnrList.stream().distinct().sorted().collect(Collectors.toList());
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Get personnr with active intyg on enhet {} (with mottagningar) returned {} items.", careUnitHsaIds,

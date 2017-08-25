@@ -18,13 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.rehabstod.converter;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.google.common.base.Strings;
-
+import riv.clinicalprocess.healthcond.certificate._1.Sysselsattning;
+import riv.clinicalprocess.healthcond.certificate.types._1.CV;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
@@ -36,6 +32,11 @@ import se.riv.clinicalprocess.healthcond.rehabilitation.v1.HosPersonal;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsData;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.Patient;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.Vardgivare;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Converts a list of {@link SjukfallCertificate} into a list of {@link IntygsData}.
@@ -55,6 +56,15 @@ public class SjukfallCertificateIntygsDataConverter {
             intygsData.setPatient(buildPatient(sc.getCivicRegistrationNumber(), sc.getPatientName()));
             intygsData.setDiagnoskod(sc.getDiagnoseCode());
 
+            if (sc.getBiDiagnoseCode1() != null) {
+                intygsData.getBidiagnoser().add(sc.getBiDiagnoseCode1());
+            }
+            if (sc.getBiDiagnoseCode2() != null) {
+                intygsData.getBidiagnoser().add(sc.getBiDiagnoseCode2());
+            }
+
+            intygsData.getSysselsattning().addAll(buildSysselsattning(sc));
+
             Vardgivare vardgivare = buildVardgivare(sc.getCareGiverId());
             Enhet enhet = buildEnhet(sc.getCareUnitId(), sc.getCareUnitName(), vardgivare);
 
@@ -70,6 +80,23 @@ public class SjukfallCertificateIntygsDataConverter {
 
         return intygsDataList;
 
+    }
+
+    private List<Sysselsattning> buildSysselsattning(SjukfallCertificate sc) {
+        List<Sysselsattning> sysselsattningList = new ArrayList<>();
+        if (Strings.isNullOrEmpty(sc.getEmployment())) {
+            return sysselsattningList;
+        }
+
+        for (String employment : sc.getEmployment().split(",")) {
+            Sysselsattning sysselsattning = new Sysselsattning();
+            CV cvVal = new CV();
+            cvVal.setCodeSystem("KV_FKMU_0002");
+            cvVal.setCode(employment);
+            sysselsattning.setTypAvSysselsattning(cvVal);
+            sysselsattningList.add(sysselsattning);
+        }
+        return sysselsattningList;
     }
 
     private Vardgivare buildVardgivare(String vardgivarId) {

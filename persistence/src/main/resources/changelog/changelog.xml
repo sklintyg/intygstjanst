@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ~ Copyright (C) 2016 Inera AB (http://www.inera.se) ~ ~ This file is 
-	part of sklintyg (https://github.com/sklintyg). ~ ~ sklintyg is free software: 
-	you can redistribute it and/or modify ~ it under the terms of the GNU General 
-	Public License as published by ~ the Free Software Foundation, either version 
-	3 of the License, or ~ (at your option) any later version. ~ ~ sklintyg is 
-	distributed in the hope that it will be useful, ~ but WITHOUT ANY WARRANTY; 
-	without even the implied warranty of ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-	PURPOSE. See the ~ GNU General Public License for more details. ~ ~ You should 
-	have received a copy of the GNU General Public License ~ along with this 
+<!-- ~ Copyright (C) 2016 Inera AB (http://www.inera.se) ~ ~ This file is
+	part of sklintyg (https://github.com/sklintyg). ~ ~ sklintyg is free software:
+	you can redistribute it and/or modify ~ it under the terms of the GNU General
+	Public License as published by ~ the Free Software Foundation, either version
+	3 of the License, or ~ (at your option) any later version. ~ ~ sklintyg is
+	distributed in the hope that it will be useful, ~ but WITHOUT ANY WARRANTY;
+	without even the implied warranty of ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR
+	PURPOSE. See the ~ GNU General Public License for more details. ~ ~ You should
+	have received a copy of the GNU General Public License ~ along with this
 	program. If not, see <http://www.gnu.org/licenses/>. -->
 
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
@@ -113,8 +113,8 @@
 		</addColumn>
 	</changeSet>
 
-	<!-- Use the following changeset in raw SQL when running on MySQL, since 
-		Liquibase emits multiple ALTER TABLE statements that are hightly inefficient 
+	<!-- Use the following changeset in raw SQL when running on MySQL, since
+		Liquibase emits multiple ALTER TABLE statements that are hightly inefficient
 		on MySQL -->
 	<changeSet id="7-mysql" dbms="mysql" author="bb">
 		<sql>
@@ -297,7 +297,7 @@
   <changeSet id="32" author="mn">
     <dropColumn tableName="CERTIFICATE" columnName="DELETED" />
   </changeSet>
-	
+
 	<changeSet id="33" author="el">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -358,4 +358,24 @@
       alter table ORIGINAL_CERTIFICATE modify column DOCUMENT mediumblob not null;
     </sql>
   </changeSet>
+
+	<changeSet id="38" author="el">
+		<addColumn tableName="SJUKFALL_CERT">
+			<column name="BI_DIAGNOSE_CODE_1" type="varchar(64)">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="SJUKFALL_CERT">
+			<column name="BI_DIAGNOSE_CODE_2" type="varchar(64)">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="SJUKFALL_CERT">
+			<column name="EMPLOYMENT" type="varchar(64)">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

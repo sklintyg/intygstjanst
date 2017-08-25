@@ -18,13 +18,18 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
+import org.hibernate.annotations.Type;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.*;
-
-import org.hibernate.annotations.Type;
 
 /**
  * Created by eriklupander on 2016-02-02.
@@ -101,6 +106,24 @@ public class SjukfallCertificate {
      */
     @Column(name = "DIAGNOSE_CODE", nullable = false)
     private String diagnoseCode;
+
+    /**
+     * Bi-diagnose code 1.
+     */
+    @Column(name = "BI_DIAGNOSE_CODE_1", nullable = true)
+    private String biDiagnoseCode1;
+
+    /**
+     * Bi-diagnose code 2.
+     */
+    @Column(name = "BI_DIAGNOSE_CODE_2", nullable = true)
+    private String biDiagnoseCode2;
+
+    /**
+     * Sysselsattning. If the patient has > 1 the values must be comma-separated.
+     */
+    @Column(name = "EMPLOYMENT", nullable = true)
+    private String employment;
 
     /**
      * If this certificate is deleted or not.
@@ -227,5 +250,29 @@ public class SjukfallCertificate {
 
     public void setSjukfallCertificateWorkCapacity(List<SjukfallCertificateWorkCapacity> sjukfallCertificateWorkCapacity) {
         this.sjukfallCertificateWorkCapacity = sjukfallCertificateWorkCapacity;
+    }
+
+    public String getBiDiagnoseCode1() {
+        return biDiagnoseCode1;
+    }
+
+    public void setBiDiagnoseCode1(String biDiagnoseCode1) {
+        this.biDiagnoseCode1 = biDiagnoseCode1;
+    }
+
+    public String getBiDiagnoseCode2() {
+        return biDiagnoseCode2;
+    }
+
+    public void setBiDiagnoseCode2(String biDiagnoseCode2) {
+        this.biDiagnoseCode2 = biDiagnoseCode2;
+    }
+
+    public String getEmployment() {
+        return employment;
+    }
+
+    public void setEmployment(String employment) {
+        this.employment = employment;
     }
 }

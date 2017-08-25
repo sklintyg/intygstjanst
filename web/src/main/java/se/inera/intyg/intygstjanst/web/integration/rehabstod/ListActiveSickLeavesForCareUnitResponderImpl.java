@@ -58,12 +58,19 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
         }
 
         String careUnitHsaId = parameters.getEnhetsId().getExtension();
+        String personnummer = parameters.getPersonId() != null ? parameters.getPersonId().getExtension() : null;
 
         List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(careUnitHsaId);
         hsaIdList.add(careUnitHsaId);
 
-        List<SjukfallCertificate> activeSjukfallCertificateForCareUnits = sjukfallCertificateDao
-                .findActiveSjukfallCertificateForCareUnits(hsaIdList);
+        List<SjukfallCertificate> activeSjukfallCertificateForCareUnits = null;
+        if (personnummer != null) {
+            activeSjukfallCertificateForCareUnits = sjukfallCertificateDao
+                    .findActiveSjukfallCertificateForPersonOnCareUnits(hsaIdList, personnummer);
+        } else {
+            activeSjukfallCertificateForCareUnits = sjukfallCertificateDao
+                    .findActiveSjukfallCertificateForCareUnits(hsaIdList);
+        }
 
         response.setResultCode(ResultCodeEnum.OK);
         IntygsLista intygsLista = new IntygsLista();
