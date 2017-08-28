@@ -19,8 +19,8 @@
 package se.inera.intyg.intygstjanst.web.integration.rehabstod.converter;
 
 import com.google.common.base.Strings;
-import riv.clinicalprocess.healthcond.certificate._1.Sysselsattning;
-import riv.clinicalprocess.healthcond.certificate.types._1.CV;
+import se.riv.clinicalprocess.healthcond.certificate.v1.Sysselsattning;
+import se.riv.clinicalprocess.healthcond.certificate.types.v1.CV;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
