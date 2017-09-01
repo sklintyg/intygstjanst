@@ -3,7 +3,6 @@ package se.inera.intyg.intygstjanst.web.integration.converter;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.validate.SamordningsnummerValidator;
 import se.inera.intyg.schemas.contract.Personnummer;
-
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukskrivningsgrad;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukskrivningsgrader;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Converts the output format from infra/sjukfall/engine {@link se.inera.intyg.infra.sjukfall.dto.Sjukfall} to
+ * Converts the output format from infra/sjukfall/engine {@link se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet} to
  * our rivta published service contract format {@link Sjukfall}.
  *
  * Created by eriklupander on 2017-02-17.
@@ -26,7 +25,7 @@ public class SjukfallConverter {
     private static final String KODVERK_PERSONNUMMER = "1.2.752.129.2.1.3.1";
     private static final String KODVERK_HSAID = "1.2.752.129.2.1.4.1";
 
-    public List<Sjukfall> toSjukfall(List<se.inera.intyg.infra.sjukfall.dto.Sjukfall> sjukfallList) {
+    public List<Sjukfall> toSjukfall(List<se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet> sjukfallList) {
         return sjukfallList.stream().map(sf -> {
             se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall sjukfall =
                     new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall();

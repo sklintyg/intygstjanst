@@ -1,19 +1,13 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
-import se.inera.intyg.infra.sjukfall.dto.Sjukfall;
+import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
@@ -25,6 +19,11 @@ import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Li
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.SjukfallLista;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Created by eriklupander on 2017-02-15.
@@ -79,7 +78,7 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
 
         // Feed the intygdata into the sjukfallengine
         IntygParametrar sjukfallEngineParams = new IntygParametrar(params.getMaxDagarMellanIntyg(), LocalDate.now());
-        List<Sjukfall> sjukfall = sjukfallEngineService.beraknaSjukfall(intygDataList, sjukfallEngineParams);
+        List<SjukfallEnhet> sjukfall = sjukfallEngineService.beraknaSjukfallForEnhet(intygDataList, sjukfallEngineParams);
 
         // Perform post-processing filtering of sjukskrivningslängder and läkare.
         List<HsaId> lakareList = params.getPersonalId().stream().filter(Objects::nonNull).collect(Collectors.toList());
