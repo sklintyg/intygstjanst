@@ -19,8 +19,6 @@
 package se.inera.intyg.intygstjanst.web.integration.rehabstod.converter;
 
 import com.google.common.base.Strings;
-import se.riv.clinicalprocess.healthcond.certificate.v1.Sysselsattning;
-import se.riv.clinicalprocess.healthcond.certificate.types.v1.CV;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
@@ -82,19 +80,14 @@ public class SjukfallCertificateIntygsDataConverter {
 
     }
 
-    private List<Sysselsattning> buildSysselsattning(SjukfallCertificate sc) {
-        List<Sysselsattning> sysselsattningList = new ArrayList<>();
+    private List<String> buildSysselsattning(SjukfallCertificate sc) {
+        List<String> sysselsattningList = new ArrayList<>();
         if (Strings.isNullOrEmpty(sc.getEmployment())) {
             return sysselsattningList;
         }
 
         for (String employment : sc.getEmployment().split(",")) {
-            Sysselsattning sysselsattning = new Sysselsattning();
-            CV cvVal = new CV();
-            cvVal.setCodeSystem("KV_FKMU_0002");
-            cvVal.setCode(employment);
-            sysselsattning.setTypAvSysselsattning(cvVal);
-            sysselsattningList.add(sysselsattning);
+            sysselsattningList.add(employment);
         }
         return sysselsattningList;
     }

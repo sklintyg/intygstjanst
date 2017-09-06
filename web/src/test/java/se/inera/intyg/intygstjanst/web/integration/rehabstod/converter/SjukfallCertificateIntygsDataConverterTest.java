@@ -31,9 +31,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class SjukfallCertificateIntygsDataConverterTest {
 
-
     private SjukfallCertTestHelper testHelper = new SjukfallCertTestHelper();
-
     private SjukfallCertificateIntygsDataConverter testee = new SjukfallCertificateIntygsDataConverter();
 
     @Test
@@ -42,8 +40,4 @@ public class SjukfallCertificateIntygsDataConverterTest {
         assertEquals(1, intygsDataList.size());
         assertEquals(2, intygsDataList.get(0).getArbetsformaga().getFormaga().size());
     }
-
-
-
-
 }
