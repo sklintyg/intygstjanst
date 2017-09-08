@@ -18,15 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v3;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import se.inera.intyg.common.db.support.DbModuleEntryPoint;
+import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
@@ -49,17 +46,20 @@ import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @SchemaValidation
 public class ListCertificatesForCitizenResponderImpl implements ListCertificatesForCitizenResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ListCertificatesForCitizenResponderImpl.class);
-
+    private static final List<String> EXCLUDED_CERTIFICATES = Arrays.asList(DbModuleEntryPoint.MODULE_ID, DoiModuleEntryPoint.MODULE_ID);
     @Autowired
     private CertificateService certificateService;
-
     @Autowired
     private MonitoringLogService monitoringLogService;
-
     @Autowired
     private IntygModuleRegistryImpl moduleRegistry;
 
@@ -76,16 +76,11 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
             List<Certificate> certificates = certificateService.listCertificatesForCitizen(
                     personnummer, toStringList(parameters.getIntygTyp()), parameters.getFromDatum(), parameters.getTomDatum());
 
-            for (Certificate certificate : certificates) {
-                if (certificateMatchesArkiveradeParameter(parameters.isArkiverade(), certificate)) {
-                    Intyg intyg = convert(certificate, parameters.getPart().getCode());
-                    if (intyg != null) {
-                        // Add all certificates that were successfully converted.
-                        // We are trying to provide callee with as much data as possible.
-                        response.getIntygsLista().getIntyg().add(intyg);
-                    }
-                }
-            }
+            response.getIntygsLista().getIntyg().addAll(certificates.stream()
+                    .filter(c -> !EXCLUDED_CERTIFICATES.contains(c.getType()))
+                    .filter(c -> c.isDeleted() == parameters.isArkiverade())
+                    .map(c -> convert(c, parameters.getPart().getCode()))
+                    .collect(Collectors.toList()));
 
             response.setResult(ResultTypeUtil.okResult());
             monitoringLogService.logCertificateListedByCitizen(personnummer);
@@ -95,10 +90,6 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         }
 
         return response;
-    }
-
-    private boolean certificateMatchesArkiveradeParameter(boolean arkiverade, Certificate certificate) {
-        return arkiverade == certificate.isDeleted();
     }
 
     private List<String> toStringList(List<TypAvIntyg> intygTyp) {

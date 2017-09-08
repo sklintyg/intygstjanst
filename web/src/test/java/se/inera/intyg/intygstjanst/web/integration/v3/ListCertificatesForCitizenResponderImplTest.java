@@ -40,6 +40,9 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import se.inera.intyg.common.db.support.DbModuleEntryPoint;
+import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
+import se.inera.intyg.common.fk7263.support.Fk7263EntryPoint;
 import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
@@ -343,6 +346,36 @@ public class ListCertificatesForCitizenResponderImplTest {
         assertEquals(timestamps[0], status.getTidpunkt());
         assertEquals(StatusKod.SENTTO.name(), status.getStatus().getCode());
         assertNotNull(status.getStatus().getCodeSystem());
+    }
+
+    @Test
+    public void testDbDoiAreExcluded() throws Exception {
+        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
+        List<String> certificateTypes = Collections.emptyList();
+        LocalDate fromDate = LocalDate.of(2000, 1, 1);
+        LocalDate toDate = LocalDate.of(2020, 12, 12);
+
+        Certificate certificate = new Certificate();
+        certificate.setType(Fk7263EntryPoint.MODULE_ID);
+        Certificate certificate2 = new Certificate();
+        certificate2.setType(Fk7263EntryPoint.MODULE_ID);
+        Certificate certificate3 = new Certificate();
+        certificate3.setType(DbModuleEntryPoint.MODULE_ID);
+        Certificate certificate4 = new Certificate();
+        certificate4.setType(DoiModuleEntryPoint.MODULE_ID);
+        List<Certificate> result = Arrays.asList(certificate, certificate3, certificate4, certificate2);
+
+        when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
+
+        ListCertificatesForCitizenType parameters = createListCertificatesRequest(civicRegistrationNumber, certificateTypes, fromDate,
+                toDate, false);
+
+        ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
+
+        verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
+
+        assertEquals(2, response.getIntygsLista().getIntyg().size());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     private ListCertificatesForCitizenType createListCertificatesRequest(Personnummer civicRegistrationNumber, List<String> types,
