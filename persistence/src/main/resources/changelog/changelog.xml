@@ -354,6 +354,10 @@
   </changeSet>
 
   <changeSet id="37" author="kja">
+    <preConditions onFail="MARK_RAN">
+        <sqlCheck expectedResult="blob">SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'ORIGINAL_CERTIFICATE' AND COLUMN_NAME = 'DOCUMENT'</sqlCheck>
+    </preConditions>
+
     <sql>
       alter table ORIGINAL_CERTIFICATE modify column DOCUMENT mediumblob not null;
     </sql>
