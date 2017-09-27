@@ -20,3 +20,4 @@ dependency-reduced-pom.xml
 build
 .gradle
 activemq-data
+out
