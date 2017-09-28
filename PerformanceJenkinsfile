@@ -4,8 +4,9 @@ stage('gatling') {
     node {
         try {
             sh("cd performanceTests")
-            shgradle "gatling -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/ \
-            -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DinfraVersion=${infraVersion}"
+            shgradle "gatling -Dcertificate.baseUrl=http://intygstjanst.inera.nordicmedtest.se" +
+                    " -DgatlingSimulation=GetCertificates"
+
         } finally {
             publishHTML allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'web/build/reports/tests/restAssuredTest', \
                 reportFiles: 'index.html', reportName: 'RestAssured results'
