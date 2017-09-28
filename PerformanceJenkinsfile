@@ -1,5 +1,29 @@
 #!groovy
 
+def buildVersion = "3.4.${BUILD_NUMBER}"
+def commonVersion = "3.5.+"
+def infraVersion = "3.5.+"
+
+stage('checkout intygstjanst') {
+    node {
+        git url: "https://github.com/sklintyg/intygstjanst.git", branch: GIT_BRANCH
+        util.run { checkout scm }
+    }
+}
+
+stage('build') {
+    node {
+        try {
+            shgradle "--refresh-dependencies clean build  \
+            -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DinfraVersion=${infraVersion}"
+        } finally {
+            publishHTML allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'build/reports/allTests', \
+                reportFiles: 'index.html', reportName: 'JUnit results'
+        }
+    }
+}
+
+
 stage('gatling') {
     node {
         try {
