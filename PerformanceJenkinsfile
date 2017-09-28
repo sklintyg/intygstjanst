@@ -27,8 +27,7 @@ stage('build') {
 stage('gatling') {
     node {
         try {
-            sh("cd performanceTests; ../gradlew gatling -Dcertificate.baseUrl=http://intygstjanst.inera.nordicmedtest.se\" +\n" +
-                    "                    \" -DgatlingSimulation=GetCertificates\"")
+            sh("cd performanceTests; ../gradlew gatling -Dcertificate.baseUrl=http://intygstjanst.inera.nordicmedtest.se -DgatlingSimulation=GetCertificates")
 
         } finally {
             publishHTML allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'web/build/reports/tests/restAssuredTest', \
