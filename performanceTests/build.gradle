@@ -10,13 +10,7 @@ repositories {
     mavenCentral()
 }
 
-sourceSets {
-    performanceTests {
-        scala {
-            srcDirs = ['src/test/scala']
-        }
-    }
-}
+sourceSets.test.output.classesDir = new File(buildDir, "classes/scala")
 
 task gatling(dependsOn: 'build') {
     doLast {
