@@ -12,10 +12,12 @@ task restAssuredTest(type: Test) {
 }
 
 gretty {
-    integrationTestTask = null
     contextPath = '/inera-certificate'
     contextConfigFile = file("src/main/webapp/WEB-INF/jetty-web.xml")
+    integrationTestTask = null
     scanInterval = 0
+    debugPort = 5005
+    debugSuspend = false
 
     jvmArgs = ["-Dcatalina.base=${buildDir}/catalina.base",
                "-Dspring.profiles.active=dev,caching-enabled,wc-hsa-stub",
