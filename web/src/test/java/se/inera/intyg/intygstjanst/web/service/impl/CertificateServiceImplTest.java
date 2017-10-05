@@ -53,6 +53,7 @@ import se.inera.intyg.intygstjanst.web.service.RelationService;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 import java.time.LocalDate;
@@ -133,17 +134,26 @@ public class CertificateServiceImplTest {
     }
 
     private Recipient createRecipient() {
-        return new Recipient(RECIPIENT_LOGICALADDRESS,
-                RECIPIENT_NAME,
-                RECIPIENT_ID,
-                RECIPIENT_CERTIFICATETYPES,
-                true);
+        return new RecipientBuilder()
+                .setLogicalAddress(RECIPIENT_LOGICALADDRESS)
+                .setName(RECIPIENT_NAME)
+                .setId(RECIPIENT_ID)
+                .setCertificateTypes(RECIPIENT_CERTIFICATETYPES)
+                .setActive(true)
+                .setTrusted(true)
+                .build();
     }
 
     @Before
     public void setup() {
         when(recipientService.getPrimaryRecipientHsvard()).thenReturn(
-                new Recipient("TEST", "Hälso- och sjukvården", HSVARD_ID, "fk7263", true));
+                new RecipientBuilder().setLogicalAddress("TEST")
+                        .setName("Hälso- och sjukvården")
+                        .setId(HSVARD_ID)
+                        .setCertificateTypes("fk7263")
+                        .setActive(true)
+                        .setTrusted(true)
+                        .build());
 
         doNothing().when(relationService).storeRelation(any(Relation.class));
     }

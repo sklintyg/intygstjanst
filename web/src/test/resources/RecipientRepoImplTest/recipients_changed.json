@@ -1,4 +1,5 @@
-[{
+[
+  {
     "id": "FKASSA",
     "name": "Försäkringskassan",
     "logicalAddress": "FKORG",
@@ -7,24 +8,25 @@
       "luse",
       "lisjp"
     ],
-    "active" : true
-
-},
+    "active": true,
+    "trusted": true
+  },
   {
-    "id" : "TRANSP",
-    "name" : "Changed",
-    "logicalAddress" : "tsTestAdress",
-    "certificateTypes" : [
+    "id": "TRANSP",
+    "name": "Changed",
+    "logicalAddress": "tsTestAdress",
+    "certificateTypes": [
       "ts-bas",
       "ts-diabetes"
     ],
-    "active" : true
+    "active": true,
+    "trusted": true
   },
   {
-    "id" : "HSVARD",
-    "name" : "Hälso- och sjukvården",
-    "logicalAddress" : "hsvardAdress",
-    "certificateTypes" : [
+    "id": "HSVARD",
+    "name": "Hälso- och sjukvården",
+    "logicalAddress": "hsvardAdress",
+    "certificateTypes": [
       "ts-bas",
       "ts-diabetes",
       "fk7263",
@@ -33,13 +35,14 @@
       "luae_na",
       "luae_fs"
     ],
-    "active" : true
+    "active": true,
+    "trusted": true
   },
   {
-    "id" : "INVANA",
-    "name" : "Invånaren",
-    "logicalAddress" : "miAdress",
-    "certificateTypes" : [
+    "id": "INVANA",
+    "name": "Invånaren",
+    "logicalAddress": "miAdress",
+    "certificateTypes": [
       "ts-bas",
       "ts-diabetes",
       "fk7263",
@@ -48,6 +51,7 @@
       "luae_na",
       "luae_fs"
     ],
-    "active" : true
+    "active": true,
+    "trusted": true
   }
 ]

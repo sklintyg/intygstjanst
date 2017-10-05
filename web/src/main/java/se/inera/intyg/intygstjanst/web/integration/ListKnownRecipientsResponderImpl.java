@@ -27,8 +27,8 @@ import se.inera.intyg.common.fk7263.schemas.clinicalprocess.healthcond.certifica
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.riv.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ListKnownRecipientsResponderImpl implements ListKnownRecipientsResponderInterface {
 
@@ -38,14 +38,13 @@ public class ListKnownRecipientsResponderImpl implements ListKnownRecipientsResp
     @Override
     public ListKnownRecipientsResponseType listKnownRecipients(String logicalAddress, ListKnownRecipientsType request) {
         ListKnownRecipientsResponseType response = new ListKnownRecipientsResponseType();
-        List<RecipientType> recipientTypeList = new ArrayList<>();
-
-        recipientService.listRecipients().forEach(r -> {
+        List<RecipientType> recipientTypeList = recipientService.listRecipients().stream().map(r -> {
             RecipientType recipientType = new RecipientType();
             recipientType.setId(r.getId());
             recipientType.setName(r.getName());
-            recipientTypeList.add(recipientType);
-        });
+            recipientType.setTrusted(r.isTrusted());
+            return recipientType;
+        }).collect(Collectors.toList());
 
         if (recipientTypeList.isEmpty()) {
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "No recipients found!"));

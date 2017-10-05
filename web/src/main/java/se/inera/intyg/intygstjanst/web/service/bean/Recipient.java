@@ -30,7 +30,6 @@ import static org.springframework.util.Assert.notEmpty;
  * Recipient object.
  *
  * @author erik
- *
  */
 public class Recipient {
 
@@ -41,18 +40,22 @@ public class Recipient {
     private String id;
     private List<String> certificateTypes;
     private boolean active;
+    private boolean trusted;
 
     public Recipient() {
     }
 
     /**
      * Constructor for recipient object.
-     * @param logicalAddress a recipient's logical address
-     * @param name a recipient's name
-     * @param id a recipient's identifier
+     *
+     * @param logicalAddress   a recipient's logical address
+     * @param name             a recipient's name
+     * @param id               a recipient's identifier
      * @param certificateTypes a comma-separated string of the type of certificates this recipient support
+     * @param active           if the recipient is active
+     * @param trusted          if the recipient can be trusted with information about sekretessmarkerade patients
      */
-    public Recipient(String logicalAddress, String name, String id, String certificateTypes, boolean active) {
+    public Recipient(String logicalAddress, String name, String id, String certificateTypes, boolean active, boolean trusted) {
         hasText(logicalAddress, "logicalAddress must not be empty");
         hasText(name, "name must not be empty");
         hasText(id, "id must not be empty");
@@ -63,17 +66,20 @@ public class Recipient {
         this.id = id;
         this.certificateTypes = Arrays.asList(certificateTypes.split(SEPARATOR));
         this.active = active;
-
+        this.trusted = trusted;
     }
 
     /**
      * Constructor for recipient object.
-     * @param logicalAddress a recipient's logical address
-     * @param name a recipient's name
-     * @param id a recipient's identifier
+     *
+     * @param logicalAddress   a recipient's logical address
+     * @param name             a recipient's name
+     * @param id               a recipient's identifier
      * @param certificateTypes a list of the type of certificates this recipient support
+     * @param active           if the recipient is active
+     * @param trusted          if the recipient can be trusted with information about sekretessmarkerade patients
      */
-    public Recipient(String logicalAddress, String name, String id, List<String> certificateTypes, boolean active) {
+    public Recipient(String logicalAddress, String name, String id, List<String> certificateTypes, boolean active, boolean trusted) {
         hasText(logicalAddress, "logicalAddress must not be empty");
         hasText(name, "name must not be empty");
         hasText(id, "id must not be empty");
@@ -84,6 +90,7 @@ public class Recipient {
         this.id = id;
         this.certificateTypes = certificateTypes;
         this.active = active;
+        this.trusted = trusted;
 
     }
 
@@ -107,50 +114,60 @@ public class Recipient {
         return active;
     }
 
+    public boolean isTrusted() {
+        return trusted;
+    }
+
+    public void setTrusted(boolean trusted) {
+        this.trusted = trusted;
+    }
+
     @Override
     public String toString() {
         return "logicalAddress: " + logicalAddress
                 + " name: " + name
                 + " id: " + id
                 + " certificateTypes: " + Joiner.on(SEPARATOR).join(certificateTypes)
-                + " active: " + active;
+                + " active: " + active
+                + " trusted: " + trusted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Recipient recipient = (Recipient) o;
+
+        if (active != recipient.active) {
+            return false;
+        }
+        if (trusted != recipient.trusted) {
+            return false;
+        }
+        if (!logicalAddress.equals(recipient.logicalAddress)) {
+            return false;
+        }
+        if (!name.equals(recipient.name)) {
+            return false;
+        }
+        if (!id.equals(recipient.id)) {
+            return false;
+        }
+        return certificateTypes.equals(recipient.certificateTypes);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + id.hashCode();
-        result = prime * result + logicalAddress.hashCode();
-        result = prime * result + name.hashCode();
-        result = prime * result + Joiner.on(SEPARATOR).join(certificateTypes).hashCode();
+        int result = logicalAddress.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + id.hashCode();
+        result = 31 * result + certificateTypes.hashCode();
+        result = 31 * result + (active ? 1 : 0);
+        result = 31 * result + (trusted ? 1 : 0);
         return result;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (getClass() != obj.getClass()) {
-            return false;
-        }
-
-        Recipient other = (Recipient) obj;
-
-        if (!id.equals(other.id)) {
-            return false;
-        } else if (!logicalAddress.equals(other.logicalAddress)) {
-            return false;
-        } else if (!name.equals(other.name)) {
-            return false;
-        } else if (!active == other.active) {
-            return false;
-        } else {
-            String one = Joiner.on(SEPARATOR).join(certificateTypes);
-            String two = Joiner.on(SEPARATOR).join(other.certificateTypes);
-            return one.equals(two);
-        }
-    }
 }

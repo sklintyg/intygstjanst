@@ -18,12 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateType;
@@ -33,6 +30,8 @@ import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.riv.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
+
+import java.util.stream.Collectors;
 
 public class GetRecipientsForCertificateResponderImpl implements GetRecipientsForCertificateResponderInterface {
 
@@ -48,27 +47,25 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
         CertificateType certificateType = new CertificateType(certTypeStr);
         GetRecipientsForCertificateResponseType response = new GetRecipientsForCertificateResponseType();
 
-        List<Recipient> recipients = recipientService.listRecipients(certificateType);
-
-        for (Recipient r : recipients) {
-            if (r.isActive()) {
-                RecipientType recipientType = new RecipientType();
-                recipientType.setId(r.getId());
-                recipientType.setName(r.getName());
-                response.getRecipient().add(recipientType);
-            }
-        }
+        response.getRecipient().addAll(recipientService.listRecipients(certificateType).stream()
+                .filter(Recipient::isActive)
+                .map(r -> {
+                    RecipientType recipientType = new RecipientType();
+                    recipientType.setId(r.getId());
+                    recipientType.setName(r.getName());
+                    recipientType.setTrusted(r.isTrusted());
+                    return recipientType;
+                })
+                .collect(Collectors.toList()));
 
         if (response.getRecipient().isEmpty()) {
             LOGGER.error("No recipients found for type {}", certTypeStr);
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR,
                     String.format("No recipients found for certificate type: %s", certTypeStr)));
         } else {
-            LOGGER.debug("{} recipient(s) found for {}", recipients.size(), certTypeStr);
+            LOGGER.debug("{} recipient(s) found for {}", response.getRecipient().size(), certTypeStr);
             response.setResult(ResultTypeUtil.okResult());
         }
-
         return response;
     }
-
 }

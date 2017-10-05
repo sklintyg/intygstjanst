@@ -46,6 +46,7 @@ import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 import java.time.LocalDateTime;
@@ -120,7 +121,8 @@ public class SendMedicalCertificateResponderImplTest {
 
     @Test
     public void testSendMedicalCertificateInvalidCertificate() throws Exception {
-        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenThrow(new InvalidCertificateException(CERTIFICATE_ID, PERSONNUMMER));
+        when(certificateService.getCertificateForCare(CERTIFICATE_ID))
+                .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, PERSONNUMMER));
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), createRequest());
 
         assertEquals(ERROR, response.getResult().getResultCode());
@@ -258,7 +260,6 @@ public class SendMedicalCertificateResponderImplTest {
 
         when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
 
-
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), request);
 
         assertEquals(OK, response.getResult().getResultCode());
@@ -268,19 +269,19 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     // INTYG-4086, namn skall ej längre skickas med.
-//    @Test
-//    public void testSendMedicalCertificateSaknatPatientnamn() throws Exception {
-//        SendMedicalCertificateRequestType invalidRequest = createRequest();
-//        invalidRequest.getSend().getLakarutlatande().getPatient().setFullstandigtNamn(null);
-//        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
-//
-//        assertEquals(ERROR, response.getResult().getResultCode());
-//        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
-//        assertEquals("Validation Error(s) found: No Patient fullstandigtNamn elements found or set!", response.getResult().getErrorText());
-//
-//        verify(recipientService, never()).getPrimaryRecipientFkassa();
-//        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
-//    }
+    //    @Test
+    //    public void testSendMedicalCertificateSaknatPatientnamn() throws Exception {
+    //        SendMedicalCertificateRequestType invalidRequest = createRequest();
+    //        invalidRequest.getSend().getLakarutlatande().getPatient().setFullstandigtNamn(null);
+    //        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
+    //
+    //        assertEquals(ERROR, response.getResult().getResultCode());
+    //        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
+    //        assertEquals("Validation Error(s) found: No Patient fullstandigtNamn elements found or set!", response.getResult().getErrorText());
+    //
+    //        verify(recipientService, never()).getPrimaryRecipientFkassa();
+    //        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+    //    }
 
     @Test
     public void testSendMedicalCertificateSaknadSigneringstidpunkt() throws Exception {
@@ -360,7 +361,8 @@ public class SendMedicalCertificateResponderImplTest {
 
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
-        assertEquals("Validation Error(s) found: Wrong o.i.d. for personalId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
+        assertEquals("Validation Error(s) found: Wrong o.i.d. for personalId! Should be 1.2.752.129.2.1.4.1",
+                response.getResult().getErrorText());
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
@@ -417,7 +419,8 @@ public class SendMedicalCertificateResponderImplTest {
 
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
-        assertEquals("Validation Error(s) found: Wrong o.i.d. for enhetsId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
+        assertEquals("Validation Error(s) found: Wrong o.i.d. for enhetsId! Should be 1.2.752.129.2.1.4.1",
+                response.getResult().getErrorText());
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
@@ -488,7 +491,8 @@ public class SendMedicalCertificateResponderImplTest {
 
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
-        assertEquals("Validation Error(s) found: Wrong o.i.d. for vardgivareId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
+        assertEquals("Validation Error(s) found: Wrong o.i.d. for vardgivareId! Should be 1.2.752.129.2.1.4.1",
+                response.getResult().getErrorText());
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
@@ -540,11 +544,14 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     private Recipient createFkRecipient() {
-        return new Recipient(FK_RECIPIENT_LOGICALADDRESS,
-                FK_RECIPIENT_NAME,
-                FK_RECIPIENT_ID,
-                FK_RECIPIENT_CERTIFICATETYPES,
-                true);
+        return new RecipientBuilder()
+                .setLogicalAddress(FK_RECIPIENT_LOGICALADDRESS)
+                .setName(FK_RECIPIENT_NAME)
+                .setId(FK_RECIPIENT_ID)
+                .setCertificateTypes(FK_RECIPIENT_CERTIFICATETYPES)
+                .setActive(true)
+                .setTrusted(true)
+                .build();
     }
 
     private SendMedicalCertificateRequestType createRequest() {

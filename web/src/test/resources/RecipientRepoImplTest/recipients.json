@@ -8,7 +8,8 @@
       "luse",
       "lisjp"
     ],
-    "active" : true
+    "active" : true,
+    "trusted": true
   },
   {
     "id" : "TRANSP",
@@ -18,7 +19,8 @@
       "ts-bas",
       "ts-diabetes"
     ],
-    "active" : true
+    "active" : true,
+    "trusted": true
   },
   {
     "id" : "HSVARD",
@@ -33,7 +35,8 @@
       "luae_na",
       "luae_fs"
     ],
-    "active" : true
+    "active" : true,
+    "trusted": true
   },
   {
     "id" : "INVANA",
@@ -48,6 +51,7 @@
       "luae_na",
       "luae_fs"
     ],
-    "active" : true
+    "active" : true,
+    "trusted": true
   }
 ]
