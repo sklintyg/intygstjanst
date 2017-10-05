@@ -26,8 +26,9 @@ stage('build') {
 stage('gatling') {
     node {
         try {
-            sh("cd performanceTests; ../gradlew gatling -Dcertificate.baseUrl=http://intygstjanst.inera.nordicmedtest.se -DgatlingSimulation=GetCertificates")
-
+            dir("performanceTest") {
+                shgradle "gatling -Dcertificate.baseUrl=http://intygstjanst.inera.nordicmedtest.se/inera-certificate -DgatlingSimulation=GetCertificates"
+            }
         } finally {
             gatlingArchive()
         }
