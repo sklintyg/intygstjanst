@@ -134,10 +134,12 @@ public class Recipient {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
 
         Recipient recipient = (Recipient) o;
 
@@ -161,12 +163,13 @@ public class Recipient {
 
     @Override
     public int hashCode() {
+        final int prime = 31;
         int result = logicalAddress.hashCode();
-        result = 31 * result + name.hashCode();
-        result = 31 * result + id.hashCode();
-        result = 31 * result + certificateTypes.hashCode();
-        result = 31 * result + (active ? 1 : 0);
-        result = 31 * result + (trusted ? 1 : 0);
+        result = prime * result + name.hashCode();
+        result = prime * result + id.hashCode();
+        result = prime * result + certificateTypes.hashCode();
+        result = prime * result + (active ? 1 : 0);
+        result = prime * result + (trusted ? 1 : 0);
         return result;
     }
 
