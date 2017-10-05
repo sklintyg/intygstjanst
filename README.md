@@ -6,26 +6,30 @@ Här hittar du grundläggande instruktioner för hur man kommer igång med proje
 
 ### Bygg projektet
 Intygstjänsten byggs med hjälp av Gradle enligt följande:
-```
-$ git clone https://github.com/sklintyg/intygstjanst.git
-$ cd intygstjanst
-$ ./gradlew build
-```
+
+    $ git clone https://github.com/sklintyg/intygstjanst.git
+    $ cd intygstjanst
+    $ ./gradlew build
 
 ### Starta webbapplikationen
 Webbapplikationen kan startas med Jetty enligt följande:
-```
-$ ./gradlew appRun
-```
+
+    $ ./gradlew appRun
+
+För att starta applikationen i debugläge används:
+
+    $ ./gradlew appRunDebug
+
+Applikationen kommer då att starta upp med debugPort = **5005**. Det är denna port du ska använda när du sätter upp din 
+debug-konfiguration i din utvecklingsmiljö.
 
 ### Visa databasen
 Man kan även komma åt H2-databasen som startas lokalt via http://localhost:8082/
 
 ### Kör RestAssured
 RestAssured körs mot en lokal instans av Intygstjänsten via:
-```
-$ ./gradlew restAssuredTest
-```
+
+    $ ./gradlew restAssuredTest
 
 ## Licens
 Copyright (C) 2017 Inera AB (http://www.inera.se)
