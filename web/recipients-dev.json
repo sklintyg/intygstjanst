@@ -65,5 +65,25 @@
     ],
     "active" : true,
     "trusted": true
+  },
+  {
+    "id": "Skatteverket",
+    "name": "Skatteverket",
+    "logicalAddress": "Skatteverket",
+    "certificateTypes" : [
+      "db"
+    ],
+    "active" : true,
+    "trusted": true
+  },
+  {
+    "id": "SOS",
+    "name": "SOS",
+    "logicalAddress": "SOS",
+    "certificateTypes" : [
+      "doi"
+    ],
+    "active" : true,
+    "trusted": true
   }
 ]
