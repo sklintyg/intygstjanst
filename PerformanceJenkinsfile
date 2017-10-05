@@ -14,8 +14,7 @@ stage('checkout intygstjanst') {
 stage('build') {
     node {
         try {
-            shgradle "--refresh-dependencies clean build  \
-            -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DinfraVersion=${infraVersion}"
+            shgradle "--refresh-dependencies clean build -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DinfraVersion=${infraVersion}"
         } finally {
             publishHTML allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'build/reports/allTests', \
                 reportFiles: 'index.html', reportName: 'JUnit results'
@@ -30,8 +29,7 @@ stage('gatling') {
             sh("cd performanceTests; ../gradlew gatling -Dcertificate.baseUrl=http://intygstjanst.inera.nordicmedtest.se -DgatlingSimulation=GetCertificates")
 
         } finally {
-            publishHTML allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'web/build/reports/tests/restAssuredTest', \
-                reportFiles: 'index.html', reportName: 'RestAssured results'
+            gatlingArchive()
         }
     }
 }
