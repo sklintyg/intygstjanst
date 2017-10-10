@@ -67,7 +67,7 @@
     "trusted": true
   },
   {
-    "id": "Skatteverket",
+    "id": "SKV",
     "name": "Skatteverket",
     "logicalAddress": "Skatteverket",
     "certificateTypes" : [
@@ -78,7 +78,7 @@
   },
   {
     "id": "SOS",
-    "name": "SOS",
+    "name": "Socialstyrelsen",
     "logicalAddress": "SOS",
     "certificateTypes" : [
       "doi"
