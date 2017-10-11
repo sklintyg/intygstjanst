@@ -1,9 +1,5 @@
 #!groovy
 
-def buildVersion = "3.4.${BUILD_NUMBER}"
-def commonVersion = "3.5.+"
-def infraVersion = "3.5.+"
-
 stage('checkout intygstjanst') {
     node {
         git url: "https://github.com/sklintyg/intygstjanst.git", branch: GIT_BRANCH
@@ -13,22 +9,20 @@ stage('checkout intygstjanst') {
 
 stage('build') {
     node {
-        try {
-            shgradle "--refresh-dependencies clean build -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DinfraVersion=${infraVersion}"
-        } finally {
-            publishHTML allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'build/reports/allTests', \
-                reportFiles: 'index.html', reportName: 'JUnit results'
+        dir("performanceTests") {
+            sh("../gradlew build")
         }
     }
 }
 
-
 stage('gatling') {
     node {
-        try {
-            sh("cd performanceTests; ../gradlew gatling -Dcertificate.baseUrl=http://intygstjanst.inera.nordicmedtest.se/inera-certificate")
-        } finally {
-            gatlingArchive()
+        dir("performanceTests") {
+            try {
+                sh("../gradlew gatling -Dcertificate.baseUrl=http://intygstjanst.inera.nordicmedtest.se/inera-certificate")
+            } finally {
+                gatlingArchive()
+            }
         }
     }
 }
