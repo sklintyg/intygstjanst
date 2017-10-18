@@ -1,9 +1,9 @@
 #!groovy
 
-def buildVersion = "3.4.${BUILD_NUMBER}"
+def buildVersion = "3.4.0.${BUILD_NUMBER}"
 def buildRoot = JOB_BASE_NAME.replaceAll(/-.*/, "") // Keep everything up to the first dash
-def commonVersion = "3.5.+"
-def infraVersion = "3.5.+"
+def commonVersion = "3.5.0.+"
+def infraVersion = "3.5.0.+"
 
 stage('checkout') {
     node {
