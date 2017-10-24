@@ -73,7 +73,7 @@ public class SetCertificateStatusResponderImplTest {
 
     @Before
     public void init() throws RecipientUnknownException {
-        Recipient recipient = new Recipient("logicalAddress", "name", RECIPIENT_FKASSA, "fk7263", true);
+        Recipient recipient = new Recipient("logicalAddress", "name", RECIPIENT_FKASSA, "fk7263", true, true);
         when(recipientService.getPrimaryRecipientFkassa()).thenReturn(recipient);
         when(recipientService.getRecipient(RECIPIENT_FKASSA)).thenReturn(recipient);
         when(recipientService.getRecipient(RECIPIENT_UNKNOWN)).thenThrow(new RecipientUnknownException(""));
