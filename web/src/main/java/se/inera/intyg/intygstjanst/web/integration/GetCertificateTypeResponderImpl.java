@@ -43,6 +43,11 @@ public class GetCertificateTypeResponderImpl implements GetCertificateTypeRespon
     @Override
     public GetCertificateTypeResponseType getCertificateType(String logicalAddress,
                                                              GetCertificateTypeType request) {
+
+        if (request == null || isNullOrEmpty(request)) {
+             throw new IllegalArgumentException("Request to GetCertificateType is missing required parameter 'intygs-id'");
+        }
+
         GetCertificateTypeResponseType response = new GetCertificateTypeResponseType();
 
         try {
@@ -55,5 +60,9 @@ public class GetCertificateTypeResponderImpl implements GetCertificateTypeRespon
             throw new ServerException("Certificate with id " + request.getIntygsId() + " is invalid or does not exist");
         }
         return response;
+    }
+
+    private boolean isNullOrEmpty(GetCertificateTypeType request) {
+        return request.getIntygsId() == null || request.getIntygsId().trim().length() == 0;
     }
 }

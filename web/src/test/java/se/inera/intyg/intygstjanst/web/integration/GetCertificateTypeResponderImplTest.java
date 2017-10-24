@@ -64,6 +64,12 @@ public class GetCertificateTypeResponderImplTest {
         responder.getCertificateType(LOGICAL_ADDRESS, buildReq("intyg-123"));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetCertificateTypeEmptyIntygsId() throws InvalidCertificateException {
+
+        responder.getCertificateType(LOGICAL_ADDRESS, buildReq(" "));
+    }
+
     private GetCertificateTypeType buildReq(String intygsId) {
         GetCertificateTypeType req = new GetCertificateTypeType();
         req.setIntygsId(intygsId);
