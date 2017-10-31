@@ -18,7 +18,10 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:clinicalprocess:healthcond:certificate:ListSickLeavesForCareResponder:1" xmlns:urn2="urn:riv:clinicalprocess:healthcond:certificate:types:2">
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:urn="urn:riv:itintegration:registry:1"
+    xmlns:urn1="urn:riv:clinicalprocess:healthcond:certificate:ListSickLeavesForCareResponder:1"
+    xmlns:urn2="urn:riv:clinicalprocess:healthcond:certificate:types:3">
    <soapenv:Header>
       <urn:LogicalAddress>fk</urn:LogicalAddress>
    </soapenv:Header>
