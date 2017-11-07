@@ -43,9 +43,12 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(SjukfallCertificateDaoImpl.class);
 
-    private static final String BASE_QUERY = "SELECT sc.civicRegistrationNumber FROM SjukfallCertificate sc JOIN "
-            + "sc.sjukfallCertificateWorkCapacity scwc WHERE "
-            + "    sc.careUnitId IN (:careUnitHsaId) "
+    private static final String BASE_QUERY =
+            "SELECT sc.civicRegistrationNumber "
+            + "FROM SjukfallCertificate sc "
+            + "JOIN sc.sjukfallCertificateWorkCapacity scwc "
+            + "WHERE sc.careGiverId = :careGiverHsaId "
+            + "AND sc.careUnitId IN (:careUnitHsaId) "
             + "AND scwc.fromDate <= :today "
             + "AND scwc.toDate >= :today "
             + "AND sc.deleted = FALSE";
@@ -54,38 +57,43 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     private EntityManager entityManager;
 
     @Override
-    public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(List<String> careUnitHsaIds) {
+    public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds) {
         String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
 
         // First, get personnummer for all patients having a currently ongoing intyg.
         List<String> personNummerList = entityManager.createQuery(
                 BASE_QUERY,
                 String.class)
+                .setParameter("careGiverHsaId", careGiverHsaId)
                 .setParameter("careUnitHsaId", careUnitHsaIds)
                 .setParameter("today", today)
                 .getResultList();
 
-        return querySjukfallCertificatesForUnitsAndPersonnummer(careUnitHsaIds, personNummerList);
+        return querySjukfallCertificatesForUnitsAndPersonnummer(careGiverHsaId, careUnitHsaIds, personNummerList);
     }
 
     @Override
-    public List<SjukfallCertificate> findActiveSjukfallCertificateForPersonOnCareUnits(List<String> careUnitHsaIds, String personnummer) {
+    public List<SjukfallCertificate> findActiveSjukfallCertificateForPersonOnCareUnits(
+            String careGiverHsaId, List<String> careUnitHsaIds, String personnummer) {
+
         String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
 
         List<String> personNummerList = entityManager.createQuery(
                 BASE_QUERY + " AND sc.civicRegistrationNumber = :civicRegistrationNumber",
                 String.class)
+                .setParameter("careGiverHsaId", careGiverHsaId)
                 .setParameter("careUnitHsaId", careUnitHsaIds)
                 .setParameter("today", today)
                 .setParameter("civicRegistrationNumber", personnummer)
                 .getResultList();
 
-        return querySjukfallCertificatesForUnitsAndPersonnummer(careUnitHsaIds, personNummerList);
+        return querySjukfallCertificatesForUnitsAndPersonnummer(careGiverHsaId, careUnitHsaIds, personNummerList);
 
     }
 
-    private List<SjukfallCertificate> querySjukfallCertificatesForUnitsAndPersonnummer(List<String> careUnitHsaIds,
-            List<String> pnrList) {
+    private List<SjukfallCertificate> querySjukfallCertificatesForUnitsAndPersonnummer(
+            String careGiverHsaId, List<String> careUnitHsaIds, List<String> pnrList) {
+
         // Perform the DISTINCT and SORT programatically.
         List<String> personNummerList = pnrList.stream().distinct().sorted().collect(Collectors.toList());
 
@@ -105,9 +113,10 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                         + "JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc "
                         + "WHERE sc.civicRegistrationNumber IN (:personNummerList) "
                         + "AND sc.careUnitId IN (:careUnitHsaIds) "
+                        + "AND sc.careGiverId = :careGiverHsaId "
                         + "AND sc.deleted = FALSE",
                 SjukfallCertificate.class)
-
+                .setParameter("careGiverHsaId", careGiverHsaId)
                 .setParameter("careUnitHsaIds", careUnitHsaIds)
                 .setParameter("personNummerList", personNummerList)
                 .getResultList();
@@ -129,8 +138,8 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     @Override
     public void revoke(String id) {
 
-        List<SjukfallCertificate> resultList = entityManager.createQuery("SELECT sc FROM SjukfallCertificate sc "
-                + "WHERE sc.id=:id", SjukfallCertificate.class)
+        List<SjukfallCertificate> resultList = entityManager.createQuery(
+                "SELECT sc FROM SjukfallCertificate sc WHERE sc.id = :id", SjukfallCertificate.class)
                 .setParameter("id", id)
                 .getResultList();
 

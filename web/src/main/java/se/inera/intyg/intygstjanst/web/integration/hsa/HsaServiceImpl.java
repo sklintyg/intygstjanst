@@ -18,12 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.hsa;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import se.inera.intyg.infra.integration.hsa.services.HsaOrganizationsService;
+
+import java.util.List;
 
 /**
  * Interfaces with {@link HsaOrganizationsService} from hsa-integration.
@@ -39,5 +38,10 @@ public class HsaServiceImpl implements HsaService {
     @Override
     public List<String> getHsaIdForUnderenheter(String careUnitHsaId) {
         return hsaOrganizationsService.getHsaIdForAktivaUnderenheter(careUnitHsaId);
+    }
+
+    @Override
+    public String getHsaIdForVardgivare(String careUnitHsaId) {
+        return hsaOrganizationsService.getVardgivareOfVardenhet(careUnitHsaId);
     }
 }

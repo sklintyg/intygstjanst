@@ -60,23 +60,25 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
         }
 
         String careUnitHsaId = parameters.getEnhetsId().getExtension();
+        String careGiverHsaId = hsaService.getHsaIdForVardgivare(careUnitHsaId);
+
         String personnummer = parameters.getPersonId() != null && parameters.getPersonId().getExtension() != null
                 ? parameters.getPersonId().getExtension().trim()
                 : null;
 
 
         List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(careUnitHsaId);
-        hsaIdList.add(careUnitHsaId);
+        hsaIdList.add(careUnitHsaId); // add care unit HSAId to list
 
         List<SjukfallCertificate> activeSjukfallCertificateForCareUnits;
         if (!Strings.isNullOrEmpty(personnummer)) {
             Personnummer pnr = Personnummer.createValidatedPersonnummerWithDash(personnummer)
                     .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
             activeSjukfallCertificateForCareUnits = sjukfallCertificateDao
-                    .findActiveSjukfallCertificateForPersonOnCareUnits(hsaIdList, pnr.getPersonnummer());
+                    .findActiveSjukfallCertificateForPersonOnCareUnits(careGiverHsaId, hsaIdList, pnr.getPersonnummer());
         } else {
             activeSjukfallCertificateForCareUnits = sjukfallCertificateDao
-                    .findActiveSjukfallCertificateForCareUnits(hsaIdList);
+                    .findActiveSjukfallCertificateForCareUnits(careGiverHsaId, hsaIdList);
         }
 
         response.setResultCode(ResultCodeEnum.OK);
