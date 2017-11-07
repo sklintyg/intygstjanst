@@ -32,11 +32,11 @@ import java.util.UUID;
  */
 public class SjukfallCertTestHelper {
 
-    public static final String CARE_UNIT_ID_1 = "careunit-1";
     public static final String DOCTOR_HSA_ID = "doctor-1";
 
     public static final String CARE_GIVER_1_ID = "caregiver-1";
-    public static final String CARE_UNIT_NAME = "careunit-name-1";
+    public static final String CARE_UNIT_1_ID = "careunit-1";
+    public static final String CARE_UNIT_1_NAME = "careunit-1-name";
     public static final String PERSONNUMMER = "191212121212";
 
     public static final String DOCTOR_NAME = "doctor-name-1";
@@ -46,16 +46,22 @@ public class SjukfallCertTestHelper {
 
     public List<SjukfallCertificate> intygsList() {
         List<SjukfallCertificate> certList = new ArrayList<>();
-        certList.add(buildSjukfallCertificate(CARE_UNIT_ID_1, CARE_GIVER_1_ID, defaultWorkCapacities(), false));
+        certList.add(buildSjukfallCertificate(CARE_GIVER_1_ID, CARE_UNIT_1_ID, CARE_UNIT_1_NAME));
         return certList;
     }
 
-    private SjukfallCertificate buildSjukfallCertificate(String careUnitId, String careGiverId, List<SjukfallCertificateWorkCapacity> workCapacities, boolean deleted) {
+    public SjukfallCertificate buildSjukfallCertificate(String careGiverId, String careUnitId, String careUnitName) {
+        return buildSjukfallCertificate(careGiverId, careUnitId, careUnitName, defaultWorkCapacities(), false);
+    }
+
+    private SjukfallCertificate buildSjukfallCertificate(String careGiverId, String careUnitId, String careUnitName,
+                                                         List<SjukfallCertificateWorkCapacity> workCapacities, boolean deleted) {
+
         SjukfallCertificate sc = new SjukfallCertificate(UUID.randomUUID().toString());
-        sc.setCareUnitId(careUnitId);
-        sc.setSjukfallCertificateWorkCapacity(workCapacities);
         sc.setCareGiverId(careGiverId);
-        sc.setCareUnitName(CARE_UNIT_NAME);
+        sc.setCareUnitId(careUnitId);
+        sc.setCareUnitName(careUnitName);
+        sc.setSjukfallCertificateWorkCapacity(workCapacities);
         sc.setCivicRegistrationNumber(PERSONNUMMER);
         sc.setDiagnoseCode(DIAGNOSE_CODE);
         sc.setPatientName(PATIENT_NAME);

@@ -85,11 +85,14 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
         int minstaSjukskrivningslangd = params.getMinstaSjukskrivningslangd() != null ? params.getMinstaSjukskrivningslangd() : 0;
 
         // Set up list of enhet hsaId's to query for.
-        List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(params.getEnhetsId().getExtension());
-        hsaIdList.add(params.getEnhetsId().getExtension());
+        String careUnitHsaId = params.getEnhetsId().getExtension();
+        String careGiverHsaId = hsaService.getHsaIdForVardgivare(careUnitHsaId);
+
+        List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(careUnitHsaId);
+        hsaIdList.add(careUnitHsaId); // also add care unit's HsaId to list
 
         // Load sjukfallCertificates from DAO
-        List<SjukfallCertificate> certificates = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(hsaIdList);
+        List<SjukfallCertificate> certificates = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(careGiverHsaId, hsaIdList);
 
         // Convert to the IntygData format that the SjukfallEngine accepts.
         List<IntygData> intygDataList = sjukfallCertificateConverter.convert(certificates);
