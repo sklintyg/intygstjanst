@@ -27,6 +27,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -132,21 +133,28 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         // Next, fetch a list of all replaced/complemented intygsId for the patients in the list
         List<String> replacedOrComplementedIntygsIdList = replacedOrComplementedIntygForPersonnummerList(personNummerList);
 
-        // Then, fetch all SjukfallCertificates for these persons on the designated units, removing any sjukfall from the
-        // replaced or complemented list.
-        List<SjukfallCertificate> resultList = entityManager.createQuery(
-                "SELECT DISTINCT sc FROM SjukfallCertificate sc "
-                        + "JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc "
-                        + "WHERE sc.civicRegistrationNumber IN (:personNummerList) "
-                        + "AND sc.careUnitId IN (:careUnitHsaIds) "
-                        + "AND sc.id NOT IN (:replacedOrComplementedIntygsIdList) "
-                        + "AND sc.deleted = FALSE",
-                SjukfallCertificate.class)
+        // Prepare the final query
+        String jpql = "SELECT DISTINCT sc FROM SjukfallCertificate sc "
+                + "JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc "
+                + "WHERE sc.civicRegistrationNumber IN (:personNummerList) "
+                + "AND sc.careUnitId IN (:careUnitHsaIds) "
+                + "AND sc.deleted = FALSE ";
 
+        // Only add the "is replaced"-stuff if there's entries to possibly exclude.
+        if (isNotEmpty(replacedOrComplementedIntygsIdList)) {
+            jpql += "AND sc.id NOT IN (:replacedOrComplementedIntygsIdList)";
+        }
+
+        TypedQuery<SjukfallCertificate> query = entityManager.createQuery(jpql, SjukfallCertificate.class)
                 .setParameter("careUnitHsaIds", careUnitHsaIds)
-                .setParameter("personNummerList", personNummerList)
-                .setParameter("replacedOrComplementedIntygsIdList", replacedOrComplementedIntygsIdList)
-                .getResultList();
+                .setParameter("personNummerList", personNummerList);
+        if (isNotEmpty(replacedOrComplementedIntygsIdList)) {
+            query = query.setParameter("replacedOrComplementedIntygsIdList", replacedOrComplementedIntygsIdList);
+        }
+
+        // Finally, fetch all SjukfallCertificates for these persons on the designated units, removing any sjukfall from
+        // the replaced or complemented list.
+        List<SjukfallCertificate> resultList = query.getResultList();
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Read {} SjukfallCertificate for belonging to unit {}",
@@ -155,6 +163,10 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         return resultList.stream()
                 .sorted(Comparator.comparing(SjukfallCertificate::getCivicRegistrationNumber))
                 .collect(Collectors.toList());
+    }
+
+    private boolean isNotEmpty(List<String> replacedOrComplementedIntygsIdList) {
+        return replacedOrComplementedIntygsIdList != null && replacedOrComplementedIntygsIdList.size() > 0;
     }
 
     @SuppressWarnings("unchecked")
