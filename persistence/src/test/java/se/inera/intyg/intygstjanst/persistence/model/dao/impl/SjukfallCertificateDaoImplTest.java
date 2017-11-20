@@ -25,6 +25,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+import se.inera.intyg.common.support.common.enumerations.RelationKod;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
@@ -53,20 +55,16 @@ import static org.junit.Assert.assertNotNull;
 @Transactional
 public class SjukfallCertificateDaoImplTest {
 
-    private static final String HSA_ID_1 = "careunit-1";
-
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
-    private static final String CARE_UNIT_NAME = "careunit-name-1";
+
     private static final String PERSONNUMMER = "19121212-1212";
     private static final String DOCTOR_HSA_ID = "doctor-1";
     private static final String DOCTOR_NAME = "doctor-name-1";
     private static final String FK7263 = "fk7263";
 
-    private static final String HSA_ID_2_1 = "careunit-2-1";
-    private static final String HSA_ID_2_2 = "careunit-2-2";
     private static final String CARE_GIVER_1_ID = "caregiver-1";
-    private static final String CARE_GIVER_2_ID = "caregiver-2";
-
+    private static final String CARE_UNIT_HSA_ID_1 = "careunit-1";
+    private static final String CARE_UNIT_NAME = "careunit-name-1";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -77,7 +75,8 @@ public class SjukfallCertificateDaoImplTest {
     @Test
     public void testFindActiveSjukfallCertificates() {
         buildDefaultSjukfallCertificates();
-        List<SjukfallCertificate> resultList = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(Arrays.asList(HSA_ID_1));
+        List<SjukfallCertificate> resultList = sjukfallCertificateDao
+                .findActiveSjukfallCertificateForCareUnits(Arrays.asList(CARE_UNIT_HSA_ID_1));
         assertNotNull(resultList);
         assertEquals(1, resultList.size());
         assertEquals(3, resultList.get(0).getSjukfallCertificateWorkCapacity().size());
@@ -86,7 +85,8 @@ public class SjukfallCertificateDaoImplTest {
     @Test
     public void testFindActiveSjukfallCertificatesForPatient() {
         buildDefaultSjukfallCertificates();
-        List<SjukfallCertificate> resultList = sjukfallCertificateDao.findActiveSjukfallCertificateForPersonOnCareUnits(Arrays.asList(HSA_ID_1), PERSONNUMMER);
+        List<SjukfallCertificate> resultList = sjukfallCertificateDao
+                .findActiveSjukfallCertificateForPersonOnCareUnits(Arrays.asList(CARE_UNIT_HSA_ID_1), PERSONNUMMER);
         assertNotNull(resultList);
         assertEquals(1, resultList.size());
         assertEquals(3, resultList.get(0).getSjukfallCertificateWorkCapacity().size());
@@ -95,7 +95,8 @@ public class SjukfallCertificateDaoImplTest {
     @Test
     public void testDeletedSjukfallCertificateIsNotFound() {
         buildDeletedSjukfallCertificates();
-        List<SjukfallCertificate> resultList = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(Arrays.asList(HSA_ID_1));
+        List<SjukfallCertificate> resultList = sjukfallCertificateDao
+                .findActiveSjukfallCertificateForCareUnits(Arrays.asList(CARE_UNIT_HSA_ID_1));
         assertNotNull(resultList);
         assertEquals(0, resultList.size());
     }
@@ -103,7 +104,8 @@ public class SjukfallCertificateDaoImplTest {
     @Test
     public void testSjukfallCertificateWithoutOngoingArbetskapacitetNedsattningIsNotFound() {
         buildNonOngoingSjukfallCertificates();
-        List<SjukfallCertificate> resultList = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(Arrays.asList(HSA_ID_1));
+        List<SjukfallCertificate> resultList = sjukfallCertificateDao
+                .findActiveSjukfallCertificateForCareUnits(Arrays.asList(CARE_UNIT_HSA_ID_1));
         assertNotNull(resultList);
         assertEquals(0, resultList.size());
     }
@@ -126,26 +128,59 @@ public class SjukfallCertificateDaoImplTest {
         assertEquals(false, fromDb.getDeleted());
     }
 
+    @Test
+    public void testReplacedIntygIsExcluded() {
+        String originalId = buildDefaultSjukfallCertificates();
+        String replacingId = buildReplacingSjukfallCertificate(originalId);
+        List<SjukfallCertificate> resultList = sjukfallCertificateDao
+                .findActiveSjukfallCertificateForCareUnits(Arrays.asList(CARE_UNIT_HSA_ID_1));
+        assertEquals(1, resultList.size());
+        assertEquals(replacingId, resultList.get(0).getId());
+    }
+
+    @Test
+    public void testReplacedIntygIsNotExcludedWhenReplacesSomethinElse() {
+        String originalId = buildDefaultSjukfallCertificates();
+        String replacingId = buildReplacingSjukfallCertificate("some-other-stuff");
+        List<SjukfallCertificate> resultList = sjukfallCertificateDao
+                .findActiveSjukfallCertificateForCareUnits(Arrays.asList(CARE_UNIT_HSA_ID_1));
+        assertEquals(2, resultList.size());
+    }
+
     private String buildDefaultSjukfallCertificates() {
-        SjukfallCertificate sc = buildSjukfallCertificate(HSA_ID_1, defaultWorkCapacities(), false);
+        SjukfallCertificate sc = buildSjukfallCertificate(CARE_UNIT_HSA_ID_1, defaultWorkCapacities(), false);
         sc = entityManager.merge(sc);
         return sc.getId();
     }
 
     private String buildDeletedSjukfallCertificates() {
-        SjukfallCertificate sc = buildSjukfallCertificate(HSA_ID_1, defaultWorkCapacities(), true);
+        SjukfallCertificate sc = buildSjukfallCertificate(CARE_UNIT_HSA_ID_1, defaultWorkCapacities(), true);
         sc = entityManager.merge(sc);
         return sc.getId();
     }
 
     private String buildNonOngoingSjukfallCertificates() {
-        SjukfallCertificate sc = buildSjukfallCertificate(HSA_ID_1, nonOngoingWorkCapacities(), false);
+        SjukfallCertificate sc = buildSjukfallCertificate(CARE_UNIT_HSA_ID_1, nonOngoingWorkCapacities(), false);
         sc = entityManager.merge(sc);
         return sc.getId();
     }
 
+    private String buildReplacingSjukfallCertificate(String originalIntygsId) {
+        SjukfallCertificate sc = buildSjukfallCertificate(CARE_UNIT_HSA_ID_1, defaultWorkCapacities(), false);
+        sc = entityManager.merge(sc);
 
-    private SjukfallCertificate buildSjukfallCertificate(String careUnitId, List<SjukfallCertificateWorkCapacity> workCapacities, boolean deleted) {
+        Relation r = new Relation();
+        r.setFromIntygsId(sc.getId());
+        r.setToIntygsId(originalIntygsId);
+        r.setRelationKod(RelationKod.ERSATT.value());
+        r.setCreated(LocalDateTime.now());
+        r = entityManager.merge(r);
+
+        return sc.getId();
+    }
+
+    private SjukfallCertificate buildSjukfallCertificate(String careUnitId, List<SjukfallCertificateWorkCapacity> workCapacities,
+            boolean deleted) {
         SjukfallCertificate sc = new SjukfallCertificate(UUID.randomUUID().toString());
         sc.setCareUnitId(careUnitId);
         sc.setSigningDateTime(CERT_SIGNING_DATETIME);
