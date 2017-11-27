@@ -15,7 +15,7 @@ stage('deploy test-IT') {
         util.run {
             def itVersion = util.latestVersion("se/inera/intyg/intygstjanst/intygstjanst-web", baseVersion)
 
-            ansiblePlaybook(extraVars: [version: "${itVersion}", ansible_ssh_port: "22", deploy_from_repo: "true"],
+            ansiblePlaybook(extraVars: [version: "${itVersion}", ansible_ssh_port: "22", deploy_from_repo: "true", config_version: "IT-3.3"],
                             installation: 'ansible-yum', inventory: 'ansible/inventory/intygstjanst/test-mi', playbook: 'ansible/deploy.yml')
 
             util.waitForServer('https://minaintyg.inera.nordicmedtest.se/inera-certificate/version.jsp')
