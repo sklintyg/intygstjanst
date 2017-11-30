@@ -18,9 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 // CHECKSTYLE:OFF LineLength
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
@@ -77,6 +79,9 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     @Autowired
     private MonitoringLogService monitoringLogService;
+
+    @Value("${fk7263.revoke.medical.certificate.force.fullstandigtnamn}")
+    private String forceFullstandigtNamnPlaceholder;
 
     @Override
     public void sendCertificate(Certificate certificate, String recipientId) {
@@ -152,6 +157,10 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
         question.getFraga().setMeddelandeText(meddelande);
         question.getFraga().setSigneringsTidpunkt(signTs);
         question.setLakarutlatande(revokeData.getLakarutlatande());
+
+        if ("true".equalsIgnoreCase(forceFullstandigtNamnPlaceholder)) {
+            question.getLakarutlatande().getPatient().setFullstandigtNamn("---");
+        }
 
         AttributedURIType logicalAddress = new AttributedURIType();
         logicalAddress.setValue(recipientService.getPrimaryRecipientFkassa().getLogicalAddress());
