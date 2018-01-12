@@ -1,0 +1,7 @@
+---
+
+- hosts: local
+  serial: 1
+  become: yes
+  roles:
+    - intygstjanst-resurser
