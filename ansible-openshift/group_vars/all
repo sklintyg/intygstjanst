@@ -28,3 +28,5 @@ activemq_version : 5.13.0
 activemq_broker_url: "tcp://localhost:61616"
 activemq_username: ""
 activemq_password: ""
+
+environment_name: openshift
