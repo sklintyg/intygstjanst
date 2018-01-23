@@ -92,7 +92,8 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
         hsaIdList.add(careUnitHsaId); // also add care unit's HsaId to list
 
         // Load sjukfallCertificates from DAO
-        List<SjukfallCertificate> certificates = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(careGiverHsaId, hsaIdList);
+        List<SjukfallCertificate> certificates = sjukfallCertificateDao
+                .findActiveSjukfallCertificateForCareUnits(careGiverHsaId, hsaIdList);
 
         // Convert to the IntygData format that the SjukfallEngine accepts.
         List<IntygData> intygDataList = sjukfallCertificateConverter.convert(certificates);
@@ -108,8 +109,8 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
                 .filter(sf -> sf.getDagar() < maxSjukskrivningslangd)
                 .filter(sf -> lakareList == null || lakareList.size() == 0
                         || lakareList.stream()
-                                .map(id -> id.getExtension())
-                                .anyMatch(extension -> extension.equals(sf.getLakare().getId())))
+                        .map(id -> id.getExtension())
+                        .anyMatch(extension -> extension.equals(sf.getLakare().getId())))
                 .collect(Collectors.toList());
 
         // Transform the output of the sjukfallengine into rivta TjK format and build the response object.
