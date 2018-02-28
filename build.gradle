@@ -7,6 +7,8 @@ ext {
     commonVersion = System.properties['commonVersion'] ?: '0-SNAPSHOT'
     infraVersion = System.properties['infraVersion'] ?: '0-SNAPSHOT'
 
+    schemasContractVersion = "2.1.5"
+
     intygHealthcondRehabilitationSchemasVersion = "1.0.7"
     intygInsuranceprocessSchemasVersion = "1.0.4"
     rivtaClinicalprocessSchemasVersion = "3.2.0-RC1"
@@ -24,6 +26,7 @@ ext {
     springVersion = "4.2.2.RELEASE"
     stAntlr4Version = "4.0.8"
     xmlUnitVersion = "1.4"
+
     mockitoVersion = "1.9.0"
     mysqlVersion = "5.1.40"
     h2Version = "1.3.176"

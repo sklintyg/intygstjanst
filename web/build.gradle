@@ -33,6 +33,7 @@ dependencies {
     compile project(':intygstjanst-persistence')
     compile "se.inera.intyg.insuranceprocess.healthreporting:intyg-insuranceprocess-healthreporting-schemas:${intygInsuranceprocessSchemasVersion}"
 
+    compile "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
     compile "se.inera.intyg.infra:hsa-integration:${infraVersion}"
     compile "se.inera.intyg.infra:sjukfall-engine:${infraVersion}"
 
