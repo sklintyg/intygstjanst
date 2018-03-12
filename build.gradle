@@ -1,5 +1,5 @@
 plugins {
-    id "se.inera.intyg.plugin.common" version "1.0.61" apply false
+    id "se.inera.intyg.plugin.common" version "1.0.62" apply false
     id "org.akhikhl.gretty" version "1.4.2" apply false
 }
 
@@ -44,8 +44,6 @@ allprojects {
     }
 
     dependencies {
-        compile "com.google.code.findbugs:jsr305:3.0.0"
-
         testCompile "junit:junit:4.+"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
     }
