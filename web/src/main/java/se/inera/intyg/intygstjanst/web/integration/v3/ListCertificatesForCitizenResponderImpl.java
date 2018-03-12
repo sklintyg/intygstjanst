@@ -49,17 +49,22 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @SchemaValidation
 public class ListCertificatesForCitizenResponderImpl implements ListCertificatesForCitizenResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ListCertificatesForCitizenResponderImpl.class);
+
     private static final List<String> EXCLUDED_CERTIFICATES = Arrays.asList(DbModuleEntryPoint.MODULE_ID, DoiModuleEntryPoint.MODULE_ID);
+
     @Autowired
     private CertificateService certificateService;
+
     @Autowired
     private MonitoringLogService monitoringLogService;
+
     @Autowired
     private IntygModuleRegistryImpl moduleRegistry;
 
@@ -72,9 +77,14 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         response.getIntygsLista().getIntyg(); // initialize list for schema validation, if no certificates
 
         try {
-            final Personnummer personnummer = new Personnummer(parameters.getPersonId().getExtension());
+            Optional<Personnummer> personnummer =
+                    Personnummer.createValidatedPersonnummer(parameters.getPersonId().getExtension());
+
             List<Certificate> certificates = certificateService.listCertificatesForCitizen(
-                    personnummer, toStringList(parameters.getIntygTyp()), parameters.getFromDatum(), parameters.getTomDatum());
+                    personnummer.orElse(null),
+                    toStringList(parameters.getIntygTyp()),
+                    parameters.getFromDatum(),
+                    parameters.getTomDatum());
 
             response.getIntygsLista().getIntyg().addAll(certificates.stream()
                     .filter(c -> !EXCLUDED_CERTIFICATES.contains(c.getType()))
@@ -83,7 +93,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
                     .collect(Collectors.toList()));
 
             response.setResult(ResultTypeUtil.okResult());
-            monitoringLogService.logCertificateListedByCitizen(personnummer);
+            monitoringLogService.logCertificateListedByCitizen(personnummer.orElse(null));
 
         } catch (MissingConsentException ex) {
             response.setResult(ResultTypeUtil.infoResult("NOCONSENT"));

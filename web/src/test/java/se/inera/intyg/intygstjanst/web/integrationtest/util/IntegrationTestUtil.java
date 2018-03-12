@@ -206,7 +206,7 @@ public class IntegrationTestUtil {
         certificate.setCareUnitId("CareUnitId");
         certificate.setCareUnitName("CareUnitName");
         certificate.setSigningDoctorName("Singing Doctor");
-        certificate.setCivicRegistrationNumber(new Personnummer(personId));
+        certificate.setCivicRegistrationNumber(createPnr(personId));
         certificate.setCertificateStates(Arrays.asList(new CertificateStateHolder("HSVARD", CertificateState.RECEIVED, LocalDateTime.now())));
         certificate.setDeletedByCareGiver(deletedByCareGiver);
         return certificate;
@@ -230,4 +230,10 @@ public class IntegrationTestUtil {
         ST registerTemplateForConsent = templateGroup.getInstanceOf(instance);
         return registerTemplateForConsent;
     }
+
+    private static Personnummer createPnr(String pnr) {
+        return Personnummer.createValidatedPersonnummer(pnr)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+    }
+
 }

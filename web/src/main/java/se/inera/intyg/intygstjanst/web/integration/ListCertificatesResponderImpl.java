@@ -18,21 +18,20 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
-
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.rivtabp20.v1.ListCertificatesResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesResponseType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.converter.ModelConverter;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.schemas.contract.Personnummer;
+
+import java.util.List;
 
 /**
  * @author andreaskaltenbach
@@ -49,8 +48,11 @@ public class ListCertificatesResponderImpl implements ListCertificatesResponderI
 
         try {
             List<Certificate> certificates = certificateService.listCertificatesForCitizen(
-                    new Personnummer(parameters.getNationalIdentityNumber()), parameters.getCertificateType(), parameters.getFromDate(),
+                    createPnr(parameters.getNationalIdentityNumber()),
+                    parameters.getCertificateType(),
+                    parameters.getFromDate(),
                     parameters.getToDate());
+
             for (Certificate certificate : certificates) {
                 if (parameters.getCertificateType().isEmpty() || !(certificate.isDeleted() || certificate.isRevoked())) {
                     response.getMeta().add(ModelConverter.toCertificateMetaType(ConverterUtil.toCertificateHolder(certificate)));
@@ -64,4 +66,10 @@ public class ListCertificatesResponderImpl implements ListCertificatesResponderI
 
         return response;
     }
+
+    private Personnummer createPnr(String personId) {
+        return Personnummer.createValidatedPersonnummer(personId)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+    }
+
 }

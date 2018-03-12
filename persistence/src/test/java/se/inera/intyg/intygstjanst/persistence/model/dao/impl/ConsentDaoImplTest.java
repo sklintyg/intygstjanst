@@ -48,8 +48,9 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
 @Transactional
 public class ConsentDaoImplTest {
 
-    public static final Personnummer CIVIC_REGISTRATION_NUMBER = new Personnummer("19001122-3344");
-    public static final Personnummer CIVIC_REGISTRATION_NUMBER_NO_DASH = new Personnummer("190011223344");
+    public static final Personnummer CIVIC_REGISTRATION_NUMBER = createPnr("19001122-3344");
+    public static final Personnummer CIVIC_REGISTRATION_NUMBER_NO_DASH = createPnr("190011223344");
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -132,7 +133,12 @@ public class ConsentDaoImplTest {
         assertEquals(0, allConsents().size());
     }
 
+    private static Personnummer createPnr(String pnr) {
+        return Personnummer.createValidatedPersonnummer(pnr).get();
+    }
+
     private List<Consent> allConsents() {
         return entityManager.createQuery("SELECT c FROM Consent c", Consent.class).getResultList();
     }
+
 }

@@ -152,7 +152,7 @@ public class RevokeCertificateResponderImplTest {
         final String logicalAddress = "logicalAddress";
 
         when(certificateService.revokeCertificate(any(), eq(certificateId)))
-                .thenThrow(new InvalidCertificateException(certificateId, new Personnummer(patientId)));
+                .thenThrow(new InvalidCertificateException(certificateId, createPnr(patientId)));
 
         RevokeCertificateType request = new RevokeCertificateType();
         request.setIntygsId(new IntygId());
@@ -202,6 +202,11 @@ public class RevokeCertificateResponderImplTest {
         Certificate cert = new Certificate(certificateId);
         cert.setStates(Arrays.asList(entries));
         return cert;
+    }
+
+    private Personnummer createPnr(String pnr) {
+        return Personnummer.createValidatedPersonnummer(pnr)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 
 }

@@ -66,7 +66,7 @@ public class CertificateForSjukfallFactory {
     private static final String CARE_UNIT_NAME = "Enhet1";
     private static final String CARE_GIVER_ID = " vardgivare-1 ";
 
-    private Personnummer pNr = new Personnummer(PERSONNUMMER);
+    private Personnummer pNr = Personnummer.createValidatedPersonnummer(PERSONNUMMER).get();
 
     private static CertificateForSjukfallFactory factory;
 

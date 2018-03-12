@@ -35,6 +35,8 @@ import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 
+import java.util.Optional;
+
 @SchemaValidation
 public class SendCertificateToRecipientResponderImpl implements SendCertificateToRecipientResponderInterface {
 
@@ -50,12 +52,15 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
         SendCertificateToRecipientResponseType response = new SendCertificateToRecipientResponseType();
 
         final String mottagareId = request.getMottagare().getCode();
-        final Personnummer personnummer = new Personnummer(request.getPatientPersonId().getExtension());
         final String intygsId = request.getIntygsId().getExtension();
+
+        final Optional<Personnummer> personnummer =
+                Personnummer.createValidatedPersonnummer(request.getPatientPersonId().getExtension());
+
         try {
             // 1. Skicka certifikat till mottagaren
-            CertificateService.SendStatus sendStatus = certificateService.sendCertificate(personnummer, intygsId,
-                    mottagareId);
+            CertificateService.SendStatus sendStatus =
+                    certificateService.sendCertificate(personnummer.orElse(null), intygsId, mottagareId);
 
             if (sendStatus == CertificateService.SendStatus.ALREADY_SENT) {
                 response.setResult(ResultTypeUtil.infoResult(String.format("Certificate '%s' already sent to '%s'.", intygsId,
@@ -68,7 +73,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
 
         } catch (InvalidCertificateException ex) {
             // return ERROR if no such certificate does exist
-            LOGGER.error("Certificate '{}' does not exist for user '{}'.", intygsId, personnummer.getPnrHash());
+            LOGGER.error("Certificate '{}' does not exist for user '{}'.", intygsId, personnummer.get().getPersonnummerHash());
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR,
                     String.format("Unknown certificate ID: %s", intygsId)));
         } catch (CertificateRevokedException ex) {

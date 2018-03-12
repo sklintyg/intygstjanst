@@ -95,7 +95,7 @@ public class SetCertificateStatusResponderImplTest {
         assertNotNull(res);
         assertEquals(ResultCodeEnum.OK, res.getResult().getResultCode());
 
-        verify(certificateService).setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA,
+        verify(certificateService).setCertificateState(createPnr("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA,
                 CertificateState.CANCELLED, timestamp);
         verify(monitoringLogService).logCertificateStatusChanged(CERTIFICATE_ID, "CANCELLED");
     }
@@ -116,7 +116,7 @@ public class SetCertificateStatusResponderImplTest {
         assertNotNull(res);
         assertEquals(ResultCodeEnum.OK, res.getResult().getResultCode());
 
-        verify(certificateService).setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA,
+        verify(certificateService).setCertificateState(createPnr("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA,
                 CertificateState.CANCELLED, timestamp);
         verify(monitoringLogService).logCertificateStatusChanged(CERTIFICATE_ID, "CANCELLED");
         verify(recipientService).getPrimaryRecipientFkassa();
@@ -145,8 +145,8 @@ public class SetCertificateStatusResponderImplTest {
     @Test
     public void testSetCertificateStatusInvalidCertificate() throws Exception {
         LocalDateTime timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
-        doThrow(new InvalidCertificateException(CERTIFICATE_ID, new Personnummer("19001122-3344"))).when(certificateService)
-                .setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA, CertificateState.CANCELLED,
+        doThrow(new InvalidCertificateException(CERTIFICATE_ID, createPnr("19001122-3344"))).when(certificateService)
+                .setCertificateState(createPnr("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA, CertificateState.CANCELLED,
                         timestamp);
 
         SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
@@ -158,8 +158,14 @@ public class SetCertificateStatusResponderImplTest {
 
         responder.setCertificateStatus(null, request);
 
-        verify(certificateService).setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA,
+        verify(certificateService).setCertificateState(createPnr("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA,
                 CertificateState.CANCELLED, timestamp);
         verify(monitoringLogService, never()).logCertificateStatusChanged(anyString(), anyString());
     }
+
+    private Personnummer createPnr(String pnr) {
+        return Personnummer.createValidatedPersonnummer(pnr)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+    }
+
 }

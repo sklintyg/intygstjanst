@@ -18,27 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
@@ -59,6 +44,18 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.IntygsStatus;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListCertificatesForCareResponderImplTest {
@@ -95,7 +92,7 @@ public class ListCertificatesForCareResponderImplTest {
 
     @Test
     public void listCertificatesWithNoCertificates() throws Exception {
-        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
+        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> careUnit = Collections.singletonList("enhet");
         List<Certificate> result = Collections.emptyList();
 
@@ -113,7 +110,7 @@ public class ListCertificatesForCareResponderImplTest {
 
     @Test
     public void listCertificates() throws Exception {
-        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
+        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> careUnit = Collections.singletonList("enhet");
 
         Certificate certificate1 = new Certificate();
@@ -137,7 +134,7 @@ public class ListCertificatesForCareResponderImplTest {
 
     @Test
     public void listCertificatesDoesNotListCertificatesDeletedByCaregiver() throws Exception {
-        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
+        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> careUnit = Collections.singletonList("enhet");
 
         Certificate certificate = new Certificate();
@@ -175,7 +172,7 @@ public class ListCertificatesForCareResponderImplTest {
                 firstStatusSaved.plusHours(4),
                 firstStatusSaved.plusHours(5),
         };
-        Personnummer pnr = new Personnummer("19121212-1212");
+        Personnummer pnr = createPnr("19121212-1212");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
         LocalDate toDate = LocalDate.of(2020, 12, 12);
@@ -231,4 +228,10 @@ public class ListCertificatesForCareResponderImplTest {
         parameters.getEnhetsId().add(enhet);
         return parameters;
     }
+
+    private Personnummer createPnr(String pnr) {
+        return Personnummer.createValidatedPersonnummer(pnr)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+    }
+
 }

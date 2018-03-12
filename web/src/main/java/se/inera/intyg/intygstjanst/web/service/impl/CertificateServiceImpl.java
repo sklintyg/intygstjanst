@@ -214,6 +214,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             CertificateRevokedException.class })
     public Certificate revokeCertificate(Personnummer civicRegistrationNumber, String certificateId)
             throws InvalidCertificateException, CertificateRevokedException {
+
         Certificate certificate = null;
         try {
             certificate = getCertificateInternal(civicRegistrationNumber, certificateId);

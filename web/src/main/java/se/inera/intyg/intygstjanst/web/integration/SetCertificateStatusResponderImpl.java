@@ -62,14 +62,27 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
 
         try {
             target = recipientService.getRecipient(target).getId();
-            certificateService.setCertificateState(new Personnummer(request.getNationalIdentityNumber()), request.getCertificateId(),
-                    target, CertificateState.valueOf(request.getStatus().name()), request.getTimestamp());
+
+            certificateService.setCertificateState(
+                    createPnr(request.getNationalIdentityNumber()),
+                    request.getCertificateId(),
+                    target,
+                    CertificateState.valueOf(request.getStatus().name()),
+                    request.getTimestamp());
+
             response.setResult(ResultOfCallUtil.okResult());
             monitoringLogService.logCertificateStatusChanged(request.getCertificateId(), request.getStatus().name());
+
         } catch (RecipientUnknownException | InvalidCertificateException e) {
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
         }
 
         return response;
     }
+
+    private Personnummer createPnr(String personId) {
+        return Personnummer.createValidatedPersonnummer(personId)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+    }
+
 }

@@ -18,10 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import javax.persistence.*;
-
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
+import se.inera.intyg.schemas.contract.Personnummer;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * @author andreaskaltenbach
@@ -43,7 +45,7 @@ public class Consent {
     }
 
     public Personnummer getCivicRegistrationNumber() {
-        return new Personnummer(civicRegistrationNumber);
+        return Personnummer.createValidatedPersonnummer(civicRegistrationNumber).get();
     }
 
     public void setCivicRegistrationNumber(Personnummer civicRegistrationNumber) {

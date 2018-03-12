@@ -183,7 +183,7 @@ public class SendMessageToCareValidatorTest {
         String certificateId = sendMessageToCareType.getIntygsId().getExtension();
         String civicRegistrationNumber = sendMessageToCareType.getPatientPersonId().getExtension();
         Certificate certificate = new Certificate(certificateId);
-        certificate.setCivicRegistrationNumber(new Personnummer(civicRegistrationNumber));
+        certificate.setCivicRegistrationNumber(createPnr(civicRegistrationNumber));
         when(certificateService.getCertificateForCare(certificateId)).thenReturn(certificate);
 
         List<String> res = validator.validateSendMessageToCare(sendMessageToCareType);
@@ -342,7 +342,7 @@ public class SendMessageToCareValidatorTest {
         String certificateId = message.getIntygsId().getExtension();
         String civicRegistrationNumber = message.getPatientPersonId().getExtension();
         Certificate certificate = new Certificate(certificateId);
-        certificate.setCivicRegistrationNumber(new Personnummer(civicRegNumber));
+        certificate.setCivicRegistrationNumber(createPnr(civicRegNumber));
         when(certificateService.getCertificateForCare(certificateId)).thenReturn(certificate);
         validator.validateThatCertificateExists(certificateId, civicRegistrationNumber, validationErrors);
     }
@@ -364,6 +364,11 @@ public class SendMessageToCareValidatorTest {
         sendMessageToCareType.setAmne(new se.riv.clinicalprocess.healthcond.certificate.types.v3.Amneskod());
         sendMessageToCareType.getAmne().setCode(amne);
         return sendMessageToCareType;
+    }
+
+    private Personnummer createPnr(String pnr) {
+        return Personnummer.createValidatedPersonnummer(pnr)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 
 }

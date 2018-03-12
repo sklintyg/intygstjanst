@@ -18,20 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +25,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
 import se.inera.intyg.common.db.support.DbModuleEntryPoint;
 import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
 import se.inera.intyg.common.fk7263.support.Fk7263EntryPoint;
@@ -66,6 +51,18 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.IntygsStatus;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListCertificatesForCitizenResponderImplTest {
@@ -103,7 +100,7 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     @Test
     public void listCertificatesWithNoCertificates() throws Exception {
-        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
+        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
         LocalDate toDate = LocalDate.of(2020, 12, 12);
@@ -129,7 +126,7 @@ public class ListCertificatesForCitizenResponderImplTest {
                 any(LocalDate.class))).thenThrow(new MissingConsentException(null));
 
         List<String> types = Collections.emptyList();
-        ListCertificatesForCitizenType parameters = createListCertificatesRequest(new Personnummer("12-3"), types, null, null, false);
+        ListCertificatesForCitizenType parameters = createListCertificatesRequest(createPnr("19350108-1234"), types, null, null, false);
 
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
@@ -140,7 +137,7 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     @Test
     public void listCertificatesArkiveradFalse() throws Exception {
-        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
+        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
         LocalDate toDate = LocalDate.of(2020, 12, 12);
@@ -167,7 +164,7 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     @Test
     public void listCertificatesArkiveradTrue() throws Exception {
-        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
+        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
         LocalDate toDate = LocalDate.of(2020, 12, 12);
@@ -195,7 +192,7 @@ public class ListCertificatesForCitizenResponderImplTest {
     @Test
     public void listCertificatesSetsStatuses() throws Exception {
         final LocalDateTime statusTimestamp = LocalDateTime.now();
-        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
+        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
         LocalDate toDate = LocalDate.of(2020, 12, 12);
@@ -232,7 +229,7 @@ public class ListCertificatesForCitizenResponderImplTest {
                 firstStatusSaved.plusHours(3),
                 firstStatusSaved.plusHours(4),
         };
-        Personnummer pnr = new Personnummer("19121212-1212");
+        Personnummer pnr = createPnr("19121212-1212");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
         LocalDate toDate = LocalDate.of(2020, 12, 12);
@@ -285,7 +282,7 @@ public class ListCertificatesForCitizenResponderImplTest {
                 firstStatusSaved.plusHours(3),
                 firstStatusSaved.plusHours(4),
         };
-        Personnummer pnr = new Personnummer("19121212-1212");
+        Personnummer pnr = createPnr("19121212-1212");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
         LocalDate toDate = LocalDate.of(2020, 12, 12);
@@ -350,7 +347,7 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     @Test
     public void testDbDoiAreExcluded() throws Exception {
-        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
+        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.emptyList();
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
         LocalDate toDate = LocalDate.of(2020, 12, 12);
@@ -404,4 +401,10 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         return parameters;
     }
+
+    private Personnummer createPnr(String pnr) {
+        return Personnummer.createValidatedPersonnummer(pnr)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+    }
+
 }

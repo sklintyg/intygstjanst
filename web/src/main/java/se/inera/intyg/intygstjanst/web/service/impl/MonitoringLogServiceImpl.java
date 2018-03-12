@@ -56,12 +56,12 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
 
     @Override
     public void logCertificateListedByCitizen(Personnummer citizenId) {
-        logEvent(MonitoringEvent.CERTIFICATE_LISTED_BY_CITIZEN, Personnummer.getPnrHashSafe(citizenId));
+        logEvent(MonitoringEvent.CERTIFICATE_LISTED_BY_CITIZEN, Personnummer.getPersonnummerHashSafe(citizenId));
     }
 
     @Override
     public void logCertificateListedByCare(Personnummer citizenId) {
-        logEvent(MonitoringEvent.CERTIFICATE_LISTED_BY_CARE, Personnummer.getPnrHashSafe(citizenId));
+        logEvent(MonitoringEvent.CERTIFICATE_LISTED_BY_CARE, Personnummer.getPersonnummerHashSafe(citizenId));
     }
 
     @Override
@@ -71,12 +71,12 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
 
     @Override
     public void logConsentGiven(Personnummer citizenId) {
-        logEvent(MonitoringEvent.CONSENT_GIVEN, Personnummer.getPnrHashSafe(citizenId));
+        logEvent(MonitoringEvent.CONSENT_GIVEN, Personnummer.getPersonnummerHashSafe(citizenId));
     }
 
     @Override
     public void logConsentRevoked(Personnummer citizenId) {
-        logEvent(MonitoringEvent.CONSENT_REVOKED, Personnummer.getPnrHashSafe(citizenId));
+        logEvent(MonitoringEvent.CONSENT_REVOKED, Personnummer.getPersonnummerHashSafe(citizenId));
     }
 
     @Override

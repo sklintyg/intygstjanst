@@ -28,14 +28,16 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType.Komplettering;
 import se.riv.clinicalprocess.healthcond.certificate.v3.MeddelandeReferens;
-import se.inera.intyg.intygstjanst.web.service.RecipientService;
-import se.inera.intyg.schemas.contract.Personnummer;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -164,8 +166,9 @@ public class SendMessageToCareValidator {
                 validationErrors.add(ErrorCode.CERTIFICATE_NOT_FOUND_ERROR.toString());
                 return;
             }
-            Personnummer suppliedCivicRegistrationNumber = new Personnummer(civicRegistrationNumber);
-            if (!suppliedCivicRegistrationNumber.equals(certificate.getCivicRegistrationNumber())) {
+            Optional<Personnummer> suppliedCivicRegistrationNumber = Personnummer.createValidatedPersonnummer(civicRegistrationNumber);
+            if (!(suppliedCivicRegistrationNumber.isPresent() &&
+                    suppliedCivicRegistrationNumber.get().equals(certificate.getCivicRegistrationNumber()))) {
                 validationErrors.add(ErrorCode.CIVIC_REGISTRATION_NUMBER_INCONSISTENCY_ERROR.toString());
             }
         } catch (InvalidCertificateException e) {
@@ -191,6 +194,10 @@ public class SendMessageToCareValidator {
                 return;
             }
         }
+    }
+
+    private Personnummer createPnr(String pnr) {
+        return Personnummer.createValidatedPersonnummer(pnr).orElse(null);
     }
 
     private boolean isPaminnelse(SendMessageToCareType sendMessageToCareType) {

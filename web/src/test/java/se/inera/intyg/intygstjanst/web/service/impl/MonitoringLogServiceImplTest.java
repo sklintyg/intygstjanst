@@ -18,10 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
-
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.LoggingEvent;
+import ch.qos.logback.core.Appender;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,14 +32,12 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.classic.spi.LoggingEvent;
-import ch.qos.logback.core.Appender;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MonitoringLogServiceImplTest {
@@ -47,7 +46,7 @@ public class MonitoringLogServiceImplTest {
     private static final String CERTIFICATE_TYPE = "CERTIFICATE_TYPE";
     private static final String CARE_UNIT = "CARE_UNIT";
     private static final String RECIPIENT = "RECIPIENT";
-    private static final String CITIZEN = "CITIZEN";
+    private static final String CITIZEN = "191212121212";
     private static final String STATUS = "STATUS";
     private static final String MESSAGE_ID = "MESSAGE_ID";
     private static final String TOPIC = "TOPIC";
@@ -111,17 +110,17 @@ public class MonitoringLogServiceImplTest {
 
     @Test
     public void shouldLogCertificateListedByCitizen() {
-        final Personnummer citizenId = new Personnummer(CITIZEN);
+        final Personnummer citizenId = createPnr(CITIZEN);
         logService.logCertificateListedByCitizen(citizenId);
         verifyLog(Level.INFO,
-                "CERTIFICATE_LISTED_BY_CITIZEN Certificates for citizen '" + citizenId.getPnrHash() + "' - listed by citizen");
+                "CERTIFICATE_LISTED_BY_CITIZEN Certificates for citizen '" + citizenId.getPersonnummerHash() + "' - listed by citizen");
     }
 
     @Test
     public void shouldLogCertificateListedByCare() {
-        final Personnummer citizenId = new Personnummer(CITIZEN);
+        final Personnummer citizenId = createPnr(CITIZEN);
         logService.logCertificateListedByCare(citizenId);
-        verifyLog(Level.INFO, "CERTIFICATE_LISTED_BY_CARE Certificates for citizen '" + citizenId.getPnrHash() + "' - listed by care");
+        verifyLog(Level.INFO, "CERTIFICATE_LISTED_BY_CARE Certificates for citizen '" + citizenId.getPersonnummerHash() + "' - listed by care");
     }
 
     @Test
@@ -132,16 +131,16 @@ public class MonitoringLogServiceImplTest {
 
     @Test
     public void shouldLogConsentGiven() {
-        final Personnummer citizenId = new Personnummer(CITIZEN);
+        final Personnummer citizenId = createPnr(CITIZEN);
         logService.logConsentGiven(citizenId);
-        verifyLog(Level.INFO, "CONSENT_GIVEN Consent given by citizen '" + citizenId.getPnrHash() + "'");
+        verifyLog(Level.INFO, "CONSENT_GIVEN Consent given by citizen '" + citizenId.getPersonnummerHash() + "'");
     }
 
     @Test
     public void shouldLogConsentRevoked() {
-        final Personnummer citizenId = new Personnummer(CITIZEN);
+        final Personnummer citizenId = createPnr(CITIZEN);
         logService.logConsentRevoked(citizenId);
-        verifyLog(Level.INFO, "CONSENT_REVOKED Consent revoked by citizen '" + citizenId.getPnrHash() + "'");
+        verifyLog(Level.INFO, "CONSENT_REVOKED Consent revoked by citizen '" + citizenId.getPersonnummerHash() + "'");
     }
 
     @Test
@@ -170,4 +169,10 @@ public class MonitoringLogServiceImplTest {
         verifyLog(Level.INFO,
                 "SEND_MESSAGE_TO_CARE_RECEIVED Message with id 'MESSAGE_ID', care unit recipient 'CARE_UNIT' - was received and forwarded to its recipient.");
     }
+
+    private Personnummer createPnr(String pnr) {
+        return Personnummer.createValidatedPersonnummer(pnr)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+    }
+
 }

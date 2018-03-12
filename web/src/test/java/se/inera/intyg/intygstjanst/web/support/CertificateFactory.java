@@ -19,11 +19,11 @@
 package se.inera.intyg.intygstjanst.web.support;
 
 
-import java.time.LocalDateTime;
-
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.schemas.contract.Personnummer;
+
+import java.time.LocalDateTime;
 
 /**
  * @author andreaskaltenbach
@@ -36,7 +36,7 @@ public final class CertificateFactory {
 
     public static final String CERTIFICATE_ID = "123456";
     public static final String CERTIFICATE_DOCUMENT = "{\"name\":\"Some JSON\"}";
-    public static final Personnummer CIVIC_REGISTRATION_NUMBER = new Personnummer("19001122-3344");
+    public static final Personnummer CIVIC_REGISTRATION_NUMBER = Personnummer.createValidatedPersonnummer("19001122-3344").get();
 
     public static final String VALID_FROM = "2000-01-01";
     public static final String VALID_TO = "2000-12-31";

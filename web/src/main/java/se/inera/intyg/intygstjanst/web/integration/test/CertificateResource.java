@@ -208,7 +208,7 @@ public class CertificateResource {
             return Resources.toString(new ClassPathResource("content/intyg-" + certificateHolder.getType() + "-content.xml").getURL(),
                     Charsets.UTF_8)
                     .replace("CERTIFICATE_ID", certificateHolder.getId())
-                    .replace("PATIENT_CRN", certificateHolder.getCivicRegistrationNumber().getPersonnummerWithoutDash())
+                    .replace("PATIENT_CRN", certificateHolder.getCivicRegistrationNumber().getPersonnummer())
                     .replace("CAREUNIT_ID", certificateHolder.getCareUnitId())
                     .replace("CAREUNIT_NAME", certificateHolder.getCareUnitName())
                     .replace("CAREGIVER_ID", certificateHolder.getCareGiverId())

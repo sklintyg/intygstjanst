@@ -18,16 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 import se.inera.intyg.insuranceprocess.healthreporting.setconsent.rivtabp20.v1.SetConsentResponderInterface;
 import se.inera.intyg.insuranceprocess.healthreporting.setconsentresponder.v1.SetConsentRequestType;
@@ -36,8 +32,19 @@ import se.inera.intyg.intygstjanst.web.service.ConsentService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 @RunWith(MockitoJUnitRunner.class)
 public class SetConsentResponderImplTest {
+
+    private final String personId = "20121212-1212";
+
+    private SetConsentRequestType consentFalse;
+    private SetConsentRequestType consentTrue;
+
+    private Personnummer personnummer;
 
     @Mock
     private ConsentService consentService = mock(ConsentService.class);
@@ -48,17 +55,24 @@ public class SetConsentResponderImplTest {
     @InjectMocks
     private SetConsentResponderInterface responder = new SetConsentResponderImpl();
 
+    @Before
+    public void setup() {
+        consentFalse = createRequest(personId, false);
+        consentTrue = createRequest(personId, true);
+        personnummer = createPnr(personId);
+    }
+
     @Test
     public void consentServiceIsCalledWithPersonnummerAndConsentGiven() {
-        responder.setConsent(null, createRequest("12345678-1234", false));
-        responder.setConsent(null, createRequest("12345678-1234", true));
-        verify(consentService).setConsent(new Personnummer("12345678-1234"), false);
-        verify(consentService).setConsent(new Personnummer("12345678-1234"), true);
+        responder.setConsent(null, consentFalse);
+        responder.setConsent(null, consentTrue);
+        verify(consentService).setConsent(personnummer, false);
+        verify(consentService).setConsent(personnummer, true);
     }
 
     @Test
     public void consentServiceReturnsOK() {
-        SetConsentResponseType result = responder.setConsent(null, createRequest("12345678-1234", false));
+        SetConsentResponseType result = responder.setConsent(null, consentFalse);
         assertEquals(ResultCodeEnum.OK, result.getResult().getResultCode());
     }
 
@@ -67,6 +81,11 @@ public class SetConsentResponderImplTest {
         parameters.setPersonnummer(id);
         parameters.setConsentGiven(consentGiven);
         return parameters;
+    }
+
+    private Personnummer createPnr(String pnr) {
+        return Personnummer.createValidatedPersonnummer(pnr)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer " + pnr));
     }
 
 }
