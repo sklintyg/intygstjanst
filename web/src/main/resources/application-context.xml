@@ -27,30 +27,26 @@
     http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 
-  <beans profile="qa,prod">
-    <!-- Config file must be present in qa and prod -->
-    <context:property-placeholder
-      location="file:${credentials.file}, file:${certificate.config.file}"
-      order="1" ignore-resource-not-found="false" ignore-unresolvable="true" />
-  </beans>
-
-  <beans profile="dev,test,local">
-    <!-- Config file could be missing in dev and test -->
-    <context:property-placeholder
-      location="file:${credentials.file}, file:${certificate.config.file}"
-      order="1" ignore-resource-not-found="true" ignore-unresolvable="true" />
-  </beans>
-
   <beans>
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+      <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+      <property name="locations">
+        <list>
+          <!-- Order matters - last value wins -->
+          <value>classpath:default.properties</value>
+          <value>classpath:version.properties</value>
+          <value>file:${certificate.config.file}</value>
+          <value>file:${credentials.file}</value>
+        </list>
+      </property>
+    </bean>
+
     <bean id="moduleRegistry" class="se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl">
       <property name="origin" value="INTYGSTJANST"/>
     </bean>
 
     <bean id="sjukfallEngineService" class="se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl"/>
-
-    <context:property-placeholder
-      location="classpath:default.properties, classpath:version.properties"
-      order="2" ignore-resource-not-found="true" />
 
     <import resource="classpath:META-INF/cxf/cxf.xml" />
 

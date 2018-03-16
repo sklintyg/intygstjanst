@@ -41,7 +41,7 @@
       </jaxrs:serviceBeans>
     </jaxrs:server>
 
-    <jaxrs:server id="sendMessageToCareStub" address="/send-message-to-care-stub-rest">
+    <jaxrs:server id="sendMessageToCareStub" address="/api/send-message-to-care">
       <jaxrs:serviceBeans>
         <bean class="se.inera.intyg.intygstjanst.web.integration.stub.SendMessageToCareResponderStubRestApi" />
       </jaxrs:serviceBeans>
