@@ -167,8 +167,8 @@ public class SendMessageToCareValidator {
                 return;
             }
             Optional<Personnummer> suppliedCivicRegistrationNumber = Personnummer.createValidatedPersonnummer(civicRegistrationNumber);
-            if (!(suppliedCivicRegistrationNumber.isPresent() &&
-                    suppliedCivicRegistrationNumber.get().equals(certificate.getCivicRegistrationNumber()))) {
+            if (!(suppliedCivicRegistrationNumber.isPresent()
+                    && suppliedCivicRegistrationNumber.get().equals(certificate.getCivicRegistrationNumber()))) {
                 validationErrors.add(ErrorCode.CIVIC_REGISTRATION_NUMBER_INCONSISTENCY_ERROR.toString());
             }
         } catch (InvalidCertificateException e) {
