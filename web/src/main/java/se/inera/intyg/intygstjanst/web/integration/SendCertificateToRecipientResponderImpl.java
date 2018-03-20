@@ -55,7 +55,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
         final String intygsId = request.getIntygsId().getExtension();
 
         final Optional<Personnummer> personnummer =
-                Personnummer.createValidatedPersonnummer(request.getPatientPersonId().getExtension());
+                Personnummer.createPersonnummer(request.getPatientPersonId().getExtension());
 
         try {
             // 1. Skicka certifikat till mottagaren

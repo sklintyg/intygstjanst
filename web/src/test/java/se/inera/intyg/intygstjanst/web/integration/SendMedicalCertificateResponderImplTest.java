@@ -68,7 +68,7 @@ public class SendMedicalCertificateResponderImplTest {
     private static final String CERTIFICATE_ID = "Intygs-id-1234567890";
     private static final String CERTIFICATE_TYPE = "fk7263";
 
-    private static final Personnummer PERSONNUMMER = Personnummer.createValidatedPersonnummer("19121212-1212").get();
+    private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").get();
 
     private static final String FK_RECIPIENT_ID = "FK";
     private static final String FK_RECIPIENT_NAME = "Försäkringskassan";

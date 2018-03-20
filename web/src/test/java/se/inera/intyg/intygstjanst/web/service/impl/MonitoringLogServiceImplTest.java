@@ -171,7 +171,7 @@ public class MonitoringLogServiceImplTest {
     }
 
     private Personnummer createPnr(String pnr) {
-        return Personnummer.createValidatedPersonnummer(pnr)
+        return Personnummer.createPersonnummer(pnr)
                 .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 

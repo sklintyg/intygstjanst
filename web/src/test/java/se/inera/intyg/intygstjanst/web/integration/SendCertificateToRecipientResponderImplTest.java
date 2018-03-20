@@ -46,7 +46,7 @@ import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.*;
 @RunWith(MockitoJUnitRunner.class)
 public class SendCertificateToRecipientResponderImplTest {
 
-    private static final Personnummer PERSONNUMMER = Personnummer.createValidatedPersonnummer("19121212-1212").get();
+    private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").get();
     private static final String CERTIFICATE_ID = "Intygs-id-1234567890";
     private static final String RECIPIENT_ID = "TRANSP";
 

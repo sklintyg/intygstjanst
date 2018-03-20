@@ -54,7 +54,7 @@ public class SetConsentResponderImpl implements SetConsentResponderInterface {
 
         final String originalPersonnummer = parameters.getPersonnummer();
         final Optional<Personnummer> civicRegistrationNumber =
-                Personnummer.createValidatedPersonnummer(parameters.getPersonnummer());
+                Personnummer.createPersonnummer(parameters.getPersonnummer());
 
         try {
             consentService.setConsent(getPersonnummer(civicRegistrationNumber), parameters.isConsentGiven());

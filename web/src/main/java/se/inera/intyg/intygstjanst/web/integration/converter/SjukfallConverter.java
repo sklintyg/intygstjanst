@@ -59,7 +59,7 @@ public class SjukfallConverter {
             enhetId.setRoot(KODVERK_HSAID);
             sjukfall.setEnhetsId(enhetId);
 
-            Optional<Personnummer> pnr = Personnummer.createValidatedPersonnummer(sf.getPatient().getId());
+            Optional<Personnummer> pnr = Personnummer.createPersonnummer(sf.getPatient().getId());
             sjukfall.setPersonId(buildPersonId(pnr));
             sjukfall.setPatientFullstandigtNamn(sf.getPatient().getNamn());
 

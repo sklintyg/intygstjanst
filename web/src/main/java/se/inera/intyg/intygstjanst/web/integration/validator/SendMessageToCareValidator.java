@@ -166,7 +166,7 @@ public class SendMessageToCareValidator {
                 validationErrors.add(ErrorCode.CERTIFICATE_NOT_FOUND_ERROR.toString());
                 return;
             }
-            Optional<Personnummer> suppliedCivicRegistrationNumber = Personnummer.createValidatedPersonnummer(civicRegistrationNumber);
+            Optional<Personnummer> suppliedCivicRegistrationNumber = Personnummer.createPersonnummer(civicRegistrationNumber);
             if (!(suppliedCivicRegistrationNumber.isPresent()
                     && suppliedCivicRegistrationNumber.get().equals(certificate.getCivicRegistrationNumber()))) {
                 validationErrors.add(ErrorCode.CIVIC_REGISTRATION_NUMBER_INCONSISTENCY_ERROR.toString());
@@ -197,7 +197,7 @@ public class SendMessageToCareValidator {
     }
 
     private Personnummer createPnr(String pnr) {
-        return Personnummer.createValidatedPersonnummer(pnr).orElse(null);
+        return Personnummer.createPersonnummer(pnr).orElse(null);
     }
 
     private boolean isPaminnelse(SendMessageToCareType sendMessageToCareType) {

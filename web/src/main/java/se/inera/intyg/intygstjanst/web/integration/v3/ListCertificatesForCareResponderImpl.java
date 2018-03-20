@@ -69,7 +69,7 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
         response.getIntygsLista().getIntyg();
 
         final Optional<Personnummer> personnummer =
-                Personnummer.createValidatedPersonnummer(parameters.getPersonId().getExtension());
+                Personnummer.createPersonnummer(parameters.getPersonId().getExtension());
 
         List<Certificate> certificates = certificateService.listCertificatesForCare(personnummer.orElse(null),
                 parameters.getEnhetsId().stream().map(HsaId::getExtension).collect(Collectors.toList()));

@@ -134,7 +134,7 @@ public class ConsentDaoImplTest {
     }
 
     private static Personnummer createPnr(String pnr) {
-        return Personnummer.createValidatedPersonnummer(pnr).get();
+        return Personnummer.createPersonnummer(pnr).get();
     }
 
     private List<Consent> allConsents() {

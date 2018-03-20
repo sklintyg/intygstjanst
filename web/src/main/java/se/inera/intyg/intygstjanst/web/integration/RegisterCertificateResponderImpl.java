@@ -185,7 +185,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             throw new RuntimeException("Could not get patient's personnummer from intyg");
         }
 
-        return Personnummer.createValidatedPersonnummer(personId)
+        return Personnummer.createPersonnummer(personId)
                 .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
 
     }

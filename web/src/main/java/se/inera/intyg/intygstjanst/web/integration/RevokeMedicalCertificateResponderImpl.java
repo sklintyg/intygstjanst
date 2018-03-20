@@ -136,7 +136,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
     protected Optional<Personnummer> safeGetCivicRegistrationNumber(RevokeMedicalCertificateRequestType request) {
         final String patientId = getPatientId(getPatient(request));
         if (StringUtils.isNotEmpty(patientId)) {
-            return Personnummer.createValidatedPersonnummer(patientId);
+            return Personnummer.createPersonnummer(patientId);
         }
         return Optional.empty();
     }

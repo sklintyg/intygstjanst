@@ -69,7 +69,7 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
     public RevokeCertificateResponseType revokeCertificate(String logicalAddress, RevokeCertificateType request) {
         RevokeCertificateResponseType response = new RevokeCertificateResponseType();
 
-        Optional<Personnummer> personnummer = Personnummer.createValidatedPersonnummer(request.getPatientPersonId().getExtension());
+        Optional<Personnummer> personnummer = Personnummer.createPersonnummer(request.getPatientPersonId().getExtension());
         String certificateId = request.getIntygsId().getExtension();
 
         try {

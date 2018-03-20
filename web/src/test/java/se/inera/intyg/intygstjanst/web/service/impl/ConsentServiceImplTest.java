@@ -35,8 +35,8 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ConsentServiceImplTest {
 
-    private static final Personnummer CONSENT_USER = Personnummer.createValidatedPersonnummer("191212121212").get();
-    private static final Personnummer UNKNOWN_USER = Personnummer.createValidatedPersonnummer("191212141414").get();
+    private static final Personnummer CONSENT_USER = Personnummer.createPersonnummer("191212121212").get();
+    private static final Personnummer UNKNOWN_USER = Personnummer.createPersonnummer("191212141414").get();
 
     @Mock
     private ConsentDao consentDao = mock(ConsentDao.class);

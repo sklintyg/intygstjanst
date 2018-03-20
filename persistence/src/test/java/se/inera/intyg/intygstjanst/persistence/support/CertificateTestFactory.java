@@ -33,8 +33,8 @@ public final class CertificateTestFactory {
 
     public static final LocalDateTime SIGNED_DATE = LocalDateTime.of(1999, 12, 31, 10, 32);
 
-    public static final Personnummer CIVIC_REGISTRATION_NUMBER = Personnummer.createValidatedPersonnummer("19001122-3344").get();
-    public static final Personnummer CIVIC_REGISTRATION_NUMBER_NO_DASH = Personnummer.createValidatedPersonnummer("190011223344").get();
+    public static final Personnummer CIVIC_REGISTRATION_NUMBER = Personnummer.createPersonnummer("19001122-3344").get();
+    public static final Personnummer CIVIC_REGISTRATION_NUMBER_NO_DASH = Personnummer.createPersonnummer("190011223344").get();
 
     public static final String CERTIFICATE_ID = "123456";
     public static final String CERTIFICATE_DOCUMENT = "{\"name\":\"Some JSON\"}";

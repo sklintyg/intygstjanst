@@ -106,7 +106,7 @@ public class SendMessageToRecipientValidator {
     }
 
     private void validateCertificate(SendMessageToRecipientType message, List<String> validationErrors) throws InvalidCertificateException {
-        Optional<Personnummer> messageCRN = Personnummer.createValidatedPersonnummer(message.getPatientPersonId().getExtension());
+        Optional<Personnummer> messageCRN = Personnummer.createPersonnummer(message.getPatientPersonId().getExtension());
         Certificate certificate = certificateService.getCertificateForCare(message.getIntygsId().getExtension());
         if (!(messageCRN.isPresent() && messageCRN.get().equals(certificate.getCivicRegistrationNumber()))) {
             validationErrors.add("PatientPersonId is not consistent with certificate");

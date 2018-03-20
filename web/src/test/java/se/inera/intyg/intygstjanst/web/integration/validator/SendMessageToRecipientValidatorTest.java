@@ -250,7 +250,7 @@ public class SendMessageToRecipientValidatorTest {
 
     private Certificate buildCertificate(String crn) {
         Certificate certificate = new Certificate();
-        certificate.setCivicRegistrationNumber(Personnummer.createValidatedPersonnummer(crn).get());
+        certificate.setCivicRegistrationNumber(Personnummer.createPersonnummer(crn).get());
         return certificate;
     }
 }

@@ -48,6 +48,6 @@ public class DaoUtilTest {
     }
 
     private Personnummer createPnr(String pnr) {
-        return Personnummer.createValidatedPersonnummer(pnr).get();
+        return Personnummer.createPersonnummer(pnr).get();
     }
 }

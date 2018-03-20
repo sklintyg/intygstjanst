@@ -81,7 +81,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class CertificateServiceImplTest {
 
-    private static final Personnummer PERSONNUMMER = Personnummer.createValidatedPersonnummer("191212121212").get();
+    private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("191212121212").get();
     private static final String CERTIFICATE_ID = "<certificate-id>";
 
     private static final String RECIPIENT_ID = "FKASSA";
@@ -570,7 +570,7 @@ public class CertificateServiceImplTest {
     }
 
     private Personnummer createPnr(String pnr) {
-        return Personnummer.createValidatedPersonnummer(pnr)
+        return Personnummer.createPersonnummer(pnr)
                 .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 

@@ -78,7 +78,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
 
         try {
             Optional<Personnummer> personnummer =
-                    Personnummer.createValidatedPersonnummer(parameters.getPersonId().getExtension());
+                    Personnummer.createPersonnummer(parameters.getPersonId().getExtension());
 
             List<Certificate> certificates = certificateService.listCertificatesForCitizen(
                     personnummer.orElse(null),

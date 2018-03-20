@@ -225,7 +225,7 @@ public class Certificate {
     }
 
     public Personnummer getCivicRegistrationNumber() {
-        return Personnummer.createValidatedPersonnummer(civicRegistrationNumber).orElse(null);
+        return Personnummer.createPersonnummer(civicRegistrationNumber).orElse(null);
     }
 
     public void setCivicRegistrationNumber(Personnummer civicRegistrationNumber) {

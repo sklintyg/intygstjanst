@@ -147,7 +147,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
     protected Optional<Personnummer> safeGetCivicRegistrationNumber(SendMedicalCertificateRequestType request) {
         final String patientId = getPatientId(getPatient(request));
         if (StringUtils.isNotEmpty(patientId)) {
-            return Personnummer.createValidatedPersonnummer(patientId);
+            return Personnummer.createPersonnummer(patientId);
         }
         return Optional.empty();
     }

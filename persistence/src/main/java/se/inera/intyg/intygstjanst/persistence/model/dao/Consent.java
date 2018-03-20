@@ -45,7 +45,7 @@ public class Consent {
     }
 
     public Personnummer getCivicRegistrationNumber() {
-        return Personnummer.createValidatedPersonnummer(civicRegistrationNumber).get();
+        return Personnummer.createPersonnummer(civicRegistrationNumber).get();
     }
 
     public void setCivicRegistrationNumber(Personnummer civicRegistrationNumber) {

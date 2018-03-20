@@ -61,7 +61,7 @@ import static org.mockito.Mockito.when;
 public class RevokeMedicalCertificateResponderImplTest {
 
     private static final String CERTIFICATE_ID = "intygs-id-1234567890";
-    private static final Personnummer PERSONNUMMER = Personnummer.createValidatedPersonnummer("19121212-1212").get();
+    private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").get();
     private static final String TARGET = "FKASSA";
 
     private static final AttributedURIType ADDRESS = new AttributedURIType();

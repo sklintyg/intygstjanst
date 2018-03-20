@@ -44,6 +44,6 @@ public class GetConsentResponderImpl implements GetConsentResponderInterface {
     }
 
     private Personnummer createPnr(String pnr) {
-        return Personnummer.createValidatedPersonnummer(pnr).orElse(null);
+        return Personnummer.createPersonnummer(pnr).orElse(null);
     }
 }
