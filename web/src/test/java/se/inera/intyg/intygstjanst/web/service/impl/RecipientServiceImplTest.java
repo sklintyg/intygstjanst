@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
@@ -34,8 +34,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.startsWith;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -52,10 +52,12 @@ public class RecipientServiceImplTest {
     private static final String TS_RECIPIENT_NAME = "Transportstyrelsen";
     private static final String TS_RECIPIENT_LOGICALADDRESS = "tsTestAddress";
     private static final String TS_RECIPIENT_CERTIFICATETYPES = "ts-bas,ts-diabetes";
+
     @Mock
-    RecipientRepoImpl repo;
+    private RecipientRepoImpl repo;
+
     @InjectMocks
-    RecipientServiceImpl service;
+    private RecipientServiceImpl service;
 
     private Recipient createFkRecipient() {
         return new RecipientBuilder()
@@ -113,13 +115,9 @@ public class RecipientServiceImplTest {
     }
 
     @Before
-    public void setup() throws RecipientUnknownException {
-        when(repo.getRecipientForLogicalAddress(eq(FK_RECIPIENT_LOGICALADDRESS))).thenReturn(createFkRecipient());
-        when(repo.getRecipientForLogicalAddress(eq(TS_RECIPIENT_LOGICALADDRESS))).thenReturn(createTsRecipient());
-        when(repo.getRecipientForLogicalAddress(startsWith("ERROR"))).thenThrow(RecipientUnknownException.class);
+    public void setup() {
         when(repo.getRecipientHsvard()).thenReturn(createHsvardRecipient());
         when(repo.getRecipientInvana()).thenReturn(createInvanaRecipient());
-
     }
 
     @Test

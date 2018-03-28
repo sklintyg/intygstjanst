@@ -20,7 +20,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -38,7 +38,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -104,8 +104,6 @@ public class StatisticsServiceImplTest {
         final String id = "The id";
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
         ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
-        ModuleApi moduleApi = mock(ModuleApi.class);
-        when(moduleApi.getUtlatandeFromXml(xmlBody)).thenReturn(mock(Utlatande.class));
 
         Certificate certificate = mock(Certificate.class);
         OriginalCertificate originalCertificate = mock(OriginalCertificate.class);
@@ -157,10 +155,6 @@ public class StatisticsServiceImplTest {
         ReflectionTestUtils.setField(serviceImpl, "jmsTemplate", null);
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
 
-        TextMessage message = mock(TextMessage.class);
-        Session session = mock(Session.class);
-        when(session.createTextMessage("The document")).thenReturn(message);
-
         boolean created = serviceImpl.created("The document", "The id", "luse", "unit");
 
         assertFalse(created);
@@ -172,10 +166,6 @@ public class StatisticsServiceImplTest {
     public void testJmsTemplateThrowsJmsException() throws JMSException {
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
         doThrow(mock(JmsException.class)).when(template).send(any(MessageCreator.class));
-
-        TextMessage message = mock(TextMessage.class);
-        Session session = mock(Session.class);
-        when(session.createTextMessage("The document")).thenReturn(message);
 
         boolean created = serviceImpl.created("The document", "The id", "luse", "unit");
 

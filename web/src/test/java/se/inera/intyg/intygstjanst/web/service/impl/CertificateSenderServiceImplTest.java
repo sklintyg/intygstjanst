@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
@@ -67,9 +67,9 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -134,14 +134,12 @@ public class CertificateSenderServiceImplTest {
     public void setupModuleRestApiFactory() throws ModuleNotFoundException {
         when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
-        when(moduleEntryPoint.getModuleId()).thenReturn("fk7263");
         when(moduleEntryPoint.getDefaultRecipient()).thenReturn(RECIPIENT_DEFAULT_LOGICALADDRESS);
     }
 
     @Before
     public void setupRecipientService() throws RecipientUnknownException {
         when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(createRecipient());
-        when(recipientService.getRecipientForLogicalAddress(RECIPIENT_LOGICALADDRESS)).thenReturn(createRecipient());
         when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(Arrays.asList(createRecipient()));
         when(recipientService.getPrimaryRecipientFkassa()).thenReturn(createRecipient());
     }

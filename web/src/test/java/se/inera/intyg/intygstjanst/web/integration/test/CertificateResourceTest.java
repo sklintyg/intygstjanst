@@ -18,7 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.test;
 
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -32,7 +34,7 @@ import javax.persistence.EntityManager;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.*;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.transaction.*;
 
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
@@ -77,7 +79,7 @@ public class CertificateResourceTest {
     @Test
     public void testDeleteCertificate() throws Exception {
         Certificate certificate = new Certificate("1");
-        when(txManager.getTransaction((TransactionDefinition) anyObject())).thenReturn(txStatus);
+        when(txManager.getTransaction(any())).thenReturn(txStatus);
         when(entityManager.find(Certificate.class, "1")).thenReturn(certificate);
 
         certificateResource.deleteCertificate("1");
@@ -90,7 +92,7 @@ public class CertificateResourceTest {
     @Test
     public void testDeleteCertificateHandlesException() throws Exception {
         Certificate certificate = new Certificate("1");
-        when(txManager.getTransaction((TransactionDefinition) anyObject())).thenReturn(txStatus);
+        when(txManager.getTransaction(any())).thenReturn(txStatus);
         when(entityManager.find(Certificate.class, "1")).thenReturn(certificate);
 
         doThrow(new RuntimeException("")).when(entityManager).remove(certificate);
@@ -104,12 +106,11 @@ public class CertificateResourceTest {
     public void testInsertCertificate() throws Exception {
         Certificate certificate = new Certificate("1");
         certificate.setOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "xml", certificate));
-        when(txManager.getTransaction((TransactionDefinition) anyObject())).thenReturn(txStatus);
-        when(moduleRegistry.getModuleApi(Mockito.anyString())).thenReturn(moduleApi);
+        when(txManager.getTransaction(any())).thenReturn(txStatus);
         certificateResource.insertCertificate(ConverterUtil.toCertificateHolder(certificate));
 
         ArgumentCaptor<Object> argument = ArgumentCaptor.forClass(Object.class);
-        verify(entityManager, Mockito.times(2)).persist(argument.capture());
+        verify(entityManager, times(2)).persist(argument.capture());
         List<Object> persistedObjects = argument.getAllValues();
         Certificate certificateArgument = (Certificate) persistedObjects.get(0);
         Assert.assertEquals(certificate.getId(), certificateArgument.getId());
@@ -121,8 +122,7 @@ public class CertificateResourceTest {
     @Test
     public void testInsertCertificateHandlesException() throws Exception {
         Certificate certificate = new Certificate("1");
-        when(txManager.getTransaction((TransactionDefinition) anyObject())).thenReturn(txStatus);
-        doThrow(new RuntimeException("")).when(entityManager).persist(Mockito.any(Certificate.class));
+        when(txManager.getTransaction(any())).thenReturn(txStatus);
 
         certificateResource.insertCertificate(ConverterUtil.toCertificateHolder(certificate));
 

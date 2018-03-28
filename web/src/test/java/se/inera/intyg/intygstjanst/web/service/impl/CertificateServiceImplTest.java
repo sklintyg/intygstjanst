@@ -26,7 +26,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
@@ -66,8 +66,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -75,9 +78,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-/**
- * @author andreaskaltenbach
- */
 @RunWith(MockitoJUnitRunner.class)
 public class CertificateServiceImplTest {
 
@@ -196,8 +196,11 @@ public class CertificateServiceImplTest {
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId("id");
         certificateHolder.setOriginalCertificate("original");
-        when(certificateDao.getCertificate(any(Personnummer.class), anyString()))
-                .thenThrow((new PersistenceException(CERTIFICATE_ID, null)));
+
+        when(certificateDao.getCertificate(
+                or(isNull(), any(Personnummer.class)),
+                or(isNull(), anyString()))
+        ).thenThrow((new PersistenceException(CERTIFICATE_ID, null)));
 
         certificateService.storeCertificate(certificateHolder);
     }
@@ -207,7 +210,10 @@ public class CertificateServiceImplTest {
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId("id");
         certificateHolder.setOriginalCertificate("original");
-        when(certificateDao.getCertificate(any(Personnummer.class), anyString())).thenReturn(new Certificate());
+        when(certificateDao.getCertificate(
+                or(isNull(), any(Personnummer.class)),
+                or(isNull(), anyString()))
+        ).thenReturn(new Certificate());
 
         certificateService.storeCertificate(certificateHolder);
     }
@@ -219,7 +225,6 @@ public class CertificateServiceImplTest {
         certificate.setCivicRegistrationNumber(PERSONNUMMER);
 
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
-        when(recipientService.getRecipientForLogicalAddress(Mockito.any(String.class))).thenReturn(createRecipient());
 
         SendStatus res = certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
 
@@ -239,7 +244,6 @@ public class CertificateServiceImplTest {
         certificate.setStates(states);
 
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
-        when(recipientService.getRecipientForLogicalAddress(Mockito.any(String.class))).thenReturn(createRecipient());
 
         SendStatus res = certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
 
@@ -304,15 +308,11 @@ public class CertificateServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetCertificateWithoutConsentCheckForNullPersonnummer() throws Exception {
-        Certificate certificate = createCertificate();
-        when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(certificate);
         certificateService.getCertificateForCitizen(null, CERTIFICATE_ID);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetCertificateWithoutConsentCheckForEmptyPersonnummer() throws Exception {
-        Certificate certificate = createCertificate();
-        when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(certificate);
         certificateService.getCertificateForCitizen(createPnr(null), CERTIFICATE_ID);
     }
 
@@ -380,8 +380,6 @@ public class CertificateServiceImplTest {
     @Test
     public void testListCertificatesForCare() {
         final List<String> careUnits = Arrays.asList("enhet-1");
-        // consent does not matter
-        when(consentService.isConsent(PERSONNUMMER)).thenReturn(false);
         certificateService.listCertificatesForCare(PERSONNUMMER, careUnits);
         verify(certificateDao).findCertificate(PERSONNUMMER, null, null, null, careUnits);
     }
@@ -531,7 +529,6 @@ public class CertificateServiceImplTest {
 
     @Test
     public void testGetCertificate() throws Exception {
-        when(consentService.isConsent(PERSONNUMMER)).thenReturn(false); // won't check
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new Certificate());
         assertNotNull(certificateService.getCertificate(CERTIFICATE_ID, PERSONNUMMER, false));
     }

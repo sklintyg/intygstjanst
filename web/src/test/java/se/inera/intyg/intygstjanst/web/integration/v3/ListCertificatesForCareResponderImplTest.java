@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
@@ -53,8 +53,9 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -83,11 +84,15 @@ public class ListCertificatesForCareResponderImplTest {
 
     @Before
     public void setup() throws ModuleNotFoundException, ModuleException {
-        when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
+        when(moduleRegistry.getModuleEntryPoint(or(isNull(), anyString()))).thenReturn(moduleEntryPoint);
+
         when(moduleEntryPoint.getDefaultRecipient()).thenReturn(OTHER_RECIPIENT_ID);
+
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
-        when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(mock(Utlatande.class));
-        when(moduleApi.getIntygFromUtlatande(any(Utlatande.class))).thenReturn(new Intyg());
+
+        when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()))).thenReturn(mock(Utlatande.class));
+
+        when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class)))).thenReturn(new Intyg());
     }
 
     @Test
@@ -153,7 +158,7 @@ public class ListCertificatesForCareResponderImplTest {
 
         verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
         verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
-        verify(moduleApi).getUtlatandeFromXml(anyString());
+        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()));
 
         // We only return Intyg that are not deletedByCaregiver
         assertEquals(1, response.getIntygsLista().getIntyg().size());

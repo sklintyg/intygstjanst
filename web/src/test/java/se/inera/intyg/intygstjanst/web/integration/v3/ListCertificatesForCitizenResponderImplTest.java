@@ -22,9 +22,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.db.support.DbModuleEntryPoint;
 import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
 import se.inera.intyg.common.fk7263.support.Fk7263EntryPoint;
@@ -60,8 +60,9 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -91,11 +92,11 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     @Before
     public void setup() throws ModuleNotFoundException, ModuleException {
-        when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
+        when(moduleRegistry.getModuleEntryPoint(or(isNull(), anyString()))).thenReturn(moduleEntryPoint);
         when(moduleEntryPoint.getDefaultRecipient()).thenReturn(FKASSA_RECIPIENT_ID);
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
-        when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(mock(Utlatande.class));
-        when(moduleApi.getIntygFromUtlatande(any(Utlatande.class))).thenReturn(new Intyg());
+        when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()))).thenReturn(mock(Utlatande.class));
+        when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class)))).thenReturn(new Intyg());
     }
 
     @Test
@@ -122,8 +123,12 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     @Test
     public void listCertificatesWithoutConsent() throws Exception {
-        when(certificateService.listCertificatesForCitizen(any(Personnummer.class), Matchers.<List<String>> any(), any(LocalDate.class),
-                any(LocalDate.class))).thenThrow(new MissingConsentException(null));
+        when(certificateService.listCertificatesForCitizen(
+                or(isNull(), any(Personnummer.class)),
+                anyList(),
+                or(isNull(), any(LocalDate.class)),
+                or(isNull(), any(LocalDate.class)))
+        ).thenThrow(new MissingConsentException(null));
 
         List<String> types = Collections.emptyList();
         ListCertificatesForCitizenType parameters = createListCertificatesRequest(createPnr("19350108-1234"), types, null, null, false);
@@ -156,7 +161,7 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
         verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
-        verify(moduleApi).getUtlatandeFromXml(anyString());
+        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()));
 
         assertEquals(1, response.getIntygsLista().getIntyg().size());
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
@@ -183,7 +188,7 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
         verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
-        verify(moduleApi).getUtlatandeFromXml(anyString());
+        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()));
 
         assertEquals(1, response.getIntygsLista().getIntyg().size());
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
