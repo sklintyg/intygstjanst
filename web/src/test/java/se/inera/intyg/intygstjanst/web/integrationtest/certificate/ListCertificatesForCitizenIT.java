@@ -18,16 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.StringStartsWith.startsWith;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
+import com.jayway.restassured.response.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,19 +31,21 @@ import org.springframework.core.io.ClassPathResource;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
-
-import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.response.Response;
-
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil.IntegrationTestCertificateType;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
+import static org.junit.Assert.assertTrue;
 
 public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
     private static final String BASE = "Envelope.Body.ListCertificatesForCitizenResponse.";
@@ -75,14 +73,14 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         return templateGroup.getInstanceOf("request");
     }
 
+    // Note: after release 2018-2 consent is not required.
     @Test
     public void listCertificatesForCitizenWithNoConsent() {
         ST requestTemplate = getRequestTemplate(false);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("INFO"))
-                .body("result.resultText", is("NOCONSENT"));
+                .rootPath(BASE).body("result.resultCode", is("OK"));
     }
 
     @Test
@@ -127,8 +125,7 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         // har åtkomst till det. När invånaren åter ger samtycke så är intyget borta.
         IntegrationTestUtil.revokeConsent(personId);
         given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("INFO"))
-                .body("result.resultText", is("NOCONSENT"))
+                .rootPath(BASE).body("result.resultCode", is("OK"))
                 .body("intygsLista[0].intyg.size()", is(0));
         IntegrationTestUtil.addConsent(personId);
         given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200)

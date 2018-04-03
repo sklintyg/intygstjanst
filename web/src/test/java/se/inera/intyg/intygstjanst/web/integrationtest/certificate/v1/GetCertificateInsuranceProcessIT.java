@@ -18,21 +18,25 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v1;
 
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
+import com.jayway.restassured.response.ValidatableResponse;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
+import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
+
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertTrue;
-
-import org.custommonkey.xmlunit.*;
-import org.junit.*;
-import org.stringtemplate.v4.*;
-
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.response.ValidatableResponse;
-
-import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
-import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class GetCertificateInsuranceProcessIT extends BaseIntegrationTest {
 
@@ -76,12 +80,12 @@ public class GetCertificateInsuranceProcessIT extends BaseIntegrationTest {
                 is("Certificate 'getCertificateInsuranceProcessITcertificateId' has been revoked"));
     }
 
+    // Note: after release 2018-2 consent is not required.
     @Test
     public void getCertificateWithoutConsent() {
         IntegrationTestUtil.registerMedicalCertificate(INTYG_ID, PERSON_ID);
 
-        givenRequest(INTYG_ID, PERSON_ID).body("result.resultCode", is("ERROR")).body("result.errorId", is("VALIDATION_ERROR"))
-                .body("result.errorText", is("Consent required from user 416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6"));
+        givenRequest(INTYG_ID, PERSON_ID).body("result.resultCode", is("OK"));
     }
 
     @Test

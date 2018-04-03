@@ -22,13 +22,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.db.support.DbModuleEntryPoint;
 import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
 import se.inera.intyg.common.fk7263.support.Fk7263EntryPoint;
-import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
@@ -63,7 +61,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListCertificatesForCitizenResponderImplTest {
@@ -121,14 +123,19 @@ public class ListCertificatesForCitizenResponderImplTest {
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
+    /**
+     * Note that release 2018-2 of Mina Intyg removed the use of consent.
+     *
+     * @throws Exception
+     */
     @Test
-    public void listCertificatesWithoutConsent() throws Exception {
+    public void listCertificatesWithoutConsentReturnsResultAnyway() throws Exception {
         when(certificateService.listCertificatesForCitizen(
                 or(isNull(), any(Personnummer.class)),
                 anyList(),
                 or(isNull(), any(LocalDate.class)),
                 or(isNull(), any(LocalDate.class)))
-        ).thenThrow(new MissingConsentException(null));
+        ).thenReturn(Collections.emptyList());
 
         List<String> types = Collections.emptyList();
         ListCertificatesForCitizenType parameters = createListCertificatesRequest(createPnr("19350108-1234"), types, null, null, false);
@@ -136,8 +143,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
         assertEquals(0, response.getIntygsLista().getIntyg().size());
-        assertEquals(ResultCodeType.INFO, response.getResult().getResultCode());
-        assertEquals("NOCONSENT", response.getResult().getResultText());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     @Test
