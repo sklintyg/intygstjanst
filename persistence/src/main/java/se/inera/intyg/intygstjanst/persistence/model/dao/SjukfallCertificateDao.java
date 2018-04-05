@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Inera AB (http://www.inera.se)
+ * Copyright (C) 2018 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -24,10 +24,15 @@ import java.util.List;
  * Created by eriklupander on 2016-02-02.
  */
 public interface SjukfallCertificateDao {
-    List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(List<String> careUnitHsaIds);
-    List<SjukfallCertificate> findActiveSjukfallCertificateForPersonOnCareUnits(List<String> careUnitHsaIds, String personnummer);
+
+    List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(
+            String careGiverHsaId, List<String> careUnitHsaIds);
+
+    List<SjukfallCertificate> findActiveSjukfallCertificateForPersonOnCareUnits(
+            String careGiverHsaId, List<String> careUnitHsaIds, String personnummer);
 
     void store(SjukfallCertificate sjukfallCert);
 
     void revoke(String id);
+
 }

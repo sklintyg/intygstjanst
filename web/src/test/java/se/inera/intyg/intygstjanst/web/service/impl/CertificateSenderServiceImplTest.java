@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Inera AB (http://www.inera.se)
+ * Copyright (C) 2018 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -18,21 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-import java.io.IOException;
-import java.util.Arrays;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -85,7 +70,10 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * @author andreaskaltenbach
@@ -124,14 +112,14 @@ public class CertificateSenderServiceImplTest {
     private CertificateSenderServiceImpl senderService = new CertificateSenderServiceImpl();
 
     private static Recipient createRecipient() {
-        RecipientBuilder builder = new RecipientBuilder();
-        builder.setId(RECIPIENT_ID);
-        builder.setName(RECIPIENT_NAME);
-        builder.setLogicalAddress(RECIPIENT_LOGICALADDRESS);
-        builder.setCertificateTypes(RECIPIENT_CERTIFICATETYPES);
-        builder.setActive(true);
-
-        return builder.build();
+        return new RecipientBuilder()
+                .setId(RECIPIENT_ID)
+                .setName(RECIPIENT_NAME)
+                .setLogicalAddress(RECIPIENT_LOGICALADDRESS)
+                .setCertificateTypes(RECIPIENT_CERTIFICATETYPES)
+                .setActive(true)
+                .setTrusted(true)
+                .build();
     }
 
     public RegisterMedicalCertificateType request() throws IOException, JAXBException {

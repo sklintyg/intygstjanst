@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Inera AB (http://www.inera.se)
+ * Copyright (C) 2018 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -23,84 +23,100 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.intyg.intygstjanst.web.service.repo.RecipientRepoImpl;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RecipientServiceImplTest {
 
-    @Mock
-    RecipientRepoImpl repo;
-
-    @InjectMocks
-    RecipientServiceImpl service;
-
     private static final String FK_CERTIFICATE_TYPE = "fk7263";
     private static final String TS_CERTIFICATE_TYPE_BAS = "ts-bas";
     private static final String TS_CERTIFICATE_TYPE_DIABETES = "ts-diabetes";
-
     private static final String FK_RECIPIENT_ID = "FKASSA";
     private static final String FK_RECIPIENT_NAME = "Försäkringskassan";
     private static final String FK_RECIPIENT_LOGICALADDRESS = "FKORG";
     private static final String FK_RECIPIENT_CERTIFICATETYPES = "fk7263,luse,lisjp";
-
     private static final String TS_RECIPIENT_ID = "TRANSP";
     private static final String TS_RECIPIENT_NAME = "Transportstyrelsen";
     private static final String TS_RECIPIENT_LOGICALADDRESS = "tsTestAddress";
     private static final String TS_RECIPIENT_CERTIFICATETYPES = "ts-bas,ts-diabetes";
+    @Mock
+    RecipientRepoImpl repo;
+    @InjectMocks
+    RecipientServiceImpl service;
 
     private Recipient createFkRecipient() {
-        return new Recipient(FK_RECIPIENT_LOGICALADDRESS,
-                FK_RECIPIENT_NAME,
-                FK_RECIPIENT_ID,
-                FK_RECIPIENT_CERTIFICATETYPES,
-                true);
+        return new RecipientBuilder()
+                .setLogicalAddress(FK_RECIPIENT_LOGICALADDRESS)
+                .setName(FK_RECIPIENT_NAME)
+                .setId(FK_RECIPIENT_ID)
+                .setCertificateTypes(FK_RECIPIENT_CERTIFICATETYPES)
+                .setActive(true)
+                .setTrusted(true)
+                .build();
     }
 
     private Recipient createTsRecipient() {
-        return new Recipient(TS_RECIPIENT_LOGICALADDRESS,
-                TS_RECIPIENT_NAME,
-                TS_RECIPIENT_ID,
-                TS_RECIPIENT_CERTIFICATETYPES,
-                true);
+        return new RecipientBuilder()
+                .setLogicalAddress(TS_RECIPIENT_LOGICALADDRESS)
+                .setName(TS_RECIPIENT_NAME)
+                .setId(TS_RECIPIENT_ID)
+                .setCertificateTypes(TS_RECIPIENT_CERTIFICATETYPES)
+                .setActive(true)
+                .setTrusted(true)
+                .build();
     }
 
     private Recipient createHsvardRecipient() {
-        return new Recipient("Meh2",
-                "Meh2",
-                "HSVARD",
-                "fk7263,ts-bas,ts-diabetes",
-                true);
+        return new RecipientBuilder()
+                .setLogicalAddress("Meh2")
+                .setName("Meh2")
+                .setId("HSVARD")
+                .setCertificateTypes("fk7263,ts-bas,ts-diabetes")
+                .setActive(true)
+                .setTrusted(true)
+                .build();
     }
 
     private Recipient createInvanaRecipient() {
-        return new Recipient("Meh",
-                "Meh",
-                "INVANA",
-                "fk7263,ts-bas,ts-diabetes",
-                true);
+        return new RecipientBuilder()
+                .setLogicalAddress("Meh")
+                .setName("Meh")
+                .setId("INVANA")
+                .setCertificateTypes("fk7263,ts-bas,ts-diabetes")
+                .setActive(true)
+                .setTrusted(true)
+                .build();
     }
 
+    private Recipient createUntrustedRecipient() {
+        return new RecipientBuilder()
+                .setLogicalAddress("UNTRUSTED_ADDRESS")
+                .setName("UNTRUSTED_NAME")
+                .setId("UNTRUSTED_ID")
+                .setCertificateTypes("fk7263,ts-bas,ts-diabetes")
+                .setActive(true)
+                .setTrusted(false)
+                .build();
+    }
 
     @Before
     public void setup() throws RecipientUnknownException {
-        when(repo.getRecipientForLogicalAddress(Mockito.eq(FK_RECIPIENT_LOGICALADDRESS)))
-                .thenReturn(createFkRecipient());
-        when(repo.getRecipientForLogicalAddress(Mockito.eq(TS_RECIPIENT_LOGICALADDRESS)))
-                .thenReturn(createTsRecipient());
-        when(repo.getRecipientForLogicalAddress(Mockito.startsWith("ERROR")))
-                .thenThrow(RecipientUnknownException.class);
+        when(repo.getRecipientForLogicalAddress(eq(FK_RECIPIENT_LOGICALADDRESS))).thenReturn(createFkRecipient());
+        when(repo.getRecipientForLogicalAddress(eq(TS_RECIPIENT_LOGICALADDRESS))).thenReturn(createTsRecipient());
+        when(repo.getRecipientForLogicalAddress(startsWith("ERROR"))).thenThrow(RecipientUnknownException.class);
         when(repo.getRecipientHsvard()).thenReturn(createHsvardRecipient());
         when(repo.getRecipientInvana()).thenReturn(createInvanaRecipient());
 
@@ -120,6 +136,18 @@ public class RecipientServiceImplTest {
 
         assertEquals(expected, service.listRecipients(new CertificateType(TS_CERTIFICATE_TYPE_BAS)));
         assertEquals(expected, service.listRecipients(new CertificateType(TS_CERTIFICATE_TYPE_DIABETES)));
+    }
+
+    @Test
+    public void testListRecipientsWithUntrusted() throws RecipientUnknownException {
+        // Note: Order matters in the list.
+        when(repo.listRecipients()).thenReturn(Arrays.asList(createUntrustedRecipient(), createFkRecipient(), createTsRecipient()));
+        List<Recipient> expectedTS = Arrays.asList(createUntrustedRecipient(), createTsRecipient());
+        List<Recipient> expectedFK = Arrays.asList(createUntrustedRecipient(), createFkRecipient());
+
+        assertEquals(expectedFK, service.listRecipients(new CertificateType(FK_CERTIFICATE_TYPE)));
+        assertEquals(expectedTS, service.listRecipients(new CertificateType(TS_CERTIFICATE_TYPE_BAS)));
+        assertEquals(expectedTS, service.listRecipients(new CertificateType(TS_CERTIFICATE_TYPE_DIABETES)));
     }
 
 }

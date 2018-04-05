@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Inera AB (http://www.inera.se)
+ * Copyright (C) 2018 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -18,58 +18,59 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
-import se.inera.intyg.intygstjanst.web.service.RecipientService;
-import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.integration.util.SendMessageToCareUtil;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.Amneskod;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.ErrorCode;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
+import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType.Komplettering;
 import se.riv.clinicalprocess.healthcond.certificate.v3.MeddelandeReferens;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendMessageToCareValidatorTest {
     private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML =
             "SendMessageToCareTest/sendmessagetocare.xml";
     private static final Recipient FKASSA =
-            new Recipient("FKORG", "Föräkringskassa", "FKASSA", Arrays.asList("fk7263"), true);
-
-    @Mock
-    private CertificateService certificateService;
-
-    @Mock
-    private Certificate certificate;
-
-    @Mock
-    private ArendeRepository arendeRepository;
-
+            new RecipientBuilder()
+                    .setLogicalAddress("FKORG")
+                    .setName("Föräkringskassa")
+                    .setId("FKASSA")
+                    .setCertificateTypes("fk7263")
+                    .setActive(true)
+                    .setTrusted(true)
+                    .build();
     @Mock
     RecipientService recipientService;
-
+    @Mock
+    private CertificateService certificateService;
+    @Mock
+    private Certificate certificate;
+    @Mock
+    private ArendeRepository arendeRepository;
     @InjectMocks
     private SendMessageToCareValidator validator;
 

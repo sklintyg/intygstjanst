@@ -10,20 +10,6 @@ class ListCertificates extends Simulation {
   val numberOfUsers = 100
 
   val testpersonnummer = csv("data/intyg.csv").circular
-  val intyg = csv("data/intyg.csv").records
-
-  before {
-    Utils.clean()
-  }
-
-  val preload = scenario("Preload database")
-    .foreach(intyg, "record") {
-      exec(flattenMapIntoAttributes("${record}"))
-        .exec(http("Store cert")
-          .post("/register-certificate/v3.0")
-          .headers(Headers.store_certificate)
-          .body(ELFileBody("request-bodies/register-medical-certificate.xml")))
-    }
 
   val scn = scenario("List Certificates")
     .feed(testpersonnummer)
@@ -39,10 +25,16 @@ class ListCertificates extends Simulation {
         substring("<ns2:certificateId>")))
     .pause(2 seconds)
 
-  setUp(preload.inject(atOnceUsers(1)).protocols(Conf.httpConf),
-      scn.inject(nothingFor(5 seconds), rampUsers(numberOfUsers) over (120 seconds)).protocols(Conf.httpConf))
+  before {
+    println("Setting up database before execution.")
+    Utils.clean()
+    Utils.preloadDatabase()
+  }
+
+  setUp(scn.inject(nothingFor(5 seconds), rampUsers(numberOfUsers) over (120 seconds)).protocols(Conf.httpConf))
 
   after {
+    println("Cleaning up after tests.")
     Utils.clean()
   }
 }

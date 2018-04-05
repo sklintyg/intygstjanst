@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Inera AB (http://www.inera.se)
+ * Copyright (C) 2018 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -51,7 +51,8 @@ public class GetRecipientsForCertificateIT extends BaseIntegrationTest {
                 .body("result.resultCode", is("OK"))
                 .body("recipient.size()", is(FK_RECIPIENT_SIZE))
                 .body("recipient.id", is("FKASSA"))
-                .body("recipient.name", is("Försäkringskassan"));
+                .body("recipient.name", is("Försäkringskassan"))
+                .body("recipient.trusted", is("true"));
     }
 
     @Test
@@ -60,7 +61,8 @@ public class GetRecipientsForCertificateIT extends BaseIntegrationTest {
                 .body("result.resultCode", is("OK"))
                 .body("recipient.size()", is(FK_RECIPIENT_SIZE))
                 .body("recipient.id", is("FKASSA"))
-                .body("recipient.name", is("Försäkringskassan"));
+                .body("recipient.name", is("Försäkringskassan"))
+                .body("recipient.trusted", is("true"));
     }
 
     @Test
@@ -69,7 +71,8 @@ public class GetRecipientsForCertificateIT extends BaseIntegrationTest {
                 .body("result.resultCode", is("OK"))
                 .body("recipient.size()", is(FK_RECIPIENT_SIZE))
                 .body("recipient.id", is("FKASSA"))
-                .body("recipient.name", is("Försäkringskassan"));
+                .body("recipient.name", is("Försäkringskassan"))
+                .body("recipient.trusted", is("true"));
     }
 
     @Test
@@ -78,7 +81,8 @@ public class GetRecipientsForCertificateIT extends BaseIntegrationTest {
                 .body("result.resultCode", is("OK"))
                 .body("recipient.size()", is(TS_RECIPIENT_SIZE))
                 .body("recipient.id", is("TRANSP"))
-                .body("recipient.name", is("Transportstyrelsen"));
+                .body("recipient.name", is("Transportstyrelsen"))
+                .body("recipient.trusted", is("true"));
     }
 
     @Test
@@ -87,7 +91,8 @@ public class GetRecipientsForCertificateIT extends BaseIntegrationTest {
                 .body("result.resultCode", is("OK"))
                 .body("recipient.size()", is(TS_RECIPIENT_SIZE))
                 .body("recipient.id", is("TRANSP"))
-                .body("recipient.name", is("Transportstyrelsen"));
+                .body("recipient.name", is("Transportstyrelsen"))
+                .body("recipient.trusted", is("true"));
     }
 
     @Test

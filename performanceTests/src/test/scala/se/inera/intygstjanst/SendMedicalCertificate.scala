@@ -12,11 +12,6 @@ class SendMedicalCertificate extends Simulation {
   val numberOfUsers = 100
 
   val testpersonnummer = csv("data/intyg.csv").circular
-  val intyg = csv("data/intyg.csv").records
-
-  before {
-    Utils.clean()
-  }
 
   val scn = scenario("Send Medical Certificates")
     .feed(testpersonnummer)
@@ -29,19 +24,16 @@ class SendMedicalCertificate extends Simulation {
       .check(
         status.is(200)))
 
-  val preload = scenario("Preload database")
-    .foreach(intyg, "record") {
-      exec(flattenMapIntoAttributes("${record}"))
-        .exec(http("Store cert")
-          .post("/register-certificate/v3.0")
-          .headers(Headers.store_certificate)
-          .body(ELFileBody("request-bodies/register-medical-certificate.xml")))
-    }
+  before {
+    println("Setting up database before execution.")
+    Utils.clean()
+    Utils.preloadDatabase()
+  }
 
-  setUp(preload.inject(atOnceUsers(1)).protocols(Conf.httpConf),
-    scn.inject(rampUsers(numberOfUsers) over (120 seconds)).protocols(Conf.httpConf))
+  setUp(scn.inject(rampUsers(numberOfUsers) over (120 seconds)).protocols(Conf.httpConf))
 
   after {
+    println("Cleaning up after tests.")
     Utils.clean()
   }
 }

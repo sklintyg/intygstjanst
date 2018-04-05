@@ -65,6 +65,16 @@
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
+  <jaxws:endpoint address="/get-certificate-type/v1.0"
+      implementor="se.inera.intyg.intygstjanst.web.integration.GetCertificateTypeResponderImpl">
+    <jaxws:schemaLocations>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.0.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.0.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/interactions/GetCertificateTypeInteraction/GetCertificateTypeResponder_1.0.xsd</jaxws:schemaLocation>
+    </jaxws:schemaLocations>
+  </jaxws:endpoint>
+
+
   <jaxws:endpoint address="/list-certificates/v1.0"
                   implementor="se.inera.intyg.intygstjanst.web.integration.ListCertificatesResponderImpl">
     <jaxws:outFaultInterceptors>

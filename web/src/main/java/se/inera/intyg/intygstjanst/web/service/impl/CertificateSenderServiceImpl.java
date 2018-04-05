@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Inera AB (http://www.inera.se)
+ * Copyright (C) 2018 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -18,7 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 // CHECKSTYLE:OFF LineLength
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,8 +79,8 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     @Autowired
     private MonitoringLogService monitoringLogService;
 
-    @Value("${fk7263.revoke.medical.certificate.force.fullstandigtnamn}")
-    private String forceFullstandigtNamnPlaceholder;
+    @Value("${fk7263.send.medical.certificate.answer.force.fullstandigtnamn}")
+    private String forceFullstandigtNamn;
 
     @Override
     public void sendCertificate(Certificate certificate, String recipientId) {
@@ -158,7 +157,9 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
         question.getFraga().setSigneringsTidpunkt(signTs);
         question.setLakarutlatande(revokeData.getLakarutlatande());
 
-        if ("true".equalsIgnoreCase(forceFullstandigtNamnPlaceholder)) {
+        // INTYG-4447: Temporary hack to mitigate problems in Anpassningsplattform requiring fullstandigtNamn to be present.
+        // Remove ASAP.
+        if ("true".equalsIgnoreCase(forceFullstandigtNamn)) {
             question.getLakarutlatande().getPatient().setFullstandigtNamn("---");
         }
 

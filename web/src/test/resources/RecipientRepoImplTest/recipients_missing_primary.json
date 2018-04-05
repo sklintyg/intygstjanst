@@ -8,23 +8,25 @@
       "luse",
       "lisjp"
     ],
-    "active" : true
+    "active": true,
+    "trusted": true
   },
   {
-    "id" : "TRANSP",
-    "name" : "Transportstyrelsen",
-    "logicalAddress" : "tsTestAdress",
-    "certificateTypes" : [
+    "id": "TRANSP",
+    "name": "Transportstyrelsen",
+    "logicalAddress": "tsTestAdress",
+    "certificateTypes": [
       "ts-bas",
       "ts-diabetes"
     ],
-    "active" : true
+    "active": true,
+    "trusted": true
   },
   {
-    "id" : "INVANA",
-    "name" : "Invånaren",
-    "logicalAddress" : "miAdress",
-    "certificateTypes" : [
+    "id": "INVANA",
+    "name": "Invånaren",
+    "logicalAddress": "miAdress",
+    "certificateTypes": [
       "ts-bas",
       "ts-diabetes",
       "fk7263",
@@ -33,6 +35,7 @@
       "luae_na",
       "luae_fs"
     ],
-    "active" : true
+    "active": true,
+    "trusted": true
   }
 ]

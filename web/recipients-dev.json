@@ -10,7 +10,8 @@
       "luae_fs",
       "luae_na"
     ],
-    "active" : true
+    "active" : true,
+    "trusted": true
   },
   {
     "id" : "TRANSP",
@@ -20,7 +21,8 @@
       "ts-bas",
       "ts-diabetes"
     ],
-    "active" : true
+    "active" : true,
+    "trusted": true
   },
   {
     "id" : "FBA",
@@ -29,7 +31,8 @@
     "certificateTypes" : [
       "lisjp"
     ],
-    "active" : true
+    "active" : true,
+    "trusted": false
   },
   {
     "id" : "HSVARD",
@@ -44,7 +47,8 @@
       "luae_na",
       "luae_fs"
     ],
-    "active" : true
+    "active" : true,
+    "trusted": true
   },
   {
     "id" : "INVANA",
@@ -59,6 +63,27 @@
       "luae_na",
       "luae_fs"
     ],
-    "active" : true
+    "active" : true,
+    "trusted": true
+  },
+  {
+    "id": "SKV",
+    "name": "Skatteverket",
+    "logicalAddress": "Skatteverket",
+    "certificateTypes" : [
+      "db"
+    ],
+    "active" : true,
+    "trusted": true
+  },
+  {
+    "id": "SOS",
+    "name": "Socialstyrelsen",
+    "logicalAddress": "SOS",
+    "certificateTypes" : [
+      "doi"
+    ],
+    "active" : true,
+    "trusted": true
   }
 ]

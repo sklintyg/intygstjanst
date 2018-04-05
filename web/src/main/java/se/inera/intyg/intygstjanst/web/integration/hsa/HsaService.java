@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Inera AB (http://www.inera.se)
+ * Copyright (C) 2018 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -24,5 +24,9 @@ import java.util.List;
  * Created by eriklupander on 2016-02-02.
  */
 public interface HsaService {
+
     List<String> getHsaIdForUnderenheter(String careUnitHsaId);
+
+    String getHsaIdForVardgivare(String careUnitHsaId);
+
 }

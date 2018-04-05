@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2018 Inera AB (http://www.inera.se)
+ *
+ * This file is part of sklintyg (https://github.com/sklintyg).
+ *
+ * sklintyg is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * sklintyg is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package se.inera.intyg.intygstjanst.web.integration.util;
 
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
@@ -14,11 +32,11 @@ import java.util.UUID;
  */
 public class SjukfallCertTestHelper {
 
-    public static final String CARE_UNIT_ID_1 = "careunit-1";
     public static final String DOCTOR_HSA_ID = "doctor-1";
 
     public static final String CARE_GIVER_1_ID = "caregiver-1";
-    public static final String CARE_UNIT_NAME = "careunit-name-1";
+    public static final String CARE_UNIT_1_ID = "careunit-1";
+    public static final String CARE_UNIT_1_NAME = "careunit-1-name";
     public static final String PERSONNUMMER = "191212121212";
 
     public static final String DOCTOR_NAME = "doctor-name-1";
@@ -28,16 +46,22 @@ public class SjukfallCertTestHelper {
 
     public List<SjukfallCertificate> intygsList() {
         List<SjukfallCertificate> certList = new ArrayList<>();
-        certList.add(buildSjukfallCertificate(CARE_UNIT_ID_1, CARE_GIVER_1_ID, defaultWorkCapacities(), false));
+        certList.add(buildSjukfallCertificate(CARE_GIVER_1_ID, CARE_UNIT_1_ID, CARE_UNIT_1_NAME));
         return certList;
     }
 
-    private SjukfallCertificate buildSjukfallCertificate(String careUnitId, String careGiverId, List<SjukfallCertificateWorkCapacity> workCapacities, boolean deleted) {
+    public SjukfallCertificate buildSjukfallCertificate(String careGiverId, String careUnitId, String careUnitName) {
+        return buildSjukfallCertificate(careGiverId, careUnitId, careUnitName, defaultWorkCapacities(), false);
+    }
+
+    private SjukfallCertificate buildSjukfallCertificate(String careGiverId, String careUnitId, String careUnitName,
+                                                         List<SjukfallCertificateWorkCapacity> workCapacities, boolean deleted) {
+
         SjukfallCertificate sc = new SjukfallCertificate(UUID.randomUUID().toString());
-        sc.setCareUnitId(careUnitId);
-        sc.setSjukfallCertificateWorkCapacity(workCapacities);
         sc.setCareGiverId(careGiverId);
-        sc.setCareUnitName(CARE_UNIT_NAME);
+        sc.setCareUnitId(careUnitId);
+        sc.setCareUnitName(careUnitName);
+        sc.setSjukfallCertificateWorkCapacity(workCapacities);
         sc.setCivicRegistrationNumber(PERSONNUMMER);
         sc.setDiagnoseCode(DIAGNOSE_CODE);
         sc.setPatientName(PATIENT_NAME);

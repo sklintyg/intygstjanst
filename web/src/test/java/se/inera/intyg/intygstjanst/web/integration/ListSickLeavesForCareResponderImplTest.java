@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Inera AB (http://www.inera.se)
+ * Copyright (C) 2018 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -18,14 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +25,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
@@ -46,7 +37,15 @@ import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Li
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
-import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
 
 /**
  * @author eriklupander
@@ -80,7 +79,7 @@ public class ListSickLeavesForCareResponderImplTest {
     @Before
     public void init() {
         enhetsId = new HsaId();
-        enhetsId.setExtension(SjukfallCertTestHelper.CARE_UNIT_ID_1);
+        enhetsId.setExtension(SjukfallCertTestHelper.CARE_UNIT_1_ID);
 
         lakareId = new HsaId();
         lakareId.setExtension(SjukfallCertTestHelper.DOCTOR_HSA_ID);
@@ -89,14 +88,14 @@ public class ListSickLeavesForCareResponderImplTest {
     @Test
     public void testListSickLeavesForCare() {
 
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyListOf(String.class)))
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyListOf(String.class)))
                 .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
         assertEquals(1, response.getSjukfallLista().getSjukfall().size());
         Sjukfall sjukfall = response.getSjukfallLista().getSjukfall().get(0);
 
-        assertEquals(SjukfallCertTestHelper.CARE_UNIT_ID_1, sjukfall.getEnhetsId().getExtension());
+        assertEquals(SjukfallCertTestHelper.CARE_UNIT_1_ID, sjukfall.getEnhetsId().getExtension());
         assertEquals(SjukfallCertTestHelper.DOCTOR_HSA_ID, sjukfall.getPersonalId().getExtension());
         assertEquals(SjukfallCertTestHelper.PERSONNUMMER, sjukfall.getPersonId().getExtension());
         assertEquals(SjukfallCertTestHelper.PATIENT_NAME, sjukfall.getPatientFullstandigtNamn());
@@ -114,13 +113,12 @@ public class ListSickLeavesForCareResponderImplTest {
 
         // The test data is minus three weeks -> plus one week, which including "today" is 4 weeks + 1 day
         assertEquals(29, sjukfall.getSjukskrivningslangd());
-
     }
 
     @Test
     public void testListSickLeavesForCareForCorrectDoctor() {
 
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyListOf(String.class)))
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyListOf(String.class)))
                 .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, lakareId));
@@ -130,7 +128,7 @@ public class ListSickLeavesForCareResponderImplTest {
     @Test
     public void testListSickLeavesForCareForInCorrectDoctorReturnsZeroRows() {
         lakareId.setExtension("other-doctor");
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyListOf(String.class)))
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyListOf(String.class)))
                 .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, lakareId));
@@ -140,7 +138,7 @@ public class ListSickLeavesForCareResponderImplTest {
     @Test
     public void testListSickLeavesForCareReturns0WhenTooLargeMinSjukskrivningslangd() {
 
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyListOf(String.class)))
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyListOf(String.class)))
                 .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null, 100, 200));
@@ -150,7 +148,7 @@ public class ListSickLeavesForCareResponderImplTest {
     @Test
     public void testListSickLeavesForCareReturns0WhenTooShortMaxSjukskrivningslangd() {
 
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyListOf(String.class)))
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyListOf(String.class)))
                 .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null, 1, 2));
@@ -160,7 +158,7 @@ public class ListSickLeavesForCareResponderImplTest {
     @Test
     public void testListSickLeavesForCareWhenZeroSjukfallCertsAreReturnedFromDao() {
 
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyListOf(String.class))).thenReturn(new ArrayList<>());
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyListOf(String.class))).thenReturn(new ArrayList<>());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
         assertEquals(0, response.getSjukfallLista().getSjukfall().size());

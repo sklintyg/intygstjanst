@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Inera AB (http://www.inera.se)
+ * Copyright (C) 2018 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -18,8 +18,14 @@
  */
 package se.inera.intyg.intygstjanst.web.service.repo;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.util.ReflectionTestUtils;
+import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.exception.ServerException;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
 import java.io.IOException;
 import java.net.URI;
@@ -30,16 +36,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
-import se.inera.intyg.intygstjanst.web.exception.ServerException;
-import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class RecipientRepoImplTest {
 
@@ -73,6 +72,7 @@ public class RecipientRepoImplTest {
     public void testListRecipients() {
         assertEquals(4, repo.listRecipients().size());
         assertTrue(repo.listRecipients().containsAll(allRecipients));
+        assertTrue(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }
 
     @Test
@@ -85,6 +85,7 @@ public class RecipientRepoImplTest {
         // Make sure the recipients loaded by init() still remain!
         assertEquals(String.format("Expected 4 recipients after update, was %s", repo.listRecipients().size()),
                 4, repo.listRecipients().size());
+        assertTrue(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }
 
     @Test
@@ -98,6 +99,7 @@ public class RecipientRepoImplTest {
 
         assertEquals(String.format("Expected 5 recipients after update, was %s", repo.listRecipients().size()),
                 5, repo.listRecipients().size());
+        assertFalse(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }
 
     @Test
@@ -113,6 +115,7 @@ public class RecipientRepoImplTest {
         assertEquals(String.format("Expected 4 recipients after update, was %s", repo.listRecipients().size()),
                 4, repo.listRecipients().size());
         assertEquals("Changed", repo.getRecipient("TRANSP").getName());
+        assertTrue(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }
 
     @Test
@@ -128,6 +131,7 @@ public class RecipientRepoImplTest {
 
         assertEquals(3, recipients.size());
         assertTrue(recipients.containsAll(exp));
+        assertTrue(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }
 
     @Test(expected = ServerException.class)

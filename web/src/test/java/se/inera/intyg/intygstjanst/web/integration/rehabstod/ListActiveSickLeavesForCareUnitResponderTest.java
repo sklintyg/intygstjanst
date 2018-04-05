@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Inera AB (http://www.inera.se)
+ * Copyright (C) 2018 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -49,7 +49,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ListActiveSickLeavesForCareUnitResponderTest {
 
-    private static final String HSA_ID = "enhet-1";
+    private static final String CAREGIVER_HSAID = "vardgivare-1";
+    private static final String CAREUNIT_HSAID = "enhet-1";
 
     @Mock
     private HsaService hsaService;
@@ -64,7 +65,7 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
 
     @Before
     public void init() {
-        hsaId.setExtension(HSA_ID);
+        hsaId.setExtension(CAREUNIT_HSAID);
     }
 
     @Test
@@ -77,7 +78,8 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
 
     @Test
     public void testNormalHappyPath() {
-        when(hsaService.getHsaIdForUnderenheter(HSA_ID)).thenReturn(new ArrayList<>());
+        when(hsaService.getHsaIdForVardgivare(CAREUNIT_HSAID)).thenReturn(CAREGIVER_HSAID);
+        when(hsaService.getHsaIdForUnderenheter(CAREUNIT_HSAID)).thenReturn(new ArrayList<>());
 
         ListActiveSickLeavesForCareUnitType params = new ListActiveSickLeavesForCareUnitType();
         params.setEnhetsId(hsaId);
@@ -88,7 +90,8 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
 
     @Test
     public void testHandlesPersonnummerWithoutDash() {
-        when(hsaService.getHsaIdForUnderenheter(HSA_ID)).thenReturn(new ArrayList<>());
+        when(hsaService.getHsaIdForVardgivare(CAREUNIT_HSAID)).thenReturn(CAREGIVER_HSAID);
+        when(hsaService.getHsaIdForUnderenheter(CAREUNIT_HSAID)).thenReturn(new ArrayList<>());
 
         ListActiveSickLeavesForCareUnitType params = new ListActiveSickLeavesForCareUnitType();
         params.setEnhetsId(hsaId);
@@ -101,14 +104,15 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
         assertEquals(ResultCodeEnum.OK, responseType.getResultCode());
 
         verify(sjukfallCertificateDao, times(1))
-                .findActiveSjukfallCertificateForPersonOnCareUnits(Arrays.asList("enhet-1"),
+                .findActiveSjukfallCertificateForPersonOnCareUnits(CAREGIVER_HSAID, Arrays.asList(CAREUNIT_HSAID),
                         "19121212-1212");
     }
 
 
     @Test
     public void testNullPatientIdExtensionRunsExpectedDaoMethod() {
-        when(hsaService.getHsaIdForUnderenheter(HSA_ID)).thenReturn(new ArrayList<>());
+        when(hsaService.getHsaIdForVardgivare(CAREUNIT_HSAID)).thenReturn(CAREGIVER_HSAID);
+        when(hsaService.getHsaIdForUnderenheter(CAREUNIT_HSAID)).thenReturn(new ArrayList<>());
 
         ListActiveSickLeavesForCareUnitType params = new ListActiveSickLeavesForCareUnitType();
         params.setEnhetsId(hsaId);
@@ -117,13 +121,14 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
         params.setPersonId(patientId);
 
         ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
-        verify(sjukfallCertificateDao, times(1)).findActiveSjukfallCertificateForCareUnits(anyList());
-        verify(sjukfallCertificateDao, times(0)).findActiveSjukfallCertificateForPersonOnCareUnits(anyList(), anyString());
+        verify(sjukfallCertificateDao, times(1)).findActiveSjukfallCertificateForCareUnits(anyString(), anyList());
+        verify(sjukfallCertificateDao, times(0)).findActiveSjukfallCertificateForPersonOnCareUnits(anyString(), anyList(), anyString());
     }
 
     @Test
     public void testEmptyStringPatientIdExtensionRunsExpectedDaoMethod() {
-        when(hsaService.getHsaIdForUnderenheter(HSA_ID)).thenReturn(new ArrayList<>());
+        when(hsaService.getHsaIdForVardgivare(CAREUNIT_HSAID)).thenReturn(CAREGIVER_HSAID);
+        when(hsaService.getHsaIdForUnderenheter(CAREUNIT_HSAID)).thenReturn(new ArrayList<>());
 
         ListActiveSickLeavesForCareUnitType params = new ListActiveSickLeavesForCareUnitType();
         params.setEnhetsId(hsaId);
@@ -132,7 +137,7 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
         params.setPersonId(patientId);
 
         ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
-        verify(sjukfallCertificateDao, times(1)).findActiveSjukfallCertificateForCareUnits(anyList());
-        verify(sjukfallCertificateDao, times(0)).findActiveSjukfallCertificateForPersonOnCareUnits(anyList(), anyString());
+        verify(sjukfallCertificateDao, times(1)).findActiveSjukfallCertificateForCareUnits(anyString(), anyList());
+        verify(sjukfallCertificateDao, times(0)).findActiveSjukfallCertificateForPersonOnCareUnits(anyString(), anyList(), anyString());
     }
 }

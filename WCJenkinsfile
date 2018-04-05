@@ -1,6 +1,6 @@
 #!groovy
 
-def baseVersion = "3.3.*"
+def baseVersion = "3.4.0.*"
 def buildRoot = JOB_BASE_NAME.replaceAll(/-.*/, "") // Keep everything up to the first dash
 
 stage('checkout') {
@@ -15,7 +15,7 @@ stage('deploy test-IT') {
         util.run {
             def itVersion = util.latestVersion("se/inera/intyg/intygstjanst/intygstjanst-web", baseVersion)
 
-            ansiblePlaybook(extraVars: [version: "${itVersion}", ansible_ssh_port: "22", deploy_from_repo: "true", config_version: "IT-3.3"],
+            ansiblePlaybook(extraVars: [version: "${itVersion}", ansible_ssh_port: "22", deploy_from_repo: "true"],
                             installation: 'ansible-yum', inventory: 'ansible/inventory/intygstjanst/test-wc', playbook: 'ansible/deploy.yml')
 
             util.waitForServer('https://webcert.inera.nordicmedtest.se/inera-certificate/version.jsp')

@@ -1,5 +1,5 @@
 plugins {
-    id "se.inera.intyg.plugin.common" version "1.0.45" apply false
+    id "se.inera.intyg.plugin.common" version "1.0.59" apply false
     id "org.akhikhl.gretty" version "1.4.2" apply false
 }
 
@@ -63,12 +63,16 @@ allprojects {
         }
     }
 
+    compileJava {
+        options.encoding = "UTF-8"
+    }
+
     [install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom*.whenConfigured { pom ->
         pom.dependencies.findAll {dep -> dep.groupId == 'se.inera.intyg.common'}.each {
-            it.version = findResolvedVersion(project, 'se.inera.intyg.common')
+            it.version = se.inera.intyg.IntygPluginKt.findResolvedVersion(project, 'se.inera.intyg.common')
         }
         pom.dependencies.findAll {dep -> dep.groupId == 'se.inera.intyg.infra'}.each {
-            it.version = findResolvedVersion(project, 'se.inera.intyg.infra')
+            it.version = se.inera.intyg.IntygPluginKt.findResolvedVersion(project, 'se.inera.intyg.infra')
         }
     }
 }

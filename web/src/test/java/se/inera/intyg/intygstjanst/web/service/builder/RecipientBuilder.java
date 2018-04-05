@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Inera AB (http://www.inera.se)
+ * Copyright (C) 2018 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -27,7 +27,6 @@ import java.util.List;
  * Recipient object.
  *
  * @author erik
- *
  */
 public class RecipientBuilder {
 
@@ -35,11 +34,11 @@ public class RecipientBuilder {
     private String name;
     private String id;
     private String certificateTypes;
-
     private boolean active;
+    private boolean trusted;
 
     public Recipient build() {
-        return new Recipient(logicalAddress, name, id, certificateTypes, active);
+        return new Recipient(logicalAddress, name, id, certificateTypes, active, trusted);
     }
 
     public String getLogicalAddress() {
@@ -73,20 +72,31 @@ public class RecipientBuilder {
         return certificateTypes;
     }
 
-    public void setCertificateTypes(String certificateTypes) {
+    public RecipientBuilder setCertificateTypes(String certificateTypes) {
         this.certificateTypes = certificateTypes;
+        return this;
     }
 
-    public void setCertificateTypes(List<String> certificateTypes) {
+    public RecipientBuilder setCertificateTypes(List<String> certificateTypes) {
         this.certificateTypes = Joiner.on(Recipient.SEPARATOR).join(certificateTypes);
+        return this;
     }
 
     public boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public RecipientBuilder setActive(boolean active) {
         this.active = active;
+        return this;
     }
 
+    public boolean isTrusted() {
+        return trusted;
+    }
+
+    public RecipientBuilder setTrusted(boolean trusted) {
+        this.trusted = trusted;
+        return this;
+    }
 }
