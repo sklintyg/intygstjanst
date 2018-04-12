@@ -80,6 +80,11 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     }
 
     @Override
+    public void logStatisticsCreated(String certificateId, String certificateType, String careUnit) {
+        logEvent(MonitoringEvent.STATISTICS_CREATED, certificateId, certificateType, careUnit);
+    }
+
+    @Override
     public void logStatisticsSent(String certificateId, String certificateType, String careUnit) {
         logEvent(MonitoringEvent.STATISTICS_SENT, certificateId, certificateType, careUnit);
     }
@@ -122,6 +127,7 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
         CERTIFICATE_STATUS_CHANGED("Certificate '{}' - changed to status '{}'"),
         CONSENT_GIVEN("Consent given by citizen '{}'"),
         CONSENT_REVOKED("Consent revoked by citizen '{}'"),
+        STATISTICS_CREATED("Certificate '{}' with type '{}', care unit '{}' - sent to statistics"),
         STATISTICS_SENT("Certificate '{}' with type '{}', care unit '{}' - sent to statistics"),
         STATISTICS_REVOKED("Certificate '{}' with type '{}', care unit '{}' - revoke sent to statistics"),
         STATISTICS_MESSAGE_SENT("Message with topic '{}' for certificate '{}' - sent to statistics"),

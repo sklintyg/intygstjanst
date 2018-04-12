@@ -21,6 +21,8 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -28,10 +30,6 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-
-import javax.jms.JMSException;
-import javax.jms.Session;
-import javax.jms.TextMessage;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,12 +41,13 @@ import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import se.inera.intyg.common.support.model.common.internal.Utlatande;
-import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+
+import javax.jms.JMSException;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StatisticsServiceImplTest {
@@ -94,7 +93,40 @@ public class StatisticsServiceImplTest {
         verify(message).setStringProperty("action", "created");
         verify(message).setStringProperty("certificate-id", id);
         verify(message).setStringProperty("certificate-type", type);
-        verify(monitoringLogService, only()).logStatisticsSent(id, type, "unit");
+        verify(message, never()).setStringProperty(eq("certificate-recipient"), any());
+        verify(monitoringLogService, only()).logStatisticsCreated(id, type, "unit");
+    }
+
+    @Test
+    public void serviceSendsCertificateSent() throws Exception {
+
+        final String action = "sent";
+        final String xml = null;
+        final String id = "id";
+        final String type = "typ";
+        final String unit = "unit";
+        final String recipient = "recipient";
+
+        ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
+        ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
+
+        boolean sent = serviceImpl.sent(id, type, unit, recipient);
+
+        TextMessage message = mock(TextMessage.class);
+        Session session = mock(Session.class);
+
+        doReturn(message).when(session).createTextMessage(xml);
+
+        assertTrue(sent);
+        verify(template, only()).send(captor.capture());
+        captor.getValue().createMessage(session);
+
+        verify(message).setStringProperty(eq("action"), eq(action));
+        verify(message).setStringProperty(eq("certificate-id"), eq(id));
+        verify(message).setStringProperty(eq("certificate-type"), eq(type));
+        verify(message).setStringProperty(eq("certificate-recipient"), eq(recipient));
+        verify(monitoringLogService, only()).logCertificateSent(id, type, unit, recipient);
+
     }
 
     @Test
@@ -125,6 +157,7 @@ public class StatisticsServiceImplTest {
         verify(message).setStringProperty("action", "revoked");
         verify(message).setStringProperty("certificate-id", id);
         verify(message).setStringProperty("certificate-type", type);
+        verify(message, never()).setStringProperty(eq("certificate-recipient"), any());
         verify(monitoringLogService, only()).logStatisticsRevoked(id, certificate.getType(), "unit");
     }
 

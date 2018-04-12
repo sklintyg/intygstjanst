@@ -44,6 +44,7 @@ import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
@@ -52,9 +53,14 @@ import se.inera.intyg.schemas.contract.Personnummer;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ERROR;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
@@ -86,6 +92,9 @@ public class SendMedicalCertificateResponderImplTest {
     @Mock
     private RecipientService recipientService = mock(RecipientService.class);
 
+    @Mock
+    private StatisticsService statisticsService;
+
     @InjectMocks
     private SendMedicalCertificateResponderInterface responder = new SendMedicalCertificateResponderImpl();
 
@@ -96,13 +105,16 @@ public class SendMedicalCertificateResponderImplTest {
 
     @Test
     public void testSendOk() throws Exception {
-        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
+        Certificate certificate = createCertificate();
+        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(certificate);
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), createRequest());
 
         assertEquals(OK, response.getResult().getResultCode());
 
         verify(recipientService).getPrimaryRecipientFkassa();
         verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+        verify(statisticsService).sent(
+                certificate.getId(), certificate.getType(), certificate.getCareUnitId(), createFkRecipient().getId());
     }
 
     @Test
@@ -117,6 +129,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService).getPrimaryRecipientFkassa();
         verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+        verifyZeroInteractions(statisticsService);
     }
 
     @Test
@@ -133,6 +146,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+        verifyZeroInteractions(statisticsService);
     }
 
     @Test
@@ -148,6 +162,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService).getPrimaryRecipientFkassa();
         verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+        verifyZeroInteractions(statisticsService);
     }
 
     @Test
@@ -164,6 +179,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService).getPrimaryRecipientFkassa();
         verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+        verifyZeroInteractions(statisticsService);
     }
 
     @Test
@@ -178,6 +194,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+        verifyZeroInteractions(statisticsService);
     }
 
     @Test
@@ -192,6 +209,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+        verifyZeroInteractions(statisticsService);
     }
 
     @Test
@@ -206,6 +224,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+        verifyZeroInteractions(statisticsService);
     }
 
     @Test
@@ -221,6 +240,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+        verifyZeroInteractions(statisticsService);
     }
 
     @Test
@@ -236,6 +256,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+        verifyZeroInteractions(statisticsService);
     }
 
     @Test
@@ -251,6 +272,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+        verifyZeroInteractions(statisticsService);
     }
 
     @Test
@@ -258,7 +280,11 @@ public class SendMedicalCertificateResponderImplTest {
         SendMedicalCertificateRequestType request = createRequest();
         request.getSend().getLakarutlatande().getPatient().getPersonId().setExtension("191212121212");
 
-        when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
+        final Certificate certificate = createCertificate();
+
+        doReturn(certificate)
+                .when(certificateService)
+                .getCertificateForCare(CERTIFICATE_ID);
 
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), request);
 
@@ -266,22 +292,9 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService).getPrimaryRecipientFkassa();
         verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
+        verify(statisticsService).sent(
+                certificate.getId(), certificate.getType(), certificate.getCareUnitId(), createFkRecipient().getId());
     }
-
-    // INTYG-4086, namn skall ej längre skickas med.
-    //    @Test
-    //    public void testSendMedicalCertificateSaknatPatientnamn() throws Exception {
-    //        SendMedicalCertificateRequestType invalidRequest = createRequest();
-    //        invalidRequest.getSend().getLakarutlatande().getPatient().setFullstandigtNamn(null);
-    //        SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
-    //
-    //        assertEquals(ERROR, response.getResult().getResultCode());
-    //        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
-    //        assertEquals("Validation Error(s) found: No Patient fullstandigtNamn elements found or set!", response.getResult().getErrorText());
-    //
-    //        verify(recipientService, never()).getPrimaryRecipientFkassa();
-    //        verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
-    //    }
 
     @Test
     public void testSendMedicalCertificateSaknadSigneringstidpunkt() throws Exception {
@@ -530,6 +543,9 @@ public class SendMedicalCertificateResponderImplTest {
         Certificate certificate = new Certificate(CERTIFICATE_ID);
         certificate.setType(CERTIFICATE_TYPE);
         certificate.setCivicRegistrationNumber(PERSONNUMMER);
+        certificate.setCareUnitId("1");
+        certificate.setCareUnitName("unitName");
+
         return certificate;
     }
 

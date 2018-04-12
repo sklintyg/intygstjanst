@@ -50,9 +50,11 @@ public class MonitoringLogServiceImplTest {
     private static final String STATUS = "STATUS";
     private static final String MESSAGE_ID = "MESSAGE_ID";
     private static final String TOPIC = "TOPIC";
-    MonitoringLogService logService = new MonitoringLogServiceImpl();
+    private MonitoringLogService logService = new MonitoringLogServiceImpl();
+
     @Mock
     private Appender<ILoggingEvent> mockAppender;
+
     @Captor
     private ArgumentCaptor<LoggingEvent> captorLoggingEvent;
 
@@ -141,6 +143,13 @@ public class MonitoringLogServiceImplTest {
         final Personnummer citizenId = createPnr(CITIZEN);
         logService.logConsentRevoked(citizenId);
         verifyLog(Level.INFO, "CONSENT_REVOKED Consent revoked by citizen '" + citizenId.getPersonnummerHash() + "'");
+    }
+
+    @Test
+    public void shouldLogStatisticsCreated() {
+        logService.logStatisticsCreated(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
+        verifyLog(Level.INFO,
+                "STATISTICS_CREATED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - sent to statistics");
     }
 
     @Test

@@ -45,6 +45,17 @@ public interface StatisticsService {
     boolean revoked(String certificateXml, String certificateId, String certificateType, String careUnitId);
 
     /**
+     * Sends data to Statistic (ST) about a revoked certificate (intyg), returning true if successfully sent,
+     * false otherwise.
+     *
+     * @param certificateId
+     * @param certificateType
+     * @param careUnitId
+     * @return
+     */
+    boolean sent(String certificateId, String certificateType, String careUnitId, String recipientId);
+
+    /**
      * Sends data to Statistik (ST) about a sent message, returning true if data was successfully sent, false otherwise.
      *
      * @param xml

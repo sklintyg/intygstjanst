@@ -26,9 +26,11 @@ import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.exception.ExternalServiceCallException;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientResponseType;
@@ -45,35 +47,41 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
     @Autowired
     private CertificateService certificateService;
 
+    @Autowired
+    private StatisticsService statisticsService;
+
     @Override
-    public SendCertificateToRecipientResponseType sendCertificateToRecipient(String logicalAddress,
-            SendCertificateToRecipientType request) {
+    public SendCertificateToRecipientResponseType sendCertificateToRecipient(
+            final String logicalAddress, final SendCertificateToRecipientType request) {
 
         SendCertificateToRecipientResponseType response = new SendCertificateToRecipientResponseType();
 
         final String mottagareId = request.getMottagare().getCode();
         final String intygsId = request.getIntygsId().getExtension();
 
-        final Optional<Personnummer> personnummer =
-                Personnummer.createPersonnummer(request.getPatientPersonId().getExtension());
+        Optional<Personnummer> personnummer = Personnummer.createPersonnummer(request.getPatientPersonId().getExtension());
 
         try {
-            // 1. Skicka certifikat till mottagaren
-            CertificateService.SendStatus sendStatus =
+
+            final Certificate certificate = certificateService.getCertificateForCare(intygsId);
+            final CertificateService.SendStatus sendStatus =
                     certificateService.sendCertificate(personnummer.orElse(null), intygsId, mottagareId);
 
             if (sendStatus == CertificateService.SendStatus.ALREADY_SENT) {
-                response.setResult(ResultTypeUtil.infoResult(String.format("Certificate '%s' already sent to '%s'.", intygsId,
-                        mottagareId)));
+                response.setResult(ResultTypeUtil.infoResult(
+                        String.format("Certificate '%s' already sent to '%s'.", intygsId, mottagareId)));
                 LOGGER.info("Certificate '{}' already sent to '{}'.", intygsId, mottagareId);
             } else {
                 response.setResult(ResultTypeUtil.okResult());
+                statisticsService.sent(
+                        certificate.getId(), certificate.getType(), certificate.getCareUnitId(), request.getMottagare().getCode());
                 LOGGER.info("Certificate '{}' sent to '{}'.", intygsId, mottagareId);
             }
 
         } catch (InvalidCertificateException ex) {
             // return ERROR if no such certificate does exist
-            LOGGER.error("Certificate '{}' does not exist for user '{}'.", intygsId, personnummer.get().getPersonnummerHash());
+            LOGGER.error("Certificate '{}' does not exist for user '{}'.",
+                    intygsId, personnummer.map(Personnummer::getPersonnummerHash).orElse(null));
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR,
                     String.format("Unknown certificate ID: %s", intygsId)));
         } catch (CertificateRevokedException ex) {

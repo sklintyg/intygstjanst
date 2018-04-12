@@ -18,10 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import static java.lang.invoke.MethodHandles.lookup;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,23 +27,27 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import org.springframework.stereotype.Component;
-
+import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
-@Component
+import javax.jms.TextMessage;
+
+@Service
 public class StatisticsServiceImpl implements StatisticsService {
 
+    private static final String ACTION = "action";
     private static final String CREATED = "created";
     private static final String REVOKED = "revoked";
+    private static final String SENT = "sent";
     private static final String MESSAGE_SENT = "message-sent";
+
+    private static final String MESSAGE_ID = "message-id";
     private static final String CERTIFICATE_ID = "certificate-id";
     private static final String CERTIFICATE_TYPE = "certificate-type";
-    private static final String MESSAGE_ID = "message-id";
-    private static final String ACTION = "action";
+    private static final String CERTIFICATE_RECIPIENT = "certificate-recipient";
 
-    private static final Logger LOG = LoggerFactory.getLogger(StatisticsServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(lookup().getClass());
 
     @Autowired(required = false)
     private JmsTemplate jmsTemplate;
@@ -63,7 +64,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         if (enabled) {
             rc = sendIntygDataPointToStatistik(CREATED, certificateXml, certificateId, certificateType);
             if (rc) {
-                monitoringLogService.logStatisticsSent(certificateId, certificateType, careUnitId);
+                monitoringLogService.logStatisticsCreated(certificateId, certificateType, careUnitId);
             }
         }
         return rc;
@@ -82,6 +83,23 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
+    public boolean sent(
+            final String certificateId,
+            final String certificateType,
+            final String careUnitId,
+            final String recipientId) {
+
+        boolean rc = true;
+        if (enabled) {
+            rc = sendIntygDataPointToStatistik(SENT, null, certificateId, certificateType, recipientId);
+        }
+        if (rc) {
+            monitoringLogService.logCertificateSent(certificateId, certificateType, careUnitId, recipientId);
+        }
+        return rc;
+    }
+
+    @Override
     public boolean messageSent(String xml, String messageId, String topic) {
         boolean rc = true;
         if (enabled) {
@@ -93,23 +111,47 @@ public class StatisticsServiceImpl implements StatisticsService {
         return rc;
     }
 
-    private boolean sendIntygDataPointToStatistik(String actionType, String certificateXml, String certificateId, String certificateType) {
+    private boolean sendIntygDataPointToStatistik(
+            final String actionType,
+            final String certificateXml,
+            final String certificateId,
+            final String certificateType) {
+
+        return sendIntygDataPointToStatistik(
+                actionType,
+                certificateXml,
+                certificateId,
+                certificateType,
+                null
+        );
+    }
+
+    private boolean sendIntygDataPointToStatistik(
+            final String actionType,
+            final String certificateXml,
+            final String certificateId,
+            final String certificateType,
+            final String certificateRecipientId) {
+
         try {
             if (jmsTemplate == null) {
-                LOG.error("Failure sending '{}' type with certificate id '{}' to statistics, no JmsTemplate configured", actionType,
+                LOG.error("Failure sending '{}' type with certificate id '{}' to statistics, no JmsTemplate configured",
+                        actionType,
                         certificateId);
                 return false;
             }
 
-            MessageCreator messageCreator = new MessageCreator() {
-                @Override
-                public Message createMessage(Session session) throws JMSException {
-                    TextMessage message = session.createTextMessage(certificateXml);
-                    message.setStringProperty(ACTION, actionType);
-                    message.setStringProperty(CERTIFICATE_ID, certificateId);
-                    message.setStringProperty(CERTIFICATE_TYPE, certificateType);
-                    return message;
+            final MessageCreator messageCreator = session -> {
+                TextMessage message = session.createTextMessage(certificateXml);
+                message.setStringProperty(ACTION, actionType);
+                message.setStringProperty(CERTIFICATE_ID, certificateId);
+                message.setStringProperty(CERTIFICATE_TYPE, certificateType);
+
+                if (certificateRecipientId != null) {
+                    message.setStringProperty(CERTIFICATE_RECIPIENT, certificateRecipientId);
                 }
+
+                return message;
             };
             jmsTemplate.send(messageCreator);
             return true;
@@ -126,14 +168,11 @@ public class StatisticsServiceImpl implements StatisticsService {
                 return false;
             }
 
-            MessageCreator messageCreator = new MessageCreator() {
-                @Override
-                public Message createMessage(Session session) throws JMSException {
-                    TextMessage message = session.createTextMessage(messageXml);
-                    message.setStringProperty(ACTION, actionType);
-                    message.setStringProperty(MESSAGE_ID, messageId);
-                    return message;
-                }
+            final MessageCreator messageCreator = session -> {
+                TextMessage message = session.createTextMessage(messageXml);
+                message.setStringProperty(ACTION, actionType);
+                message.setStringProperty(MESSAGE_ID, messageId);
+                return message;
             };
             jmsTemplate.send(messageCreator);
             return true;

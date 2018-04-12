@@ -25,11 +25,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientResponseType;
@@ -61,21 +63,46 @@ public class SendCertificateToRecipientResponderImplTest {
     @Mock
     private CertificateSenderService certificateSenderService;
 
+    @Mock
+    private StatisticsService statisticsService;
+
     @InjectMocks
     private SendCertificateToRecipientResponderInterface responder = new SendCertificateToRecipientResponderImpl();
 
     @Test
     public void testSendCertificateToRecipient() throws Exception {
-        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID)).thenReturn(CertificateService.SendStatus.OK);
-        SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
+
+        final Personnummer personnummer = PERSONNUMMER;
+
+        SendCertificateToRecipientType request = createRequest();
+        request.getMottagare().setCode("FKASSA");
+
+        Certificate certificate = mock(Certificate.class);
+
+        doReturn(certificate)
+                .when(certificateService)
+                .getCertificateForCare(CERTIFICATE_ID);
+
+        doReturn("type").when(certificate).getType();
+        doReturn("unit").when(certificate).getCareUnitId();
+
+        SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
 
         assertEquals(OK, response.getResult().getResultCode());
-        verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
     }
 
     @Test
     public void testSendCertificateToRecipientAlreadySent() throws Exception {
-        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "FKASSA")).thenReturn(CertificateService.SendStatus.ALREADY_SENT);
+
+        Certificate certificate = mock(Certificate.class);
+
+        doReturn(CertificateService.SendStatus.ALREADY_SENT)
+                .when(certificateService)
+                .sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "FKASSA");
+
+        doReturn(certificate)
+                .when(certificateService)
+                .getCertificateForCare(CERTIFICATE_ID);
 
         SendCertificateToRecipientType request = createRequest();
         request.getMottagare().setCode("FKASSA");
