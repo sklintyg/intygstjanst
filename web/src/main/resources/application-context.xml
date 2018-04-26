@@ -62,6 +62,9 @@
     <import resource="classpath*:module-config.xml" />
     <import resource="classpath*:it-module-cxf-servlet.xml" />
 
+    <!-- Initializes caching, required by hsa-services-config.xml -->
+    <import resource="classpath:/basic-cache-config.xml" />
+
     <!-- HSA stub -->
     <import resource="classpath:hsa-stub-context.xml" />
 
