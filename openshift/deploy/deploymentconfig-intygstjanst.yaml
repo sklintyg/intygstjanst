@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: intygstjanst
+  name: intygstjanst
+spec:
+  replicas: 1
+  selector:
+    app: intygstjanst
+    deploymentconfig: intygstjanst
+  template:
+    metadata:
+      labels:
+        app: intygstjanst
+        deploymentconfig: intygstjanst
+        environment: test
+    spec:
+      containers:
+      - env:
+        - name: APP_JVM_ENV
+          value: -Ddb_server=$DB_SERVER -Ddb_port=$DB_PORT -Ddb_name=$DB_NAME -Ddb_username=$DB_USERNAME -Ddb_password=$DB_PASSWORD -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dcredentials.file=/opt/inera/credentials/credentials.properties -Dcertificate.config.folder=/opt/inera -Dcertificate.config.file=/opt/inera/intygstjanst-konfiguration/certificate.properties -Dcertificate.logback.file=/opt/inera/intygstjanst-konfiguration/certificate-logback.xml -Drecipient.config.file=/opt/inera/intygstjanst-konfiguration/recipients.json
+        - name: ACTIVE_SPRING_PROFILES
+          value: test,it-fk-stub,it-ts-stub,it-init-db,testability-api,caching-enabled
+        - name: NTJP_URL
+          value: https://qa.esb.ntjp.se:443/vp
+        - name: DB_SERVER
+          value: mysql
+        - name: DB_PORT
+          value: '3306'
+        - name: DB_NAME
+          value: intyg
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: intygstjanst-credentials
+              key: db_username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: intygstjanst-credentials
+              key: db_password
+        image: 172.30.1.1:5000/intygstjanster-test/intygstjanst:latest
+        imagePullPolicy: Always
+        name: intygstjanst
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 5005
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /inera-certificate/services
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+         - mountPath: /opt/inera/intygstjanst-konfiguration
+           name: intygstjanst-konfiguration-test
+           readOnly: true
+         - mountPath: /opt/inera/certifikat
+           name: intygstjanst-certifikat-test
+           readOnly: true
+         - mountPath: /opt/inera/credentials
+           name: intygstjanst-credentials-test
+           readOnly: true
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+       - configMap:
+           defaultMode: 420
+           name: intygstjanst-konfiguration-test
+         name: intygstjanst-konfiguration-test
+       - name: intygstjanst-certifikat-test
+         secret:
+           defaultMode: 420
+           secretName: intygstjanst-certifikat-test
+       - name: intygstjanst-credentials-test
+         secret:
+           defaultMode: 420
+           secretName: intygstjanst-credentials-test
+  test: false
