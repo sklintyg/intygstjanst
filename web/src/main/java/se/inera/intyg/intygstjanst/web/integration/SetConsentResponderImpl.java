@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.insuranceprocess.healthreporting.setconsent.rivtabp20.v1.SetConsentResponderInterface;
@@ -72,7 +72,7 @@ public class SetConsentResponderImpl implements SetConsentResponderInterface {
 
             LOGGER.warn(msg + " - ignored.");
             response.setResult(ResultOfCallUtil.infoResult(msg));
-        } catch (HibernateOptimisticLockingFailureException e) {
+        } catch (ObjectOptimisticLockingFailureException e) {
             // INTYG-886 ÅtertaSamtycke kan teoretiskt anropas flera gånger i rask takt av klienter, vilket leder till ett
             // race condition som ger HibernateOptimisticLockingFailureException.
             String msg = String.format("Consent already revoked for %s",

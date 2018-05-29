@@ -53,6 +53,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class IntygBootstrapBean {
 
@@ -82,14 +83,23 @@ public class IntygBootstrapBean {
 
     private void bootstrapModuleCertificates() {
         for (Resource resource : getResourceListing("classpath*:module-bootstrap-certificate/*.xml")) {
+            // Make spotbugs happy (it disallows nullpointerexceptions, but we don't really care about that here).
+            if (resource == null) {
+                throw new RuntimeException("Nullpointer.");
+            }
+            String resourceFilename = resource.getFilename();
+            if (resourceFilename == null) {
+                throw new RuntimeException("Nullpointer.");
+            }
             try {
-                String moduleName = resource.getFilename().split("__")[0];
+                Objects.requireNonNull(resourceFilename);
+                String moduleName = resourceFilename.split("__")[0];
                 LOG.info("Bootstrapping certificate '{}' from module {}", resource.getFilename(), moduleName);
                 String xmlString = Resources.toString(resource.getURL(), Charsets.UTF_8);
                 bootstrapCertificate(xmlString, moduleRegistry.getModuleApi(moduleName).getUtlatandeFromXml(xmlString),
                         moduleRegistry.getModuleEntryPoint(moduleName).getDefaultRecipient());
             } catch (IOException | ModuleNotFoundException | ModuleException e) {
-                LOG.error("Could not bootstrap certificate in file '{}'", resource.getFilename(), e);
+                LOG.error("Could not bootstrap certificate in file '{}'", resourceFilename, e);
             }
         }
     }
@@ -155,8 +165,13 @@ public class IntygBootstrapBean {
     private static class ResourceFilenameComparator implements Comparator<Resource> {
         @Override
         public int compare(Resource arg0, Resource arg1) {
-            String[] firstObjectsStrings = arg0.getFilename().split("-");
-            String[] secondObjectsStrings = arg1.getFilename().split("-");
+            String arg0Filename = arg0.getFilename();
+            String arg1Filename = arg1.getFilename();
+            if (arg0Filename == null || arg1Filename == null) {
+                throw new NullPointerException();
+            }
+            String[] firstObjectsStrings = arg0Filename.split("-");
+            String[] secondObjectsStrings = arg1Filename.split("-");
             int first = 0, second = 0;
             final int indexOfInt = 1;
             try {

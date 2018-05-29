@@ -58,7 +58,7 @@ public class ArendeRepositoryTest {
     public void testFindOne() {
         Arende saved = buildFragaSvarFraga(ENHET_1_ID);
         sendMessageToCareRepository.save(saved);
-        Arende read = sendMessageToCareRepository.findOne(saved.getInternReferens());
+        Arende read = sendMessageToCareRepository.findById(saved.getInternReferens()).get();
         assertEquals(read.getInternReferens(), saved.getInternReferens());
     }
 

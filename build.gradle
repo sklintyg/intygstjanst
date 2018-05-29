@@ -22,8 +22,8 @@ ext {
     liquibaseVersion = "3.3.5"
     restassuredVersion = "2.8.0"
     servletApiVersion = "2.5"
-    springDataVersion = "1.9.0.RELEASE"
-    springVersion = "4.2.2.RELEASE"
+    springDataVersion = "2.0.6.RELEASE"
+    springVersion = "4.3.16.RELEASE"
     stAntlr4Version = "4.0.8"
     xmlUnitVersion = "1.4"
 
