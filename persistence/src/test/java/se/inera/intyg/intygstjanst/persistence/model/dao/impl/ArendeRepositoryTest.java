@@ -18,15 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
-import static org.junit.Assert.assertEquals;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +25,17 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
 @ActiveProfiles({ "dev", "unit-testing" })
@@ -58,7 +57,7 @@ public class ArendeRepositoryTest {
     public void testFindOne() {
         Arende saved = buildFragaSvarFraga(ENHET_1_ID);
         sendMessageToCareRepository.save(saved);
-        Arende read = sendMessageToCareRepository.findById(saved.getInternReferens()).get();
+        Arende read = sendMessageToCareRepository.findOne(saved.getInternReferens());
         assertEquals(read.getInternReferens(), saved.getInternReferens());
     }
 
