@@ -65,7 +65,7 @@ dependencies {
 
     // We explicitly declare this as a testRuntime dependency so Restassured tests loads the correct XSD for
     // SetCertificateStatusResponder_1.0.xsd (as it exists in two different schemas)
-    testRuntime "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:0-SNAPSHOT" //${rivtaClinicalprocessSchemasVersion}"
+    testRuntime "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     testRuntime "javax.servlet:servlet-api:${servletApiVersion}"
 
     gretty "org.apache.activemq:activemq-client:${activeMqVersion}"
