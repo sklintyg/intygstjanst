@@ -33,6 +33,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 
 import javax.jms.JMSException;
+import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
@@ -56,6 +57,9 @@ public class StatisticsServiceImplTest {
     private JmsTemplate template;
 
     @Mock
+    private Queue destinationQueue;
+
+    @Mock
     private MonitoringLogService monitoringLogService;
 
     @InjectMocks
@@ -64,13 +68,13 @@ public class StatisticsServiceImplTest {
     @Test
     public void disabledServiceDoesNothingOnCreated() {
         serviceImpl.created(null, null, null, null);
-        verify(template, never()).send(any(MessageCreator.class));
+        verify(template, never()).send(any(Queue.class), any(MessageCreator.class));
     }
 
     @Test
     public void disabledServiceDoesNothingOnRevoked() {
         serviceImpl.revoked(null, null, null, null);
-        verify(template, never()).send(any(MessageCreator.class));
+        verify(template, never()).send(any(Queue.class), any(MessageCreator.class));
     }
 
     @Test
@@ -78,18 +82,22 @@ public class StatisticsServiceImplTest {
         final String xml = "The document";
         final String id = "The id";
         final String type = "the type of the certificate";
+
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
-        ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
+
+        ArgumentCaptor<Queue> queue = ArgumentCaptor.forClass(Queue.class);
+        ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
 
         TextMessage message = mock(TextMessage.class);
         Session session = mock(Session.class);
+
         when(session.createTextMessage(xml)).thenReturn(message);
 
         boolean created = serviceImpl.created(xml, id, type, "unit");
 
         assertTrue(created);
-        verify(template, only()).send(captor.capture());
-        captor.getValue().createMessage(session);
+        verify(template, only()).send(queue.capture(), messageCreator.capture());
+        messageCreator.getValue().createMessage(session);
         verify(message).setStringProperty("action", "created");
         verify(message).setStringProperty("certificate-id", id);
         verify(message).setStringProperty("certificate-type", type);
@@ -108,18 +116,20 @@ public class StatisticsServiceImplTest {
         final String recipient = "recipient";
 
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
-        ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
 
-        boolean sent = serviceImpl.sent(id, type, unit, recipient);
+        ArgumentCaptor<Queue> queue = ArgumentCaptor.forClass(Queue.class);
+        ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
 
         TextMessage message = mock(TextMessage.class);
         Session session = mock(Session.class);
 
         doReturn(message).when(session).createTextMessage(xml);
 
+        boolean sent = serviceImpl.sent(id, type, unit, recipient);
+
         assertTrue(sent);
-        verify(template, only()).send(captor.capture());
-        captor.getValue().createMessage(session);
+        verify(template, only()).send(queue.capture(), messageCreator.capture());
+        messageCreator.getValue().createMessage(session);
 
         verify(message).setStringProperty(eq("action"), eq(action));
         verify(message).setStringProperty(eq("certificate-id"), eq(id));
@@ -134,26 +144,30 @@ public class StatisticsServiceImplTest {
         final String type = "lisjp";
         final String xmlBody = "xml body";
         final String id = "The id";
-        ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
-        ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
 
+        ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
+
+        ArgumentCaptor<Queue> queue = ArgumentCaptor.forClass(Queue.class);
+        ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
+
+        TextMessage message = mock(TextMessage.class);
+        Session session = mock(Session.class);
         Certificate certificate = mock(Certificate.class);
         OriginalCertificate originalCertificate = mock(OriginalCertificate.class);
+
         when(originalCertificate.getDocument()).thenReturn(xmlBody);
         when(certificate.getOriginalCertificate()).thenReturn(originalCertificate);
         when(certificate.getId()).thenReturn(id);
         when(certificate.getType()).thenReturn(type);
-
-        TextMessage message = mock(TextMessage.class);
-        Session session = mock(Session.class);
         when(session.createTextMessage(xmlBody)).thenReturn(message);
 
         boolean revoked = serviceImpl.revoked(certificate.getOriginalCertificate().getDocument(), certificate.getId(),
                 certificate.getType(), "unit");
 
         assertTrue(revoked);
-        verify(template, only()).send(captor.capture());
-        captor.getValue().createMessage(session);
+        verify(template, only()).send(queue.capture(), messageCreator.capture());
+        messageCreator.getValue().createMessage(session);
+
         verify(message).setStringProperty("action", "revoked");
         verify(message).setStringProperty("certificate-id", id);
         verify(message).setStringProperty("certificate-type", type);
@@ -167,17 +181,21 @@ public class StatisticsServiceImplTest {
         final String messageId = "This is the id of the message";
 
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
-        ArgumentCaptor<MessageCreator> captor = ArgumentCaptor.forClass(MessageCreator.class);
+
+        ArgumentCaptor<Queue> queue = ArgumentCaptor.forClass(Queue.class);
+        ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
 
         TextMessage message = mock(TextMessage.class);
         Session session = mock(Session.class);
+
         when(session.createTextMessage(messageBody)).thenReturn(message);
 
         boolean messageSent = serviceImpl.messageSent(messageBody, messageId, "topic");
 
         assertTrue(messageSent);
-        verify(template, only()).send(captor.capture());
-        captor.getValue().createMessage(session);
+        verify(template, only()).send(queue.capture(), messageCreator.capture());
+        messageCreator.getValue().createMessage(session);
+
         verify(message).setStringProperty("action", "message-sent");
         verify(message).setStringProperty("message-id", messageId);
         verify(monitoringLogService, only()).logStatisticsMessageSent(messageId, "topic");
@@ -198,12 +216,12 @@ public class StatisticsServiceImplTest {
     @Test
     public void testJmsTemplateThrowsJmsException() throws JMSException {
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
-        doThrow(mock(JmsException.class)).when(template).send(any(MessageCreator.class));
+        doThrow(mock(JmsException.class)).when(template).send(any(Queue.class), any(MessageCreator.class));
 
         boolean created = serviceImpl.created("The document", "The id", "luse", "unit");
 
         assertFalse(created);
-        verify(template, only()).send(any(MessageCreator.class));
+        verify(template, only()).send(any(Queue.class), any(MessageCreator.class));
         verifyZeroInteractions(monitoringLogService);
     }
 }

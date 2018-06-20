@@ -179,7 +179,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 message.setStringProperty(MESSAGE_ID, messageId);
                 return message;
             };
-            jmsTemplate.send(messageCreator);
+            jmsTemplate.send(destinationQueue, messageCreator);
             return true;
         } catch (JmsException e) {
             LOG.error("Failure sending '{}' type with message id '{}'to statistics", actionType, messageId, e);
