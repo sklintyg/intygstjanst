@@ -23,6 +23,8 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.w3._2000._09.xmldsig_.SignatureType;
+import org.w3._2002._06.xmldsig_filter2.XPathType;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
@@ -69,7 +71,8 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     @PostConstruct
     public void initializeJaxbContext() throws JAXBException {
         // We need to register DatePeriodType with the JAXBContext explicitly for some reason.
-        jaxbContext = JAXBContext.newInstance(RegisterCertificateType.class, DatePeriodType.class);
+        jaxbContext = JAXBContext.newInstance(RegisterCertificateType.class, DatePeriodType.class, SignatureType.class,
+                XPathType.class);
         objectFactory = new ObjectFactory();
     }
 
