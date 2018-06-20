@@ -242,8 +242,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         monitoringLogService.logCertificateRegistered(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
 
         String transformedXml = certificateReceivedForStatistics(certificateHolder);
-        statisticsService.created(transformedXml, certificate.getId(), certificate.getType(),
-                certificate.getCareUnitId());
+        statisticsService.created(transformedXml, certificate.getId(), certificate.getType(), certificate.getCareUnitId());
         sjukfallCertificateService.created(certificate);
     }
 

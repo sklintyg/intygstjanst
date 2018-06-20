@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<configuration scan="true" scanPeriod="30 seconds">
+  <jmxConfigurator />
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <filter class="se.inera.intyg.common.util.logging.MarkerFilter">
+      <markers>Validation, Monitoring</markers>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>ACCEPT</onMismatch>
+    </filter>
+    <encoder>
+      <pattern>%date{ISO8601} [%thread] %-5level %logger{10} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!--Daily rolling file appender -->
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="se.inera.intyg.common.util.logging.MarkerFilter">
+      <markers>Validation, Monitoring</markers>
+      <onMatch>DENY</onMatch>
+      <onMismatch>ACCEPT</onMismatch>
+    </filter>
+    <file>${catalina.base}/logs/certificate.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.base}/logs/certificate.%d{yyyy-MM-dd}.log</fileNamePattern>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%date{ISO8601} [%thread] %-5level %logger{10} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!--Daily rolling file appender for validation messages -->
+  <appender name="VALIDATION" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="se.inera.intyg.common.util.logging.MarkerFilter">
+      <marker>Validation</marker>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+    <file>${catalina.base}/logs/validation.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.base}/logs/validation.%d{yyyy-MM-dd}.log</fileNamePattern>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%date{ISO8601} %-5level - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!--Daily rolling file appender for monitoring messages -->
+  <appender name="MONITORING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="se.inera.intyg.common.util.logging.MarkerFilter">
+      <marker>Monitoring</marker>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+    <file>${catalina.base}/logs/monitoring.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.base}/logs/monitoring.%d{yyyy-MM-dd}.log</fileNamePattern>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%date{ISO8601} %-5level - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="org.springframework" level="error" />
+  <logger name="org.hibernate" level="error" />
+  <logger name="org.hibernate.engine.jdbc.spi.SqlExceptionHelper" level="off" />
+  <logger name="org.apache.cxf" level="info" />
+  <logger name="se.inera.intyg" level="debug" />
+
+  <root>
+    <level value="error" />
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+    <appender-ref ref="VALIDATION" />
+    <appender-ref ref="MONITORING" />
+  </root>
+
+</configuration>

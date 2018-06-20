@@ -54,7 +54,7 @@
 
     <import resource="application-context-ws.xml" />
 
-    <import resource="classpath:jms-config.xml" />
+    <!--<import resource="classpath:jms-config.xml" />-->
 
     <import resource="jaxrs-context.xml" />
 
@@ -72,7 +72,7 @@
     <import resource="classpath:/hsa-services-config.xml" />
 
     <context:annotation-config />
-    <context:component-scan base-package="se.inera.intyg.intygstjanst.web" />
+    <context:component-scan base-package="se.inera.intyg.intygstjanst.config,se.inera.intyg.intygstjanst.persistence,se.inera.intyg.intygstjanst.web" />
 
     <bean id="recipientService" class="se.inera.intyg.intygstjanst.web.service.impl.RecipientServiceImpl" />
 
@@ -86,8 +86,9 @@
 
     <!-- In dev and demo mode we bootstrap data -->
     <beans profile="dev">
-      <bean id="IntygBootstrapBean"
-        class="se.inera.intyg.intygstjanst.web.service.bean.IntygBootstrapBean" />
+      <bean id="IntygBootstrapBean" class="se.inera.intyg.intygstjanst.web.service.bean.IntygBootstrapBean">
+        <property name="txManager" ref="transactionManager"/>
+      </bean>
     </beans>
   </beans>
 

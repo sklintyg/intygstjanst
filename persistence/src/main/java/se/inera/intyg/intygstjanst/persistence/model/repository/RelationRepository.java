@@ -16,19 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
+package se.inera.intyg.intygstjanst.persistence.model.repository;
 
-import org.springframework.stereotype.Repository;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
-import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.springframework.stereotype.Repository;
+
+import se.inera.intyg.intygstjanst.persistence.config.JpaConstans;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
+import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
 
 /**
  * Relations.
@@ -36,9 +39,9 @@ import java.util.stream.Collectors;
  * @author eriklupander
  */
 @Repository
-public class RelationDaoImpl implements RelationDao {
+public class RelationRepository implements RelationDao {
 
-    @PersistenceContext
+    @PersistenceContext(unitName = JpaConstans.PERSISTANCE_UNIT_NAME)
     private EntityManager entityManager;
 
     @Override

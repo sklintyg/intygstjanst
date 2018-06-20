@@ -16,24 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.service.impl;
+package se.inera.intyg.intygstjanst.web.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
-import se.inera.intyg.intygstjanst.persistence.model.repository.ArendeRepository;
-import se.inera.intyg.intygstjanst.web.service.ArendeService;
-
-@Service
-public class ArendeServiceImpl implements ArendeService {
-
-    @Autowired
-    private ArendeRepository arendeRepository;
-
-    @Override
-    public Arende processIncomingMessage(Arende message) {
-        return arendeRepository.save(message);
-    }
+/**
+ * @author Magnus Ekstrand on 2018-06-18.
+ */
+@Configuration
+@PropertySource("classpath:config/jms-test.properties")
+@Profile({"dev","test"})
+public class JmsConfigTest {
 
 }
+

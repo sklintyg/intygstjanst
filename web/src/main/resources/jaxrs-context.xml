@@ -68,9 +68,13 @@
       </jaxrs:extensionMappings>
     </jaxrs:server>
 
-    <bean id="certificateBean" class="se.inera.intyg.intygstjanst.web.integration.test.CertificateResource" />
-    <bean id="statisticsServiceBean" class="se.inera.intyg.intygstjanst.web.integration.test.StatisticsServiceResource" />
-    <bean id="sjukfallCertBean" class="se.inera.intyg.intygstjanst.web.integration.test.SjukfallCertResource" />
+    <bean id="certificateBean" class="se.inera.intyg.intygstjanst.web.integration.test.CertificateResource">
+      <property name="txManager" ref="transactionManager"/>
+    </bean>
+    <bean id="statisticsServiceBean" class="se.inera.intyg.intygstjanst.web.integration.test.StatisticsServiceResource"/>
+    <bean id="sjukfallCertBean" class="se.inera.intyg.intygstjanst.web.integration.test.SjukfallCertResource">
+      <property name="txManager" ref="transactionManager"/>
+    </bean>
     <bean id="fkBean" class="se.inera.intyg.intygstjanst.web.integration.stub.FkStubResource" />
   </beans>
 

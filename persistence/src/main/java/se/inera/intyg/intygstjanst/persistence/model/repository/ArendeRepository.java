@@ -16,24 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.service.impl;
+package se.inera.intyg.intygstjanst.persistence.model.repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
-import se.inera.intyg.intygstjanst.persistence.model.repository.ArendeRepository;
-import se.inera.intyg.intygstjanst.web.service.ArendeService;
 
-@Service
-public class ArendeServiceImpl implements ArendeService {
-
-    @Autowired
-    private ArendeRepository arendeRepository;
-
-    @Override
-    public Arende processIncomingMessage(Arende message) {
-        return arendeRepository.save(message);
-    }
-
+@Repository
+public interface ArendeRepository extends JpaRepository<Arende, Long> {
+    /**
+     * Should return a {@link Arende} matching the search criteria.
+     *
+     * @param meddelandeId
+     * @return
+     */
+    Arende findByMeddelandeId(String meddelandeId);
 }

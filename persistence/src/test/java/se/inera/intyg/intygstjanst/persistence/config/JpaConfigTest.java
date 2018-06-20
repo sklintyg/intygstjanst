@@ -16,18 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+package se.inera.intyg.intygstjanst.persistence.config;
 
-@Repository
-public interface ArendeRepository extends JpaRepository<Arende, Long> {
-    /**
-     * Should return a {@link Arende} matching the search criteria.
-     *
-     * @param meddelandeId
-     * @return
-     */
-    Arende findByMeddelandeId(String meddelandeId);
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+/**
+ * @author Magnus Ekstrand on 2018-06-15.
+ */
+@Configuration
+@EnableJpaRepositories(basePackages = JpaConstans.REPOSITORY_PACKAGE_TO_SCAN)
+@PropertySource("classpath:config/jpa-test.properties")
+@Profile({"dev","test"})
+public class JpaConfigTest {
+
 }

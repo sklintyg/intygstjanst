@@ -18,8 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static java.lang.invoke.MethodHandles.lookup;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,8 @@ import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
 import javax.jms.TextMessage;
+
+import static java.lang.invoke.MethodHandles.lookup;
 
 @Service
 public class StatisticsServiceImpl implements StatisticsService {
@@ -49,7 +49,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private static final Logger LOG = LoggerFactory.getLogger(lookup().getClass());
 
-    @Autowired(required = false)
+    @Autowired
     private JmsTemplate jmsTemplate;
 
     @Autowired

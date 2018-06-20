@@ -16,24 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.service.impl;
+package se.inera.intyg.intygstjanst.persistence.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+/**
+ * @author Magnus Ekstrand on 2018-06-15.
+ */
+public class JpaConstans {
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
-import se.inera.intyg.intygstjanst.persistence.model.repository.ArendeRepository;
-import se.inera.intyg.intygstjanst.web.service.ArendeService;
-
-@Service
-public class ArendeServiceImpl implements ArendeService {
-
-    @Autowired
-    private ArendeRepository arendeRepository;
-
-    @Override
-    public Arende processIncomingMessage(Arende message) {
-        return arendeRepository.save(message);
-    }
+    public static final String PERSISTANCE_UNIT_NAME = "IneraCertificate";
+    public static final String BASE_PACKAGE_TO_SCAN = "se.inera.intyg.intygstjanst.persistance.model";
+    public static final String REPOSITORY_PACKAGE_TO_SCAN = "se.inera.intyg.intygstjanst.persistance.model.repository";
 
 }

@@ -16,25 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
+package se.inera.intyg.intygstjanst.persistence.model.repository;
+
+import org.springframework.stereotype.Repository;
+import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
+import se.inera.intyg.intygstjanst.persistence.config.JpaConstans;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Consent;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import org.springframework.stereotype.Repository;
-
-import se.inera.intyg.schemas.contract.Personnummer;
-import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Consent;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
 
 /**
  * @author andreaskaltenbach
  */
 @Repository
-public class ConsentDaoImpl implements ConsentDao {
+public class ConsentRepository implements ConsentDao {
 
-    @PersistenceContext
+    @PersistenceContext(unitName = JpaConstans.PERSISTANCE_UNIT_NAME)
     private EntityManager entityManager;
 
     @Override

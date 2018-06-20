@@ -18,21 +18,19 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.test;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.Queue;
-import javax.jms.TextMessage;
-
+import com.google.common.base.Joiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 
-import com.google.common.base.Joiner;
+import javax.jms.Destination;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.TextMessage;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class for consuming JMS messages sent to statistik (ST). Meant to be used for integration testing purposes.
@@ -46,12 +44,10 @@ public class Receiver {
     private static final long TIMEOUT = 3000;
 
     @Autowired
-    @Qualifier("jmsProducerTemplate")
     private JmsTemplate jmsTemplate;
 
-    @Autowired
-    @Qualifier("statisticsQueue")
-    private Queue queue;
+    @Value("${jms.destination.queue.name}")
+    private String destinationQueueName;
 
     private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
 
@@ -59,6 +55,7 @@ public class Receiver {
         return jmsTemplate.execute(session -> {
             Map<String, String> storage = new HashMap<>();
 
+            Destination queue = jmsTemplate.getDestinationResolver().resolveDestinationName(session, destinationQueueName, false);
             MessageConsumer consumer = session.createConsumer(queue);
             Message rawMessage;
             while ((rawMessage = consumer.receive(TIMEOUT)) != null) {

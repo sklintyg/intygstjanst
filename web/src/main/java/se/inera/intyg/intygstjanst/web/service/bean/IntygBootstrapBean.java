@@ -38,6 +38,7 @@ import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.common.util.integration.json.CustomObjectMapper;
+import se.inera.intyg.intygstjanst.persistence.config.JpaConstans;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
@@ -59,7 +60,7 @@ public class IntygBootstrapBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(IntygBootstrapBean.class);
 
-    @PersistenceContext
+    @PersistenceContext(unitName = JpaConstans.PERSISTANCE_UNIT_NAME)
     private EntityManager entityManager;
 
     private TransactionTemplate transactionTemplate;

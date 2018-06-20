@@ -38,6 +38,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -47,6 +48,7 @@ import com.google.common.base.Strings;
 import com.google.common.io.Resources;
 
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
+import se.inera.intyg.intygstjanst.persistence.config.JpaConstans;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
@@ -60,7 +62,7 @@ public class CertificateResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateResource.class);
 
-    @PersistenceContext
+    @PersistenceContext(unitName = JpaConstans.PERSISTANCE_UNIT_NAME)
     private EntityManager entityManager;
 
     private TransactionTemplate transactionTemplate;

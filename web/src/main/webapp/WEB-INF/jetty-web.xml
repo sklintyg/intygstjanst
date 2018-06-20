@@ -19,8 +19,8 @@
   -->
 
 <!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
-<!-- 
-  This file is used when running Jetty embedded from maven with target 
+<!--
+  This file is used when running Jetty embedded from maven with target
   > mvn jetty:run See the jetty-maven-plugin in the pom.xml file of this project.
 -->
 <Configure id="wac" class="org.eclipse.jetty.webapp.WebAppContext">
@@ -29,6 +29,7 @@
     <Arg>.*/.*jsp-api-[^/]\.jar$|./.*jsp-[^/]\.jar$|./.*taglibs[^/]*\.jar$
     </Arg>
   </Call>
+  <!--
   <New id="DataSource" class="org.eclipse.jetty.plus.jndi.Resource">
     <Arg>
       <Ref refid="wac" />
@@ -58,4 +59,5 @@
       </New>
     </Arg>
   </New>
+  -->
 </Configure>

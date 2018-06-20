@@ -12,6 +12,7 @@ task restAssuredTest(type: Test) {
 }
 
 gretty {
+    def jvmArgSpringProfiles = '-Dspring.profiles.active=dev,caching-enabled,embedded,wc-hsa-stub'
     contextPath = '/inera-certificate'
     contextConfigFile = file("src/main/webapp/WEB-INF/jetty-web.xml")
     integrationTestTask = null
@@ -19,8 +20,8 @@ gretty {
     debugPort = 5005
     debugSuspend = false
 
-    jvmArgs = ["-Dcatalina.base=${buildDir}/catalina.base",
-               "-Dspring.profiles.active=dev,caching-enabled,wc-hsa-stub",
+    jvmArgs = [jvmArgSpringProfiles,
+               "-Dcatalina.base=${buildDir}/catalina.base",
                "-Drecipient.config.file=${projectDir}/recipients-dev.json",
                "-Dcredentials.file=${projectDir}/certificate-credentials.properties",
                "-Dcertificate.logback.file=${projectDir}/certificate-logback.xml",
@@ -50,27 +51,36 @@ dependencies {
     compile "se.riv.itintegration.monitoring:itintegration-monitoring-schemas:${rivtaItintegrationMonitoringSchemasVersion}"
     compile "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"
 
+    compile "org.apache.activemq:activemq-spring:${activeMqVersion}"
+
     compile "org.springframework:spring-jms:${springVersion}"
     compile "org.springframework:spring-webmvc:${springVersion}"
 
-    compileOnly "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
+    //compileOnly "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
+    compileOnly "javax.jms:jms-api:${javaxJmsVersion}"
     compileOnly "javax.servlet:servlet-api:${servletApiVersion}"
+    compileOnly "org.apache.activemq:activemq-client:${activeMqVersion}"
 
-    testCompile "org.springframework:spring-test:${springVersion}"
-    testCompile "xmlunit:xmlunit:${xmlUnitVersion}"
     testCompile "com.jayway.restassured:rest-assured:${restassuredVersion}"
     testCompile "com.jayway.restassured:json-schema-validator:${jsonSchemaValidatorVersion}"
+    testCompile "javax.jms:jms-api:${javaxJmsVersion}"
     testCompile "org.antlr:ST4:${stAntlr4Version}"
-    testCompile "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
+    testCompile "org.springframework:spring-test:${springVersion}"
+    testCompile "xmlunit:xmlunit:${xmlUnitVersion}"
+    //testCompile "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
+    //testCompile "org.apache.activemq:activemq-broker:${activeMqVersion}"
 
     // We explicitly declare this as a testRuntime dependency so Restassured tests loads the correct XSD for
     // SetCertificateStatusResponder_1.0.xsd (as it exists in two different schemas)
     testRuntime "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     testRuntime "javax.servlet:servlet-api:${servletApiVersion}"
 
+    testRuntime "com.h2database:h2:${h2Version}"
+
+    //gretty "org.apache.activemq:activemq-kahadb-store:${activeMqVersion}"
     gretty "org.apache.activemq:activemq-client:${activeMqVersion}"
     gretty "org.apache.activemq:activemq-broker:${activeMqVersion}"
-    gretty "org.apache.activemq:activemq-kahadb-store:${activeMqVersion}"
-    gretty "com.h2database:h2:${h2Version}"
     gretty "mysql:mysql-connector-java:${mysqlVersion}"
+    gretty "com.h2database:h2:${h2Version}"
+
 }

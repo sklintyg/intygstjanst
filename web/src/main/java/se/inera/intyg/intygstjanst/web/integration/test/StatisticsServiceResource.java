@@ -34,7 +34,7 @@ import java.util.List;
 public class StatisticsServiceResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(StatisticsServiceResource.class);
 
-    @Autowired(required = false)
+    @Autowired
     private Receiver receiver;
 
     @GET

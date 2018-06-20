@@ -31,6 +31,7 @@
   <context:annotation-config />
   <context:component-scan base-package="se.inera.intyg.intygstjanst.persistence.model" />
 
+  <!--
   <bean id="dataSource" class="org.h2.jdbcx.JdbcConnectionPool" destroy-method="dispose">
     <constructor-arg>
       <bean class="org.h2.jdbcx.JdbcDataSource">
@@ -67,9 +68,9 @@
         <prop key="hibernate.id.new_generator_mappings">false</prop>
         <prop key="hibernate.show_sql">false</prop>
         <prop key="hibernate.format_sql">true</prop>
-        <!-- prop key="hibernate.hbm2ddl.auto">create-drop</prop -->
       </props>
     </property>
   </bean>
+  -->
 
 </beans>
