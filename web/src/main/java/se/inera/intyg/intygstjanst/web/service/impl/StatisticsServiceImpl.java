@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
+import javax.jms.Queue;
 import javax.jms.TextMessage;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -51,6 +52,9 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Autowired
     private JmsTemplate jmsTemplate;
+
+    @Autowired
+    private Queue destinationQueue;
 
     @Autowired
     private MonitoringLogService monitoringLogService;
@@ -153,7 +157,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
                 return message;
             };
-            jmsTemplate.send(messageCreator);
+
+            jmsTemplate.send(destinationQueue, messageCreator);
             return true;
         } catch (JmsException e) {
             LOG.error("Failure sending '{}' type with certificate id '{}'to statistics", actionType, certificateId, e);

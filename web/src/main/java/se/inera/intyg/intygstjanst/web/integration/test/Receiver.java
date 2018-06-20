@@ -22,12 +22,11 @@ import com.google.common.base.Joiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 
-import javax.jms.Destination;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
+import javax.jms.Queue;
 import javax.jms.TextMessage;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,26 +36,27 @@ import java.util.Map;
  */
 public class Receiver {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
+
     private static final String CERTIFICATE_ID = "certificate-id";
     private static final String MESSAGE_ID = "message-id";
     private static final String ACTION = "action";
     private static final String FK_MESSAGE_ACTION = "message-sent";
+
     private static final long TIMEOUT = 3000;
 
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    @Value("${jms.destination.queue.name}")
-    private String destinationQueueName;
+    @Autowired
+    private Queue destinationQueue;
 
-    private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
 
     public Map<String, String> getMessages() {
         return jmsTemplate.execute(session -> {
             Map<String, String> storage = new HashMap<>();
 
-            Destination queue = jmsTemplate.getDestinationResolver().resolveDestinationName(session, destinationQueueName, false);
-            MessageConsumer consumer = session.createConsumer(queue);
+            MessageConsumer consumer = session.createConsumer(destinationQueue);
             Message rawMessage;
             while ((rawMessage = consumer.receive(TIMEOUT)) != null) {
                 String action = rawMessage.getStringProperty(ACTION);

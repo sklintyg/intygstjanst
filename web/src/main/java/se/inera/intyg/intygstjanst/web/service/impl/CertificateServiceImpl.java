@@ -59,9 +59,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * @author andreaskaltenbach
- */
 @Service
 public class CertificateServiceImpl implements CertificateService, ModuleContainerApi {
 

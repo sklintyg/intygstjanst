@@ -32,7 +32,7 @@ import java.util.List;
 
 @Path("/statisticsresource")
 public class StatisticsServiceResource {
-    private static final Logger LOGGER = LoggerFactory.getLogger(StatisticsServiceResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StatisticsServiceResource.class);
 
     @Autowired
     private Receiver receiver;
@@ -42,10 +42,10 @@ public class StatisticsServiceResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<String> getAllMessages() {
         if (receiver == null) {
-            LOGGER.error("No receiver found");
+            LOG.error("No receiver found");
             return null;
         }
-        LOGGER.debug("Get all messages");
+        LOG.debug("Fetching all messages");
         return Lists.newArrayList(receiver.getMessages().values());
     }
 
@@ -54,10 +54,10 @@ public class StatisticsServiceResource {
     @Produces(MediaType.APPLICATION_XML)
     public String getMessage(@PathParam("id") String id, @PathParam("action") String action) {
         if (receiver == null) {
-            LOGGER.error("No receiver found");
+            LOG.error("No receiver found");
             return null;
         }
-        LOGGER.debug("Get {}-message for id {}", action, id);
+        LOG.debug("Fetching {}-message for id {}", action, id);
         return receiver.getMessages().get(Receiver.generateKey(id, action));
     }
 
