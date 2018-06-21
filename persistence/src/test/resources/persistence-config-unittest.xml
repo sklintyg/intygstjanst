@@ -30,51 +30,12 @@
 
   <!--<import resource="classpath:env/*-persistence-config.xml" />-->
 
+  <jpa:repositories base-package="se.inera.intyg.intygstjanst.persistence.model.repository"/>
+
   <context:annotation-config />
   <context:component-scan base-package="se.inera.intyg.intygstjanst.persistence.config,se.inera.intyg.intygstjanst.persistence.model" />
 
-  <jpa:repositories base-package="se.inera.intyg.intygstjanst.persistence.model.repository"/>
-
-
-  <!--
-  <bean class="se.inera.intyg.intygstjanst.persistence.config.JpaConfigDev"/>
-
-  <bean id="dataSource" class="org.h2.jdbcx.JdbcConnectionPool" destroy-method="dispose">
-    <constructor-arg>
-      <bean class="org.h2.jdbcx.JdbcDataSource">
-        <property name="URL" value="jdbc:h2:mem:dataSource;MVCC=TRUE" />
-        <property name="user" value="sa" />
-        <property name="password" value="" />
-      </bean>
-    </constructor-arg>
-  </bean>
-
-  <bean id="entityManagerFactory"
-      class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-    <property name="dataSource" ref="dataSource" />
-    <property name="persistenceUnitName" value="IneraCertificate" />
-    <property name="jpaVendorAdapter">
-      <bean
-          class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-        <property name="database" value="H2" />
-      </bean>
-    </property>
-    <property name="jpaProperties">
-      <props>
-        <prop key="hibernate.id.new_generator_mappings">false</prop>
-        <prop key="hibernate.show_sql">false</prop>
-        <prop key="hibernate.format_sql">true</prop>
-      </props>
-    </property>
-  </bean>
-  -->
-
   <tx:annotation-driven/>
-
-  <!--
-  <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-    <property name="entityManagerFactory" ref="entityManagerFactory" />
-  </bean>
 
   <beans profile="dev,demo">
     <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
@@ -89,6 +50,5 @@
       <constructor-arg value="changelog/changelog.xml"/>
     </bean>
   </beans>
-  -->
 
 </beans>

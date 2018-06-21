@@ -36,7 +36,7 @@
           <!-- Order matters - last value wins -->
           <value>classpath:default.properties</value>
           <value>classpath:version.properties</value>
-          <value>file:${certificate.config.file}</value>
+          <value>file:${config.file}</value>
           <value>file:${credentials.file}</value>
         </list>
       </property>
@@ -53,8 +53,6 @@
     <import resource="classpath:persistence-config.xml" />
 
     <import resource="application-context-ws.xml" />
-
-    <!--<import resource="classpath:jms-config.xml" />-->
 
     <import resource="jaxrs-context.xml" />
 

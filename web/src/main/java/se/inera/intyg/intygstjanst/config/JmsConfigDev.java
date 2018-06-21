@@ -19,9 +19,11 @@
 package se.inera.intyg.intygstjanst.config;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.EnableJms;
+import se.inera.intyg.intygstjanst.web.integration.test.Receiver;
 
 /**
  * Creates connection factory and JMS templates for communicating with ActiveMQ. Note that this JmsConfig creates its
@@ -32,7 +34,12 @@ import org.springframework.jms.annotation.EnableJms;
  */
 @Configuration
 @EnableJms
-@Profile({"!dev","!test","!embedded"})
-public class JmsConfig {
+@Profile({"dev","test","embedded"})
+public class JmsConfigDev extends JmsConfigBase {
+
+    @Bean
+    public Receiver receiver() {
+        return new Receiver();
+    }
 
 }
