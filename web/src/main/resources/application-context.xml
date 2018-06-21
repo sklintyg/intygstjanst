@@ -29,11 +29,11 @@
 
   <beans>
 
+    <!--
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
       <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
       <property name="locations">
         <list>
-          <!-- Order matters - last value wins -->
           <value>classpath:default.properties</value>
           <value>classpath:version.properties</value>
           <value>file:${config.file}</value>
@@ -41,6 +41,7 @@
         </list>
       </property>
     </bean>
+    -->
 
     <bean id="moduleRegistry" class="se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl">
       <property name="origin" value="INTYGSTJANST"/>
@@ -48,7 +49,9 @@
 
     <bean id="sjukfallEngineService" class="se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl"/>
 
+    <!--
     <import resource="classpath:META-INF/cxf/cxf.xml" />
+    -->
 
     <import resource="classpath:persistence-config.xml" />
 
