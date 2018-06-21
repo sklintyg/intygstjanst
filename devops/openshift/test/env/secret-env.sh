@@ -1,8 +1,8 @@
 #!/bin/bash
 # Assign backing service addresses from the outer environment
 
-export DB_USERNAME=${DATABASE_USERNAME-intygstjanst}
-export DB_PASSWORD=${DATABASE_PASSWORD-intygstjanst}
+export DB_USERNAME=${DATABASE_USERNAME-intyg}
+export DB_PASSWORD=${DATABASE_PASSWORD-intyg}
 export DB_NAME=${DATABASE_NAME-intygstjanst_test}
 export DB_SERVER=$MYSQL_SERVICE_HOST
 export DB_PORT=$MYSQL_SERVICE_PORT
