@@ -86,7 +86,7 @@
     </bean>
 
     <!-- In dev and demo mode we bootstrap data -->
-    <beans profile="dev">
+    <beans profile="dev,demo,test">
       <bean id="IntygBootstrapBean" class="se.inera.intyg.intygstjanst.web.service.bean.IntygBootstrapBean">
         <property name="txManager" ref="transactionManager"/>
       </bean>
