@@ -37,6 +37,7 @@
 
   <tx:annotation-driven/>
 
+  <!--
   <beans profile="dev,demo">
     <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
       <property name="dataSource" ref="dataSource" />
@@ -50,5 +51,6 @@
       <constructor-arg value="changelog/changelog.xml"/>
     </bean>
   </beans>
+  -->
 
 </beans>
