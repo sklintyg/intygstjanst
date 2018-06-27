@@ -32,7 +32,7 @@ import org.springframework.jms.annotation.EnableJms;
  */
 @Configuration
 @EnableJms
-@Profile({"!dev","!test","!embedded"})
+@Profile({"!openshift"})
 public class JmsConfig {
 
 }

@@ -77,6 +77,7 @@
 
     <bean id="recipientService" class="se.inera.intyg.intygstjanst.web.service.impl.RecipientServiceImpl" />
 
+    <!--
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
       <property name="basenames">
         <list>
@@ -84,9 +85,10 @@
         </list>
       </property>
     </bean>
+    -->
 
     <!-- In dev and demo mode we bootstrap data -->
-    <beans profile="dev">
+    <beans profile="dev,test">
       <bean id="IntygBootstrapBean" class="se.inera.intyg.intygstjanst.web.service.bean.IntygBootstrapBean">
         <property name="txManager" ref="transactionManager"/>
       </bean>

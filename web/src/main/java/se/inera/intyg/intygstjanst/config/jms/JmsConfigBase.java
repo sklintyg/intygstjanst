@@ -53,13 +53,13 @@ public abstract class JmsConfigBase {
 
 
     @Bean
-    public ConnectionFactory connectionFactory() {
-        return new ActiveMQConnectionFactory(brokerPassword, brokerUsername, brokerUrl);
+    public CachingConnectionFactory cachingConnectionFactory() {
+        return new CachingConnectionFactory(connectionFactory());
     }
 
     @Bean
-    public CachingConnectionFactory cachingConnectionFactory() {
-        return new CachingConnectionFactory(connectionFactory());
+    public ConnectionFactory connectionFactory() {
+        return new ActiveMQConnectionFactory(brokerPassword, brokerUsername, brokerUrl);
     }
 
     @Bean

@@ -20,17 +20,13 @@
 package se.inera.intyg.intygstjanst.persistence.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * @author Magnus Ekstrand on 2018-06-15.
  */
 @Configuration
-@EnableJpaRepositories(basePackages = JpaConstans.REPOSITORY_PACKAGE_TO_SCAN)
 @PropertySource("classpath:config/jpa-test.properties")
-@Profile({"dev","test"})
 public class JpaConfigTest {
 
 }

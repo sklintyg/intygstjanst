@@ -19,11 +19,6 @@
 package se.inera.intyg.intygstjanst.config;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import javax.annotation.PostConstruct;
-
 import org.apache.cxf.Bus;
 import org.apache.cxf.feature.LoggingFeature;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -38,6 +34,11 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
+import se.inera.intyg.intygstjanst.persistence.config.JpaConfigDev;
+
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @Configuration
 @EnableTransactionManagement

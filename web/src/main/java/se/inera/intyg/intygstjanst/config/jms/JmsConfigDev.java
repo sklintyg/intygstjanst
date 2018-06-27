@@ -34,7 +34,7 @@ import se.inera.intyg.intygstjanst.web.integration.test.Receiver;
  */
 @Configuration
 @EnableJms
-@Profile({"dev","test","embedded"})
+@Profile({"dev","openshift"})
 public class JmsConfigDev extends JmsConfigBase {
 
     @Bean

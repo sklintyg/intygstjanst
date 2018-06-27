@@ -35,9 +35,12 @@ import java.util.Properties;
 
 public abstract class JpaConfigBase {
 
+    static final String LIQUIBASE_SCRIPT = "changelog/changelog.xml";
+
     private static final Logger LOG = LoggerFactory.getLogger(JpaConfigBase.class);
 
     private static final int MAXIMUM_POOL_SIZE = 20;
+
 
     @Value("${hibernate.dialect}")
     private String hibernateDialect;
@@ -75,14 +78,6 @@ public abstract class JpaConfigBase {
         final JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactory);
         return transactionManager;
-    }
-
-    @Bean(name = "dbUpdate")
-    SpringLiquibase initDb(final DataSource dataSource) {
-        final SpringLiquibase springLiquibase = new SpringLiquibase();
-        springLiquibase.setDataSource(dataSource);
-        springLiquibase.setChangeLog("classpath:changelog/changelog.xml");
-        return springLiquibase;
     }
 
     @SuppressWarnings("ContextJavaBeanUnresolvedMethodsInspection")

@@ -30,10 +30,14 @@
 
   <!--<import resource="classpath:env/*-persistence-config.xml" />-->
 
+  <bean class="se.inera.intyg.intygstjanst.persistence.config.JpaConfigTest" />
+  <bean class="se.inera.intyg.intygstjanst.persistence.config.JpaConfigDev" />
+
   <jpa:repositories base-package="se.inera.intyg.intygstjanst.persistence.model.repository"/>
 
   <context:annotation-config />
   <context:component-scan base-package="se.inera.intyg.intygstjanst.persistence.config,se.inera.intyg.intygstjanst.persistence.model" />
+
 
   <tx:annotation-driven/>
 

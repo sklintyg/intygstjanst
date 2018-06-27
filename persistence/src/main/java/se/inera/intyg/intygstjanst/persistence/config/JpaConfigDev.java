@@ -18,6 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.persistence.config;
 
+import liquibase.integration.spring.SpringLiquibase;
 import org.h2.tools.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,11 +28,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 
 @Configuration
 @EnableJpaRepositories(basePackages = JpaConstans.REPOSITORY_PACKAGE_TO_SCAN)
-@Profile({"embedded"})
+@Profile("openshift")
 public class JpaConfigDev extends JpaConfigBase {
 
     @Value("${db.httpPort}")
@@ -39,6 +41,13 @@ public class JpaConfigDev extends JpaConfigBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(JpaConfigDev.class);
 
+    @Bean(name = "dbUpdate")
+    SpringLiquibase initDb(final DataSource dataSource) {
+        final SpringLiquibase springLiquibase = new SpringLiquibase();
+        springLiquibase.setDataSource(dataSource);
+        springLiquibase.setChangeLog("classpath:" + LIQUIBASE_SCRIPT);
+        return springLiquibase;
+    }
 
     @Bean(destroyMethod = "stop")
     Server h2WebServer() throws SQLException {

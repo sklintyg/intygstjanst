@@ -51,8 +51,8 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
-@ActiveProfiles("dev")
 @Transactional
+@ActiveProfiles({"dev","openshift"})
 public class SjukfallCertificateDaoImplTest {
 
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
