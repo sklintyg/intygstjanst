@@ -25,7 +25,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsTemplate;
-import se.inera.intyg.intygstjanst.web.integration.test.Receiver;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
@@ -80,9 +79,11 @@ public abstract class JmsConfigBase {
         return new ActiveMQQueue(destinationQueueName);
     }
 
+    /*
     @Bean
     public Receiver receiver() {
         return new Receiver();
     }
+     */
 
 }
