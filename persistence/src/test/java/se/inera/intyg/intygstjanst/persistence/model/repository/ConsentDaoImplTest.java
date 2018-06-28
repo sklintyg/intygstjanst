@@ -44,7 +44,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
-@ActiveProfiles("dev")
+@ActiveProfiles({"dev","embedded"})
 @Transactional
 public class ConsentDaoImplTest {
 

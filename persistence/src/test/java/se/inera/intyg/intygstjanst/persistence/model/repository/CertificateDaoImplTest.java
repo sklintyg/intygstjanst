@@ -48,7 +48,7 @@ import static se.inera.intyg.intygstjanst.persistence.support.CertificateTestFac
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
-@ActiveProfiles("dev")
+@ActiveProfiles({"dev","embedded"})
 @Transactional
 public class CertificateDaoImplTest {
 
