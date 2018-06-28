@@ -29,7 +29,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableJpaRepositories(basePackages = JpaConstans.REPOSITORY_PACKAGE_TO_SCAN)
-@Profile("!openshift")
+@Profile("!embedded")
 public class JpaConfig extends JpaConfigBase {
 
     @Bean(name = "dbCheck")

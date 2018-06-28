@@ -5,6 +5,6 @@ environment_name: "dev"
 config_etc_folder: "{{ config_folder }}/{{ environment_name }}"
 
 # Spring profiles
-profiles: test,it-fk-stub,it-ts-stub,wc-hsa-stub,caching-enabled,openshift
+profiles: test,it-fk-stub,it-ts-stub,wc-hsa-stub,caching-enabled,embedded
 
 deploy_from_repo: false

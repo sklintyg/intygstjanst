@@ -27,7 +27,7 @@ import org.springframework.context.annotation.PropertySource;
  */
 @Configuration
 @PropertySource("classpath:config/jms-test.properties")
-@Profile({"dev","test"})
+@Profile({"dev"})
 public class JmsConfigTest {
 
 }

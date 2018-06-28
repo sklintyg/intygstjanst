@@ -43,7 +43,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
-@ActiveProfiles({"dev","openshift"})
+@ActiveProfiles({"dev","embedded"})
 @Transactional
 public class RelationDaoImplTest {
 

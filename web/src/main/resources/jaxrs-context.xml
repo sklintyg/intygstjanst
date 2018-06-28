@@ -48,11 +48,11 @@
     </jaxrs:server>
   </beans>
 
-  <beans profile="dev,test,testability-api,it-fk-stub">
+  <beans profile="dev,testability-api,it-fk-stub,openshift">
     <bean id="medicalCertificateStore" class="se.inera.intyg.common.support.stub.MedicalCertificatesStore"/>
   </beans>
 
-  <beans profile="dev,test,testability-api">
+  <beans profile="dev,testability-api,openshift">
     <jaxrs:server id="certificateService" address="/resources">
       <jaxrs:serviceBeans>
         <ref bean="certificateBean" />

@@ -39,7 +39,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
 @Transactional
-@ActiveProfiles({"dev","openshift"})
+@ActiveProfiles({"dev","embedded"})
 public class ArendeRepositoryTest {
 
     private static String ENHET_1_ID = "ENHET_1_ID";

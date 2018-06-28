@@ -33,7 +33,7 @@ import java.sql.SQLException;
 
 @Configuration
 @EnableJpaRepositories(basePackages = JpaConstans.REPOSITORY_PACKAGE_TO_SCAN)
-@Profile("openshift")
+@Profile("embedded")
 public class JpaConfigDev extends JpaConfigBase {
 
     @Value("${db.httpPort}")
