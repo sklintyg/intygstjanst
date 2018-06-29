@@ -16,23 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.config.jms;
+package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.jms.annotation.EnableJms;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-/**
- * Creates connection factory and JMS templates for communicating with ActiveMQ. Note that this JmsConfig creates its
- * {@link ActiveMQConnectionFactory} directly rather than looking up a container-provided ConnectionFactory through
- * JNDI.
- *
- * Created by Magnus Ekstrand 2018-06-13
- */
-@Configuration
-@EnableJms
-@Profile("!embedded")
-public class JmsConfig {
-
+@Repository
+public interface ArendeRepository extends JpaRepository<Arende, Long> {
+    /**
+     * Should return a {@link Arende} matching the search criteria.
+     *
+     * @param meddelandeId
+     * @return
+     */
+    Arende findByMeddelandeId(String meddelandeId);
 }

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.persistence.model.repository;
+package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,8 +51,8 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
+@ActiveProfiles("dev")
 @Transactional
-@ActiveProfiles({"dev","embedded"})
 public class SjukfallCertificateDaoImplTest {
 
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");

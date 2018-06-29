@@ -29,33 +29,32 @@
 
   <beans>
 
-    <!--
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
       <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
       <property name="locations">
         <list>
+          <!-- Order matters - last value wins -->
           <value>classpath:default.properties</value>
           <value>classpath:version.properties</value>
-          <value>file:${config.file}</value>
+          <value>file:${certificate.config.file}</value>
           <value>file:${credentials.file}</value>
         </list>
       </property>
     </bean>
-    -->
 
-    <bean id="moduleRegistry" class="se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl" depends-on="dbUpdate">
+    <bean id="moduleRegistry" class="se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl">
       <property name="origin" value="INTYGSTJANST"/>
     </bean>
 
     <bean id="sjukfallEngineService" class="se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl"/>
 
-    <!--
     <import resource="classpath:META-INF/cxf/cxf.xml" />
-    -->
 
     <import resource="classpath:persistence-config.xml" />
 
     <import resource="application-context-ws.xml" />
+
+    <import resource="classpath:jms-config.xml" />
 
     <import resource="jaxrs-context.xml" />
 
@@ -73,11 +72,10 @@
     <import resource="classpath:/hsa-services-config.xml" />
 
     <context:annotation-config />
-    <context:component-scan base-package="se.inera.intyg.intygstjanst.config,se.inera.intyg.intygstjanst.persistence,se.inera.intyg.intygstjanst.web" />
+    <context:component-scan base-package="se.inera.intyg.intygstjanst.web" />
 
     <bean id="recipientService" class="se.inera.intyg.intygstjanst.web.service.impl.RecipientServiceImpl" />
 
-    <!--
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
       <property name="basenames">
         <list>
@@ -85,13 +83,11 @@
         </list>
       </property>
     </bean>
-    -->
 
     <!-- In dev and demo mode we bootstrap data -->
     <beans profile="dev">
-      <bean id="IntygBootstrapBean" class="se.inera.intyg.intygstjanst.web.service.bean.IntygBootstrapBean">
-        <property name="txManager" ref="transactionManager"/>
-      </bean>
+      <bean id="IntygBootstrapBean"
+        class="se.inera.intyg.intygstjanst.web.service.bean.IntygBootstrapBean" />
     </beans>
   </beans>
 

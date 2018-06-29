@@ -18,45 +18,48 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.test;
 
-import com.google.common.base.Joiner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.core.JmsTemplate;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.Queue;
 import javax.jms.TextMessage;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jms.core.JmsTemplate;
+
+import com.google.common.base.Joiner;
 
 /**
  * Class for consuming JMS messages sent to statistik (ST). Meant to be used for integration testing purposes.
  */
 public class Receiver {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
-
     private static final String CERTIFICATE_ID = "certificate-id";
     private static final String MESSAGE_ID = "message-id";
     private static final String ACTION = "action";
     private static final String FK_MESSAGE_ACTION = "message-sent";
-
     private static final long TIMEOUT = 3000;
 
     @Autowired
+    @Qualifier("jmsProducerTemplate")
     private JmsTemplate jmsTemplate;
 
     @Autowired
-    private Queue destinationQueue;
+    @Qualifier("statisticsQueue")
+    private Queue queue;
 
+    private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
 
     public Map<String, String> getMessages() {
         return jmsTemplate.execute(session -> {
             Map<String, String> storage = new HashMap<>();
 
-            MessageConsumer consumer = session.createConsumer(destinationQueue);
+            MessageConsumer consumer = session.createConsumer(queue);
             Message rawMessage;
             while ((rawMessage = consumer.receive(TIMEOUT)) != null) {
                 String action = rawMessage.getStringProperty(ACTION);

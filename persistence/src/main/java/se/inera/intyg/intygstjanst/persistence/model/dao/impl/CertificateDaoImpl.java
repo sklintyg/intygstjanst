@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.persistence.model.repository;
+package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
-import se.inera.intyg.intygstjanst.persistence.config.JpaConstans;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
@@ -44,11 +43,12 @@ import java.util.*;
  * Implementation of {@link CertificateDao}.
  */
 @Repository
-public class CertificateRepository implements CertificateDao {
+public class CertificateDaoImpl implements CertificateDao {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CertificateRepository.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CertificateDaoImpl.class);
 
-    @PersistenceContext(unitName = JpaConstans.PERSISTANCE_UNIT_NAME)
+    /** Injected EntityManager object. */
+    @PersistenceContext
     private EntityManager entityManager;
 
     @Override

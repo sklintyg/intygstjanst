@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.persistence.model.repository;
+package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +43,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
-@ActiveProfiles({"dev","embedded"})
+@ActiveProfiles("dev")
 @Transactional
 public class RelationDaoImplTest {
 
