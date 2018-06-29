@@ -54,10 +54,10 @@ public class StatisticsServiceImpl implements StatisticsService {
     private JmsTemplate jmsTemplate;
 
     @Autowired
-    private Queue destinationQueue;
+    private MonitoringLogService monitoringLogService;
 
     @Autowired
-    private MonitoringLogService monitoringLogService;
+    private Queue destinationQueue;
 
     @Value("${statistics.enabled}")
     private boolean enabled;

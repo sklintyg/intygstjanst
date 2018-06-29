@@ -32,12 +32,6 @@
         http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
         http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd">
 
-  <cxf:bus>
-    <cxf:features>
-      <cxf:logging/>
-    </cxf:features>
-  </cxf:bus>
-
   <!-- ws endpoints -->
 
   <jaxws:endpoint address="/get-consent/v1.0" implementor="se.inera.intyg.intygstjanst.web.integration.GetConsentResponderImpl">

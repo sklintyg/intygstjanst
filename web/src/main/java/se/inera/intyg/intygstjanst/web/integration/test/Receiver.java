@@ -36,13 +36,10 @@ import org.springframework.jms.support.JmsUtils;
  */
 public class Receiver {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
-
     private static final String CERTIFICATE_ID = "certificate-id";
     private static final String MESSAGE_ID = "message-id";
     private static final String ACTION = "action";
     private static final String FK_MESSAGE_ACTION = "message-sent";
-
     private static final long TIMEOUT = 3000;
 
     @Autowired
@@ -51,6 +48,7 @@ public class Receiver {
     @Autowired
     private Queue destinationQueue;
 
+    private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
 
     public Map<String, String> getMessages() {
         return jmsTemplate.execute(session -> {

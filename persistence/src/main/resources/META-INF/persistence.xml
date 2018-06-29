@@ -21,11 +21,9 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
   version="2.0">
   <persistence-unit name="IneraCertificate" transaction-type="RESOURCE_LOCAL">
-    <class>se.inera.intyg.intygstjanst.persistence.model.dao.Arende</class>
     <class>se.inera.intyg.intygstjanst.persistence.model.dao.Certificate</class>
     <class>se.inera.intyg.intygstjanst.persistence.model.dao.Consent</class>
     <class>se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate</class>
     <class>se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate</class>
-    <class>se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity</class>
   </persistence-unit>
 </persistence>

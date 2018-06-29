@@ -25,9 +25,8 @@
 -->
 <Configure id="wac" class="org.eclipse.jetty.webapp.WebAppContext">
   <Call name="setAttribute">
-      <Arg>org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern</Arg>
+    <Arg>org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern</Arg>
     <Arg>.*/.*jsp-api-[^/]\.jar$|./.*jsp-[^/]\.jar$|./.*taglibs[^/]*\.jar$
     </Arg>
   </Call>
-
 </Configure>

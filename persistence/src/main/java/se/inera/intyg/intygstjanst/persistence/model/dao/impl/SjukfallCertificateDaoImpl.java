@@ -16,8 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.persistence.model.repository;
+package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -26,25 +35,15 @@ import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * Uses JPQL to query {@link SjukfallCertificate} a list of sjukfall related intyg.
  *
  * @author eriklupander
  */
 @Repository
-public class SjukfallCertificateRepository implements SjukfallCertificateDao {
+public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SjukfallCertificateRepository.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SjukfallCertificateDaoImpl.class);
 
     private static final String BASE_QUERY =
             "SELECT sc.civicRegistrationNumber "

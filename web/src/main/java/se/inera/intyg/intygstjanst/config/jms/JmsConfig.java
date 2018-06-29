@@ -18,10 +18,20 @@
  */
 package se.inera.intyg.intygstjanst.config.jms;
 
+import javax.jms.ConnectionFactory;
+import javax.jms.Queue;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.pool.PooledConnectionFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.EnableJms;
+import org.springframework.jms.connection.JmsTransactionManager;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.support.destination.DestinationResolver;
+import org.springframework.jms.support.destination.DynamicDestinationResolver;
+import se.inera.intyg.intygstjanst.web.integration.test.Receiver;
 
 /**
  * Creates connection factory and JMS templates for communicating with ActiveMQ. Note that this JmsConfig creates its
@@ -32,7 +42,52 @@ import org.springframework.jms.annotation.EnableJms;
  */
 @Configuration
 @EnableJms
-@Profile("!testability-api")
-public class JmsConfig extends JmsConfigBase {
+public class JmsConfig {
 
+    @Value("${activemq.broker.url}")
+    private String brokerUrl;
+
+    @Value("${activemq.broker.username}")
+    private String brokerUsername;
+
+    @Value("${activemq.broker.password}")
+    private String brokerPassword;
+
+    @Value("${activemq.destination.queue.name}")
+    private String destinationQueueName;
+
+
+    @Bean
+    public ConnectionFactory connectionFactory() {
+        return new PooledConnectionFactory(new ActiveMQConnectionFactory(brokerPassword, brokerUsername, brokerUrl));
+    }
+
+    @Bean
+    public JmsTransactionManager jmsTransactionManager() {
+        return new JmsTransactionManager(connectionFactory());
+    }
+
+    @Bean
+    public JmsTemplate jmsTemplate() {
+        final JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory());
+        jmsTemplate.setDefaultDestination(destinationQueue());
+        jmsTemplate.setSessionTransacted(true);
+        return jmsTemplate;
+    }
+
+    @Bean
+    public Queue destinationQueue() {
+        return new ActiveMQQueue(destinationQueueName);
+    }
+
+    @Bean
+    public DestinationResolver destinationResolver() {
+        return new DynamicDestinationResolver();
+    }
+
+    // Only used by test API features
+    @Bean
+    public Receiver receiver() {
+        return new Receiver();
+    }
 }

@@ -19,6 +19,11 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import com.google.common.base.Stopwatch;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.persistence.model.dao.HealthCheckDao;
 import se.inera.intyg.intygstjanst.web.service.HealthCheckService;
-
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Service for checking the general health status of the application.

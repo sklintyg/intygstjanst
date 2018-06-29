@@ -15,5 +15,4 @@ dependencies {
     compile "com.h2database:h2:${h2Version}"
 
     testCompile "org.springframework:spring-test:${springVersion}"
-
 }
