@@ -53,7 +53,7 @@ stage('tag and upload') {
 }
 
 stage('propagate') {
-    //build job: "it-sandbox-build", wait: false, parameters: [[$class: 'StringParameterValue', name: 'IB_BUILD_VERSION', value: buildVersion]]
+    build job: "it-sandbox-build", wait: false, parameters: [[$class: 'StringParameterValue', name: 'IB_BUILD_VERSION', value: buildVersion]]
     build job: "${buildRoot}-deploy-it-webcert", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
     build job: "${buildRoot}-deploy-it-minaintyg", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
 }
