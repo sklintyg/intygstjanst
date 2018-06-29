@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oclc.purl.dsdl.svrl.SchematronOutputType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
@@ -45,6 +46,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+@ActiveProfiles({"dev","embedded"})
 public class TransformToStatisticsIT extends BaseIntegrationTest{
 
     private String intygsId = UUID.randomUUID().toString();
