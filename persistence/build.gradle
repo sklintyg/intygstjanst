@@ -11,8 +11,9 @@ dependencies {
     compile "org.liquibase:liquibase-core:${liquibaseVersion}"
     compile "org.springframework.data:spring-data-jpa:${springDataVersion}"
     compile "org.springframework:spring-tx:${springVersion}"
+    compile "com.zaxxer:HikariCP-java6:${hikariCPVersion}"
+    compile "com.h2database:h2:${h2Version}"
 
     testCompile "org.springframework:spring-test:${springVersion}"
 
-    testRuntime "com.h2database:h2:${h2Version}"
 }

@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
+import se.inera.intyg.intygstjanst.persistence.model.repository.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;

@@ -18,8 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static java.lang.invoke.MethodHandles.lookup;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +29,10 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
+import javax.jms.Queue;
 import javax.jms.TextMessage;
+
+import static java.lang.invoke.MethodHandles.lookup;
 
 @Service
 public class StatisticsServiceImpl implements StatisticsService {
@@ -49,8 +50,11 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private static final Logger LOG = LoggerFactory.getLogger(lookup().getClass());
 
-    @Autowired(required = false)
+    @Autowired
     private JmsTemplate jmsTemplate;
+
+    @Autowired
+    private Queue destinationQueue;
 
     @Autowired
     private MonitoringLogService monitoringLogService;
@@ -153,7 +157,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
                 return message;
             };
-            jmsTemplate.send(messageCreator);
+
+            jmsTemplate.send(destinationQueue, messageCreator);
             return true;
         } catch (JmsException e) {
             LOG.error("Failure sending '{}' type with certificate id '{}'to statistics", actionType, certificateId, e);
@@ -174,7 +179,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 message.setStringProperty(MESSAGE_ID, messageId);
                 return message;
             };
-            jmsTemplate.send(messageCreator);
+            jmsTemplate.send(destinationQueue, messageCreator);
             return true;
         } catch (JmsException e) {
             LOG.error("Failure sending '{}' type with message id '{}'to statistics", actionType, messageId, e);

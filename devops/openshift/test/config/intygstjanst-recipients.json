@@ -1,0 +1,89 @@
+[
+  {
+    "id": "FKASSA",
+    "name": "Försäkringskassan",
+    "logicalAddress": "FKORG",
+    "certificateTypes": [
+      "fk7263",
+      "luse",
+      "lisjp",
+      "luae_fs",
+      "luae_na"
+    ],
+    "active" : true,
+    "trusted": true
+  },
+  {
+    "id" : "TRANSP",
+    "name" : "Transportstyrelsen",
+    "logicalAddress" : "tsTestAdress",
+    "certificateTypes" : [
+      "ts-bas",
+      "ts-diabetes"
+    ],
+    "active" : true,
+    "trusted": true
+  },
+  {
+    "id" : "FBA",
+    "name" : "F\u00F6rs\u00E4kringsbolaget AB",
+    "logicalAddress" : "fail-adress",
+    "certificateTypes" : [
+      "lisjp"
+    ],
+    "active" : true,
+    "trusted": false
+  },
+  {
+    "id" : "HSVARD",
+    "name" : "Hälso- och sjukvården",
+    "logicalAddress" : "hsvardAdress",
+    "certificateTypes" : [
+      "ts-bas",
+      "ts-diabetes",
+      "fk7263",
+      "lisjp",
+      "luse",
+      "luae_na",
+      "luae_fs"
+    ],
+    "active" : true,
+    "trusted": true
+  },
+  {
+    "id" : "INVANA",
+    "name" : "Invånaren",
+    "logicalAddress" : "miAdress",
+    "certificateTypes" : [
+      "ts-bas",
+      "ts-diabetes",
+      "fk7263",
+      "lisjp",
+      "luse",
+      "luae_na",
+      "luae_fs"
+    ],
+    "active" : true,
+    "trusted": true
+  },
+  {
+    "id": "SKV",
+    "name": "Skatteverket",
+    "logicalAddress": "Skatteverket",
+    "certificateTypes" : [
+      "db"
+    ],
+    "active" : true,
+    "trusted": true
+  },
+  {
+    "id": "SOS",
+    "name": "Socialstyrelsen",
+    "logicalAddress": "SOS",
+    "certificateTypes" : [
+      "doi"
+    ],
+    "active" : true,
+    "trusted": true
+  }
+]
