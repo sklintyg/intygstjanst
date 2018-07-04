@@ -18,6 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.config.jms;
 
+import javax.jms.ConnectionFactory;
+import javax.jms.Queue;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,9 +27,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsTemplate;
-
-import javax.jms.ConnectionFactory;
-import javax.jms.Queue;
 
 /**
  * Creates connection factory and JMS templates for communicating with ActiveMQ. Note that this JmsConfig creates its
@@ -52,23 +51,18 @@ public abstract class JmsConfigBase {
 
 
     @Bean
-    public CachingConnectionFactory cachingConnectionFactory() {
-        return new CachingConnectionFactory(connectionFactory());
-    }
-
-    @Bean
     public ConnectionFactory connectionFactory() {
-        return new ActiveMQConnectionFactory(brokerPassword, brokerUsername, brokerUrl);
+        return new CachingConnectionFactory(new ActiveMQConnectionFactory(brokerPassword, brokerUsername, brokerUrl));
     }
 
     @Bean
-    public JmsTransactionManager jmsTransactionManager() {
-        return new JmsTransactionManager(connectionFactory());
+    public JmsTransactionManager jmsTransactionManager(ConnectionFactory connectionFactory) {
+        return new JmsTransactionManager(connectionFactory);
     }
 
     @Bean
     public JmsTemplate jmsTemplate() {
-        JmsTemplate jmsTemplate = new JmsTemplate(cachingConnectionFactory());
+        JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory());
         jmsTemplate.setDefaultDestination(destinationQueue());
         jmsTemplate.setSessionTransacted(true);
         return jmsTemplate;
@@ -78,12 +72,4 @@ public abstract class JmsConfigBase {
     public Queue destinationQueue() {
         return new ActiveMQQueue(destinationQueueName);
     }
-
-    /*
-    @Bean
-    public Receiver receiver() {
-        return new Receiver();
-    }
-     */
-
 }

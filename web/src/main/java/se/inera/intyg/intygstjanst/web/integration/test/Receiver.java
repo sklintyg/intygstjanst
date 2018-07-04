@@ -19,17 +19,16 @@
 package se.inera.intyg.intygstjanst.web.integration.test;
 
 import com.google.common.base.Joiner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.core.JmsTemplate;
-
+import java.util.HashMap;
+import java.util.Map;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.Queue;
 import javax.jms.TextMessage;
-import java.util.HashMap;
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 
 /**
  * Class for consuming JMS messages sent to statistik (ST). Meant to be used for integration testing purposes.
@@ -64,7 +63,6 @@ public class Receiver {
                 final String key = generateKey(id, action);
                 map.put(key, ((TextMessage) msg).getText());
             }
-
             LOG.info("Received {} messages", map.keySet().size());
             consumer.close();
             return map;
