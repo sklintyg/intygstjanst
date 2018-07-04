@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
@@ -38,6 +39,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
+import se.inera.intyg.infra.monitoring.MonitoringConfiguration;
 
 @Configuration
 @EnableTransactionManagement
@@ -49,6 +51,7 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
         @PropertySource("file:${config.file}"),
 })
 @ImportResource({"classpath:META-INF/cxf/cxf.xml"})
+@Import(MonitoringConfiguration.class)
 public class ApplicationConfig implements TransactionManagementConfigurer {
 
     @Autowired

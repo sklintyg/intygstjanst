@@ -24,7 +24,6 @@ gretty {
                "-Dcatalina.base=${buildDir}/catalina.base",
                "-Drecipients.file=${projectDir}/recipients-dev.json",
                "-Dcredentials.file=${projectDir}/certificate-credentials.properties",
-               "-Dlogback.file=${projectDir}/certificate-logback.xml",
                "-Dconfig.file=${projectDir}/certificate-dev.properties"]
 }
 
@@ -37,6 +36,7 @@ dependencies {
     compile "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
     compile "se.inera.intyg.infra:hsa-integration:${infraVersion}"
     compile "se.inera.intyg.infra:sjukfall-engine:${infraVersion}"
+    compile "se.inera.intyg.infra:monitoring:${infraVersion}"
 
     compile "se.inera.intyg.common:fk7263:${commonVersion}"
     compile "se.inera.intyg.common:ts-bas:${commonVersion}"
