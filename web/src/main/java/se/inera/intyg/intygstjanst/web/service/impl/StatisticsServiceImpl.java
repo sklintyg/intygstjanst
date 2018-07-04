@@ -18,8 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import javax.jms.Message;
-import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.TextMessage;
 import org.slf4j.Logger;
@@ -29,7 +27,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import org.springframework.jms.support.JmsUtils;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
@@ -172,23 +169,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     //
-    private boolean send(final MessageCreator messageCreator) {
-        return jmsTemplate.execute(session -> {
-            MessageProducer producer = session.createProducer(destinationQueue);
-            try {
-                final Message message = messageCreator.createMessage(session);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Sending created message: " + message);
-                }
-                producer.send(message);
-                if (session.getTransacted()) {
-                    JmsUtils.commitIfNecessary(session);
-                }
-            }
-            finally {
-                JmsUtils.closeMessageProducer(producer);
-            }
-            return true;
-        }, true);
+    boolean send(final MessageCreator messageCreator) {
+        jmsTemplate.send(destinationQueue, messageCreator);
+        return true;
     }
 }

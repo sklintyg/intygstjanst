@@ -19,22 +19,13 @@
 package se.inera.intyg.intygstjanst.persistence.config;
 
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import se.inera.intyg.intygstjanst.persistence.liquibase.DbChecker;
-
-import javax.sql.DataSource;
 
 @Configuration
 @EnableJpaRepositories(basePackages = JpaConstans.REPOSITORY_PACKAGE_TO_SCAN)
 @Profile("!embedded")
 public class JpaConfig extends JpaConfigBase {
-
-    @Bean(name = "dbCheck")
-    DbChecker initDb(final DataSource dataSource) {
-        return new DbChecker(dataSource, LIQUIBASE_SCRIPT);
-    }
 
 }

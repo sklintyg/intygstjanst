@@ -18,6 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import javax.jms.JMSException;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -32,10 +36,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 
-import javax.jms.JMSException;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -201,16 +201,12 @@ public class StatisticsServiceImplTest {
         verify(monitoringLogService, only()).logStatisticsMessageSent(messageId, "topic");
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testNoJmsTemplateConfigured() throws JMSException {
         ReflectionTestUtils.setField(serviceImpl, "jmsTemplate", null);
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
 
-        boolean created = serviceImpl.created("The document", "The id", "luse", "unit");
-
-        assertFalse(created);
-        verifyZeroInteractions(template);
-        verifyZeroInteractions(monitoringLogService);
+        serviceImpl.created("The document", "The id", "luse", "unit");
     }
 
     @Test

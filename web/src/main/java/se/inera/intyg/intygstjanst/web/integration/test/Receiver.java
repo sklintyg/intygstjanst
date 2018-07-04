@@ -67,8 +67,7 @@ public class Receiver {
                 if (session.getTransacted()) {
                     JmsUtils.commitIfNecessary(session);
                 }
-                LOG.info("Received {} messages", map.keySet().size());
-                consumer.close();
+                LOG.info("Received {} messages", map.size());
                 return map;
             } finally {
                 JmsUtils.closeMessageConsumer(consumer);

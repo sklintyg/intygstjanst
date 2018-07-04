@@ -20,6 +20,10 @@ package se.inera.intyg.intygstjanst.persistence.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.util.Properties;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+import liquibase.integration.spring.SpringLiquibase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,18 +32,11 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.util.Properties;
-
 public abstract class JpaConfigBase {
 
     static final String LIQUIBASE_SCRIPT = "changelog/changelog.xml";
-
     private static final Logger LOG = LoggerFactory.getLogger(JpaConfigBase.class);
-
     private static final int MAXIMUM_POOL_SIZE = 20;
-
 
     @Value("${hibernate.dialect}")
     private String hibernateDialect;
@@ -106,6 +103,14 @@ public abstract class JpaConfigBase {
         jpaProperties.put("hibernate.enable_lazy_load_no_trans", false);
 
         return jpaProperties;
+    }
+
+    @Bean(name = "dbUpdate")
+    SpringLiquibase initDb(final DataSource dataSource) {
+        final SpringLiquibase springLiquibase = new SpringLiquibase();
+        springLiquibase.setDataSource(dataSource);
+        springLiquibase.setChangeLog("classpath:" + LIQUIBASE_SCRIPT);
+        return springLiquibase;
     }
 
 }

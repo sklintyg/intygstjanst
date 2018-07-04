@@ -76,6 +76,7 @@ dependencies {
 
     gretty "org.apache.activemq:activemq-client:${activeMqVersion}"
     gretty "org.apache.activemq:activemq-broker:${activeMqVersion}"
+    gretty "org.apache.activemq:activemq-pool:${activeMqVersion}"
     gretty "mysql:mysql-connector-java:${mysqlVersion}"
     gretty "com.h2database:h2:${h2Version}"
 
