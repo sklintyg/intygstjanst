@@ -50,7 +50,8 @@ public class StatisticsServiceResource {
     @Produces(MediaType.APPLICATION_XML)
     public String getMessage(@PathParam("id") String id, @PathParam("action") String action) {
         LOG.debug("Fetching {}-message for id {}", action, id);
-        return receiver.getMessages().get(Receiver.generateKey(id, action));
+        final String msg = receiver.getMessages().get(Receiver.generateKey(id, action));
+        LOG.debug("Message: {}", msg);
+        return msg;
     }
-
 }

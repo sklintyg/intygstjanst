@@ -62,7 +62,6 @@ public class Receiver {
                 final String action = msg.getStringProperty(ACTION);
                 final String id = msg.getStringProperty(FK_MESSAGE_ACTION.equals(action) ? MESSAGE_ID : CERTIFICATE_ID);
                 final String key = generateKey(id, action);
-                LOG.info("Received message with key: {}", key);
                 map.put(key, ((TextMessage) msg).getText());
             }
 

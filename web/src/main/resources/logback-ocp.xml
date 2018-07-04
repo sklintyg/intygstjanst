@@ -26,6 +26,8 @@
 
     <include resource="logback-ocp-base.xml"/>
 
+    <logger name="org.apache.cxf" level="INFO" />
+
     <logger name="se.inera.certificate.web" level="WARN"/>
 
     <logger name="se.inera.intyg" level="DEBUG" />
