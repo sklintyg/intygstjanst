@@ -46,6 +46,7 @@ dependencies {
     compile "se.inera.intyg.common:luae_na:${commonVersion}"
     compile "se.inera.intyg.common:db:${commonVersion}"
     compile "se.inera.intyg.common:doi:${commonVersion}"
+    compile "se.inera.intyg.common:afmu:${commonVersion}"
 
     compile "se.riv.itintegration.monitoring:itintegration-monitoring-schemas:${rivtaItintegrationMonitoringSchemasVersion}"
     compile "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"

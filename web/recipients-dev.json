@@ -85,5 +85,15 @@
     ],
     "active" : true,
     "trusted": true
+  },
+  {
+    "id": "AF",
+    "name": "Arbetsförmedlingen",
+    "logicalAddress": "AF",
+    "certificateTypes" : [
+      "afmu"
+    ],
+    "active" : true,
+    "trusted": true
   }
 ]
