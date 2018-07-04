@@ -15,7 +15,7 @@ export REDIS_PASSWORD=${REDIS_PASSWORD-redis}
 export REDIS_PORT=$REDIS_SERVICE_PORT
 export REDIS_HOST=$REDIS_SERVICE_HOST
 
-export SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE-dev,embedded,caching-enabled,wc-hsa-stub}"
+export SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE-dev,testability-api,caching-enabled,wc-hsa-stub}"
 
 export CATALINA_OPTS_APPEND="\
 -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 \

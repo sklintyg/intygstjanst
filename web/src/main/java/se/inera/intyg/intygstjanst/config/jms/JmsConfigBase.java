@@ -27,6 +27,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.support.destination.DestinationResolver;
+import org.springframework.jms.support.destination.DynamicDestinationResolver;
 
 /**
  * Creates connection factory and JMS templates for communicating with ActiveMQ. Note that this JmsConfig creates its
@@ -56,8 +58,8 @@ public abstract class JmsConfigBase {
     }
 
     @Bean
-    public JmsTransactionManager jmsTransactionManager(ConnectionFactory connectionFactory) {
-        return new JmsTransactionManager(connectionFactory);
+    public JmsTransactionManager jmsTransactionManager() {
+        return new JmsTransactionManager(connectionFactory());
     }
 
     @Bean
@@ -71,5 +73,10 @@ public abstract class JmsConfigBase {
     @Bean
     public Queue destinationQueue() {
         return new ActiveMQQueue(destinationQueueName);
+    }
+
+    @Bean
+    public DestinationResolver destinationResolver() {
+        return new DynamicDestinationResolver();
     }
 }

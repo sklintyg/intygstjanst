@@ -32,7 +32,7 @@ import org.springframework.jms.annotation.EnableJms;
  */
 @Configuration
 @EnableJms
-@Profile("!embedded")
-public class JmsConfig {
+@Profile("!testability-api")
+public class JmsConfig extends JmsConfigBase {
 
 }

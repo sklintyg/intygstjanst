@@ -18,6 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import javax.jms.Message;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +29,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import org.springframework.jms.support.JmsUtils;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
-import javax.jms.Queue;
-import javax.jms.TextMessage;
 
 import static java.lang.invoke.MethodHandles.lookup;
 
@@ -138,28 +141,16 @@ public class StatisticsServiceImpl implements StatisticsService {
             final String certificateRecipientId) {
 
         try {
-            if (jmsTemplate == null) {
-                LOG.error("Failure sending '{}' type with certificate id '{}' to statistics, no JmsTemplate configured",
-                        actionType,
-                        certificateId);
-                return false;
-            }
-
-            final MessageCreator messageCreator = session -> {
+            return send(session -> {
                 TextMessage message = session.createTextMessage(certificateXml);
                 message.setStringProperty(ACTION, actionType);
                 message.setStringProperty(CERTIFICATE_ID, certificateId);
                 message.setStringProperty(CERTIFICATE_TYPE, certificateType);
-
                 if (certificateRecipientId != null) {
                     message.setStringProperty(CERTIFICATE_RECIPIENT, certificateRecipientId);
                 }
-
                 return message;
-            };
-
-            jmsTemplate.send(destinationQueue, messageCreator);
-            return true;
+            });
         } catch (JmsException e) {
             LOG.error("Failure sending '{}' type with certificate id '{}'to statistics", actionType, certificateId, e);
             return false;
@@ -168,22 +159,36 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private boolean sendFkMessageDataPointToStatistik(String actionType, String messageXml, String messageId) {
         try {
-            if (jmsTemplate == null) {
-                LOG.error("Failure sending '{}' type with message id '{}' to statistics, no JmsTemplate configured", actionType, messageId);
-                return false;
-            }
-
-            final MessageCreator messageCreator = session -> {
-                TextMessage message = session.createTextMessage(messageXml);
+            return send(session -> {
+                final TextMessage message = session.createTextMessage(messageXml);
                 message.setStringProperty(ACTION, actionType);
                 message.setStringProperty(MESSAGE_ID, messageId);
                 return message;
-            };
-            jmsTemplate.send(destinationQueue, messageCreator);
-            return true;
+            });
         } catch (JmsException e) {
             LOG.error("Failure sending '{}' type with message id '{}'to statistics", actionType, messageId, e);
             return false;
         }
+    }
+
+    //
+    private boolean send(final MessageCreator messageCreator) {
+        return jmsTemplate.execute(session -> {
+            MessageProducer producer = session.createProducer(destinationQueue);
+            try {
+                final Message message = messageCreator.createMessage(session);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Sending created message: " + message);
+                }
+                producer.send(message);
+                if (session.getTransacted()) {
+                    JmsUtils.commitIfNecessary(session);
+                }
+            }
+            finally {
+                JmsUtils.closeMessageProducer(producer);
+            }
+            return true;
+        }, true);
     }
 }

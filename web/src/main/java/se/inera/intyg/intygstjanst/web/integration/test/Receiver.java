@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.support.JmsUtils;
 
 /**
  * Class for consuming JMS messages sent to statistik (ST). Meant to be used for integration testing purposes.
@@ -54,18 +55,24 @@ public class Receiver {
     public Map<String, String> getMessages() {
         return jmsTemplate.execute(session -> {
             final Map<String, String> map = new HashMap<>();
-
             final MessageConsumer consumer = session.createConsumer(destinationQueue);
-            Message msg;
-            while ((msg = consumer.receive(TIMEOUT)) != null) {
-                final String action = msg.getStringProperty(ACTION);
-                final String id = msg.getStringProperty(FK_MESSAGE_ACTION.equals(action) ? MESSAGE_ID : CERTIFICATE_ID);
-                final String key = generateKey(id, action);
-                map.put(key, ((TextMessage) msg).getText());
+            try {
+                Message msg;
+                while ((msg = consumer.receive(TIMEOUT)) != null) {
+                    final String action = msg.getStringProperty(ACTION);
+                    final String id = msg.getStringProperty(FK_MESSAGE_ACTION.equals(action) ? MESSAGE_ID : CERTIFICATE_ID);
+                    final String key = generateKey(id, action);
+                    map.put(key, ((TextMessage) msg).getText());
+                }
+                if (session.getTransacted()) {
+                    JmsUtils.commitIfNecessary(session);
+                }
+                LOG.info("Received {} messages", map.keySet().size());
+                consumer.close();
+                return map;
+            } finally {
+                JmsUtils.closeMessageConsumer(consumer);
             }
-            LOG.info("Received {} messages", map.keySet().size());
-            consumer.close();
-            return map;
         }, true);
     }
 

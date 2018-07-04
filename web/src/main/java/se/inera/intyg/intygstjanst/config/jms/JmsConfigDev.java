@@ -34,7 +34,7 @@ import se.inera.intyg.intygstjanst.web.integration.test.Receiver;
  */
 @Configuration
 @EnableJms
-@Profile("embedded")
+@Profile("testability-api")
 public class JmsConfigDev extends JmsConfigBase {
 
     @Bean
