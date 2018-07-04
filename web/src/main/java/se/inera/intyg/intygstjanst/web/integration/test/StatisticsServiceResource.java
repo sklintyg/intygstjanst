@@ -41,10 +41,6 @@ public class StatisticsServiceResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public List<String> getAllMessages() {
-        if (receiver == null) {
-            LOG.error("No receiver found");
-            return null;
-        }
         LOG.debug("Fetching all messages");
         return Lists.newArrayList(receiver.getMessages().values());
     }
@@ -53,10 +49,6 @@ public class StatisticsServiceResource {
     @Path("/{id}/{action}")
     @Produces(MediaType.APPLICATION_XML)
     public String getMessage(@PathParam("id") String id, @PathParam("action") String action) {
-        if (receiver == null) {
-            LOG.error("No receiver found");
-            return null;
-        }
         LOG.debug("Fetching {}-message for id {}", action, id);
         return receiver.getMessages().get(Receiver.generateKey(id, action));
     }

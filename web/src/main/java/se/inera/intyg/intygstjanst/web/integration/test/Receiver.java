@@ -54,25 +54,21 @@ public class Receiver {
 
     public Map<String, String> getMessages() {
         return jmsTemplate.execute(session -> {
-            Map<String, String> storage = new HashMap<>();
+            final Map<String, String> map = new HashMap<>();
 
-            MessageConsumer consumer = session.createConsumer(destinationQueue);
-            Message rawMessage;
-            while ((rawMessage = consumer.receive(TIMEOUT)) != null) {
-                String action = rawMessage.getStringProperty(ACTION);
-                String id;
-                if (action.equals(FK_MESSAGE_ACTION)) {
-                    id = rawMessage.getStringProperty(MESSAGE_ID);
-                } else {
-                    id = rawMessage.getStringProperty(CERTIFICATE_ID);
-                }
-                storage.put(generateKey(id, action), ((TextMessage) rawMessage).getText());
+            final MessageConsumer consumer = session.createConsumer(destinationQueue);
+            Message msg;
+            while ((msg = consumer.receive(TIMEOUT)) != null) {
+                final String action = msg.getStringProperty(ACTION);
+                final String id = msg.getStringProperty(FK_MESSAGE_ACTION.equals(action) ? MESSAGE_ID : CERTIFICATE_ID);
+                final String key = generateKey(id, action);
+                LOG.info("Received message with key: {}", key);
+                map.put(key, ((TextMessage) msg).getText());
             }
 
-            LOG.info("Received {} messages", storage.keySet().size());
-
+            LOG.info("Received {} messages", map.keySet().size());
             consumer.close();
-            return storage;
+            return map;
         }, true);
     }
 
