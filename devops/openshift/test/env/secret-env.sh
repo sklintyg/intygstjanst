@@ -7,7 +7,7 @@ export DB_NAME=${DATABASE_NAME:-intygstjanst_test}
 export DB_SERVER=$MYSQL_SERVICE_HOST
 export DB_PORT=$MYSQL_SERVICE_PORT
 
-export JMS_DESTINATION_QUEUE_NAME=test.statistik.utlatande.queue
+export JMS_DESTINATION_QUEUE_NAME=certificate.queue
 export JMS_BROKER_USERNAME=${ACTIVEMQ_BROKER_USERNAME:-admin}
 export JMS_BROKER_PASSWORD=${ACTIVEMQ_BROKER_PASSWORD:-admin}
 
