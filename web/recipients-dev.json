@@ -91,7 +91,7 @@
     "name": "Arbetsförmedlingen",
     "logicalAddress": "AF",
     "certificateTypes" : [
-      "afmu"
+      "af00213"
     ],
     "active" : true,
     "trusted": true
