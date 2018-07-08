@@ -39,16 +39,16 @@ import org.springframework.jms.support.destination.DynamicDestinationResolver;
  */
 public abstract class JmsConfigBase {
 
-    @Value("${jms.broker.url}")
+    @Value("${activemq.broker.url}")
     private String brokerUrl;
 
-    @Value("${jms.broker.username}")
+    @Value("${activemq.broker.username}")
     private String brokerUsername;
 
-    @Value("${jms.broker.password}")
+    @Value("${activemq.broker.password}")
     private String brokerPassword;
 
-    @Value("${jms.destination.queue.name}")
+    @Value("${activemq.destination.queue.name}")
     private String destinationQueueName;
 
 
