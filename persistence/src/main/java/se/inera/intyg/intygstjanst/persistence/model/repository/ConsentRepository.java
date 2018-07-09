@@ -20,7 +20,7 @@ package se.inera.intyg.intygstjanst.persistence.model.repository;
 
 import org.springframework.stereotype.Repository;
 import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
-import se.inera.intyg.intygstjanst.persistence.config.JpaConstans;
+import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Consent;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -34,7 +34,7 @@ import javax.persistence.PersistenceContext;
 @Repository
 public class ConsentRepository implements ConsentDao {
 
-    @PersistenceContext(unitName = JpaConstans.PERSISTANCE_UNIT_NAME)
+    @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
     private EntityManager entityManager;
 
     @Override

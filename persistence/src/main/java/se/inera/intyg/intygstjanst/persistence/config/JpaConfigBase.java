@@ -62,8 +62,8 @@ public abstract class JpaConfigBase {
         final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setDataSource(dataSource);
         entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        entityManagerFactoryBean.setPersistenceUnitName(JpaConstans.PERSISTANCE_UNIT_NAME);
-        entityManagerFactoryBean.setPackagesToScan(JpaConstans.BASE_PACKAGE_TO_SCAN);
+        entityManagerFactoryBean.setPersistenceUnitName(JpaConstants.PERSISTANCE_UNIT_NAME);
+        entityManagerFactoryBean.setPackagesToScan(JpaConstants.BASE_PACKAGE_TO_SCAN);
         entityManagerFactoryBean.setJpaProperties(additionalProperties());
 
         return entityManagerFactoryBean;

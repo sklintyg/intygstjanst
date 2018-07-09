@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(basePackages = JpaConstans.REPOSITORY_PACKAGE_TO_SCAN)
+@EnableJpaRepositories(basePackages = JpaConstants.REPOSITORY_PACKAGE_TO_SCAN)
 @Profile("embedded")
 public class JpaConfigDev extends JpaConfigBase {
 

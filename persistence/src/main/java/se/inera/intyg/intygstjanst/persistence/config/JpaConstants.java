@@ -21,13 +21,13 @@ package se.inera.intyg.intygstjanst.persistence.config;
 /**
  * @author Magnus Ekstrand on 2018-06-15.
  */
-public final class JpaConstans {
+public final class JpaConstants {
 
     public static final String PERSISTANCE_UNIT_NAME = "IneraCertificate";
     public static final String BASE_PACKAGE_TO_SCAN = "se.inera.intyg.intygstjanst.persistance.model";
     public static final String REPOSITORY_PACKAGE_TO_SCAN = "se.inera.intyg.intygstjanst.persistance.model.repository";
 
-    private JpaConstans() {
+    private JpaConstants() {
         // Checkstyle states: Utility classes should not have a public or default constructor
     }
 

@@ -25,7 +25,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-import se.inera.intyg.intygstjanst.persistence.config.JpaConstans;
+import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 
 import javax.persistence.EntityManager;
@@ -47,7 +47,7 @@ public class ArendeRepositoryTest {
     private static String ENHET_3_ID = "ENHET_3_ID";
     private static String ENHET_4_ID = "ENHET_4_ID";
 
-    @PersistenceContext(unitName = JpaConstans.PERSISTANCE_UNIT_NAME)
+    @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
     private EntityManager entityManager;
 
     @Autowired

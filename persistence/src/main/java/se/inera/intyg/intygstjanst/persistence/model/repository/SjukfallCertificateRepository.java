@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
-import se.inera.intyg.intygstjanst.persistence.config.JpaConstans;
+import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 
@@ -62,7 +62,7 @@ public class SjukfallCertificateRepository implements SjukfallCertificateDao {
             + "     ('" + RelationKod.ERSATT.value() + "','" + RelationKod.KOMPLT.value() + "') "
             + "WHERE sc.CIVIC_REGISTRATION_NUMBER IN (:pnrList)";
 
-    @PersistenceContext(unitName = JpaConstans.PERSISTANCE_UNIT_NAME)
+    @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
     private EntityManager entityManager;
 
     @Override

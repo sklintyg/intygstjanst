@@ -29,7 +29,7 @@ import javax.persistence.PersistenceContext;
 
 import org.springframework.stereotype.Repository;
 
-import se.inera.intyg.intygstjanst.persistence.config.JpaConstans;
+import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
 
@@ -41,7 +41,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
 @Repository
 public class RelationRepository implements RelationDao {
 
-    @PersistenceContext(unitName = JpaConstans.PERSISTANCE_UNIT_NAME)
+    @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
     private EntityManager entityManager;
 
     @Override
