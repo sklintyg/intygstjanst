@@ -24,8 +24,8 @@ package se.inera.intyg.intygstjanst.persistence.config;
 public final class JpaConstants {
 
     public static final String PERSISTANCE_UNIT_NAME = "IneraCertificate";
-    public static final String BASE_PACKAGE_TO_SCAN = "se.inera.intyg.intygstjanst.persistance.model";
-    public static final String REPOSITORY_PACKAGE_TO_SCAN = "se.inera.intyg.intygstjanst.persistance.model.repository";
+    public static final String BASE_PACKAGE_TO_SCAN = "se.inera.intyg.intygstjanst.persistence.model";
+    public static final String REPOSITORY_PACKAGE_TO_SCAN = BASE_PACKAGE_TO_SCAN + ".dao";
 
     private JpaConstants() {
         // Checkstyle states: Utility classes should not have a public or default constructor
