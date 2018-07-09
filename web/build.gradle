@@ -58,8 +58,6 @@ dependencies {
 
     compileOnly "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
     compileOnly "javax.servlet:servlet-api:${servletApiVersion}"
-    compileOnly "org.apache.activemq:activemq-client:${activeMqVersion}"
-    compileOnly "org.apache.activemq:activemq-pool:${activeMqVersion}"
 
     testCompile "org.springframework:spring-test:${springVersion}"
     testCompile "xmlunit:xmlunit:${xmlUnitVersion}"
@@ -73,9 +71,8 @@ dependencies {
     testRuntime "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     testRuntime "javax.servlet:servlet-api:${servletApiVersion}"
 
-    gretty "org.apache.activemq:activemq-client:${activeMqVersion}"
+    gretty "org.apache.activemq:activemq-spring:${activeMqVersion}"
     gretty "org.apache.activemq:activemq-broker:${activeMqVersion}"
-    gretty "org.apache.activemq:activemq-pool:${activeMqVersion}"
     gretty "mysql:mysql-connector-java:${mysqlVersion}"
     gretty "com.h2database:h2:${h2Version}"
     gretty "mysql:mysql-connector-java:${mysqlVersion}"
