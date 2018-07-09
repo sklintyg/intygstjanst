@@ -26,7 +26,7 @@
 <body>
 <div style="padding-left:20px">
   <div>
-    <h3>Intygstj�nsten</h3>
+    <h3>Intygstjänsten</h3>
   </div>
   <div style="width:50%">
     <h4 style="padding-bottom:5px;">Configuration info</h4>
