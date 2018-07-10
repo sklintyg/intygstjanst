@@ -71,9 +71,5 @@ dependencies {
     testRuntime "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     testRuntime "javax.servlet:servlet-api:${servletApiVersion}"
 
-    gretty "org.apache.activemq:activemq-spring:${activeMqVersion}"
-    gretty "org.apache.activemq:activemq-broker:${activeMqVersion}"
-    gretty "mysql:mysql-connector-java:${mysqlVersion}"
-    gretty "com.h2database:h2:${h2Version}"
     gretty "mysql:mysql-connector-java:${mysqlVersion}"
 }
