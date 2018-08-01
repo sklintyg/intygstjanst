@@ -12,7 +12,7 @@ task restAssuredTest(type: Test) {
 }
 
 gretty {
-    def jvmArgSpringProfiles = '-Dspring.profiles.active=dev,embedded,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub'
+    def springProfiles = 'dev,embedded,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub'
     contextPath = '/inera-certificate'
     contextConfigFile = file("src/main/webapp/WEB-INF/jetty-web.xml")
     integrationTestTask = null
@@ -20,11 +20,12 @@ gretty {
     debugPort = 5005
     debugSuspend = false
 
-    jvmArgs = ["-Dcatalina.base=${buildDir}/catalina.base",
-               "-Dspring.profiles.active=dev,caching-enabled,wc-hsa-stub",
-               "-Drecipient.config.file=${projectDir}/recipients-dev.json",
-               "-Dcredentials.file=${projectDir}/certificate-credentials.properties",
-               "-Dconfig.file=${projectDir}/certificate-dev.properties"]
+    jvmArgs = [
+            "-Dspring.profiles.active=" + springProfiles,
+            "-Dcatalina.base=${buildDir}/catalina.base",
+            "-Drecipient.config.file=${projectDir}/recipients-dev.json",
+            "-Dcredentials.file=${projectDir}/certificate-credentials.properties",
+            "-Dconfig.file=${projectDir}/certificate-dev.properties"]
 }
 
 war.dependsOn createVersionPropertyFile

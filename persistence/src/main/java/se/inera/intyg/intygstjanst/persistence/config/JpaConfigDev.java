@@ -40,7 +40,7 @@ public class JpaConfigDev extends JpaConfigBase {
 
     @Bean(destroyMethod = "stop")
     Server h2WebServer() throws SQLException {
-        LOG.info("Starting H2 Web Server Console");
+        LOG.info("Starting H2 Web Server Console on http://127.0.0.1:{}", databaseHttpPort);
         final Server server = Server.createWebServer("-web", "-webAllowOthers", "-webPort", databaseHttpPort);
         server.start();
         return server;
