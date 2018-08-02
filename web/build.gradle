@@ -12,7 +12,7 @@ task restAssuredTest(type: Test) {
 }
 
 gretty {
-    def springProfiles = 'dev,embedded,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub'
+    def springProfiles = 'dev,embedded,testability-api,caching-enabled,wc-hsa-stub'
     contextPath = '/inera-certificate'
     contextConfigFile = file("src/main/webapp/WEB-INF/jetty-web.xml")
     integrationTestTask = null

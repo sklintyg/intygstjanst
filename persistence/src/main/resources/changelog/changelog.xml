@@ -357,7 +357,7 @@
     <preConditions onFail="MARK_RAN">
         <or>
             <dbms type="h2" />
-            <sqlCheck expectedResult="blob">SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'ORIGINAL_CERTIFICATE' AND COLUMN_NAME = 'DOCUMENT'</sqlCheck>
+            <sqlCheck expectedResult="blob">SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'ORIGINAL_CERTIFICATE' AND COLUMN_NAME = 'DOCUMENT' AND TABLE_SCHEMA = SCHEMA()</sqlCheck>
         </or>
     </preConditions>
 
