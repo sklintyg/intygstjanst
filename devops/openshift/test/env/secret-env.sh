@@ -17,7 +17,6 @@ export REDIS_HOST=$REDIS_SERVICE_HOST
 export SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE:-dev,testability-api,caching-enabled,wc-hsa-stub}"
 
 export CATALINA_OPTS_APPEND="\
--agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 \
 -Dconfig.folder=/opt/$APP_NAME/config \
 -Dconfig.file=/opt/$APP_NAME/config/intygstjanst.properties \
 -Dlogback.file=classpath:logback-ocp.xml \

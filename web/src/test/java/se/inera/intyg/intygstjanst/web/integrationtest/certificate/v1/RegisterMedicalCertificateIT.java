@@ -18,25 +18,29 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v1;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.StringStartsWith.startsWith;
-
-import org.junit.*;
-import org.stringtemplate.v4.*;
-
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.response.ValidatableResponse;
-
+import java.util.UUID;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
+
+
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 public class RegisterMedicalCertificateIT extends BaseIntegrationTest {
 
     private STGroup templateGroup;
 
-    private static final String INTYG_ID = "registerMedicalCertificateITcertificateId";
+    private static final String INTYG_ID = UUID.randomUUID().toString();
     private static final String INTYG_TYP = "fk7263";
 
     @Before
@@ -56,7 +60,7 @@ public class RegisterMedicalCertificateIT extends BaseIntegrationTest {
         final String personId = "19010101-0101";
 
         getMedicalCertificateRequest(INTYG_ID, personId).body("result.resultCode", is("ERROR")).body("result.resultText", is(
-                "Certificate 'registerMedicalCertificateITcertificateId' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
+                "Certificate '" + INTYG_ID + "' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
         givenRequest(INTYG_ID, personId, false).body("result.resultCode", is("OK"));
         getMedicalCertificateRequest(INTYG_ID, personId).body("result.resultCode", is("OK")).body("meta.certificateId", is(INTYG_ID))
                 .body("lakarutlatande.skapadAvHosPersonal.enhet.enhets-id.@extension", is("EnhetsId"))
