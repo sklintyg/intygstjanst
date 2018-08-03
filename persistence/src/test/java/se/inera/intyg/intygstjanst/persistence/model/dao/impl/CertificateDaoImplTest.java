@@ -18,13 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -32,25 +34,20 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.*;
-import static se.inera.intyg.common.support.model.CertificateState.*;
-import static se.inera.intyg.intygstjanst.persistence.support.CertificateTestFactory.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static se.inera.intyg.common.support.model.CertificateState.DELETED;
+import static se.inera.intyg.common.support.model.CertificateState.RECEIVED;
+import static se.inera.intyg.common.support.model.CertificateState.RESTORED;
+import static se.inera.intyg.common.support.model.CertificateState.SENT;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
-@ActiveProfiles("dev")
-@Transactional
-public class CertificateDaoImplTest {
+public class CertificateDaoImplTest extends TestSupport {
 
     private final String CERTIFICATE_ID_UNKNOWN = "unknownId";
     private final String CIVIC_REGISTRATION_NUMBER_UNKNOWN = "19440223-1641";

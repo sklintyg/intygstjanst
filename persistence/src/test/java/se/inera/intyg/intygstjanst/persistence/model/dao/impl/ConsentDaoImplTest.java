@@ -18,35 +18,24 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Consent;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
+import se.inera.intyg.schemas.contract.Personnummer;
+
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
-
-import se.inera.intyg.schemas.contract.Personnummer;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Consent;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
-
 /**
  * @author andreaskaltenbach
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
-@ActiveProfiles("dev")
-@Transactional
-public class ConsentDaoImplTest {
+public class ConsentDaoImplTest extends TestSupport {
 
     public static final Personnummer CIVIC_REGISTRATION_NUMBER = createPnr("19001122-3344");
     public static final Personnummer CIVIC_REGISTRATION_NUMBER_NO_DASH = createPnr("190011223344");

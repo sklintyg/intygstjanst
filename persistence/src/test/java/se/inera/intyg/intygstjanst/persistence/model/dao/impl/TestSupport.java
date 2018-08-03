@@ -16,20 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.persistence.support;
+package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
+import java.time.LocalDateTime;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
+import se.inera.intyg.intygstjanst.persistence.TestConfig;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-import java.time.LocalDateTime;
-
-/**
- * @author andreaskaltenbach
- */
-public final class CertificateTestFactory {
-
-    private CertificateTestFactory() {
-    }
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = TestConfig.class)
+@ActiveProfiles({ "dev" })
+@Transactional
+public abstract class TestSupport {
 
     public static final LocalDateTime SIGNED_DATE = LocalDateTime.of(1999, 12, 31, 10, 32);
 

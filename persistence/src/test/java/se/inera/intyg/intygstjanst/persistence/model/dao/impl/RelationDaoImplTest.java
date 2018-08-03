@@ -18,21 +18,16 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -41,11 +36,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author eriklupander
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
-@ActiveProfiles("dev")
-@Transactional
-public class RelationDaoImplTest {
+public class RelationDaoImplTest extends TestSupport {
 
     // Försöker ha intygens ID-nummer i kronologisk ordning, dvs. intyg-2 skall i testet peka på intyg-1
     private static final String START_INTYG = "intyg-2";

@@ -18,14 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
+import java.time.LocalDateTime;
+import org.junit.Test;
+import se.inera.intyg.common.support.model.CertificateState;
+
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.time.LocalDateTime;
-
-import org.junit.Test;
-
-import se.inera.intyg.common.support.model.CertificateState;
 
 public class CertificateTest {
 

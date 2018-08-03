@@ -18,13 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import org.junit.Test;
+
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-
-import java.time.LocalDateTime;
-import java.util.*;
-
-import org.junit.Test;
 
 /**
  *
