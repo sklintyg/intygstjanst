@@ -27,4 +27,3 @@ import org.springframework.context.annotation.PropertySource;
 @ComponentScan(basePackages = "se.inera.intyg.intygstjanst.persistence")
 public class TestConfig {
 }
-

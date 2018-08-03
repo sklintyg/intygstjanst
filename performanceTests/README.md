@@ -30,26 +30,22 @@ I mappen src/test/resources/request-bodies finns xml-filer med SOAP-requests fö
 Lagrar 1000 intyg, 10 per testperson, från csv-filen med personnummer.
 Tömmer inte databasen efter körning, använd RemoveTestData för att tömma.
 
-- gradle gatling -DgatlingSimulation=StoreCertificates
+- gradle gatlingSingleTest -DgatlingSimulation=StoreCertificates
 
 ### GetCertificates
 Preloadar databasen med personer och intyg.
 Lägger in medgivande och hämtar ut specifika intyg för en testperson.
 Tömmer databasen efter körning.
 
-- gradle gatling -DgatlingSimulation=GetCertificates
+- gradle gatlingSingleTest -DgatlingSimulation=GetCertificates
 
 ### ListCertificates
 Preloadar databasen med personer och intyg.
 Lägger in medgivande och listar ut intyg.
 Tömmer databasen efter körning.
 
-- gradle gatling -DgatlingSimulation=ListCertificates
+- gradle gatlingSingleTest -DgatlingSimulation=ListCertificates
 
-### RemoveTestData
-Man kan även tömma databasen genom att köra:
-
-- gradle gatling -DgatlingSimulation=RemoveTestData
 
 ### Testpersonnummer
 Testpersonnummer används primärt mot demo/QA eller annan miljö där PU-tjänstens testmiljö är aktiv.
@@ -61,7 +57,7 @@ Ett alternativ är att öppna build.gradle och redigera gatlingBaseUrl i ext-blo
 
 - "http://localhost:8080/inera-certificate"
 
-Alternativt kan man ange -Dcertificate.baseUrl=....... på kommandoraden.
+Alternativt kan man ange -DbaseUrl=....... på kommandoraden.
 
 ### Exekvering från command-line
 Testerna körs genom att ge:

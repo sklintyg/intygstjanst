@@ -18,12 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.persistence.config;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import java.util.Properties;
+
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import liquibase.integration.spring.SpringLiquibase;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,11 +31,15 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import liquibase.integration.spring.SpringLiquibase;
+
 public abstract class JpaConfigBase {
 
     static final String LIQUIBASE_SCRIPT = "changelog/changelog.xml";
-    private static final Logger LOG = LoggerFactory.getLogger(JpaConfigBase.class);
-    private static final int MAXIMUM_POOL_SIZE = 20;
+    static final Logger LOG = LoggerFactory.getLogger(JpaConfigBase.class);
 
     @Value("${hibernate.dialect}")
     private String hibernateDialect;
@@ -48,13 +51,15 @@ public abstract class JpaConfigBase {
     private String hibernateFormatSql;
 
     @Value("${db.driver}")
-    private String databaseDriver;
+    private String driver;
     @Value("${db.url}")
-    private String databaseUrl;
+    private String url;
     @Value("${db.username}")
-    private String databaseUsername;
+    private String username;
     @Value("${db.password}")
-    private String databasePassword;
+    private String password;
+    @Value("${db.pool.maxSize}")
+    private int maxPoolSize;
 
 
     @Bean(name = "entityManagerFactory")
@@ -79,16 +84,15 @@ public abstract class JpaConfigBase {
     @SuppressWarnings("ContextJavaBeanUnresolvedMethodsInspection")
     @Bean(name = "dataSource", destroyMethod = "shutdown")
     DataSource dataSource() {
-        LOG.info("Initialize data-source with url: {}", databaseUrl);
+        LOG.info("Initialize data-source with url: {}", url);
 
         final HikariConfig dataSourceConfig = new HikariConfig();
-        dataSourceConfig.setDriverClassName(databaseDriver);
-        dataSourceConfig.setJdbcUrl(databaseUrl);
-        dataSourceConfig.setUsername(databaseUsername);
-        dataSourceConfig.setPassword(databasePassword);
+        dataSourceConfig.setDriverClassName(driver);
+        dataSourceConfig.setJdbcUrl(url);
+        dataSourceConfig.setUsername(username);
+        dataSourceConfig.setPassword(password);
         dataSourceConfig.setAutoCommit(false);
-        dataSourceConfig.setConnectionTestQuery("SELECT 1");
-        dataSourceConfig.setMaximumPoolSize(MAXIMUM_POOL_SIZE);
+        dataSourceConfig.setMaximumPoolSize(maxPoolSize);
 
         return new HikariDataSource(dataSourceConfig);
     }

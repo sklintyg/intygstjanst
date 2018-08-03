@@ -1,4 +1,5 @@
 package se.inera.intygstjanst
+
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
@@ -13,7 +14,7 @@ import scalaj.http._
 
 object Utils {
 
-  val baseUrl = System.getProperty("baseUrl", "http://localhost:8080" )
+  val baseUrl = System.getProperty("baseUrl", "http://localhost:8080/inera-certificate" )
 
   val consent = exec(http("Give consent for ${personNr}")
         .post("/set-consent/v1.0")

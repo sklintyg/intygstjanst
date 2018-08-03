@@ -2,7 +2,7 @@ apply plugin: 'scala'
 
 ext {
     gatlingVersion = '2.1.7'
-    gatlingBaseUrl =  System.properties['certificate.baseUrl'] ?: "http://localhost:8080/inera-certificate"
+    gatlingBaseUrl =  System.properties['baseUrl'] ?: "http://localhost:8080/inera-certificate"
     simulation = System.properties['gatlingSimulation']
 }
 
