@@ -20,11 +20,33 @@ För att starta applikationen i debugläge används:
 
     $ ./gradlew appRunDebug
 
-Applikationen kommer då att starta upp med debugPort = **5005**. Det är denna port du ska använda när du sätter upp din 
-debug-konfiguration i din utvecklingsmiljö.
+Applikationen kommer då att starta upp med debugPort = **5005**. Det är denna port du ska använda när du sätter upp din debug-konfiguration i din utvecklingsmiljö.
+
+Bas-URL för webbtjänsten är: [http://localhost:8080/inera-certificate](http://localhost:8080/inera-certificate/) 
+
+### Spring Profiler
+
+| Profilnamn | Beskrivning |
+| :------------ | :----------- |
+| dev | Generellt för exekvering i dev miljö, används även i infra |
+| embedded | Laddar databasen med testdata och aktiverar H2 webbgränssnitt |
+| testability-api | Aktiverar APIer för integrationstester (restAssuredTest) |
+| caching-enabled | Aktiverar cache, se infra och redis-cache |
+| it-fk-stub | Aktiverar NTJP stubbar, om denna inte anges måste NTJP-integration konfigureras   | 
+| wc-hsa-stub | Aktiverar HSA stubbar, se infra och hsa-integration |
+
+Aktiverade profiler i dev: `dev,embedded,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub`
+
 
 ### Visa databasen
-Man kan även komma åt H2-databasen som startas lokalt via http://localhost:8082/
+H2-databasens webbgränssnitt nås med: [http://localhost:8082/](http://localhost:8082/)
+
+JBDC URL: `jdbc:h2:mem:dataSource`
+
+User Name: `sa`
+
+Lämna Password fältet tomt.
+
 
 ### Kör RestAssured
 RestAssured körs mot en lokal instans av Intygstjänsten via:

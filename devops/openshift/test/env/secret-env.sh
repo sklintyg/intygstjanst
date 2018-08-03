@@ -15,9 +15,10 @@ export REDIS_PORT=$REDIS_SERVICE_PORT
 export REDIS_HOST=$REDIS_SERVICE_HOST
 
 # dev profile is default for pipeline
-export SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-test,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub}
+SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub}
 
 export CATALINA_OPTS_APPEND="\
+-Dspring.profiles.active=$SPRING_PROFILES_ACTIVE \
 -Dconfig.folder=/opt/$APP_NAME/config \
 -Dconfig.file=/opt/$APP_NAME/config/intygstjanst.properties \
 -Dlogback.file=classpath:logback-ocp.xml \
