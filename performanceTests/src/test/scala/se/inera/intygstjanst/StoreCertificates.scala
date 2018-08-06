@@ -1,4 +1,5 @@
 package se.inera.intygstjanst
+
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
@@ -19,7 +20,9 @@ class StoreCertificates extends Simulation {
           .body(ELFileBody("request-bodies/register-medical-certificate.xml"))
           .check(status.is(200)))
     }
-    .pause(2 seconds)
+    .pause(1 seconds)
+    .exec(Utils.purgeQueue)
+
   setUp(scn.inject(rampUsers(100) over (120 seconds)).protocols(Conf.httpConf))
 
 }

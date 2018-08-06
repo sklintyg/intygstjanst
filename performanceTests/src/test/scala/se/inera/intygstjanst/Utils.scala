@@ -21,7 +21,12 @@ object Utils {
           .headers(Headers.set_consent)
           .body(ELFileBody("request-bodies/set-consent.xml"))
           .check(status.is(200)));
-  
+
+  // purges message queue (to statistics), otherwise the app hangs when the queue is full.
+  def purgeQueue = exec(http("Purge queue")
+    .get("/resources/statisticsresource/purge")
+    .check(status.is(200)));
+
   def storeWithCorrelation() = { 
     exec(session=>session.set("intygsId", UUID.randomUUID().toString()))
     .exec(http("Store certificates for ${personNr}")

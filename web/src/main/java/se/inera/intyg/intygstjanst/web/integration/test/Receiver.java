@@ -57,7 +57,7 @@ public class Receiver {
 
     public Map<String, String> getMessages() {
         final Map<String, String> map = new HashMap<>();
-        this.consume(msg -> {
+        this.consume(TIMEOUT, msg -> {
             try {
                 final String action = msg.getStringProperty(ACTION);
                 final String id = msg.getStringProperty(FK_MESSAGE_ACTION.equals(action) ? MESSAGE_ID : CERTIFICATE_ID);
@@ -73,16 +73,17 @@ public class Receiver {
     /**
      * Returns number of consumed messages.
      *
+     * @param timeout wait for timmeout millis.
      * @param consumer the consumer.
      * @return number of consumed messages.
      */
-    public int consume(final Consumer<Message> consumer) {
+    public int consume(final long timeout, final Consumer<Message> consumer) {
         return jmsTemplate.execute(session -> {
             final MessageConsumer messageConsumer = session.createConsumer(destinationQueue);
             try {
                 Message msg;
                 int n = 0;
-                while ((msg = messageConsumer.receive(TIMEOUT)) != null) {
+                while ((msg = messageConsumer.receive(timeout)) != null) {
                     consumer.accept(msg);
                     n++;
                 }
