@@ -25,7 +25,9 @@ gretty {
             "-Dcatalina.base=${buildDir}/catalina.base",
             "-Drecipient.config.file=${projectDir}/recipients-dev.json",
             "-Dcredentials.file=${projectDir}/certificate-credentials.properties",
-            "-Dconfig.file=${projectDir}/certificate-dev.properties"]
+            "-Dconfig.file=${projectDir}/certificate-dev.properties",
+            "-Xmx512M"
+    ]
 }
 
 war.dependsOn createVersionPropertyFile
