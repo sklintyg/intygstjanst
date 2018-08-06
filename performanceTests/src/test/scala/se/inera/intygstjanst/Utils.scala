@@ -38,7 +38,8 @@ object Utils {
 
   // Use scalaj.http, so this function can be used without gatling DSL
   def cleanAll() : HttpResponse[String] = {
-    var url = baseUrl + "/resources/certificate" 
+    this.purgeQueue
+    var url = baseUrl + "/resources/certificate"
     Http(url)
      .method("delete")
      .header("content-type", "application/json")
@@ -46,6 +47,7 @@ object Utils {
   }
 
   def clean() = {
+    this.purgeQueue
     val bufferedSource = fromFile("src/test/resources/data/intyg.csv")
     for (line <- bufferedSource.getLines) {
       val cols = line.split(",").map(_.trim)
