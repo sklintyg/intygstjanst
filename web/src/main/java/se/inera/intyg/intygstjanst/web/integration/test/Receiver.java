@@ -18,18 +18,23 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.test;
 
-import com.google.common.base.Joiner;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.Queue;
 import javax.jms.TextMessage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.JmsUtils;
+
+import com.google.common.base.Joiner;
 
 /**
  * Class for consuming JMS messages sent to statistik (ST). Meant to be used for integration testing purposes.
@@ -51,24 +56,43 @@ public class Receiver {
     private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
 
     public Map<String, String> getMessages() {
+        final Map<String, String> map = new HashMap<>();
+        this.consume(msg -> {
+            try {
+                final String action = msg.getStringProperty(ACTION);
+                final String id = msg.getStringProperty(FK_MESSAGE_ACTION.equals(action) ? MESSAGE_ID : CERTIFICATE_ID);
+                final String key = generateKey(id, action);
+                map.put(key, ((TextMessage) msg).getText());
+            } catch (JMSException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return map;
+    }
+
+    /**
+     * Returns number of consumed messages.
+     *
+     * @param consumer the consumer.
+     * @return number of consumed messages.
+     */
+    public int consume(final Consumer<Message> consumer) {
         return jmsTemplate.execute(session -> {
-            final Map<String, String> map = new HashMap<>();
-            final MessageConsumer consumer = session.createConsumer(destinationQueue);
+            final MessageConsumer messageConsumer = session.createConsumer(destinationQueue);
             try {
                 Message msg;
-                while ((msg = consumer.receive(TIMEOUT)) != null) {
-                    final String action = msg.getStringProperty(ACTION);
-                    final String id = msg.getStringProperty(FK_MESSAGE_ACTION.equals(action) ? MESSAGE_ID : CERTIFICATE_ID);
-                    final String key = generateKey(id, action);
-                    map.put(key, ((TextMessage) msg).getText());
+                int n = 0;
+                while ((msg = messageConsumer.receive(TIMEOUT)) != null) {
+                    consumer.accept(msg);
+                    n++;
                 }
                 if (session.getTransacted()) {
                     JmsUtils.commitIfNecessary(session);
                 }
-                LOG.info("Received {} messages", map.size());
-                return map;
+                LOG.info("Received {} messages", n);
+                return n;
             } finally {
-                JmsUtils.closeMessageConsumer(consumer);
+                JmsUtils.closeMessageConsumer(messageConsumer);
             }
         }, true);
     }
