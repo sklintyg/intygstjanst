@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.integration.hsa.services.HsaOrganizationsService;
 
 import java.util.List;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 
 /**
  * Interfaces with {@link HsaOrganizationsService} from hsa-integration.
@@ -36,11 +37,13 @@ public class HsaServiceImpl implements HsaService {
     private HsaOrganizationsService hsaOrganizationsService;
 
     @Override
+    @PrometheusTimeMethod
     public List<String> getHsaIdForUnderenheter(String careUnitHsaId) {
         return hsaOrganizationsService.getHsaIdForAktivaUnderenheter(careUnitHsaId);
     }
 
     @Override
+    @PrometheusTimeMethod
     public String getHsaIdForVardgivare(String careUnitHsaId) {
         return hsaOrganizationsService.getVardgivareOfVardenhet(careUnitHsaId);
     }

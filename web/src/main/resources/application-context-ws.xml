@@ -319,7 +319,7 @@
   </jaxws:endpoint>
 
 
-  <beans profile="!it-fk-stub">
+  <beans profile="!dev">
     <http:conduit
             name="\{urn:riv:(clinicalprocess:healthcond|insuranceprocess:healthreporting):.*.http-conduit">
       <http:client AllowChunking="false" AutoRedirect="true" Connection="Keep-Alive"/>

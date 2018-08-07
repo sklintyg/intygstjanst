@@ -18,16 +18,20 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import java.util.Optional;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
@@ -40,8 +44,6 @@ import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.Revoke
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
-
-import java.util.Optional;
 
 @Transactional
 @SchemaValidation
@@ -66,6 +68,7 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
     private RevokeCertificateResponderInterface externalRevokeClient;
 
     @Override
+    @PrometheusTimeMethod
     public RevokeCertificateResponseType revokeCertificate(String logicalAddress, RevokeCertificateType request) {
         RevokeCertificateResponseType response = new RevokeCertificateResponseType();
 

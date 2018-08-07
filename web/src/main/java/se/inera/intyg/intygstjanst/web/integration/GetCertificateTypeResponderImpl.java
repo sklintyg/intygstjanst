@@ -24,6 +24,7 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetype.
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetype.v1.GetCertificateTypeResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetype.v1.GetCertificateTypeType;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
@@ -41,6 +42,7 @@ public class GetCertificateTypeResponderImpl implements GetCertificateTypeRespon
     private CertificateService certificateService;
 
     @Override
+    @PrometheusTimeMethod
     public GetCertificateTypeResponseType getCertificateType(String logicalAddress, GetCertificateTypeType request) {
 
         if (isNullOrEmpty(request)) {

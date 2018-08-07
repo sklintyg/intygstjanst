@@ -25,6 +25,7 @@ import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickle
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ResultCodeEnum;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
@@ -49,6 +50,7 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
     private SjukfallCertificateDao sjukfallCertificateDao;
 
     @Override
+    @PrometheusTimeMethod
     public ListActiveSickLeavesForCareUnitResponseType listActiveSickLeavesForCareUnit(String logicalAddress,
             ListActiveSickLeavesForCareUnitType parameters) {
         ListActiveSickLeavesForCareUnitResponseType response = new ListActiveSickLeavesForCareUnitResponseType();

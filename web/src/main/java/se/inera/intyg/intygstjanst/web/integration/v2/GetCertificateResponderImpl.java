@@ -27,6 +27,7 @@ import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConv
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.integration.util.CertificateStateFilterUtil;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponderInterface;
@@ -49,6 +50,7 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
     private ModuleContainerApi moduleContainer;
 
     @Override
+    @PrometheusTimeMethod
     public GetCertificateResponseType getCertificate(String logicalAddress, GetCertificateType request) {
         GetCertificateResponseType response = new GetCertificateResponseType();
 

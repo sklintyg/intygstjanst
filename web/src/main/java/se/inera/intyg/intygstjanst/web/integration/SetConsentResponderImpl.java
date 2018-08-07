@@ -26,6 +26,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.insuranceprocess.healthreporting.setconsent.rivtabp20.v1.SetConsentResponderInterface;
 import se.inera.intyg.insuranceprocess.healthreporting.setconsentresponder.v1.SetConsentRequestType;
 import se.inera.intyg.insuranceprocess.healthreporting.setconsentresponder.v1.SetConsentResponseType;
@@ -48,6 +49,7 @@ public class SetConsentResponderImpl implements SetConsentResponderInterface {
     private MonitoringLogService monitoringLogService;
 
     @Override
+    @PrometheusTimeMethod
     public SetConsentResponseType setConsent(AttributedURIType logicalAddress, SetConsentRequestType parameters) {
 
         SetConsentResponseType response = new SetConsentResponseType();

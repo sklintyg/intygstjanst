@@ -24,6 +24,7 @@ import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
@@ -46,6 +47,7 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
     private RecipientService recipientService;
 
     @Override
+    @PrometheusTimeMethod
     public SetCertificateStatusResponseType setCertificateStatus(String logicalAddress, SetCertificateStatusType parameters) {
         SetCertificateStatusResponseType response = new SetCertificateStatusResponseType();
 

@@ -23,6 +23,7 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
@@ -68,6 +69,7 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
     private SjukfallCertificateConverter sjukfallCertificateConverter;
 
     @Override
+    @PrometheusTimeMethod
     public ListSickLeavesForCareResponseType listSickLeavesForCare(String logicalAddress, ListSickLeavesForCareType params) {
 
         ListSickLeavesForCareResponseType responseType = new ListSickLeavesForCareResponseType();

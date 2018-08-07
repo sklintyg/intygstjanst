@@ -32,6 +32,7 @@ import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 import se.inera.intyg.intygstjanst.web.integration.util.CertificateStateFilterUtil;
@@ -68,6 +69,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
     private IntygModuleRegistryImpl moduleRegistry;
 
     @Override
+    @PrometheusTimeMethod
     public ListCertificatesForCitizenResponseType listCertificatesForCitizen(String logicalAddress,
             ListCertificatesForCitizenType parameters) {
         LOGGER.debug("List certificates for citizen. arkiverade={}", parameters.isArkiverade());

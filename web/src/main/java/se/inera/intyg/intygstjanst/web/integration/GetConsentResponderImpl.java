@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
 
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.insuranceprocess.healthreporting.getconsent.rivtabp20.v1.GetConsentResponderInterface;
 import se.inera.intyg.insuranceprocess.healthreporting.getconsentresponder.v1.GetConsentRequestType;
@@ -36,6 +37,7 @@ public class GetConsentResponderImpl implements GetConsentResponderInterface {
     private ConsentService consentService;
 
     @Override
+    @PrometheusTimeMethod
     public GetConsentResponseType getConsent(AttributedURIType logicalAddress, GetConsentRequestType parameters) {
         GetConsentResponseType response = new GetConsentResponseType();
         response.setConsentGiven(consentService.isConsent(createPnr(parameters.getPersonnummer())));

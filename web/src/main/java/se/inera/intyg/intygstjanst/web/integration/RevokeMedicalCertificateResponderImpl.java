@@ -35,6 +35,7 @@ import se.inera.intyg.common.support.integration.module.exception.InvalidCertifi
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
 import se.inera.intyg.common.util.logging.LogMarkers;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
@@ -65,6 +66,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
 
     @Transactional
     @Override
+    @PrometheusTimeMethod
     public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress,
             RevokeMedicalCertificateRequestType request) {
 

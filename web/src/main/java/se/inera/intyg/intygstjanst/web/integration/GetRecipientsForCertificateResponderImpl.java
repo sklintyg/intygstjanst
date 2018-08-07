@@ -26,6 +26,7 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcer
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.RecipientType;
 import se.inera.intyg.common.fk7263.schemas.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
@@ -41,6 +42,7 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
     private RecipientService recipientService;
 
     @Override
+    @PrometheusTimeMethod
     public GetRecipientsForCertificateResponseType getRecipientsForCertificate(String logicalAddress,
             GetRecipientsForCertificateType request) {
         String certTypeStr = request.getCertificateType().trim();

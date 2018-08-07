@@ -24,6 +24,7 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients.v1.ListKnownRecipientsType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients.v1.RecipientType;
 import se.inera.intyg.common.fk7263.schemas.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.riv.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 
@@ -36,6 +37,7 @@ public class ListKnownRecipientsResponderImpl implements ListKnownRecipientsResp
     private RecipientService recipientService;
 
     @Override
+    @PrometheusTimeMethod
     public ListKnownRecipientsResponseType listKnownRecipients(String logicalAddress, ListKnownRecipientsType request) {
         ListKnownRecipientsResponseType response = new ListKnownRecipientsResponseType();
         List<RecipientType> recipientTypeList = recipientService.listRecipients().stream().map(r -> {

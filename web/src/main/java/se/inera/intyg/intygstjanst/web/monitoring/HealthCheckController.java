@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.web.monitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.service.HealthCheckService;
 import se.inera.intyg.intygstjanst.web.service.impl.HealthCheckServiceImpl.Status;
 
@@ -47,6 +48,7 @@ public class HealthCheckController {
     @GET
     @Path("/ping")
     @Produces(MediaType.APPLICATION_XML)
+    @PrometheusTimeMethod
     public Response getPing() {
         String xmlResponse = buildXMLResponse(true, 0, null);
         LOGGER.debug("Pinged Intygstjänsten, got: " + xmlResponse);
@@ -56,6 +58,7 @@ public class HealthCheckController {
     @GET
     @Path("/checkDB")
     @Produces(MediaType.APPLICATION_XML)
+    @PrometheusTimeMethod
     public Response checkDB() {
         Status status = healthCheck.getDbStatus();
         String xmlResponse = buildXMLResponse(status);
@@ -65,6 +68,7 @@ public class HealthCheckController {
     @GET
     @Path("/checkJMS")
     @Produces(MediaType.APPLICATION_XML)
+    @PrometheusTimeMethod
     public Response checkJMS() {
         Status status = healthCheck.getJMSStatus();
         String xmlResponse = buildXMLResponse(status);
@@ -74,6 +78,7 @@ public class HealthCheckController {
     @GET
     @Path("/uptime")
     @Produces(MediaType.APPLICATION_XML)
+    @PrometheusTimeMethod
     public Response checkUptime() {
         Status status = healthCheck.getUptime();
         String xmlResponse = buildXMLResponse(status);

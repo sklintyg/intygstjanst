@@ -27,6 +27,7 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcer
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.ListRelationsForCertificateResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.ListRelationsForCertificateType;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.web.service.RelationService;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
@@ -48,6 +49,7 @@ public class ListRelationsForCertificateResponderImpl implements ListRelationsFo
     private RelationService relationService;
 
     @Override
+    @PrometheusTimeMethod
     public ListRelationsForCertificateResponseType listRelationsForCertificate(String logicalAddress,
             ListRelationsForCertificateType listRelationsForCertificateType) {
         long start = System.currentTimeMillis();
