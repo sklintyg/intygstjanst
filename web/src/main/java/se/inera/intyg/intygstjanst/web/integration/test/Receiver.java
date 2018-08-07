@@ -95,7 +95,7 @@ public class Receiver {
             } finally {
                 JmsUtils.closeMessageConsumer(messageConsumer);
             }
-        }, false);
+        }, true);
     }
 
     /**
