@@ -71,9 +71,9 @@ public class Receiver {
     }
 
     /**
-     * Returns number of consumed messages.
+     * Returns number of consumed messages, wait for max timeout.
      *
-     * @param timeout wait for timmeout millis.
+     * @param timeout wait for max timeout in millis, 0 is forever and less than 0 is no wait at all.
      * @param consumer the consumer.
      * @return number of consumed messages.
      */
@@ -83,7 +83,7 @@ public class Receiver {
             try {
                 Message msg;
                 int n = 0;
-                while ((msg = messageConsumer.receive(timeout)) != null) {
+                while ((msg = next(timeout, messageConsumer)) != null) {
                     consumer.accept(msg);
                     n++;
                 }
@@ -95,10 +95,26 @@ public class Receiver {
             } finally {
                 JmsUtils.closeMessageConsumer(messageConsumer);
             }
-        }, true);
+        }, false);
     }
 
-    public static String generateKey(String certificateId, String action) {
+    /**
+     * Returns number of consumed messages (no wait).
+     *
+     * @param consumer the consumer.
+     * @return number of consumed messages.
+     */
+    public int consume(final Consumer<Message> consumer) {
+        return consume(-1L, consumer);
+    }
+
+    //
+    Message next(final long timeout, final MessageConsumer consumer) throws JMSException {
+        return (timeout < 0L) ? consumer.receiveNoWait() : consumer.receive(timeout);
+    }
+
+    //
+    static String generateKey(String certificateId, String action) {
         return Joiner.on("-").join(certificateId, action);
     }
 

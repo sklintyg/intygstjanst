@@ -61,7 +61,7 @@ public class StatisticsServiceResource {
     @Path("/purge")
     @Produces(MediaType.APPLICATION_JSON)
     public String purge() {
-        final int n = receiver.consume(10L, msg -> { });
+        final int n = receiver.consume(msg -> { });
         return String.format("{ \"numPurged\": %d }", n);
     }
 
