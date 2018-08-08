@@ -14,7 +14,7 @@ class StoreCertificates extends Simulation {
     .feed(testpersonnummer)
     .repeat(10) {
       exec(session => session.set("intygsId", UUID.randomUUID().toString()))
-        .exec(http("Store certificate ${personNr}")
+        .exec(http("Register Certificate 3.0")
           .post("/register-certificate/v3.0")
           .headers(Headers.store_certificate)
           .body(ELFileBody("request-bodies/register-medical-certificate.xml"))
@@ -22,6 +22,8 @@ class StoreCertificates extends Simulation {
     }
     .pause(1 seconds)
     .exec(Utils.purgeQueue)
+
+  //setUp(scn.inject(rampUsers(100) over (30 seconds)).throttle(reachRps(20) in (20 seconds), holdFor(10 minutes)).protocols(Conf.httpConf))
 
   setUp(scn.inject(rampUsers(100) over (120 seconds)).protocols(Conf.httpConf))
 

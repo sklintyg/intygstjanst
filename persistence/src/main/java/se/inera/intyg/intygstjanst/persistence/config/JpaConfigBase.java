@@ -61,6 +61,9 @@ public abstract class JpaConfigBase {
     @Value("${db.pool.maxSize}")
     private int maxPoolSize;
 
+    static final long IDLE_TIMEOUT = 15000L;
+    static final long CONN_TIMEOUT = 3000L;
+    static final int MIN_IDLE = 3;
 
     @Bean(name = "entityManagerFactory")
     LocalContainerEntityManagerFactoryBean entityManagerFactory(final DataSource dataSource) {
@@ -86,15 +89,20 @@ public abstract class JpaConfigBase {
     DataSource dataSource() {
         LOG.info("Initialize data-source with url: {}", url);
 
-        final HikariConfig dataSourceConfig = new HikariConfig();
-        dataSourceConfig.setDriverClassName(driver);
-        dataSourceConfig.setJdbcUrl(url);
-        dataSourceConfig.setUsername(username);
-        dataSourceConfig.setPassword(password);
-        dataSourceConfig.setAutoCommit(false);
-        dataSourceConfig.setMaximumPoolSize(maxPoolSize);
+        final HikariConfig config = new HikariConfig();
 
-        return new HikariDataSource(dataSourceConfig);
+        config.setDriverClassName(driver);
+        config.setJdbcUrl(url);
+        config.setUsername(username);
+        config.setPassword(password);
+        config.setAutoCommit(false);
+        config.setConnectionTestQuery("SELECT 1");
+        config.setMinimumIdle(MIN_IDLE);
+        config.setMaximumPoolSize(maxPoolSize);
+        config.setConnectionTimeout(CONN_TIMEOUT);
+        config.setIdleTimeout(IDLE_TIMEOUT);
+
+        return new HikariDataSource(config);
     }
 
     Properties additionalProperties() {
