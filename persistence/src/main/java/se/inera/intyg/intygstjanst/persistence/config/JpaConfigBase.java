@@ -96,7 +96,6 @@ public abstract class JpaConfigBase {
         config.setUsername(username);
         config.setPassword(password);
         config.setAutoCommit(false);
-        config.setConnectionTestQuery("SELECT 1");
         config.setMinimumIdle(MIN_IDLE);
         config.setMaximumPoolSize(maxPoolSize);
         config.setConnectionTimeout(CONN_TIMEOUT);

@@ -58,6 +58,7 @@ dependencies {
     compile "org.apache.activemq:activemq-spring:${activeMqVersion}"
     compile "org.springframework:spring-jms:${springVersion}"
     compile "org.springframework:spring-webmvc:${springVersion}"
+    compile "mysql:mysql-connector-java:${mysqlVersion}"
 
     compileOnly "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
     compileOnly "javax.servlet:servlet-api:${servletApiVersion}"
@@ -73,6 +74,4 @@ dependencies {
     // SetCertificateStatusResponder_1.0.xsd (as it exists in two different schemas)
     testRuntime "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     testRuntime "javax.servlet:servlet-api:${servletApiVersion}"
-
-    gretty "mysql:mysql-connector-java:${mysqlVersion}"
 }
