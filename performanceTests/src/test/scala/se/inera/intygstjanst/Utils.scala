@@ -16,14 +16,14 @@ object Utils {
 
   val baseUrl = System.getProperty("baseUrl", "http://localhost:8080/inera-certificate" )
 
-  val consent = exec(http("Give consent for ${personNr}")
+  val consent = exec(http("Set Consent 1.0")
         .post("/set-consent/v1.0")
           .headers(Headers.set_consent)
           .body(ELFileBody("request-bodies/set-consent.xml"))
           .check(status.is(200)));
 
   // purges message queue (to statistics), otherwise the app hangs when the queue is full.
-  def purgeQueue = exec(http("Purge queue")
+  def purgeQueue = exec(http("Purge ST queue")
     .get("/resources/statisticsresource/purge")
     .check(status.is(200)));
 
