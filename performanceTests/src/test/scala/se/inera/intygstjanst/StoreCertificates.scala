@@ -21,10 +21,6 @@ class StoreCertificates extends Simulation {
           .check(status.is(200)))
     }
     .pause(1 seconds)
-    .exec(Utils.purgeQueue)
-
-  //setUp(scn.inject(rampUsers(100) over (30 seconds)).throttle(reachRps(20) in (20 seconds), holdFor(10 minutes)).protocols(Conf.httpConf))
 
   setUp(scn.inject(rampUsers(100) over (120 seconds)).protocols(Conf.httpConf))
-
 }

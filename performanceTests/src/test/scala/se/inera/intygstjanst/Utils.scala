@@ -14,7 +14,7 @@ import scalaj.http._
 
 object Utils {
 
-  val baseUrl = System.getProperty("baseUrl", "http://localhost:8080/inera-certificate" )
+  val baseUrl = System.getProperty("baseUrl", "http://localhost:8080" ) + "/inera-certificate"
 
   val consent = exec(http("Set Consent 1.0")
         .post("/set-consent/v1.0")

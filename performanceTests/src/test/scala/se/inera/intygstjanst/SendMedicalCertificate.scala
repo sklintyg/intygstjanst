@@ -17,12 +17,11 @@ class SendMedicalCertificate extends Simulation {
     .feed(testpersonnummer)
     //Give consent for current user
     .exec(Utils.consent)
-    .exec(http("Send certificate ${intygsId} for user ${personNr}")
+    .exec(http("Send Certificate 1.0")
       .post("/send-certificate/v1.0")
       .headers(Headers.send_medical_certificate)
       .body(ELFileBody("request-bodies/send-medical-certificate.xml"))
-      .check(
-        status.is(200)))
+      .check(status.is(200)))
 
   before {
     println("Setting up database before execution.")

@@ -14,19 +14,17 @@ class RegisterCertificate extends Simulation {
 
   val testpersonnummer = csv("data/testpersonnummerSkatteverket.csv").circular
 
-  def luse = exec(http("Register LUSE certificate ${intygsId} for user ${personNr}")
+  def luse = exec(http("Register LUSE Certificate 3.0")
           .post("/register-certificate-se/v3.0")
           .headers(Headers.register_certificate)
           .body(ELFileBody("request-bodies/register-luse.xml"))
-          .check(
-            status.is(200)))
+          .check(status.is(200)))
 
-  def lisjp = exec(http("Register LISJP certificate ${intygsId} for user ${personNr}")
+  def lisjp = exec(http("Register LISJP Certificate 3.0")
           .post("/register-certificate-se/v3.0")
           .headers(Headers.register_certificate)
           .body(ELFileBody("request-bodies/register-lisjp.xml"))
-          .check(
-                  status.is(200)))
+          .check(status.is(200)))
 
   val scn = scenario("Register Certificates")
     .feed(testpersonnummer)
@@ -34,9 +32,7 @@ class RegisterCertificate extends Simulation {
         "personNr" -> session("personNr").as[String].replace("-",""),
         "intygsId" -> UUID.randomUUID()
         ))
-    .uniformRandomSwitch(
-      lisjp,
-      luse)
+    .uniformRandomSwitch(lisjp, luse)
 
   setUp(scn.inject(rampUsers(numberOfUsers) over (120 seconds)).protocols(Conf.httpConf))
 
