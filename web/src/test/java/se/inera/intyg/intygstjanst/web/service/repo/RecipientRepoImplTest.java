@@ -70,7 +70,7 @@ public class RecipientRepoImplTest {
 
     @Test
     public void testListRecipients() {
-        assertEquals(4, repo.listRecipients().size());
+        assertEquals(5, repo.listRecipients().size());
         assertTrue(repo.listRecipients().containsAll(allRecipients));
         assertTrue(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }
@@ -83,37 +83,37 @@ public class RecipientRepoImplTest {
         } catch (IOException e) {
         }
         // Make sure the recipients loaded by init() still remain!
-        assertEquals(String.format("Expected 4 recipients after update, was %s", repo.listRecipients().size()),
-                4, repo.listRecipients().size());
+        assertEquals(String.format("Expected 5 recipients after update, was %s", repo.listRecipients().size()),
+                5, repo.listRecipients().size());
         assertTrue(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }
 
     @Test
     public void testAddingRecipientToFile() throws IOException {
-        assertEquals(String.format("Expected 4 recipients before update, was %s", repo.listRecipients().size()),
-                4, repo.listRecipients().size());
+        assertEquals(String.format("Expected 5 recipients before update, was %s", repo.listRecipients().size()),
+                5, repo.listRecipients().size());
 
         // Change file and update
         injectRecipientFile("recipients_updated.json");
         repo.update();
 
-        assertEquals(String.format("Expected 5 recipients after update, was %s", repo.listRecipients().size()),
-                5, repo.listRecipients().size());
+        assertEquals(String.format("Expected 6 recipients after update, was %s", repo.listRecipients().size()),
+                6, repo.listRecipients().size());
         assertFalse(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }
 
     @Test
     public void testChangedRecipientInFile() throws IOException, RecipientUnknownException {
-        assertEquals(String.format("Expected 4 recipients before update, was %s", repo.listRecipients().size()),
-                4, repo.listRecipients().size());
+        assertEquals(String.format("Expected 5 recipients before update, was %s", repo.listRecipients().size()),
+                5, repo.listRecipients().size());
         assertEquals("Transportstyrelsen", repo.getRecipient("TRANSP").getName());
 
         // Change file and update
         injectRecipientFile("recipients_changed.json");
         repo.update();
 
-        assertEquals(String.format("Expected 4 recipients after update, was %s", repo.listRecipients().size()),
-                4, repo.listRecipients().size());
+        assertEquals(String.format("Expected 5 recipients after update, was %s", repo.listRecipients().size()),
+                5, repo.listRecipients().size());
         assertEquals("Changed", repo.getRecipient("TRANSP").getName());
         assertTrue(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }

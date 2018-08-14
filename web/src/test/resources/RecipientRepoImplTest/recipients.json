@@ -53,5 +53,15 @@
     ],
     "active" : true,
     "trusted": true
+  },
+  {
+    "id": "AF",
+    "name": "Arbetsförmedlingen",
+    "logicalAddress": "AF",
+    "certificateTypes" : [
+      "af00213"
+    ],
+    "active" : true,
+    "trusted": true
   }
 ]
