@@ -25,13 +25,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversType;
-import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverType;
 import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverTypeType;
@@ -50,9 +48,6 @@ public class ListApprovedReceiversResponderImpl implements ListApprovedReceivers
     @Autowired
     private RecipientService recipientService;
 
-    @Autowired
-    private IntygModuleRegistry intygModuleRegistry;
-
     @Override
     public ListApprovedReceiversResponseType listApprovedReceivers(String s, ListApprovedReceiversType listApprovedReceiversType) {
         if (listApprovedReceiversType.getIntygsId() == null) {
@@ -68,8 +63,6 @@ public class ListApprovedReceiversResponderImpl implements ListApprovedReceivers
             throw new IllegalArgumentException("Request to ListApprovedReceivers is missing required parameter 'TypAvIntyg'");
         }
 
-        String huvudmottagare = findHuvudmottagare(typAvIntyg);
-
         List<String> allowedRecipientIds = approvedReceiverDao.getApprovedReceiverIdsForCertificate(intygsId.getExtension());
 
         ListApprovedReceiversResponseType response = new ListApprovedReceiversResponseType();
@@ -80,7 +73,7 @@ public class ListApprovedReceiversResponderImpl implements ListApprovedReceivers
                 CertificateReceiverType recipient = new CertificateReceiverType();
                 recipient.setReceiverId(allowedRecipientId);
                 recipient.setReceiverName(serviceRecipient.getName());
-                recipient.setReceiverType(resolveMottagarTyp(huvudmottagare, allowedRecipientId));
+                recipient.setReceiverType(toSchemaType(serviceRecipient.getRecipientType()));
                 recipient.setTrusted(serviceRecipient.isTrusted());
                 response.getRecipient().add(recipient);
             } catch (RecipientUnknownException e) {
@@ -93,20 +86,7 @@ public class ListApprovedReceiversResponderImpl implements ListApprovedReceivers
         return response;
     }
 
-    private CertificateReceiverTypeType resolveMottagarTyp(String huvudmottagareCode, String mottagarId) {
-        return huvudmottagareCode.equalsIgnoreCase(mottagarId) ? CertificateReceiverTypeType.HUVUDMOTTAGARE
-                : CertificateReceiverTypeType.ANNAN_MOTTAGARE;
-    }
-
-    private String findHuvudmottagare(TypAvIntyg intygTyp) {
-        try {
-            ModuleEntryPoint moduleEntryPoint = intygModuleRegistry.getModuleEntryPoint(intygTyp.getCode());
-            if (moduleEntryPoint == null) {
-                throw new IllegalArgumentException("No ModuleEntryPoint found for intygTyp '" + intygTyp.getCode() + "'");
-            }
-            return moduleEntryPoint.getDefaultRecipient();
-        } catch (ModuleNotFoundException e) {
-            throw new IllegalArgumentException("No default receiver (huvudmottagare) found for intygtyp '" + intygTyp.getCode() + "'");
-        }
+    private CertificateReceiverTypeType toSchemaType(CertificateRecipientType certificateRecipientType) {
+        return CertificateReceiverTypeType.valueOf(certificateRecipientType.name());
     }
 }

@@ -25,10 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listpossiblereceivers.v1.ListPossibleReceiversResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listpossiblereceivers.v1.ListPossibleReceiversResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listpossiblereceivers.v1.ListPossibleReceiversType;
-import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverType;
@@ -37,13 +35,9 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 
 import java.util.List;
 
-// @SchemaValidation
 public class ListPossibleReceiversResponderImpl implements ListPossibleReceiversResponderInterface {
 
     private static final Logger LOG = LoggerFactory.getLogger(ListPossibleReceiversResponderImpl.class);
-
-    @Autowired
-    private IntygModuleRegistry intygModuleRegistry;
 
     @Autowired
     private RecipientService recipientService;
@@ -55,8 +49,6 @@ public class ListPossibleReceiversResponderImpl implements ListPossibleReceivers
             throw new IllegalArgumentException("Request to ListPossibleReceivers is missing required parameter 'intygTyp'");
         }
 
-        String huvudmottagareCode = findHuvudmottagare(intygTyp);
-
         CertificateType certificateType = new CertificateType(intygTyp.getCode());
         List<Recipient> recipients = recipientService.listRecipients(certificateType);
 
@@ -66,24 +58,14 @@ public class ListPossibleReceiversResponderImpl implements ListPossibleReceivers
             CertificateReceiverType certificateReceiverType = new CertificateReceiverType();
             certificateReceiverType.setReceiverId(possibleRecipient.getId());
             certificateReceiverType.setReceiverName(possibleRecipient.getName());
-            certificateReceiverType.setReceiverType(resolveMottagarTyp(huvudmottagareCode, possibleRecipient.getId()));
+            certificateReceiverType.setReceiverType(toSchemaType(possibleRecipient.getRecipientType()));
             certificateReceiverType.setTrusted(possibleRecipient.isTrusted());
             response.getRecipient().add(certificateReceiverType);
         }
         return response;
     }
 
-    private CertificateReceiverTypeType resolveMottagarTyp(String huvudmottagareCode, String mottagarId) {
-        return huvudmottagareCode.equalsIgnoreCase(mottagarId) ? CertificateReceiverTypeType.HUVUDMOTTAGARE
-                : CertificateReceiverTypeType.ANNAN_MOTTAGARE;
-    }
-
-    private String findHuvudmottagare(TypAvIntyg intygTyp) {
-        try {
-            ModuleEntryPoint moduleEntryPoint = intygModuleRegistry.getModuleEntryPoint(intygTyp.getCode());
-            return moduleEntryPoint.getDefaultRecipient();
-        } catch (ModuleNotFoundException e) {
-            throw new IllegalArgumentException("No default receiver (huvudmottagare) found for intygtyp '" + intygTyp.getCode() + "'");
-        }
+    private CertificateReceiverTypeType toSchemaType(CertificateRecipientType certificateRecipientType) {
+        return CertificateReceiverTypeType.valueOf(certificateRecipientType.name());
     }
 }

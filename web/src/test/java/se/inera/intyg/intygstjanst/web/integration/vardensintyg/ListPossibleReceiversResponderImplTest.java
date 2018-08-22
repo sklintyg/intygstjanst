@@ -25,11 +25,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listpossiblereceivers.v1.ListPossibleReceiversResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listpossiblereceivers.v1.ListPossibleReceiversType;
-import se.inera.intyg.common.af00213.support.Af00213EntryPoint;
-import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverTypeType;
@@ -50,17 +47,13 @@ public class ListPossibleReceiversResponderImplTest {
     @Mock
     private RecipientService recipientService;
 
-    @Mock
-    private IntygModuleRegistry intygModuleRegistry;
-
     @InjectMocks
     private ListPossibleReceiversResponderImpl testee;
 
     @Test
-    public void testListOk() throws RecipientUnknownException, ModuleNotFoundException {
+    public void testListOk() {
         CertificateType certificateType = new CertificateType(INTYG_TYP);
 
-        when(intygModuleRegistry.getModuleEntryPoint(INTYG_TYP)).thenReturn(new Af00213EntryPoint());
         when(recipientService.listRecipients(certificateType)).thenReturn(buildRecipients("AF", INTYG_TYP));
 
         ListPossibleReceiversResponseType resp = testee.listPossibleReceivers(LOGICAL_ADDRESS, buildReq(INTYG_TYP));
@@ -68,6 +61,7 @@ public class ListPossibleReceiversResponderImplTest {
         assertEquals(1, resp.getRecipient().size());
         assertEquals("AF", resp.getRecipient().get(0).getReceiverId());
         assertEquals("AF-name", resp.getRecipient().get(0).getReceiverName());
+        assertEquals("HUVUDMOTTAGARE", resp.getRecipient().get(0).getReceiverType().name());
         assertEquals(CertificateReceiverTypeType.HUVUDMOTTAGARE, resp.getRecipient().get(0).getReceiverType());
     }
 
@@ -77,7 +71,8 @@ public class ListPossibleReceiversResponderImplTest {
     }
 
     private List<Recipient> buildRecipients(String recipientId, String certTypes) {
-        return Arrays.asList(new Recipient(LOGICAL_ADDRESS, recipientId + "-name", recipientId, certTypes, true, true));
+        return Arrays.asList(new Recipient(LOGICAL_ADDRESS, recipientId + "-name", recipientId,
+                CertificateRecipientType.HUVUDMOTTAGARE.name(), certTypes, true, true));
     }
 
     private ListPossibleReceiversType buildReq(String intygTyp) {

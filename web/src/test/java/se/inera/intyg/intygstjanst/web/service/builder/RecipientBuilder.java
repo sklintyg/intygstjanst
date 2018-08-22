@@ -19,6 +19,7 @@
 package se.inera.intyg.intygstjanst.web.service.builder;
 
 import com.google.common.base.Joiner;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class RecipientBuilder {
     private boolean trusted;
 
     public Recipient build() {
-        return new Recipient(logicalAddress, name, id, certificateTypes, active, trusted);
+        return new Recipient(logicalAddress, name, id, CertificateRecipientType.HUVUDMOTTAGARE.name(), certificateTypes, active, trusted);
     }
 
     public String getLogicalAddress() {

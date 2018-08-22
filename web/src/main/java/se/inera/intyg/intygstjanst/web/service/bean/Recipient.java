@@ -38,6 +38,7 @@ public class Recipient {
     private String logicalAddress;
     private String name;
     private String id;
+    private CertificateRecipientType recipientType;
     private List<String> certificateTypes;
     private boolean active;
     private boolean trusted;
@@ -48,22 +49,33 @@ public class Recipient {
     /**
      * Constructor for recipient object.
      *
-     * @param logicalAddress   a recipient's logical address
-     * @param name             a recipient's name
-     * @param id               a recipient's identifier
-     * @param certificateTypes a comma-separated string of the type of certificates this recipient support
-     * @param active           if the recipient is active
-     * @param trusted          if the recipient can be trusted with information about sekretessmarkerade patients
+     * @param logicalAddress
+     *            a recipient's logical address
+     * @param name
+     *            a recipient's name
+     * @param id
+     *            a recipient's identifier
+     * @param recipientType
+     *            a recipient's type: HUVUDMOTTAGARE, DIREKTMOTTAGARE, MOTTAGARE
+     * @param certificateTypes
+     *            a comma-separated string of the type of certificates this recipient support
+     * @param active
+     *            if the recipient is active
+     * @param trusted
+     *            if the recipient can be trusted with information about sekretessmarkerade patients
      */
-    public Recipient(String logicalAddress, String name, String id, String certificateTypes, boolean active, boolean trusted) {
+    public Recipient(String logicalAddress, String name, String id, String recipientType, String certificateTypes, boolean active,
+            boolean trusted) {
         hasText(logicalAddress, "logicalAddress must not be empty");
         hasText(name, "name must not be empty");
         hasText(id, "id must not be empty");
+        hasText(recipientType, "id must not be empty");
         hasText(certificateTypes, "certificateTypes must not be empty");
 
         this.logicalAddress = logicalAddress;
         this.name = name;
         this.id = id;
+        this.recipientType = CertificateRecipientType.valueOf(recipientType);
         this.certificateTypes = Arrays.asList(certificateTypes.split(SEPARATOR));
         this.active = active;
         this.trusted = trusted;
@@ -72,22 +84,33 @@ public class Recipient {
     /**
      * Constructor for recipient object.
      *
-     * @param logicalAddress   a recipient's logical address
-     * @param name             a recipient's name
-     * @param id               a recipient's identifier
-     * @param certificateTypes a list of the type of certificates this recipient support
-     * @param active           if the recipient is active
-     * @param trusted          if the recipient can be trusted with information about sekretessmarkerade patients
+     * @param logicalAddress
+     *            a recipient's logical address
+     * @param name
+     *            a recipient's name
+     * @param id
+     *            a recipient's identifier
+     * @param recipientType
+     *            a recipient's type: HUVUDMOTTAGARE, DIREKTMOTTAGARE, MOTTAGARE
+     * @param certificateTypes
+     *            a list of the type of certificates this recipient support
+     * @param active
+     *            if the recipient is active
+     * @param trusted
+     *            if the recipient can be trusted with information about sekretessmarkerade patients
      */
-    public Recipient(String logicalAddress, String name, String id, List<String> certificateTypes, boolean active, boolean trusted) {
+    public Recipient(String logicalAddress, String name, String id, String recipientType, List<String> certificateTypes, boolean active,
+            boolean trusted) {
         hasText(logicalAddress, "logicalAddress must not be empty");
         hasText(name, "name must not be empty");
         hasText(id, "id must not be empty");
+        hasText(id, "recipientType must not be empty");
         notEmpty(certificateTypes, "certificateTypes must have at least one certificate type");
 
         this.logicalAddress = logicalAddress;
         this.name = name;
         this.id = id;
+        this.recipientType = CertificateRecipientType.valueOf(recipientType);
         this.certificateTypes = certificateTypes;
         this.active = active;
         this.trusted = trusted;
@@ -104,6 +127,10 @@ public class Recipient {
 
     public String getId() {
         return id;
+    }
+
+    public CertificateRecipientType getRecipientType() {
+        return recipientType;
     }
 
     public List<String> getCertificateTypes() {
@@ -127,6 +154,7 @@ public class Recipient {
         return "logicalAddress: " + logicalAddress
                 + " name: " + name
                 + " id: " + id
+                + " recipientType: " + recipientType.name()
                 + " certificateTypes: " + Joiner.on(SEPARATOR).join(certificateTypes)
                 + " active: " + active
                 + " trusted: " + trusted;
@@ -158,6 +186,9 @@ public class Recipient {
         if (!id.equals(recipient.id)) {
             return false;
         }
+        if (!recipientType.equals(recipient.recipientType)) {
+            return false;
+        }
         return certificateTypes.equals(recipient.certificateTypes);
     }
 
@@ -167,10 +198,10 @@ public class Recipient {
         int result = logicalAddress.hashCode();
         result = prime * result + name.hashCode();
         result = prime * result + id.hashCode();
+        result = prime * result + recipientType.hashCode();
         result = prime * result + certificateTypes.hashCode();
         result = prime * result + (active ? 1 : 0);
         result = prime * result + (trusted ? 1 : 0);
         return result;
     }
-
 }

@@ -35,6 +35,7 @@ import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.schemas.contract.Personnummer;
 
@@ -73,7 +74,8 @@ public class SetCertificateStatusResponderImplTest {
 
     @Before
     public void init() throws RecipientUnknownException {
-        Recipient recipient = new Recipient("logicalAddress", "name", RECIPIENT_FKASSA, "fk7263", true, true);
+        Recipient recipient = new Recipient("logicalAddress", "name", RECIPIENT_FKASSA, CertificateRecipientType.HUVUDMOTTAGARE.name(),
+                "fk7263", true, true);
         when(recipientService.getPrimaryRecipientFkassa()).thenReturn(recipient);
         when(recipientService.getRecipient(RECIPIENT_FKASSA)).thenReturn(recipient);
         when(recipientService.getRecipient(RECIPIENT_UNKNOWN)).thenThrow(new RecipientUnknownException(""));
