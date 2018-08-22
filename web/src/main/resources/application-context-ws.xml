@@ -260,6 +260,17 @@
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
+  <!-- Vårdens/Invånarens intyg -->
+  <jaxws:endpoint address="/list-approved-receivers/v1.0"
+                  implementor="se.inera.intyg.intygstjanst.web.integration.vardensintyg.ListApprovedReceiversResponderImpl">
+  </jaxws:endpoint>
+  <jaxws:endpoint address="/list-possible-receivers/v1.0"
+                  implementor="se.inera.intyg.intygstjanst.web.integration.vardensintyg.ListPossibleReceiversResponderImpl">
+  </jaxws:endpoint>
+  <jaxws:endpoint address="/register-approved-receivers/v1.0"
+                  implementor="se.inera.intyg.intygstjanst.web.integration.vardensintyg.RegisterApprovedReceiversResponderImpl">
+  </jaxws:endpoint>
+
   <!-- ws clients -->
 
   <jaxws:client id="revokeMedicalCertificateClient"

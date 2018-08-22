@@ -54,6 +54,7 @@
             base-package="se.inera.intyg.intygstjanst.config,se.inera.intyg.intygstjanst.persistence,se.inera.intyg.intygstjanst.web"/>
 
     <bean id="recipientService" class="se.inera.intyg.intygstjanst.web.service.impl.RecipientServiceImpl"/>
+    <bean id="receiverService" class="se.inera.intyg.intygstjanst.web.service.impl.ReceiverServiceImpl"/>
 
     <!-- Initializes caching, required by hsa-services-config.xml -->
     <beans profile="caching-enabled">
