@@ -60,13 +60,12 @@ public class ListApprovedReceiversResponderImplIT extends BaseIntegrationTest {
                 .then().statusCode(200)
                 .rootPath("Envelope.Body.RegisterApprovedReceiversResponse.");
 
-        givenRequest(intygsId, "af00213").body("recipient.receiverId", is("AF"));
+        givenRequest(intygsId).body("recipient.receiverId", is("AF"));
     }
 
-    private ValidatableResponse givenRequest(String intygsId, String intygTyp) {
+    private ValidatableResponse givenRequest(String intygsId) {
         ST requestTemplate = templateGroup.getInstanceOf("request");
         requestTemplate.add("intygsId", intygsId);
-        requestTemplate.add("intygTyp", intygTyp);
 
         return given()
                 .body(requestTemplate.render())

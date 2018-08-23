@@ -34,7 +34,6 @@ import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverType;
 import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverTypeType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
-import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 
 import java.util.List;
 
@@ -58,15 +57,10 @@ public class ListApprovedReceiversResponderImpl implements ListApprovedReceivers
             throw new IllegalArgumentException("Request to ListApprovedReceivers is missing required parameter 'IntygId.extension'");
         }
 
-        TypAvIntyg typAvIntyg = listApprovedReceiversType.getIntygsTyp();
-        if (typAvIntyg == null || Strings.isNullOrEmpty(typAvIntyg.getCode())) {
-            throw new IllegalArgumentException("Request to ListApprovedReceivers is missing required parameter 'TypAvIntyg'");
-        }
-
-        List<String> allowedRecipientIds = approvedReceiverDao.getApprovedReceiverIdsForCertificate(intygsId.getExtension());
+        List<String> approvedReceiverIds = approvedReceiverDao.getApprovedReceiverIdsForCertificate(intygsId.getExtension());
 
         ListApprovedReceiversResponseType response = new ListApprovedReceiversResponseType();
-        for (String allowedRecipientId : allowedRecipientIds) {
+        for (String allowedRecipientId : approvedReceiverIds) {
 
             try {
                 Recipient serviceRecipient = recipientService.getRecipient(allowedRecipientId);

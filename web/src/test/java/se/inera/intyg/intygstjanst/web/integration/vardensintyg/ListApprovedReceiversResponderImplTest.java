@@ -33,7 +33,6 @@ import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverTypeType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
-import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 
 import java.util.Arrays;
 
@@ -70,11 +69,7 @@ public class ListApprovedReceiversResponderImplTest {
         assertEquals(CertificateReceiverTypeType.HUVUDMOTTAGARE, resp.getRecipient().get(0).getReceiverType());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testFailsWithNullIntygTyp() {
-        testee.listApprovedReceivers(LOGICAL_ADDRESS, buildReq(INTYG_ID, null));
-    }
-
+    @Test
     public void testReturnsEmptyWhenUnknownIntygTyp() {
         ListApprovedReceiversResponseType resp = testee.listApprovedReceivers(LOGICAL_ADDRESS, buildReq(INTYG_ID, "okand-typ"));
         assertEquals(0, resp.getRecipient().size());
@@ -99,9 +94,6 @@ public class ListApprovedReceiversResponderImplTest {
         } else {
             req.setIntygsId(null);
         }
-        TypAvIntyg typAvIntyg = new TypAvIntyg();
-        typAvIntyg.setCode(intygTyp);
-        req.setIntygsTyp(typAvIntyg);
         return req;
     }
 }
