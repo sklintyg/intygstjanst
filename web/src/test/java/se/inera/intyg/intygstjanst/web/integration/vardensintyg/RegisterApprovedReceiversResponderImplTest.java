@@ -31,7 +31,7 @@ import se.inera.intyg.intygstjanst.web.service.ReceiverService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
-import se.riv.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
 import java.util.Arrays;
 
@@ -42,6 +42,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+
+;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterApprovedReceiversResponderImplTest {

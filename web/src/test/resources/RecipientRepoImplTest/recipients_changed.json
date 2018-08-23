@@ -2,6 +2,7 @@
   {
     "id": "FKASSA",
     "name": "Försäkringskassan",
+    "recipientType": "HUVUDMOTTAGARE",
     "logicalAddress": "FKORG",
     "certificateTypes": [
       "fk7263",
@@ -14,6 +15,7 @@
   {
     "id": "TRANSP",
     "name": "Changed",
+    "recipientType": "HUVUDMOTTAGARE",
     "logicalAddress": "tsTestAdress",
     "certificateTypes": [
       "ts-bas",
@@ -25,6 +27,7 @@
   {
     "id": "HSVARD",
     "name": "Hälso- och sjukvården",
+    "recipientType": "MOTTAGARE",
     "logicalAddress": "hsvardAdress",
     "certificateTypes": [
       "ts-bas",
@@ -41,6 +44,7 @@
   {
     "id": "INVANA",
     "name": "Invånaren",
+    "recipientType": "MOTTAGARE",
     "logicalAddress": "miAdress",
     "certificateTypes": [
       "ts-bas",
