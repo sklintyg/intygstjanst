@@ -65,7 +65,7 @@ public class RegisterApprovedReceiversResponderImplTest {
         when(recipientService.getRecipient(anyString())).thenReturn(new Recipient());
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq("FK", "AF"));
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
-        verify(receiverService, times(2)).registerApprovedReceivers(any(ApprovedReceiver.class));
+        verify(receiverService, times(2)).registerApprovedReceiver(any(ApprovedReceiver.class));
         verify(recipientService, times(2)).getRecipient(anyString());
     }
 

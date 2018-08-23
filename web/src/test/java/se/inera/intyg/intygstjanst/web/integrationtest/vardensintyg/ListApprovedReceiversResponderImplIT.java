@@ -60,7 +60,7 @@ public class ListApprovedReceiversResponderImplIT extends BaseIntegrationTest {
                 .then().statusCode(200)
                 .rootPath("Envelope.Body.RegisterApprovedReceiversResponse.");
 
-        givenRequest(intygsId).body("recipient.receiverId", is("AF"));
+        givenRequest(intygsId).body("receiverList.receiverId", is("AF"));
     }
 
     private ValidatableResponse givenRequest(String intygsId) {

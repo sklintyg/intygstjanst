@@ -23,5 +23,8 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
 
 public interface ReceiverService {
     @Transactional
-    void registerApprovedReceivers(ApprovedReceiver approvedReceiver);
+    void registerApprovedReceiver(ApprovedReceiver approvedReceiver);
+
+    @Transactional
+    void clearApprovedReceiversForCertificate(String intygsId);
 }

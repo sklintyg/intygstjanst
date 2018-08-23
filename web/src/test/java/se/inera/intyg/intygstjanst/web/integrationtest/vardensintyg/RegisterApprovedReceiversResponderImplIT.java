@@ -31,21 +31,64 @@ import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import java.util.UUID;
 
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 public class RegisterApprovedReceiversResponderImplIT extends BaseIntegrationTest {
 
     private STGroup templateGroup;
+    private STGroup listApprovedTemplateGroup;
 
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
+        listApprovedTemplateGroup = new STGroupFile("integrationtests/listapprovedreceivers/requests.stg");
         templateGroup = new STGroupFile("integrationtests/registerapprovedreceivers/requests.stg");
     }
 
     @Test
     public void testRegisterApprovedReceivers() {
         givenRequest(UUID.randomUUID().toString(), "AF").body("result.resultCode", is("OK"));
+    }
+
+    @Test
+    public void testRegisterAndThenUpdateApprovedReceivers() {
+        String intygsId = UUID.randomUUID().toString();
+
+        // Register AF
+        givenRequest(intygsId, "AF").body("result.resultCode", is("OK"));
+
+        // Check approved using ListApproved contract
+        givenListApprovedRequest(intygsId)
+                .body("receiverList[0].receiverId", equalTo("AF"));
+
+        // Register FKASSA instead
+        givenRequest(intygsId, "FKASSA").body("result.resultCode", is("OK"));
+
+        // Check approved using ListApproved contract
+        givenListApprovedRequest(intygsId)
+                .body("receiverList[0].receiverId", equalTo("FKASSA"));
+
+    }
+
+    @Test
+    public void testRegisterAndThenUpdateDoesNotUpdateApprovedReceivers() {
+        String intygsId = UUID.randomUUID().toString();
+
+        // Register AF
+        givenRequest(intygsId, "AF").body("result.resultCode", is("OK"));
+
+        // Check approved using ListApproved contract
+        givenListApprovedRequest(intygsId)
+                .body("receiverList[0].receiverId", equalTo("AF"));
+
+        // Register FKASSA instead
+        givenRequest(intygsId, "NOT_A_RECEIVER_AT_ALL").body("result.resultCode", is("ERROR"));
+
+        // Check approved using ListApproved contract
+        givenListApprovedRequest(intygsId)
+                .body("receiverList[0].receiverId", equalTo("AF"));
+
     }
 
     private ValidatableResponse givenRequest(String intygsId, String mottagare) {
@@ -58,5 +101,16 @@ public class RegisterApprovedReceiversResponderImplIT extends BaseIntegrationTes
                 .when().post("inera-certificate/register-approved-receivers/v1.0")
                 .then().statusCode(200)
                 .rootPath("Envelope.Body.RegisterApprovedReceiversResponse.");
+    }
+
+    private ValidatableResponse givenListApprovedRequest(String intygsId) {
+        ST requestTemplate = listApprovedTemplateGroup.getInstanceOf("request");
+        requestTemplate.add("intygsId", intygsId);
+
+        return given()
+                .body(requestTemplate.render())
+                .when().post("inera-certificate/list-approved-receivers/v1.0")
+                .then().statusCode(200)
+                .rootPath("Envelope.Body.ListApprovedReceiversResponse.");
     }
 }

@@ -71,4 +71,5 @@ public class ApprovedReceiver {
     public void setReceiverId(String receiverId) {
         this.receiverId = receiverId;
     }
+
 }

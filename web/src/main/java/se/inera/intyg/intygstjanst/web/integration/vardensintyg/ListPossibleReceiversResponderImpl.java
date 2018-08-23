@@ -60,7 +60,7 @@ public class ListPossibleReceiversResponderImpl implements ListPossibleReceivers
             certificateReceiverType.setReceiverName(possibleRecipient.getName());
             certificateReceiverType.setReceiverType(toSchemaType(possibleRecipient.getRecipientType()));
             certificateReceiverType.setTrusted(possibleRecipient.isTrusted());
-            response.getRecipient().add(certificateReceiverType);
+            response.getReceiverList().add(certificateReceiverType);
         }
         return response;
     }

@@ -69,7 +69,7 @@ public class ListApprovedReceiversResponderImpl implements ListApprovedReceivers
                 recipient.setReceiverName(serviceRecipient.getName());
                 recipient.setReceiverType(toSchemaType(serviceRecipient.getRecipientType()));
                 recipient.setTrusted(serviceRecipient.isTrusted());
-                response.getRecipient().add(recipient);
+                response.getReceiverList().add(recipient);
             } catch (RecipientUnknownException e) {
                 String errMsg = "Certificate with id '" + intygsId.getExtension() + "' specified approved recipient of type '"
                         + allowedRecipientId + "' which is not known.";

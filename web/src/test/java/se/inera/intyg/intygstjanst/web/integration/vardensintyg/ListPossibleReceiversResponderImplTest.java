@@ -58,11 +58,11 @@ public class ListPossibleReceiversResponderImplTest {
 
         ListPossibleReceiversResponseType resp = testee.listPossibleReceivers(LOGICAL_ADDRESS, buildReq(INTYG_TYP));
 
-        assertEquals(1, resp.getRecipient().size());
-        assertEquals("AF", resp.getRecipient().get(0).getReceiverId());
-        assertEquals("AF-name", resp.getRecipient().get(0).getReceiverName());
-        assertEquals("HUVUDMOTTAGARE", resp.getRecipient().get(0).getReceiverType().name());
-        assertEquals(CertificateReceiverTypeType.HUVUDMOTTAGARE, resp.getRecipient().get(0).getReceiverType());
+        assertEquals(1, resp.getReceiverList().size());
+        assertEquals("AF", resp.getReceiverList().get(0).getReceiverId());
+        assertEquals("AF-name", resp.getReceiverList().get(0).getReceiverName());
+        assertEquals("HUVUDMOTTAGARE", resp.getReceiverList().get(0).getReceiverType().name());
+        assertEquals(CertificateReceiverTypeType.HUVUDMOTTAGARE, resp.getReceiverList().get(0).getReceiverType());
     }
 
     @Test(expected = IllegalArgumentException.class)
