@@ -408,4 +408,12 @@
 			<column name="CERTIFICATE_ID"></column>
 		</createIndex>
 	</changeSet>
+
+	<changeSet id="40" author="el">
+		<addColumn tableName="APPROVED_RECEIVER">
+			<column name="APPROVED" type="boolean">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

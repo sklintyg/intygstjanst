@@ -1,6 +1,6 @@
 delimiters "$", "$"
 
-request(intygsId, mottagare) ::= <<
+request(intygsId, intygsTyp, mottagare) ::= <<
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:clinicalprocess:healthcond:certificate:RegisterApprovedReceivers:1" xmlns:urn2="urn:riv:clinicalprocess:healthcond:certificate:types:3">
    <soapenv:Header>
       <urn:LogicalAddress></urn:LogicalAddress>
@@ -11,7 +11,14 @@ request(intygsId, mottagare) ::= <<
             <urn2:root></urn2:root>
             <urn2:extension>$intygsId$</urn2:extension>
          </urn1:intyg-id>
-         <urn1:approvedReceivers>$mottagare$</urn1:approvedReceivers>
+         <urn1:typAvIntyg>
+            <urn2:code>lisjp</urn2:code>
+            <urn2:codeSystem></urn2:codeSystem>
+         </urn1:typAvIntyg>
+         <urn1:approvedReceivers>
+            <urn1:receiverId>$mottagare$</urn1:receiverId>
+            <urn1:approvalStatus>YES</urn1:approvalStatus>
+         </urn1:approvedReceivers>
       </urn1:RegisterApprovedReceivers>
    </soapenv:Body>
 </soapenv:Envelope>

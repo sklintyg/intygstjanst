@@ -41,8 +41,8 @@ public class ApprovedReceiverDaoImpl implements ApprovedReceiverDao {
     private EntityManager entityManager;
 
     @Override
-    public List<String> getApprovedReceiverIdsForCertificate(String intygsId) {
-        return entityManager.createQuery("SELECT ar.receiverId FROM ApprovedReceiver ar WHERE ar.certificateId = :intygsId")
+    public List<ApprovedReceiver> getApprovedReceiverIdsForCertificate(String intygsId) {
+        return entityManager.createQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId = :intygsId", ApprovedReceiver.class)
                 .setParameter("intygsId", intygsId)
                 .getResultList();
     }

@@ -45,6 +45,9 @@ public class ApprovedReceiver {
     @Column(name = "RECEIVER_ID", nullable = false)
     private String receiverId;
 
+    @Column(name = "APPROVED", nullable = false)
+    private boolean approved;
+
     public ApprovedReceiver() {
     }
 
@@ -72,4 +75,11 @@ public class ApprovedReceiver {
         this.receiverId = receiverId;
     }
 
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
 }

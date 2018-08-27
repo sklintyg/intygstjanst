@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.web.integration.vardensintyg;
 
 import com.google.common.base.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.ReceiverApprovalStatus;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversType;
@@ -27,8 +28,14 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.ReceiverService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.ApprovalStatusType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
+
+import java.util.List;
 
 public class RegisterApprovedReceiversResponderImpl implements RegisterApprovedReceiversResponderInterface {
 
@@ -53,37 +60,70 @@ public class RegisterApprovedReceiversResponderImpl implements RegisterApprovedR
             return resp;
         }
 
+        if (request.getTypAvIntyg() == null
+                || Strings.isNullOrEmpty(request.getTypAvIntyg().getCode())) {
+            resultType.setResultCode(ResultCodeType.ERROR);
+            resultType.setResultText(
+                    "Request to registerApprovedReceiver is missing required parameter 'typAvIntyg'");
+            resp.setResult(resultType);
+            return resp;
+        }
+
         // Check each receiver so it's valid before storing. If there are any problems we break and return error
         // before saving.
-        for (String receiverId : request.getApprovedReceivers()) {
-            if (Strings.isNullOrEmpty(receiverId)) {
+        for (ReceiverApprovalStatus receiverApprovalStatus : request
+                .getApprovedReceivers()) {
+
+            if (Strings.isNullOrEmpty(receiverApprovalStatus.getReceiverId())) {
                 resultType.setResultCode(ResultCodeType.ERROR);
                 resultType.setResultText(
-                        "Request to registerApprovedReceiver contained receiverId with null or empty receiverId");
+                        "Request to registerApprovedReceiver contained receiverId that was null or empty.");
                 resp.setResult(resultType);
                 return resp;
             }
 
             // Make sure the receiverId is present in the recipients.json store.
             try {
-                recipientService.getRecipient(receiverId);
+                recipientService.getRecipient(receiverApprovalStatus.getReceiverId());
             } catch (RecipientUnknownException e) {
                 resultType.setResultCode(ResultCodeType.ERROR);
                 resultType.setResultText(
-                        "Request to registerApprovedReceiver contained unknown receiverId '" + receiverId + "'");
+                        "Request to registerApprovedReceiver contained unknown receiverId '" + receiverApprovalStatus.getReceiverId()
+                                + "'");
                 resp.setResult(resultType);
                 return resp;
             }
         }
 
-        // If we're OK down here, remove existing entires ones and store the new ones
+        // If we're OK down here, remove existing ones and store the new ones
         receiverService.clearApprovedReceiversForCertificate(request.getIntygId().getExtension());
 
-        for (String receiver : request.getApprovedReceivers()) {
-            ApprovedReceiver approvedReceiver = new ApprovedReceiver();
-            approvedReceiver.setCertificateId(request.getIntygId().getExtension());
-            approvedReceiver.setReceiverId(receiver);
-            receiverService.registerApprovedReceiver(approvedReceiver);
+        // Iterate over ALL known receivers. If not explicitly set to YES (or huvudmottagare), set NO.
+        CertificateType certType = new CertificateType(request.getTypAvIntyg().getCode());
+        List<Recipient> knownRecipients = recipientService.listRecipients(certType);
+
+        for (Recipient knownRecipient : knownRecipients) {
+            boolean isIncludedInRequest = false;
+
+            ApprovedReceiver newReceiver = new ApprovedReceiver();
+            newReceiver.setCertificateId(request.getIntygId().getExtension());
+            newReceiver.setReceiverId(knownRecipient.getId());
+
+            // Find the corresponding item in the request and store YES / NO
+            for (ReceiverApprovalStatus receiverApprovalStatus : request
+                    .getApprovedReceivers()) {
+                if (knownRecipient.getId().equalsIgnoreCase(receiverApprovalStatus.getReceiverId())) {
+                    newReceiver.setApproved(receiverApprovalStatus.getApprovalStatus() == ApprovalStatusType.YES);
+                    isIncludedInRequest = true;
+                    break;
+                }
+            }
+
+            // If the receiver was NOT included in the request, set YES if huvudmottagare, otherwise NO.
+            if (!isIncludedInRequest) {
+                newReceiver.setApproved(knownRecipient.getRecipientType() == CertificateRecipientType.HUVUDMOTTAGARE);
+            }
+            receiverService.registerApprovedReceiver(newReceiver);
         }
 
         resultType.setResultCode(ResultCodeType.OK);

@@ -25,13 +25,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversType;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
-import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverType;
+import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.ApprovalStatusType;
+import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverRegistrationType;
 import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverTypeType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 
@@ -57,24 +59,28 @@ public class ListApprovedReceiversResponderImpl implements ListApprovedReceivers
             throw new IllegalArgumentException("Request to ListApprovedReceivers is missing required parameter 'IntygId.extension'");
         }
 
-        List<String> approvedReceiverIds = approvedReceiverDao.getApprovedReceiverIdsForCertificate(intygsId.getExtension());
+        // Get list of registered possible receivers.
+        List<ApprovedReceiver> receivers = approvedReceiverDao.getApprovedReceiverIdsForCertificate(intygsId.getExtension());
 
         ListApprovedReceiversResponseType response = new ListApprovedReceiversResponseType();
-        for (String allowedRecipientId : approvedReceiverIds) {
 
+
+
+        for (ApprovedReceiver receiver : receivers) {
             try {
-                Recipient serviceRecipient = recipientService.getRecipient(allowedRecipientId);
-                CertificateReceiverType recipient = new CertificateReceiverType();
-                recipient.setReceiverId(allowedRecipientId);
-                recipient.setReceiverName(serviceRecipient.getName());
-                recipient.setReceiverType(toSchemaType(serviceRecipient.getRecipientType()));
-                recipient.setTrusted(serviceRecipient.isTrusted());
-                response.getReceiverList().add(recipient);
+                Recipient serviceRecipient = recipientService.getRecipient(receiver.getReceiverId());
+                CertificateReceiverRegistrationType registrationType = new CertificateReceiverRegistrationType();
+                registrationType.setReceiverId(receiver.getReceiverId());
+                registrationType.setReceiverName(serviceRecipient.getName());
+                registrationType.setReceiverType(toSchemaType(serviceRecipient.getRecipientType()));
+                registrationType.setTrusted(serviceRecipient.isTrusted());
+                registrationType.setApprovalStatus(receiver.isApproved() ? ApprovalStatusType.YES : ApprovalStatusType.NO);
+                response.getReceiverList().add(registrationType);
+
             } catch (RecipientUnknownException e) {
-                String errMsg = "Certificate with id '" + intygsId.getExtension() + "' specified approved recipient of type '"
-                        + allowedRecipientId + "' which is not known.";
-                LOG.error(errMsg);
-                throw new ServerException(errMsg);
+                LOG.error("RecipientUnknownException when building list of approved receivers for intyg-id '{}'",
+                        intygsId.getExtension());
+                throw new ServerException(e.getMessage());
             }
         }
         return response;

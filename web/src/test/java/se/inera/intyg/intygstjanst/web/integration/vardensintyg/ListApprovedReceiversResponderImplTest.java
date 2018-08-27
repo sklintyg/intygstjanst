@@ -26,6 +26,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversType;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
@@ -57,7 +58,7 @@ public class ListApprovedReceiversResponderImplTest {
 
     @Test
     public void testListOk() throws RecipientUnknownException, ModuleNotFoundException {
-        when(approvedReceiverDao.getApprovedReceiverIdsForCertificate(INTYG_ID)).thenReturn(Arrays.asList("AF"));
+        when(approvedReceiverDao.getApprovedReceiverIdsForCertificate(INTYG_ID)).thenReturn(Arrays.asList(buildApprovedReceiver("AF")));
         when(recipientService.getRecipient("AF")).thenReturn(buildRecipient("AF", INTYG_TYP));
 
         ListApprovedReceiversResponseType resp = testee.listApprovedReceivers(LOGICAL_ADDRESS, buildReq(INTYG_ID, INTYG_TYP));
@@ -67,6 +68,14 @@ public class ListApprovedReceiversResponderImplTest {
         assertEquals("AF-name", resp.getReceiverList().get(0).getReceiverName());
         assertEquals("HUVUDMOTTAGARE", resp.getReceiverList().get(0).getReceiverType().name());
         assertEquals(CertificateReceiverTypeType.HUVUDMOTTAGARE, resp.getReceiverList().get(0).getReceiverType());
+    }
+
+    private ApprovedReceiver buildApprovedReceiver(String mottagareId) {
+        ApprovedReceiver ar = new ApprovedReceiver();
+        ar.setReceiverId(mottagareId);
+        ar.setCertificateId(INTYG_ID);
+        ar.setApproved(true);
+        return ar;
     }
 
     @Test

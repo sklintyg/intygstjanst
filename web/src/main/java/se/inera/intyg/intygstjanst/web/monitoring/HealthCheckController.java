@@ -25,13 +25,12 @@ import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.service.HealthCheckService;
 import se.inera.intyg.intygstjanst.web.service.impl.HealthCheckServiceImpl.Status;
 
-import java.util.Map;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Map;
 
 /**
  * RESTinterface for checking the general health status of the application.

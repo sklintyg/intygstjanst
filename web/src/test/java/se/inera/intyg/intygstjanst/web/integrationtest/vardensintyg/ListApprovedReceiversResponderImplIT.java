@@ -31,7 +31,6 @@ import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import java.util.UUID;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
 
 public class ListApprovedReceiversResponderImplIT extends BaseIntegrationTest {
 
@@ -47,7 +46,7 @@ public class ListApprovedReceiversResponderImplIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void testListPossibleReceiversAf00213() {
+    public void testListApprovedReceiversAf00213() {
         // First, register a receiver
         String intygsId = UUID.randomUUID().toString();
 
@@ -60,7 +59,9 @@ public class ListApprovedReceiversResponderImplIT extends BaseIntegrationTest {
                 .then().statusCode(200)
                 .rootPath("Envelope.Body.RegisterApprovedReceiversResponse.");
 
-        givenRequest(intygsId).body("receiverList.receiverId", is("AF"));
+        givenRequest(intygsId);
+//                .body("receiverList[1].approvalStatus", is("YES"))
+//                .body("receiverList[1].receiverId", is("FBA"));
     }
 
     private ValidatableResponse givenRequest(String intygsId) {

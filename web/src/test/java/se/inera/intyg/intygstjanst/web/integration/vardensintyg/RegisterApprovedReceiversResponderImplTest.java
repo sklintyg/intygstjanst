@@ -23,14 +23,18 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.ReceiverApprovalStatus;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversType;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.ReceiverService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.ApprovalStatusType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
 import java.util.Arrays;
@@ -62,7 +66,15 @@ public class RegisterApprovedReceiversResponderImplTest {
 
     @Test
     public void testRegister() throws RecipientUnknownException {
-        when(recipientService.getRecipient(anyString())).thenReturn(new Recipient());
+        Recipient recipientFk = new Recipient(LOGICAL_ADDRESS, "name", "FK", "HUVUDMOTTAGARE", "lisjp", true, true);
+        Recipient recipientAf = new Recipient(LOGICAL_ADDRESS, "name", "AF", "MOTTAGARE", "lisjp", true, true);
+
+        when(recipientService.getRecipient("FK")).thenReturn(recipientFk);
+        when(recipientService.getRecipient("AF")).thenReturn(recipientAf);
+
+        when(recipientService.listRecipients(new CertificateType("lisjp")))
+                .thenReturn(Arrays.asList(recipientFk, recipientAf));
+
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq("FK", "AF"));
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
         verify(receiverService, times(2)).registerApprovedReceiver(any(ApprovedReceiver.class));
@@ -106,13 +118,22 @@ public class RegisterApprovedReceiversResponderImplTest {
         verifyZeroInteractions(receiverService);
     }
 
-    private RegisterApprovedReceiversType buildReq(String ... receivers) {
+    private RegisterApprovedReceiversType buildReq(String... receivers) {
         RegisterApprovedReceiversType req = new RegisterApprovedReceiversType();
         IntygId intygId = new IntygId();
         intygId.setExtension(INTYG_ID);
         req.setIntygId(intygId);
 
-        req.getApprovedReceivers().addAll(Arrays.asList(receivers));
+        TypAvIntyg typAvIntyg = new TypAvIntyg();
+        typAvIntyg.setCode("lisjp");
+        req.setTypAvIntyg(typAvIntyg);
+
+        Arrays.stream(receivers).forEach(rec -> {
+            ReceiverApprovalStatus receiverApprovalStatus = new ReceiverApprovalStatus();
+            receiverApprovalStatus.setReceiverId(rec);
+            receiverApprovalStatus.setApprovalStatus(ApprovalStatusType.YES);
+            req.getApprovedReceivers().addAll(Arrays.asList(receiverApprovalStatus));
+        });
 
         return req;
     }
