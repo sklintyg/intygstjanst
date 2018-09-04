@@ -44,7 +44,8 @@ public class ListPossibleReceiversResponderImplIT extends BaseIntegrationTest {
     @Test
     public void testListPossibleReceiversLisjp() {
         givenRequest("af00213")
-                .body("receiverList.receiverId", is("AF"));
+                .body("receiverList.receiverId", is("AF"))
+                .body("receiverList.receiverType", is("HUVUDMOTTAGARE"));
     }
 
     private ValidatableResponse givenRequest(String intygTyp) {

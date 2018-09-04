@@ -54,23 +54,25 @@ public class RegisterApprovedReceiversResponderImplIT extends BaseIntegrationTes
                 .body("result.resultCode", is("OK"));
     }
 
-   // @Test
+    @Test
     public void testRegisterAndThenUpdateApprovedReceivers() {
         String intygsId = UUID.randomUUID().toString();
 
         // Register AF
-        givenRequest(intygsId, INTYG_TYP, "AF").body("result.resultCode", is("OK"));
+        givenRequest(intygsId, INTYG_TYP, "FBA").body("result.resultCode", is("OK"));
 
         // Check approved using ListApproved contract
         givenListApprovedRequest(intygsId)
-                .body("receiverList[0].receiverId", equalTo("AF"));
+                .body("receiverList.find { it.receiverId == 'FKASSA' }.approvalStatus", is("YES"))
+                .body("receiverList.find { it.receiverId == 'FBA' }.approvalStatus", is("YES"));
 
         // Register FKASSA instead
         givenRequest(intygsId, INTYG_TYP, "FKASSA").body("result.resultCode", is("OK"));
 
         // Check approved using ListApproved contract
         givenListApprovedRequest(intygsId)
-                .body("receiverList[0].receiverId", equalTo("FKASSA"));
+                .body("receiverList.find { it.receiverId == 'FKASSA' }.approvalStatus", is("YES"))
+                .body("receiverList.find { it.receiverId == 'FBA' }.approvalStatus", is("NO"));
 
     }
 

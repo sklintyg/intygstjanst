@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.web.integration.vardensintyg;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -38,8 +39,10 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
@@ -66,24 +69,46 @@ public class RegisterApprovedReceiversResponderImplTest {
 
     @Test
     public void testRegister() throws RecipientUnknownException {
-        Recipient recipientFk = new Recipient(LOGICAL_ADDRESS, "name", "FK", "HUVUDMOTTAGARE", "lisjp", true, true);
+        Recipient recipientFk = new Recipient(LOGICAL_ADDRESS, "name", "FKASSA", "HUVUDMOTTAGARE", "lisjp", true, true);
         Recipient recipientAf = new Recipient(LOGICAL_ADDRESS, "name", "AF", "MOTTAGARE", "lisjp", true, true);
 
-        when(recipientService.getRecipient("FK")).thenReturn(recipientFk);
+        when(recipientService.getRecipient("FKASSA")).thenReturn(recipientFk);
         when(recipientService.getRecipient("AF")).thenReturn(recipientAf);
 
         when(recipientService.listRecipients(new CertificateType("lisjp")))
                 .thenReturn(Arrays.asList(recipientFk, recipientAf));
 
-        RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq("FK", "AF"));
+        RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq("FKASSA", "AF"));
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
         verify(receiverService, times(2)).registerApprovedReceiver(any(ApprovedReceiver.class));
         verify(recipientService, times(2)).getRecipient(anyString());
     }
 
     @Test
+    public void testHuvudmottagareIsAddedIfOmittedRegister() throws RecipientUnknownException {
+        Recipient recipientFk = new Recipient(LOGICAL_ADDRESS, "name", "FKASSA", "HUVUDMOTTAGARE", "lisjp", true, true);
+        Recipient recipientAf = new Recipient(LOGICAL_ADDRESS, "name", "AF", "MOTTAGARE", "lisjp", true, true);
+
+        when(recipientService.getRecipient("AF")).thenReturn(recipientAf);
+
+        when(recipientService.listRecipients(new CertificateType("lisjp")))
+                .thenReturn(Arrays.asList(recipientFk, recipientAf));
+
+        RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq("AF"));
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+        verify(recipientService, times(1)).getRecipient(anyString());
+
+        ArgumentCaptor<ApprovedReceiver> approvedReceiverCaptor = ArgumentCaptor.forClass(ApprovedReceiver.class);
+        verify(receiverService, times(2)).registerApprovedReceiver(approvedReceiverCaptor.capture());
+        List<ApprovedReceiver> approvedReceivers = approvedReceiverCaptor.getAllValues();
+
+        // This assert proves that FKASSA was added even though it wasn't part of the request.
+        assertTrue(approvedReceivers.stream().anyMatch(ar -> "FKASSA".equals(ar.getReceiverId())));
+    }
+
+    @Test
     public void testReturnsErrorWhenNullIntygId() {
-        RegisterApprovedReceiversType req = buildReq("FK");
+        RegisterApprovedReceiversType req = buildReq("FKASSA");
         req.getIntygId().setExtension(null);
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, req);
 
@@ -93,8 +118,18 @@ public class RegisterApprovedReceiversResponderImplTest {
 
     @Test
     public void testReturnsErrorWhenBlankIntygId() {
-        RegisterApprovedReceiversType req = buildReq("FK");
+        RegisterApprovedReceiversType req = buildReq("FKASSA");
         req.getIntygId().setExtension("");
+        RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, req);
+
+        assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
+        verifyZeroInteractions(receiverService);
+    }
+
+    @Test
+    public void testReturnsErrorWhenBlankIntygsTyp() {
+        RegisterApprovedReceiversType req = buildReq("FKASSA");
+        req.getTypAvIntyg().setCode("");
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, req);
 
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());

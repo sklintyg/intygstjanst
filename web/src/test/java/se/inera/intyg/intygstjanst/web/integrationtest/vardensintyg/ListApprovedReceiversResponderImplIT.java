@@ -31,6 +31,7 @@ import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import java.util.UUID;
 
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
 
 public class ListApprovedReceiversResponderImplIT extends BaseIntegrationTest {
 
@@ -46,22 +47,22 @@ public class ListApprovedReceiversResponderImplIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void testListApprovedReceiversAf00213() {
+    public void testListApprovedReceiversLisjp() {
         // First, register a receiver
         String intygsId = UUID.randomUUID().toString();
 
         ST requestTemplate = registerApprovedTemplateGroup.getInstanceOf("request");
         requestTemplate.add("intygsId", intygsId);
-        requestTemplate.add("mottagare", "AF");
+        requestTemplate.add("mottagare", "FBA");
 
         given().body(requestTemplate.render())
                 .when().post("inera-certificate/register-approved-receivers/v1.0")
                 .then().statusCode(200)
                 .rootPath("Envelope.Body.RegisterApprovedReceiversResponse.");
 
-        givenRequest(intygsId);
-//                .body("receiverList[1].approvalStatus", is("YES"))
-//                .body("receiverList[1].receiverId", is("FBA"));
+        givenRequest(intygsId)
+                .body("receiverList.find { it.receiverId == 'FKASSA' }.approvalStatus", is("YES"))
+                .body("receiverList.find { it.receiverId == 'FBA' }.approvalStatus", is("YES"));
     }
 
     private ValidatableResponse givenRequest(String intygsId) {
