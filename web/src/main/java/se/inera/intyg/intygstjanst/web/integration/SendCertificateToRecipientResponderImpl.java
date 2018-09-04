@@ -31,6 +31,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.InternalNotificationService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientResponderInterface;
@@ -51,6 +52,9 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
     @Autowired
     private StatisticsService statisticsService;
 
+    @Autowired
+    private InternalNotificationService internalNotificationService;
+
     @Override
     @PrometheusTimeMethod
     public SendCertificateToRecipientResponseType sendCertificateToRecipient(
@@ -66,8 +70,8 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
         try {
 
             final Certificate certificate = certificateService.getCertificateForCare(intygsId);
-            final CertificateService.SendStatus sendStatus =
-                    certificateService.sendCertificate(personnummer.orElse(null), intygsId, mottagareId);
+            final CertificateService.SendStatus sendStatus = certificateService.sendCertificate(personnummer.orElse(null), intygsId,
+                    mottagareId);
 
             if (sendStatus == CertificateService.SendStatus.ALREADY_SENT) {
                 response.setResult(ResultTypeUtil.infoResult(
@@ -77,6 +81,9 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
                 response.setResult(ResultTypeUtil.okResult());
                 statisticsService.sent(
                         certificate.getId(), certificate.getType(), certificate.getCareUnitId(), request.getMottagare().getCode());
+
+                internalNotificationService.notifyCareIfSentByCitizen(certificate, request.getSkickatAv());
+
                 LOGGER.info("Certificate '{}' sent to '{}'.", intygsId, mottagareId);
             }
 

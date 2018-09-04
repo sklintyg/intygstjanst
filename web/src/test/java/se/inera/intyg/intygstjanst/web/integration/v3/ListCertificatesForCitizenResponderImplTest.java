@@ -95,7 +95,6 @@ public class ListCertificatesForCitizenResponderImplTest {
     @Before
     public void setup() throws ModuleNotFoundException, ModuleException {
         when(moduleRegistry.getModuleEntryPoint(or(isNull(), anyString()))).thenReturn(moduleEntryPoint);
-        when(moduleEntryPoint.getDefaultRecipient()).thenReturn(FKASSA_RECIPIENT_ID);
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()))).thenReturn(mock(Utlatande.class));
         when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class)))).thenReturn(new Intyg());

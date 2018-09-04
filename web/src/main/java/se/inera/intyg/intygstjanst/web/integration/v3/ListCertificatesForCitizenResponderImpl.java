@@ -115,7 +115,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
             // Unified handling of all certificate types, maintaining a simple module api
             Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
             intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
-                    .filter(ch -> CertificateStateFilterUtil.filter(ch, part, moduleEntryPoint.getDefaultRecipient()))
+                    .filter(ch -> CertificateStateFilterUtil.filter(ch, part))
                     .collect(Collectors.toList())));
             return intyg;
 

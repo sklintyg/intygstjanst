@@ -76,7 +76,7 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
             response.setIntyg(jaxbObject.getIntyg());
             response.getIntyg().getStatus()
                     .addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
-                            .filter(ch -> CertificateStateFilterUtil.filter(ch, part, SMI_DEFAULT_RECIPIENT))
+                            .filter(ch -> CertificateStateFilterUtil.filter(ch, part))
                             .collect(Collectors.toList())));
         } catch (Exception e) {
             LOGGER.error("Error while converting in GetCertificate for id: {} with stacktrace: {}", certificateHolder.getId(),

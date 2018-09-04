@@ -18,15 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v3;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
@@ -47,6 +42,10 @@ import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.
 import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.ListaType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @SchemaValidation
 public class ListCertificatesForCareResponderImpl implements ListCertificatesForCareResponderInterface {
@@ -102,7 +101,7 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
             // Unified handling of all certificate types, maintaining a simple module api
             Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
             intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
-                    .filter(ch -> CertificateStateFilterUtil.filter(ch, HSVARD_PARTKOD, moduleEntryPoint.getDefaultRecipient()))
+                    .filter(ch -> CertificateStateFilterUtil.filter(ch, HSVARD_PARTKOD))
                     .collect(Collectors.toList())));
             return intyg;
 

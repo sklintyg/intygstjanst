@@ -45,7 +45,7 @@ public final class CertificateStateFilterUtil {
      *            huvudmottagare of the intyg type the status item belongs to
      * @return whether to keep or the given status item
      */
-    public static boolean filter(CertificateStateHolder status, String part, String defaultRecipient) {
+    public static boolean filter(CertificateStateHolder status, String part) {
         switch (part) {
         case "INVANA":
             // Invanaren: alla statusar (INTYG-3629).
@@ -56,9 +56,9 @@ public final class CertificateStateFilterUtil {
             if (status.getState() == CertificateState.DELETED || status.getState() == CertificateState.RESTORED) {
                 return false;
             }
-            if (status.getState() == CertificateState.SENT && !Objects.equals(status.getTarget(), defaultRecipient)) {
-                return false;
-            }
+//            if (status.getState() == CertificateState.SENT && !Objects.equals(status.getTarget(), defaultRecipient)) {
+//                return false;
+//            }
             return true;
         default:
             // FKKASSA och ovriga parter

@@ -86,7 +86,7 @@ public class ListCertificatesForCareResponderImplTest {
     public void setup() throws ModuleNotFoundException, ModuleException {
         when(moduleRegistry.getModuleEntryPoint(or(isNull(), anyString()))).thenReturn(moduleEntryPoint);
 
-        when(moduleEntryPoint.getDefaultRecipient()).thenReturn(OTHER_RECIPIENT_ID);
+//        when(moduleEntryPoint.getDefaultRecipient()).thenReturn(OTHER_RECIPIENT_ID);
 
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
 
@@ -200,7 +200,7 @@ public class ListCertificatesForCareResponderImplTest {
 
         // Then
         assertEquals(1, response.getIntygsLista().getIntyg().size());
-        assertEquals(2, response.getIntygsLista().getIntyg().get(0).getStatus().size());
+        assertEquals(3, response.getIntygsLista().getIntyg().get(0).getStatus().size());
 
         IntygsStatus status = response.getIntygsLista().getIntyg().get(0).getStatus().get(0);
         assertEquals(OTHER_RECIPIENT_ID, status.getPart().getCode());
@@ -213,6 +213,13 @@ public class ListCertificatesForCareResponderImplTest {
         assertEquals(OTHER_RECIPIENT_ID, status.getPart().getCode());
         assertNotNull(status.getPart().getCodeSystem());
         assertEquals(timestamps[1], status.getTidpunkt());
+        assertEquals(StatusKod.SENTTO.name(), status.getStatus().getCode());
+        assertNotNull(status.getStatus().getCodeSystem());
+
+        status = response.getIntygsLista().getIntyg().get(0).getStatus().get(2);
+        assertEquals(FKASSA_RECIPIENT_ID, status.getPart().getCode());
+        assertNotNull(status.getPart().getCodeSystem());
+        assertEquals(timestamps[0], status.getTidpunkt());
         assertEquals(StatusKod.SENTTO.name(), status.getStatus().getCode());
         assertNotNull(status.getStatus().getCodeSystem());
     }

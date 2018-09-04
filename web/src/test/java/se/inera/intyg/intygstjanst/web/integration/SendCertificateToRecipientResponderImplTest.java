@@ -31,6 +31,7 @@ import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.InternalNotificationService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientResponderInterface;
@@ -42,8 +43,15 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
-import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.ERROR;
+import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.INFO;
+import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.OK;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendCertificateToRecipientResponderImplTest {
@@ -65,6 +73,9 @@ public class SendCertificateToRecipientResponderImplTest {
 
     @Mock
     private StatisticsService statisticsService;
+
+    @Mock
+    private InternalNotificationService internalNotificationService;
 
     @InjectMocks
     private SendCertificateToRecipientResponderInterface responder = new SendCertificateToRecipientResponderImpl();
@@ -89,6 +100,9 @@ public class SendCertificateToRecipientResponderImplTest {
         SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
 
         assertEquals(OK, response.getResult().getResultCode());
+
+        verify(internalNotificationService, times(1))
+                .notifyCareIfSentByCitizen(any(Certificate.class), any(SendCertificateToRecipientType.SkickatAv.class));
     }
 
     @Test
@@ -171,7 +185,9 @@ public class SendCertificateToRecipientResponderImplTest {
         request.getMottagare().setCode(RECIPIENT_ID);
         request.setIntygsId(new IntygId());
         request.getIntygsId().setExtension(CERTIFICATE_ID);
-
+        SendCertificateToRecipientType.SkickatAv skickatAv = new SendCertificateToRecipientType.SkickatAv();
+        skickatAv.setPersonId(new PersonId());
+        request.setSkickatAv(skickatAv);
         return request;
     }
 }
