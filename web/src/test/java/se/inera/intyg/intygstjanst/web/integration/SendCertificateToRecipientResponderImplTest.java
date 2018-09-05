@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.web.integration;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -43,6 +44,8 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -83,8 +86,6 @@ public class SendCertificateToRecipientResponderImplTest {
     @Test
     public void testSendCertificateToRecipient() throws Exception {
 
-        final Personnummer personnummer = PERSONNUMMER;
-
         SendCertificateToRecipientType request = createRequest();
         request.getMottagare().setCode("FKASSA");
 
@@ -101,8 +102,11 @@ public class SendCertificateToRecipientResponderImplTest {
 
         assertEquals(OK, response.getResult().getResultCode());
 
+        ArgumentCaptor<SendCertificateToRecipientType.SkickatAv> captor = ArgumentCaptor.forClass(SendCertificateToRecipientType.SkickatAv.class);
         verify(internalNotificationService, times(1))
-                .notifyCareIfSentByCitizen(any(Certificate.class), any(SendCertificateToRecipientType.SkickatAv.class));
+                .notifyCareIfSentByCitizen(any(Certificate.class), captor.capture());
+        assertNotNull(captor.getValue().getPersonId());
+        assertNull(captor.getValue().getHosPersonal());
     }
 
     @Test
