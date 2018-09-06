@@ -41,18 +41,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.io.Resources;
 
-import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.ReceiverApprovalStatus;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversType;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
@@ -212,7 +211,9 @@ public class CertificateResource {
     @Path("/{id}/approvedreceivers")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response registerApprovedReceivers(@PathParam("id") final String id, @RequestBody final RegisterApprovedReceiversType registerApprovedReceiversType) {
+    public Response registerApprovedReceivers(@PathParam("id") final String id,
+                                              @RequestBody final RegisterApprovedReceiversType registerApprovedReceiversType) {
+
         return transactionTemplate.execute(status -> {
             String receiverId = null;
             boolean approvalStatus = false;
