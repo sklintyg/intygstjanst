@@ -69,10 +69,9 @@ public class RegisterApprovedReceiversResponderImpl implements RegisterApprovedR
             return resp;
         }
 
-        // Check each receiver so it's valid before storing. If there are any problems we break and return error
-        // before saving.
-        for (ReceiverApprovalStatus receiverApprovalStatus : request
-                .getApprovedReceivers()) {
+        // Check each receiver so it's valid before storing.
+        // If there are any problems we break and return error before saving.
+        for (ReceiverApprovalStatus receiverApprovalStatus : request.getApprovedReceivers()) {
 
             if (Strings.isNullOrEmpty(receiverApprovalStatus.getReceiverId())) {
                 resultType.setResultCode(ResultCodeType.ERROR);
@@ -110,8 +109,7 @@ public class RegisterApprovedReceiversResponderImpl implements RegisterApprovedR
             newReceiver.setReceiverId(knownRecipient.getId());
 
             // Find the corresponding item in the request and store YES / NO
-            for (ReceiverApprovalStatus receiverApprovalStatus : request
-                    .getApprovedReceivers()) {
+            for (ReceiverApprovalStatus receiverApprovalStatus : request.getApprovedReceivers()) {
                 if (knownRecipient.getId().equalsIgnoreCase(receiverApprovalStatus.getReceiverId())) {
                     newReceiver.setApproved(receiverApprovalStatus.getApprovalStatus() == ApprovalStatusType.YES);
                     isIncludedInRequest = true;

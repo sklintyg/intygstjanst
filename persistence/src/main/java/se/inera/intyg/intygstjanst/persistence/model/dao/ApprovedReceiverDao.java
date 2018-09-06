@@ -24,6 +24,7 @@ import java.util.List;
  * Created by eriklupander.
  */
 public interface ApprovedReceiverDao {
+
     List<ApprovedReceiver> getApprovedReceiverIdsForCertificate(String intygsId);
 
     void clearApprovedReceiversForCertificate(String intygsId);

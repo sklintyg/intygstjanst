@@ -21,17 +21,17 @@ package se.inera.intyg.intygstjanst.web.integration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponderInterface;
-import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateResponseType;
-import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.GetRecipientsForCertificateType;
-import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v1.RecipientType;
-import se.inera.intyg.common.fk7263.schemas.clinicalprocess.healthcond.certificate.utils.ResultTypeUtil;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponderInterface;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponseType;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateType;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.RecipientType;
+import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.v1.utils.ResultTypeUtil;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
-import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.riv.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class GetRecipientsForCertificateResponderImpl implements GetRecipientsForCertificateResponderInterface {
@@ -45,29 +45,41 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
     @PrometheusTimeMethod
     public GetRecipientsForCertificateResponseType getRecipientsForCertificate(String logicalAddress,
             GetRecipientsForCertificateType request) {
-        String certTypeStr = request.getCertificateType().trim();
-        CertificateType certificateType = new CertificateType(certTypeStr);
-        GetRecipientsForCertificateResponseType response = new GetRecipientsForCertificateResponseType();
 
-        response.getRecipient().addAll(recipientService.listRecipients(certificateType).stream()
+        String intygsId = request.getCertificateId().trim();
+
+        List<Recipient> recipientList = recipientService.listRecipients(intygsId);
+
+        List<RecipientType> filteredList = recipientList.stream()
                 .filter(Recipient::isActive)
                 .map(r -> {
-                    RecipientType recipientType = new RecipientType();
-                    recipientType.setId(r.getId());
-                    recipientType.setName(r.getName());
-                    recipientType.setTrusted(r.isTrusted());
-                    return recipientType;
+                    return createRecipientType(r);
                 })
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
+
+        GetRecipientsForCertificateResponseType response = new GetRecipientsForCertificateResponseType();
+        response.getRecipient().addAll(filteredList);
 
         if (response.getRecipient().isEmpty()) {
-            LOGGER.error("No recipients found for type {}", certTypeStr);
+            LOGGER.error("No recipients found for certificate {}", intygsId);
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR,
-                    String.format("No recipients found for certificate type: %s", certTypeStr)));
+                    String.format("No recipients found for certificate id: %s", intygsId)));
         } else {
-            LOGGER.debug("{} recipient(s) found for {}", response.getRecipient().size(), certTypeStr);
+            LOGGER.debug("{} recipient(s) found for {}", response.getRecipient().size(), intygsId);
             response.setResult(ResultTypeUtil.okResult());
         }
+
         return response;
     }
+
+    private RecipientType createRecipientType(Recipient recipient) {
+        RecipientType recipientType = new RecipientType();
+        recipientType.setId(recipient.getId());
+        recipientType.setName(recipient.getName());
+        recipientType.setTrusted(recipient.isTrusted());
+        recipientType.setType(recipient.getRecipientType().name());
+
+        return recipientType;
+    }
+
 }

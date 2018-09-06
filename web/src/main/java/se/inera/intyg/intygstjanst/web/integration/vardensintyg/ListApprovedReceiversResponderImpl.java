@@ -59,13 +59,10 @@ public class ListApprovedReceiversResponderImpl implements ListApprovedReceivers
             throw new IllegalArgumentException("Request to ListApprovedReceivers is missing required parameter 'IntygId.extension'");
         }
 
-        // Get list of registered possible receivers.
-        List<ApprovedReceiver> receivers = approvedReceiverDao.getApprovedReceiverIdsForCertificate(intygsId.getExtension());
-
         ListApprovedReceiversResponseType response = new ListApprovedReceiversResponseType();
 
-
-
+        // Get list of registered possible receivers.
+        List<ApprovedReceiver> receivers = approvedReceiverDao.getApprovedReceiverIdsForCertificate(intygsId.getExtension());
         for (ApprovedReceiver receiver : receivers) {
             try {
                 Recipient serviceRecipient = recipientService.getRecipient(receiver.getReceiverId());

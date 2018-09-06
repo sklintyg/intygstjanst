@@ -54,6 +54,15 @@ public interface RecipientService {
     List<Recipient> listRecipients();
 
     /**
+     * Get a list of registered recipients for a specific certificate}.
+     *
+     * @param certificateId
+     *            the certificate id
+     * @return a List of {@link Recipient}
+     */
+    List<Recipient> listRecipients(String certificateId);
+
+    /**
      * Get a list of registered recipients for a certain {@link CertificateType}.
      *
      * @return a List of {@link Recipient}

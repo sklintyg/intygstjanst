@@ -18,31 +18,109 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.core.Is.is;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.stringtemplate.v4.*;
-
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.response.ValidatableResponse;
-
+import org.hamcrest.Matchers;
+import org.junit.Before;
+import org.junit.Test;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+
+import java.util.UUID;
+
+import static com.jayway.restassured.RestAssured.given;
 
 public class GetRecipientsForCertificateIT extends BaseIntegrationTest {
 
     private STGroup templateGroup;
 
-    private static final int FK_RECIPIENT_SIZE = 1;
-    private static final int TS_RECIPIENT_SIZE = 1;
+    private STGroup registerApprovedTemplateGroup;
 
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
         templateGroup = new STGroupFile("integrationtests/getrecipientsforcertificate/requests.stg");
+        registerApprovedTemplateGroup = new STGroupFile("integrationtests/registerapprovedreceivers/requests.stg");
+    }
+
+    @Test
+    public void getRecipientForCertificate() {
+        // First, register a receiver
+        String intygsId = UUID.randomUUID().toString();
+
+        ST requestTemplate = registerApprovedTemplateGroup.getInstanceOf("request");
+        requestTemplate.add("intygsId", intygsId);
+        requestTemplate.add("mottagare", "FKASSA");
+
+        given().body(requestTemplate.render())
+                .when().post("inera-certificate/register-approved-receivers/v1.0")
+                .then().statusCode(200)
+                .rootPath("Envelope.Body.RegisterApprovedReceiversResponse.");
+
+        givenRequest(intygsId)
+                .body("recipient.size()", Matchers.is(1))
+                .body("recipient.find { it.id == 'FKASSA' }.name", Matchers.is("Försäkringskassan"))
+                .body("recipient.find { it.id == 'FKASSA' }.type", Matchers.is("HUVUDMOTTAGARE"));
+    }
+
+    @Test
+    public void getRecipientsForCertificate() {
+        // First, register a receiver
+        String intygsId = UUID.randomUUID().toString();
+
+        ST requestTemplate = registerApprovedTemplateGroup.getInstanceOf("request");
+        requestTemplate.add("intygsId", intygsId);
+        requestTemplate.add("mottagare", "FBA");
+
+        given().body(requestTemplate.render())
+                .when().post("inera-certificate/register-approved-receivers/v1.0")
+                .then().statusCode(200)
+                .rootPath("Envelope.Body.RegisterApprovedReceiversResponse.");
+
+        givenRequest(intygsId)
+                .body("recipient.size()", Matchers.is(2))
+                .body("recipient.find { it.id == 'FKASSA' }.name", Matchers.is("Försäkringskassan"))
+                .body("recipient.find { it.id == 'FKASSA' }.type", Matchers.is("HUVUDMOTTAGARE"))
+                .body("recipient.find { it.id == 'FBA' }.name", Matchers.is("Försäkringsbolaget AB"))
+                .body("recipient.find { it.id == 'FBA' }.type", Matchers.is("MOTTAGARE"));
+    }
+
+    private ValidatableResponse givenRequest(String intygsId) {
+        ST requestTemplate = templateGroup.getInstanceOf("request");
+        requestTemplate.add("intygsId", intygsId);
+
+        return given()
+                .body(requestTemplate.render())
+                .when().post("inera-certificate/get-recipients-for-certificate/v1.1")
+                .then().statusCode(200)
+                .rootPath("Envelope.Body.GetRecipientsForCertificateResponse.");
+    }
+
+    /*
+    private STGroup templateGroup;
+
+    private static final int FK_RECIPIENT_SIZE = 1;
+    private static final int TS_RECIPIENT_SIZE = 1;
+
+    private static final String CITIZEN_CIVIC_REGISTRATION_NUMBER = "19010101-0101";
+
+    @Before
+    public void setup() {
+        RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
+        templateGroup = new STGroupFile("integrationtests/getrecipientsforcertificate/requests.stg");
+    }
+
+    @Test
+    public void getRecipientsForCertificate() {
+        givenRequest("1234567890")
+                .body("result.resultCode", is("OK"))
+                .body("recipient.size()", is(FK_RECIPIENT_SIZE))
+                .body("recipient.id", is("FKASSA"))
+                .body("recipient.name", is("Försäkringskassan"))
+                .body("recipient.trusted", is("true"));
     }
 
     @Test
@@ -103,15 +181,6 @@ public class GetRecipientsForCertificateIT extends BaseIntegrationTest {
                 .body("result.errorId", is("APPLICATION_ERROR"))
                 .body("result.resultText", is("No recipients found for certificate type: unknown"));
     }
+    */
 
-    private ValidatableResponse givenRequest(String intygTyp) {
-        ST requestTemplate = templateGroup.getInstanceOf("request");
-        requestTemplate.add("intygTyp", intygTyp);
-
-        return given()
-                .body(requestTemplate.render())
-                .when().post("inera-certificate/get-recipients-for-certificate/v1.0")
-                .then().statusCode(200)
-                .rootPath("Envelope.Body.GetRecipientsForCertificateResponse.");
-    }
 }

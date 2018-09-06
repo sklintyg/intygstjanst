@@ -18,6 +18,21 @@
  */
 package se.inera.intyg.intygstjanst.web.service.repo;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Repository;
+import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.exception.ServerException;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+
+import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,37 +42,23 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import javax.annotation.PostConstruct;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Repository;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
-
-import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
-import se.inera.intyg.intygstjanst.web.exception.ServerException;
-import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
-import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
-
 @Repository
 @EnableScheduling
 public class RecipientRepoImpl implements RecipientRepo {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RecipientRepoImpl.class);
 
     private static final String INVANA_ID = "INVANA";
     private static final String HSVARD_ID = "HSVARD";
     private static final String FKASSA_ID = "FKASSA";
     private static final String TRANSP_ID = "TRANSP";
-    private static final Logger LOG = LoggerFactory.getLogger(RecipientRepoImpl.class);
+
     protected Map<Recipient, Set<CertificateType>> certificateTypesForRecipient;
     private Map<String, Recipient> recipientMap;
+
     @Value("${recipient.file}")
     private String recipientFile;
+
 
     /**
      * Initial setup of the in-memory database.
@@ -147,4 +148,5 @@ public class RecipientRepoImpl implements RecipientRepo {
         return recipientMap.containsKey(FKASSA_ID) && recipientMap.containsKey(HSVARD_ID)
                 && recipientMap.containsKey(INVANA_ID) && recipientMap.containsKey(TRANSP_ID);
     }
+
 }

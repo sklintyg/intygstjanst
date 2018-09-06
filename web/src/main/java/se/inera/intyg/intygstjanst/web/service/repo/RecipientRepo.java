@@ -24,6 +24,7 @@ import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import java.util.List;
 
 public interface RecipientRepo {
+
     Recipient getRecipientForLogicalAddress(String logicalAddress) throws RecipientUnknownException;
 
     Recipient getRecipient(String recipientId) throws RecipientUnknownException;
@@ -37,4 +38,5 @@ public interface RecipientRepo {
     Recipient getRecipientHsvard();
 
     Recipient getRecipientTransp();
+
 }

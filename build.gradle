@@ -11,6 +11,7 @@ ext {
 
     intygHealthcondRehabilitationSchemasVersion = "1.0.7"
     intygInsuranceprocessSchemasVersion = "1.0.4"
+    intygClinicalprocessSchemasVersion = "0-SNAPSHOT"
     rivtaClinicalprocessSchemasVersion = "3.2.0-RC3"
     rivtaItintegrationMonitoringSchemasVersion = "1.0.0.4"
 
