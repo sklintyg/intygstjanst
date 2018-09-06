@@ -18,13 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.test;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Strings;
-import com.google.common.io.Resources;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
@@ -36,18 +34,30 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
+import com.google.common.io.Resources;
+
+import org.springframework.web.bind.annotation.RequestBody;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.ReceiverApprovalStatus;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversType;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
+import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.ApprovalStatusType;
 
 /**
  * @author andreaskaltenbach
@@ -196,6 +206,43 @@ public class CertificateResource {
                 return Response.serverError().build();
             }
         });
+    }
+
+    @POST
+    @Path("/{id}/approvedreceivers")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response registerApprovedReceivers(@PathParam("id") final String id, @RequestBody final RegisterApprovedReceiversType registerApprovedReceiversType) {
+        return transactionTemplate.execute(status -> {
+            String receiverId = null;
+            boolean approvalStatus = false;
+
+            try {
+                for (ReceiverApprovalStatus ras : registerApprovedReceiversType.getApprovedReceivers()) {
+                    receiverId = ras.getReceiverId();
+                    approvalStatus = parseApprovalStatus(ras.getApprovalStatus().value());
+
+                    ApprovedReceiver approvedReceiver = new ApprovedReceiver();
+                    approvedReceiver.setCertificateId(id);
+                    approvedReceiver.setReceiverId(receiverId);
+                    approvedReceiver.setApproved(approvalStatus);
+
+                    LOGGER.info("register approved receiver {} for certificate {}", id, receiverId);
+                    entityManager.persist(approvedReceiver);
+                }
+                return Response.ok().build();
+            } catch (Exception e) {
+                LOGGER.warn("register approved receiver {} failed for certificate {}", id, receiverId, e);
+                return Response.serverError().build();
+            }
+        });
+    }
+
+    private boolean parseApprovalStatus(String approvalStatus) {
+        if (approvalStatus != null && approvalStatus.equals(ApprovalStatusType.YES.value())) {
+            return true;
+        }
+        return false;
     }
 
     private String getXmlBody(CertificateHolder certificateHolder) throws IOException {
