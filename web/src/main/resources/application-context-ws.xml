@@ -74,7 +74,6 @@
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
-
   <jaxws:endpoint address="/list-certificates/v1.0"
                   implementor="se.inera.intyg.intygstjanst.web.integration.ListCertificatesResponderImpl">
     <jaxws:outFaultInterceptors>
@@ -328,7 +327,6 @@
         <jaxws:schemaLocation>classpath:/interactions/ListSickLeavesForCareInteraction/ListSickLeavesForCareResponder_1.0.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
-
 
   <beans profile="!dev">
     <http:conduit
