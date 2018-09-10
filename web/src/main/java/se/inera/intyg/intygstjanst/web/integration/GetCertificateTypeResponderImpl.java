@@ -23,14 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetype.v1.GetCertificateTypeResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetype.v1.GetCertificateTypeResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetype.v1.GetCertificateTypeType;
-import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
-
-import static se.inera.intyg.common.support.Constants.KV_INTYGSTYP_CODE_SYSTEM;
 
 /**
  * Created by eriklupander on 2017-05-11.
@@ -49,17 +45,14 @@ public class GetCertificateTypeResponderImpl implements GetCertificateTypeRespon
             throw new IllegalArgumentException("Request to GetCertificateType is missing required parameter 'intygs-id'");
         }
 
-        GetCertificateTypeResponseType response = new GetCertificateTypeResponseType();
-
-        try {
-            Certificate cert = certificateService.getCertificateForCare(request.getIntygsId());
-            TypAvIntyg typAvIntyg = new TypAvIntyg();
-            typAvIntyg.setCode(cert.getType());
-            typAvIntyg.setCodeSystem(KV_INTYGSTYP_CODE_SYSTEM);
-            response.setTyp(typAvIntyg);
-        } catch (InvalidCertificateException e) {
-            throw new ServerException("Certificate with id " + request.getIntygsId() + " is invalid or does not exist");
+        TypAvIntyg typAvIntyg = certificateService.getCertificateType(request.getIntygsId());
+        if (typAvIntyg == null) {
+            throw new ServerException("Failed to get certificate's type. "
+                    + "Certificate with id " + request.getIntygsId() + " is invalid or does not exist");
         }
+
+        GetCertificateTypeResponseType response = new GetCertificateTypeResponseType();
+        response.setTyp(typAvIntyg);
         return response;
     }
 

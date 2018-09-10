@@ -26,10 +26,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetype.v1.GetCertificateTypeResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetype.v1.GetCertificateTypeResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetype.v1.GetCertificateTypeType;
-import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.common.lisjp.support.LisjpEntryPoint;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
+
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -46,28 +49,31 @@ public class GetCertificateTypeResponderImplTest {
     private CertificateService certificateService = mock(CertificateService.class);
 
     @InjectMocks
-    private GetCertificateTypeResponderInterface responder = new GetCertificateTypeResponderImpl();
+    private GetCertificateTypeResponderInterface testee = new GetCertificateTypeResponderImpl();
 
     @Test
-    public void testGetCertificateTypeSuccess() throws InvalidCertificateException {
-        when(certificateService.getCertificateForCare(anyString())).thenReturn(buildCert());
+    public void testGetCertificateTypeSuccess() {
+        String intygsId = UUID.randomUUID().toString();
+        String intygsTyp = LisjpEntryPoint.MODULE_ID;
 
-        GetCertificateTypeResponseType response = responder.getCertificateType(LOGICAL_ADDRESS, buildReq("intyg-123"));
-        assertEquals("lisjp", response.getTyp().getCode());
+        when(certificateService.getCertificateType(anyString())).thenReturn(buildCertType(intygsTyp));
+
+        GetCertificateTypeResponseType response = testee.getCertificateType(LOGICAL_ADDRESS, buildReq(intygsId));
+
+        assertEquals(intygsTyp, response.getTyp().getCode());
         assertEquals(KV_INTYGSTYP_CODE_SYSTEM, response.getTyp().getCodeSystem());
     }
 
     @Test(expected = ServerException.class)
-    public void testGetCertificateTypeNotFound() throws InvalidCertificateException {
-        when(certificateService.getCertificateForCare(anyString())).thenThrow(new InvalidCertificateException("some error", null));
-
-        responder.getCertificateType(LOGICAL_ADDRESS, buildReq("intyg-123"));
+    public void testGetCertificateTypeNotFound() {
+        String intygsId = UUID.randomUUID().toString();
+        when(certificateService.getCertificateType(anyString())).thenReturn(null);
+        testee.getCertificateType(LOGICAL_ADDRESS, buildReq(intygsId));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetCertificateTypeEmptyIntygsId() throws InvalidCertificateException {
-
-        responder.getCertificateType(LOGICAL_ADDRESS, buildReq(" "));
+    public void testGetCertificateTypeEmptyIntygsId() {
+        testee.getCertificateType(LOGICAL_ADDRESS, buildReq(" "));
     }
 
     private GetCertificateTypeType buildReq(String intygsId) {
@@ -76,10 +82,18 @@ public class GetCertificateTypeResponderImplTest {
         return req;
     }
 
-    private Certificate buildCert() {
-        Certificate cert = new Certificate("intyg-123");
-        cert.setType("lisjp");
+    private Certificate buildCert(String intygsId, String intygsTyp) {
+        Certificate cert = new Certificate(intygsId);
+        cert.setType(intygsTyp);
         return cert;
     }
+
+    private TypAvIntyg buildCertType(String intygsTyp) {
+        TypAvIntyg typAvIntyg = new TypAvIntyg();
+        typAvIntyg.setCode(intygsTyp);
+        typAvIntyg.setCodeSystem(KV_INTYGSTYP_CODE_SYSTEM);
+        return typAvIntyg;
+    }
+
 
 }

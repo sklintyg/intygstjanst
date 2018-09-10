@@ -54,10 +54,13 @@ import se.inera.intyg.intygstjanst.web.service.RelationService;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.schemas.contract.Personnummer;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static se.inera.intyg.common.support.Constants.KV_INTYGSTYP_CODE_SYSTEM;
 
 /**
  * @author andreaskaltenbach
@@ -65,7 +68,7 @@ import java.util.List;
 @Service
 public class CertificateServiceImpl implements CertificateService, ModuleContainerApi {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CertificateServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CertificateServiceImpl.class);
 
     @Autowired
     private RecipientService recipientService;
@@ -148,6 +151,24 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         }
 
         return certificate;
+    }
+
+    @Override
+    public TypAvIntyg getCertificateType(String certificateId) {
+        Certificate cert = null;
+
+        try {
+            cert = getCertificateForCare(certificateId);
+        } catch (InvalidCertificateException e) {
+            LOGGER.error("Certificate with id {} is invalid or does not exist", certificateId);
+            return null;
+        }
+
+        TypAvIntyg typAvIntyg = null;
+        typAvIntyg = new TypAvIntyg();
+        typAvIntyg.setCode(cert.getType());
+        typAvIntyg.setCodeSystem(KV_INTYGSTYP_CODE_SYSTEM);
+        return typAvIntyg;
     }
 
     @Override
@@ -236,9 +257,9 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Transactional
     public void certificateReceived(CertificateHolder certificateHolder)
             throws CertificateAlreadyExistsException, InvalidCertificateException {
-        LOG.debug("Certificate received {}", certificateHolder.getId());
+        LOGGER.debug("Certificate received {}", certificateHolder.getId());
         Certificate certificate = storeCertificate(certificateHolder);
-        LOG.debug("Certificate stored {}", certificateHolder.getId());
+        LOGGER.debug("Certificate stored {}", certificateHolder.getId());
         monitoringLogService.logCertificateRegistered(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
 
         String transformedXml = certificateReceivedForStatistics(certificateHolder);
@@ -253,7 +274,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
             return moduleApi.transformToStatisticsService(certificateHolder.getOriginalCertificate());
         } catch (ModuleNotFoundException | ModuleException e) {
-            LOG.error("Module not found for certificate of type {}", certificateHolder.getType());
+            LOGGER.error("Module not found for certificate of type {}", certificateHolder.getType());
             throw Throwables.propagate(e);
         }
     }
@@ -265,7 +286,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
             certificateXml = moduleApi.transformToStatisticsService(certificate.getOriginalCertificate().getDocument());
         } catch (ModuleNotFoundException | ModuleException e) {
-            LOG.error("Module not found for certificate of type {}", certificate.getType());
+            LOGGER.error("Module not found for certificate of type {}", certificate.getType());
             throw Throwables.propagate(e);
         }
         statisticsService.revoked(certificateXml, certificate.getId(), certificate.getType(),

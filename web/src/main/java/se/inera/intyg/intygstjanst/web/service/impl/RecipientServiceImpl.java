@@ -19,6 +19,7 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@Service
 public class RecipientServiceImpl implements RecipientService {
 
     @Autowired
@@ -56,7 +58,6 @@ public class RecipientServiceImpl implements RecipientService {
 
     @Override
     public List<Recipient> listRecipients(String certificateId) {
-
         // Get list of registered possible receivers.
         List<ApprovedReceiver> possibleReceivers =
                 approvedReceiverDao.getApprovedReceiverIdsForCertificate(certificateId);

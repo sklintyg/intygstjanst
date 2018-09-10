@@ -18,26 +18,31 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetype.v1.GetCertificateTypeType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateType;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
-import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.common.lisjp.support.LisjpEntryPoint;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.UUID;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -46,11 +51,15 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static se.inera.intyg.common.support.Constants.KV_INTYGSTYP_CODE_SYSTEM;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetRecipientsForCertificateResponderImplTest {
 
     private static final String LOGICAL_ADDRESS = "logicalAddress";
+
+    @Mock
+    private CertificateService certificateService;
 
     @Mock
     private RecipientService recipientService;
@@ -59,45 +68,86 @@ public class GetRecipientsForCertificateResponderImplTest {
     private GetRecipientsForCertificateResponderInterface responder = new GetRecipientsForCertificateResponderImpl();
 
     @Test
-    public void getRecipientsForCertificateTest() throws RecipientUnknownException {
-        final String intygsTyp = "intygsTyp";
-        final String recipientId = "recipientId";
-        final String recipientName = "recipientName";
+    public void getRecipientsForCertificateTest() {
+        final String intygsId = "intygsId";
+        when(recipientService.listRecipients(any(String.class))).thenReturn(getRecipientList(true, true));
 
-        when(recipientService.listRecipients(any(String.class))).thenReturn(Arrays
-                .asList(new RecipientBuilder()
-                        .setLogicalAddress("logicalAddress")
-                        .setName(recipientName)
-                        .setId(recipientId)
-                        .setCertificateTypes("certificateTypes")
-                        .setActive(true)
-                        .setTrusted(true)
-                        .build()));
-
-        GetRecipientsForCertificateResponseType res = responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRequest(intygsTyp));
+        GetRecipientsForCertificateResponseType res =
+                responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
 
         assertNotNull(res);
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
         assertEquals(1, res.getRecipient().size());
-        assertEquals(recipientId, res.getRecipient().get(0).getId());
-        assertEquals(recipientName, res.getRecipient().get(0).getName());
+        assertEquals("recipientId", res.getRecipient().get(0).getId());
+        assertEquals("recipientName", res.getRecipient().get(0).getName());
         assertTrue(res.getRecipient().get(0).isTrusted());
 
-        ArgumentCaptor<String> typeCaptor = ArgumentCaptor.forClass(String.class);
-        verify(recipientService).listRecipients(typeCaptor.capture());
-        assertEquals(intygsTyp, typeCaptor.getValue());
+        ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+        verify(recipientService).listRecipients(stringCaptor.capture());
+        assertEquals(intygsId, stringCaptor.getValue());
     }
 
     @Test
-    public void getRecipientsForCertificateNoRecipientsFoundTest() throws RecipientUnknownException {
+    public void getRecipientsForCertificateWhenNoRecipientsWereFoundTest() throws InvalidCertificateException {
         final String intygsId = "intygsId";
-        when(recipientService.listRecipients(any(String.class))).thenReturn(new ArrayList<>());
 
-        GetRecipientsForCertificateResponseType res = responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRequest(intygsId));
+        when(recipientService.listRecipients(any(String.class))).thenReturn(new ArrayList<>());
+        when(certificateService.getCertificateType(any(String.class))).thenReturn(createCertificateType(null));
+
+        GetRecipientsForCertificateResponseType res =
+                responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
 
         assertNotNull(res);
         assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
         assertEquals(ErrorIdType.APPLICATION_ERROR, res.getResult().getErrorId());
+
+        ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+        verify(recipientService).listRecipients(stringCaptor.capture());
+        assertEquals(intygsId, stringCaptor.getValue());
+
+        ArgumentCaptor<GetCertificateTypeType> typeCaptor = ArgumentCaptor.forClass(GetCertificateTypeType.class);
+        verify(certificateService).getCertificateType(stringCaptor.capture());
+    }
+
+    @Test
+    public void getRecipientForCertificateWhenNoApprovedRecieversWereFoundTest() throws InvalidCertificateException {
+        final String intygsId = "intygsId";
+
+        when(recipientService.listRecipients(any(String.class))).thenReturn(new ArrayList<>());
+        when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(getRecipientList(true, true));
+        when(certificateService.getCertificateType(any(String.class))).thenReturn(createCertificateType(LisjpEntryPoint.MODULE_ID));
+
+        GetRecipientsForCertificateResponseType res =
+                responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
+
+        assertNotNull(res);
+        assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
+        assertEquals(1, res.getRecipient().size());
+        assertEquals("recipientId", res.getRecipient().get(0).getId());
+        assertEquals("recipientName", res.getRecipient().get(0).getName());
+        assertTrue(res.getRecipient().get(0).isTrusted());
+
+        ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+        verify(recipientService).listRecipients(stringCaptor.capture());
+
+        ArgumentCaptor<CertificateType> ctypeCaptor = ArgumentCaptor.forClass(CertificateType.class);
+        verify(recipientService).listRecipients(ctypeCaptor.capture());
+
+        ArgumentCaptor<GetCertificateTypeType> gctypeCaptor = ArgumentCaptor.forClass(GetCertificateTypeType.class);
+        verify(certificateService).getCertificateType(stringCaptor.capture());
+    }
+
+    @Test
+    public void getRecipientsForCertificateInactiveTest() {
+        final String intygsId = "intygsId";
+
+        when(recipientService.listRecipients(any(String.class))).thenReturn(getRecipientList(false, true));
+
+        GetRecipientsForCertificateResponseType res =
+                responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
+
+        assertNotNull(res);
+        assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
 
         ArgumentCaptor<String> typeCaptor = ArgumentCaptor.forClass(String.class);
         verify(recipientService).listRecipients(typeCaptor.capture());
@@ -105,71 +155,50 @@ public class GetRecipientsForCertificateResponderImplTest {
     }
 
     @Test
-    public void getRecipientsForCertificateInactiveTest() throws RecipientUnknownException {
-        final String intygsTyp = "intygsTyp";
+    public void getRecipientsForCertificateUntrustedTest() {
+        final String intygsId = "intygsId";
 
-        when(recipientService.listRecipients(any(String.class))).thenReturn(Arrays
-                .asList(new RecipientBuilder()
-                        .setLogicalAddress("logicalAddress")
-                        .setName("recipientName")
-                        .setId("recipientId")
-                        .setCertificateTypes("certificateTypes")
-                        .setActive(false)
-                        .setTrusted(true)
-                        .build()));
+        when(recipientService.listRecipients(any(String.class))).thenReturn(getRecipientList(true, false));
 
-        GetRecipientsForCertificateResponseType res = responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRequest(intygsTyp));
-
-        assertNotNull(res);
-        assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
-
-        ArgumentCaptor<String> typeCaptor = ArgumentCaptor.forClass(String.class);
-        verify(recipientService).listRecipients(typeCaptor.capture());
-        assertEquals(intygsTyp, typeCaptor.getValue());
-    }
-
-    @Test
-    public void getRecipientsForCertificateUntrustedTest() throws RecipientUnknownException {
-        final String intygsTyp = "intygsTyp";
-        final String recipientId = "recipientId";
-        final String recipientName = "recipientName";
-
-        when(recipientService.listRecipients(any(String.class))).thenReturn(Arrays
-                .asList(new RecipientBuilder()
-                        .setLogicalAddress("logicalAddress")
-                        .setName(recipientName)
-                        .setId(recipientId)
-                        .setCertificateTypes("certificateTypes")
-                        .setActive(true)
-                        .setTrusted(false)
-                        .build()));
-
-        GetRecipientsForCertificateResponseType res = responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRequest(intygsTyp));
+        GetRecipientsForCertificateResponseType res =
+                responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
 
         assertNotNull(res);
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
         assertEquals(1, res.getRecipient().size());
-        assertEquals(recipientId, res.getRecipient().get(0).getId());
-        assertEquals(recipientName, res.getRecipient().get(0).getName());
+        assertEquals("recipientId", res.getRecipient().get(0).getId());
+        assertEquals("recipientName", res.getRecipient().get(0).getName());
         assertFalse(res.getRecipient().get(0).isTrusted());
 
         ArgumentCaptor<String> typeCaptor = ArgumentCaptor.forClass(String.class);
         verify(recipientService).listRecipients(typeCaptor.capture());
-        assertEquals(intygsTyp, typeCaptor.getValue());
+        assertEquals(intygsId, typeCaptor.getValue());
     }
 
-    private GetRecipientsForCertificateType createRequest(String id) {
-        GetRecipientsForCertificateType parameters = new GetRecipientsForCertificateType();
-        parameters.setCertificateId(id);
-        return parameters;
+    private GetRecipientsForCertificateType createRecipientsForCertificateRequest(String id) {
+        GetRecipientsForCertificateType reguest = new GetRecipientsForCertificateType();
+        reguest.setCertificateId(id);
+        return reguest;
     }
 
-    private ApprovedReceiver getDefaultApprovedReceiver() {
-        ApprovedReceiver approvedReceiver = new ApprovedReceiver();
-        approvedReceiver.setId(new Random().nextLong());
-        approvedReceiver.setApproved(true);
-        approvedReceiver.setCertificateId(UUID.randomUUID().toString());
-        approvedReceiver.setReceiverId("recipientId");
-        return approvedReceiver;
+    private TypAvIntyg createCertificateType(String certificateType) {
+        TypAvIntyg typAvIntyg = new TypAvIntyg();
+        if (StringUtils.isNoneBlank(certificateType)) {
+            typAvIntyg.setCode(certificateType);
+            typAvIntyg.setCodeSystem(KV_INTYGSTYP_CODE_SYSTEM);
+        }
+        return typAvIntyg;
     }
+
+    private List<Recipient> getRecipientList(boolean active, boolean trusted) {
+        return Collections.singletonList(new RecipientBuilder()
+                .setLogicalAddress("logicalAddress")
+                .setName("recipientName")
+                .setId("recipientId")
+                .setCertificateTypes("certificateTypes")
+                .setActive(active)
+                .setTrusted(trusted)
+                .build());
+    }
+
 }

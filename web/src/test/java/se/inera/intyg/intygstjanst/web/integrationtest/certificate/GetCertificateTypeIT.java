@@ -68,10 +68,11 @@ public class GetCertificateTypeIT extends BaseIntegrationTest {
     @Test
     public void getCertificateDoesNotExist() {
         requestTemplate.add("data", new IntygsData("fit-intyg-finnsinte"));
+        String expected = "Failed to get certificate's type. Certificate with id fit-intyg-finnsinte is invalid or does not exist";
 
         given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-type/v1.0").then().statusCode(500)
                 .rootPath("Envelope.Body.Fault").body("faultcode", is("soap:Server"))
-                .body("faultstring", is("Certificate with id fit-intyg-finnsinte is invalid or does not exist"));
+                .body("faultstring", is(expected));
     }
 
     @Test
