@@ -66,7 +66,7 @@ public class CertificateToSjukfallCertificateConverterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testThrowsExceptionWhenNonFk7263Type() {
-        testee.convertFk7263(getFactoryInstance().buildCert("fk"), new TsBasUtlatande());
+        testee.convertFk7263(getFactoryInstance().buildCert("fk"), TsBasUtlatande.builder().build());
     }
 
     @Test
@@ -174,7 +174,7 @@ public class CertificateToSjukfallCertificateConverterTest {
 
     @Test
     public void testIsConvertableFk7263ReturnsFalseWhenNonFk7263Type() {
-        assertFalse(testee.isConvertableFk7263(new TsBasUtlatande()));
+        assertFalse(testee.isConvertableFk7263(TsBasUtlatande.builder().build()));
     }
 
     @Test
@@ -223,7 +223,7 @@ public class CertificateToSjukfallCertificateConverterTest {
 
     @Test
     public void testIsConvertableLisjpReturnsFalseWhenNonLisjpType() {
-        assertFalse(testee.isConvertableLisjp(new TsBasUtlatande()));
+        assertFalse(testee.isConvertableLisjp(TsBasUtlatande.builder().build()));
     }
 
     @Test
