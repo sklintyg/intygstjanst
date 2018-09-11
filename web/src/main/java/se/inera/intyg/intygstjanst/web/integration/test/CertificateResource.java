@@ -219,7 +219,7 @@ public class CertificateResource {
                 @SuppressWarnings("unchecked")
                 List<ApprovedReceiver> approvedReceivers =
                         entityManager
-                                .createQuery("SELECT ar.id FROM approved_receiver ar WHERE ar.certificate_id=:certificateId")
+                                .createQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId=:certificateId")
                                 .setParameter("certificateId", id)
                                 .getResultList();
 
