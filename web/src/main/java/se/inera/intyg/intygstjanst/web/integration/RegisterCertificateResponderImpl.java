@@ -43,6 +43,7 @@ import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.Regi
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.DatePeriodType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.PartialDateType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Relation;
@@ -73,7 +74,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     public void initializeJaxbContext() throws JAXBException {
         // We need to register DatePeriodType with the JAXBContext explicitly for some reason.
         jaxbContext = JAXBContext.newInstance(RegisterCertificateType.class, DatePeriodType.class, SignatureType.class,
-                XPathType.class);
+                XPathType.class, PartialDateType.class);
         objectFactory = new ObjectFactory();
     }
 
