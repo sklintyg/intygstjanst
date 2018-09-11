@@ -36,7 +36,7 @@ public abstract class BaseIntegrationTest {
     @Before
     public void setupBase() {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
-        RestAssured.baseURI = "http://localhost:8080/";//System.getProperty("integration.tests.baseUrl");
+        RestAssured.baseURI = System.getProperty("integration.tests.baseUrl");
     }
 
     @After
