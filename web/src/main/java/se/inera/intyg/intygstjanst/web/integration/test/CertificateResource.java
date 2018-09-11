@@ -207,6 +207,36 @@ public class CertificateResource {
         });
     }
 
+    @DELETE
+    @Path("/{id}/approvedreceivers")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteApprovedReceivers(@PathParam("id") final String id) {
+
+        return transactionTemplate.execute(status -> {
+            try {
+                LOGGER.info("removing approved receivers for certificates {}", id);
+
+                @SuppressWarnings("unchecked")
+                List<ApprovedReceiver> approvedReceivers =
+                        entityManager
+                                .createQuery("SELECT ar.id FROM approved_receiver ar WHERE ar.certificate_id=:certificateId")
+                                .setParameter("certificateId", id)
+                                .getResultList();
+
+                for (ApprovedReceiver ar : approvedReceivers) {
+                    entityManager.remove(ar);
+                }
+
+                return Response.ok().build();
+
+            } catch (Exception e) {
+                status.setRollbackOnly();
+                LOGGER.warn("removal of approved receivers for certificate {} failed", id, e);
+                return Response.serverError().build();
+            }
+        });
+    }
+
     @POST
     @Path("/{id}/approvedreceivers")
     @Produces(MediaType.APPLICATION_JSON)
