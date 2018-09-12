@@ -11,7 +11,7 @@ env:
   - name: infraVersion
     value: $INFRA_VERSION
   - name: buildVersion
-    value: $IB_BUILD_VERSION
+    value: $INTYGSTJANST_BUILD_VERSION
   - name: commonVersion
     value: $COMMON_VERSION
   - name: gitRef
