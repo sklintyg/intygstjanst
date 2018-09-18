@@ -168,6 +168,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         certificateHolder.setCivicRegistrationNumber(createPnr(intyg));
         certificateHolder.setSignedDate(intyg.getSigneringstidpunkt());
         certificateHolder.setType(type);
+        certificateHolder.setTypeVersion(intyg.getVersion());
         certificateHolder.setOriginalCertificate(originalCertificate);
         certificateHolder.setAdditionalInfo(additionalInfo);
         certificateHolder.setCertificateRelation(convertRelation(intyg.getIntygsId().getExtension(), intyg.getRelation()));

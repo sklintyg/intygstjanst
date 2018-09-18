@@ -53,6 +53,7 @@ import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.RelationService;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateTypeInfo;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 
@@ -154,7 +155,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     @Override
-    public TypAvIntyg getCertificateType(String certificateId) {
+    public CertificateTypeInfo getCertificateTypeInfo(String certificateId) {
         Certificate cert = null;
 
         try {
@@ -168,7 +169,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         typAvIntyg = new TypAvIntyg();
         typAvIntyg.setCode(cert.getType());
         typAvIntyg.setCodeSystem(KV_INTYGSTYP_CODE_SYSTEM);
-        return typAvIntyg;
+
+        return new CertificateTypeInfo(typAvIntyg, cert.getTypeVersion());
     }
 
     @Override

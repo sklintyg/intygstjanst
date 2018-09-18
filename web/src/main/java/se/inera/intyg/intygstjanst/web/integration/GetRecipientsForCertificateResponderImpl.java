@@ -18,10 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateType;
@@ -32,13 +37,9 @@ import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateTypeInfo;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
-import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class GetRecipientsForCertificateResponderImpl implements GetRecipientsForCertificateResponderInterface {
 
@@ -119,9 +120,9 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
     }
 
     private String getIntygsTyp(String intygsId) {
-        TypAvIntyg typAvIntyg = certificateService.getCertificateType(intygsId);
-        if (typAvIntyg != null) {
-            return typAvIntyg.getCode();
+        final CertificateTypeInfo certificateTypeInfo = certificateService.getCertificateTypeInfo(intygsId);
+        if (certificateTypeInfo != null && certificateTypeInfo.getTypAvIntyg() != null) {
+            return certificateTypeInfo.getTypAvIntyg().getCode();
         }
 
         LOGGER.error("Failed to get certificate's type. Certificate with id {} is invalid or does not exist", intygsId);

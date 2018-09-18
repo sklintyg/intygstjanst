@@ -67,6 +67,12 @@ public class Certificate {
      */
     @Column(name = "CERTIFICATE_TYPE", nullable = false)
     private String type;
+    /**
+     * Version of of the certificate type.
+     */
+    @Column(name = "CERTIFICATE_TYPE_VERSION", nullable = false)
+    private String typeVersion;
+
 
     /**
      * Name of the doctor that signed the certificate.
@@ -280,6 +286,14 @@ public class Certificate {
         this.wireTapped = wireTapped;
     }
 
+    public String getTypeVersion() {
+        return typeVersion;
+    }
+
+    public void setTypeVersion(String typeVersion) {
+        this.typeVersion = typeVersion;
+    }
+
     public List<CertificateStateHistoryEntry> getStates() {
         return Collections.unmodifiableList(CertificateStateHistoryEntry.BY_TIMESTAMP_DESC.sortedCopy(states));
     }
@@ -319,7 +333,7 @@ public class Certificate {
 
     @Override
     public String toString() {
-        return "Certificate{" + "id='" + id + '\'' + ", type='" + type + '\''
+        return "Certificate{" + "id='" + id + '\'' + ", type='" + type + '\'' + ", typeVersion='" + typeVersion + '\''
                 + ", signingDoctorName='" + signingDoctorName + '\'' + ", careUnitName='" + careUnitName + '\''
                 + ", civicRegistrationNumber='" + civicRegistrationNumber + '\'' + ", signedDate=" + signedDate
                 + ", validFromDate='" + validFromDate + '\'' + ", validToDate='" + validToDate + '\'' + ", states=" + states + '}';

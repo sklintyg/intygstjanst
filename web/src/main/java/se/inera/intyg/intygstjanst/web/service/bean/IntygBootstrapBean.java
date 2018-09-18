@@ -59,6 +59,7 @@ import java.util.Objects;
 public class IntygBootstrapBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(IntygBootstrapBean.class);
+    private static final String DEFAULT_TYPE_VERSION_FALLBACK = "1.0";
 
     @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
     private EntityManager entityManager;
@@ -127,6 +128,7 @@ public class IntygBootstrapBean {
                         new CertificateStateHistoryEntry(defaultRecipient, CertificateState.SENT,
                                 utlatande.getGrundData().getSigneringsdatum().plusMinutes(2))));
                 certificate.setType(utlatande.getTyp());
+                certificate.setTypeVersion(utlatande.getTextVersion() != null ? utlatande.getTextVersion() : DEFAULT_TYPE_VERSION_FALLBACK);
                 certificate.setValidFromDate(null);
                 certificate.setValidToDate(null);
                 certificate.setWireTapped(false);

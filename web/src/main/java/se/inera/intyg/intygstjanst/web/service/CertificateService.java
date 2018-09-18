@@ -18,17 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateTypeInfo;
 import se.inera.intyg.schemas.contract.Personnummer;
-import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @author andreaskaltenbach
@@ -103,7 +103,7 @@ public interface CertificateService {
      * @param certificateId the certificate ID
      * @return the certificate's type or null if the requested certificate does not exist
      */
-    TypAvIntyg getCertificateType(String certificateId);
+    CertificateTypeInfo getCertificateTypeInfo(String certificateId);
 
     /**
      * Sends a certificate to a destined recipient.

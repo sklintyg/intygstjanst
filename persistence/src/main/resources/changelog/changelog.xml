@@ -416,4 +416,22 @@
 			</column>
 		</addColumn>
 	</changeSet>
+
+	<!-- Add column for intygTypeVersion needed for versioned inityg -->
+	<changeSet id="41" author="marced">
+		<addColumn tableName="CERTIFICATE">
+			<column name="CERTIFICATE_TYPE_VERSION" type="varchar(32)">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+		<!-- NOTE: This need to be verified to work before put int production!!!!
+    Since we dont have a simple way of finding out exact version of existing ts
+    certificates (they will exist with versions 2.6/2.8 and 6.7/6.8.) we only specify major version (=modelversion) for ts certificates.
+    The minor version only matters when resolving texts, while major is important when choosing moduleapi version etc.-->
+		<sql>
+			UPDATE CERTIFICATE SET CERTIFICATE_TYPE_VERSION = '1.0' WHERE CERTIFICATE_TYPE  NOT IN ('ts-bas', 'ts-diabetes');
+			UPDATE CERTIFICATE SET CERTIFICATE_TYPE_VERSION = '6' WHERE CERTIFICATE_TYPE = 'ts-bas';
+			UPDATE CERTIFICATE SET CERTIFICATE_TYPE_VERSION = '2' WHERE CERTIFICATE_TYPE = 'ts-diabetes';
+		</sql>
+	</changeSet>
 </databaseChangeLog>

@@ -35,6 +35,7 @@ public final class ConverterUtil {
         Certificate certificate = new Certificate(certificateHolder.getId());
 
         certificate.setType(certificateHolder.getType());
+        certificate.setTypeVersion(certificateHolder.getTypeVersion());
         certificate.setSigningDoctorName(certificateHolder.getSigningDoctorName());
         certificate.setSignedDate(certificateHolder.getSignedDate());
 
@@ -63,6 +64,7 @@ public final class ConverterUtil {
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId(certificate.getId());
         certificateHolder.setType(certificate.getType());
+        certificateHolder.setTypeVersion(certificate.getTypeVersion());
         certificateHolder.setOriginalCertificate(certificate.getOriginalCertificate() == null ? null
                 : certificate.getOriginalCertificate().getDocument());
         certificateHolder.setCareUnitId(certificate.getCareUnitId());

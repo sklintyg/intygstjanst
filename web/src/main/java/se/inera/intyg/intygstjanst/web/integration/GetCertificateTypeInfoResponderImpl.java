@@ -20,43 +20,45 @@ package se.inera.intyg.intygstjanst.web.integration;
 
 import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.beans.factory.annotation.Autowired;
-import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetype.v1.GetCertificateTypeResponderInterface;
-import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetype.v1.GetCertificateTypeResponseType;
-import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetype.v1.GetCertificateTypeType;
+
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoResponderInterface;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoResponseType;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoType;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateTypeInfo;
 
 /**
  * Created by eriklupander on 2017-05-11.
  */
 @SchemaValidation
-public class GetCertificateTypeResponderImpl implements GetCertificateTypeResponderInterface {
+public class GetCertificateTypeInfoResponderImpl implements GetCertificateTypeInfoResponderInterface {
 
     @Autowired
     private CertificateService certificateService;
 
     @Override
     @PrometheusTimeMethod
-    public GetCertificateTypeResponseType getCertificateType(String logicalAddress, GetCertificateTypeType request) {
+    public GetCertificateTypeInfoResponseType getCertificateTypeInfo(String logicalAddress, GetCertificateTypeInfoType request) {
 
         if (isNullOrEmpty(request)) {
             throw new IllegalArgumentException("Request to GetCertificateType is missing required parameter 'intygs-id'");
         }
 
-        TypAvIntyg typAvIntyg = certificateService.getCertificateType(request.getIntygsId());
-        if (typAvIntyg == null) {
+        final CertificateTypeInfo certificateTypeInfo = certificateService.getCertificateTypeInfo(request.getIntygsId());
+        if (certificateTypeInfo == null) {
             throw new ServerException("Failed to get certificate's type. "
                     + "Certificate with id " + request.getIntygsId() + " is invalid or does not exist");
         }
 
-        GetCertificateTypeResponseType response = new GetCertificateTypeResponseType();
-        response.setTyp(typAvIntyg);
+        GetCertificateTypeInfoResponseType response = new GetCertificateTypeInfoResponseType();
+        response.setTyp(certificateTypeInfo.getTypAvIntyg());
+        response.setTypVersion(certificateTypeInfo.getVersion());
         return response;
     }
 
-    private boolean isNullOrEmpty(GetCertificateTypeType request) {
+    private boolean isNullOrEmpty(GetCertificateTypeInfoType request) {
         return request == null || request.getIntygsId() == null || request.getIntygsId().trim().length() == 0;
     }
 }

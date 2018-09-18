@@ -1,5 +1,6 @@
 {"id": "intyg-1",
     "type": "fk7263",
+    "typeVersion": "1.0",
     "civicRegistrationNumber": "19121212-1212",
     "signedDate": "2011-03-23T09:29:15.000",
     "signingDoctorName": "Eva Holgersson",

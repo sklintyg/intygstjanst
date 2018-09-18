@@ -18,32 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetype.v1.GetCertificateTypeType;
-import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponderInterface;
-import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponseType;
-import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateType;
-import se.inera.intyg.common.lisjp.support.LisjpEntryPoint;
-import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.inera.intyg.intygstjanst.web.service.RecipientService;
-import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
-import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
-import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
-import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
-import se.riv.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
-import se.riv.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -53,10 +27,39 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static se.inera.intyg.common.support.Constants.KV_INTYGSTYP_CODE_SYSTEM;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoType;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponderInterface;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponseType;
+import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateType;
+import se.inera.intyg.common.lisjp.support.LisjpEntryPoint;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateTypeInfo;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
+import se.riv.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
+import se.riv.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
+
 @RunWith(MockitoJUnitRunner.class)
 public class GetRecipientsForCertificateResponderImplTest {
 
     private static final String LOGICAL_ADDRESS = "logicalAddress";
+    private static final String DEFAULT_TYPE_VERSION = "1.0";
 
     @Mock
     private CertificateService certificateService;
@@ -92,7 +95,7 @@ public class GetRecipientsForCertificateResponderImplTest {
         final String intygsId = "intygsId";
 
         when(recipientService.listRecipients(any(String.class))).thenReturn(new ArrayList<>());
-        when(certificateService.getCertificateType(any(String.class))).thenReturn(createCertificateType(null));
+        when(certificateService.getCertificateTypeInfo(any(String.class))).thenReturn(createCertificateType(null, null));
 
         GetRecipientsForCertificateResponseType res =
                 responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
@@ -105,8 +108,8 @@ public class GetRecipientsForCertificateResponderImplTest {
         verify(recipientService).listRecipients(stringCaptor.capture());
         assertEquals(intygsId, stringCaptor.getValue());
 
-        ArgumentCaptor<GetCertificateTypeType> typeCaptor = ArgumentCaptor.forClass(GetCertificateTypeType.class);
-        verify(certificateService).getCertificateType(stringCaptor.capture());
+        ArgumentCaptor<GetCertificateTypeInfoType> typeCaptor = ArgumentCaptor.forClass(GetCertificateTypeInfoType.class);
+        verify(certificateService).getCertificateTypeInfo(stringCaptor.capture());
     }
 
     @Test
@@ -115,7 +118,7 @@ public class GetRecipientsForCertificateResponderImplTest {
 
         when(recipientService.listRecipients(any(String.class))).thenReturn(new ArrayList<>());
         when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(getRecipientList(true, true));
-        when(certificateService.getCertificateType(any(String.class))).thenReturn(createCertificateType(LisjpEntryPoint.MODULE_ID));
+        when(certificateService.getCertificateTypeInfo(any(String.class))).thenReturn(createCertificateType(LisjpEntryPoint.MODULE_ID, DEFAULT_TYPE_VERSION));
 
         GetRecipientsForCertificateResponseType res =
                 responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
@@ -133,8 +136,8 @@ public class GetRecipientsForCertificateResponderImplTest {
         ArgumentCaptor<CertificateType> ctypeCaptor = ArgumentCaptor.forClass(CertificateType.class);
         verify(recipientService).listRecipients(ctypeCaptor.capture());
 
-        ArgumentCaptor<GetCertificateTypeType> gctypeCaptor = ArgumentCaptor.forClass(GetCertificateTypeType.class);
-        verify(certificateService).getCertificateType(stringCaptor.capture());
+        ArgumentCaptor<GetCertificateTypeInfoType> gctypeCaptor = ArgumentCaptor.forClass(GetCertificateTypeInfoType.class);
+        verify(certificateService).getCertificateTypeInfo(stringCaptor.capture());
     }
 
     @Test
@@ -181,13 +184,13 @@ public class GetRecipientsForCertificateResponderImplTest {
         return reguest;
     }
 
-    private TypAvIntyg createCertificateType(String certificateType) {
+    private CertificateTypeInfo createCertificateType(String certificateType, String version) {
         TypAvIntyg typAvIntyg = new TypAvIntyg();
         if (StringUtils.isNoneBlank(certificateType)) {
             typAvIntyg.setCode(certificateType);
             typAvIntyg.setCodeSystem(KV_INTYGSTYP_CODE_SYSTEM);
         }
-        return typAvIntyg;
+        return new CertificateTypeInfo(typAvIntyg, version);
     }
 
     private List<Recipient> getRecipientList(boolean active, boolean trusted) {
