@@ -46,6 +46,7 @@ public abstract class TestSupport {
     public static final String CARE_UNIT_ID = "1.2.3.4.5.6";
     public static final String CARE_UNIT_NAME = "London Bridge Hospital";
     public static final String CARE_GIVER_ID = "5678";
+    private static final String DEFAULT_TYPE_VERSION = "1.0";
 
     public static Certificate buildCertificate() {
         return buildCertificate(CERTIFICATE_ID);
@@ -67,6 +68,7 @@ public abstract class TestSupport {
         Certificate certificate = new Certificate(certificateId);
         certificate.setCivicRegistrationNumber(CIVIC_REGISTRATION_NUMBER);
         certificate.setType(certificateType);
+        certificate.setTypeVersion(DEFAULT_TYPE_VERSION);
         certificate.setSignedDate(signedDate);
         certificate.setSigningDoctorName(SIGNING_DOCTOR);
         certificate.setCareUnitId(CARE_UNIT_ID);
