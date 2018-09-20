@@ -18,11 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.StringStartsWith.startsWith;
-
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,17 +30,15 @@ import org.springframework.core.io.ClassPathResource;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
-
-import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
+
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 public class SendCertificateToRecipientIT extends BaseIntegrationTest {
     private static final String REGISTER_BASE = "Envelope.Body.RegisterCertificateResponse.";
@@ -51,13 +49,14 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
 
     private STGroup templateGroupRecipient;
     private STGroup templateGroupRegister;
-    private String personId1 = "192703104321";
 
+    private String personId1 = "192703104321";
     private String intygsId = "123456";
 
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
+
         templateGroupRecipient = new STGroupFile("integrationtests/sendcertificatetorecipient/requests.stg");
         requestTemplateRecipient = templateGroupRecipient.getInstanceOf("request");
 
