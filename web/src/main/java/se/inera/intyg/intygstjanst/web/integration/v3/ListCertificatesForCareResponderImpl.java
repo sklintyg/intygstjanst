@@ -96,10 +96,9 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
     private Intyg convert(Certificate certificate) {
         try {
             CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
-            ModuleEntryPoint moduleEntryPoint = moduleRegistry.getModuleEntryPoint(certificateHolder.getType());
-            ModuleApi moduleApi = moduleEntryPoint.getModuleApi();
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
             // Unified handling of all certificate types, maintaining a simple module api
-            Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
+            Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate(), certificateHolder.getTypeVersion()));
             intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
                     .filter(ch -> CertificateStateFilterUtil.filter(ch, HSVARD_PARTKOD))
                     .collect(Collectors.toList())));

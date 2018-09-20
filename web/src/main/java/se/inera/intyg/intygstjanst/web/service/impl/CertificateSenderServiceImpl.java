@@ -104,7 +104,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
                             String.format("Recipient %s is not available for certificate type %s", recipientId, certType.toString()));
                 }
             }
-            module.getModuleApi().sendCertificateToRecipient(certificate.getOriginalCertificate().getDocument(),
+            moduleRegistry.getModuleApi(certificate.getType()).sendCertificateToRecipient(certificate.getOriginalCertificate().getDocument(),
                     logicalAddress, recipientId, certificate.getTypeVersion());
 
             monitoringLogService.logCertificateSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(), recipientId);

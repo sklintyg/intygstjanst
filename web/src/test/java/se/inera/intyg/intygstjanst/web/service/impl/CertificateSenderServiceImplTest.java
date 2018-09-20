@@ -67,9 +67,11 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -134,7 +136,7 @@ public class CertificateSenderServiceImplTest {
     @Before
     public void setupModuleRestApiFactory() throws ModuleNotFoundException {
         when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
-        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
+        when(moduleRegistry.getModuleApi(or(isNull(), anyString()))).thenReturn(moduleApi);
         when(moduleEntryPoint.getDefaultRecipient()).thenReturn(RECIPIENT_DEFAULT_LOGICALADDRESS);
     }
 

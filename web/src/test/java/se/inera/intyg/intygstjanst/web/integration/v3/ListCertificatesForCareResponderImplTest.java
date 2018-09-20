@@ -63,6 +63,7 @@ public class ListCertificatesForCareResponderImplTest {
 
     private static final String FKASSA_RECIPIENT_ID = "FKASSA";
     private static final String OTHER_RECIPIENT_ID = "someotherId";
+    private static final String INTYG_TYPE_VERSION = "1.0";
 
     @Mock
     private CertificateService certificateService;
@@ -84,13 +85,10 @@ public class ListCertificatesForCareResponderImplTest {
 
     @Before
     public void setup() throws ModuleNotFoundException, ModuleException {
-        when(moduleRegistry.getModuleEntryPoint(or(isNull(), anyString()))).thenReturn(moduleEntryPoint);
 
-//        when(moduleEntryPoint.getDefaultRecipient()).thenReturn(OTHER_RECIPIENT_ID);
+        when(moduleRegistry.getModuleApi(or(isNull(), anyString()))).thenReturn(moduleApi);
 
-        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
-
-        when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()))).thenReturn(mock(Utlatande.class));
+        when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()), anyString())).thenReturn(mock(Utlatande.class));
 
         when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class)))).thenReturn(new Intyg());
     }
@@ -119,8 +117,10 @@ public class ListCertificatesForCareResponderImplTest {
         List<String> careUnit = Collections.singletonList("enhet");
 
         Certificate certificate1 = new Certificate();
+        certificate1.setTypeVersion(INTYG_TYPE_VERSION);
         certificate1.setDeletedByCareGiver(Boolean.FALSE);
         Certificate certificate2 = new Certificate();
+        certificate2.setTypeVersion(INTYG_TYPE_VERSION);
         certificate2.setDeletedByCareGiver(Boolean.FALSE);
 
         List<Certificate> result = Arrays.asList(certificate1, certificate2);
@@ -143,8 +143,10 @@ public class ListCertificatesForCareResponderImplTest {
         List<String> careUnit = Collections.singletonList("enhet");
 
         Certificate certificate = new Certificate();
+        certificate.setTypeVersion(INTYG_TYPE_VERSION);
         certificate.setDeletedByCareGiver(Boolean.TRUE);
         Certificate certificate2 = new Certificate();
+        certificate2.setTypeVersion(INTYG_TYPE_VERSION);
         certificate2.setDeletedByCareGiver(Boolean.FALSE);
 
         List<Certificate> result = Arrays.asList(certificate, certificate2);
@@ -158,7 +160,7 @@ public class ListCertificatesForCareResponderImplTest {
 
         verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
         verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
-        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()));
+        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()), anyString());
 
         // We only return Intyg that are not deletedByCaregiver
         assertEquals(1, response.getIntygsLista().getIntyg().size());

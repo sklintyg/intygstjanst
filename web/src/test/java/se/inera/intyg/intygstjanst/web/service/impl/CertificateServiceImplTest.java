@@ -450,16 +450,18 @@ public class CertificateServiceImplTest {
     @Test
     public void testCertificateReceived() throws Exception {
         final String certificateType = "luse";
+        final String certificateTypeVersion = "1.0";
         final String careUnitId = "enhet-1";
         final String originalXml = "original";
         final String transformedXml = "transformedXml";
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId(CERTIFICATE_ID);
         certificateHolder.setType(certificateType);
+        certificateHolder.setTypeVersion(certificateTypeVersion);
         certificateHolder.setCareUnitId(careUnitId);
         certificateHolder.setOriginalCertificate(originalXml);
         when(moduleRegistry.getModuleApi(certificateType)).thenReturn(moduleApi);
-        when(moduleApi.transformToStatisticsService(originalXml)).thenReturn(transformedXml);
+        when(moduleApi.transformToStatisticsService(originalXml, certificateTypeVersion)).thenReturn(transformedXml);
 
         certificateService.certificateReceived(certificateHolder);
         verify(certificateDao).store(any(Certificate.class));
@@ -494,14 +496,16 @@ public class CertificateServiceImplTest {
     @Test
     public void testCertificateReceivedModuleException() throws Exception {
         final String certificateType = "luse";
+        final String certificateTypeVersion = "1.0";
         final String originalXml = "original";
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId(CERTIFICATE_ID);
         certificateHolder.setType(certificateType);
+        certificateHolder.setTypeVersion(certificateTypeVersion);
         certificateHolder.setCareUnitId("enhet-1");
         certificateHolder.setOriginalCertificate(originalXml);
         when(moduleRegistry.getModuleApi(certificateType)).thenReturn(moduleApi);
-        when(moduleApi.transformToStatisticsService(originalXml)).thenThrow(new ModuleException());
+        when(moduleApi.transformToStatisticsService(originalXml, certificateTypeVersion)).thenThrow(new ModuleException());
 
         try {
             certificateService.certificateReceived(certificateHolder);

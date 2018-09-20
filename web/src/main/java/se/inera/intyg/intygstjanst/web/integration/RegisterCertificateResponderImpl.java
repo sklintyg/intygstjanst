@@ -85,7 +85,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             String intygsTyp = getIntygsTyp(registerCertificate);
             ModuleApi api = moduleRegistry.getModuleApi(intygsTyp);
             String xml = xmlToString(registerCertificate);
-            ValidateXmlResponse validationResponse = api.validateXml(xml);
+            ValidateXmlResponse validationResponse = api.validateXml(xml, registerCertificate.getIntyg().getVersion());
             String additionalInfo = api.getAdditionalInfo(registerCertificate.getIntyg());
 
             if (!validationResponse.hasErrorMessages()) {

@@ -73,6 +73,7 @@ public class ListCertificatesForCitizenResponderImplTest {
     private static final String FKASSA_RECIPIENT_ID = "FKASSA";
     private static final String OTHER_RECIPIENT_ID = "someotherID";
     private static final String MINA_INTYG_RECIPIENT_ID = "INVANA";
+    private static final String INTYG_TYPE_VERSION = "1.0";
 
     @Mock
     private CertificateService certificateService;
@@ -94,9 +95,8 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     @Before
     public void setup() throws ModuleNotFoundException, ModuleException {
-        when(moduleRegistry.getModuleEntryPoint(or(isNull(), anyString()))).thenReturn(moduleEntryPoint);
-        when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
-        when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()))).thenReturn(mock(Utlatande.class));
+        when(moduleRegistry.getModuleApi(or(isNull(), anyString()))).thenReturn(moduleApi);
+        when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()), anyString())).thenReturn(mock(Utlatande.class));
         when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class)))).thenReturn(new Intyg());
     }
 
@@ -153,8 +153,10 @@ public class ListCertificatesForCitizenResponderImplTest {
         LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         Certificate certificate = new Certificate();
+        certificate.setTypeVersion(INTYG_TYPE_VERSION);
         certificate.addState(new CertificateStateHistoryEntry("MI", CertificateState.DELETED, LocalDateTime.now().minusDays(4)));
         Certificate certificate2 = new Certificate();
+        certificate2.setTypeVersion(INTYG_TYPE_VERSION);
         List<Certificate> result = Arrays.asList(certificate, certificate2);
 
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
@@ -166,7 +168,7 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
         verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
-        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()));
+        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()), anyString());
 
         assertEquals(1, response.getIntygsLista().getIntyg().size());
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
@@ -180,8 +182,10 @@ public class ListCertificatesForCitizenResponderImplTest {
         LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         Certificate certificate = new Certificate();
+        certificate.setTypeVersion(INTYG_TYPE_VERSION);
         certificate.addState(new CertificateStateHistoryEntry("INVANA", CertificateState.DELETED, LocalDateTime.now().minusDays(4)));
         Certificate certificate2 = new Certificate();
+        certificate2.setTypeVersion(INTYG_TYPE_VERSION);
         List<Certificate> result = Arrays.asList(certificate, certificate2);
 
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
@@ -193,7 +197,7 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
         verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
-        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()));
+        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()), anyString());
 
         assertEquals(1, response.getIntygsLista().getIntyg().size());
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
@@ -208,6 +212,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         Certificate certificate = new Certificate();
+        certificate.setTypeVersion(INTYG_TYPE_VERSION);
         certificate.setStates(Arrays.asList(new CertificateStateHistoryEntry("FKASSA", CertificateState.SENT, statusTimestamp)));
         List<Certificate> result = Arrays.asList(certificate);
 
@@ -245,6 +250,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         Certificate certificate = new Certificate();
+        certificate.setTypeVersion(INTYG_TYPE_VERSION);
         certificate.setStates(Arrays.asList(
                 new CertificateStateHistoryEntry(FKASSA_RECIPIENT_ID, CertificateState.SENT, timestamps[0]),
                 new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.SENT, timestamps[1]),
@@ -298,6 +304,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         LocalDate toDate = LocalDate.of(2020, 12, 12);
 
         Certificate certificate = new Certificate();
+        certificate.setTypeVersion(INTYG_TYPE_VERSION);
         certificate.setStates(Arrays.asList(
                 new CertificateStateHistoryEntry(FKASSA_RECIPIENT_ID, CertificateState.SENT, timestamps[0]),
                 new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.SENT, timestamps[1]),
@@ -364,12 +371,16 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         Certificate certificate = new Certificate();
         certificate.setType(Fk7263EntryPoint.MODULE_ID);
+        certificate.setTypeVersion(INTYG_TYPE_VERSION);
         Certificate certificate2 = new Certificate();
         certificate2.setType(Fk7263EntryPoint.MODULE_ID);
+        certificate2.setTypeVersion(INTYG_TYPE_VERSION);
         Certificate certificate3 = new Certificate();
         certificate3.setType(DbModuleEntryPoint.MODULE_ID);
+        certificate3.setTypeVersion(INTYG_TYPE_VERSION);
         Certificate certificate4 = new Certificate();
         certificate4.setType(DoiModuleEntryPoint.MODULE_ID);
+        certificate4.setTypeVersion(INTYG_TYPE_VERSION);
         List<Certificate> result = Arrays.asList(certificate, certificate3, certificate4, certificate2);
 
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);

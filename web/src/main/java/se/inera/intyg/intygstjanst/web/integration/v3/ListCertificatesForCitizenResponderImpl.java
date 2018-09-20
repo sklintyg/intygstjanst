@@ -110,10 +110,11 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
     private Intyg convert(Certificate certificate, String part) {
         try {
             CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
-            ModuleEntryPoint moduleEntryPoint = moduleRegistry.getModuleEntryPoint(certificateHolder.getType());
-            ModuleApi moduleApi = moduleEntryPoint.getModuleApi();
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
+
             // Unified handling of all certificate types, maintaining a simple module api
-            Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
+            Intyg intyg = moduleApi.getIntygFromUtlatande(
+                    moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate(), certificateHolder.getTypeVersion()));
             intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
                     .filter(ch -> CertificateStateFilterUtil.filter(ch, part))
                     .collect(Collectors.toList())));
