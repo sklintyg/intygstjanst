@@ -43,6 +43,7 @@ public class InternalNotificationServiceImpl implements InternalNotificationServ
 
     private static final String CERTIFICATE_ID = "certificate-id";
     private static final String CERTIFICATE_TYPE = "certificate-type";
+    private static final String CERTIFICATE_TYPE_VERSION = "certificate-type-version";
     private static final String CARE_UNIT_ID = "care-unit-id";
 
     private static final Logger LOG = LoggerFactory.getLogger(lookup().getClass());
@@ -61,13 +62,13 @@ public class InternalNotificationServiceImpl implements InternalNotificationServ
         if (skickatAv != null && skickatAv.getPersonId() != null
                 && skickatAv.getHosPersonal() == null) {
             notifyCertificateSentByCitizenToRecipient(certificate.getId(),
-                    certificate.getType(), certificate.getCareUnitId());
+                    certificate.getType(), certificate.getTypeVersion(), certificate.getCareUnitId());
         }
     }
 
-    private void notifyCertificateSentByCitizenToRecipient(String certificateId, String certificateType,
+    private void notifyCertificateSentByCitizenToRecipient(String certificateId, String certificateType, String certificateTypeVersion,
             String careUnitId) {
-        boolean rc = sendCertificateSentByCitizienToInternalNotificationQueue(SENT, certificateId, certificateType, careUnitId);
+        boolean rc = sendCertificateSentByCitizienToInternalNotificationQueue(SENT, certificateId, certificateType, certificateTypeVersion, careUnitId);
         if (rc) {
             LOG.debug("Internal notification was sent");
         } else {
@@ -79,6 +80,7 @@ public class InternalNotificationServiceImpl implements InternalNotificationServ
             final String actionType,
             final String certificateId,
             final String certificateType,
+            final String certificateTypeVersion,
             final String careUnitId) {
 
         try {
@@ -87,6 +89,7 @@ public class InternalNotificationServiceImpl implements InternalNotificationServ
                 message.setStringProperty(ACTION, actionType);
                 message.setStringProperty(CERTIFICATE_ID, certificateId);
                 message.setStringProperty(CERTIFICATE_TYPE, certificateType);
+                message.setStringProperty(CERTIFICATE_TYPE_VERSION, certificateTypeVersion);
                 message.setStringProperty(CARE_UNIT_ID, careUnitId);
                 return message;
             });

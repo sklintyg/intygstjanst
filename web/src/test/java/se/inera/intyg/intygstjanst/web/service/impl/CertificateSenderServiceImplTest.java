@@ -83,13 +83,14 @@ public class CertificateSenderServiceImplTest {
 
     private static final String CERTIFICATE_ID = "123456";
     private static final String CERTIFICATE_TYPE = "fk7263";
+    private static final String CERTIFICATE_TYPE_VERSION = "1.0";
 
     private static final String RECIPIENT_ID = "FKASSA";
     private static final String RECIPIENT_NAME = "Försäkringskassan";
     private static final String RECIPIENT_LOGICALADDRESS = "FKORG";
     private static final String RECIPIENT_DEFAULT_LOGICALADDRESS = "FKORG-DEFAULT";
     private static final String RECIPIENT_CERTIFICATETYPES = "fk7263";
-    private static Certificate certificate = CertificateFactory.buildCertificate(CERTIFICATE_ID, CERTIFICATE_TYPE);
+    private static Certificate certificate = CertificateFactory.buildCertificate(CERTIFICATE_ID, CERTIFICATE_TYPE, CERTIFICATE_TYPE_VERSION);
     @Mock
     private RecipientService recipientService;
     @Mock
@@ -147,20 +148,20 @@ public class CertificateSenderServiceImplTest {
     @Test
     public void testSend() throws Exception {
         senderService.sendCertificate(certificate, RECIPIENT_ID);
-        verify(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_LOGICALADDRESS), eq(RECIPIENT_ID));
+        verify(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_LOGICALADDRESS), eq(RECIPIENT_ID), eq(CERTIFICATE_TYPE_VERSION));
     }
 
     @Test
     public void testSendWithDefaultRecipient() throws ModuleException {
         senderService.sendCertificate(certificate, null);
-        verify(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_DEFAULT_LOGICALADDRESS), Mockito.isNull(String.class));
+        verify(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_DEFAULT_LOGICALADDRESS), Mockito.isNull(String.class), eq(CERTIFICATE_TYPE_VERSION));
     }
 
     @Test(expected = ServerException.class)
     public void testSendWithFailingModule() throws Exception {
         // web service call fails
         doThrow(new ModuleException("")).when(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_LOGICALADDRESS),
-                eq(RECIPIENT_ID));
+                eq(RECIPIENT_ID), eq(CERTIFICATE_TYPE_VERSION));
         senderService.sendCertificate(certificate, RECIPIENT_ID);
     }
 

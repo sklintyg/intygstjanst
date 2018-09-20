@@ -41,6 +41,8 @@
     <!-- Import spring context of all module dependencies -->
     <import resource="classpath*:module-config.xml"/>
     <import resource="classpath*:it-module-cxf-servlet.xml"/>
+    <!-- Load version helper -->
+    <context:component-scan base-package="se.inera.intyg.common.support.modules.support.api.versions" />
 
     <cache:annotation-driven cache-manager="cacheManager"/>
 

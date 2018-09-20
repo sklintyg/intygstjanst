@@ -105,7 +105,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
                 }
             }
             module.getModuleApi().sendCertificateToRecipient(certificate.getOriginalCertificate().getDocument(),
-                    logicalAddress, recipientId);
+                    logicalAddress, recipientId, certificate.getTypeVersion());
 
             monitoringLogService.logCertificateSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(), recipientId);
 

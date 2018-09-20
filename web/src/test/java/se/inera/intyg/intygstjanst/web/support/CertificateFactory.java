@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
  */
 public final class CertificateFactory {
     private static final String INTYG_TYPE = "fk7263";
+    private static final java.lang.String INTYG_TYPE_VERSION = "1.0";
 
     private CertificateFactory() {
     }
@@ -52,21 +53,18 @@ public final class CertificateFactory {
     }
 
     public static Certificate buildCertificate(String certificateId) {
-        return buildCertificate(certificateId, VALID_FROM, VALID_TO);
+        return buildCertificate(certificateId, INTYG_TYPE, INTYG_TYPE_VERSION, VALID_FROM, VALID_TO);
     }
 
-    public static Certificate buildCertificate(String certificateId, String certificateType) {
-        return buildCertificate(certificateId, certificateType, VALID_FROM, VALID_TO);
+    public static Certificate buildCertificate(String certificateId, String certificateType, String certificateTypeVersion) {
+        return buildCertificate(certificateId, certificateType, certificateTypeVersion, VALID_FROM, VALID_TO);
     }
 
-    public static Certificate buildCertificate(String certificateId, String validFrom, String validTo) {
-        return buildCertificate(certificateId, INTYG_TYPE, validFrom, validTo);
-    }
-
-    public static Certificate buildCertificate(String certificateId, String certificateType, String validFrom, String validTo) {
+    public static Certificate buildCertificate(String certificateId, String certificateType, String certificateTypeVersion, String validFrom, String validTo) {
         Certificate certificate = new Certificate(certificateId);
         certificate.setCivicRegistrationNumber(CIVIC_REGISTRATION_NUMBER);
         certificate.setType(certificateType);
+        certificate.setTypeVersion(certificateTypeVersion);
         certificate.setValidFromDate(validFrom);
         certificate.setValidToDate(validTo);
         certificate.setSignedDate(SIGNED_DATE);
