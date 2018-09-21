@@ -38,7 +38,7 @@ public class RevokeMedicalCertificateIT extends BaseIntegrationTest {
     private STGroup templateGroup;
 
     private static final String INTYG_ID = "revokeMedicalCertificateITcertificateId";
-    private static final String INTYG_TYP = "fk7263";
+    private static final String INTYG_TYP_FK7263 = "fk7263";
 
     @Before
     public void setup() {
@@ -55,7 +55,7 @@ public class RevokeMedicalCertificateIT extends BaseIntegrationTest {
     @Test
     public void revokeMedicalCertificate() {
         final String personId = "190101010101";
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_FK7263, FK7263_VERSION, personId, false);
 
         getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
         givenRequest(INTYG_ID, personId, "meddelande").body("result.resultCode", is("OK"));
@@ -80,7 +80,7 @@ public class RevokeMedicalCertificateIT extends BaseIntegrationTest {
     @Test
     public void revokeMedicalCertificateWithBlanksteg() {
         final String personId = "190101010101";
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_FK7263, FK7263_VERSION, personId, false);
 
         getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
         givenRequest(INTYG_ID, personId, "meddelande", "blankstegRequest").body("result.resultCode", is("OK"));

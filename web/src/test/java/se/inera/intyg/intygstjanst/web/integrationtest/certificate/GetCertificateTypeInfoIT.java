@@ -33,9 +33,9 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
-public class GetCertificateTypeIT extends BaseIntegrationTest {
+public class GetCertificateTypeInfoIT extends BaseIntegrationTest {
 
-    private static final String BASE = "Envelope.Body.GetCertificateTypeResponse.";
+    private static final String BASE = "Envelope.Body.GetCertificateTypeInfoResponse.";
     private static final String INTYG_ID = "getCertificateITcertificateId";
     private static final String PERSON_ID = "190101010101";
 
@@ -46,7 +46,7 @@ public class GetCertificateTypeIT extends BaseIntegrationTest {
     @Before
     public void setup() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
-        templateGroup = new STGroupFile("integrationtests/getcertificatetype/requests.stg");
+        templateGroup = new STGroupFile("integrationtests/getcertificatetypeinfo/requests.stg");
         requestTemplate = templateGroup.getInstanceOf("request");
         cleanup();
     }
@@ -58,11 +58,12 @@ public class GetCertificateTypeIT extends BaseIntegrationTest {
 
     @Test
     public void getCertificateWorks() {
-        IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", LUSE_VERSION, PERSON_ID, false);
         requestTemplate.add("data", new IntygsData(INTYG_ID));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-type/v1.0").then().statusCode(200).rootPath(BASE)
-                .body("typ.code", is("luse"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-type-info/v1.0").then().statusCode(200).rootPath(BASE)
+                .body("typ.code", is("luse"))
+                .body("typVersion", is(LUSE_VERSION));
     }
 
     @Test
@@ -70,7 +71,7 @@ public class GetCertificateTypeIT extends BaseIntegrationTest {
         requestTemplate.add("data", new IntygsData("fit-intyg-finnsinte"));
         String expected = "Failed to get certificate's type. Certificate with id fit-intyg-finnsinte is invalid or does not exist";
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-type/v1.0").then().statusCode(500)
+        given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-type-info/v1.0").then().statusCode(500)
                 .rootPath("Envelope.Body.Fault").body("faultcode", is("soap:Server"))
                 .body("faultstring", is(expected));
     }
@@ -80,7 +81,7 @@ public class GetCertificateTypeIT extends BaseIntegrationTest {
         requestTemplate.add("data", new IntygsData("<root></root>")); // This breakes the XML Schema
 
         // GetCertificateType does not have a fault transformer, SoapFault is expected
-        given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-type/v1.0").then().statusCode(500)
+        given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-type-info/v1.0").then().statusCode(500)
                 .rootPath("Envelope.Body.Fault").body("faultcode", is("soap:Client")).body("faultstring", startsWith("Unmarshalling Error"));
     }
 

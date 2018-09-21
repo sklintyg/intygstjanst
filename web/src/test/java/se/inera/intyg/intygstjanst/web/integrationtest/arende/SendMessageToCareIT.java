@@ -50,6 +50,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
     private static final String INTYG_ID_NON_EXISTANT = "intyg-nonexistant";
     private static final String PERSON_ID = "190101010101";
 
+
     private ST requestTemplate;
 
     @Before
@@ -67,7 +68,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
 
     @Test
     public void sendMessageToCareOk() throws Exception {
-        IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", LUSE_VERSION,  PERSON_ID, false);
         String enhetsId = "123456";
 
         requestTemplate.add("data", new ArendeData(INTYG_ID, "KOMPL", PERSON_ID, enhetsId));
@@ -78,7 +79,7 @@ public class SendMessageToCareIT extends BaseIntegrationTest {
 
     @Test
     public void responseRespectsSchema() throws Exception {
-        IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", LUSE_VERSION ,PERSON_ID, false);
         final String xsdString = Resources.toString(
                 new ClassPathResource("interactions/SendMessageToCareInteraction/SendMessageToCareResponder_2.0.xsd").getURL(), Charsets.UTF_8);
 

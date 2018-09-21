@@ -37,7 +37,7 @@ public class RegisterTSDiabetesIT extends BaseIntegrationTest {
     private STGroup templateGroup;
 
     private static final String INTYG_ID = "registerTSDiabetesITcertificateId";
-    private static final String INTYG_TYP = "ts-diabetes";
+    private static final String INTYG_TYP_TS_DIABETES = "ts-diabetes";
 
     @Before
     public void setup() {
@@ -63,7 +63,7 @@ public class RegisterTSDiabetesIT extends BaseIntegrationTest {
     @Test
     public void registerTSDiabetesAlreadyExists() {
         final String personId = "190101010101";
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_TS_DIABETES, TS_DIABETES_VERSION, personId, false);
 
         givenRequest(INTYG_ID, personId).body("resultat.resultCode", is("INFO")).body("resultat.resultText", is("Certificate already exists"));
     }

@@ -98,7 +98,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
 
     @Test
     public void sendCertificateToRecipientTS() {
-        IntegrationTestUtil.givenIntyg(intygsId, "ts-bas", personId1, false);
+        IntegrationTestUtil.givenIntyg(intygsId, "ts-bas", TS_BAS_VERSION, personId1, false);
 
         requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
         requestTemplateRecipient.add("mottagare", "TRANSP");

@@ -30,6 +30,11 @@ import com.jayway.restassured.RestAssured;
  */
 public abstract class BaseIntegrationTest {
 
+    protected static final String LUSE_VERSION = "1.0";
+    protected static final String FK7263_VERSION = "1.0";
+    protected static final String TS_BAS_VERSION = "6.8";
+    protected static final String TS_DIABETES_VERSION = "2.7";
+
     /**
      * Common setup for all tests
      */

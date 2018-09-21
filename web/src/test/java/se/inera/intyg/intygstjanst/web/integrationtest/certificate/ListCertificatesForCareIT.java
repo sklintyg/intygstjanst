@@ -94,7 +94,7 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
         IntegrationTestUtil.registerCertificateFromTemplate(intygsId.get(2), personId1, IntegrationTestCertificateType.LUAEFS);
         IntegrationTestUtil.registerCertificateFromTemplate(intygsId.get(3), personId1, IntegrationTestCertificateType.LISJP);
         // deletedByCareGiver should not be returned
-        IntegrationTestUtil.givenIntyg(intygsId.get(4), "fk7263", personId1, true);
+        IntegrationTestUtil.givenIntyg(intygsId.get(4), "fk7263", FK7263_VERSION, personId1, true);
         requestTemplate.add("data", new IntygsData(personId1));
 
         Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-care/v3.0").then()

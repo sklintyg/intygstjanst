@@ -56,7 +56,7 @@ public class GetCertificateIT extends BaseIntegrationTest {
 
     @Test
     public void getCertificateWorks() {
-        IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", LUSE_VERSION, PERSON_ID, false);
         requestTemplate.add("data", new IntygsData(INTYG_ID, PERSON_ID));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-se/v2.0").then().statusCode(200).rootPath(BASE)

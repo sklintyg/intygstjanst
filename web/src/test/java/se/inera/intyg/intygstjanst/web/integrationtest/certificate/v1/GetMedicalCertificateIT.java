@@ -37,7 +37,7 @@ public class GetMedicalCertificateIT extends BaseIntegrationTest {
     private STGroup templateGroup;
 
     private static final String INTYG_ID = "getMedicalCertificateITcertificateId";
-    private static final String INTYG_TYP = "fk7263";
+    private static final String INTYG_TYP_FK7263 = "fk7263";
 
     @Before
     public void setup() {
@@ -54,7 +54,7 @@ public class GetMedicalCertificateIT extends BaseIntegrationTest {
     @Test
     public void getMedicalCertificate() {
         final String personId = "190101010101";
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_FK7263, FK7263_VERSION, personId, false);
 
         givenRequest(INTYG_ID, personId).body("result.resultCode", is("OK")).body("meta.certificateId", is(INTYG_ID))
                 .body("meta.status.type", is("RECEIVED")).body("lakarutlatande.patient.person-id.@extension", is(personId));
@@ -70,7 +70,7 @@ public class GetMedicalCertificateIT extends BaseIntegrationTest {
     @Test
     public void getMedicalCertificateRevoked() {
         final String personId = "190101010101";
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_FK7263, FK7263_VERSION,personId, false);
         IntegrationTestUtil.revokeMedicalCertificate(INTYG_ID, personId, "");
 
         givenRequest(INTYG_ID, personId).body("meta.certificateId", is(INTYG_ID)).body("result.resultCode", is("ERROR"))
@@ -81,7 +81,7 @@ public class GetMedicalCertificateIT extends BaseIntegrationTest {
     @Test
     public void getMedicalCertificateDeletedByCareGiver() {
         final String personId = "190101010101";
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, true);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_FK7263, FK7263_VERSION, personId, true);
 
         givenRequest(INTYG_ID, personId).body("result.resultCode", is("ERROR")).body("result.errorId", is("APPLICATION_ERROR"))
                 .body("result.resultText", is("Certificate 'getMedicalCertificateITcertificateId' has been deleted by care giver"));

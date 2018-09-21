@@ -41,7 +41,7 @@ public class RegisterMedicalCertificateIT extends BaseIntegrationTest {
     private STGroup templateGroup;
 
     private static final String INTYG_ID = UUID.randomUUID().toString();
-    private static final String INTYG_TYP = "fk7263";
+    private static final String INTYG_TYP_FK7263 = "fk7263";
 
     @Before
     public void setup() {
@@ -73,7 +73,7 @@ public class RegisterMedicalCertificateIT extends BaseIntegrationTest {
 
     @Test
     public void registerMedicalCertificateIdAlreadyExistOnOtherPerson() {
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, "19020202-0202", false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_FK7263, FK7263_VERSION,"19020202-0202", false);
 
         givenRequest(INTYG_ID, "19010101-0101", false).body("result.resultCode", is("ERROR")).body("result.errorId", is("APPLICATION_ERROR"))
                 .body("result.errorText", is("Invalid certificate ID"));

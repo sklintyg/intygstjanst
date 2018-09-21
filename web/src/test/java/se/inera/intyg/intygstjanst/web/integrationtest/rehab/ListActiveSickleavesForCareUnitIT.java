@@ -155,8 +155,8 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
 
     @Test
     public void testReadIntygsDataForUnknownUnit() {
-        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", PERSON_ID, false);
-        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", FK7263_VERSION, PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", LUSE_VERSION, PERSON_ID, false);
 
         given().with().body(REQUEST.replace("{{careUnitHsaId}}", "unknown-unit"))
                 .expect()

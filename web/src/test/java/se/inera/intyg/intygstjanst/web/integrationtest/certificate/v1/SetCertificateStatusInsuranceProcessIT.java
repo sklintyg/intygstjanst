@@ -42,7 +42,7 @@ public class SetCertificateStatusInsuranceProcessIT extends BaseIntegrationTest 
     private STGroup templateGroup;
 
     private static final String INTYG_ID = "setCertificateStatusInsuranceprocessITcertificateId";
-    private static final String INTYG_TYP = "fk7263";
+    private static final String INTYG_TYP_FK7263 = "fk7263";
 
     @Before
     public void setup() {
@@ -72,7 +72,7 @@ public class SetCertificateStatusInsuranceProcessIT extends BaseIntegrationTest 
     public void setCertificateStatusMultipleTimes() {
         final String personId = "190101010101";
         final String status = CertificateState.SENT.name();
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_FK7263, FK7263_VERSION, personId, false);
 
         getMedicalCertificateRequest(INTYG_ID, personId).body("meta.status.size()", is(1)).body("meta.status.type", is("RECEIVED"));
         // mark as sent twice
@@ -93,7 +93,7 @@ public class SetCertificateStatusInsuranceProcessIT extends BaseIntegrationTest 
 
     @Test
     public void setCertificateStatusWrongPerson() {
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, "19020202-0202", false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_FK7263, FK7263_VERSION, "19020202-0202", false);
         givenRequest("fit-intyg-finnsinte", "190101010101", "FK", CertificateState.SENT.name(), LocalDateTime.now())
                 .body("result.resultCode", is("ERROR")).body("result.errorId", is("VALIDATION_ERROR")).body("result.errorText", is(
                         "Certificate 'fit-intyg-finnsinte' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));

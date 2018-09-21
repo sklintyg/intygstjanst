@@ -38,7 +38,7 @@ public class SendMedicalCertificateIT extends BaseIntegrationTest {
     private STGroup templateGroup;
 
     private static final String INTYG_ID = "sendMedicalCertificateITcertificateId";
-    private static final String INTYG_TYP = "fk7263";
+    private static final String INTYG_TYP_FK7263 = "fk7263";
 
     @Before
     public void setup() {
@@ -55,7 +55,7 @@ public class SendMedicalCertificateIT extends BaseIntegrationTest {
     @Test
     public void sendMedicalCertificate() {
         final String personId = "19010101-0101";
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_FK7263, FK7263_VERSION, personId, false);
 
         getMedicalCertificateRequest(INTYG_ID, personId)
                 .body("meta.status.size()", is(1))
@@ -127,7 +127,7 @@ public class SendMedicalCertificateIT extends BaseIntegrationTest {
     @Test
     public void sendMedicalCertificateRevoked() {
         final String personId = "19010101-0101";
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_FK7263, FK7263_VERSION, personId, false);
         IntegrationTestUtil.revokeMedicalCertificate(INTYG_ID, personId, "meddelande");
 
         givenRequest(INTYG_ID, personId).body("result.resultCode", is("INFO")).body("result.infoText",
@@ -145,7 +145,7 @@ public class SendMedicalCertificateIT extends BaseIntegrationTest {
     @Test
     public void sendMedicalCertificateWrongPerson() {
         final String personId = "19010101-0101";
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, "19020202-0202", false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_FK7263, FK7263_VERSION, "19020202-0202", false);
 
         givenRequest(INTYG_ID, personId)
                 .body("result.resultCode", is("ERROR"))
@@ -156,7 +156,7 @@ public class SendMedicalCertificateIT extends BaseIntegrationTest {
     @Test
     public void sendMedicalCertificateWithBlanksteg() {
         final String personId = "19010101-0101";
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_FK7263, FK7263_VERSION, personId, false);
 
         getMedicalCertificateRequest(INTYG_ID, personId)
                 .body("meta.status.size()", is(1))

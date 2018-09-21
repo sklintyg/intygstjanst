@@ -129,8 +129,8 @@ public class IntegrationTestUtil {
         given().delete("inera-certificate/resources/certificate/unit/" + careUnitId).then().statusCode(200);
     }
 
-    public static void givenIntyg(String intygId, String intygTyp, String personId, boolean deletedByCareGiver) {
-        given().contentType("application/json;charset=utf-8").body(certificate(intygId, intygTyp, personId, deletedByCareGiver))
+    public static void givenIntyg(String intygId, String intygTyp, String intygTypeVersion, String personId, boolean deletedByCareGiver) {
+        given().contentType("application/json;charset=utf-8").body(certificate(intygId, intygTyp, intygTypeVersion, personId, deletedByCareGiver))
                 .post("inera-certificate/resources/certificate/").then().statusCode(200);
     }
 
@@ -197,10 +197,11 @@ public class IntegrationTestUtil {
         }
     }
 
-    private static CertificateHolder certificate(String intygId, String intygTyp, String personId, boolean deletedByCareGiver) {
+    private static CertificateHolder certificate(String intygId, String intygTyp, String intygTypeVersion, String personId, boolean deletedByCareGiver) {
         CertificateHolder certificate = new CertificateHolder();
         certificate.setId(intygId);
         certificate.setType(intygTyp);
+        certificate.setTypeVersion(intygTypeVersion);
         certificate.setSignedDate(LocalDateTime.now());
         certificate.setCareGiverId("CareGiverId");
         certificate.setCareUnitId("CareUnitId");

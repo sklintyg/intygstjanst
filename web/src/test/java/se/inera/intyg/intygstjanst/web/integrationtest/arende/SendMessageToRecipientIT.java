@@ -70,7 +70,7 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
 
     @Test
     public void sendMessageToRecipientOk() throws Exception {
-        IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", LUSE_VERSION, PERSON_ID, false);
 
         String enhetsId = "123456";
         requestTemplate.add("data", new ArendeData(INTYG_ID, "KOMPL", PERSON_ID, enhetsId));
@@ -81,7 +81,7 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
 
     @Test
     public void responseRespectsSchema() throws Exception {
-        IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", LUSE_VERSION, PERSON_ID, false);
         final String xsdString = Resources.toString(
                 new ClassPathResource("interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_2.0.xsd").getURL(), Charsets.UTF_8);
 

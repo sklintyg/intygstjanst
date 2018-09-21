@@ -63,8 +63,8 @@ public class ListCertificatesIT extends BaseIntegrationTest {
 
     @Test
     public void listCertificates() {
-        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", PERSON_ID, false);
-        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", FK7263_VERSION, PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", LUSE_VERSION, PERSON_ID, false);
         IntegrationTestUtil.addConsent(PERSON_ID);
 
         givenRequest(PERSON_ID).body("meta.size()", is(2)).body("meta[0].certificateId", anyOf(is(INTYG_IDS.get(0)), is(INTYG_IDS.get(1))))
@@ -73,8 +73,8 @@ public class ListCertificatesIT extends BaseIntegrationTest {
 
     @Test
     public void listCertificatesCertificateType() {
-        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", PERSON_ID, false);
-        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", FK7263_VERSION, PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", LUSE_VERSION, PERSON_ID, false);
         IntegrationTestUtil.addConsent(PERSON_ID);
 
         givenCertificateTypeRequest(PERSON_ID, "fk7263").body("meta.size()", is(1)).body("meta[0].certificateId", is(INTYG_IDS.get(0)))
@@ -83,8 +83,8 @@ public class ListCertificatesIT extends BaseIntegrationTest {
 
     @Test
     public void listCertificatesDateInterval() {
-        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", PERSON_ID, false);
-        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", FK7263_VERSION, PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", LUSE_VERSION, PERSON_ID, false);
         IntegrationTestUtil.addConsent(PERSON_ID);
 
         givenDateIntervalRequest(PERSON_ID, LocalDateTime.now(), LocalDateTime.now().plusDays(2)).body("meta.size()", is(0)).body("result.resultCode",
@@ -94,8 +94,8 @@ public class ListCertificatesIT extends BaseIntegrationTest {
     // Note: after 2018-2 consent is not required.
     @Test
     public void listCertificatesNoConsent() {
-        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", PERSON_ID, false);
-        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", FK7263_VERSION, PERSON_ID, false);
+        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", LUSE_VERSION, PERSON_ID, false);
 
         givenRequest(PERSON_ID).body("meta.size()", is(2)).body("result.resultCode", is("OK"));
     }

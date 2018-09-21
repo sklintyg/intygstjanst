@@ -115,7 +115,7 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
     public void listCertificatesRevokeConsent() {
         ST requestTemplate = getRequestTemplate(true);
         IntegrationTestUtil.addConsent(personId);
-        IntegrationTestUtil.givenIntyg(intygsId_alltypes.get(0), "fk7263", personId, true);
+        IntegrationTestUtil.givenIntyg(intygsId_alltypes.get(0), "fk7263", FK7263_VERSION, personId, true);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200)

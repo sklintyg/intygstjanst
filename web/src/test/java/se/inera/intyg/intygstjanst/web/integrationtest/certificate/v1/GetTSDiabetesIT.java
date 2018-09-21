@@ -37,7 +37,7 @@ public class GetTSDiabetesIT extends BaseIntegrationTest {
     private STGroup templateGroup;
 
     private static final String INTYG_ID = "getTSDiabetesITcertificateId";
-    private static final String INTYG_TYP = "ts-diabetes";
+    private static final String INTYG_TYP_TS_DIABETES = "ts-diabetes";
 
     @Before
     public void setup() {
@@ -54,7 +54,7 @@ public class GetTSDiabetesIT extends BaseIntegrationTest {
     @Test
     public void getTSDiabetes() {
         final String personId = "190101010101";
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_TS_DIABETES, TS_DIABETES_VERSION, personId, false);
 
         givenRequest(INTYG_ID, personId).body("resultat.resultCode", is("OK")).body("intyg.intygsId", is(INTYG_ID))
                 .body("meta.status.type", is("RECEIVED")).body("intyg.grundData.patient.personId.extension", is(personId));
@@ -70,7 +70,7 @@ public class GetTSDiabetesIT extends BaseIntegrationTest {
     @Test
     public void getTSDiabetesRevoked() {
         final String personId = "190101010101";
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_TS_DIABETES, TS_DIABETES_VERSION, personId, false);
         IntegrationTestUtil.revokeMedicalCertificate(INTYG_ID, personId, "");
 
         givenRequest(INTYG_ID, personId).body("intyg.intygsId", is(INTYG_ID)).body("resultat.resultCode", is("ERROR"))
@@ -81,7 +81,7 @@ public class GetTSDiabetesIT extends BaseIntegrationTest {
     @Test
     public void getTSDiabetesDeletedByCareGiver() {
         final String personId = "190101010101";
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, personId, true);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_TS_DIABETES, TS_DIABETES_VERSION, personId, true);
 
         givenRequest(INTYG_ID, personId).body("resultat.resultCode", is("ERROR")).body("resultat.errorId", is("APPLICATION_ERROR"))
                 .body("resultat.resultText", is("Certificate 'getTSDiabetesITcertificateId' has been deleted by care giver"));
@@ -89,7 +89,7 @@ public class GetTSDiabetesIT extends BaseIntegrationTest {
 
     @Test
     public void getTSDiabetesWrongPerson() {
-        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP, "19020202-0202", false);
+        IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_TS_DIABETES, TS_DIABETES_VERSION, "19020202-0202", false);
 
         givenRequest(INTYG_ID, "190101010101").body("resultat.resultCode", is("ERROR")).body("resultat.errorId", is("VALIDATION_ERROR")).body(
                 "resultat.resultText",
