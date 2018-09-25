@@ -18,7 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v2;
 
-import com.google.common.base.Throwables;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +36,7 @@ import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertif
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 
 import javax.xml.bind.JAXB;
 import java.io.StringReader;
@@ -47,8 +47,6 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetCertificateResponderImpl.class);
 
-    private static final String SMI_DEFAULT_RECIPIENT = "FKASSA";
-
     @Autowired
     private ModuleContainerApi moduleContainer;
 
@@ -58,7 +56,6 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
     @Override
     @PrometheusTimeMethod
     public GetCertificateResponseType getCertificate(String logicalAddress, GetCertificateType request) {
-        GetCertificateResponseType response = new GetCertificateResponseType();
 
         String certificateId = request.getIntygsId().getExtension();
 
@@ -67,36 +64,37 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
             if (certificate.isDeletedByCareGiver()) {
                 throw new ServerException("Certificate with id " + certificateId + " is deleted from intygstjansten");
             } else {
-                setCertificateBody(certificate, response, request.getPart().getCode());
+                GetCertificateResponseType response = new GetCertificateResponseType();
+                response.setIntyg(convertCertificate(certificate, request.getPart().getCode()));
+                return response;
             }
         } catch (InvalidCertificateException e) {
             throw new ServerException("Certificate with id " + certificateId + " is invalid or does not exist");
         }
-        return response;
     }
 
-    protected void setCertificateBody(CertificateHolder certificateHolder, GetCertificateResponseType response, String part) {
+    protected Intyg convertCertificate(CertificateHolder certificateHolder, String part) {
         try {
-
-            RegisterCertificateType jaxbObject = JAXB.unmarshal(new StringReader(certificateHolder.getOriginalCertificate()),
-                    RegisterCertificateType.class);
-            response.setIntyg(jaxbObject.getIntyg());
+            RegisterCertificateType jaxbObject =
+                    JAXB.unmarshal(new StringReader(certificateHolder.getOriginalCertificate()), RegisterCertificateType.class);
+            Intyg intyg = jaxbObject.getIntyg();
 
             // If OriginalCertificate is not a RegisterCertificateType, try to convert it
-            if (response.getIntyg() == null) {
+            if (intyg == null) {
                 ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
                 Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate());
-                response.setIntyg(moduleApi.getIntygFromUtlatande(utlatande));
+                intyg = moduleApi.getIntygFromUtlatande(utlatande);
             }
 
-            response.getIntyg().getStatus()
+            intyg.getStatus()
                     .addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
                             .filter(ch -> CertificateStateFilterUtil.filter(ch, part))
                             .collect(Collectors.toList())));
+            return intyg;
+
         } catch (Exception e) {
-            LOGGER.error("Error while converting in GetCertificate for id: {} with stacktrace: {}", certificateHolder.getId(),
-                    e.getStackTrace());
-            Throwables.propagate(e);
+            LOGGER.error("Error converting certificate in convertCertificate with id: {}", certificateHolder.getId());
+            throw new RuntimeException(e);
         }
     }
 

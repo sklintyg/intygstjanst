@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2016 Inera AB (http://www.inera.se)
+  ~
+  ~ This file is part of sklintyg (https://github.com/sklintyg).
+  ~
+  ~ sklintyg is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ sklintyg is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<ns3:RegisterTSBas xmlns="urn:local:se:intygstjanster:services:1"
+    xmlns:ns2="urn:local:se:intygstjanster:services:types:1"
+    xmlns:ns3="urn:local:se:intygstjanster:services:RegisterTSBasResponder:1">
+    <ns3:intyg>
+  <intygsId>987654321</intygsId>
+  <intygsTyp>ts-bas</intygsTyp>
+  <version>06</version>
+  <utgava>07</utgava>
+  <grundData>
+    <signeringsTidstampel>2013-08-12T15:57:00</signeringsTidstampel>
+    <skapadAv>
+      <personId>
+        <ns2:root>1.2.752.129.2.1.4.1</ns2:root>
+        <ns2:extension>SE0000000000-1333</ns2:extension>
+      </personId>
+      <fullstandigtNamn>Doktor Thompson</fullstandigtNamn>
+      <atLakare>false</atLakare>
+      <vardenhet>
+        <enhetsId>
+          <ns2:root>1.2.752.129.2.1.4.1</ns2:root>
+          <ns2:extension>SE0000000000-1337</ns2:extension>
+        </enhetsId>
+        <enhetsnamn>Vårdenhet Väst</enhetsnamn>
+        <postadress>Enhetsvägen 12</postadress>
+        <postnummer>54321</postnummer>
+        <postort>Tumba</postort>
+        <telefonnummer>08-1337</telefonnummer>
+        <vardgivare>
+          <vardgivarid>
+            <ns2:root>1.2.752.129.2.1.4.1</ns2:root>
+            <ns2:extension>SE0000000000-HAHAHHSAA</ns2:extension>
+          </vardgivarid>
+          <vardgivarnamn>Vårdgivarnamn</vardgivarnamn>
+        </vardgivare>
+      </vardenhet>
+    </skapadAv>
+    <patient>
+      <personId>
+        <ns2:root>1.2.752.129.2.1.3.1</ns2:root>
+        <ns2:extension>19121212-1212</ns2:extension>
+      </personId>
+      <fullstandigtNamn>Johnny Appleseed</fullstandigtNamn>
+      <fornamn>Johnny</fornamn>
+      <efternamn>Appleseed</efternamn>
+      <postadress>Testvägen 12</postadress>
+      <postnummer>12345</postnummer>
+      <postort>Testort</postort>
+    </patient>
+  </grundData>
+  <intygAvser>
+    <korkortstyp>C</korkortstyp>
+  </intygAvser>
+  <identitetStyrkt>
+    <idkontroll>IDK6</idkontroll>
+  </identitetStyrkt>
+  <synfunktion>
+    <harSynfaltsdefekt>false</harSynfaltsdefekt>
+    <harNattblindhet>false</harNattblindhet>
+    <harProgressivOgonsjukdom>false</harProgressivOgonsjukdom>
+    <harDiplopi>false</harDiplopi>
+    <harNystagmus>false</harNystagmus>
+    <synskarpaUtanKorrektion>
+      <hogerOga>0.0</hogerOga>
+      <vansterOga>0.0</vansterOga>
+      <binokulart>0.0</binokulart>
+    </synskarpaUtanKorrektion>
+    <synskarpaMedKorrektion>
+      <harKontaktlinsHogerOga>false</harKontaktlinsHogerOga>
+      <harKontaktlinsVansterOga>false</harKontaktlinsVansterOga>
+    </synskarpaMedKorrektion>
+  </synfunktion>
+  <horselBalanssinne>
+    <harBalansrubbningYrsel>false</harBalansrubbningYrsel>
+  </horselBalanssinne>
+  <rorelseorganensFunktioner>
+    <harRorelsebegransning>false</harRorelsebegransning>
+  </rorelseorganensFunktioner>
+  <hjartKarlSjukdomar>
+    <harRiskForsamradHjarnFunktion>false</harRiskForsamradHjarnFunktion>
+    <harHjarnskadaICNS>false</harHjarnskadaICNS>
+    <harRiskfaktorerStroke>false</harRiskfaktorerStroke>
+  </hjartKarlSjukdomar>
+  <diabetes>
+    <harDiabetes>false</harDiabetes>
+  </diabetes>
+  <neurologiskaSjukdomar>false</neurologiskaSjukdomar>
+  <medvetandestorning>
+    <harMedvetandestorning>false</harMedvetandestorning>
+  </medvetandestorning>
+  <harNjurSjukdom>false</harNjurSjukdom>
+  <harKognitivStorning>false</harKognitivStorning>
+  <harSomnVakenhetStorning>false</harSomnVakenhetStorning>
+  <alkoholNarkotikaLakemedel>
+    <harTeckenMissbruk>false</harTeckenMissbruk>
+    <harVardinsats>false</harVardinsats>
+    <harLakarordineratLakemedelsbruk>false</harLakarordineratLakemedelsbruk>
+  </alkoholNarkotikaLakemedel>
+  <harPsykiskStorning>false</harPsykiskStorning>
+  <utvecklingsstorning>
+    <harPsykiskUtvecklingsstorning>false</harPsykiskUtvecklingsstorning>
+    <harAndrayndrom>false</harAndrayndrom>
+  </utvecklingsstorning>
+  <sjukhusvard>
+    <harSjukhusvardEllerLakarkontakt>false</harSjukhusvardEllerLakarkontakt>
+  </sjukhusvard>
+  <ovrigMedicinering>
+    <harStadigvarandeMedicinering>false</harStadigvarandeMedicinering>
+  </ovrigMedicinering>
+  <bedomning>
+    <kanInteTaStallning>true</kanInteTaStallning>
+  </bedomning>
+</ns3:intyg>
+</ns3:RegisterTSBas>
