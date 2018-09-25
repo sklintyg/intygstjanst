@@ -36,7 +36,10 @@ import se.inera.intyg.intygstjanst.web.integration.util.CertificateStateFilterUt
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
 
+import javax.xml.bind.JAXB;
+import java.io.StringReader;
 import java.util.stream.Collectors;
 
 @SchemaValidation
@@ -74,9 +77,18 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
 
     protected void setCertificateBody(CertificateHolder certificateHolder, GetCertificateResponseType response, String part) {
         try {
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
-            Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate());
-            response.setIntyg(moduleApi.getIntygFromUtlatande(utlatande));
+
+            RegisterCertificateType jaxbObject = JAXB.unmarshal(new StringReader(certificateHolder.getOriginalCertificate()),
+                    RegisterCertificateType.class);
+            response.setIntyg(jaxbObject.getIntyg());
+
+            // If OriginalCertificate is not a RegisterCertificateType, try to convert it
+            if (response.getIntyg() == null) {
+                ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
+                Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate());
+                response.setIntyg(moduleApi.getIntygFromUtlatande(utlatande));
+            }
+
             response.getIntyg().getStatus()
                     .addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
                             .filter(ch -> CertificateStateFilterUtil.filter(ch, part))

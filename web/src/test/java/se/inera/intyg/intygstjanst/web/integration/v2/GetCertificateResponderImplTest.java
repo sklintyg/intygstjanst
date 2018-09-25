@@ -80,6 +80,21 @@ public class GetCertificateResponderImplTest {
     public void getCertificateTest() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
         final String intygId = "intyg-1";
         when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(createResponse(false));
+        GetCertificateResponseType res = responder.getCertificate(LOGICAL_ADDRESS, createRequest(intygId));
+        assertNotNull(res.getIntyg());
+        assertEquals(1, res.getIntyg().getStatus().size());
+        assertEquals(StatusKod.SENTTO.name(), res.getIntyg().getStatus().get(0).getStatus().getCode());
+        assertEquals("FKASSA", res.getIntyg().getStatus().get(0).getPart().getCode());
+        assertEquals(TIMESTAMP, res.getIntyg().getStatus().get(0).getTidpunkt());
+        verify(moduleContainer).getCertificate(intygId, null, false);
+    }
+
+    @Test
+    public void getCertificateOldFormat() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
+        final String intygId = "intyg-1";
+        final CertificateHolder response = createResponse(false);
+        response.setOriginalCertificate("<old></old>");
+        when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(response);
         when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()))).thenReturn(mock(Utlatande.class));
         when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class)))).thenReturn(new Intyg());
@@ -115,13 +130,9 @@ public class GetCertificateResponderImplTest {
                 new CertificateStateHolder(MINA_INTYG_RECIPIENT_ID, CertificateState.DELETED, TIMESTAMP));
 
         // When
-        when(moduleRegistry.getModuleApi(anyString())).thenReturn(moduleApi);
-        when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()))).thenReturn(mock(Utlatande.class));
-        when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class)))).thenReturn(new Intyg());
         when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(mockedReturnValue);
         GetCertificateResponseType fromFk = responder.getCertificate(LOGICAL_ADDRESS,
                 createRequest(intygId, FKASSA_RECIPIENT_ID));
-        when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class)))).thenReturn(new Intyg());
         when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(mockedReturnValue);
         GetCertificateResponseType fromMinaIntyg = responder.getCertificate(LOGICAL_ADDRESS,
                 createRequest(intygId, MINA_INTYG_RECIPIENT_ID));
