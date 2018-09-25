@@ -21,7 +21,8 @@
     "logicalAddress" : "tsTestAdress",
     "certificateTypes" : [
       "ts-bas",
-      "ts-diabetes"
+      "ts-diabetes",
+      "ts-diabetes-2"
     ],
     "active" : true,
     "trusted": true
@@ -45,6 +46,7 @@
     "certificateTypes" : [
       "ts-bas",
       "ts-diabetes",
+      "ts-diabetes-2",
       "fk7263",
       "lisjp",
       "luse",
@@ -62,6 +64,7 @@
     "certificateTypes" : [
       "ts-bas",
       "ts-diabetes",
+      "ts-diabetes-2",
       "fk7263",
       "lisjp",
       "luse",
