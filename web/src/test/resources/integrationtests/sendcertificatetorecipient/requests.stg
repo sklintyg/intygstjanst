@@ -73,11 +73,10 @@ request(data, mottagare) ::= <<
                </urn3:specialistkompetens>
                <!--You may enter ANY elements at this point-->
             </urn1:hosPersonal>
-            
+
          </urn1:skickatAv>
          <!--You may enter ANY elements at this point-->
       </urn1:SendCertificateToRecipient>
    </soapenv:Body>
-</soapenv:Envelope>
 </soapenv:Envelope>
 >>

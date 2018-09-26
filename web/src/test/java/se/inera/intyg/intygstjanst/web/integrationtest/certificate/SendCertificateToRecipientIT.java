@@ -105,6 +105,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
                 .rootPath(RECIPIENT_BASE).body("result.resultCode", is("OK"));
     }
 
+
     @Test
     public void faultTransformerTest() throws Exception {
         requestTemplateRecipient.add("data", new IntygsData("<tag></tag>", personId1));
