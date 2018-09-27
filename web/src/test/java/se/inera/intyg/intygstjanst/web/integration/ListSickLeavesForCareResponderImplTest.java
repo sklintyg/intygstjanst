@@ -45,8 +45,8 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -91,7 +91,7 @@ public class ListSickLeavesForCareResponderImplTest {
     @Test
     public void testListSickLeavesForCare() {
 
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList()))
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
                 .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
@@ -121,7 +121,7 @@ public class ListSickLeavesForCareResponderImplTest {
     @Test
     public void testListSickLeavesForCareForCorrectDoctor() {
 
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList()))
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
                 .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, lakareId));
@@ -131,7 +131,7 @@ public class ListSickLeavesForCareResponderImplTest {
     @Test
     public void testListSickLeavesForCareForInCorrectDoctorReturnsZeroRows() {
         lakareId.setExtension("other-doctor");
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList()))
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
                 .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, lakareId));
@@ -141,7 +141,7 @@ public class ListSickLeavesForCareResponderImplTest {
     @Test
     public void testListSickLeavesForCareReturns0WhenTooLargeMinSjukskrivningslangd() {
 
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList()))
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
                 .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null, 100, 200));
@@ -151,7 +151,7 @@ public class ListSickLeavesForCareResponderImplTest {
     @Test
     public void testListSickLeavesForCareReturns0WhenTooShortMaxSjukskrivningslangd() {
 
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList()))
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
                 .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null, 1, 2));
@@ -161,7 +161,7 @@ public class ListSickLeavesForCareResponderImplTest {
     @Test
     public void testListSickLeavesForCareWhenZeroSjukfallCertsAreReturnedFromDao() {
 
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList())).thenReturn(new ArrayList<>());
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt())).thenReturn(new ArrayList<>());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
         assertEquals(0, response.getSjukfallLista().getSjukfall().size());

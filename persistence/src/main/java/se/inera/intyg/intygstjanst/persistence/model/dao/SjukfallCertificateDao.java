@@ -24,7 +24,8 @@ import java.util.List;
  * Created by eriklupander on 2016-02-02.
  */
 public interface SjukfallCertificateDao {
-    List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds);
+    List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
+            int maxDagarSedanAvslut);
 
     List<SjukfallCertificate> findActiveSjukfallCertificateForPersonOnCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
             String personnummer);

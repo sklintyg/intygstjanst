@@ -68,7 +68,6 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
                 ? parameters.getPersonId().getExtension().trim()
                 : null;
 
-
         List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(careUnitHsaId);
         hsaIdList.add(careUnitHsaId); // add care unit HSAId to list
 
@@ -79,8 +78,9 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
             activeSjukfallCertificateForCareUnits = sjukfallCertificateDao
                     .findActiveSjukfallCertificateForPersonOnCareUnits(careGiverHsaId, hsaIdList, pnr.getPersonnummerWithDash());
         } else {
+            int maxDagarSedanAvslut = parameters.getMaxDagarSedanAvslut() != null ? parameters.getMaxDagarSedanAvslut() : 0;
             activeSjukfallCertificateForCareUnits = sjukfallCertificateDao
-                    .findActiveSjukfallCertificateForCareUnits(careGiverHsaId, hsaIdList);
+                    .findActiveSjukfallCertificateForCareUnits(careGiverHsaId, hsaIdList, maxDagarSedanAvslut);
         }
 
         response.setResultCode(ResultCodeEnum.OK);

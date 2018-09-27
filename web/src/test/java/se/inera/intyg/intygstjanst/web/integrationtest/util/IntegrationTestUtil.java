@@ -57,17 +57,15 @@ public class IntegrationTestUtil {
         registerCertificateFromTemplate(intygsId, personId, filePath);
     }
 
-    /**
-     * Adds fromDate / toDate minus 2 days to plus 2 days from now() to the template.
-     */
-    public static void registerCertificateWithDateParameters(String intygsId, String personId, IntegrationTestCertificateType type) {
+    public static void registerCertificateWithDateParameters(String intygsId, String personId, IntegrationTestCertificateType type,
+            int daysValidFromNow, int daysPassed) {
         String filePath = getFilePath(type);
         STGroup templateGroup = new STGroupFile(filePath);
         ST requestTemplateForConsent = templateGroup.getInstanceOf("requestParameterized");
         requestTemplateForConsent.add("intygId", intygsId);
         requestTemplateForConsent.add("personId", personId);
 
-        applyToFromDatesToRequestTemplate(requestTemplateForConsent);
+        applyToFromDatesToRequestTemplate(requestTemplateForConsent, daysValidFromNow, daysPassed);
 
         executeRegisterCertificate(requestTemplateForConsent);
     }
@@ -77,9 +75,9 @@ public class IntegrationTestUtil {
                 .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
     }
 
-    private static void applyToFromDatesToRequestTemplate(ST requestTemplate) {
-        requestTemplate.add("fromDate", LocalDate.now().minusDays(2).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        requestTemplate.add("toDate", LocalDate.now().plusDays(2).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    private static void applyToFromDatesToRequestTemplate(ST requestTemplate, int daysValidFromNow, int daysPassed) {
+        requestTemplate.add("fromDate", LocalDate.now().minusDays(daysPassed).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        requestTemplate.add("toDate", LocalDate.now().plusDays(daysValidFromNow).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 
     private static String getFilePath(IntegrationTestCertificateType type) {
@@ -160,7 +158,7 @@ public class IntegrationTestUtil {
         requestTemplateForRegister.add("intygId", intygsId);
         requestTemplateForRegister.add("personId", personId);
         if (REGISTER_TEMPLATE_WITH_DATES.equals(template)) {
-            applyToFromDatesToRequestTemplate(requestTemplateForRegister);
+            applyToFromDatesToRequestTemplate(requestTemplateForRegister, 2, 2);
         }
         given().body(requestTemplateForRegister.render()).when().post("inera-certificate/register-certificate/v3.0").then().statusCode(200)
                 .rootPath(REGISTER_MEDICAL_BASE).body("result.resultCode", is("OK"));

@@ -28,9 +28,7 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
@@ -60,6 +58,8 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
     private static final String CARE_UNIT_1_ID = "careunit-1";
     private static final String CARE_UNIT_1_NAME = "careunit-1-name";
 
+    private static final int MAX_DAGAR_SEDAN_AVSLUT = 0;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -70,7 +70,7 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
     public void testFindActiveSjukfallCertificates() {
         buildDefaultSjukfallCertificates();
         List<SjukfallCertificate> resultList = sjukfallCertificateDao
-                .findActiveSjukfallCertificateForCareUnits(CARE_GIVER_1_ID, Arrays.asList(CARE_UNIT_1_ID));
+                .findActiveSjukfallCertificateForCareUnits(CARE_GIVER_1_ID, Arrays.asList(CARE_UNIT_1_ID), MAX_DAGAR_SEDAN_AVSLUT);
 
         assertNotNull(resultList);
         assertEquals(1, resultList.size());
@@ -92,7 +92,7 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
     public void testDeletedSjukfallCertificateIsNotFound() {
         buildDeletedSjukfallCertificates();
         List<SjukfallCertificate> resultList = sjukfallCertificateDao
-                .findActiveSjukfallCertificateForCareUnits(CARE_GIVER_1_ID, Arrays.asList(CARE_UNIT_1_ID));
+                .findActiveSjukfallCertificateForCareUnits(CARE_GIVER_1_ID, Arrays.asList(CARE_UNIT_1_ID), MAX_DAGAR_SEDAN_AVSLUT);
 
         assertNotNull(resultList);
         assertEquals(0, resultList.size());
@@ -102,7 +102,7 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
     public void testSjukfallCertificateWithoutOngoingArbetskapacitetNedsattningIsNotFound() {
         buildNonOngoingSjukfallCertificates();
         List<SjukfallCertificate> resultList = sjukfallCertificateDao
-                .findActiveSjukfallCertificateForCareUnits(CARE_GIVER_1_ID, Arrays.asList(CARE_UNIT_1_ID));
+                .findActiveSjukfallCertificateForCareUnits(CARE_GIVER_1_ID, Arrays.asList(CARE_UNIT_1_ID), MAX_DAGAR_SEDAN_AVSLUT);
 
         assertNotNull(resultList);
         assertEquals(0, resultList.size());
@@ -145,7 +145,7 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
         assertEquals(CARE_GIVER_2_ID, entityManager.find(SjukfallCertificate.class, sc2.getId()).getCareGiverId());
 
         List<SjukfallCertificate> resultList = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(
-                CARE_GIVER_2_ID, Arrays.asList(CARE_UNIT_1_ID));
+                CARE_GIVER_2_ID, Arrays.asList(CARE_UNIT_1_ID), MAX_DAGAR_SEDAN_AVSLUT);
 
         assertNotNull(resultList);
         assertEquals(1, resultList.size());
@@ -158,7 +158,7 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
         String replacingId = buildReplacingSjukfallCertificate(originalId);
 
         List<SjukfallCertificate> resultList = sjukfallCertificateDao
-                .findActiveSjukfallCertificateForCareUnits(CARE_GIVER_1_ID, Arrays.asList(CARE_UNIT_1_ID));
+                .findActiveSjukfallCertificateForCareUnits(CARE_GIVER_1_ID, Arrays.asList(CARE_UNIT_1_ID), MAX_DAGAR_SEDAN_AVSLUT);
 
         assertEquals(1, resultList.size());
         assertEquals(replacingId, resultList.get(0).getId());
@@ -170,7 +170,7 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
         String replacingId = buildReplacingSjukfallCertificate("some-other-stuff");
 
         List<SjukfallCertificate> resultList = sjukfallCertificateDao
-                .findActiveSjukfallCertificateForCareUnits(CARE_GIVER_1_ID, Arrays.asList(CARE_UNIT_1_ID));
+                .findActiveSjukfallCertificateForCareUnits(CARE_GIVER_1_ID, Arrays.asList(CARE_UNIT_1_ID), MAX_DAGAR_SEDAN_AVSLUT);
 
         assertEquals(2, resultList.size());
     }

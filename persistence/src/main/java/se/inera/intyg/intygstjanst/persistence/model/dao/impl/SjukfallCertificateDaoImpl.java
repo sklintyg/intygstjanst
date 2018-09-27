@@ -51,8 +51,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
             + "JOIN sc.sjukfallCertificateWorkCapacity scwc "
             + "WHERE sc.careGiverId = :careGiverHsaId "
             + "AND sc.careUnitId IN (:careUnitHsaId) "
-            + "AND scwc.fromDate <= :today "
-            + "AND scwc.toDate >= :today "
+            + "AND scwc.toDate >= :toDate "
             + "AND sc.deleted = FALSE";
 
     private static final String EXCLUDE_REPLACED_INTYG_QUERY = "SELECT TO_INTYG_ID FROM RELATION r "
@@ -65,8 +64,9 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     private EntityManager entityManager;
 
     @Override
-    public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds) {
-        String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
+    public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
+            int maxDagarSedanAvslut) {
+        String toDate = LocalDate.now().minusDays(maxDagarSedanAvslut).format(DateTimeFormatter.ISO_DATE);
 
         // First, get personnummer for all patients having a currently ongoing intyg.
         List<String> personNummerList = entityManager.createQuery(
@@ -74,7 +74,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                 String.class)
                 .setParameter("careGiverHsaId", careGiverHsaId)
                 .setParameter("careUnitHsaId", careUnitHsaIds)
-                .setParameter("today", today)
+                .setParameter("toDate", toDate)
                 .getResultList();
 
         return querySjukfallCertificatesForUnitsAndPersonnummer(careGiverHsaId, careUnitHsaIds, personNummerList);
@@ -91,7 +91,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                 String.class)
                 .setParameter("careGiverHsaId", careGiverHsaId)
                 .setParameter("careUnitHsaId", careUnitHsaIds)
-                .setParameter("today", today)
+                .setParameter("toDate", today)
                 .setParameter("civicRegistrationNumber", personnummer)
                 .getResultList();
 

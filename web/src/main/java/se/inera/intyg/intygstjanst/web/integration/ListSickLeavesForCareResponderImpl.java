@@ -95,7 +95,7 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
 
         // Load sjukfallCertificates from DAO
         List<SjukfallCertificate> certificates = sjukfallCertificateDao
-                .findActiveSjukfallCertificateForCareUnits(careGiverHsaId, hsaIdList);
+                .findActiveSjukfallCertificateForCareUnits(careGiverHsaId, hsaIdList, 0);
 
         // Convert to the IntygData format that the SjukfallEngine accepts.
         List<IntygData> intygDataList = sjukfallCertificateConverter.convert(certificates);

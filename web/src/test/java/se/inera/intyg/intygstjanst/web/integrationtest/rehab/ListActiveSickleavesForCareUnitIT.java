@@ -39,6 +39,11 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
  */
 public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
 
+    private static final int EXPIRED_A_WEEK_AGO = -7;
+    private static final int EXPIRED_TWO_WEEKS_AGO = -14;
+    private static final int VALID_FOR_TWO_MORE_DAYS = 2;
+    private static final int DAYS_ALREADY_PASSED = 2;
+
     private static final List<String> INTYG_IDS = Arrays.asList("listActiveSickleavesForCareUnitITcertificateId1",
             "listActiveSickleavesForCareUnitITcertificateId2", "listActiveSickleavesForCareUnitITcertificateId3",
             "listActiveSickleavesForCareUnitITcertificateId4");
@@ -96,6 +101,22 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
             "   </soapenv:Body>\n" +
             "</soapenv:Envelope>";
 
+    private static final String REQUEST_INCLUDING_EXPIRED_SICK_LEAVES_WITHIN_10_DAYS = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:riv:itintegration:registry:1\" xmlns:urn1=\"urn:riv:clinicalprocess:healthcond:rehabilitation:ListActiveSickLeavesForCareUnitResponder:1\" xmlns:urn2=\"urn:riv:clinicalprocess:healthcond:certificate:types:2\">\n"
+            +
+            "   <soapenv:Header>\n" +
+            "      <urn:LogicalAddress>1</urn:LogicalAddress>\n" +
+            "   </soapenv:Header>\n" +
+            "   <soapenv:Body>\n" +
+            "      <urn1:ListActiveSickLeavesForCareUnit>\n" +
+            "         <urn1:enhets-id>\n" +
+            "            <urn2:root>1.2.752.129.2.1.4.1</urn2:root>\n" +
+            "            <urn2:extension>{{careUnitHsaId}}</urn2:extension>\n" +
+            "         </urn1:enhets-id>\n" +
+            "         <urn1:max-dagar-sedan-avslut>10</urn1:max-dagar-sedan-avslut>\n" +
+            "         <!--You may enter ANY elements at this point-->\n" +
+            "      </urn1:ListActiveSickLeavesForCareUnit>\n" +
+            "   </soapenv:Body>\n" +
+            "</soapenv:Envelope>";
 
     private static final String BASE = "Envelope.Body.ListActiveSickLeavesForCareUnitResponse.";
 
@@ -104,7 +125,8 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
         IntegrationTestUtil.registerMedicalCertificate(INTYG_IDS.get(0), PERSON_ID, REGISTER_TEMPLATE_Fk7263);
         IntegrationTestUtil.registerMedicalCertificate(INTYG_IDS.get(1), PERSON_ID, REGISTER_TEMPLATE_Fk7263);
         IntegrationTestUtil.registerMedicalCertificate(INTYG_IDS.get(2), PERSON_ID, REGISTER_TEMPLATE_Fk7263);
-        IntegrationTestUtil.registerCertificateWithDateParameters(INTYG_IDS.get(3), PERSON_ID_2, IntegrationTestUtil.IntegrationTestCertificateType.LISJP);
+        IntegrationTestUtil.registerCertificateWithDateParameters(INTYG_IDS.get(3), PERSON_ID_2, IntegrationTestUtil.IntegrationTestCertificateType.LISJP,
+                VALID_FOR_TWO_MORE_DAYS, DAYS_ALREADY_PASSED);
 
         given().with().body(REQUEST.replace("{{careUnitHsaId}}", CARE_UNIT_ID))
                 .expect()
@@ -124,7 +146,8 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
         IntegrationTestUtil.registerMedicalCertificate(INTYG_IDS.get(0), PERSON_ID, REGISTER_TEMPLATE_Fk7263);
         IntegrationTestUtil.registerMedicalCertificate(INTYG_IDS.get(1), PERSON_ID, REGISTER_TEMPLATE_Fk7263);
         IntegrationTestUtil.registerMedicalCertificate(INTYG_IDS.get(2), PERSON_ID, REGISTER_TEMPLATE_Fk7263);
-        IntegrationTestUtil.registerCertificateWithDateParameters(INTYG_IDS.get(3), PERSON_ID_2, IntegrationTestUtil.IntegrationTestCertificateType.LISJP);
+        IntegrationTestUtil.registerCertificateWithDateParameters(INTYG_IDS.get(3), PERSON_ID_2, IntegrationTestUtil.IntegrationTestCertificateType.LISJP,
+                VALID_FOR_TWO_MORE_DAYS, DAYS_ALREADY_PASSED);
 
         given().with().body(REQUEST_WITH_PATIENTID
                 .replace("{{careUnitHsaId}}", CARE_UNIT_ID)
@@ -174,6 +197,35 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
                 .statusCode(200)
                 .body(BASE + "resultCode", is("ERROR"))
                 .body(BASE + "comment", startsWith("Unmarshalling Error"))
+                .when()
+                .post("inera-certificate/list-active-sick-leaves-for-care-unit/v1.0");
+    }
+
+    @Test
+    public void testReadIntygsDataIncludingRecentlyExpiredSickLeaves() {
+        IntegrationTestUtil.registerCertificateWithDateParameters(INTYG_IDS.get(3), PERSON_ID_2, IntegrationTestUtil.IntegrationTestCertificateType.LISJP,
+                EXPIRED_A_WEEK_AGO, 30);
+
+        given().with().body(REQUEST_INCLUDING_EXPIRED_SICK_LEAVES_WITHIN_10_DAYS.replace("{{careUnitHsaId}}", CARE_UNIT_ID))
+                .expect()
+                .statusCode(200)
+                .body(BASE + "resultCode", is("OK"))
+                .body(BASE + "intygsLista.intygsData.size()", equalTo(1))
+                .body(BASE + "intygsLista.intygsData[0].patient.personId.extension", is(PERSON_ID_2_DASHED))
+                .when()
+                .post("inera-certificate/list-active-sick-leaves-for-care-unit/v1.0");
+    }
+
+    @Test
+    public void testReadIntygsDataNotIncludingSickLeavesExpiredForMoreThanTwoWeeks() {
+        IntegrationTestUtil.registerCertificateWithDateParameters(INTYG_IDS.get(3), PERSON_ID_2, IntegrationTestUtil.IntegrationTestCertificateType.LISJP,
+                EXPIRED_TWO_WEEKS_AGO, 30);
+
+        given().with().body(REQUEST_INCLUDING_EXPIRED_SICK_LEAVES_WITHIN_10_DAYS.replace("{{careUnitHsaId}}", CARE_UNIT_ID))
+                .expect()
+                .statusCode(200)
+                .body(BASE + "resultCode", is("OK"))
+                .body(BASE + "intygsLista.intygsData.size()", equalTo(0))
                 .when()
                 .post("inera-certificate/list-active-sick-leaves-for-care-unit/v1.0");
     }

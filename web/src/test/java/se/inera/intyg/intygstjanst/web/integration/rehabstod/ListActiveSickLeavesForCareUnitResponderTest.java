@@ -37,6 +37,7 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
@@ -83,6 +84,8 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
 
         ListActiveSickLeavesForCareUnitType params = new ListActiveSickLeavesForCareUnitType();
         params.setEnhetsId(hsaId);
+        params.setMaxDagarSedanAvslut(0);
+
         ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
         assertNotNull(responseType);
         assertEquals(ResultCodeEnum.OK, responseType.getResultCode());
@@ -98,6 +101,7 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
         PersonId patientId = new PersonId();
         patientId.setExtension("191212121212");
         params.setPersonId(patientId);
+        params.setMaxDagarSedanAvslut(0);
 
         ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
         assertNotNull(responseType);
@@ -107,7 +111,6 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
                 .findActiveSjukfallCertificateForPersonOnCareUnits(CAREGIVER_HSAID, Arrays.asList(CAREUNIT_HSAID),
                         "19121212-1212");
     }
-
 
     @Test
     public void testNullPatientIdExtensionRunsExpectedDaoMethod() {
@@ -121,7 +124,7 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
         params.setPersonId(patientId);
 
         ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
-        verify(sjukfallCertificateDao, times(1)).findActiveSjukfallCertificateForCareUnits(anyString(), anyList());
+        verify(sjukfallCertificateDao, times(1)).findActiveSjukfallCertificateForCareUnits(anyString(), anyList(), anyInt());
         verify(sjukfallCertificateDao, times(0)).findActiveSjukfallCertificateForPersonOnCareUnits(anyString(), anyList(), anyString());
     }
 
@@ -137,7 +140,7 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
         params.setPersonId(patientId);
 
         ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
-        verify(sjukfallCertificateDao, times(1)).findActiveSjukfallCertificateForCareUnits(anyString(), anyList());
+        verify(sjukfallCertificateDao, times(1)).findActiveSjukfallCertificateForCareUnits(anyString(), anyList(), anyInt());
         verify(sjukfallCertificateDao, times(0)).findActiveSjukfallCertificateForPersonOnCareUnits(anyString(), anyList(), anyString());
     }
 }
