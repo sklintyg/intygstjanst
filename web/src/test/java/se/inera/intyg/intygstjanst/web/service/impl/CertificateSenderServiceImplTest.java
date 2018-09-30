@@ -136,7 +136,7 @@ public class CertificateSenderServiceImplTest {
     @Before
     public void setupModuleRestApiFactory() throws ModuleNotFoundException {
         when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
-        when(moduleRegistry.getModuleApi(or(isNull(), anyString()))).thenReturn(moduleApi);
+        when(moduleRegistry.getModuleApi(or(isNull(), anyString()), or(isNull(), anyString()))).thenReturn(moduleApi);
         when(moduleEntryPoint.getDefaultRecipient()).thenReturn(RECIPIENT_DEFAULT_LOGICALADDRESS);
     }
 
@@ -150,20 +150,20 @@ public class CertificateSenderServiceImplTest {
     @Test
     public void testSend() throws Exception {
         senderService.sendCertificate(certificate, RECIPIENT_ID);
-        verify(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_LOGICALADDRESS), eq(RECIPIENT_ID), eq(CERTIFICATE_TYPE_VERSION));
+        verify(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_LOGICALADDRESS), eq(RECIPIENT_ID));
     }
 
     @Test
     public void testSendWithDefaultRecipient() throws ModuleException {
         senderService.sendCertificate(certificate, null);
-        verify(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_DEFAULT_LOGICALADDRESS), Mockito.isNull(String.class), eq(CERTIFICATE_TYPE_VERSION));
+        verify(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_DEFAULT_LOGICALADDRESS), Mockito.isNull(String.class));
     }
 
     @Test(expected = ServerException.class)
     public void testSendWithFailingModule() throws Exception {
         // web service call fails
         doThrow(new ModuleException("")).when(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_LOGICALADDRESS),
-                eq(RECIPIENT_ID), eq(CERTIFICATE_TYPE_VERSION));
+                eq(RECIPIENT_ID));
         senderService.sendCertificate(certificate, RECIPIENT_ID);
     }
 

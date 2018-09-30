@@ -273,8 +273,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     private String certificateReceivedForStatistics(CertificateHolder certificateHolder)
             throws CertificateAlreadyExistsException, InvalidCertificateException {
         try {
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
-            return moduleApi.transformToStatisticsService(certificateHolder.getOriginalCertificate(), certificateHolder.getTypeVersion());
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType(), certificateHolder.getTypeVersion());
+            return moduleApi.transformToStatisticsService(certificateHolder.getOriginalCertificate());
         } catch (ModuleNotFoundException | ModuleException e) {
             LOGGER.error("Module not found for certificate of type {}", certificateHolder.getType());
             throw Throwables.propagate(e);
@@ -285,9 +285,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     public void revokeCertificateForStatistics(Certificate certificate) {
         String certificateXml;
         try {
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
-            certificateXml = moduleApi.transformToStatisticsService(certificate.getOriginalCertificate().getDocument(),
-                    certificate.getTypeVersion());
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+            certificateXml = moduleApi.transformToStatisticsService(certificate.getOriginalCertificate().getDocument());
         } catch (ModuleNotFoundException | ModuleException e) {
             LOGGER.error("Module not found for certificate of type {}", certificate.getType());
             throw Throwables.propagate(e);

@@ -99,7 +99,7 @@ public class IntygBootstrapBean {
                 String intygMajorTypeVersion = resourceFilename.split("\\.")[1];
                 LOG.info("Bootstrapping certificate '{}' from module {}", resource.getFilename(), moduleName);
                 String xmlString = Resources.toString(resource.getURL(), Charsets.UTF_8);
-                bootstrapCertificate(xmlString, moduleRegistry.getModuleApi(moduleName).getUtlatandeFromXml(xmlString, intygMajorTypeVersion),
+                bootstrapCertificate(xmlString, moduleRegistry.getModuleApi(moduleName, intygMajorTypeVersion).getUtlatandeFromXml(xmlString),
                         moduleRegistry.getModuleEntryPoint(moduleName).getDefaultRecipient());
             } catch (IOException | ModuleNotFoundException | ModuleException e) {
                 LOG.error("Could not bootstrap certificate in file '{}'", resourceFilename, e);
@@ -235,8 +235,8 @@ public class IntygBootstrapBean {
                     try {
                         String contentString = Resources.toString(content.getURL(), Charsets.UTF_8);
 
-                        ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
-                        Utlatande utlatande = moduleApi.getUtlatandeFromXml(contentString, certificate.getTypeVersion());
+                        ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+                        Utlatande utlatande = moduleApi.getUtlatandeFromXml(contentString);
 
                         if (certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
                             SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertFk7263(certificate,

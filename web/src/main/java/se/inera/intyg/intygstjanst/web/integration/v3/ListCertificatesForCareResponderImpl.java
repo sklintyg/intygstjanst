@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
@@ -96,9 +95,9 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
     private Intyg convert(Certificate certificate) {
         try {
             CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType(), certificateHolder.getTypeVersion());
             // Unified handling of all certificate types, maintaining a simple module api
-            Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate(), certificateHolder.getTypeVersion()));
+            Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
             intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
                     .filter(ch -> CertificateStateFilterUtil.filter(ch, HSVARD_PARTKOD))
                     .collect(Collectors.toList())));

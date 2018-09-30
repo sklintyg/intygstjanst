@@ -63,9 +63,8 @@ public class SjukfallCertificateServiceImpl implements SjukfallCertificateServic
         }
 
         try {
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
-            Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument(),
-                    certificate.getTypeVersion());
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+            Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
             //TODO: Code below doesn't automatically handle intyg versions as it's not part of the ModuleApi framework.
             switch (certificate.getType()) {
                 case Fk7263EntryPoint.MODULE_ID:
@@ -100,9 +99,9 @@ public class SjukfallCertificateServiceImpl implements SjukfallCertificateServic
         }
 
         try {
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType());
-            Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument(),
-                    certificate.getTypeVersion());
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+            Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument()
+            );
 
             if (certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
                 sjukfallCertificateDao.revoke(certificate.getId());

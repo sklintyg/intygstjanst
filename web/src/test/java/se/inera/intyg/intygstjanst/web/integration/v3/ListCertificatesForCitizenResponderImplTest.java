@@ -95,8 +95,8 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     @Before
     public void setup() throws ModuleNotFoundException, ModuleException {
-        when(moduleRegistry.getModuleApi(or(isNull(), anyString()))).thenReturn(moduleApi);
-        when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()), anyString())).thenReturn(mock(Utlatande.class));
+        when(moduleRegistry.getModuleApi(or(isNull(), anyString()), or(isNull(), anyString()))).thenReturn(moduleApi);
+        when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()))).thenReturn(mock(Utlatande.class));
         when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class)))).thenReturn(new Intyg());
     }
 
@@ -168,7 +168,7 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
         verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
-        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()), anyString());
+        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()));
 
         assertEquals(1, response.getIntygsLista().getIntyg().size());
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
@@ -197,7 +197,7 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
         verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
-        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()), anyString());
+        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()));
 
         assertEquals(1, response.getIntygsLista().getIntyg().size());
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());

@@ -75,9 +75,9 @@ public class RegisterCertificateResponderImplTest {
 
     @Before
     public void setUp() throws Exception {
-        when(moduleRegistry.getModuleApi(INTYGSTYP.toLowerCase())).thenReturn(moduleApi);
+        when(moduleRegistry.getModuleApi(INTYGSTYP.toLowerCase(), INTYGSVERSION)).thenReturn(moduleApi);
         when(moduleRegistry.getModuleIdFromExternalId(INTYGSTYP)).thenReturn(INTYGSTYP.toLowerCase());
-        when(moduleApi.validateXml(anyString(),anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.VALID, new ArrayList<>()));
+        when(moduleApi.validateXml(anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.VALID, new ArrayList<>()));
         responder.initializeJaxbContext();
     }
 
@@ -96,7 +96,7 @@ public class RegisterCertificateResponderImplTest {
         assertNotNull(res);
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
 
-        verify(moduleApi).validateXml(anyString(), anyString());
+        verify(moduleApi).validateXml(anyString());
         ArgumentCaptor<CertificateHolder> certificateHolderCaptor = ArgumentCaptor.forClass(CertificateHolder.class);
         verify(moduleContainer).certificateReceived(certificateHolderCaptor.capture());
         assertEquals(intygId, certificateHolderCaptor.getValue().getId());
@@ -112,7 +112,7 @@ public class RegisterCertificateResponderImplTest {
 
     @Test
     public void registerCertificateValidationErrorsTest() throws Exception {
-        when(moduleApi.validateXml(anyString(), anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.INVALID, Arrays.asList("fel")));
+        when(moduleApi.validateXml(anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.INVALID, Arrays.asList("fel")));
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
                 createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "patientId", LocalDateTime.now()));
         assertNotNull(res);
@@ -120,7 +120,7 @@ public class RegisterCertificateResponderImplTest {
         assertEquals(ErrorIdType.VALIDATION_ERROR, res.getResult().getErrorId());
         assertNotNull(res.getResult().getResultText());
 
-        verify(moduleApi).validateXml(anyString(), anyString());
+        verify(moduleApi).validateXml(anyString());
         verify(moduleContainer, never()).certificateReceived(any(CertificateHolder.class));
     }
 
@@ -133,7 +133,7 @@ public class RegisterCertificateResponderImplTest {
         assertEquals(ResultCodeType.INFO, res.getResult().getResultCode());
         assertEquals("Certificate already exists", res.getResult().getResultText());
 
-        verify(moduleApi).validateXml(anyString(), anyString());
+        verify(moduleApi).validateXml(anyString());
         verify(moduleContainer).certificateReceived(any(CertificateHolder.class));
     }
 
@@ -147,7 +147,7 @@ public class RegisterCertificateResponderImplTest {
         assertEquals(ErrorIdType.VALIDATION_ERROR, res.getResult().getErrorId());
         assertNotNull(res.getResult().getResultText());
 
-        verify(moduleApi).validateXml(anyString(), anyString());
+        verify(moduleApi).validateXml(anyString());
         verify(moduleContainer).certificateReceived(any(CertificateHolder.class));
     }
 
@@ -165,21 +165,21 @@ public class RegisterCertificateResponderImplTest {
             fail("should throw");
         } catch (RuntimeException e) {
             assertTrue(e.getCause() instanceof JAXBException);
-            verify(moduleApi, never()).validateXml(anyString(), anyString());
+            verify(moduleApi, never()).validateXml(anyString());
             verify(moduleContainer, never()).certificateReceived(any(CertificateHolder.class));
         }
     }
 
     @Test
     public void registerCertificateWrongCertificateTypeTest() throws Exception {
-        when(moduleApi.validateXml(anyString(), anyString())).thenThrow(new UnsupportedOperationException());
+        when(moduleApi.validateXml(anyString())).thenThrow(new UnsupportedOperationException());
 
         try {
             responder.registerCertificate(LOGICAL_ADDRESS,
                     createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "patientId", LocalDateTime.now()));
             fail("should throw");
         } catch (UnsupportedOperationException e) {
-            verify(moduleApi).validateXml(anyString(), anyString());
+            verify(moduleApi).validateXml(anyString());
             verify(moduleContainer, never()).certificateReceived(any(CertificateHolder.class));
         }
     }
@@ -193,7 +193,7 @@ public class RegisterCertificateResponderImplTest {
                             "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
             fail("should throw");
         } catch (RuntimeException e) {
-            verify(moduleApi).validateXml(anyString(), anyString());
+            verify(moduleApi).validateXml(anyString());
             verify(moduleContainer).certificateReceived(any(CertificateHolder.class));
         }
     }

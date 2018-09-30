@@ -97,6 +97,7 @@ public class CertificateForSjukfallFactory {
     public Certificate buildCert(String intygsTyp) {
         Certificate cert = new Certificate(CERT_ID);
         cert.setType(intygsTyp);
+        cert.setTypeVersion("1.0");
         cert.setSignedDate(CERT_SIGNING_DATETIME);
         cert.setSigningDoctorName(DOC_NAME);
         cert.setCivicRegistrationNumber(pNr);

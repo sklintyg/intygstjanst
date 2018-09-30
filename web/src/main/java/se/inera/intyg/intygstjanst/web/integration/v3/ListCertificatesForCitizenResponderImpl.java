@@ -28,7 +28,6 @@ import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConv
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
@@ -110,11 +109,11 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
     private Intyg convert(Certificate certificate, String part) {
         try {
             CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType());
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType(), certificateHolder.getTypeVersion());
 
             // Unified handling of all certificate types, maintaining a simple module api
             Intyg intyg = moduleApi.getIntygFromUtlatande(
-                    moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate(), certificateHolder.getTypeVersion()));
+                    moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
             intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
                     .filter(ch -> CertificateStateFilterUtil.filter(ch, part))
                     .collect(Collectors.toList())));

@@ -86,9 +86,9 @@ public class ListCertificatesForCareResponderImplTest {
     @Before
     public void setup() throws ModuleNotFoundException, ModuleException {
 
-        when(moduleRegistry.getModuleApi(or(isNull(), anyString()))).thenReturn(moduleApi);
+        when(moduleRegistry.getModuleApi(or(isNull(), anyString()), or(isNull(), anyString()))).thenReturn(moduleApi);
 
-        when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()), anyString())).thenReturn(mock(Utlatande.class));
+        when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()))).thenReturn(mock(Utlatande.class));
 
         when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class)))).thenReturn(new Intyg());
     }
@@ -160,7 +160,7 @@ public class ListCertificatesForCareResponderImplTest {
 
         verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
         verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
-        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()), anyString());
+        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()));
 
         // We only return Intyg that are not deletedByCaregiver
         assertEquals(1, response.getIntygsLista().getIntyg().size());
