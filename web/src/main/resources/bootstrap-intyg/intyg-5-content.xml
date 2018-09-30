@@ -1,162 +1,131 @@
-<ns2:RegisterCertificate xmlns="urn:riv:clinicalprocess:healthcond:certificate:3" xmlns:ns2="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3" xmlns:ns3="urn:riv:clinicalprocess:healthcond:certificate:types:3">
-    <ns2:intyg>
-        <intygs-id>
-            <ns3:root>SE0000000000-1337</ns3:root>
-            <ns3:extension>intyg-5</ns3:extension>
-        </intygs-id>
-        <typ>
-            <ns3:code>TSTRK1007</ns3:code>
-            <ns3:codeSystem>f6fb361a-e31d-48b8-8657-99b63912dd9b</ns3:codeSystem>
-            <ns3:displayName>Transportstyrelsens läkarintyg</ns3:displayName>
-        </typ>
-        <version>6.7</version>
-        <signeringstidpunkt>2013-08-12T15:57:00</signeringstidpunkt>
-        <skickatTidpunkt>2013-08-12T15:57:00</skickatTidpunkt>
-        <patient>
-            <person-id>
-                <ns3:root>1.2.752.129.2.1.3.1</ns3:root>
-                <ns3:extension>191212121212</ns3:extension>
-            </person-id>
-            <fornamn/>
-            <efternamn/>
-            <postadress/>
-            <postnummer/>
-            <postort/>
-        </patient>
-        <skapadAv>
-            <personal-id>
-                <ns3:root>1.2.752.129.2.1.4.1</ns3:root>
-                <ns3:extension>SE0000000000-1333</ns3:extension>
-            </personal-id>
-            <fullstandigtNamn>Doktor Thompson</fullstandigtNamn>
-            <enhet>
-                <enhets-id>
-                    <ns3:root>1.2.752.129.2.1.4.1</ns3:root>
-                    <ns3:extension>SE0000000000-1337</ns3:extension>
-                </enhets-id>
-                <arbetsplatskod>
-                    <ns3:root>1.2.752.29.4.71</ns3:root>
-                    <ns3:extension>N/A</ns3:extension>
-                </arbetsplatskod>
-                <enhetsnamn>Vårdenhet Väst</enhetsnamn>
-                <postadress>Enhetsvägen 12</postadress>
-                <postnummer>54321</postnummer>
-                <postort>Tumba</postort>
-                <telefonnummer>08-1337</telefonnummer>
-                <vardgivare>
-                    <vardgivare-id>
-                        <ns3:root>1.2.752.129.2.1.4.1</ns3:root>
-                        <ns3:extension>SE0000000000-HAHAHHSAA</ns3:extension>
-                    </vardgivare-id>
-                    <vardgivarnamn>Vårdgivarnamn</vardgivarnamn>
-                </vardgivare>
-            </enhet>
-        </skapadAv>
-        <svar id="1">
-            <instans>1</instans>
-            <delsvar id="1.1">
-                <ns3:cv>
-                    <ns3:code>IAV3</ns3:code>
-                    <ns3:codeSystem>24c41b8d-258a-46bf-a08a-b90738b28770</ns3:codeSystem>
-                    <ns3:displayName>C</ns3:displayName>
-                </ns3:cv>
-            </delsvar>
-        </svar>
-        <svar id="2">
-            <delsvar id="2.1">
-                <ns3:cv>
-                    <ns3:code>IDK6</ns3:code>
-                    <ns3:codeSystem>e7cc8f30-a353-4c42-b17a-a189b6876647</ns3:codeSystem>
-                    <ns3:displayName>Pass</ns3:displayName>
-                </ns3:cv>
-            </delsvar>
-        </svar>
-        <svar id="3">
-            <delsvar id="3.1">false</delsvar>
-        </svar>
-        <svar id="4">
-            <delsvar id="4.1">false</delsvar>
-        </svar>
-        <svar id="5">
-            <delsvar id="5.1">false</delsvar>
-        </svar>
-        <svar id="6">
-            <delsvar id="6.1">false</delsvar>
-        </svar>
-        <svar id="7">
-            <delsvar id="7.1">false</delsvar>
-        </svar>
-        <svar id="8">
-            <delsvar id="8.1">0.0</delsvar>
-            <delsvar id="8.7">false</delsvar>
-            <delsvar id="8.2">0.0</delsvar>
-            <delsvar id="8.8">false</delsvar>
-            <delsvar id="8.3">0.0</delsvar>
-        </svar>
-        <svar id="10">
-            <delsvar id="10.1">false</delsvar>
-        </svar>
-        <svar id="12">
-            <delsvar id="12.1">false</delsvar>
-        </svar>
-        <svar id="14">
-            <delsvar id="14.1">false</delsvar>
-        </svar>
-        <svar id="15">
-            <delsvar id="15.1">false</delsvar>
-        </svar>
-        <svar id="16">
-            <delsvar id="16.1">false</delsvar>
-        </svar>
-        <svar id="17">
-            <delsvar id="17.1">false</delsvar>
-        </svar>
-        <svar id="20">
-            <delsvar id="20.1">false</delsvar>
-        </svar>
-        <svar id="21">
-            <delsvar id="21.1">false</delsvar>
-        </svar>
-        <svar id="22">
-            <delsvar id="22.1">false</delsvar>
-        </svar>
-        <svar id="23">
-            <delsvar id="23.1">false</delsvar>
-        </svar>
-        <svar id="24">
-            <delsvar id="24.1">false</delsvar>
-        </svar>
-        <svar id="25">
-            <delsvar id="25.1">false</delsvar>
-            <delsvar id="25.2">false</delsvar>
-        </svar>
-        <svar id="26">
-            <delsvar id="26.1">false</delsvar>
-        </svar>
-        <svar id="27">
-            <delsvar id="27.1">false</delsvar>
-        </svar>
-        <svar id="28">
-            <delsvar id="28.1">false</delsvar>
-        </svar>
-        <svar id="29">
-            <delsvar id="29.1">false</delsvar>
-        </svar>
-        <svar id="30">
-            <delsvar id="30.1">false</delsvar>
-        </svar>
-        <svar id="31">
-            <delsvar id="31.1">false</delsvar>
-        </svar>
-        <svar id="33">
-            <instans>1</instans>
-            <delsvar id="33.1">
-                <ns3:cv>
-                    <ns3:code>VAR11</ns3:code>
-                    <ns3:codeSystem>e889fa20-1dee-4f79-8b37-03853e75a9f8</ns3:codeSystem>
-                    <ns3:displayName>Kan inte ta ställning</ns3:displayName>
-                </ns3:cv>
-            </delsvar>
-        </svar>
-    </ns2:intyg>
-</ns2:RegisterCertificate>
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ ~ Copyright (C) 2016 Inera AB (http://www.inera.se)
+ ~
+ ~ This file is part of sklintyg (https://github.com/sklintyg).
+ ~
+ ~ sklintyg is free software: you can redistribute it and/or modify
+ ~ it under the terms of the GNU General Public License as published by
+ ~ the Free Software Foundation, either version 3 of the License, or
+ ~ (at your option) any later version.
+ ~
+ ~ sklintyg is distributed in the hope that it will be useful,
+ ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ ~ GNU General Public License for more details.
+ ~
+ ~ You should have received a copy of the GNU General Public License
+ ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<ns3:RegisterTSBas xmlns:ns2="urn:local:se:intygstjanster:services:types:1" xmlns:ns4="urn:local:se:intygstjanster:services:1" xmlns:ns3="urn:local:se:intygstjanster:services:RegisterTSBasResponder:1">
+    <ns3:intyg>
+        <ns4:intygsId>intyg-5</ns4:intygsId>
+        <ns4:intygsTyp>ts-bas</ns4:intygsTyp>
+        <ns4:version>06</ns4:version>
+        <ns4:utgava>07</ns4:utgava>
+        <ns4:grundData>
+            <ns4:signeringsTidstampel>2013-08-12T15:57:00</ns4:signeringsTidstampel>
+            <ns4:skapadAv>
+                <ns4:personId>
+                    <ns2:root>1.2.752.129.2.1.4.1</ns2:root>
+                    <ns2:extension>SE0000000000-1333</ns2:extension>
+                </ns4:personId>
+                <ns4:fullstandigtNamn>Doktor Thompson</ns4:fullstandigtNamn>
+                <ns4:atLakare>false</ns4:atLakare>
+                <ns4:vardenhet>
+                    <ns4:enhetsId>
+                        <ns2:root>1.2.752.129.2.1.4.1</ns2:root>
+                        <ns2:extension>SE0000000000-1337</ns2:extension>
+                    </ns4:enhetsId>
+                    <ns4:enhetsnamn>Vårdenhet Väst</ns4:enhetsnamn>
+                    <ns4:postadress>Enhetsvägen 12</ns4:postadress>
+                    <ns4:postnummer>54321</ns4:postnummer>
+                    <ns4:postort>Tumba</ns4:postort>
+                    <ns4:telefonnummer>08-1337</ns4:telefonnummer>
+                    <ns4:vardgivare>
+                        <ns4:vardgivarid>
+                            <ns2:root>1.2.752.129.2.1.4.1</ns2:root>
+                            <ns2:extension>SE0000000000-HAHAHHSAA</ns2:extension>
+                        </ns4:vardgivarid>
+                        <ns4:vardgivarnamn>Vårdgivarnamn</ns4:vardgivarnamn>
+                    </ns4:vardgivare>
+                </ns4:vardenhet>
+                <ns4:specialiteter>SPECIALITET</ns4:specialiteter>
+            </ns4:skapadAv>
+            <ns4:patient>
+                <ns4:personId>
+                    <ns2:root>1.2.752.129.2.1.3.1</ns2:root>
+                    <ns2:extension>19121212-1212</ns2:extension>
+                </ns4:personId>
+                <ns4:fullstandigtNamn>Johnny Appleseed</ns4:fullstandigtNamn>
+                <ns4:fornamn>Johnny</ns4:fornamn>
+                <ns4:efternamn>Appleseed</ns4:efternamn>
+                <ns4:postadress>Testvägen 12</ns4:postadress>
+                <ns4:postnummer>123456</ns4:postnummer>
+                <ns4:postort>Testort</ns4:postort>
+            </ns4:patient>
+        </ns4:grundData>
+        <ns4:intygAvser>
+            <ns4:korkortstyp>C</ns4:korkortstyp>
+        </ns4:intygAvser>
+        <ns4:identitetStyrkt>
+            <ns4:idkontroll>IDK6</ns4:idkontroll>
+        </ns4:identitetStyrkt>
+        <ns4:synfunktion>
+            <ns4:harSynfaltsdefekt>false</ns4:harSynfaltsdefekt>
+            <ns4:harNattblindhet>false</ns4:harNattblindhet>
+            <ns4:harProgressivOgonsjukdom>false</ns4:harProgressivOgonsjukdom>
+            <ns4:harDiplopi>false</ns4:harDiplopi>
+            <ns4:harNystagmus>false</ns4:harNystagmus>
+            <ns4:synskarpaUtanKorrektion>
+                <ns4:hogerOga>0.0</ns4:hogerOga>
+                <ns4:vansterOga>0.0</ns4:vansterOga>
+                <ns4:binokulart>0.0</ns4:binokulart>
+            </ns4:synskarpaUtanKorrektion>
+            <ns4:synskarpaMedKorrektion>
+                <ns4:harKontaktlinsHogerOga>false</ns4:harKontaktlinsHogerOga>
+                <ns4:harKontaktlinsVansterOga>false</ns4:harKontaktlinsVansterOga>
+            </ns4:synskarpaMedKorrektion>
+        </ns4:synfunktion>
+        <ns4:horselBalanssinne>
+            <ns4:harBalansrubbningYrsel>false</ns4:harBalansrubbningYrsel>
+        </ns4:horselBalanssinne>
+        <ns4:rorelseorganensFunktioner>
+            <ns4:harRorelsebegransning>false</ns4:harRorelsebegransning>
+        </ns4:rorelseorganensFunktioner>
+        <ns4:hjartKarlSjukdomar>
+            <ns4:harRiskForsamradHjarnFunktion>false</ns4:harRiskForsamradHjarnFunktion>
+            <ns4:harHjarnskadaICNS>false</ns4:harHjarnskadaICNS>
+            <ns4:harRiskfaktorerStroke>false</ns4:harRiskfaktorerStroke>
+        </ns4:hjartKarlSjukdomar>
+        <ns4:diabetes>
+            <ns4:harDiabetes>false</ns4:harDiabetes>
+        </ns4:diabetes>
+        <ns4:neurologiskaSjukdomar>false</ns4:neurologiskaSjukdomar>
+        <ns4:medvetandestorning>
+            <ns4:harMedvetandestorning>false</ns4:harMedvetandestorning>
+        </ns4:medvetandestorning>
+        <ns4:harNjurSjukdom>false</ns4:harNjurSjukdom>
+        <ns4:harKognitivStorning>false</ns4:harKognitivStorning>
+        <ns4:harSomnVakenhetStorning>false</ns4:harSomnVakenhetStorning>
+        <ns4:alkoholNarkotikaLakemedel>
+            <ns4:harTeckenMissbruk>false</ns4:harTeckenMissbruk>
+            <ns4:harVardinsats>false</ns4:harVardinsats>
+            <ns4:harLakarordineratLakemedelsbruk>false</ns4:harLakarordineratLakemedelsbruk>
+        </ns4:alkoholNarkotikaLakemedel>
+        <ns4:harPsykiskStorning>false</ns4:harPsykiskStorning>
+        <ns4:utvecklingsstorning>
+            <ns4:harPsykiskUtvecklingsstorning>false</ns4:harPsykiskUtvecklingsstorning>
+            <ns4:harAndrayndrom>false</ns4:harAndrayndrom>
+        </ns4:utvecklingsstorning>
+        <ns4:sjukhusvard>
+            <ns4:harSjukhusvardEllerLakarkontakt>false</ns4:harSjukhusvardEllerLakarkontakt>
+        </ns4:sjukhusvard>
+        <ns4:ovrigMedicinering>
+            <ns4:harStadigvarandeMedicinering>false</ns4:harStadigvarandeMedicinering>
+        </ns4:ovrigMedicinering>
+        <ns4:bedomning>
+            <ns4:korkortstyp>C</ns4:korkortstyp>
+        </ns4:bedomning>
+    </ns3:intyg>
+</ns3:RegisterTSBas>

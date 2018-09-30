@@ -27,12 +27,16 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcer
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.ListRelationsForCertificateResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.ListRelationsForCertificateType;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
+import se.inera.intyg.intygstjanst.web.exception.ServerException;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.RelationService;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvRelation;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import static se.inera.intyg.common.support.Constants.KV_RELATION_CODE_SYSTEM;
@@ -47,6 +51,9 @@ public class ListRelationsForCertificateResponderImpl implements ListRelationsFo
 
     @Autowired
     private RelationService relationService;
+
+    @Autowired
+    private CertificateService certificateService;
 
     @Override
     @PrometheusTimeMethod
@@ -69,18 +76,27 @@ public class ListRelationsForCertificateResponderImpl implements ListRelationsFo
         intygRelations.setIntygsId(buildIntygId(intygsId));
 
         for (Relation r : relationGraph) {
-            intygRelations.getRelation().add(convertRelation(r));
+            boolean makulerat;
+            try {
+                makulerat = certificateService.getCertificateForCare(r.getFromIntygsId()).isRevoked();
+            } catch (InvalidCertificateException e) {
+                LOGGER.error("Failed to get revoke status for certificate {}", r.getFromIntygsId());
+                throw new ServerException(MessageFormat.format("Failed to get revoke status for certificate {}", r.getFromIntygsId()));
+            }
+            intygRelations.getRelation().add(convertRelation(r, makulerat));
         }
         return intygRelations;
     }
 
-    private se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.Relation convertRelation(Relation r) {
+    private se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.Relation convertRelation(
+            Relation r, boolean makulerat) {
         se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.Relation intygRelation =
                 new se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.Relation();
         intygRelation.setFranIntygsId(buildIntygId(r.getFromIntygsId()));
         intygRelation.setTillIntygsId(buildIntygId(r.getToIntygsId()));
         intygRelation.setSkapad(r.getCreated());
         intygRelation.setTyp(buildTypAvRelation(r.getRelationKod()));
+        intygRelation.setFranIntygMakulerat(makulerat);
         return intygRelation;
     }
 

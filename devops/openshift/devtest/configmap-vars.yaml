@@ -1,0 +1,13 @@
+apiVersion: v1
+data:
+  NTJP_WS_CERTIFICATE_FILE:
+  NTJP_WS_CERTIFICATE_TYPE: PKCS12
+  NTJP_WS_TRUSTSTORE_FILE:
+  NTJP_WS_TRUSTSTORE_TYPE: JKS
+  NTJP_BASE_URL:
+  INFRASTRUCTURE_DIRECTORY_LOGICALADDRESS: stub
+  ACTIVEMQ_DESTINATION_QUEUE_NAME: devtest.certificate.queue
+kind: ConfigMap
+metadata:
+  name: intygstjanst-devtest-configmap-envvar
+type: Opaque

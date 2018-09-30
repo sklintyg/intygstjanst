@@ -44,6 +44,7 @@ dependencies {
     compile "se.inera.intyg.infra:sjukfall-engine:${infraVersion}"
     compile "se.inera.intyg.infra:monitoring:${infraVersion}"
 
+    compile "se.inera.intyg.common:common-support:${commonVersion}"
     compile "se.inera.intyg.common:common-schemas:${commonVersion}"
     compile "se.inera.intyg.common:fk7263:${commonVersion}"
     compile "se.inera.intyg.common:ts-bas:${commonVersion}"

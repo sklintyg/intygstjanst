@@ -20,6 +20,11 @@ package se.inera.intyg.intygstjanst.web.integration.v2;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,15 +40,21 @@ import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
+import se.inera.intyg.common.support.model.common.internal.Utlatande;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
+import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
+import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Part;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetCertificateResponderImplTest {
@@ -56,13 +67,37 @@ public class GetCertificateResponderImplTest {
     @Mock
     private ModuleContainerApi moduleContainer;
 
+    @Mock
+    private ModuleApi moduleApi;
+
+    @Mock
+    private IntygModuleRegistry moduleRegistry;
+
     @InjectMocks
     private GetCertificateResponderInterface responder = new GetCertificateResponderImpl();
 
     @Test
-    public void getCertificateTest() throws InvalidCertificateException {
+    public void getCertificateTest() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
         final String intygId = "intyg-1";
         when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(createResponse(false));
+        GetCertificateResponseType res = responder.getCertificate(LOGICAL_ADDRESS, createRequest(intygId));
+        assertNotNull(res.getIntyg());
+        assertEquals(1, res.getIntyg().getStatus().size());
+        assertEquals(StatusKod.SENTTO.name(), res.getIntyg().getStatus().get(0).getStatus().getCode());
+        assertEquals("FKASSA", res.getIntyg().getStatus().get(0).getPart().getCode());
+        assertEquals(TIMESTAMP, res.getIntyg().getStatus().get(0).getTidpunkt());
+        verify(moduleContainer).getCertificate(intygId, null, false);
+    }
+
+    @Test
+    public void getCertificateOldFormat() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
+        final String intygId = "intyg-1";
+        final CertificateHolder response = createResponse(false);
+        response.setOriginalCertificate("<old></old>");
+        when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(response);
+        when(moduleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
+        when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()))).thenReturn(mock(Utlatande.class));
+        when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class)))).thenReturn(new Intyg());
         GetCertificateResponseType res = responder.getCertificate(LOGICAL_ADDRESS, createRequest(intygId));
         assertNotNull(res.getIntyg());
         assertEquals(1, res.getIntyg().getStatus().size());
@@ -133,6 +168,8 @@ public class GetCertificateResponderImplTest {
 
     private CertificateHolder createResponse(boolean deletedByCareGiver, CertificateStateHolder... statusItems) {
         CertificateHolder holder = new CertificateHolder();
+        holder.setType("test-type");
+        holder.setTypeVersion("1.0");
         holder.setDeletedByCareGiver(deletedByCareGiver);
         holder.setOriginalCertificate(
                 "<registerCertificateType xmlns:ns2=\"urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3\"><ns2:intyg></ns2:intyg></registerCertificateType>");
