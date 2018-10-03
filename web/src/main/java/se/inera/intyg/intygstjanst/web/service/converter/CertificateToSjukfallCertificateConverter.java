@@ -73,7 +73,7 @@ public class CertificateToSjukfallCertificateConverter {
      *             IllegalArgumentException
      *             if fk7263 check fails.
      */
-    //TODO: This class does not handle intyg-type versions
+    //NOTE: See INTYG-7275
     public SjukfallCertificate convertFk7263(Certificate certificate, Utlatande utlatande) {
 
         if (!(utlatande instanceof Fk7263Utlatande)) {

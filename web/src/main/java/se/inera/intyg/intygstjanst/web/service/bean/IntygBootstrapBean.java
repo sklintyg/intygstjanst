@@ -99,7 +99,8 @@ public class IntygBootstrapBean {
                 String intygMajorTypeVersion = resourceFilename.split("\\.")[1];
                 LOG.info("Bootstrapping certificate '{}' from module {}", resource.getFilename(), moduleName);
                 String xmlString = Resources.toString(resource.getURL(), Charsets.UTF_8);
-                bootstrapCertificate(xmlString, moduleRegistry.getModuleApi(moduleName, intygMajorTypeVersion).getUtlatandeFromXml(xmlString),
+                bootstrapCertificate(xmlString,
+                        moduleRegistry.getModuleApi(moduleName, intygMajorTypeVersion).getUtlatandeFromXml(xmlString),
                         moduleRegistry.getModuleEntryPoint(moduleName).getDefaultRecipient());
             } catch (IOException | ModuleNotFoundException | ModuleException e) {
                 LOG.error("Could not bootstrap certificate in file '{}'", resourceFilename, e);

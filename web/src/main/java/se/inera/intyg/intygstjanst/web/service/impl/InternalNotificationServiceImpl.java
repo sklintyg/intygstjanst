@@ -68,7 +68,8 @@ public class InternalNotificationServiceImpl implements InternalNotificationServ
 
     private void notifyCertificateSentByCitizenToRecipient(String certificateId, String certificateType, String certificateTypeVersion,
             String careUnitId) {
-        boolean rc = sendCertificateSentByCitizienToInternalNotificationQueue(SENT, certificateId, certificateType, certificateTypeVersion, careUnitId);
+        boolean rc = sendCertificateSentByCitizienToInternalNotificationQueue(SENT, certificateId, certificateType, certificateTypeVersion,
+                careUnitId);
         if (rc) {
             LOG.debug("Internal notification was sent");
         } else {
