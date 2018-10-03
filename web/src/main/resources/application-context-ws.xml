@@ -108,7 +108,7 @@
         <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
         <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
         <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/interactions/RevokeCertificateInteraction/RevokeCertificateResponder_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/interactions/RevokeCertificateInteraction/RevokeCertificateResponder_2.1.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
@@ -134,7 +134,7 @@
         <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
         <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
         <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/interactions/SendCertificateToRecipientInteraction/SendCertificateToRecipientResponder_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/interactions/SendCertificateToRecipientInteraction/SendCertificateToRecipientResponder_2.1.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
@@ -168,7 +168,7 @@
         <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
         <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
         <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_2.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_2.1.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
@@ -202,7 +202,7 @@
         <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
         <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
         <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/interactions/RegisterCertificateInteraction/RegisterCertificateResponder_3.0.xsd</jaxws:schemaLocation>
+        <jaxws:schemaLocation>classpath:/interactions/RegisterCertificateInteraction/RegisterCertificateResponder_3.1.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
@@ -256,7 +256,7 @@
       <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
-      <jaxws:schemaLocation>classpath:/interactions/ListCertificatesForCareInteraction/ListCertificatesForCareResponder_3.0.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/interactions/ListCertificatesForCareInteraction/ListCertificatesForCareResponder_3.1.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 

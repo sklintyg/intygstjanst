@@ -118,7 +118,7 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
     @Test
     public void responseRespectsSchema() throws Exception {
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/ListCertificatesForCareInteraction/ListCertificatesForCareResponder_3.0.xsd").getURL(),
+                new ClassPathResource("interactions/ListCertificatesForCareInteraction/ListCertificatesForCareResponder_3.1.xsd").getURL(),
                 Charsets.UTF_8);
 
         requestTemplate.add("data", new IntygsData(personId1));

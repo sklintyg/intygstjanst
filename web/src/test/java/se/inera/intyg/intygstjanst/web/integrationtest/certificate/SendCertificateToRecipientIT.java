@@ -83,7 +83,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
     @Test
     public void responseRespectsSchema() throws Exception {
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/SendCertificateToRecipientInteraction/SendCertificateToRecipientResponder_2.0.xsd").getURL(), Charsets.UTF_8);
+                new ClassPathResource("interactions/SendCertificateToRecipientInteraction/SendCertificateToRecipientResponder_2.1.xsd").getURL(), Charsets.UTF_8);
 
         requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
         requestTemplateRecipient.add("mottagare", "FKASSA");

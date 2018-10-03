@@ -83,7 +83,7 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
     public void responseRespectsSchema() throws Exception {
         IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", PERSON_ID, false);
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_2.0.xsd").getURL(), Charsets.UTF_8);
+                new ClassPathResource("interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_2.1.xsd").getURL(), Charsets.UTF_8);
 
         requestTemplate.add("data", new ArendeData(INTYG_ID, "KOMPL", PERSON_ID, "123456"));
 
