@@ -77,7 +77,7 @@ public class RevokeCertificateIT extends BaseIntegrationTest {
         STGroup templateGroupForRevoke = new STGroupFile("integrationtests/revokecertificate/requests.stg");
         ST requestTemplateForRevoke = templateGroupForRevoke.getInstanceOf("request");
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/RevokeCertificateInteraction/RevokeCertificateResponder_2.0.xsd").getURL(), Charsets.UTF_8);
+                new ClassPathResource("interactions/RevokeCertificateInteraction/RevokeCertificateResponder_2.1.xsd").getURL(), Charsets.UTF_8);
 
         requestTemplateForRevoke.add("data", new IntygsData(intygsIdNotExists, personId1));
 

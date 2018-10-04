@@ -76,7 +76,7 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
     @Test
     public void responseRespectsSchema() throws Exception {
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/RegisterCertificateInteraction/RegisterCertificateResponder_3.0.xsd").getURL(), Charsets.UTF_8);
+                new ClassPathResource("interactions/RegisterCertificateInteraction/RegisterCertificateResponder_3.1.xsd").getURL(), Charsets.UTF_8);
 
         requestTemplate.add("data", new IntygsData(intygsId, personId1));
 

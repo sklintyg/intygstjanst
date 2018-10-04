@@ -1,9 +1,9 @@
 #!groovy
 
-def buildVersion = "3.6.0.${BUILD_NUMBER}"
+def buildVersion = "3.7.0.${BUILD_NUMBER}"
 def buildRoot = JOB_BASE_NAME.replaceAll(/-.*/, "") // Keep everything up to the first dash
-def commonVersion = "3.7.0.+"
-def infraVersion = "3.7.0.+"
+def commonVersion = "3.8.0.+"
+def infraVersion = "3.8.0.+"
 
 stage('checkout') {
     node {
@@ -53,9 +53,17 @@ stage('tag and upload') {
 }
 
 stage('propagate') {
-    build job: "intygstjanst-dintyg-build", wait: false, parameters: [[$class: 'StringParameterValue', name: 'INTYGSTJANST_BUILD_VERSION', value: buildVersion]]
-    build job: "${buildRoot}-deploy-it-webcert", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
-    build job: "${buildRoot}-deploy-it-minaintyg", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
+    node {
+        gitRef = "v${buildVersion}"
+        build job: "intygstjanst-dintyg-build", wait: false, parameters: [
+                [$class: 'StringParameterValue', name: 'INTYGSTJANST_BUILD_VERSION', value: buildVersion],
+                [$class: 'StringParameterValue', name: 'COMMON_VERSION', value: commonVersion],
+                [$class: 'StringParameterValue', name: 'INFRA_VERSION', value: infraVersion],
+                [$class: 'StringParameterValue', name: 'GIT_REF', value: gitRef]
+        ]
+        build job: "${buildRoot}-deploy-it-webcert", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
+        build job: "${buildRoot}-deploy-it-minaintyg", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
+    }
 }
 
 stage('notify') {
