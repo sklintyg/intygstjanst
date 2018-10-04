@@ -49,6 +49,7 @@ import static org.junit.Assert.assertTrue;
 public class ListCertificatesForCitizenV4IT extends BaseIntegrationTest {
     private static final String BASE = "Envelope.Body.ListCertificatesForCitizenResponse.";
     private static final String defaultType = "luse";
+    private static final String LUAE_NA_VERSION = "1.0";
 
     private String intygsId = "123456";
 
@@ -113,7 +114,7 @@ public class ListCertificatesForCitizenV4IT extends BaseIntegrationTest {
     public void listCertificatesRevokeConsent() {
         ST requestTemplate = getRequestTemplate(true);
         IntegrationTestUtil.addConsent(personId);
-        IntegrationTestUtil.givenIntyg(intygsId_alltypes.get(0), FK7263_VERSION,"fk7263", personId, true);
+        IntegrationTestUtil.givenIntyg(intygsId_alltypes.get(0), "luae_na", LUAE_NA_VERSION, personId, true);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v4.0").then().statusCode(200)
