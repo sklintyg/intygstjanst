@@ -58,14 +58,14 @@ public class IntegrationTestUtil {
     }
 
     public static void registerCertificateWithDateParameters(String intygsId, String personId, IntegrationTestCertificateType type,
-            int daysValidFromNow, int daysPassed) {
+            int fromDaysRelativeToNow, int toDaysRelativeToNow) {
         String filePath = getFilePath(type);
         STGroup templateGroup = new STGroupFile(filePath);
         ST requestTemplateForConsent = templateGroup.getInstanceOf("requestParameterized");
         requestTemplateForConsent.add("intygId", intygsId);
         requestTemplateForConsent.add("personId", personId);
 
-        applyToFromDatesToRequestTemplate(requestTemplateForConsent, daysValidFromNow, daysPassed);
+        applyToFromDatesToRequestTemplate(requestTemplateForConsent, fromDaysRelativeToNow, toDaysRelativeToNow);
 
         executeRegisterCertificate(requestTemplateForConsent);
     }
@@ -75,9 +75,9 @@ public class IntegrationTestUtil {
                 .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
     }
 
-    private static void applyToFromDatesToRequestTemplate(ST requestTemplate, int daysValidFromNow, int daysPassed) {
-        requestTemplate.add("fromDate", LocalDate.now().minusDays(daysPassed).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        requestTemplate.add("toDate", LocalDate.now().plusDays(daysValidFromNow).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    private static void applyToFromDatesToRequestTemplate(ST requestTemplate, int fromDaysRelativeToNow, int toDaysRelativeToNow) {
+        requestTemplate.add("fromDate", LocalDate.now().plusDays(fromDaysRelativeToNow).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        requestTemplate.add("toDate", LocalDate.now().plusDays(toDaysRelativeToNow).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 
     private static String getFilePath(IntegrationTestCertificateType type) {
@@ -158,7 +158,7 @@ public class IntegrationTestUtil {
         requestTemplateForRegister.add("intygId", intygsId);
         requestTemplateForRegister.add("personId", personId);
         if (REGISTER_TEMPLATE_WITH_DATES.equals(template)) {
-            applyToFromDatesToRequestTemplate(requestTemplateForRegister, 2, 2);
+            applyToFromDatesToRequestTemplate(requestTemplateForRegister, -2, 2);
         }
         given().body(requestTemplateForRegister.render()).when().post("inera-certificate/register-certificate/v3.0").then().statusCode(200)
                 .rootPath(REGISTER_MEDICAL_BASE).body("result.resultCode", is("OK"));

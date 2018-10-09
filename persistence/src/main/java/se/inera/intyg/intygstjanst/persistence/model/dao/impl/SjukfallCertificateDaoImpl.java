@@ -51,7 +51,8 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
             + "JOIN sc.sjukfallCertificateWorkCapacity scwc "
             + "WHERE sc.careGiverId = :careGiverHsaId "
             + "AND sc.careUnitId IN (:careUnitHsaId) "
-            + "AND scwc.toDate >= :toDate "
+            + "AND ((scwc.fromDate <= :today AND scwc.toDate >= :today) "   // active today or...
+            + "  OR (scwc.toDate < :today AND scwc.toDate >= :recentlyClosed)) "  // recently closed
             + "AND sc.deleted = FALSE";
 
     private static final String EXCLUDE_REPLACED_INTYG_QUERY = "SELECT TO_INTYG_ID FROM RELATION r "
@@ -66,15 +67,17 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     @Override
     public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
             int maxDagarSedanAvslut) {
-        String toDate = LocalDate.now().minusDays(maxDagarSedanAvslut).format(DateTimeFormatter.ISO_DATE);
+        String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
+        String recentlyClosed = LocalDate.now().minusDays(maxDagarSedanAvslut).format(DateTimeFormatter.ISO_DATE);
 
         // First, get personnummer for all patients having a currently ongoing intyg.
         List<String> personNummerList = entityManager.createQuery(
-                BASE_QUERY,
+                BASE_QUERY + "",
                 String.class)
                 .setParameter("careGiverHsaId", careGiverHsaId)
                 .setParameter("careUnitHsaId", careUnitHsaIds)
-                .setParameter("toDate", toDate)
+                .setParameter("today", today)
+                .setParameter("recentlyClosed", recentlyClosed)
                 .getResultList();
 
         return querySjukfallCertificatesForUnitsAndPersonnummer(careGiverHsaId, careUnitHsaIds, personNummerList);
@@ -82,16 +85,18 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
 
     @Override
     public List<SjukfallCertificate> findActiveSjukfallCertificateForPersonOnCareUnits(
-            String careGiverHsaId, List<String> careUnitHsaIds, String personnummer) {
+            String careGiverHsaId, List<String> careUnitHsaIds, String personnummer, int maxDagarSedanAvslut) {
 
         String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
+        String recentlyClosed = LocalDate.now().minusDays(maxDagarSedanAvslut).format(DateTimeFormatter.ISO_DATE);
 
         List<String> personNummerList = entityManager.createQuery(
                 BASE_QUERY + " AND sc.civicRegistrationNumber = :civicRegistrationNumber",
                 String.class)
                 .setParameter("careGiverHsaId", careGiverHsaId)
                 .setParameter("careUnitHsaId", careUnitHsaIds)
-                .setParameter("toDate", today)
+                .setParameter("today", today)
+                .setParameter("recentlyClosed", recentlyClosed)
                 .setParameter("civicRegistrationNumber", personnummer)
                 .getResultList();
 

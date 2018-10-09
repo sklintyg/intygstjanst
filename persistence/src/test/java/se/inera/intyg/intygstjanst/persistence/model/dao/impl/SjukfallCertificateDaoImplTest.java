@@ -80,8 +80,8 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
     @Test
     public void testFindActiveSjukfallCertificatesForPatient() {
         buildDefaultSjukfallCertificates();
-        List<SjukfallCertificate> resultList = sjukfallCertificateDao
-                .findActiveSjukfallCertificateForPersonOnCareUnits(CARE_GIVER_1_ID, Arrays.asList(CARE_UNIT_1_ID), PERSONNUMMER);
+        List<SjukfallCertificate> resultList = sjukfallCertificateDao.findActiveSjukfallCertificateForPersonOnCareUnits(CARE_GIVER_1_ID,
+                Arrays.asList(CARE_UNIT_1_ID), PERSONNUMMER, MAX_DAGAR_SEDAN_AVSLUT);
 
         assertNotNull(resultList);
         assertEquals(1, resultList.size());

@@ -39,11 +39,6 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
  */
 public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
 
-    private static final int EXPIRED_A_WEEK_AGO = -7;
-    private static final int EXPIRED_TWO_WEEKS_AGO = -14;
-    private static final int VALID_FOR_TWO_MORE_DAYS = 2;
-    private static final int DAYS_ALREADY_PASSED = 2;
-
     private static final List<String> INTYG_IDS = Arrays.asList("listActiveSickleavesForCareUnitITcertificateId1",
             "listActiveSickleavesForCareUnitITcertificateId2", "listActiveSickleavesForCareUnitITcertificateId3",
             "listActiveSickleavesForCareUnitITcertificateId4");
@@ -126,7 +121,7 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
         IntegrationTestUtil.registerMedicalCertificate(INTYG_IDS.get(1), PERSON_ID, REGISTER_TEMPLATE_Fk7263);
         IntegrationTestUtil.registerMedicalCertificate(INTYG_IDS.get(2), PERSON_ID, REGISTER_TEMPLATE_Fk7263);
         IntegrationTestUtil.registerCertificateWithDateParameters(INTYG_IDS.get(3), PERSON_ID_2, IntegrationTestUtil.IntegrationTestCertificateType.LISJP,
-                VALID_FOR_TWO_MORE_DAYS, DAYS_ALREADY_PASSED);
+                -2, 2);
 
         given().with().body(REQUEST.replace("{{careUnitHsaId}}", CARE_UNIT_ID))
                 .expect()
@@ -147,7 +142,7 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
         IntegrationTestUtil.registerMedicalCertificate(INTYG_IDS.get(1), PERSON_ID, REGISTER_TEMPLATE_Fk7263);
         IntegrationTestUtil.registerMedicalCertificate(INTYG_IDS.get(2), PERSON_ID, REGISTER_TEMPLATE_Fk7263);
         IntegrationTestUtil.registerCertificateWithDateParameters(INTYG_IDS.get(3), PERSON_ID_2, IntegrationTestUtil.IntegrationTestCertificateType.LISJP,
-                VALID_FOR_TWO_MORE_DAYS, DAYS_ALREADY_PASSED);
+                -2, 2);
 
         given().with().body(REQUEST_WITH_PATIENTID
                 .replace("{{careUnitHsaId}}", CARE_UNIT_ID)
@@ -204,7 +199,7 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
     @Test
     public void testReadIntygsDataIncludingRecentlyExpiredSickLeaves() {
         IntegrationTestUtil.registerCertificateWithDateParameters(INTYG_IDS.get(3), PERSON_ID_2, IntegrationTestUtil.IntegrationTestCertificateType.LISJP,
-                EXPIRED_A_WEEK_AGO, 30);
+                -14, -7);
 
         given().with().body(REQUEST_INCLUDING_EXPIRED_SICK_LEAVES_WITHIN_10_DAYS.replace("{{careUnitHsaId}}", CARE_UNIT_ID))
                 .expect()
@@ -219,7 +214,21 @@ public class ListActiveSickleavesForCareUnitIT extends BaseIntegrationTest {
     @Test
     public void testReadIntygsDataNotIncludingSickLeavesExpiredForMoreThanTwoWeeks() {
         IntegrationTestUtil.registerCertificateWithDateParameters(INTYG_IDS.get(3), PERSON_ID_2, IntegrationTestUtil.IntegrationTestCertificateType.LISJP,
-                EXPIRED_TWO_WEEKS_AGO, 30);
+                -21, -14);
+
+        given().with().body(REQUEST_INCLUDING_EXPIRED_SICK_LEAVES_WITHIN_10_DAYS.replace("{{careUnitHsaId}}", CARE_UNIT_ID))
+                .expect()
+                .statusCode(200)
+                .body(BASE + "resultCode", is("OK"))
+                .body(BASE + "intygsLista.intygsData.size()", equalTo(0))
+                .when()
+                .post("inera-certificate/list-active-sick-leaves-for-care-unit/v1.0");
+    }
+
+    @Test
+    public void testReadIntygsDataNotIncludingSickLeavesActiveInTheFuture() {
+        IntegrationTestUtil.registerCertificateWithDateParameters(INTYG_IDS.get(3), PERSON_ID_2, IntegrationTestUtil.IntegrationTestCertificateType.LISJP,
+                14, 21);
 
         given().with().body(REQUEST_INCLUDING_EXPIRED_SICK_LEAVES_WITHIN_10_DAYS.replace("{{careUnitHsaId}}", CARE_UNIT_ID))
                 .expect()

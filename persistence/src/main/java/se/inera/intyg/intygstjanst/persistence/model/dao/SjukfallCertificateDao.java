@@ -28,7 +28,7 @@ public interface SjukfallCertificateDao {
             int maxDagarSedanAvslut);
 
     List<SjukfallCertificate> findActiveSjukfallCertificateForPersonOnCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
-            String personnummer);
+            String personnummer, int maxDagarSedanAvslut);
 
     void store(SjukfallCertificate sjukfallCert);
 

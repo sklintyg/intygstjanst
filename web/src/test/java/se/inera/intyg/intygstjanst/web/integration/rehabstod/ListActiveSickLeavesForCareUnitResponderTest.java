@@ -52,6 +52,7 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
 
     private static final String CAREGIVER_HSAID = "vardgivare-1";
     private static final String CAREUNIT_HSAID = "enhet-1";
+    private static final int MAX_DAGAR_SEDAN_AVSLUT = 0;
 
     @Mock
     private HsaService hsaService;
@@ -101,7 +102,7 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
         PersonId patientId = new PersonId();
         patientId.setExtension("191212121212");
         params.setPersonId(patientId);
-        params.setMaxDagarSedanAvslut(0);
+        params.setMaxDagarSedanAvslut(MAX_DAGAR_SEDAN_AVSLUT);
 
         ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
         assertNotNull(responseType);
@@ -109,7 +110,7 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
 
         verify(sjukfallCertificateDao, times(1))
                 .findActiveSjukfallCertificateForPersonOnCareUnits(CAREGIVER_HSAID, Arrays.asList(CAREUNIT_HSAID),
-                        "19121212-1212");
+                        "19121212-1212", MAX_DAGAR_SEDAN_AVSLUT);
     }
 
     @Test
@@ -125,7 +126,7 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
 
         ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
         verify(sjukfallCertificateDao, times(1)).findActiveSjukfallCertificateForCareUnits(anyString(), anyList(), anyInt());
-        verify(sjukfallCertificateDao, times(0)).findActiveSjukfallCertificateForPersonOnCareUnits(anyString(), anyList(), anyString());
+        verify(sjukfallCertificateDao, times(0)).findActiveSjukfallCertificateForPersonOnCareUnits(anyString(), anyList(), anyString(), anyInt());
     }
 
     @Test
@@ -141,6 +142,6 @@ public class ListActiveSickLeavesForCareUnitResponderTest {
 
         ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
         verify(sjukfallCertificateDao, times(1)).findActiveSjukfallCertificateForCareUnits(anyString(), anyList(), anyInt());
-        verify(sjukfallCertificateDao, times(0)).findActiveSjukfallCertificateForPersonOnCareUnits(anyString(), anyList(), anyString());
+        verify(sjukfallCertificateDao, times(0)).findActiveSjukfallCertificateForPersonOnCareUnits(anyString(), anyList(), anyString(), anyInt());
     }
 }

@@ -68,6 +68,7 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
                 ? parameters.getPersonId().getExtension().trim()
                 : null;
 
+        int maxDagarSedanAvslut = parameters.getMaxDagarSedanAvslut() != null ? parameters.getMaxDagarSedanAvslut() : 0;
         List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(careUnitHsaId);
         hsaIdList.add(careUnitHsaId); // add care unit HSAId to list
 
@@ -76,9 +77,9 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
             Personnummer pnr = Personnummer.createPersonnummer(personnummer)
                     .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
             activeSjukfallCertificateForCareUnits = sjukfallCertificateDao
-                    .findActiveSjukfallCertificateForPersonOnCareUnits(careGiverHsaId, hsaIdList, pnr.getPersonnummerWithDash());
+                    .findActiveSjukfallCertificateForPersonOnCareUnits(careGiverHsaId, hsaIdList, pnr.getPersonnummerWithDash(),
+                            maxDagarSedanAvslut);
         } else {
-            int maxDagarSedanAvslut = parameters.getMaxDagarSedanAvslut() != null ? parameters.getMaxDagarSedanAvslut() : 0;
             activeSjukfallCertificateForCareUnits = sjukfallCertificateDao
                     .findActiveSjukfallCertificateForCareUnits(careGiverHsaId, hsaIdList, maxDagarSedanAvslut);
         }
