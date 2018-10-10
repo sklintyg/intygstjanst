@@ -21,7 +21,7 @@ package se.inera.intyg.intygstjanst.web.support;
 import com.google.common.collect.ImmutableList;
 import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
 import se.inera.intyg.common.fkparent.model.internal.Diagnos;
-import se.inera.intyg.common.lisjp.model.internal.LisjpUtlatande;
+import se.inera.intyg.common.lisjp.v1.model.internal.LisjpUtlatandeV1;
 import se.inera.intyg.common.lisjp.model.internal.Sjukskrivning;
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
 import se.inera.intyg.common.support.model.common.internal.GrundData;
@@ -108,8 +108,8 @@ public class CertificateForSjukfallFactory {
         return cert;
     }
 
-    public LisjpUtlatande buildLisjpUtlatande() {
-        LisjpUtlatande utlatande = mock(LisjpUtlatande.class);
+    public LisjpUtlatandeV1 buildLisjpUtlatande() {
+        LisjpUtlatandeV1 utlatande = mock(LisjpUtlatandeV1.class);
 
         mockGrundData(utlatande);
         when(utlatande.getDiagnoser()).thenReturn(ImmutableList.of(Diagnos.create("J22", "", "", "")));

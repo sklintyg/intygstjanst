@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
 import se.inera.intyg.common.fkparent.model.internal.Diagnos;
-import se.inera.intyg.common.lisjp.model.internal.LisjpUtlatande;
+import se.inera.intyg.common.lisjp.v1.model.internal.LisjpUtlatandeV1;
 import se.inera.intyg.common.lisjp.model.internal.Sjukskrivning;
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
 import se.inera.intyg.common.support.model.common.internal.Patient;
@@ -131,11 +131,11 @@ public class CertificateToSjukfallCertificateConverter {
      */
     public SjukfallCertificate convertLisjp(Certificate certificate, Utlatande utlatande) {
 
-        if (!(utlatande instanceof LisjpUtlatande)) {
+        if (!(utlatande instanceof LisjpUtlatandeV1)) {
             throw new IllegalArgumentException("Cannot convert " + utlatande.getClass().getName() + " to SjukfallCertificate");
         }
 
-        LisjpUtlatande lisjpUtlatande = (LisjpUtlatande) utlatande;
+        LisjpUtlatandeV1 lisjpUtlatandeV1 = (LisjpUtlatandeV1) utlatande;
 
         SjukfallCertificate sc = new SjukfallCertificateBuilder(Strings.nullToEmpty(certificate.getId()).trim())
                 .careGiverId(Strings.nullToEmpty(certificate.getCareGiverId()).trim())
@@ -144,28 +144,28 @@ public class CertificateToSjukfallCertificateConverter {
                 .certificateType(certificate.getType())
                 .civicRegistrationNumber(Strings.nullToEmpty(certificate.getCivicRegistrationNumber().getPersonnummerWithDash()).trim())
                 .signingDoctorName(certificate.getSigningDoctorName())
-                .patientName(getPatientName(lisjpUtlatande.getGrundData().getPatient()))
-                .diagnoseCode(lisjpUtlatande.getDiagnoser().get(0).getDiagnosKod())
-                .signingDoctorId(Strings.nullToEmpty(lisjpUtlatande.getGrundData().getSkapadAv().getPersonId()).trim())
-                .signingDoctorName(lisjpUtlatande.getGrundData().getSkapadAv().getFullstandigtNamn())
+                .patientName(getPatientName(lisjpUtlatandeV1.getGrundData().getPatient()))
+                .diagnoseCode(lisjpUtlatandeV1.getDiagnoser().get(0).getDiagnosKod())
+                .signingDoctorId(Strings.nullToEmpty(lisjpUtlatandeV1.getGrundData().getSkapadAv().getPersonId()).trim())
+                .signingDoctorName(lisjpUtlatandeV1.getGrundData().getSkapadAv().getFullstandigtNamn())
                 .signingDateTime(certificate.getSignedDate())
                 .certificateType(certificate.getType())
                 .deleted(certificate.isRevoked())
-                .workCapacities(buildWorkCapacitiesLisjp(lisjpUtlatande))
-                .employment(lisjpUtlatande.getSysselsattning() != null ? lisjpUtlatande.getSysselsattning()
+                .workCapacities(buildWorkCapacitiesLisjp(lisjpUtlatandeV1))
+                .employment(lisjpUtlatandeV1.getSysselsattning() != null ? lisjpUtlatandeV1.getSysselsattning()
                         .stream()
                         .filter(Objects::nonNull)
                         .map(s -> s.getTyp().getId())
                         .collect(Collectors.joining(",")) : null)
                 .build();
 
-        if (lisjpUtlatande.getDiagnoser().size() > 1) {
-            for (int a = 1; a < lisjpUtlatande.getDiagnoser().size(); a++) {
+        if (lisjpUtlatandeV1.getDiagnoser().size() > 1) {
+            for (int a = 1; a < lisjpUtlatandeV1.getDiagnoser().size(); a++) {
                 if (a == 1) {
-                    sc.setBiDiagnoseCode1(lisjpUtlatande.getDiagnoser().get(a).getDiagnosKod());
+                    sc.setBiDiagnoseCode1(lisjpUtlatandeV1.getDiagnoser().get(a).getDiagnosKod());
                 }
                 if (a == 2) {
-                    sc.setBiDiagnoseCode2(lisjpUtlatande.getDiagnoser().get(a).getDiagnosKod());
+                    sc.setBiDiagnoseCode2(lisjpUtlatandeV1.getDiagnoser().get(a).getDiagnosKod());
                 }
             }
         }
@@ -173,9 +173,9 @@ public class CertificateToSjukfallCertificateConverter {
         return sc;
     }
 
-    private List<SjukfallCertificateWorkCapacity> buildWorkCapacitiesLisjp(LisjpUtlatande lisjpUtlatande) {
+    private List<SjukfallCertificateWorkCapacity> buildWorkCapacitiesLisjp(LisjpUtlatandeV1 lisjpUtlatandeV1) {
         List<SjukfallCertificateWorkCapacity> workCapacities = new ArrayList<>();
-        lisjpUtlatande.getSjukskrivningar().stream().forEach(sjukskrivning -> {
+        lisjpUtlatandeV1.getSjukskrivningar().stream().forEach(sjukskrivning -> {
             if (sjukskrivning.getSjukskrivningsgrad() == Sjukskrivning.SjukskrivningsGrad.HELT_NEDSATT) {
                 workCapacities.add(buildWorkCapacity(WORK_CAPACITY_100, sjukskrivning.getPeriod()));
             }
@@ -265,19 +265,19 @@ public class CertificateToSjukfallCertificateConverter {
 
     public boolean isConvertableLisjp(Utlatande utlatande) {
 
-        if (utlatande == null || !(utlatande instanceof LisjpUtlatande)) {
+        if (utlatande == null || !(utlatande instanceof LisjpUtlatandeV1)) {
             return false;
         }
 
-        LisjpUtlatande lisjpUtlatande = (LisjpUtlatande) utlatande;
-        if (lisjpUtlatande.getAvstangningSmittskydd() != null && lisjpUtlatande.getAvstangningSmittskydd()) {
-            LOG.debug("Intyg {} is not a valid SjukfallCertificate, is smittskydd.", lisjpUtlatande.getId());
+        LisjpUtlatandeV1 lisjpUtlatandeV1 = (LisjpUtlatandeV1) utlatande;
+        if (lisjpUtlatandeV1.getAvstangningSmittskydd() != null && lisjpUtlatandeV1.getAvstangningSmittskydd()) {
+            LOG.debug("Intyg {} is not a valid SjukfallCertificate, is smittskydd.", lisjpUtlatandeV1.getId());
             return false;
         }
 
-        Diagnos diagnos = lisjpUtlatande.getDiagnoser().stream().findFirst().orElse(null);
+        Diagnos diagnos = lisjpUtlatandeV1.getDiagnoser().stream().findFirst().orElse(null);
         if (diagnos == null || diagnos.getDiagnosKod() == null || "".equals(diagnos.getDiagnosKod().trim())) {
-            LOG.debug("Intyg {} is not a valid SjukfallCertificate, has no diagnoseCode.", lisjpUtlatande.getId());
+            LOG.debug("Intyg {} is not a valid SjukfallCertificate, has no diagnoseCode.", lisjpUtlatandeV1.getId());
             return false;
         }
 
