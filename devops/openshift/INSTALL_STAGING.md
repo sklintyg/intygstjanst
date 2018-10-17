@@ -71,7 +71,7 @@ Note that we strongly recommend using a git account that has read-only (e.g. pub
 
 For security reasons, no secret properties or configuration may be checked into git. Thus, a number of placeholders needs to be replaced prior to creating or updating secrets and/or config maps.
 
-Open _staging/secret-vars.yaml and replace \<replaceme\> with expected values:
+Open _staging/secret-vars.yaml_ and replace \<replaceme\> with expected values:
 
     ACTIVEMQ_BROKER_USERNAME: <replaceme>
     ACTIVEMQ_BROKER_PASSWORD: <replaceme>
