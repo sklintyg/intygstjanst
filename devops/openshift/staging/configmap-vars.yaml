@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  REDIS_HOST: <replaceme>
+  ACTIVEMQ_BROKER_URL: tcp://<replaceme>:<replaceme>
+  ACTIVEMQ_DESTINATION_QUEUE_NAME: staging.statistik.utlatande.queue
+  NTJP_WS_CERTIFICATE_FILE=${CERTIFICATE_FOLDER}/demo.intygstjanst.intygstjanster.se.p12
+  NTJP_WS_TRUSTSTORE_FILE=${CERTIFICATE_FOLDER}/truststore.jks
+  NTJP_WS_CERTIFICATE_TYPE: PKCS12
+  NTJP_WS_TRUSTSTORE_TYPE: JKS
+
+kind: ConfigMap
+metadata:
+  name: intygstjanst-staging-configmap-envvar
+type: Opaque

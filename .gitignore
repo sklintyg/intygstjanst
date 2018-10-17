@@ -21,3 +21,6 @@ build
 .gradle
 activemq-data
 out
+
+*.jks
+*.pkcs12
