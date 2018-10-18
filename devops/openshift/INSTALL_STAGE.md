@@ -95,4 +95,3 @@ Run the following command:
         -p STAGE=staging -p DATABASE_NAME=<replaceme> \
         -p HEALTH_URI=/inera-certificate/services \
         -o yaml | oc apply -f -
-
