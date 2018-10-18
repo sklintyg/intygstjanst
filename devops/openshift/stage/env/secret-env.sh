@@ -3,7 +3,7 @@
 
 export DB_USERNAME=${DATABASE_USERNAME:-intyg}
 export DB_PASSWORD=${DATABASE_PASSWORD:-intyg}
-export DB_NAME=${DATABASE_NAME:-intyg}
+export DB_NAME=${DATABASE_NAME:-minaintyg}
 export DB_SERVER=mysql
 export DB_PORT=$MYSQL_SERVICE_PORT
 
