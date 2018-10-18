@@ -67,7 +67,9 @@ Note that we strongly recommend using a git account that has read-only (e.g. pub
     password: ******
     > oc project stage
 
-(3.) Make sure the latest deployment template is installed into the cluster, see https://github.com/sklintyg/tools/blob/develop/devops/openshift/deploytemplate-webapp.yaml
+(3.) Make sure the latest deployment template is installed into the cluster, see 
+
+https://github.com/sklintyg/tools/blob/develop/devops/openshift/deploytemplate-webapp.yaml
 
 ### 2.2 Update placeholders
 
@@ -83,20 +85,23 @@ Open _stage/secret-vars.yaml_ and replace \<replaceme\> with expected values:
 
 Open _stage/configmap-vars.yaml_ and replace \<replaceme\> with expected values. You may also need to update name of keystore/truststore files as well as their type (JKS or PKCS12):
 
-    REDIS_HOST: <replaceme>
+    REDIS_HOST: <replaceme;replaceme;replaceme>
+    REDIS_PORT: <replaceme;replaceme;replaceme>
+    REDIS_SENTINEL_MASTER_NAME: <replaceme>
     ACTIVEMQ_BROKER_URL: tcp://<replaceme>:<replaceme>
     ACTIVEMQ_DESTINATION_QUEUE_NAME: stage.statistik.utlatande.queue
     NTJP_WS_CERTIFICATE_FILE=${CERTIFICATE_FOLDER}/demo.intygstjanst.intygstjanster.se.p12
     NTJP_WS_TRUSTSTORE_FILE=${CERTIFICATE_FOLDER}/truststore.jks
     NTJP_WS_CERTIFICATE_TYPE: PKCS12
     NTJP_WS_TRUSTSTORE_TYPE: JKS
-    
-The _stage/config/certificate.properties_ file shouldn't require any changes **except** modifying _localhost.stub.url=_ depending on whether you want communication with FK to be stubbed or not:
-
-    localhost.stub.url=URL to FK stub OR NTjP QA
-    
+        
 The _stage/config/recipients.json_ file may need to be updated with any new intyg recipients.
     
+##### 2.2.1 Redis Sentinel configuration
+Redis sentinel needs at least three URL:s passed in order to work correctly. These are specified in the _redis.host_ and _redis.port_ properties respectively:
+
+    redis.host=host1;host2;host3
+    redis.port=26379;26379;26379
     
 ### 2.3 Prepare certificates
 Staging and Prod certificates are **never** commited to git. However, you may temporarily copy them to _stage/certifikat_ in order to install/update them. Typically, certificates have probably been installed separately. The important thing is that the deployment template **requires** a secret named:
@@ -132,15 +137,20 @@ We're all set for deploying the application. As stated in the pre-reqs, the "dep
 
 **NOTE 1!!** You need to reference the correct docker image from the Nexus!! You must replace \<replaceme\> with a correct path to the image to deploy!!
 
-**NOTE 2!!** Please specify the DATABASE_NAME for the intygstjanst stage env mysql.
+**NOTE 2!!** Please specify the DATABASE_NAME for the intygstjanst stage env mysql. "intygstjanst" is the default database name.
 Run the following command:
 
     oc process deploytemplate-webapp \
         -p APP_NAME=intygstjanst-stage \
-        -p IMAGE=<replaceme> \
+        -p IMAGE=docker.drift.inera.se/intyg/intygstjanst-test:<version> \
         -p STAGE=stage -p DATABASE_NAME=<replaceme> \
         -p HEALTH_URI=/inera-certificate/services \
         -o yaml | oc apply -f -
+        
+        
+if using the deploytemplate-webapp file locally, use this command instead:
+
+    oc process -f <path-to>/deploytemplate-webapp.yaml ........
 
 ### 2.6 Verify
 The pod(s) running intygstjanst should become available within a few minutes.
