@@ -3,8 +3,8 @@ data:
   REDIS_HOST: <replaceme>
   REDIS_SENTINEL_MASTER_NAME: <replaceme>
   ACTIVEMQ_BROKER_URL: tcp://<replaceme>:<replaceme>
-  ACTIVEMQ_DESTINATION_QUEUE_NAME: staging.statistik.utlatande.queue
-  ACTIVEMQ_INTERNAL_NOTIFICATION_QUEUE_NAME=staging.internal.notification.queue
+  ACTIVEMQ_DESTINATION_QUEUE_NAME: stage.statistik.utlatande.queue
+  ACTIVEMQ_INTERNAL_NOTIFICATION_QUEUE_NAME=stage.internal.notification.queue
   NTJP_WS_CERTIFICATE_FILE=${CERTIFICATE_FOLDER}/demo.intygstjanst.intygstjanster.se.p12
   NTJP_WS_TRUSTSTORE_FILE=${CERTIFICATE_FOLDER}/truststore.jks
   NTJP_WS_CERTIFICATE_TYPE: PKCS12
@@ -12,5 +12,5 @@ data:
 
 kind: ConfigMap
 metadata:
-  name: intygstjanst-staging-configmap-envvar
+  name: intygstjanst-stage-configmap-envvar
 type: Opaque
