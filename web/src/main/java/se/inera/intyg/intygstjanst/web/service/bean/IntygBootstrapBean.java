@@ -97,7 +97,8 @@ public class IntygBootstrapBean {
                 Objects.requireNonNull(resourceFilename);
                 String moduleName = resourceFilename.split("__")[0];
                 String intygMajorTypeVersion = resourceFilename.split("\\.")[1];
-                LOG.info("Bootstrapping certificate '{}' from module {}", resource.getFilename(), moduleName);
+                LOG.info("Bootstrapping certificate '{}' from module {} (version {})", resource.getFilename(), moduleName,
+                        intygMajorTypeVersion);
                 String xmlString = Resources.toString(resource.getURL(), Charsets.UTF_8);
                 bootstrapCertificate(xmlString,
                         moduleRegistry.getModuleApi(moduleName, intygMajorTypeVersion).getUtlatandeFromXml(xmlString),
