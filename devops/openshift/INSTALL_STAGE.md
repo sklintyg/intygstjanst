@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 1. INSTALLATION INSTRUCTIONS
 The first part deals with traditional actions and pre-requisites for a successful installation.
 
@@ -46,116 +47,240 @@ Two queues needs to be set up for Intygstjänsten (or ActiveMQ will create them 
 
 
 ### 2.1 Pre-req
+=======
+# OPENSHIFT INSTALLATION GUIDE
+>>>>>>> INTYG-6519: Mer generell installationsanvisning, och mindre strukturändringar
 
-- A git client must be available
-- "oc" must be installed locally and available on your PATH.
-- VPN connected to the appropriate network.
+Installation of web application intygstjanst on openshift.
 
-(1.) Clone the github repo and switch to the release branch specified in the release notes, e.g:
+## 1 Pre-Installation Requirements
 
+The following prerequisites and requirements must be satisfied in order for the intygstjanst to install successfully.
+
+
+### 1.1 Backing Service Dependencies
+
+The application has the following external services: 
+
+Provided by operations (execution environment):
+
+* MySQL (provided)
+* ActiveMQ (provided)
+* Redis Sentinel (provided)
+* Redis Server (provided)
+
+Provided elsewhere:
+
+* Inera Service Platform (NTjP)
+
+For all backing services their actual addresses and user accounts have to be known prior to start the installation procedure.  
+
+### 1.3 Integration / Firewall
+
+Intygstjänsten communicates in/out with the Inera Service Platform and thus needs firewall rules for that access.
+
+### 1.4 Certificates
+
+Intygstjänsten needs certificates, keystores and truststores for communicating over Tjänsteplattformen. The operations provider is responsible for installing these certificates in the appropriate OpenShift "secret", see detailed instructions in the OpenShift section.
+
+### 1.5 Message Queues
+
+Two queues needs are required and depending on permissions those may be implicitly created by the application. The `<env>` placeholder shall be substituted with the actual name of the environment such as `stage` or `prod`.
+
+- &lt;env>.statistik.utlatande.queue
+- &lt;env>.internal.notification.queue
+
+### 1.5 Database
+
+A database for the application must have been created.  It's recommended to use character set `utf8mb4` and case-sensitive collation. 
+
+### 1.6 Access to Software Artifacts
+
+Software artifacts are located at, and downloaded from:
+
+* From Installing Client - https://build-inera.nordicmedtest.se/nexus/repository/releases/se/inera/intyg/intygstjanst/
+* From OpenShift Cluster - docker.drift.inera.se/intyg/
+
+### 1.7 Access to OpenShift Cluster
+
+The OpenShift user account must have the right permissions to process, create, delete and replace objects, and most certainly a VPN account and connection is required in order to access the OpenShift Cluster.
+
+### 1.8 Client Software Tools
+
+The installation client must have **git** and **oc** (OpenShift Client) installed and if a database schema migration is required then **java** (Java 8) and **tar** is required in order to execute the migration tool (liquibase runner).
+
+Must have:
+
+* git
+* oc
+* VPN Client (such as Cisco Any Connect) 
+
+To run database migration tool:
+
+* java
+* tar
+
+# 2. Installation Procedure
+
+### 2.1 Installation Checklist
+
+1. All Pre-Installation Requirements are fulfilled, se above
+2. Check if a database migration is required
+3. Ensure that the env secret and secret-envvar are up to date
+4. Ensure that the configmap and configmap-envvar are up to date
+5. Check that deployment works as expected 
+6. Fine-tune memory settings for container and java process
+7. Setup policies for number of replicas, auto-scaling and rolling upgrade strategy
+
+
+### 2.2 Migrate Database Schema
+
+Prior to any release that includes changes to the database schema, the operations provider must execute schema updates using the Liquibase runner tool provided in this section. 
+
+_Please note: a complete database backup is recommended prior to run the database migration tool_
+
+Replace `<version>` below with the actual application version.
+
+Fetch the actual version of the tool, the example below runs `wget` to retrieve the package (tarball).
+
+    > wget https://build-inera.nordicmedtest.se/nexus/repository/releases/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/<version>/intygstjanst-liquibase-runner-<version>.tar
+
+
+Download onto a computer having Java installed and network access to the database and execute the runner.
+
+    > tar xvf intygstjanst-liquibase-runner-<version>.tar
+    > cd intygstjanst-liquibase-runner-<version>
+    > bin/intygstjanst-liquibase-runner --url=jdbc:mysql://<database-host>/<database-name> --username=<database_username> --password=<database_password> update
+
+
+### 2.3 Get Source for Configuration
+
+
+##### 2.3.1 Clone the repository
+
+Clone repository and switch to the release branch specified in the release notes. Substitute `<name>` below with the actual release name, such as `2018-4`.
     
     > git clone https://github.com/sklintyg/intygstjanst.git
-    > git checkout release/2018-4
+    > git checkout release/<name>
     > cd devops/openshift
     
 Note that we strongly recommend using a git account that has read-only (e.g. public) access to the repo.
     
-(2.) Log-in into the cluster with oc and select the correct project, e.g:
+##### 2.3.2 Log-in into the cluster
+
+Use oc to login and select the actual project, e.g:
 
     > oc login https://path.to.cluster
     username: ******
     password: ******
-    > oc project stage
+    > oc project <name>
 
-(3.) Make sure the latest deployment template is installed into the cluster, see 
+### 2.3.3 Ensure that the latest deployment template is installed
 
-https://github.com/sklintyg/tools/blob/develop/devops/openshift/deploytemplate-webapp.yaml
+Down load and install the latest _[deploytemplate-webapp.yaml](https://github.com/sklintyg/tools/blob/develop/devops/openshift/deploytemplate-webapp.yaml)_
 
-### 2.2 Update placeholders
+Syntax to create or replace the template: 
+
+	> oc [ create | replace ] -f deploytemplate-webapp.yaml
+
+### 2.4 Update configuration placeholders
 
 For security reasons, no secret properties or configuration may be checked into git. Thus, a number of placeholders needs to be replaced prior to creating or updating secrets and/or config maps.
 
-Open _stage/secret-vars.yaml_ and replace \<replaceme\> with expected values:
+Open _&lt;env>/secret-vars.yaml_ and replace `<value>` with expected values:
 
-    ACTIVEMQ_BROKER_USERNAME: <replaceme>
-    ACTIVEMQ_BROKER_PASSWORD: <replaceme>
-    NTJP_WS_CERTIFICATE_PASSWORD: <replaceme>
-    NTJP_WS_KEY_MANAGER_PASSWORD: <replaceme>
-    NTJP_WS_TRUSTSTORE_PASSWORD: <replaceme>
+    ACTIVEMQ_BROKER_USERNAME: <value>
+    ACTIVEMQ_BROKER_PASSWORD: <value>
+    NTJP_WS_CERTIFICATE_PASSWORD: <value>
+    NTJP_WS_KEY_MANAGER_PASSWORD: <value>
+    NTJP_WS_TRUSTSTORE_PASSWORD: <value>
 
-Open _stage/configmap-vars.yaml_ and replace \<replaceme\> with expected values. You may also need to update name of keystore/truststore files as well as their type (JKS or PKCS12):
+Open _&lt;env>/configmap-vars.yaml_ and replace `<value>` with expected values. You may also need to update name of keystore/truststore files as well as their type (JKS or PKCS12)
 
-    REDIS_HOST: <replaceme;replaceme;replaceme>
-    REDIS_PORT: <replaceme;replaceme;replaceme>
-    REDIS_SENTINEL_MASTER_NAME: <replaceme>
-    ACTIVEMQ_BROKER_URL: tcp://<replaceme>:<replaceme>
-    ACTIVEMQ_DESTINATION_QUEUE_NAME: stage.statistik.utlatande.queue
-    NTJP_WS_CERTIFICATE_FILE=${CERTIFICATE_FOLDER}/demo.intygstjanst.intygstjanster.se.p12
-    NTJP_WS_TRUSTSTORE_FILE=${CERTIFICATE_FOLDER}/truststore.jks
-    NTJP_WS_CERTIFICATE_TYPE: PKCS12
-    NTJP_WS_TRUSTSTORE_TYPE: JKS
-        
-The _stage/config/recipients.json_ file may need to be updated with any new intyg recipients.
+    REDIS_HOST: <value>
+    REDIS_PORT: <value>
+    REDIS_SENTINEL_MASTER_NAME: <value>
+    ACTIVEMQ_BROKER_URL: <value>
+    ACTIVEMQ_DESTINATION_QUEUE_NAME: <value>
+    NTJP_WS_CERTIFICATE_FILE: <value>
+    NTJP_WS_TRUSTSTORE_FILE: <value>
+    NTJP_WS_CERTIFICATE_TYPE: <value>
+    NTJP_WS_TRUSTSTORE_TYPE: <value>
+   
+Note: Other properties might be used to define a `<value>`. As an example is the path to certificates indicated by the `CERTIFICATE_FOLDER` property and the truststore file might be defined like:
+ 
+	NTJP_WS_TRUSTSTORE_FILE: ${CERTIFICATE_FOLDER}/truststore.jks
     
-##### 2.2.1 Redis Sentinel configuration
+        
+The _&lt;env>/config/recipients.json_ file may need to be updated with any new intyg recipients.
+    
+##### 2.4.1 Redis Sentinel Configuration
+
 Redis sentinel needs at least three URL:s passed in order to work correctly. These are specified in the _redis.host_ and _redis.port_ properties respectively:
 
     redis.host=host1;host2;host3
     redis.port=26379;26379;26379
     
-### 2.3 Prepare certificates
-Staging and Prod certificates are **never** commited to git. However, you may temporarily copy them to _stage/certifikat_ in order to install/update them. Typically, certificates have probably been installed separately. The important thing is that the deployment template **requires** a secret named:
+### 2.5 Prepare Certificates
 
-    intygstjanst-stage-certifikat
-    
-to be available in the OpenShift project. It will be mounted to _/opt/intygstjanst-stage/certifikat_ in the container file system.
+The `<env>` placeholder shall be substituted with the actual name of the environment such as `stage` or `prod`.
 
-### 2.4 Creating config and secrets
-If you've finished updating the files above, it's now time to use _oc_ to install them into OpenShift.
+Staging and Prod certificates are **never** committed to git. However, you may temporarily copy them to _&lt;env>/certifikat_ in order to install/update them. Typically, certificates have probably been installed separately. The important thing is that the deployment template **requires** a secret named: `intygstjanst-<env>-certifikat` to be available in the OpenShift project. It will be mounted to _/opt/intygstjanst-<env>/certifikat_ in the container file system.
 
-All commands must be executed from the same folder as this markdown file, i.e. _/intygstjanst/devops/openshift_    
 
-##### 2.4.1 Create environment variables secret and configmap
+### 2.6 Creating Config and Secrets
+If you've finished updating the files above, it's now time to use **oc** to install them into OpenShift.
+All commands must be executed from the same folder as this markdown file, i.e. _/intygstjanst/devops/openshift_ 
+
+Note: To delete an existing ConfigMap or Secret use the following syntax:
+
+	> oc delete [ configmap | secret ] <name>
+
+##### 2.6.1 Create environment variables for Secret and ConfigMap
 From YAML-files, their names are hard-coded into the respective file
 
-    oc create -f stage/configmap-vars.yaml
-    oc create -f stage/secret-vars.yaml
+    > oc create -f <env>/configmap-vars.yaml
+    > oc create -f <env>/secret-vars.yaml
     
-##### 2.4.2 Create env secret and config map
-Creates config map and secret from the contents of the _stage/env_ and _stage/config_ folders:
+##### 2.6.2 Create Secret and ConfigMap
+Creates config map and secret from the contents of the _&lt;env>/env_ and _&lt;env>/config_ folders:
 
-    oc create configmap "intygstjanst-stage-config" --from-file=stage/config/
-    oc create secret generic "intygstjanst-stage-env" --from-file=stage/env/ --type=Opaque
+    > oc create configmap intygstjanst-<env>-config --from-file=<env>/config/
+    > oc create secret generic intygstjanst-<env>-env --from-file=<env>/env/ --type=Opaque
     
-##### 2.4.3 Create secret with certificates
-If this hasn't been done previously, you may **temporarily** copy keystores into the _stage/certifikat_ folder and then install them into OpenShift using this command:
+##### 2.6.3 Create Secret with Certificates
+If this hasn't been done previously, you may **temporarily** copy keystores into the _&lt;env>/certifikat_ folder and then install them into OpenShift using this command:
 
-    oc create secret generic "intygstjanst-stage-certifikat" --from-file=stage/certifikat/ --type=Opaque
+    > oc create secret generic intygstjanst-<env>-certifikat --from-file=<env>/certifikat/ --type=Opaque
 
-### 2.5 Deploy
+### 2.7 Deploy
 We're all set for deploying the application. As stated in the pre-reqs, the "deploytemplate-webapp" must be installed in the OpenShift project.
 
-**NOTE 1!!** You need to reference the correct docker image from the Nexus!! You must replace \<replaceme\> with a correct path to the image to deploy!!
+**NOTE 1** You need to reference the correct docker image from the Nexus!! You must replace \<replaceme\> with a correct path to the image to deploy!!
 
-**NOTE 2!!** Please specify the DATABASE_NAME for the intygstjanst stage env mysql. "intygstjanst" is the default database name.
-Run the following command:
+**NOTE 2** Please specify the `DATABASE_NAME` actual MySQL database. Default is **intygstjanst**.
 
-    oc process deploytemplate-webapp \
-        -p APP_NAME=intygstjanst-stage \
+Run the following command to create a deployment:
+
+    > oc process deploytemplate-webapp \
+        -p APP_NAME=intygstjanst-<env> \
         -p IMAGE=docker.drift.inera.se/intyg/intygstjanst-test:<version> \
-        -p STAGE=stage -p DATABASE_NAME=<replaceme> \
+        -p STAGE=<env> 
+        -p DATABASE_NAME=<value> \
         -p HEALTH_URI=/inera-certificate/services \
         -o yaml | oc apply -f -
         
         
-if using the deploytemplate-webapp file locally, use this command instead:
+Alternatively, it's possible to use the deploytemplate-webapp file locally:
 
-    oc process -f <path-to>/deploytemplate-webapp.yaml ........
+    > oc process -f deploytemplate-webapp.yaml -p APP_NAME=intygstjanst-<env> ...
 
-### 2.6 Verify
-The pod(s) running intygstjanst should become available within a few minutes.
+### 2.8 Verify
+The pod(s) running intygstjanst should become available within a few minutes use **oc** or Web Console to checkout the logs for progress:
 
-### 2.7 Routes
-Intygstjänsten should _only_ be accessible from inside the OpenShift project using its _service_ name (e.g. http://intygstjanst-stage:8080) and from Nationella tjänsteplattformen. E.g. take care when setting up an OpenShift route so Intygstjänsten isn't publically adressable from the Internet.
+	> oc logs dc/intygstjanst-<env>
+
+### 2.9 Routes
+Intygstjänsten should _only_ be accessible from inside of the OpenShift project using its _service_ name (e.g. http://intygstjanst-&lt;env>:8080) and from Nationella tjänsteplattformen. E.g. take care when setting up an OpenShift route so the intygsyjanst servcie isn't publicly addressable from the Internet.
 
 The security measures based on mutual TLS and PKI should nevertheless stop any attempts from unsolicited callers.
