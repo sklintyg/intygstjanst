@@ -23,7 +23,7 @@ import org.junit.Test;
 import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
 import se.inera.intyg.common.fkparent.model.internal.Diagnos;
 import se.inera.intyg.common.lisjp.v1.model.internal.LisjpUtlatandeV1;
-import se.inera.intyg.common.ts_bas.model.internal.TsBasUtlatande;
+import se.inera.intyg.common.ts_bas.v6.model.internal.TsBasUtlatandeV6;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 
 import java.time.LocalDateTime;
@@ -66,7 +66,7 @@ public class CertificateToSjukfallCertificateConverterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testThrowsExceptionWhenNonFk7263Type() {
-        testee.convertFk7263(getFactoryInstance().buildCert("fk"), TsBasUtlatande.builder().build());
+        testee.convertFk7263(getFactoryInstance().buildCert("fk"), TsBasUtlatandeV6.builder().build());
     }
 
     @Test
@@ -174,7 +174,7 @@ public class CertificateToSjukfallCertificateConverterTest {
 
     @Test
     public void testIsConvertableFk7263ReturnsFalseWhenNonFk7263Type() {
-        assertFalse(testee.isConvertableFk7263(TsBasUtlatande.builder().build()));
+        assertFalse(testee.isConvertableFk7263(TsBasUtlatandeV6.builder().build()));
     }
 
     @Test
@@ -223,7 +223,7 @@ public class CertificateToSjukfallCertificateConverterTest {
 
     @Test
     public void testIsConvertableLisjpReturnsFalseWhenNonLisjpType() {
-        assertFalse(testee.isConvertableLisjp(TsBasUtlatande.builder().build()));
+        assertFalse(testee.isConvertableLisjp(TsBasUtlatandeV6.builder().build()));
     }
 
     @Test
