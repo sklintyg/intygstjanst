@@ -1,55 +1,5 @@
-<<<<<<< HEAD
-# 1. INSTALLATION INSTRUCTIONS
-The first part deals with traditional actions and pre-requisites for a successful installation.
 
-### 1.1 Service dependencies
-The application has the following external service dependencies, all of which are provided by the operations provider:
-
-* MySQL (provided)
-* ActiveMQ (provided)
-* Redis Sentinel (provided)
-* Redis Server (provided)
-
-### 1.2 Liquibase
-
-Prior to any release that includes changes to the database schema, the operations provider must execute schema updates using the Liquibase runner application provided in this section.
-
-Replace \<version\> below with the actual version.
-
-    https://build-inera.nordicmedtest.se/nexus/repository/releases/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/3.6.0.431/intygstjanst-liquibase-runner-3.6.0.431.tar
-
-TODO Path to Intyg Nexus:
-
-    intygstjanst-liquibase-runner/<version>/intygstjanst-liquibase-runner-<version>.tar
-
-Download onto a computer having Java installed and network access to the database and execute the runner.
-
-    tar xzf intygstjanst-liquibase-runner-<version>.tar
-    cd intygstjanst-liquibase-runner-<version>.tar
-    ./bin/liquibase-runner --url=jdbc:mysql://DATABASEHOST/intyg --username=<database_username> --password=<database_password> update
-
-### 1.3 Integration / Firewall
-
-Intygstjänsten communicates in/out with the Nationella Tjänsteplattformen and thus needs firewall rules for that access.
-
-### 1.4 Certificates
-
-Intygstjänsten needs certificates, keystores and truststores for communicating over Tjänsteplattformen. The operations provider is responsible for installing these certificates in the appropriate OpenShift "secret", see detailed instructions in the OpenShift section.
-
-### 1.5 Queues
-
-Two queues needs to be set up for Intygstjänsten (or ActiveMQ will create them automatically?)
-
-- stage.statistik.utlatande.queue
-- stage.internal.notification.queue
-
-# 2. Installation on OPENSHIFT
-
-
-### 2.1 Pre-req
-=======
 # OPENSHIFT INSTALLATION GUIDE
->>>>>>> INTYG-6519: Mer generell installationsanvisning, och mindre strukturändringar
 
 Installation of web application intygstjanst on openshift.
 
