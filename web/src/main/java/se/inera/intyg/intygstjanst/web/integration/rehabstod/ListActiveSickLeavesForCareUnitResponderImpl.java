@@ -53,6 +53,7 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
     @PrometheusTimeMethod
     public ListActiveSickLeavesForCareUnitResponseType listActiveSickLeavesForCareUnit(String logicalAddress,
             ListActiveSickLeavesForCareUnitType parameters) {
+
         ListActiveSickLeavesForCareUnitResponseType response = new ListActiveSickLeavesForCareUnitResponseType();
 
         if (hasNoCareUnitId(parameters)) {

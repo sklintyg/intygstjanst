@@ -18,15 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
@@ -35,6 +26,17 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -48,7 +50,11 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
 
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
 
-    private static final String PERSONNUMMER = "19121212-1212";
+    private static final String TOLVAN_TOLVANSSON = "Tolvan Tolvansson";
+    private static final String TOLVAN_TOLVANSSON_PNR = "19121212-1212";
+    private static final String LILLTOLVAN_TOLVANSSON = "Lill-Tolvan Tolvansson";
+    private static final String LILLTOLVAN_TOLVANSSON_PNR = "19121212-1212";
+
     private static final String DOCTOR_HSA_ID = "doctor-1";
     private static final String DOCTOR_NAME = "doctor-1-name";
     private static final String FK7263 = "fk7263";
@@ -68,7 +74,7 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
 
     @Test
     public void testFindActiveSjukfallCertificates() {
-        buildDefaultSjukfallCertificates();
+        buildDefaultSjukfallCertificate();
         List<SjukfallCertificate> resultList = sjukfallCertificateDao
                 .findActiveSjukfallCertificateForCareUnits(CARE_GIVER_1_ID, Arrays.asList(CARE_UNIT_1_ID), MAX_DAGAR_SEDAN_AVSLUT);
 
@@ -78,10 +84,28 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
     }
 
     @Test
-    public void testFindActiveSjukfallCertificatesForPatient() {
-        buildDefaultSjukfallCertificates();
+    public void testFindActiveSjukfallCertificatesForPatientOnCareUnits() {
+        buildDefaultSjukfallCertificate();
         List<SjukfallCertificate> resultList = sjukfallCertificateDao.findActiveSjukfallCertificateForPersonOnCareUnits(CARE_GIVER_1_ID,
-                Arrays.asList(CARE_UNIT_1_ID), PERSONNUMMER, MAX_DAGAR_SEDAN_AVSLUT);
+                Arrays.asList(CARE_UNIT_1_ID), TOLVAN_TOLVANSSON_PNR, MAX_DAGAR_SEDAN_AVSLUT);
+
+        assertNotNull(resultList);
+        assertEquals(1, resultList.size());
+        assertEquals(3, resultList.get(0).getSjukfallCertificateWorkCapacity().size());
+    }
+
+    @Test
+    public void testFindActiveSjukfallCertificatesForPatient() {
+        // This test is to ensure you only get certificate(s) for one patient
+
+        Map<String, String> map = new HashMap<String, String>() {{
+                put(TOLVAN_TOLVANSSON_PNR, TOLVAN_TOLVANSSON);
+                put(LILLTOLVAN_TOLVANSSON_PNR, LILLTOLVAN_TOLVANSSON);
+        }};
+        buildDefaultSjukfallCertificates(map);
+
+        List<SjukfallCertificate> resultList = sjukfallCertificateDao
+                .findActiveSjukfallCertificateForPerson(TOLVAN_TOLVANSSON_PNR, MAX_DAGAR_SEDAN_AVSLUT);
 
         assertNotNull(resultList);
         assertEquals(1, resultList.size());
@@ -110,7 +134,7 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
 
     @Test
     public void testRevoke() {
-        String id = buildDefaultSjukfallCertificates();
+        String id = buildDefaultSjukfallCertificate();
         sjukfallCertificateDao.revoke(id);
 
         SjukfallCertificate fromDb = entityManager.find(SjukfallCertificate.class, id);
@@ -119,7 +143,7 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
 
     @Test
     public void testNothingHappensOnRevokeForNonExistingSjukfallCert() {
-        String id = buildDefaultSjukfallCertificates();
+        String id = buildDefaultSjukfallCertificate();
         sjukfallCertificateDao.revoke("some-other-id");
 
         SjukfallCertificate fromDb = entityManager.find(SjukfallCertificate.class, id);
@@ -154,7 +178,7 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
 
     @Test
     public void testReplacedIntygIsExcluded() {
-        String originalId = buildDefaultSjukfallCertificates();
+        String originalId = buildDefaultSjukfallCertificate();
         String replacingId = buildReplacingSjukfallCertificate(originalId);
 
         List<SjukfallCertificate> resultList = sjukfallCertificateDao
@@ -166,7 +190,7 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
 
     @Test
     public void testReplacedIntygIsNotExcludedWhenReplacesSomethinElse() {
-        String originalId = buildDefaultSjukfallCertificates();
+        String originalId = buildDefaultSjukfallCertificate();
         String replacingId = buildReplacingSjukfallCertificate("some-other-stuff");
 
         List<SjukfallCertificate> resultList = sjukfallCertificateDao
@@ -175,11 +199,20 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
         assertEquals(2, resultList.size());
     }
 
-    private String buildDefaultSjukfallCertificates() {
+    private String buildDefaultSjukfallCertificate() {
         SjukfallCertificate sc = buildSjukfallCertificate(CARE_GIVER_1_ID, CARE_UNIT_1_ID, CARE_UNIT_1_NAME,
                 defaultWorkCapacities(), false);
         sc = entityManager.merge(sc);
         return sc.getId();
+    }
+
+    private void buildDefaultSjukfallCertificates(Map<String, String> personMap) {
+        personMap.forEach((key, value) -> {
+                    SjukfallCertificate sc =
+                            buildSjukfallCertificate(CARE_GIVER_1_ID, CARE_UNIT_1_ID, CARE_UNIT_1_NAME,
+                                    defaultWorkCapacities(), false, key, value);
+                    entityManager.merge(sc);
+                });
     }
 
     private String buildDeletedSjukfallCertificates() {
@@ -211,10 +244,23 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
         return sc.getId();
     }
 
-    private SjukfallCertificate buildSjukfallCertificate(String careGiverId, String careUnitId,
+    private SjukfallCertificate buildSjukfallCertificate(String careGiverId,
+                                                         String careUnitId,
                                                          String careUnitName,
                                                          List<SjukfallCertificateWorkCapacity> workCapacities,
                                                          boolean deleted) {
+
+        return buildSjukfallCertificate(careGiverId, careUnitId, careUnitName, workCapacities,
+                                        deleted, TOLVAN_TOLVANSSON_PNR, TOLVAN_TOLVANSSON);
+    }
+
+    private SjukfallCertificate buildSjukfallCertificate(String careGiverId,
+                                                         String careUnitId,
+                                                         String careUnitName,
+                                                         List<SjukfallCertificateWorkCapacity> workCapacities,
+                                                         boolean deleted,
+                                                         String personNummer,
+                                                         String personNamn) {
 
         SjukfallCertificate sc = new SjukfallCertificate(UUID.randomUUID().toString());
         sc.setCareGiverId(careGiverId);
@@ -222,9 +268,9 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
         sc.setCareUnitName(careUnitName);
         sc.setSigningDateTime(CERT_SIGNING_DATETIME);
         sc.setSjukfallCertificateWorkCapacity(workCapacities);
-        sc.setCivicRegistrationNumber(PERSONNUMMER);
+        sc.setCivicRegistrationNumber(personNummer);
         sc.setDiagnoseCode("M16");
-        sc.setPatientName("Tolvan Tolvansson");
+        sc.setPatientName(personNamn);
         sc.setSigningDoctorId(DOCTOR_HSA_ID);
         sc.setSigningDoctorName(DOCTOR_NAME);
         sc.setType(FK7263);

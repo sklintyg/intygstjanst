@@ -48,7 +48,7 @@ import static org.mockito.Mockito.when;
  * Created by eriklupander on 2016-02-04.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ListActiveSickLeavesForCareUnitResponderTest {
+public class ListActiveSickLeavesForCareUnitResponderImplTest {
 
     private static final String CAREGIVER_HSAID = "vardgivare-1";
     private static final String CAREUNIT_HSAID = "enhet-1";

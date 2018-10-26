@@ -1,0 +1,91 @@
+/*
+ * Copyright (C) 2018 Inera AB (http://www.inera.se)
+ *
+ * This file is part of sklintyg (https://github.com/sklintyg).
+ *
+ * sklintyg is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * sklintyg is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package se.inera.intyg.intygstjanst.web.integration.rehabstod;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ListActiveSickLeavesForPersonResponderInterface;
+import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ListActiveSickLeavesForPersonResponseType;
+import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ListActiveSickLeavesForPersonType;
+import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ResultCodeEnum;
+import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ResultType;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallCertificateIntygsDataConverter;
+import se.inera.intyg.schemas.contract.Personnummer;
+import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsLista;
+
+import java.util.List;
+
+/**
+ * @author Magnus Ekstrand on 2018-10-23.
+ */
+public class ListActiveSickLeavesForPersonResponderImpl implements ListActiveSickLeavesForPersonResponderInterface {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ListActiveSickLeavesForPersonResponderImpl.class);
+
+    @Autowired
+    private SjukfallCertificateDao sjukfallCertificateDao;
+
+    @Override
+    @PrometheusTimeMethod
+    public ListActiveSickLeavesForPersonResponseType listActiveSickLeavesForPerson(
+            String logicalAddress, ListActiveSickLeavesForPersonType parameters) {
+
+        ListActiveSickLeavesForPersonResponseType response = new ListActiveSickLeavesForPersonResponseType();
+
+        try {
+            Personnummer personnummer = parsePersonnummer(parameters);
+            int maxDagarSedanAvslut = parameters.getMaxDagarSedanAvslut() != null ? parameters.getMaxDagarSedanAvslut() : 0;
+
+            List<SjukfallCertificate> activeSjukfallCertificateForPerson =
+                    sjukfallCertificateDao.findActiveSjukfallCertificateForPerson(
+                            personnummer.getPersonnummerWithDash(), maxDagarSedanAvslut);
+
+            IntygsLista intygsLista = new IntygsLista();
+            intygsLista.getIntygsData()
+                    .addAll(new SjukfallCertificateIntygsDataConverter().buildIntygsData(activeSjukfallCertificateForPerson));
+
+            response.setIntygsLista(intygsLista);
+            response.setResult(createResultType(ResultCodeEnum.OK, null));
+
+        } catch (Exception e) {
+            LOGGER.error("Could not get active sick leaves for a person.", e);
+            response.setResult(createResultType(ResultCodeEnum.ERROR, e.getMessage()));
+        }
+
+        return response;
+    }
+
+    private ResultType createResultType(ResultCodeEnum resultCode, String message) {
+        ResultType result = new ResultType();
+        result.setResultCode(resultCode);
+        result.setResultMessage(message);
+        return result;
+    }
+    private Personnummer parsePersonnummer(ListActiveSickLeavesForPersonType parameters) {
+        String personnummer = parameters.getPersonId() != null && parameters.getPersonId().getExtension() != null
+                ? parameters.getPersonId().getExtension().trim()
+                : null;
+        return Personnummer.createPersonnummer(personnummer)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+    }
+}

@@ -21,12 +21,15 @@ package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -65,15 +68,15 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     private EntityManager entityManager;
 
     @Override
-    public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
-            int maxDagarSedanAvslut) {
+    public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(
+            String careGiverHsaId, List<String> careUnitHsaIds, int maxDagarSedanAvslut) {
+
         String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
         String recentlyClosed = LocalDate.now().minusDays(maxDagarSedanAvslut).format(DateTimeFormatter.ISO_DATE);
 
         // First, get personnummer for all patients having a currently ongoing intyg.
-        List<String> personNummerList = entityManager.createQuery(
-                BASE_QUERY + "",
-                String.class)
+        List<String> personNummerList = entityManager
+                .createQuery(BASE_QUERY + "", String.class)
                 .setParameter("careGiverHsaId", careGiverHsaId)
                 .setParameter("careUnitHsaId", careUnitHsaIds)
                 .setParameter("today", today)
@@ -89,10 +92,11 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
 
         String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
         String recentlyClosed = LocalDate.now().minusDays(maxDagarSedanAvslut).format(DateTimeFormatter.ISO_DATE);
+        String query = BASE_QUERY
+                + " AND sc.civicRegistrationNumber = :civicRegistrationNumber";
 
-        List<String> personNummerList = entityManager.createQuery(
-                BASE_QUERY + " AND sc.civicRegistrationNumber = :civicRegistrationNumber",
-                String.class)
+        List<String> personNummerList = entityManager
+                .createQuery(query, String.class)
                 .setParameter("careGiverHsaId", careGiverHsaId)
                 .setParameter("careUnitHsaId", careUnitHsaIds)
                 .setParameter("today", today)
@@ -104,6 +108,11 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     }
 
     @Override
+    public List<SjukfallCertificate> findActiveSjukfallCertificateForPerson(String personnummer, int maxDagarSedanAvslut) {
+        return querySjukfallCertificatesForPersonnummer(personnummer, maxDagarSedanAvslut);
+    }
+
+    @Override
     public void store(SjukfallCertificate sjukfallCert) {
         entityManager.persist(sjukfallCert);
     }
@@ -111,8 +120,9 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     @Override
     public void revoke(String id) {
 
-        List<SjukfallCertificate> resultList = entityManager.createQuery("SELECT sc FROM SjukfallCertificate sc "
-                + "WHERE sc.id=:id", SjukfallCertificate.class)
+        List<SjukfallCertificate> resultList = entityManager
+                .createQuery("SELECT sc FROM SjukfallCertificate sc "
+                        + "WHERE sc.id=:id", SjukfallCertificate.class)
                 .setParameter("id", id)
                 .getResultList();
 
@@ -125,6 +135,61 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
             entityManager.merge(sc);
             LOG.debug("Successfully marked SjukfallCert {} as deleted", id);
         }
+    }
+
+    private List<SjukfallCertificate> querySjukfallCertificatesForPersonnummer(String personnummer, int maxDagarSedanAvslut) {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Get active intyg on all care givers and their units for a personnummer.");
+        }
+
+        // if no personnummer found, return empty list
+        if (Strings.isNullOrEmpty(personnummer)) {
+            return new ArrayList<>();
+        }
+
+        // Next, fetch a list of all replaced/complemented intygsId for the patients in the list
+        List<String> replacedOrComplementedIntygsIdList =
+                replacedOrComplementedIntygForPersonnummerList(Arrays.asList(personnummer));
+
+        String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
+        String recentlyClosed = LocalDate.now().minusDays(maxDagarSedanAvslut).format(DateTimeFormatter.ISO_DATE);
+
+        // Prepare jpql query
+        String jpql = "SELECT DISTINCT sc "
+                + "FROM SjukfallCertificate sc "
+                + "JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc "
+                + "WHERE sc.deleted = FALSE "
+                + "AND sc.civicRegistrationNumber = :personnummer "
+                + "AND ((scwc.fromDate <= :today AND scwc.toDate >= :today) "   // active today or...
+                + "  OR (scwc.toDate < :today AND scwc.toDate >= :recentlyClosed)) ";  // recently closed
+
+        // Only add the "is replaced"-stuff if there's entries to possibly exclude.
+        if (isNotEmpty(replacedOrComplementedIntygsIdList)) {
+            jpql += "AND sc.id NOT IN (:replacedOrComplementedIntygsIdList)";
+        }
+
+        TypedQuery<SjukfallCertificate> query = entityManager
+                .createQuery(jpql, SjukfallCertificate.class)
+                .setParameter("personnummer", personnummer)
+                .setParameter("today", today)
+                .setParameter("recentlyClosed", recentlyClosed);
+
+        if (isNotEmpty(replacedOrComplementedIntygsIdList)) {
+            query = query.setParameter("replacedOrComplementedIntygsIdList", replacedOrComplementedIntygsIdList);
+        }
+
+        // Finally, fetch all SjukfallCertificates removing any sjukfall from
+        // the replaced or complemented list.
+        List<SjukfallCertificate> resultList = query.getResultList();
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Read {} SjukfallCertificate", resultList.size());
+        }
+
+        return resultList.stream()
+                .sorted(Comparator.comparing(SjukfallCertificate::getCivicRegistrationNumber))
+                .collect(Collectors.toList());
     }
 
     private List<SjukfallCertificate> querySjukfallCertificatesForUnitsAndPersonnummer(
