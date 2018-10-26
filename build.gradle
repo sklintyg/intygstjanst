@@ -9,7 +9,7 @@ ext {
 
     schemasContractVersion = "2.1.7"
 
-    intygHealthcondRehabilitationSchemasVersion = "1.0.8"
+    intygHealthcondRehabilitationSchemasVersion = "1.1.0"
     intygInsuranceprocessSchemasVersion = "1.0.4"
     intygClinicalprocessSchemasVersion = "1.0.16"
     rivtaClinicalprocessSchemasVersion = "4.0"
