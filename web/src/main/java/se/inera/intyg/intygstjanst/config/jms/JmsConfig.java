@@ -63,7 +63,7 @@ public class JmsConfig {
 
     @Bean
     public ConnectionFactory connectionFactory() {
-        return new PooledConnectionFactory(new ActiveMQConnectionFactory(brokerPassword, brokerUsername, brokerUrl));
+        return new PooledConnectionFactory(new ActiveMQConnectionFactory(brokerUsername, brokerPassword, brokerUrl));
     }
 
     @Bean
