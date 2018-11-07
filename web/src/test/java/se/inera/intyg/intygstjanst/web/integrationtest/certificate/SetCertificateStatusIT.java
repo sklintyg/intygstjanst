@@ -23,6 +23,11 @@ import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,13 +35,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
-
-import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
@@ -47,6 +45,8 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
     private ST requestTemplateResult;
     private String intygsId = "123456";
     private String personId = "192703104321";
+    private String versionsId = "1.0";
+
     private String intygsIdNotExists = "123456t";
     private final String status = "RECEIV";
 
@@ -67,13 +67,13 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
 
     @Test
     public void setCertificateStatusWorks() {
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId, personId);
-        requestTemplate.add("data", new IntygsData(intygsId));
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId, versionsId, personId);
+        requestTemplate.add("data", new SetStatusIntygsData(intygsId));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v2.0").then().statusCode(200)
                 .rootPath(BASE).body("result.resultCode", is("OK"));
 
-        requestTemplateResult.add("data", new IntygsData(intygsId));
+        requestTemplateResult.add("data", new GetIntygsData(intygsId));
 
         given().body(requestTemplateResult.render()).when().post("inera-certificate/get-certificate-se/v2.0").then().statusCode(200)
                 .rootPath(GET_BASE).body("intyg.status.status[0].code", is(status)).body("intyg.status.status[1].code", is(status)).extract()
@@ -82,8 +82,8 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
 
     @Test
     public void setCertificateStatusIntygNotExists() {
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId, personId);
-        requestTemplate.add("data", new IntygsData(intygsIdNotExists));
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId, versionsId, personId);
+        requestTemplate.add("data", new SetStatusIntygsData(intygsIdNotExists));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v2.0").then().statusCode(200)
                 .rootPath(BASE).body("result.resultCode", is("ERROR"));
@@ -95,7 +95,7 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
         final String xsdString = Resources.toString(
                 new ClassPathResource("interactions/SetCertificateStatusInteraction/SetCertificateStatusResponder_2.0.xsd").getURL(), Charsets.UTF_8);
 
-        requestTemplate.add("data", new IntygsData(intygsId));
+        requestTemplate.add("data", new SetStatusIntygsData(intygsId));
 
         given().filter(
                 new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SetCertificateStatusResponder:2"),
@@ -106,7 +106,7 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
 
     @Test
     public void faultTransformerTest() throws Exception {
-        requestTemplate.add("data", new IntygsData("<tag></tag>"));
+        requestTemplate.add("data", new SetStatusIntygsData("<tag></tag>"));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v2.0").then().statusCode(200)
                 .rootPath(BASE).body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
@@ -117,11 +117,20 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
         IntegrationTestUtil.deleteIntyg(intygsId);
     }
 
-    private static class IntygsData {
-        @SuppressWarnings("unused")
+    @SuppressWarnings("unused")
+    private class SetStatusIntygsData {
         public final String intygsId;
 
-        public IntygsData(String intygsId) {
+        SetStatusIntygsData(String intygsId) {
+            this.intygsId = intygsId;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private class GetIntygsData {
+        public final String intygsId;
+
+        GetIntygsData(String intygsId) {
             this.intygsId = intygsId;
         }
     }

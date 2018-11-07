@@ -18,6 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
+
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
@@ -35,11 +40,6 @@ import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.StringStartsWith.startsWith;
-
 public class SendCertificateToRecipientIT extends BaseIntegrationTest {
     private static final String REGISTER_BASE = "Envelope.Body.RegisterCertificateResponse.";
     private static final String RECIPIENT_BASE = "Envelope.Body.SendCertificateToRecipientResponse.";
@@ -52,6 +52,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
 
     private String personId1 = "192703104321";
     private String intygsId = "123456";
+    private String versionsId = "1.0";
 
     @Before
     public void setup() {
@@ -69,11 +70,11 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
     @Test
     public void sendCertificateToRecipientWorks() {
 
-        requestTemplateRegister.add("data", new IntygsData(intygsId, personId1));
+        requestTemplateRegister.add("data", new RegisterIntygsData(intygsId, versionsId, personId1));
         given().body(requestTemplateRegister.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200)
                 .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
 
-        requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
+        requestTemplateRecipient.add("data", new SendIntygsData(intygsId, personId1));
         requestTemplateRecipient.add("mottagare", "FKASSA");
 
         given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v2.0").then().statusCode(200)
@@ -85,7 +86,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
         final String xsdString = Resources.toString(
                 new ClassPathResource("interactions/SendCertificateToRecipientInteraction/SendCertificateToRecipientResponder_2.1.xsd").getURL(), Charsets.UTF_8);
 
-        requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
+        requestTemplateRecipient.add("data", new SendIntygsData(intygsId, personId1));
         requestTemplateRecipient.add("mottagare", "FKASSA");
 
         given().filter(
@@ -99,7 +100,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
     public void sendCertificateToRecipientTS() {
         IntegrationTestUtil.givenIntyg(intygsId, "ts-bas", TS_BAS_VERSION, personId1, false);
 
-        requestTemplateRecipient.add("data", new IntygsData(intygsId, personId1));
+        requestTemplateRecipient.add("data", new SendIntygsData(intygsId, personId1));
         requestTemplateRecipient.add("mottagare", "TRANSP");
         given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v2.0").then().statusCode(200)
                 .rootPath(RECIPIENT_BASE).body("result.resultCode", is("OK"));
@@ -108,7 +109,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
 
     @Test
     public void faultTransformerTest() throws Exception {
-        requestTemplateRecipient.add("data", new IntygsData("<tag></tag>", personId1));
+        requestTemplateRecipient.add("data", new SendIntygsData("<tag></tag>", personId1));
         requestTemplateRecipient.add("mottagare", "FKASSA");
 
         given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v2.0").then().statusCode(200)
@@ -121,14 +122,13 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
     }
 
     @SuppressWarnings("unused")
-    private static class IntygsData {
+    private class SendIntygsData {
         public final String intygsId;
         public final String personId;
 
-        public IntygsData(String intygsId, String personId) {
+        SendIntygsData(String intygsId, String personId) {
             this.intygsId = intygsId;
             this.personId = personId;
         }
     }
-
 }

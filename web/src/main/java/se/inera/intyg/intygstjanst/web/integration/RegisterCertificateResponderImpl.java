@@ -19,25 +19,13 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import com.google.common.base.Throwables;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3._2000._09.xmldsig_.SignatureType;
 import org.w3._2002._06.xmldsig_filter2.XPathType;
-import se.inera.intyg.common.support.common.enumerations.RelationKod;
-import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
-import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
-import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
-import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
-import se.inera.intyg.common.support.modules.support.api.ModuleApi;
-import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
-import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
-import se.inera.intyg.common.support.modules.support.api.dto.ValidateXmlResponse;
-import se.inera.intyg.common.util.logging.LogMarkers;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.ObjectFactory;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
@@ -47,14 +35,28 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.PartialDateType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Relation;
-
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import java.io.StringWriter;
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.List;
+import se.inera.intyg.common.support.common.enumerations.RelationKod;
+import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
+import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
+import se.inera.intyg.common.support.modules.support.api.ModuleApi;
+import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
+import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
+import se.inera.intyg.common.support.modules.support.api.dto.ValidateXmlResponse;
+import se.inera.intyg.common.util.logging.LogMarkers;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 @SchemaValidation
 public class RegisterCertificateResponderImpl implements RegisterCertificateResponderInterface {
@@ -96,6 +98,8 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             }
         } catch (CertificateAlreadyExistsException e) {
             return makeCertificateAlreadyExistsResult(registerCertificate);
+        } catch (ModuleNotFoundException e) {
+            return makeInvalidCertificateVersionResult(registerCertificate);
         } catch (InvalidCertificateException e) {
             return makeInvalidCertificateResult(registerCertificate);
         } catch (JAXBException e) {
@@ -111,7 +115,9 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         throw new RuntimeException("Unrecoverable exception in registerCertificate");
     }
 
-    private RegisterCertificateResponseType storeIntyg(final RegisterCertificateType registerCertificate, final String intygsTyp,
+    private RegisterCertificateResponseType storeIntyg(
+            final RegisterCertificateType registerCertificate,
+            final String intygsTyp,
             final String xml, final String additionalInfo) throws CertificateAlreadyExistsException, InvalidCertificateException {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
         CertificateHolder certificateHolder = toCertificateHolder(registerCertificate.getIntyg(), intygsTyp, xml, additionalInfo);
@@ -145,6 +151,23 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
         LOGGER.error(LogMarkers.VALIDATION, "Failed to create Certificate with id " + certificateId + " issued by " + issuedBy
                 + ": Certificate ID already exists for another person.");
+        return response;
+    }
+
+    private RegisterCertificateResponseType makeInvalidCertificateVersionResult(RegisterCertificateType registerCertificate) {
+        RegisterCertificateResponseType response = new RegisterCertificateResponseType();
+
+        final String majorVersion = StringUtils.substringBefore(registerCertificate.getIntyg().getVersion(), ".");
+        final String typ = registerCertificate.getIntyg().getTyp().getCode();
+        final String message = MessageFormat.format("Certificate with type: {0} does not support major version: {1}", typ, majorVersion);
+
+        response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, message));
+
+        final String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
+        final String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
+        final String logMessage = MessageFormat.format("Failed to create Certificate with id {0} issued by {1} : "
+                + "Certificate type {2} does not support major version: {3}", certificateId, issuedBy, typ, majorVersion);
+        LOGGER.error(LogMarkers.VALIDATION, logMessage);
         return response;
     }
 

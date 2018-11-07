@@ -18,6 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v4;
 
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
@@ -31,20 +36,14 @@ import org.springframework.core.io.ClassPathResource;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil.IntegrationTestCertificateType;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertTrue;
 
 public class ListCertificatesForCitizenV4IT extends BaseIntegrationTest {
     private static final String BASE = "Envelope.Body.ListCertificatesForCitizenResponse.";
@@ -97,10 +96,10 @@ public class ListCertificatesForCitizenV4IT extends BaseIntegrationTest {
     public void listMultipleCertificatesShowAll() {
         ST requestTemplate = getRequestTemplate(true);
         IntegrationTestUtil.addConsent(personId);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(0), personId, IntegrationTestCertificateType.LUAENA);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(1), personId, IntegrationTestCertificateType.LUSE);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(2), personId, IntegrationTestCertificateType.LUAEFS);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(3), personId, IntegrationTestCertificateType.LISJP);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(0), LUAE_NA_VERSION, personId, IntegrationTestCertificateType.LUAENA);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(1), LUAE_NA_VERSION, personId, IntegrationTestCertificateType.LUSE);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(2), LUAE_NA_VERSION, personId, IntegrationTestCertificateType.LUAEFS);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(3), LUAE_NA_VERSION, personId, IntegrationTestCertificateType.LISJP);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v4.0").then()
@@ -136,10 +135,10 @@ public class ListCertificatesForCitizenV4IT extends BaseIntegrationTest {
     public void listMultipleCertificatesShowOnlyOneType() {
         ST requestTemplate = getRequestTemplate(false);
         IntegrationTestUtil.addConsent(personId);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(0), personId, IntegrationTestCertificateType.LUAENA);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(1), personId, IntegrationTestCertificateType.LUSE);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(2), personId, IntegrationTestCertificateType.LUAEFS);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(3), personId, IntegrationTestCertificateType.LISJP);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(0), LUAE_NA_VERSION, personId, IntegrationTestCertificateType.LUAENA);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(1), LUAE_NA_VERSION, personId, IntegrationTestCertificateType.LUSE);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(2), LUAE_NA_VERSION, personId, IntegrationTestCertificateType.LUAEFS);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(3), LUAE_NA_VERSION, personId, IntegrationTestCertificateType.LISJP);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v4.0").then()
@@ -152,7 +151,7 @@ public class ListCertificatesForCitizenV4IT extends BaseIntegrationTest {
     @Test
     public void listCertificatesForCitizenWorks() {
         ST requestTemplate = getRequestTemplate(false);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId, personId);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId, LUAE_NA_VERSION, personId);
         IntegrationTestUtil.addConsent(personId);
 
         requestTemplate.add("data", new ListParameters(personId, defaultType));

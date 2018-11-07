@@ -21,18 +21,22 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 
-import org.junit.*;
-import org.stringtemplate.v4.*;
-
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
-
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class RegisterCertificateScenarioIT extends BaseIntegrationTest {
     private String intygsId = "123456";
     private String personId = "192703104321";
+    private String versionsId = "1.0";
+
     private static final String REGISTER_BASE = "Envelope.Body.RegisterCertificateResponse.";
     private static final String GET_BASE = "Envelope.Body.GetCertificateResponse.";
 
@@ -44,7 +48,7 @@ public class RegisterCertificateScenarioIT extends BaseIntegrationTest {
 
     @Test
     public void runScenarioRegisterCertificate() {
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId, personId);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId, versionsId, personId);
         IntegrationTestUtil.sendCertificateToRecipient(intygsId, personId);
         IntegrationTestUtil.revokeCertificate(intygsId, personId);
     }
@@ -52,7 +56,7 @@ public class RegisterCertificateScenarioIT extends BaseIntegrationTest {
     @Test
     public void runScenarioRegisterAndGetCertificate() {
         ST requestTemplateForRegister = getRequestTemplate("register/request_default.stg");
-        requestTemplateForRegister.add("data", new IntygsData(intygsId, personId));
+        requestTemplateForRegister.add("data", new RegisterIntygsData(intygsId, versionsId, personId));
 
         given().body(requestTemplateForRegister.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200)
                 .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
@@ -60,7 +64,7 @@ public class RegisterCertificateScenarioIT extends BaseIntegrationTest {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
         STGroup templateGroupGet = new STGroupFile("integrationtests/getcertificate/requests.stg");
         ST requestTemplateGet = templateGroupGet.getInstanceOf("request");
-        requestTemplateGet.add("data", new IntygsData(intygsId, personId));
+        requestTemplateGet.add("data", new RegisterIntygsData(intygsId, versionsId, personId));
 
         given().body(requestTemplateGet.render()).when().post("inera-certificate/get-certificate-se/v2.0").then().statusCode(200)
                 .rootPath(GET_BASE).body("intyg.intygs-id.extension", is(intygsId));
@@ -76,16 +80,5 @@ public class RegisterCertificateScenarioIT extends BaseIntegrationTest {
         STGroup templateGroup = new STGroupFile(base + path);
         ST registerTemplateForConsent = templateGroup.getInstanceOf("request");
         return registerTemplateForConsent;
-    }
-
-    @SuppressWarnings("unused")
-    private static class IntygsData {
-        public final String intygsId;
-        public final String personId;
-
-        public IntygsData(String intygsId, String personId) {
-            this.intygsId = intygsId;
-            this.personId = personId;
-        }
     }
 }

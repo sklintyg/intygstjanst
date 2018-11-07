@@ -24,10 +24,12 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
+import com.jayway.restassured.response.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,14 +37,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
-
-import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.response.Response;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
@@ -55,6 +52,8 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
     private ST requestTemplate;
     private String personId1 = "192703104321";
     private List<String> intygsId = Arrays.asList("luae_na_1", "luse_1", "luae_fs_1", "lisjp_1", "fk7263_deletedByCareGiver");
+    private String versionsId = "1.0";
+
 
     @Before
     public void setup() {
@@ -67,7 +66,7 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
 
     @After
     public void deleteIntyg() {
-        intygsId.stream().forEach(id -> IntegrationTestUtil.deleteIntyg(id));
+        intygsId.stream().forEach(IntegrationTestUtil::deleteIntyg);
         IntegrationTestUtil.deleteCertificatesForUnit(CARE_UNIT_ID);
     }
 
@@ -89,10 +88,10 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
 
     @Test
     public void listMultipleCertificates() {
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId.get(0), personId1, IntegrationTestCertificateType.LUAENA);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId.get(1), personId1, IntegrationTestCertificateType.LUSE);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId.get(2), personId1, IntegrationTestCertificateType.LUAEFS);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId.get(3), personId1, IntegrationTestCertificateType.LISJP);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId.get(0), versionsId, personId1, IntegrationTestCertificateType.LUAENA);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId.get(1), versionsId, personId1, IntegrationTestCertificateType.LUSE);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId.get(2), versionsId, personId1, IntegrationTestCertificateType.LUAEFS);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId.get(3), versionsId, personId1, IntegrationTestCertificateType.LISJP);
         // deletedByCareGiver should not be returned
         IntegrationTestUtil.givenIntyg(intygsId.get(4), "fk7263", FK7263_VERSION, personId1, true);
         requestTemplate.add("data", new IntygsData(personId1));

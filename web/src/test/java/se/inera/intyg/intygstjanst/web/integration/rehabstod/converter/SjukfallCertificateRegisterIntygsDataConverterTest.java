@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by eriklupander on 2016-02-04.
  */
-public class SjukfallCertificateIntygsDataConverterTest {
+public class SjukfallCertificateRegisterIntygsDataConverterTest {
 
     private SjukfallCertTestHelper testHelper = new SjukfallCertTestHelper();
     private SjukfallCertificateIntygsDataConverter testee = new SjukfallCertificateIntygsDataConverter();

@@ -18,21 +18,20 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.util;
 
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.core.Is.is;
+
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
-import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
-import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
-import se.inera.intyg.schemas.contract.Personnummer;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.core.Is.is;
+import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
+import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 public class IntegrationTestUtil {
 
@@ -52,13 +51,13 @@ public class IntegrationTestUtil {
         LISJP
     }
 
-    public static void registerCertificateFromTemplate(String intygsId, String personId, IntegrationTestCertificateType type) {
+    public static void registerCertificateFromTemplate(String intygsId, String versionsId, String personId, IntegrationTestCertificateType type) {
         String filePath = getFilePath(type);
-        registerCertificateFromTemplate(intygsId, personId, filePath);
+        registerCertificateFromTemplate(intygsId, versionsId, personId, filePath);
     }
 
     public static void registerCertificateWithDateParameters(String intygsId, String personId, IntegrationTestCertificateType type,
-            int fromDaysRelativeToNow, int toDaysRelativeToNow) {
+                                                             int fromDaysRelativeToNow, int toDaysRelativeToNow) {
         String filePath = getFilePath(type);
         STGroup templateGroup = new STGroupFile(filePath);
         ST requestTemplateForConsent = templateGroup.getInstanceOf("requestParameterized");
@@ -83,27 +82,27 @@ public class IntegrationTestUtil {
     private static String getFilePath(IntegrationTestCertificateType type) {
         String baseUrl = "integrationtests/register/";
         switch (type) {
-        case LISJP:
-            return baseUrl + "request_lisjp.stg";
-        case LUSE:
-            return baseUrl + "request_luse.stg";
-        case LUAEFS:
-            return baseUrl + "request_luaefs.stg";
-        case LUAENA:
-            return baseUrl + "request_luaena.stg";
-        default:
-            return DEFAULT_FILE_PATH;
+            case LISJP:
+                return baseUrl + "request_lisjp.stg";
+            case LUSE:
+                return baseUrl + "request_luse.stg";
+            case LUAEFS:
+                return baseUrl + "request_luaefs.stg";
+            case LUAENA:
+                return baseUrl + "request_luaena.stg";
+            default:
+                return DEFAULT_FILE_PATH;
         }
     }
 
-    public static void registerCertificateFromTemplate(String intygsId, String personId) {
-        registerCertificateFromTemplate(intygsId, personId, DEFAULT_FILE_PATH);
+    public static void registerCertificateFromTemplate(String intygsId, String versionsId, String personId) {
+        registerCertificateFromTemplate(intygsId, versionsId, personId, DEFAULT_FILE_PATH);
     }
 
-    private static void registerCertificateFromTemplate(String intygsId, String personId, String filePath) {
+    private static void registerCertificateFromTemplate(String intygsId, String versionsId, String personId, String filePath) {
         STGroup templateGroup = new STGroupFile(filePath);
         ST requestTemplateForConsent = templateGroup.getInstanceOf("request");
-        requestTemplateForConsent.add("data", new IntygsData(intygsId, personId));
+        requestTemplateForConsent.add("data", new RegisterIntygsData(intygsId, versionsId, personId));
         executeRegisterCertificate(requestTemplateForConsent);
     }
 
@@ -134,7 +133,7 @@ public class IntegrationTestUtil {
 
     public static void revokeCertificate(String intygsId, String personId) {
         ST requestTemplateForRevoke = getRequestTemplate("revokecertificate/requests.stg");
-        requestTemplateForRevoke.add("data", new IntygsData(intygsId, personId));
+        requestTemplateForRevoke.add("data", new RevokeIntygsData(intygsId, personId));
         given().body(requestTemplateForRevoke.render()).when().post("inera-certificate/revoke-certificate-rivta/v2.0").then().statusCode(200)
                 .rootPath(REVOKE_BASE).body("result.resultCode", is("OK"));
 
@@ -166,22 +165,11 @@ public class IntegrationTestUtil {
 
     public static void sendCertificateToRecipient(String intygsId, String personId) {
         ST requestTemplateRecipient = getRequestTemplate("sendcertificatetorecipient/requests.stg");
-        requestTemplateRecipient.add("data", new IntygsData(intygsId, personId));
+        requestTemplateRecipient.add("data", new SendIntygsData(intygsId, personId));
         requestTemplateRecipient.add("mottagare", "FKASSA");
 
         given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v2.0").then().statusCode(200)
                 .rootPath(SEND_BASE).body("result.resultCode", is("OK"));
-    }
-
-    @SuppressWarnings("unused")
-    private static class IntygsData {
-        public final String intygsId;
-        public final String personId;
-
-        public IntygsData(String intygsId, String personId) {
-            this.intygsId = intygsId;
-            this.personId = personId;
-        }
     }
 
     @SuppressWarnings("unused")
@@ -235,4 +223,38 @@ public class IntegrationTestUtil {
                 .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 
+    @SuppressWarnings("unused")
+    protected static class RevokeIntygsData {
+        public final String intygsId;
+        public final String personId;
+
+        public RevokeIntygsData(String intygsId, String personId) {
+            this.intygsId = intygsId;
+            this.personId = personId;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    protected static class RegisterIntygsData {
+        public final String intygsId;
+        public final String intygsVersion;
+        public final String personId;
+
+        public RegisterIntygsData(final String intygsId, final String intygsVersion, final String personId) {
+            this.intygsId = intygsId;
+            this.intygsVersion = intygsVersion;
+            this.personId = personId;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    protected static class SendIntygsData {
+        public final String intygsId;
+        public final String personId;
+
+        SendIntygsData(String intygsId, String personId) {
+            this.intygsId = intygsId;
+            this.personId = personId;
+        }
+    }
 }

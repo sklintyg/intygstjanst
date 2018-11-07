@@ -17,7 +17,7 @@ request(data) ::= <<
                     <ns3:codeSystem>f6fb361a-e31d-48b8-8657-99b63912dd9b</ns3:codeSystem>
                     <ns3:displayName>Läkarutlåtande för sjukersättning</ns3:displayName>
                 </typ>
-                <version>1.0</version>
+                <version>$data.intygsVersion$</version>
                 <signeringstidpunkt>2015-12-07T15:48:05</signeringstidpunkt>
                 <skickatTidpunkt>2015-12-07T15:48:05</skickatTidpunkt>
                 <patient>

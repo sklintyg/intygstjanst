@@ -50,6 +50,8 @@ import static org.junit.Assert.assertTrue;
 public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
     private static final String BASE = "Envelope.Body.ListCertificatesForCitizenResponse.";
     private static final String defaultType = "luse";
+    private String versionsId = "1.0";
+
 
     private String intygsId = "123456";
 
@@ -98,10 +100,10 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
     public void listMultipleCertificatesShowAll() {
         ST requestTemplate = getRequestTemplate(true);
         IntegrationTestUtil.addConsent(personId);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(0), personId, IntegrationTestCertificateType.LUAENA);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(1), personId, IntegrationTestCertificateType.LUSE);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(2), personId, IntegrationTestCertificateType.LUAEFS);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(3), personId, IntegrationTestCertificateType.LISJP);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(0), versionsId, personId, IntegrationTestCertificateType.LUAENA);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(1), versionsId, personId, IntegrationTestCertificateType.LUSE);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(2), versionsId, personId, IntegrationTestCertificateType.LUAEFS);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(3), versionsId, personId, IntegrationTestCertificateType.LISJP);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then()
@@ -137,10 +139,10 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
     public void listMultipleCertificatesShowOnlyOneType() {
         ST requestTemplate = getRequestTemplate(false);
         IntegrationTestUtil.addConsent(personId);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(0), personId, IntegrationTestCertificateType.LUAENA);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(1), personId, IntegrationTestCertificateType.LUSE);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(2), personId, IntegrationTestCertificateType.LUAEFS);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(3), personId, IntegrationTestCertificateType.LISJP);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(0), versionsId, personId, IntegrationTestCertificateType.LUAENA);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(1), versionsId, personId, IntegrationTestCertificateType.LUSE);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(2), versionsId, personId, IntegrationTestCertificateType.LUAEFS);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(3), versionsId, personId, IntegrationTestCertificateType.LISJP);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then()
@@ -153,7 +155,7 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
     @Test
     public void listCertificatesForCitizenWorks() {
         ST requestTemplate = getRequestTemplate(false);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId, personId);
+        IntegrationTestUtil.registerCertificateFromTemplate(intygsId, versionsId, personId);
         IntegrationTestUtil.addConsent(personId);
 
         requestTemplate.add("data", new ListParameters(personId, defaultType));

@@ -23,6 +23,11 @@ import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,13 +35,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
-
-import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
@@ -52,6 +50,7 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
 
     private String personId1 = "192703104321";
     private String personId2 = "195206172339";
+    private String versionsId = "1.0";
 
     private STGroup templateGroup;
 
@@ -67,18 +66,46 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
 
     @Test
     public void registerCertificateWorks() {
-        requestTemplate.add("data", new IntygsData(intygsId, personId1));
+        requestTemplate.add("data", new RegisterIntygsData(intygsId, versionsId, personId1));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("OK"));
     }
 
     @Test
+    public void registerCertificateUnsupportedIntygMajorVersion() {
+
+        final String incorrectVersion = "99.3";
+
+        requestTemplate.add("data", new RegisterIntygsData(intygsId, incorrectVersion, personId1));
+
+        given()
+                .body(requestTemplate.render())
+                .when().post("inera-certificate/register-certificate-se/v3.0")
+                .then().statusCode(200).rootPath(BASE).body("result.resultCode", is("ERROR"));
+    }
+
+
+    @Test
+    public void registerCertificateSupportedIntygMajorVersionButIncorrectMinorVersion() {
+
+        final String incorrectVersion = "1.123";
+
+        requestTemplate.add("data", new RegisterIntygsData(intygsId, incorrectVersion, personId1));
+
+        given()
+                .body(requestTemplate.render())
+                .when().post("inera-certificate/register-certificate-se/v3.0")
+                .then().statusCode(200).rootPath(BASE).body("result.resultCode", is("OK"));
+    }
+
+
+    @Test
     public void responseRespectsSchema() throws Exception {
         final String xsdString = Resources.toString(
                 new ClassPathResource("interactions/RegisterCertificateInteraction/RegisterCertificateResponder_3.1.xsd").getURL(), Charsets.UTF_8);
 
-        requestTemplate.add("data", new IntygsData(intygsId, personId1));
+        requestTemplate.add("data", new RegisterIntygsData(intygsId, versionsId, personId1));
 
         given().filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3"),
                 "soap:Envelope/soap:Body/lc:RegisterCertificateResponse")).body(requestTemplate.render()).when()
@@ -88,7 +115,7 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
 
     @Test
     public void registerSameCertificateTwiceReturnsInfoResult() {
-        requestTemplate.add("data", new IntygsData(intygsId, personId1));
+        requestTemplate.add("data", new RegisterIntygsData(intygsId, versionsId, personId1));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("OK"));
@@ -99,13 +126,13 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
 
     @Test
     public void registerSameCertificateForDifferentPersonsReturnsErrorResult() {
-        requestTemplate.add("data", new IntygsData(intygsId, personId1));
+        requestTemplate.add("data", new RegisterIntygsData(intygsId, versionsId, personId1));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("OK"));
 
         ST requestTemplate2 = templateGroup.getInstanceOf("request");
-        requestTemplate2.add("data", new IntygsData(intygsId, personId2));
+        requestTemplate2.add("data", new RegisterIntygsData(intygsId, versionsId, personId2));
 
         given().body(requestTemplate2.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("ERROR"));
@@ -113,7 +140,7 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
 
     @Test
     public void faultTransformerTest() {
-        requestTemplate.add("data", new IntygsData("<tag></tag>", personId1));
+        requestTemplate.add("data", new RegisterIntygsData("<tag></tag>", versionsId, personId1));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200).rootPath(BASE)
                 .body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
@@ -122,18 +149,6 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
     @After
     public void cleanup() {
         IntegrationTestUtil.deleteIntyg(intygsId);
-    }
-
-    @SuppressWarnings("unused")
-    private static class IntygsData {
-        public final String intygsId;
-
-        public final String personId;
-
-        public IntygsData(String intygsId, String personId) {
-            this.intygsId = intygsId;
-            this.personId = personId;
-        }
     }
 
 }

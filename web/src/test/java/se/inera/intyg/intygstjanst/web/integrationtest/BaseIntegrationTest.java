@@ -18,10 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest;
 
+import com.jayway.restassured.RestAssured;
 import org.junit.After;
 import org.junit.Before;
-
-import com.jayway.restassured.RestAssured;
 
 /**
  * Base class for REST / SOAP in-container tests for Intygstjänsten.
@@ -47,6 +46,31 @@ public abstract class BaseIntegrationTest {
     @After
     public void cleanupBase() {
         RestAssured.reset();
+    }
+
+
+    @SuppressWarnings("unused")
+    protected class RegisterIntygsData {
+        public final String intygsId;
+        public final String intygsVersion;
+        public final String personId;
+
+        public RegisterIntygsData(final String intygsId, final String intygsVersion, final String personId) {
+            this.intygsId = intygsId;
+            this.intygsVersion = intygsVersion;
+            this.personId = personId;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    protected class RevokeIntygsData {
+        public final String intygsId;
+        public final String personId;
+
+        public RevokeIntygsData(String intygsId, String personId) {
+            this.intygsId = intygsId;
+            this.personId = personId;
+        }
     }
 
 }
