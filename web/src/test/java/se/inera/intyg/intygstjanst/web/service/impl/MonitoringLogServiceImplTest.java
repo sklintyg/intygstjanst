@@ -18,11 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.classic.spi.LoggingEvent;
-import ch.qos.logback.core.Appender;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +27,12 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.LoggingEvent;
+import ch.qos.logback.core.Appender;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
@@ -129,20 +130,6 @@ public class MonitoringLogServiceImplTest {
     public void shouldLogCertificateStatusChanged() {
         logService.logCertificateStatusChanged(CERTIFICATE_ID, STATUS);
         verifyLog(Level.INFO, "CERTIFICATE_STATUS_CHANGED Certificate 'CERTIFICATE_ID' - changed to status 'STATUS'");
-    }
-
-    @Test
-    public void shouldLogConsentGiven() {
-        final Personnummer citizenId = createPnr(CITIZEN);
-        logService.logConsentGiven(citizenId);
-        verifyLog(Level.INFO, "CONSENT_GIVEN Consent given by citizen '" + citizenId.getPersonnummerHash() + "'");
-    }
-
-    @Test
-    public void shouldLogConsentRevoked() {
-        final Personnummer citizenId = createPnr(CITIZEN);
-        logService.logConsentRevoked(citizenId);
-        verifyLog(Level.INFO, "CONSENT_REVOKED Consent revoked by citizen '" + citizenId.getPersonnummerHash() + "'");
     }
 
     @Test

@@ -70,16 +70,6 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     }
 
     @Override
-    public void logConsentGiven(Personnummer citizenId) {
-        logEvent(MonitoringEvent.CONSENT_GIVEN, Personnummer.getPersonnummerHashSafe(citizenId));
-    }
-
-    @Override
-    public void logConsentRevoked(Personnummer citizenId) {
-        logEvent(MonitoringEvent.CONSENT_REVOKED, Personnummer.getPersonnummerHashSafe(citizenId));
-    }
-
-    @Override
     public void logStatisticsCreated(String certificateId, String certificateType, String careUnit) {
         logEvent(MonitoringEvent.STATISTICS_CREATED, certificateId, certificateType, careUnit);
     }
@@ -125,8 +115,6 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
         CERTIFICATE_LISTED_BY_CITIZEN("Certificates for citizen '{}' - listed by citizen"),
         CERTIFICATE_LISTED_BY_CARE("Certificates for citizen '{}' - listed by care"),
         CERTIFICATE_STATUS_CHANGED("Certificate '{}' - changed to status '{}'"),
-        CONSENT_GIVEN("Consent given by citizen '{}'"),
-        CONSENT_REVOKED("Consent revoked by citizen '{}'"),
         STATISTICS_CREATED("Certificate '{}' with type '{}', care unit '{}' - sent to statistics"),
         STATISTICS_SENT("Certificate '{}' with type '{}', care unit '{}' - sent to statistics"),
         STATISTICS_REVOKED("Certificate '{}' with type '{}', care unit '{}' - revoke sent to statistics"),

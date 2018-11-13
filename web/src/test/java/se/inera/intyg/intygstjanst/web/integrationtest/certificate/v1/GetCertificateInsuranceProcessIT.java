@@ -18,9 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v1;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.response.ValidatableResponse;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -30,6 +27,10 @@ import org.junit.Test;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
+
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
+import com.jayway.restassured.response.ValidatableResponse;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
@@ -55,13 +56,11 @@ public class GetCertificateInsuranceProcessIT extends BaseIntegrationTest {
     @After
     public void cleanup() {
         IntegrationTestUtil.deleteIntyg(INTYG_ID);
-        IntegrationTestUtil.revokeConsent(PERSON_ID);
     }
 
     @Test
     public void getCertificate() {
         IntegrationTestUtil.registerMedicalCertificate(INTYG_ID, PERSON_ID);
-        IntegrationTestUtil.addConsent(PERSON_ID);
 
         givenRequest(INTYG_ID, PERSON_ID).body("meta.certificateId", is(INTYG_ID)).body("meta.status.type", is("RECEIVED"))
                 .body("certificate.RegisterMedicalCertificate.lakarutlatande.lakarutlatande-id", is(INTYG_ID))
@@ -74,24 +73,14 @@ public class GetCertificateInsuranceProcessIT extends BaseIntegrationTest {
     public void getCertificateRevoked() {
         IntegrationTestUtil.registerMedicalCertificate(INTYG_ID, PERSON_ID);
         IntegrationTestUtil.revokeMedicalCertificate(INTYG_ID, PERSON_ID, "meddelande");
-        IntegrationTestUtil.addConsent(PERSON_ID);
 
         givenRequest(INTYG_ID, PERSON_ID).body("result.resultCode", is("INFO")).body("result.infoText",
                 is("Certificate 'getCertificateInsuranceProcessITcertificateId' has been revoked"));
     }
 
-    // Note: after release 2018-2 consent is not required.
-    @Test
-    public void getCertificateWithoutConsent() {
-        IntegrationTestUtil.registerMedicalCertificate(INTYG_ID, PERSON_ID);
-
-        givenRequest(INTYG_ID, PERSON_ID).body("result.resultCode", is("OK"));
-    }
-
     @Test
     public void getCertificateWrongPerson() {
         IntegrationTestUtil.registerMedicalCertificate(INTYG_ID, "19020202-0202");
-        IntegrationTestUtil.addConsent(PERSON_ID);
 
         givenRequest(INTYG_ID, PERSON_ID).body("result.resultCode", is("ERROR")).body("result.errorId", is("VALIDATION_ERROR")).body(
                 "result.errorText",
@@ -100,7 +89,6 @@ public class GetCertificateInsuranceProcessIT extends BaseIntegrationTest {
 
     @Test
     public void getCertificateCertificateDoesNotExist() {
-        IntegrationTestUtil.addConsent(PERSON_ID);
         givenRequest("fit-intyg-finnsinte", PERSON_ID).body("result.resultCode", is("ERROR")).body("result.errorId", is("VALIDATION_ERROR")).body(
                 "result.errorText",
                 is("Certificate 'fit-intyg-finnsinte' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
@@ -109,7 +97,6 @@ public class GetCertificateInsuranceProcessIT extends BaseIntegrationTest {
     @Test
     public void getCertificateSmL() {
         IntegrationTestUtil.registerMedicalCertificate(INTYG_ID, PERSON_ID, "smLRequest");
-        IntegrationTestUtil.addConsent(PERSON_ID);
 
         givenRequest(INTYG_ID, PERSON_ID).body("result.resultCode", is("OK")).body("meta.certificateId", is(INTYG_ID))
                 .body("meta.status.type", is("RECEIVED"))
@@ -120,7 +107,6 @@ public class GetCertificateInsuranceProcessIT extends BaseIntegrationTest {
     @Test
     public void getCertificateTransformTest() throws Exception {
         String template = "transformRequest";
-        IntegrationTestUtil.addConsent(PERSON_ID);
 
         IntegrationTestUtil.registerMedicalCertificate(INTYG_ID, PERSON_ID, template);
 
@@ -137,7 +123,6 @@ public class GetCertificateInsuranceProcessIT extends BaseIntegrationTest {
     @Test
     public void getCertificateTransformSmLTest() throws Exception {
         String template = "transformSmLRequest";
-        IntegrationTestUtil.addConsent(PERSON_ID);
 
         IntegrationTestUtil.registerMedicalCertificate(INTYG_ID, PERSON_ID, template);
 

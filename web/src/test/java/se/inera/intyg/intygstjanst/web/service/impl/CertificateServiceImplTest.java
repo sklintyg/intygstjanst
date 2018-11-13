@@ -18,7 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +31,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
@@ -52,12 +59,6 @@ import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.intyg.schemas.contract.Personnummer;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -265,13 +266,6 @@ public class CertificateServiceImplTest {
         certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fkassa");
     }
 
-    // Consent is not required after 2018-2
-    @Test
-    public void testGetCertificateWithoutConsent() throws Exception {
-        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new Certificate());
-        certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
-    }
-
     @Test
     public void testGetCertificateForCare() throws Exception {
         when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(new Certificate());
@@ -299,12 +293,12 @@ public class CertificateServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetCertificateWithoutConsentCheckForNullPersonnummer() throws Exception {
+    public void testGetCertificateCheckForNullPersonnummer() throws Exception {
         certificateService.getCertificateForCitizen(null, CERTIFICATE_ID);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetCertificateWithoutConsentCheckForEmptyPersonnummer() throws Exception {
+    public void testGetCertificateCheckForEmptyPersonnummer() throws Exception {
         certificateService.getCertificateForCitizen(createPnr(null), CERTIFICATE_ID);
     }
 
@@ -353,12 +347,6 @@ public class CertificateServiceImplTest {
         certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
     }
 
-    // Consent not required after 2018-2
-    @Test
-    public void testListCertificatesForCitizenMissingConsent() {
-        certificateService.listCertificatesForCitizen(PERSONNUMMER, null, null, null);
-    }
-
     @Test
     public void testListCertificatesForCitizen() {
         final List<String> certificateTypes = Arrays.asList("fk7263");
@@ -373,13 +361,6 @@ public class CertificateServiceImplTest {
         final List<String> careUnits = Arrays.asList("enhet-1");
         certificateService.listCertificatesForCare(PERSONNUMMER, careUnits);
         verify(certificateDao).findCertificate(PERSONNUMMER, null, null, null, careUnits);
-    }
-
-    // Consent is not required after 2018-2
-    @Test
-    public void testGetCertificateForCitizenMissingConsent() throws Exception {
-        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new Certificate());
-        certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
     }
 
     @Test
@@ -525,13 +506,6 @@ public class CertificateServiceImplTest {
     public void testGetCertificate() throws Exception {
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new Certificate());
         assertNotNull(certificateService.getCertificate(CERTIFICATE_ID, PERSONNUMMER, false));
-    }
-
-    // Consent not required after 2018-2
-    @Test
-    public void testGetCertificateCheckConsentFalse() throws Exception {
-        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new Certificate());
-        certificateService.getCertificate(CERTIFICATE_ID, PERSONNUMMER, true);
     }
 
     @Test

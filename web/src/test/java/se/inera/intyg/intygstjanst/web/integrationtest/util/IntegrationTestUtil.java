@@ -18,26 +18,27 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.util;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.core.Is.is;
-
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupFile;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
+
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
 import se.inera.intyg.schemas.contract.Personnummer;
 
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.core.Is.is;
+
 public class IntegrationTestUtil {
 
     private static final String REGISTER_BASE = "Envelope.Body.RegisterCertificateResponse.";
     private static final String REGISTER_MEDICAL_BASE = "Envelope.Body.RegisterMedicalCertificateResponse.";
-    private static final String CONSENT_BASE = "Envelope.Body.SetConsentResponse.";
     private static final String REVOKE_BASE = "Envelope.Body.RevokeCertificateResponse.";
     private static final String REVOKE_MEDICAL_BASE = "Envelope.Body.RevokeMedicalCertificateResponse.";
     private static final String SEND_BASE = "Envelope.Body.SendCertificateToRecipientResponse.";
@@ -60,17 +61,17 @@ public class IntegrationTestUtil {
                                                              int fromDaysRelativeToNow, int toDaysRelativeToNow) {
         String filePath = getFilePath(type);
         STGroup templateGroup = new STGroupFile(filePath);
-        ST requestTemplateForConsent = templateGroup.getInstanceOf("requestParameterized");
-        requestTemplateForConsent.add("intygId", intygsId);
-        requestTemplateForConsent.add("personId", personId);
+        ST requestTemplate = templateGroup.getInstanceOf("requestParameterized");
+        requestTemplate.add("intygId", intygsId);
+        requestTemplate.add("personId", personId);
 
-        applyToFromDatesToRequestTemplate(requestTemplateForConsent, fromDaysRelativeToNow, toDaysRelativeToNow);
+        applyToFromDatesToRequestTemplate(requestTemplate, fromDaysRelativeToNow, toDaysRelativeToNow);
 
-        executeRegisterCertificate(requestTemplateForConsent);
+        executeRegisterCertificate(requestTemplate);
     }
 
-    private static void executeRegisterCertificate(ST requestTemplateForConsent) {
-        given().body(requestTemplateForConsent.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200)
+    private static void executeRegisterCertificate(ST requestTemplate) {
+        given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200)
                 .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
     }
 
@@ -101,17 +102,9 @@ public class IntegrationTestUtil {
 
     private static void registerCertificateFromTemplate(String intygsId, String versionsId, String personId, String filePath) {
         STGroup templateGroup = new STGroupFile(filePath);
-        ST requestTemplateForConsent = templateGroup.getInstanceOf("request");
-        requestTemplateForConsent.add("data", new RegisterIntygsData(intygsId, versionsId, personId));
-        executeRegisterCertificate(requestTemplateForConsent);
-    }
-
-    public static void addConsent(String personId) {
-        setConsent(personId, true);
-    }
-
-    public static void revokeConsent(String personId) {
-        setConsent(personId, false);
+        ST requestTemplate = templateGroup.getInstanceOf("request");
+        requestTemplate.add("data", new RegisterIntygsData(intygsId, versionsId, personId));
+        executeRegisterCertificate(requestTemplate);
     }
 
     public static void deleteIntyg(String id) {
@@ -172,17 +165,6 @@ public class IntegrationTestUtil {
                 .rootPath(SEND_BASE).body("result.resultCode", is("OK"));
     }
 
-    @SuppressWarnings("unused")
-    private static class ConsentData {
-        public final String personId;
-        public final Boolean consent;
-
-        public ConsentData(String personId, Boolean consent) {
-            this.personId = personId;
-            this.consent = consent;
-        }
-    }
-
     private static CertificateHolder certificate(String intygId, String intygTyp, String intygTypeVersion, String personId, boolean deletedByCareGiver) {
         CertificateHolder certificate = new CertificateHolder();
         certificate.setId(intygId);
@@ -199,14 +181,6 @@ public class IntegrationTestUtil {
         return certificate;
     }
 
-    private static void setConsent(String personId, Boolean consent) {
-        ST registerTemplateForConsent = getRequestTemplate("setconsent/requests.stg");
-        registerTemplateForConsent.add("data", new ConsentData(personId, consent));
-
-        given().body(registerTemplateForConsent.render()).when().post("inera-certificate/set-consent/v1.0").then().statusCode(200)
-                .rootPath(CONSENT_BASE).body("result.resultCode", is("OK"));
-    }
-
     private static ST getRequestTemplate(String path) {
         return getRequestTemplate(path, "request");
     }
@@ -214,8 +188,8 @@ public class IntegrationTestUtil {
     private static ST getRequestTemplate(String path, String instance) {
         String base = "integrationtests/";
         STGroup templateGroup = new STGroupFile(base + path);
-        ST registerTemplateForConsent = templateGroup.getInstanceOf(instance);
-        return registerTemplateForConsent;
+        ST requestTemplate = templateGroup.getInstanceOf(instance);
+        return requestTemplate;
     }
 
     private static Personnummer createPnr(String pnr) {

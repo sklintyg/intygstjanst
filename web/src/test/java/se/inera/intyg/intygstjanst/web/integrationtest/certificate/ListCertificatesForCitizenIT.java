@@ -18,12 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.response.Response;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,15 +29,18 @@ import org.springframework.core.io.ClassPathResource;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
+
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
+import com.jayway.restassured.response.Response;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil.IntegrationTestCertificateType;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
@@ -75,20 +76,9 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         return templateGroup.getInstanceOf("request");
     }
 
-    // Note: after release 2018-2 consent is not required.
-    @Test
-    public void listCertificatesForCitizenWithNoConsent() {
-        ST requestTemplate = getRequestTemplate(false);
-        requestTemplate.add("data", new ListParameters(personId, defaultType));
-
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK"));
-    }
-
     @Test
     public void listCertificateNotExists() {
         ST requestTemplate = getRequestTemplate(true);
-        IntegrationTestUtil.addConsent(personId);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then()
@@ -99,7 +89,6 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
     @Test
     public void listMultipleCertificatesShowAll() {
         ST requestTemplate = getRequestTemplate(true);
-        IntegrationTestUtil.addConsent(personId);
         IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(0), versionsId, personId, IntegrationTestCertificateType.LUAENA);
         IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(1), versionsId, personId, IntegrationTestCertificateType.LUSE);
         IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(2), versionsId, personId, IntegrationTestCertificateType.LUAEFS);
@@ -114,31 +103,8 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void listCertificatesRevokeConsent() {
-        ST requestTemplate = getRequestTemplate(true);
-        IntegrationTestUtil.addConsent(personId);
-        IntegrationTestUtil.givenIntyg(intygsId_alltypes.get(0), "fk7263", FK7263_VERSION, personId, true);
-        requestTemplate.add("data", new ListParameters(personId, defaultType));
-
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0].intyg.size()", is(1));
-
-        // Eftersom intyget är markerat som borttaget av vården så ska detta städas bort då inte heller invånaren längre
-        // har åtkomst till det. När invånaren åter ger samtycke så är intyget borta.
-        IntegrationTestUtil.revokeConsent(personId);
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK"))
-                .body("intygsLista[0].intyg.size()", is(0));
-        IntegrationTestUtil.addConsent(personId);
-        given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK"))
-                .body("intygsLista[0].intyg.size()", is(0));
-    }
-
-    @Test
     public void listMultipleCertificatesShowOnlyOneType() {
         ST requestTemplate = getRequestTemplate(false);
-        IntegrationTestUtil.addConsent(personId);
         IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(0), versionsId, personId, IntegrationTestCertificateType.LUAENA);
         IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(1), versionsId, personId, IntegrationTestCertificateType.LUSE);
         IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(2), versionsId, personId, IntegrationTestCertificateType.LUAEFS);
@@ -156,7 +122,6 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
     public void listCertificatesForCitizenWorks() {
         ST requestTemplate = getRequestTemplate(false);
         IntegrationTestUtil.registerCertificateFromTemplate(intygsId, versionsId, personId);
-        IntegrationTestUtil.addConsent(personId);
 
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
@@ -198,7 +163,6 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         for (String intyg : intygsId_alltypes) {
             IntegrationTestUtil.deleteIntyg(intyg);
         }
-        IntegrationTestUtil.revokeConsent(personId);
         IntegrationTestUtil.deleteCertificatesForCitizen(personId);
     }
 

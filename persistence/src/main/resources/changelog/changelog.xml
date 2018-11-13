@@ -434,4 +434,8 @@
 			UPDATE CERTIFICATE SET CERTIFICATE_TYPE_VERSION = '2' WHERE CERTIFICATE_TYPE = 'ts-diabetes';
 		</sql>
 	</changeSet>
+
+	<changeSet id="42" author="mh">
+		<dropTable tableName="CONSENT" />
+	</changeSet>
 </databaseChangeLog>

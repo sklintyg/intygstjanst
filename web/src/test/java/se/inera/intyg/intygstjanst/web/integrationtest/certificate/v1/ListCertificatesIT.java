@@ -18,22 +18,23 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v1;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.response.ValidatableResponse;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
+
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
+import com.jayway.restassured.response.ValidatableResponse;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.AnyOf.anyOf;
@@ -57,7 +58,6 @@ public class ListCertificatesIT extends BaseIntegrationTest {
     @After
     public void cleanup() {
         INTYG_IDS.stream().forEach(id -> IntegrationTestUtil.deleteIntyg(id));
-        IntegrationTestUtil.revokeConsent(PERSON_ID);
         IntegrationTestUtil.deleteCertificatesForCitizen(PERSON_ID);
     }
 
@@ -65,7 +65,6 @@ public class ListCertificatesIT extends BaseIntegrationTest {
     public void listCertificates() {
         IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", FK7263_VERSION, PERSON_ID, false);
         IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", LUSE_VERSION, PERSON_ID, false);
-        IntegrationTestUtil.addConsent(PERSON_ID);
 
         givenRequest(PERSON_ID).body("meta.size()", is(2)).body("meta[0].certificateId", anyOf(is(INTYG_IDS.get(0)), is(INTYG_IDS.get(1))))
                 .body("meta[1].certificateId", anyOf(is(INTYG_IDS.get(0)), is(INTYG_IDS.get(1)))).body("result.resultCode", is("OK"));
@@ -75,7 +74,6 @@ public class ListCertificatesIT extends BaseIntegrationTest {
     public void listCertificatesCertificateType() {
         IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", FK7263_VERSION, PERSON_ID, false);
         IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", LUSE_VERSION, PERSON_ID, false);
-        IntegrationTestUtil.addConsent(PERSON_ID);
 
         givenCertificateTypeRequest(PERSON_ID, "fk7263").body("meta.size()", is(1)).body("meta[0].certificateId", is(INTYG_IDS.get(0)))
                 .body("result.resultCode", is("OK"));
@@ -85,19 +83,9 @@ public class ListCertificatesIT extends BaseIntegrationTest {
     public void listCertificatesDateInterval() {
         IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", FK7263_VERSION, PERSON_ID, false);
         IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", LUSE_VERSION, PERSON_ID, false);
-        IntegrationTestUtil.addConsent(PERSON_ID);
 
         givenDateIntervalRequest(PERSON_ID, LocalDateTime.now(), LocalDateTime.now().plusDays(2)).body("meta.size()", is(0)).body("result.resultCode",
                 is("OK"));
-    }
-
-    // Note: after 2018-2 consent is not required.
-    @Test
-    public void listCertificatesNoConsent() {
-        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", FK7263_VERSION, PERSON_ID, false);
-        IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", LUSE_VERSION, PERSON_ID, false);
-
-        givenRequest(PERSON_ID).body("meta.size()", is(2)).body("result.resultCode", is("OK"));
     }
 
     @Test

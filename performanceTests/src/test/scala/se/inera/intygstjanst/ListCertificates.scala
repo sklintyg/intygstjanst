@@ -13,8 +13,6 @@ class ListCertificates extends Simulation {
 
   val scn = scenario("List Certificates")
     .feed(testpersonnummer)
-    //Give consent for current user
-    .exec(Utils.consent)
     .exec(http("List certificates for ${personNr}")
       .post("/list-certificates/v1.0")
       .headers(Headers.list_certificates)

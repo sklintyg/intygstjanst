@@ -18,21 +18,21 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
+
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.rivtabp20.v1.ListCertificatesResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesResponseType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.converter.ModelConverter;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
-import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.schemas.contract.Personnummer;
-
-import java.util.List;
 
 /**
  * @author andreaskaltenbach
@@ -48,23 +48,18 @@ public class ListCertificatesResponderImpl implements ListCertificatesResponderI
 
         ListCertificatesResponseType response = new ListCertificatesResponseType();
 
-        try {
-            List<Certificate> certificates = certificateService.listCertificatesForCitizen(
-                    createPnr(parameters.getNationalIdentityNumber()),
-                    parameters.getCertificateType(),
-                    parameters.getFromDate(),
-                    parameters.getToDate());
+        List<Certificate> certificates = certificateService.listCertificatesForCitizen(
+                createPnr(parameters.getNationalIdentityNumber()),
+                parameters.getCertificateType(),
+                parameters.getFromDate(),
+                parameters.getToDate());
 
-            for (Certificate certificate : certificates) {
-                if (parameters.getCertificateType().isEmpty() || !(certificate.isDeleted() || certificate.isRevoked())) {
-                    response.getMeta().add(ModelConverter.toCertificateMetaType(ConverterUtil.toCertificateHolder(certificate)));
-                }
+        for (Certificate certificate : certificates) {
+            if (parameters.getCertificateType().isEmpty() || !(certificate.isDeleted() || certificate.isRevoked())) {
+                response.getMeta().add(ModelConverter.toCertificateMetaType(ConverterUtil.toCertificateHolder(certificate)));
             }
-            response.setResult(ResultOfCallUtil.okResult());
-
-        } catch (MissingConsentException ex) {
-            response.setResult(ResultOfCallUtil.infoResult("NOCONSENT"));
         }
+        response.setResult(ResultOfCallUtil.okResult());
 
         return response;
     }

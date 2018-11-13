@@ -15,8 +15,6 @@ class GetCertificates extends Simulation {
 
   val scn = scenario("Get Certificates")
     .feed(testpersonnummer)
-    //Give consent for current user
-    .exec(Utils.consent)
     .exec(http("Get Certificate 1.0")
       .post("/get-certificate/v1.0")
       .headers(Headers.get_certificate)

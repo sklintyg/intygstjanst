@@ -18,12 +18,19 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v4;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
 import se.inera.intyg.common.db.support.DbModuleEntryPoint;
 import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
 import se.inera.intyg.common.fk7263.support.Fk7263EntryPoint;
@@ -48,18 +55,11 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.IntygsStatus;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -111,28 +111,6 @@ public class ListCertificatesForCitizenResponderImplTest {
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
         verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
-
-        assertEquals(0, response.getIntygsLista().getIntyg().size());
-    }
-
-    /**
-     * Note that release 2018-2 of Mina Intyg removed the use of consent.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void listCertificatesWithoutConsentReturnsResultAnyway() throws Exception {
-        when(certificateService.listCertificatesForCitizen(
-                or(isNull(), any(Personnummer.class)),
-                anyList(),
-                or(isNull(), any(LocalDate.class)),
-                or(isNull(), any(LocalDate.class)))
-        ).thenReturn(Collections.emptyList());
-
-        List<String> types = Collections.emptyList();
-        ListCertificatesForCitizenType parameters = createListCertificatesRequest(createPnr("19350108-1234"), types, null, null, false);
-
-        ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
         assertEquals(0, response.getIntygsLista().getIntyg().size());
     }

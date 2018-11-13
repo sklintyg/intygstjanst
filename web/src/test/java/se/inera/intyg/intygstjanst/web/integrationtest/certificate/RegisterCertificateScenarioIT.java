@@ -18,19 +18,20 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.core.Is.is;
-
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
+
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
+
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.core.Is.is;
 
 public class RegisterCertificateScenarioIT extends BaseIntegrationTest {
     private String intygsId = "123456";
@@ -78,7 +79,7 @@ public class RegisterCertificateScenarioIT extends BaseIntegrationTest {
     private static ST getRequestTemplate(String path) {
         String base = "integrationtests/";
         STGroup templateGroup = new STGroupFile(base + path);
-        ST registerTemplateForConsent = templateGroup.getInstanceOf("request");
-        return registerTemplateForConsent;
+        ST requestTemplate = templateGroup.getInstanceOf("request");
+        return requestTemplate;
     }
 }

@@ -18,36 +18,31 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.rivtabp20.v1.ListCertificatesResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesRequestType;
-import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesResponseType;
-import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
-import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
-import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.inera.intyg.schemas.contract.Personnummer;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.rivtabp20.v1.ListCertificatesResponderInterface;
+import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesRequestType;
+import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesResponseType;
+import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.schemas.contract.Personnummer;
+
 import static org.junit.Assert.assertEquals;
-import static org.mockito.AdditionalMatchers.or;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.anyList;
-import static org.mockito.Mockito.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
 /**
@@ -81,25 +76,6 @@ public class ListCertificatesResponderImplTest {
 
         assertEquals(0, response.getMeta().size());
         assertEquals(OK, response.getResult().getResultCode());
-    }
-
-    @Test
-    public void listCertificatesWithoutConsent() throws Exception {
-        when(certificateService.listCertificatesForCitizen(
-                or(isNull(), any(Personnummer.class)),
-                anyList(),
-                or(isNull(), any(LocalDate.class)),
-                or(isNull(), any(LocalDate.class)))
-        ).thenThrow(new MissingConsentException(null));
-
-        List<String> types = Collections.emptyList();
-        ListCertificatesRequestType parameters = createListCertificatesRequest(createPnr("19350108-1234"), types, null, null);
-
-        ListCertificatesResponseType response = responder.listCertificates(null, parameters);
-
-        assertEquals(0, response.getMeta().size());
-        assertEquals(INFO, response.getResult().getResultCode());
-        assertEquals("NOCONSENT", response.getResult().getInfoText());
     }
 
     @Test

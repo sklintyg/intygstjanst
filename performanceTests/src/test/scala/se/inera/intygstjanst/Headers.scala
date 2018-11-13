@@ -21,8 +21,6 @@ object Headers {
 
   val list_active_sick_leaves = soap( """urn:riv:clinicalprocess:healthcond:rehabilitation:ListActiveSickLeavesForCareUnitResponder:1:ListActiveSickLeavesForCareUnit""")
 
-  val set_consent = soap( """urn:riv:insuranceprocess:healthreporting:SetConsentResponder:1:SetConsent""")
-
   val store_certificate = soap( """urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:1""")
 
   val get_certificate = soap( """urn:riv:insuranceprocess:healthreporting:GetCertificateResponder:1:GetCertificate""")

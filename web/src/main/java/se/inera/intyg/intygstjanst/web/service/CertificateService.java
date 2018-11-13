@@ -76,7 +76,6 @@ public interface CertificateService {
      * @param certificateId
      *            the certificate ID
      * @return the certificate information or null if the requested certificate does not exist
-     *             if the patient has not given consent for accessing her certificates
      * @throws InvalidCertificateException
      *             if the certificate does not exist or the certificate id and civicRegistrationNumber didn't match
      * @throws CertificateRevokedException

@@ -15,8 +15,6 @@ class SendMedicalCertificate extends Simulation {
 
   val scn = scenario("Send Medical Certificates")
     .feed(testpersonnummer)
-    //Give consent for current user
-    .exec(Utils.consent)
     .exec(http("Send Certificate 1.0")
       .post("/send-certificate/v1.0")
       .headers(Headers.send_medical_certificate)

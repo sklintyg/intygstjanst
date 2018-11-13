@@ -18,21 +18,32 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Type;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
-import se.inera.intyg.schemas.contract.Personnummer;
-
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.hibernate.annotations.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 /**
  * This class represents the document part of a certificate. The document is stored as a binary large object in the
@@ -134,7 +145,7 @@ public class Certificate {
      * <p>
      * This can be due to that the care giver has stopped using WebCert and have their certificates persisted elsewhere.
      * The certificate can be deleted from the database as soon as the citizen no longer has access to the certificate
-     * (by revoking its consent or stops being a citizen).
+     * (by stops being a citizen).
      */
     @Column(name = "DELETED_BY_CARE_GIVER", nullable = false, columnDefinition = "TINYINT(1")
     private boolean deletedByCareGiver = false;
