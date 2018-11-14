@@ -69,7 +69,7 @@
 - name: Remove unzipped intygstjanst-liquibase-runner-{{ version }} from releases
   file:
     state: absent
-    path: "{{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}/bin/liquibase-runner"
+    path: "{{ releases_folder }}/intygstjanst-liquibase-runner-{{ version }}"
 
 - name: Remove intygstjanst-web-{{ version }}.war from releases (as it is now deployed to tomcat)
   file:
