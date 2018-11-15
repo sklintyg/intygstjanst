@@ -153,8 +153,9 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
                 replacedOrComplementedIntygForPersonnummerList(Arrays.asList(personnummer));
 
         // Prepare jpql query
-        String jpql = "SELECT sc "
+        String jpql = "SELECT DISTINCT sc "
                 + "FROM SjukfallCertificate sc "
+                + "JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc "
                 + "WHERE sc.deleted = FALSE "
                 + "AND sc.civicRegistrationNumber = :personnummer ";
 
