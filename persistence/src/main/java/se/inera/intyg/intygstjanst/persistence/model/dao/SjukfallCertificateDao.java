@@ -36,9 +36,8 @@ public interface SjukfallCertificateDao {
             String personnummer,
             int maxDagarSedanAvslut);
 
-    List<SjukfallCertificate> findActiveSjukfallCertificateForPerson(
-            String personnummer,
-            int maxDagarSedanAvslut);
+    List<SjukfallCertificate> findSjukfallCertificateForPerson(
+            String personnummer);
 
     void store(SjukfallCertificate sjukfallCert);
 

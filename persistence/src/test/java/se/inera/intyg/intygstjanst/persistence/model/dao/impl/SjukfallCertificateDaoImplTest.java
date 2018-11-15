@@ -18,16 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import se.inera.intyg.common.support.common.enumerations.RelationKod;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -37,6 +27,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import se.inera.intyg.common.support.common.enumerations.RelationKod;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -49,6 +50,7 @@ import static org.junit.Assert.assertNotNull;
 public class SjukfallCertificateDaoImplTest extends TestSupport {
 
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
+    private static final LocalDateTime CERT_SIGNING_DATETIME_OLD = LocalDateTime.parse("2015-02-01T15:00:00");
 
     private static final String TOLVAN_TOLVANSSON = "Tolvan Tolvansson";
     private static final String TOLVAN_TOLVANSSON_PNR = "19121212-1212";
@@ -95,7 +97,7 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
     }
 
     @Test
-    public void testFindActiveSjukfallCertificatesForPatient() {
+    public void testFindSjukfallCertificatesForPatient() {
         // This test is to ensure you only get certificate(s) for one patient
 
         Map<String, String> map = new HashMap<String, String>() {{
@@ -103,12 +105,18 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
                 put(LILLTOLVAN_TOLVANSSON_PNR, LILLTOLVAN_TOLVANSSON);
         }};
         buildDefaultSjukfallCertificates(map);
+        buildNonOngoingSjukfallCertificates();
+
+        SjukfallCertificate sc = buildSjukfallCertificate(CARE_GIVER_2_ID, CARE_UNIT_1_ID, CARE_UNIT_1_NAME,
+                defaultWorkCapacities(), false);
+        sc.setSigningDateTime(CERT_SIGNING_DATETIME_OLD);
+        entityManager.merge(sc);
 
         List<SjukfallCertificate> resultList = sjukfallCertificateDao
-                .findActiveSjukfallCertificateForPerson(TOLVAN_TOLVANSSON_PNR, MAX_DAGAR_SEDAN_AVSLUT);
+                .findSjukfallCertificateForPerson(TOLVAN_TOLVANSSON_PNR);
 
         assertNotNull(resultList);
-        assertEquals(1, resultList.size());
+        assertEquals(3, resultList.size());
         assertEquals(3, resultList.get(0).getSjukfallCertificateWorkCapacity().size());
     }
 

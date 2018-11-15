@@ -18,9 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.rehabstod;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ListActiveSickLeavesForPersonResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ListActiveSickLeavesForPersonResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ListActiveSickLeavesForPersonType;
@@ -32,8 +35,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallCertificateIntygsDataConverter;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsLista;
-
-import java.util.List;
 
 /**
  * @author Magnus Ekstrand on 2018-10-23.
@@ -54,11 +55,9 @@ public class ListActiveSickLeavesForPersonResponderImpl implements ListActiveSic
 
         try {
             Personnummer personnummer = parsePersonnummer(parameters);
-            int maxDagarSedanAvslut = parameters.getMaxDagarSedanAvslut() != null ? parameters.getMaxDagarSedanAvslut() : 0;
 
             List<SjukfallCertificate> activeSjukfallCertificateForPerson =
-                    sjukfallCertificateDao.findActiveSjukfallCertificateForPerson(
-                            personnummer.getPersonnummerWithDash(), maxDagarSedanAvslut);
+                    sjukfallCertificateDao.findSjukfallCertificateForPerson(personnummer.getPersonnummerWithDash());
 
             IntygsLista intygsLista = new IntygsLista();
             intygsLista.getIntygsData()

@@ -108,8 +108,8 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     }
 
     @Override
-    public List<SjukfallCertificate> findActiveSjukfallCertificateForPerson(String personnummer, int maxDagarSedanAvslut) {
-        return querySjukfallCertificatesForPersonnummer(personnummer, maxDagarSedanAvslut);
+    public List<SjukfallCertificate> findSjukfallCertificateForPerson(String personnummer) {
+        return querySjukfallCertificatesForPersonnummer(personnummer);
     }
 
     @Override
@@ -137,7 +137,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         }
     }
 
-    private List<SjukfallCertificate> querySjukfallCertificatesForPersonnummer(String personnummer, int maxDagarSedanAvslut) {
+    private List<SjukfallCertificate> querySjukfallCertificatesForPersonnummer(String personnummer) {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Get active intyg on all care givers and their units for a personnummer.");
@@ -152,17 +152,11 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         List<String> replacedOrComplementedIntygsIdList =
                 replacedOrComplementedIntygForPersonnummerList(Arrays.asList(personnummer));
 
-        String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
-        String recentlyClosed = LocalDate.now().minusDays(maxDagarSedanAvslut).format(DateTimeFormatter.ISO_DATE);
-
         // Prepare jpql query
-        String jpql = "SELECT DISTINCT sc "
+        String jpql = "SELECT sc "
                 + "FROM SjukfallCertificate sc "
-                + "JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc "
                 + "WHERE sc.deleted = FALSE "
-                + "AND sc.civicRegistrationNumber = :personnummer "
-                + "AND ((scwc.fromDate <= :today AND scwc.toDate >= :today) "   // active today or...
-                + "  OR (scwc.toDate < :today AND scwc.toDate >= :recentlyClosed)) ";  // recently closed
+                + "AND sc.civicRegistrationNumber = :personnummer ";
 
         // Only add the "is replaced"-stuff if there's entries to possibly exclude.
         if (isNotEmpty(replacedOrComplementedIntygsIdList)) {
@@ -171,9 +165,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
 
         TypedQuery<SjukfallCertificate> query = entityManager
                 .createQuery(jpql, SjukfallCertificate.class)
-                .setParameter("personnummer", personnummer)
-                .setParameter("today", today)
-                .setParameter("recentlyClosed", recentlyClosed);
+                .setParameter("personnummer", personnummer);
 
         if (isNotEmpty(replacedOrComplementedIntygsIdList)) {
             query = query.setParameter("replacedOrComplementedIntygsIdList", replacedOrComplementedIntygsIdList);
