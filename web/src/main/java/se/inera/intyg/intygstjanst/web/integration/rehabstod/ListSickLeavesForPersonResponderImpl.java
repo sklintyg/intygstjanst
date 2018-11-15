@@ -24,11 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ListActiveSickLeavesForPersonResponderInterface;
-import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ListActiveSickLeavesForPersonResponseType;
-import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ListActiveSickLeavesForPersonType;
-import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ResultCodeEnum;
-import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ResultType;
+import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonResponderInterface;
+import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonResponseType;
+import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonType;
+import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ResultCodeEnum;
+import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ResultType;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
@@ -39,19 +39,19 @@ import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsLista;
 /**
  * @author Magnus Ekstrand on 2018-10-23.
  */
-public class ListActiveSickLeavesForPersonResponderImpl implements ListActiveSickLeavesForPersonResponderInterface {
+public class ListSickLeavesForPersonResponderImpl implements ListSickLeavesForPersonResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ListActiveSickLeavesForPersonResponderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ListSickLeavesForPersonResponderImpl.class);
 
     @Autowired
     private SjukfallCertificateDao sjukfallCertificateDao;
 
     @Override
     @PrometheusTimeMethod
-    public ListActiveSickLeavesForPersonResponseType listActiveSickLeavesForPerson(
-            String logicalAddress, ListActiveSickLeavesForPersonType parameters) {
+    public ListSickLeavesForPersonResponseType listSickLeavesForPerson(
+            String logicalAddress, ListSickLeavesForPersonType parameters) {
 
-        ListActiveSickLeavesForPersonResponseType response = new ListActiveSickLeavesForPersonResponseType();
+        ListSickLeavesForPersonResponseType response = new ListSickLeavesForPersonResponseType();
 
         try {
             Personnummer personnummer = parsePersonnummer(parameters);
@@ -80,7 +80,7 @@ public class ListActiveSickLeavesForPersonResponderImpl implements ListActiveSic
         result.setResultMessage(message);
         return result;
     }
-    private Personnummer parsePersonnummer(ListActiveSickLeavesForPersonType parameters) {
+    private Personnummer parsePersonnummer(ListSickLeavesForPersonType parameters) {
         String personnummer = parameters.getPersonId() != null && parameters.getPersonId().getExtension() != null
                 ? parameters.getPersonId().getExtension().trim()
                 : null;

@@ -317,13 +317,13 @@
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
 
-  <!-- TjK for ListActiveSickLeavesForPerson. Consider moving to separate xml file and import -->
-  <jaxws:endpoint address="/list-active-sick-leaves-for-person/v1.0"
-      implementor="se.inera.intyg.intygstjanst.web.integration.rehabstod.ListActiveSickLeavesForPersonResponderImpl">
+  <!-- TjK for ListSickLeavesForPerson. Consider moving to separate xml file and import -->
+  <jaxws:endpoint address="/list-sick-leaves-for-person/v1.0"
+      implementor="se.inera.intyg.intygstjanst.web.integration.rehabstod.ListSickLeavesForPersonResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg
-            value="transform/clinicalprocess-healthcond-rehabilitation/list-active-sick-leaves-for-person-transform.xslt"/>
+            value="transform/clinicalprocess-healthcond-rehabilitation/list-sick-leaves-for-person-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>

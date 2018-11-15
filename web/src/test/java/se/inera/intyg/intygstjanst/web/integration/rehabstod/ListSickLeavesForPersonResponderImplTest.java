@@ -23,9 +23,10 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ResultCodeEnum;
-import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ListActiveSickLeavesForPersonResponseType;
-import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforperson.v1.ListActiveSickLeavesForPersonType;
+
+import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonResponseType;
+import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonType;
+import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ResultCodeEnum;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
 
@@ -36,18 +37,18 @@ import static org.junit.Assert.assertNotNull;
  * Created by Magnus Ekstrand on 2018-10-23.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ListActiveSickLeavesForPersonResponderImplTest {
+public class ListSickLeavesForPersonResponderImplTest {
 
     @Mock
     private SjukfallCertificateDao sjukfallCertificateDao;
 
     @InjectMocks
-    private ListActiveSickLeavesForPersonResponderImpl testee;
+    private ListSickLeavesForPersonResponderImpl testee;
 
     @Test
     public void testWithNoPersonId() {
-        ListActiveSickLeavesForPersonType params = new ListActiveSickLeavesForPersonType();
-        ListActiveSickLeavesForPersonResponseType responseType = testee.listActiveSickLeavesForPerson("", params);
+        ListSickLeavesForPersonType params = new ListSickLeavesForPersonType();
+        ListSickLeavesForPersonResponseType responseType = testee.listSickLeavesForPerson("", params);
         assertNotNull(responseType);
         assertEquals(ResultCodeEnum.ERROR, responseType.getResult().getResultCode());
         assertEquals("Could not parse passed personnummer", responseType.getResult().getResultMessage());
@@ -58,11 +59,10 @@ public class ListActiveSickLeavesForPersonResponderImplTest {
         PersonId patientId = new PersonId();
         patientId.setExtension("191212121212");
 
-        ListActiveSickLeavesForPersonType params = new ListActiveSickLeavesForPersonType();
+        ListSickLeavesForPersonType params = new ListSickLeavesForPersonType();
         params.setPersonId(patientId);
-        params.setMaxDagarSedanAvslut(0);
 
-        ListActiveSickLeavesForPersonResponseType responseType = testee.listActiveSickLeavesForPerson("", params);
+        ListSickLeavesForPersonResponseType responseType = testee.listSickLeavesForPerson("", params);
         assertNotNull(responseType);
         assertEquals(ResultCodeEnum.OK, responseType.getResult().getResultCode());
     }
