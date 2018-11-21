@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
@@ -33,6 +33,7 @@ import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface;
@@ -48,9 +49,11 @@ import java.util.Arrays;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -85,18 +88,23 @@ public class RevokeCertificateResponderImplTest {
         final String patientId = "19121212-1212";
         final String logicalAddress = "logicalAddress";
 
-        when(certificateService.revokeCertificate(any(), eq(certificateId)))
-                .thenReturn(createCertificate(certificateId, new CertificateStateHistoryEntry("target1", CertificateState.SENT, null),
-                        new CertificateStateHistoryEntry("target2", CertificateState.SENT, null),
-                        new CertificateStateHistoryEntry("target1", CertificateState.SENT, null)));
-        when(recipientService.getRecipient(anyString())).thenReturn(new RecipientBuilder()
+        final Recipient recipient = new RecipientBuilder()
                 .setLogicalAddress(logicalAddress)
                 .setName("name")
                 .setId("id")
                 .setCertificateTypes("types")
                 .setActive(true)
                 .setTrusted(true)
-                .build());
+                .build();
+
+        final Certificate certificate = createCertificate(
+                certificateId,
+                new CertificateStateHistoryEntry("target1", CertificateState.SENT, null),
+                new CertificateStateHistoryEntry("target2", CertificateState.SENT, null),
+                new CertificateStateHistoryEntry("target1", CertificateState.SENT, null));
+
+        when(certificateService.revokeCertificate(any(), eq(certificateId))).thenReturn(certificate);
+        when(recipientService.getRecipient(anyString())).thenReturn(recipient);
 
         RevokeCertificateType request = new RevokeCertificateType();
         request.setIntygsId(new IntygId());
@@ -110,7 +118,7 @@ public class RevokeCertificateResponderImplTest {
         verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
         verify(certificateService, times(1)).revokeCertificateForStatistics(any());
         verify(sjukfallCertificateService, times(1)).revoked(any());
-        verify(monitoringService, times(1)).logCertificateRevoked(eq(certificateId), anyString(), any());
+        verify(monitoringService, times(1)).logCertificateRevoked(eq(certificateId), or(isNull(), anyString()), any());
         verify(revokeInterface, times(2)).revokeCertificate(eq(logicalAddress), any());
     }
 
@@ -121,13 +129,6 @@ public class RevokeCertificateResponderImplTest {
         final String logicalAddress = "logicalAddress";
 
         when(certificateService.revokeCertificate(any(), eq(certificateId))).thenReturn(createCertificate(certificateId));
-        when(recipientService.getRecipient(anyString())).thenReturn(new RecipientBuilder()
-                .setLogicalAddress(logicalAddress)
-                .setName("name").setId("id")
-                .setCertificateTypes("types")
-                .setActive(true)
-                .setTrusted(true)
-                .build());
 
         RevokeCertificateType request = new RevokeCertificateType();
         request.setIntygsId(new IntygId());
@@ -141,7 +142,7 @@ public class RevokeCertificateResponderImplTest {
         verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
         verify(certificateService, times(1)).revokeCertificateForStatistics(any());
         verify(sjukfallCertificateService, times(1)).revoked(any());
-        verify(monitoringService, times(1)).logCertificateRevoked(eq(certificateId), anyString(), any());
+        verify(monitoringService, times(1)).logCertificateRevoked(eq(certificateId), or(isNull(), anyString()), any());
         verify(revokeInterface, times(0)).revokeCertificate(eq(logicalAddress), any());
     }
 
@@ -152,7 +153,7 @@ public class RevokeCertificateResponderImplTest {
         final String logicalAddress = "logicalAddress";
 
         when(certificateService.revokeCertificate(any(), eq(certificateId)))
-                .thenThrow(new InvalidCertificateException(certificateId, new Personnummer(patientId)));
+                .thenThrow(new InvalidCertificateException(certificateId, createPnr(patientId)));
 
         RevokeCertificateType request = new RevokeCertificateType();
         request.setIntygsId(new IntygId());
@@ -167,7 +168,7 @@ public class RevokeCertificateResponderImplTest {
         verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
         verify(certificateService, times(0)).revokeCertificateForStatistics(any());
         verify(sjukfallCertificateService, times(0)).revoked(any());
-        verify(monitoringService, times(0)).logCertificateRevoked(eq(certificateId), anyString(), any());
+        verify(monitoringService, times(0)).logCertificateRevoked(eq(certificateId), or(isNull(), anyString()), any());
         verify(revokeInterface, times(0)).revokeCertificate(eq(logicalAddress), any());
     }
 
@@ -202,6 +203,11 @@ public class RevokeCertificateResponderImplTest {
         Certificate cert = new Certificate(certificateId);
         cert.setStates(Arrays.asList(entries));
         return cert;
+    }
+
+    private Personnummer createPnr(String pnr) {
+        return Personnummer.createPersonnummer(pnr)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 
 }

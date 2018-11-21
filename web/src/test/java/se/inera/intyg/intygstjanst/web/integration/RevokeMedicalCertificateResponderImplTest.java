@@ -23,7 +23,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
@@ -61,7 +61,7 @@ import static org.mockito.Mockito.when;
 public class RevokeMedicalCertificateResponderImplTest {
 
     private static final String CERTIFICATE_ID = "intygs-id-1234567890";
-    private static final Personnummer PERSONNUMMER = new Personnummer("19121212-1212");
+    private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").get();
     private static final String TARGET = "FKASSA";
 
     private static final AttributedURIType ADDRESS = new AttributedURIType();
@@ -154,7 +154,7 @@ public class RevokeMedicalCertificateResponderImplTest {
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
 
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
-        assertEquals("No certificate 'intygs-id-1234567890' found to revoke for patient '" + PERSONNUMMER.getPnrHash() + "'.",
+        assertEquals("No certificate 'intygs-id-1234567890' found to revoke for patient '" + PERSONNUMMER.getPersonnummerHash() + "'.",
                 response.getResult().getErrorText());
         Mockito.verifyZeroInteractions(statisticsService);
         Mockito.verifyZeroInteractions(sjukfallCertificateService);

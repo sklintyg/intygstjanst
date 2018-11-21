@@ -18,25 +18,27 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v1;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.StringStartsWith.startsWith;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
+import com.jayway.restassured.response.ValidatableResponse;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
+import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.*;
-import org.stringtemplate.v4.*;
-
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.response.ValidatableResponse;
-
-import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
-import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 public class ListCertificatesIT extends BaseIntegrationTest {
 
@@ -89,12 +91,13 @@ public class ListCertificatesIT extends BaseIntegrationTest {
                 is("OK"));
     }
 
+    // Note: after 2018-2 consent is not required.
     @Test
     public void listCertificatesNoConsent() {
         IntegrationTestUtil.givenIntyg(INTYG_IDS.get(0), "fk7263", PERSON_ID, false);
         IntegrationTestUtil.givenIntyg(INTYG_IDS.get(1), "luse", PERSON_ID, false);
 
-        givenRequest(PERSON_ID).body("meta.size()", is(0)).body("result.resultCode", is("INFO")).body("result.infoText", is("NOCONSENT"));
+        givenRequest(PERSON_ID).body("meta.size()", is(2)).body("result.resultCode", is("OK"));
     }
 
     @Test

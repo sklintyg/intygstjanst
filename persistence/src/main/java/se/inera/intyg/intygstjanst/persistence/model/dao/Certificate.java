@@ -18,21 +18,21 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import java.time.LocalDateTime;
-import java.util.*;
-
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
+import se.inera.intyg.schemas.contract.Personnummer;
+
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This class represents the document part of a certificate. The document is stored as a binary large object in the
@@ -225,7 +225,7 @@ public class Certificate {
     }
 
     public Personnummer getCivicRegistrationNumber() {
-        return new Personnummer(civicRegistrationNumber);
+        return Personnummer.createPersonnummer(civicRegistrationNumber).orElse(null);
     }
 
     public void setCivicRegistrationNumber(Personnummer civicRegistrationNumber) {

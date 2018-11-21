@@ -18,22 +18,21 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.common.base.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.google.common.base.Strings;
-
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.Amneskod;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class SendMessageToRecipientValidator {
@@ -107,9 +106,9 @@ public class SendMessageToRecipientValidator {
     }
 
     private void validateCertificate(SendMessageToRecipientType message, List<String> validationErrors) throws InvalidCertificateException {
-        Personnummer messageCRN = new Personnummer(message.getPatientPersonId().getExtension());
+        Optional<Personnummer> messageCRN = Personnummer.createPersonnummer(message.getPatientPersonId().getExtension());
         Certificate certificate = certificateService.getCertificateForCare(message.getIntygsId().getExtension());
-        if (!messageCRN.equals(certificate.getCivicRegistrationNumber())) {
+        if (!(messageCRN.isPresent() && messageCRN.get().equals(certificate.getCivicRegistrationNumber()))) {
             validationErrors.add("PatientPersonId is not consistent with certificate");
         }
     }

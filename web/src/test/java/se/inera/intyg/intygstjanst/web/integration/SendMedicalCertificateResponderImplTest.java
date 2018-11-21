@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType;
@@ -68,7 +68,7 @@ public class SendMedicalCertificateResponderImplTest {
     private static final String CERTIFICATE_ID = "Intygs-id-1234567890";
     private static final String CERTIFICATE_TYPE = "fk7263";
 
-    private static final Personnummer PERSONNUMMER = new Personnummer("19121212-1212");
+    private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").get();
 
     private static final String FK_RECIPIENT_ID = "FK";
     private static final String FK_RECIPIENT_NAME = "Försäkringskassan";
@@ -599,7 +599,7 @@ public class SendMedicalCertificateResponderImplTest {
         PatientType patient = new PatientType();
         II patientIdHolder = new II();
         patientIdHolder.setRoot(PATIENT_ID_OID);
-        patientIdHolder.setExtension(PERSONNUMMER.getPersonnummer());
+        patientIdHolder.setExtension(PERSONNUMMER.getPersonnummerWithDash());
         patient.setPersonId(patientIdHolder);
         patient.setFullstandigtNamn("patientnamn");
         lakarutlatande.setPatient(patient);

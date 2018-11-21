@@ -18,25 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static org.junit.Assert.*;
-import static se.inera.intyg.common.support.model.CertificateState.DELETED;
-import static se.inera.intyg.common.support.model.CertificateState.RECEIVED;
-import static se.inera.intyg.common.support.model.CertificateState.RESTORED;
-import static se.inera.intyg.common.support.model.CertificateState.SENT;
-import static se.inera.intyg.intygstjanst.persistence.support.CertificateFactory.CERTIFICATE_ID;
-import static se.inera.intyg.intygstjanst.persistence.support.CertificateFactory.CIVIC_REGISTRATION_NUMBER;
-import static se.inera.intyg.intygstjanst.persistence.support.CertificateFactory.FK7263;
-import static se.inera.intyg.intygstjanst.persistence.support.CertificateFactory.buildCertificate;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,17 +25,35 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
-import se.inera.intyg.intygstjanst.persistence.model.dao.*;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.schemas.contract.Personnummer;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static org.junit.Assert.*;
+import static se.inera.intyg.common.support.model.CertificateState.*;
+import static se.inera.intyg.intygstjanst.persistence.support.CertificateTestFactory.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/persistence-config-unittest.xml" })
 @ActiveProfiles("dev")
 @Transactional
 public class CertificateDaoImplTest {
+
+    private final String CERTIFICATE_ID_UNKNOWN = "unknownId";
+    private final String CIVIC_REGISTRATION_NUMBER_UNKNOWN = "19440223-1641";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -243,26 +242,26 @@ public class CertificateDaoImplTest {
 
     @Test(expected = PersistenceException.class)
     public void testUpdateStatusForWrongCertificate() throws PersistenceException {
-        certificateDao.updateStatus("<unknownCertId>", new Personnummer("<unknownPersonnummer>"), CertificateState.SENT, "FKASSA",
+        certificateDao.updateStatus(CERTIFICATE_ID_UNKNOWN, createPnr(CIVIC_REGISTRATION_NUMBER_UNKNOWN), CertificateState.SENT, "FKASSA",
                 null);
     }
 
     @Test
     public void testGetCertificateForUnknownCertificate() throws PersistenceException {
         certificateDao.store(buildCertificate());
-        assertNull(certificateDao.getCertificate(new Personnummer("<unknownPersonnummer>"), "<unknownCertId>"));
+        assertNull(certificateDao.getCertificate(createPnr(CIVIC_REGISTRATION_NUMBER_UNKNOWN), CERTIFICATE_ID_UNKNOWN));
     }
 
     @Test
     public void testGetCertificateForPnrWithoutDash() throws PersistenceException {
         certificateDao.store(buildCertificate());
-        assertNotNull(certificateDao.getCertificate(new Personnummer("190011223344"), "123456"));
+        assertNotNull(certificateDao.getCertificate(CIVIC_REGISTRATION_NUMBER_NO_DASH, "123456"));
     }
 
     @Test(expected = PersistenceException.class)
     public void testGetCertificateForWrongCivicRegistrationNumber() throws PersistenceException {
         certificateDao.store(buildCertificate());
-        certificateDao.getCertificate(new Personnummer("<another civic registration number>"), CERTIFICATE_ID);
+        certificateDao.getCertificate(createPnr(CIVIC_REGISTRATION_NUMBER_UNKNOWN), CERTIFICATE_ID);
     }
 
     @Test
@@ -275,7 +274,7 @@ public class CertificateDaoImplTest {
         assertEquals(0, certificate.getStates().size());
 
         try {
-            certificateDao.updateStatus(CERTIFICATE_ID, new Personnummer("another patient"), RECEIVED, "FKASSA", null);
+            certificateDao.updateStatus(CERTIFICATE_ID, createPnr(CIVIC_REGISTRATION_NUMBER_UNKNOWN), RECEIVED, "FKASSA", null);
             fail("Exception expected.");
         } catch (PersistenceException e) {
             // Empty
@@ -312,7 +311,7 @@ public class CertificateDaoImplTest {
 
         assertEquals(0, certificate.getStates().size());
 
-        certificateDao.updateStatus(CERTIFICATE_ID, new Personnummer("190011223344"), DELETED, "FKASSA", null);
+        certificateDao.updateStatus(CERTIFICATE_ID, CIVIC_REGISTRATION_NUMBER_NO_DASH, DELETED, "FKASSA", null);
 
         assertEquals(1, certificate.getStates().size());
         assertEquals(DELETED, certificate.getStates().get(0).getState());
@@ -322,7 +321,7 @@ public class CertificateDaoImplTest {
 
     @Test(expected = PersistenceException.class)
     public void testUpdateStatusNoPnrForWrongCertificate() throws PersistenceException {
-        certificateDao.updateStatus("<unknownCertId>", CertificateState.SENT, "FKASSA", null);
+        certificateDao.updateStatus(CERTIFICATE_ID_UNKNOWN, CertificateState.SENT, "FKASSA", null);
     }
 
     @Test
@@ -386,6 +385,10 @@ public class CertificateDaoImplTest {
         OriginalCertificate original = entityManager.find(OriginalCertificate.class, originalCertId);
         assertNotNull(original);
         assertEquals("Some text", original.getDocument());
+    }
+
+    private Personnummer createPnr(String pnr) {
+        return Personnummer.createPersonnummer(pnr).get();
     }
 
 }

@@ -18,19 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.util.List;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
+import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
@@ -42,6 +34,13 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.Amneskod;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.MeddelandeReferens;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendMessageToRecipientValidatorTest {
@@ -251,7 +250,7 @@ public class SendMessageToRecipientValidatorTest {
 
     private Certificate buildCertificate(String crn) {
         Certificate certificate = new Certificate();
-        certificate.setCivicRegistrationNumber(new Personnummer(crn));
+        certificate.setCivicRegistrationNumber(Personnummer.createPersonnummer(crn).get());
         return certificate;
     }
 }

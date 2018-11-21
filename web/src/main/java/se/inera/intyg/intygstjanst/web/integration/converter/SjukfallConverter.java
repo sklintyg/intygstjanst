@@ -28,6 +28,7 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -58,7 +59,7 @@ public class SjukfallConverter {
             enhetId.setRoot(KODVERK_HSAID);
             sjukfall.setEnhetsId(enhetId);
 
-            Personnummer pnr = new Personnummer(sf.getPatient().getId());
+            Optional<Personnummer> pnr = Personnummer.createPersonnummer(sf.getPatient().getId());
             sjukfall.setPersonId(buildPersonId(pnr));
             sjukfall.setPatientFullstandigtNamn(sf.getPatient().getNamn());
 
@@ -85,15 +86,13 @@ public class SjukfallConverter {
         }).collect(Collectors.toList());
     }
 
-    private PersonId buildPersonId(Personnummer pnr) {
+    private PersonId buildPersonId(Optional<Personnummer> personnummer) {
         PersonId personId = new PersonId();
-        personId.setRoot(SamordningsnummerValidator.isSamordningsNummer(pnr) ? KODVERK_SAMORDNINGSNUMMER : KODVERK_PERSONNUMMER);
+        personId.setRoot(SamordningsnummerValidator.isSamordningsNummer(personnummer)
+                            ? KODVERK_SAMORDNINGSNUMMER
+                            : KODVERK_PERSONNUMMER);
 
-        try {
-            personId.setExtension(pnr.getNormalizedPnr());
-        } catch (Exception e) {
-            personId.setExtension(pnr.getPersonnummer());
-        }
+        personnummer.ifPresent(pnr -> personId.setExtension(pnr.getPersonnummer()));
 
         return personId;
     }

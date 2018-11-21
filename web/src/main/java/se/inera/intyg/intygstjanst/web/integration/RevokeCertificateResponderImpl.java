@@ -24,12 +24,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
@@ -37,14 +35,18 @@ import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
+import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 
+import java.util.Optional;
+
 @Transactional
 @SchemaValidation
 public class RevokeCertificateResponderImpl implements RevokeCertificateResponderInterface {
+
     private static final Logger LOG = LoggerFactory.getLogger(RevokeCertificateResponderImpl.class);
 
     @Autowired
@@ -67,11 +69,11 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
     public RevokeCertificateResponseType revokeCertificate(String logicalAddress, RevokeCertificateType request) {
         RevokeCertificateResponseType response = new RevokeCertificateResponseType();
 
-        Personnummer pnr = new Personnummer(request.getPatientPersonId().getExtension());
+        Optional<Personnummer> personnummer = Personnummer.createPersonnummer(request.getPatientPersonId().getExtension());
         String certificateId = request.getIntygsId().getExtension();
 
         try {
-            Certificate certificate = certificateService.revokeCertificate(pnr, certificateId);
+            Certificate certificate = certificateService.revokeCertificate(personnummer.orElse(null), certificateId);
 
             nofifyStakeholders(request, certificate);
 
@@ -84,13 +86,20 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
             // could arrive before the register request and we want to avoid race conditions.
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR,
                     "Certificate " + certificateId + " does not exist for patient."));
-            LOG.warn("Certificate '{}' does not exist for patient '{}'.", certificateId, pnr.getPnrHash());
+            LOG.warn("Certificate '{}' does not exist for patient '{}'.", certificateId, getPersonnummerHash(personnummer));
         } catch (CertificateRevokedException e) {
             response.setResult(ResultTypeUtil.infoResult("Certificate " + certificateId + " is already revoked."));
             LOG.warn("Certificate '{}' already revoked.", certificateId);
         }
 
         return response;
+    }
+
+    private String getPersonnummerHash(Optional<Personnummer> personnummer) {
+        if (personnummer.isPresent()) {
+            return personnummer.get().getPersonnummerHash();
+        }
+        return "<unknown person id>";
     }
 
     private void nofifyStakeholders(RevokeCertificateType request, Certificate certificate) {

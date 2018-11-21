@@ -18,27 +18,25 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
+import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
 import se.inera.intyg.intygstjanst.web.service.ConsentService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
+import static org.junit.Assert.assertFalse;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 @RunWith(MockitoJUnitRunner.class)
 public class ConsentServiceImplTest {
 
-    private static final Personnummer CONSENT_USER = new Personnummer("consentUser");
+    private static final Personnummer CONSENT_USER = Personnummer.createPersonnummer("191212121212").get();
+    private static final Personnummer UNKNOWN_USER = Personnummer.createPersonnummer("191212141414").get();
 
     @Mock
     private ConsentDao consentDao = mock(ConsentDao.class);
@@ -51,9 +49,9 @@ public class ConsentServiceImplTest {
 
     @Test
     public void unknownUserHasNoConsent() {
-        when(consentDao.hasConsent(new Personnummer("unknown"))).thenReturn(false);
+        when(consentDao.hasConsent(UNKNOWN_USER)).thenReturn(false);
 
-        assertFalse(consentService.isConsent(new Personnummer("unknown")));
+        assertFalse(consentService.isConsent(UNKNOWN_USER));
     }
 
     @Test
@@ -73,4 +71,5 @@ public class ConsentServiceImplTest {
         consentService.setConsent(CONSENT_USER, false);
         verify(certificateDao).removeCertificatesDeletedByCareGiver(eq(CONSENT_USER));
     }
+
 }

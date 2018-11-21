@@ -26,7 +26,6 @@ import se.inera.intyg.common.db.support.DbModuleEntryPoint;
 import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
-import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
@@ -49,17 +48,22 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @SchemaValidation
 public class ListCertificatesForCitizenResponderImpl implements ListCertificatesForCitizenResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ListCertificatesForCitizenResponderImpl.class);
+
     private static final List<String> EXCLUDED_CERTIFICATES = Arrays.asList(DbModuleEntryPoint.MODULE_ID, DoiModuleEntryPoint.MODULE_ID);
+
     @Autowired
     private CertificateService certificateService;
+
     @Autowired
     private MonitoringLogService monitoringLogService;
+
     @Autowired
     private IntygModuleRegistryImpl moduleRegistry;
 
@@ -71,23 +75,25 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         response.setIntygsLista(new ListaType());
         response.getIntygsLista().getIntyg(); // initialize list for schema validation, if no certificates
 
-        try {
-            final Personnummer personnummer = new Personnummer(parameters.getPersonId().getExtension());
-            List<Certificate> certificates = certificateService.listCertificatesForCitizen(
-                    personnummer, toStringList(parameters.getIntygTyp()), parameters.getFromDatum(), parameters.getTomDatum());
+        Optional<Personnummer> personnummer =
+                Personnummer.createPersonnummer(parameters.getPersonId().getExtension());
 
-            response.getIntygsLista().getIntyg().addAll(certificates.stream()
-                    .filter(c -> !EXCLUDED_CERTIFICATES.contains(c.getType()))
-                    .filter(c -> c.isDeleted() == parameters.isArkiverade())
-                    .map(c -> convert(c, parameters.getPart().getCode()))
-                    .collect(Collectors.toList()));
+        List<Certificate> certificates = certificateService.listCertificatesForCitizen(
+                personnummer.orElse(null),
+                toStringList(parameters.getIntygTyp()),
+                parameters.getFromDatum(),
+                parameters.getTomDatum());
 
-            response.setResult(ResultTypeUtil.okResult());
-            monitoringLogService.logCertificateListedByCitizen(personnummer);
+        response.getIntygsLista().getIntyg().addAll(certificates.stream()
+                .filter(c -> !EXCLUDED_CERTIFICATES.contains(c.getType()))
+                .filter(c -> c.isDeleted() == parameters.isArkiverade())
+                .map(c -> convert(c, parameters.getPart().getCode()))
+                .collect(Collectors.toList()));
 
-        } catch (MissingConsentException ex) {
-            response.setResult(ResultTypeUtil.infoResult("NOCONSENT"));
-        }
+        response.setResult(ResultTypeUtil.okResult());
+        monitoringLogService.logCertificateListedByCitizen(personnummer.orElse(null));
+
+
 
         return response;
     }

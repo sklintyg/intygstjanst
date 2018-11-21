@@ -72,10 +72,10 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
 
         List<SjukfallCertificate> activeSjukfallCertificateForCareUnits;
         if (!Strings.isNullOrEmpty(personnummer)) {
-            Personnummer pnr = Personnummer.createValidatedPersonnummerWithDash(personnummer)
+            Personnummer pnr = Personnummer.createPersonnummer(personnummer)
                     .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
             activeSjukfallCertificateForCareUnits = sjukfallCertificateDao
-                    .findActiveSjukfallCertificateForPersonOnCareUnits(careGiverHsaId, hsaIdList, pnr.getPersonnummer());
+                    .findActiveSjukfallCertificateForPersonOnCareUnits(careGiverHsaId, hsaIdList, pnr.getPersonnummerWithDash());
         } else {
             activeSjukfallCertificateForCareUnits = sjukfallCertificateDao
                     .findActiveSjukfallCertificateForCareUnits(careGiverHsaId, hsaIdList);

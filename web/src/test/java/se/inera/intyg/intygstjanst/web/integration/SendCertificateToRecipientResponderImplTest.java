@@ -18,20 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.ERROR;
-import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.INFO;
-import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.OK;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
+import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
@@ -48,10 +39,14 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.Part;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
+import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.*;
+
 @RunWith(MockitoJUnitRunner.class)
 public class SendCertificateToRecipientResponderImplTest {
 
-    private static final Personnummer PERSONNUMMER = new Personnummer("19121212-1212");
+    private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").get();
     private static final String CERTIFICATE_ID = "Intygs-id-1234567890";
     private static final String RECIPIENT_ID = "TRANSP";
 

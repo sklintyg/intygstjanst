@@ -18,32 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
+import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.db.support.DbModuleEntryPoint;
 import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
 import se.inera.intyg.common.fk7263.support.Fk7263EntryPoint;
-import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
@@ -66,6 +49,23 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.IntygsStatus;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListCertificatesForCitizenResponderImplTest {
@@ -94,16 +94,16 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     @Before
     public void setup() throws ModuleNotFoundException, ModuleException {
-        when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
+        when(moduleRegistry.getModuleEntryPoint(or(isNull(), anyString()))).thenReturn(moduleEntryPoint);
         when(moduleEntryPoint.getDefaultRecipient()).thenReturn(FKASSA_RECIPIENT_ID);
         when(moduleEntryPoint.getModuleApi()).thenReturn(moduleApi);
-        when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(mock(Utlatande.class));
-        when(moduleApi.getIntygFromUtlatande(any(Utlatande.class))).thenReturn(new Intyg());
+        when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()))).thenReturn(mock(Utlatande.class));
+        when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class)))).thenReturn(new Intyg());
     }
 
     @Test
     public void listCertificatesWithNoCertificates() throws Exception {
-        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
+        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
         LocalDate toDate = LocalDate.of(2020, 12, 12);
@@ -123,24 +123,32 @@ public class ListCertificatesForCitizenResponderImplTest {
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
+    /**
+     * Note that release 2018-2 of Mina Intyg removed the use of consent.
+     *
+     * @throws Exception
+     */
     @Test
-    public void listCertificatesWithoutConsent() throws Exception {
-        when(certificateService.listCertificatesForCitizen(any(Personnummer.class), Matchers.<List<String>> any(), any(LocalDate.class),
-                any(LocalDate.class))).thenThrow(new MissingConsentException(null));
+    public void listCertificatesWithoutConsentReturnsResultAnyway() throws Exception {
+        when(certificateService.listCertificatesForCitizen(
+                or(isNull(), any(Personnummer.class)),
+                anyList(),
+                or(isNull(), any(LocalDate.class)),
+                or(isNull(), any(LocalDate.class)))
+        ).thenReturn(Collections.emptyList());
 
         List<String> types = Collections.emptyList();
-        ListCertificatesForCitizenType parameters = createListCertificatesRequest(new Personnummer("12-3"), types, null, null, false);
+        ListCertificatesForCitizenType parameters = createListCertificatesRequest(createPnr("19350108-1234"), types, null, null, false);
 
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
         assertEquals(0, response.getIntygsLista().getIntyg().size());
-        assertEquals(ResultCodeType.INFO, response.getResult().getResultCode());
-        assertEquals("NOCONSENT", response.getResult().getResultText());
+        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
     }
 
     @Test
     public void listCertificatesArkiveradFalse() throws Exception {
-        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
+        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
         LocalDate toDate = LocalDate.of(2020, 12, 12);
@@ -159,7 +167,7 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
         verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
-        verify(moduleApi).getUtlatandeFromXml(anyString());
+        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()));
 
         assertEquals(1, response.getIntygsLista().getIntyg().size());
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
@@ -167,7 +175,7 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     @Test
     public void listCertificatesArkiveradTrue() throws Exception {
-        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
+        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
         LocalDate toDate = LocalDate.of(2020, 12, 12);
@@ -186,7 +194,7 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
         verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
-        verify(moduleApi).getUtlatandeFromXml(anyString());
+        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()));
 
         assertEquals(1, response.getIntygsLista().getIntyg().size());
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
@@ -195,7 +203,7 @@ public class ListCertificatesForCitizenResponderImplTest {
     @Test
     public void listCertificatesSetsStatuses() throws Exception {
         final LocalDateTime statusTimestamp = LocalDateTime.now();
-        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
+        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
         LocalDate toDate = LocalDate.of(2020, 12, 12);
@@ -232,7 +240,7 @@ public class ListCertificatesForCitizenResponderImplTest {
                 firstStatusSaved.plusHours(3),
                 firstStatusSaved.plusHours(4),
         };
-        Personnummer pnr = new Personnummer("19121212-1212");
+        Personnummer pnr = createPnr("19121212-1212");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
         LocalDate toDate = LocalDate.of(2020, 12, 12);
@@ -285,7 +293,7 @@ public class ListCertificatesForCitizenResponderImplTest {
                 firstStatusSaved.plusHours(3),
                 firstStatusSaved.plusHours(4),
         };
-        Personnummer pnr = new Personnummer("19121212-1212");
+        Personnummer pnr = createPnr("19121212-1212");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
         LocalDate toDate = LocalDate.of(2020, 12, 12);
@@ -350,7 +358,7 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     @Test
     public void testDbDoiAreExcluded() throws Exception {
-        Personnummer civicRegistrationNumber = new Personnummer("19350108-1234");
+        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.emptyList();
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
         LocalDate toDate = LocalDate.of(2020, 12, 12);
@@ -404,4 +412,10 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         return parameters;
     }
+
+    private Personnummer createPnr(String pnr) {
+        return Personnummer.createPersonnummer(pnr)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+    }
+
 }

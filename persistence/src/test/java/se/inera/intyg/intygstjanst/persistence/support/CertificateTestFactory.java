@@ -18,27 +18,28 @@
  */
 package se.inera.intyg.intygstjanst.persistence.support;
 
-import java.time.LocalDateTime;
-
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.schemas.contract.Personnummer;
+
+import java.time.LocalDateTime;
 
 /**
  * @author andreaskaltenbach
  */
-public final class CertificateFactory {
+public final class CertificateTestFactory {
 
-    private CertificateFactory() {
+    private CertificateTestFactory() {
     }
+
+    public static final LocalDateTime SIGNED_DATE = LocalDateTime.of(1999, 12, 31, 10, 32);
+
+    public static final Personnummer CIVIC_REGISTRATION_NUMBER = Personnummer.createPersonnummer("19001122-3344").get();
+    public static final Personnummer CIVIC_REGISTRATION_NUMBER_NO_DASH = Personnummer.createPersonnummer("190011223344").get();
 
     public static final String CERTIFICATE_ID = "123456";
     public static final String CERTIFICATE_DOCUMENT = "{\"name\":\"Some JSON\"}";
-    public static final Personnummer CIVIC_REGISTRATION_NUMBER = new Personnummer("19001122-3344");
     public static final String FK7263 = "fk7263";
-
-    public static final LocalDateTime SIGNED_DATE = LocalDateTime.of(1999, 12, 31, 10, 32);
     public static final String SIGNING_DOCTOR = "Dr. Oetker";
-
     public static final String CARE_UNIT_ID = "1.2.3.4.5.6";
     public static final String CARE_UNIT_NAME = "London Bridge Hospital";
     public static final String CARE_GIVER_ID = "5678";

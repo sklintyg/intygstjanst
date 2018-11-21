@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
@@ -49,7 +48,6 @@ import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.inera.intyg.intygstjanst.web.service.ConsentService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.RelationService;
@@ -85,9 +83,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     private CertificateSenderService senderService;
 
     @Autowired
-    private ConsentService consentService;
-
-    @Autowired
     private StatisticsService statisticsService;
 
     @Autowired
@@ -100,7 +95,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Transactional(readOnly = true)
     public List<Certificate> listCertificatesForCitizen(Personnummer civicRegistrationNumber, List<String> certificateTypes,
             LocalDate fromDate, LocalDate toDate) {
-        assertConsent(civicRegistrationNumber);
+        assertPersonnummer(civicRegistrationNumber);
+
         return certificateDao.findCertificate(civicRegistrationNumber, certificateTypes, fromDate, toDate, null);
     }
 
@@ -116,7 +112,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             throws InvalidCertificateException,
             CertificateRevokedException {
 
-        assertConsent(civicRegistrationNumber);
+        assertPersonnummer(civicRegistrationNumber);
 
         Certificate certificate = null;
         try {
@@ -214,6 +210,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             CertificateRevokedException.class })
     public Certificate revokeCertificate(Personnummer civicRegistrationNumber, String certificateId)
             throws InvalidCertificateException, CertificateRevokedException {
+
         Certificate certificate = null;
         try {
             certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
@@ -306,9 +303,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Transactional(readOnly = true, noRollbackFor = { PersistenceException.class })
     public CertificateHolder getCertificate(String certificateId, Personnummer personId, boolean checkConsent)
             throws InvalidCertificateException {
-        if (checkConsent && personId != null && !consentService.isConsent(personId)) {
-            throw new MissingConsentException(personId);
-        }
 
         Certificate certificate = null;
         try {
@@ -324,13 +318,9 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         return ConverterUtil.toCertificateHolder(certificate);
     }
 
-    private void assertConsent(Personnummer civicRegistrationNumber) {
+    private void assertPersonnummer(Personnummer civicRegistrationNumber) {
         if (civicRegistrationNumber == null || Strings.isNullOrEmpty(civicRegistrationNumber.getPersonnummer())) {
             throw new IllegalArgumentException("Invalid/missing civicRegistrationNumber");
-        }
-
-        if (!consentService.isConsent(civicRegistrationNumber)) {
-            throw new MissingConsentException(civicRegistrationNumber);
         }
     }
 

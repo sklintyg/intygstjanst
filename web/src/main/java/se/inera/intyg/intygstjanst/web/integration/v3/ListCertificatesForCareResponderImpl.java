@@ -18,14 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v3;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
@@ -45,6 +41,10 @@ import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.
 import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.ListaType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @SchemaValidation
 public class ListCertificatesForCareResponderImpl implements ListCertificatesForCareResponderInterface {
@@ -68,9 +68,10 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
         response.setIntygsLista(new ListaType());
         response.getIntygsLista().getIntyg();
 
-        final Personnummer personnummer = new Personnummer(parameters.getPersonId().getExtension());
+        final Optional<Personnummer> personnummer =
+                Personnummer.createPersonnummer(parameters.getPersonId().getExtension());
 
-        List<Certificate> certificates = certificateService.listCertificatesForCare(personnummer,
+        List<Certificate> certificates = certificateService.listCertificatesForCare(personnummer.orElse(null),
                 parameters.getEnhetsId().stream().map(HsaId::getExtension).collect(Collectors.toList()));
 
         for (Certificate certificate : certificates) {
@@ -85,8 +86,8 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
                 }
             }
         }
-        monitoringLogService.logCertificateListedByCare(personnummer);
 
+        monitoringLogService.logCertificateListedByCare(personnummer.orElse(null));
         return response;
     }
 
@@ -108,4 +109,5 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
 
         return null;
     }
+
 }

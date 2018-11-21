@@ -18,18 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import javax.persistence.PersistenceException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ConsentDao;
 import se.inera.intyg.intygstjanst.web.service.ConsentService;
+import se.inera.intyg.schemas.contract.Personnummer;
+
+import javax.persistence.PersistenceException;
 
 /**
  * @author andreaskaltenbach
@@ -68,7 +67,7 @@ public class ConsentServiceImpl implements ConsentService {
                 certificateDao.removeCertificatesDeletedByCareGiver(civicRegistrationNumber);
             } catch (PersistenceException e) {
                 LOGGER.error("Failed to remove certificates deleted by care giver for citizen {}",
-                        Personnummer.getPnrHashSafe(civicRegistrationNumber));
+                        Personnummer.getPersonnummerHashSafe(civicRegistrationNumber));
             }
         }
     }

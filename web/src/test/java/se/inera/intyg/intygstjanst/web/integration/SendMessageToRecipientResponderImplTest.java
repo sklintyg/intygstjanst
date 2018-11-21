@@ -19,9 +19,11 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -35,7 +37,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
@@ -124,7 +126,9 @@ public class SendMessageToRecipientResponderImplTest {
     @Test
     public void sendMessageToRecipientArendeServiceThrowsExceptionTest() throws Exception {
         setupClientResponse(ResultTypeUtil.okResult());
-        when(arendeService.processIncomingMessage(any(Arende.class))).thenThrow(new RuntimeException("error"));
+
+        when(arendeService.processIncomingMessage(or(isNull(), any(Arende.class)))).thenThrow(new RuntimeException("error"));
+
         SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
         assertInvocations(times(1), times(1), times(1));
@@ -149,14 +153,15 @@ public class SendMessageToRecipientResponderImplTest {
                 .thenReturn(response);
     }
 
-    private void assertInvocations(VerificationMode monitoringLogInvocation,
+    private void assertInvocations(
+            VerificationMode monitoringLogInvocation,
             VerificationMode arendeServiceInvocation,
             VerificationMode sendMessageToRecipientClientInvocation) throws JAXBException, InvalidCertificateException {
+
         verify(validator).validate(any(SendMessageToRecipientType.class)); // always call validator
         verify(arendeService, arendeServiceInvocation).processIncomingMessage(any(Arende.class));
-        verify(monitoringLog, monitoringLogInvocation).logSendMessageToRecipient(anyString(), anyString());
-        verify(sendMessageToRecipientResponder, sendMessageToRecipientClientInvocation).sendMessageToRecipient(
-                eq(LOGICAL_ADDRESS_RECIPIENT),
-                any(SendMessageToRecipientType.class));
+        verify(monitoringLog, monitoringLogInvocation).logSendMessageToRecipient(or(isNull(), anyString()), anyString());
+        verify(sendMessageToRecipientResponder, sendMessageToRecipientClientInvocation)
+                .sendMessageToRecipient(eq(LOGICAL_ADDRESS_RECIPIENT), any(SendMessageToRecipientType.class));
     }
 }

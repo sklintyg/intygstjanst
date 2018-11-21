@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.ifv.insuranceprocess.certificate.v1.StatusType;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtabp20.v1.SetCertificateStatusResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusRequestType;
@@ -42,7 +42,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -95,7 +95,7 @@ public class SetCertificateStatusResponderImplTest {
         assertNotNull(res);
         assertEquals(ResultCodeEnum.OK, res.getResult().getResultCode());
 
-        verify(certificateService).setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA,
+        verify(certificateService).setCertificateState(createPnr("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA,
                 CertificateState.CANCELLED, timestamp);
         verify(monitoringLogService).logCertificateStatusChanged(CERTIFICATE_ID, "CANCELLED");
     }
@@ -116,7 +116,7 @@ public class SetCertificateStatusResponderImplTest {
         assertNotNull(res);
         assertEquals(ResultCodeEnum.OK, res.getResult().getResultCode());
 
-        verify(certificateService).setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA,
+        verify(certificateService).setCertificateState(createPnr("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA,
                 CertificateState.CANCELLED, timestamp);
         verify(monitoringLogService).logCertificateStatusChanged(CERTIFICATE_ID, "CANCELLED");
         verify(recipientService).getPrimaryRecipientFkassa();
@@ -145,8 +145,8 @@ public class SetCertificateStatusResponderImplTest {
     @Test
     public void testSetCertificateStatusInvalidCertificate() throws Exception {
         LocalDateTime timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
-        doThrow(new InvalidCertificateException(CERTIFICATE_ID, new Personnummer("19001122-3344"))).when(certificateService)
-                .setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA, CertificateState.CANCELLED,
+        doThrow(new InvalidCertificateException(CERTIFICATE_ID, createPnr("19001122-3344"))).when(certificateService)
+                .setCertificateState(createPnr("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA, CertificateState.CANCELLED,
                         timestamp);
 
         SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
@@ -158,8 +158,14 @@ public class SetCertificateStatusResponderImplTest {
 
         responder.setCertificateStatus(null, request);
 
-        verify(certificateService).setCertificateState(new Personnummer("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA,
+        verify(certificateService).setCertificateState(createPnr("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA,
                 CertificateState.CANCELLED, timestamp);
         verify(monitoringLogService, never()).logCertificateStatusChanged(anyString(), anyString());
     }
+
+    private Personnummer createPnr(String pnr) {
+        return Personnummer.createPersonnummer(pnr)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+    }
+
 }

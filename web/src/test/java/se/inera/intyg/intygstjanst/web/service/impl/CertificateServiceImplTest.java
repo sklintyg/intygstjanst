@@ -25,13 +25,11 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.common.support.integration.module.exception.MissingConsentException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
@@ -47,7 +45,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
-import se.inera.intyg.intygstjanst.web.service.ConsentService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RelationService;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
@@ -66,8 +63,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -75,13 +74,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-/**
- * @author andreaskaltenbach
- */
 @RunWith(MockitoJUnitRunner.class)
 public class CertificateServiceImplTest {
 
-    private static final Personnummer PERSONNUMMER = new Personnummer("<civicRegistrationNumber>");
+    private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("191212121212").get();
     private static final String CERTIFICATE_ID = "<certificate-id>";
 
     private static final String RECIPIENT_ID = "FKASSA";
@@ -93,9 +89,6 @@ public class CertificateServiceImplTest {
 
     @Mock
     private CertificateDao certificateDao;
-
-    @Mock
-    private ConsentService consentService;
 
     @Mock
     private ObjectMapper objectMapper;
@@ -196,8 +189,10 @@ public class CertificateServiceImplTest {
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId("id");
         certificateHolder.setOriginalCertificate("original");
-        when(certificateDao.getCertificate(any(Personnummer.class), anyString()))
-                .thenThrow((new PersistenceException(CERTIFICATE_ID, null)));
+
+        when(certificateDao.getCertificate(
+                or(isNull(), any(Personnummer.class)),
+                or(isNull(), anyString()))).thenThrow((new PersistenceException(CERTIFICATE_ID, null)));
 
         certificateService.storeCertificate(certificateHolder);
     }
@@ -207,7 +202,9 @@ public class CertificateServiceImplTest {
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId("id");
         certificateHolder.setOriginalCertificate("original");
-        when(certificateDao.getCertificate(any(Personnummer.class), anyString())).thenReturn(new Certificate());
+        when(certificateDao.getCertificate(
+                or(isNull(), any(Personnummer.class)),
+                or(isNull(), anyString()))).thenReturn(new Certificate());
 
         certificateService.storeCertificate(certificateHolder);
     }
@@ -219,7 +216,6 @@ public class CertificateServiceImplTest {
         certificate.setCivicRegistrationNumber(PERSONNUMMER);
 
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
-        when(recipientService.getRecipientForLogicalAddress(Mockito.any(String.class))).thenReturn(createRecipient());
 
         SendStatus res = certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
 
@@ -239,7 +235,6 @@ public class CertificateServiceImplTest {
         certificate.setStates(states);
 
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
-        when(recipientService.getRecipientForLogicalAddress(Mockito.any(String.class))).thenReturn(createRecipient());
 
         SendStatus res = certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
 
@@ -270,9 +265,10 @@ public class CertificateServiceImplTest {
         certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fkassa");
     }
 
-    @Test(expected = MissingConsentException.class)
+    // Consent is not required after 2018-2
+    @Test
     public void testGetCertificateWithoutConsent() throws Exception {
-        when(consentService.isConsent(PERSONNUMMER)).thenReturn(false);
+        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new Certificate());
         certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
     }
 
@@ -304,21 +300,17 @@ public class CertificateServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetCertificateWithoutConsentCheckForNullPersonnummer() throws Exception {
-        Certificate certificate = createCertificate();
-        when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(certificate);
         certificateService.getCertificateForCitizen(null, CERTIFICATE_ID);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetCertificateWithoutConsentCheckForEmptyPersonnummer() throws Exception {
-        Certificate certificate = createCertificate();
-        when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(certificate);
-        certificateService.getCertificateForCitizen(new Personnummer(null), CERTIFICATE_ID);
+        certificateService.getCertificateForCitizen(createPnr(null), CERTIFICATE_ID);
     }
 
     @Test
     public void testRevokeCertificate() throws Exception {
-        final Personnummer civicRegistrationNumber = new Personnummer("191212121212");
+        final Personnummer civicRegistrationNumber = createPnr("191212121212");
         when(certificateDao.getCertificate(civicRegistrationNumber, CERTIFICATE_ID)).thenReturn(new Certificate(CERTIFICATE_ID));
         Certificate revokeCertificate = certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
         assertEquals(CERTIFICATE_ID, revokeCertificate.getId());
@@ -330,7 +322,7 @@ public class CertificateServiceImplTest {
 
     @Test(expected = InvalidCertificateException.class)
     public void testRevokeCertificateGetThrowsPersistenceException() throws Exception {
-        final Personnummer civicRegistrationNumber = new Personnummer("191212121212");
+        final Personnummer civicRegistrationNumber = createPnr("191212121212");
         when(certificateDao.getCertificate(civicRegistrationNumber, CERTIFICATE_ID))
                 .thenThrow(new PersistenceException(CERTIFICATE_ID, civicRegistrationNumber));
         certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
@@ -338,7 +330,7 @@ public class CertificateServiceImplTest {
 
     @Test(expected = InvalidCertificateException.class)
     public void testRevokeCertificateUpdateStatusThrowsPersistenceException() throws Exception {
-        final Personnummer civicRegistrationNumber = new Personnummer("191212121212");
+        final Personnummer civicRegistrationNumber = createPnr("191212121212");
         when(certificateDao.getCertificate(civicRegistrationNumber, CERTIFICATE_ID)).thenReturn(new Certificate(CERTIFICATE_ID));
         doThrow(new PersistenceException(CERTIFICATE_ID, civicRegistrationNumber)).when(certificateDao).updateStatus(CERTIFICATE_ID,
                 civicRegistrationNumber, CertificateState.CANCELLED, "HSVARD", null);
@@ -347,23 +339,23 @@ public class CertificateServiceImplTest {
 
     @Test(expected = InvalidCertificateException.class)
     public void testRevokeCertificateNullAnswer() throws Exception {
-        final Personnummer civicRegistrationNumber = new Personnummer("191212121212");
+        final Personnummer civicRegistrationNumber = createPnr("191212121212");
         when(certificateDao.getCertificate(civicRegistrationNumber, CERTIFICATE_ID)).thenReturn(null);
         certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
     }
 
     @Test(expected = CertificateRevokedException.class)
     public void testRevokeCertificateAlreadyRevoked() throws Exception {
-        final Personnummer civicRegistrationNumber = new Personnummer("191212121212");
+        final Personnummer civicRegistrationNumber = createPnr("191212121212");
         Certificate certificate = new Certificate(CERTIFICATE_ID);
         certificate.addState(new CertificateStateHistoryEntry("HSVARD", CertificateState.CANCELLED, LocalDateTime.now()));
         when(certificateDao.getCertificate(civicRegistrationNumber, CERTIFICATE_ID)).thenReturn(certificate);
         certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
     }
 
-    @Test(expected = MissingConsentException.class)
+    // Consent not required after 2018-2
+    @Test
     public void testListCertificatesForCitizenMissingConsent() {
-        when(consentService.isConsent(PERSONNUMMER)).thenReturn(false);
         certificateService.listCertificatesForCitizen(PERSONNUMMER, null, null, null);
     }
 
@@ -372,7 +364,6 @@ public class CertificateServiceImplTest {
         final List<String> certificateTypes = Arrays.asList("fk7263");
         final LocalDate fromDate = LocalDate.now();
         final LocalDate toDate = fromDate.plusDays(2);
-        when(consentService.isConsent(PERSONNUMMER)).thenReturn(true);
         certificateService.listCertificatesForCitizen(PERSONNUMMER, certificateTypes, fromDate, toDate);
         verify(certificateDao).findCertificate(PERSONNUMMER, certificateTypes, fromDate, toDate, null);
     }
@@ -380,21 +371,19 @@ public class CertificateServiceImplTest {
     @Test
     public void testListCertificatesForCare() {
         final List<String> careUnits = Arrays.asList("enhet-1");
-        // consent does not matter
-        when(consentService.isConsent(PERSONNUMMER)).thenReturn(false);
         certificateService.listCertificatesForCare(PERSONNUMMER, careUnits);
         verify(certificateDao).findCertificate(PERSONNUMMER, null, null, null, careUnits);
     }
 
-    @Test(expected = MissingConsentException.class)
+    // Consent is not required after 2018-2
+    @Test
     public void testGetCertificateForCitizenMissingConsent() throws Exception {
-        when(consentService.isConsent(PERSONNUMMER)).thenReturn(false);
+        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new Certificate());
         certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
     }
 
     @Test
     public void testGetCertificateForCitizen() throws Exception {
-        when(consentService.isConsent(PERSONNUMMER)).thenReturn(true);
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new Certificate());
         assertNotNull(certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID));
         verify(certificateDao).getCertificate(PERSONNUMMER, CERTIFICATE_ID);
@@ -402,21 +391,18 @@ public class CertificateServiceImplTest {
 
     @Test(expected = InvalidCertificateException.class)
     public void testGetCertificateForCitizenInvalidCertificate() throws Exception {
-        when(consentService.isConsent(PERSONNUMMER)).thenReturn(true);
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenThrow(new PersistenceException(CERTIFICATE_ID, PERSONNUMMER));
         certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
     }
 
     @Test(expected = InvalidCertificateException.class)
     public void testGetCertificateForCitizenCertificateNull() throws Exception {
-        when(consentService.isConsent(PERSONNUMMER)).thenReturn(true);
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(null);
         certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
     }
 
     @Test(expected = CertificateRevokedException.class)
     public void testGetCertificateForCitizenCertificateRevoked() throws Exception {
-        when(consentService.isConsent(PERSONNUMMER)).thenReturn(true);
         Certificate revokedCertificate = new Certificate();
         revokedCertificate.addState(new CertificateStateHistoryEntry("HSVARD", CertificateState.CANCELLED, LocalDateTime.now()));
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(revokedCertificate);
@@ -531,20 +517,19 @@ public class CertificateServiceImplTest {
 
     @Test
     public void testGetCertificate() throws Exception {
-        when(consentService.isConsent(PERSONNUMMER)).thenReturn(false); // won't check
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new Certificate());
         assertNotNull(certificateService.getCertificate(CERTIFICATE_ID, PERSONNUMMER, false));
     }
 
-    @Test(expected = MissingConsentException.class)
+    // Consent not required after 2018-2
+    @Test
     public void testGetCertificateCheckConsentFalse() throws Exception {
-        when(consentService.isConsent(PERSONNUMMER)).thenReturn(false);
+        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new Certificate());
         certificateService.getCertificate(CERTIFICATE_ID, PERSONNUMMER, true);
     }
 
     @Test
     public void testGetCertificateCheckConsent() throws Exception {
-        when(consentService.isConsent(PERSONNUMMER)).thenReturn(true);
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new Certificate());
         assertNotNull(certificateService.getCertificate(CERTIFICATE_ID, PERSONNUMMER, true));
     }
@@ -568,4 +553,10 @@ public class CertificateServiceImplTest {
         when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(revokedCertificate);
         assertNotNull(certificateService.getCertificate(CERTIFICATE_ID, null, false));
     }
+
+    private Personnummer createPnr(String pnr) {
+        return Personnummer.createPersonnummer(pnr)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+    }
+
 }

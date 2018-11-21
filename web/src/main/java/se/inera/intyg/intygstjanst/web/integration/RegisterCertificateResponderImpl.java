@@ -160,7 +160,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         certificateHolder.setCareUnitName(intyg.getSkapadAv().getEnhet().getEnhetsnamn());
         certificateHolder.setCareGiverId(intyg.getSkapadAv().getEnhet().getVardgivare().getVardgivareId().getExtension());
         certificateHolder.setSigningDoctorName(intyg.getSkapadAv().getFullstandigtNamn());
-        certificateHolder.setCivicRegistrationNumber(new Personnummer(intyg.getPatient().getPersonId().getExtension()));
+        certificateHolder.setCivicRegistrationNumber(createPnr(intyg));
         certificateHolder.setSignedDate(intyg.getSigneringstidpunkt());
         certificateHolder.setType(type);
         certificateHolder.setOriginalCertificate(originalCertificate);
@@ -175,5 +175,18 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
                     RelationKod.fromValue(relations.get(0).getTyp().getCode()), LocalDateTime.now());
         }
         return null;
+    }
+
+    private Personnummer createPnr(Intyg intyg) {
+        String personId = null;
+        try {
+            personId = intyg.getPatient().getPersonId().getExtension();
+        } catch (NullPointerException npe) {
+            throw new RuntimeException("Could not get patient's personnummer from intyg");
+        }
+
+        return Personnummer.createPersonnummer(personId)
+                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+
     }
 }
