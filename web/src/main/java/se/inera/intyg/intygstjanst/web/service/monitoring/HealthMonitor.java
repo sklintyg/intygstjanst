@@ -18,12 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.web.service.monitoring;
 
+import io.prometheus.client.Collector;
 import io.prometheus.client.Gauge;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -31,6 +31,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.sql.Time;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Exposes health metrics as Prometheus values. To simplify any 3rd party scraping applications, all metrics produced
@@ -44,9 +46,8 @@ import java.sql.Time;
  *
  * @author eriklupander
  */
-@EnableScheduling
 @Component
-public class HealthMonitor {
+public class HealthMonitor extends Collector {
 
     private static final String PREFIX = "health_";
     private static final String NORMAL = "_normal";
@@ -71,7 +72,6 @@ public class HealthMonitor {
 
     private static final long MILLIS_PER_SECOND = 1000L;
 
-    private static final long DELAY = 30000L;
     private static final String CURR_TIME_SQL = "SELECT CURRENT_TIME()";
 
     @PersistenceContext
@@ -80,12 +80,19 @@ public class HealthMonitor {
     @Autowired
     private ConnectionFactory connectionFactory;
 
-    @Scheduled(fixedDelay = DELAY)
-    public void healthCheck() {
+    @PostConstruct
+    public void init() {
+        this.register();
+    }
+
+    @Override
+    public List<MetricFamilySamples> collect() {
         long secondsSinceStart = (System.currentTimeMillis() - START_TIME) / MILLIS_PER_SECOND;
         UPTIME.set(secondsSinceStart);
         DB_ACCESSIBLE.set(checkTimeFromDb() ? 0 : 1);
         JMS_ACCESSIBLE.set(checkJmsConnection() ? 0 : 1);
+
+        return Collections.emptyList();
     }
 
     private boolean checkJmsConnection() {
