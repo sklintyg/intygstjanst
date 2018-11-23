@@ -21,6 +21,7 @@ gretty {
     debugSuspend = false
 
     jvmArgs = [
+            "-Dresources.folder=${projectDir}/../src/main/resources",
             "-Dspring.profiles.active=" + springProfiles,
             "-Dcatalina.base=${buildDir}/catalina.base",
             "-Drecipient.config.file=${projectDir}/recipients-dev.json",
@@ -44,6 +45,7 @@ dependencies {
     compile "se.inera.intyg.infra:monitoring:${infraVersion}"
 
     compile "se.inera.intyg.common:common-support:${commonVersion}"
+    compile "se.inera.intyg.common:integration-util:${commonVersion}"
     compile "se.inera.intyg.common:common-schemas:${commonVersion}"
     compile "se.inera.intyg.common:fk7263:${commonVersion}"
     compile "se.inera.intyg.common:ts-bas:${commonVersion}"
@@ -66,6 +68,7 @@ dependencies {
     compileOnly "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
     compileOnly "javax.servlet:servlet-api:${servletApiVersion}"
 
+    testCompile "org.assertj:assertj-core:${assertjVersion}"
     testCompile "org.springframework:spring-test:${springVersion}"
     testCompile "xmlunit:xmlunit:${xmlUnitVersion}"
     testCompile "com.jayway.restassured:rest-assured:${restassuredVersion}"

@@ -15,6 +15,7 @@ ext {
     rivtaItintegrationMonitoringSchemasVersion = "1.0.0.4"
 
     activeMqVersion = "5.13.5"
+    assertjVersion = "3.6.2"
     geronimoJmsVersion = "1.1.1"
     hikariCPVersion = "2.3.5"
     jadiraUserTypeVersion = "5.0.0.GA"

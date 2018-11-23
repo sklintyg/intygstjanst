@@ -19,7 +19,6 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import com.google.common.base.Throwables;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +42,7 @@ import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.List;
+import se.inera.intyg.common.services.texts.IntygTextsService;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
@@ -72,6 +72,9 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     @Autowired
     private IntygModuleRegistry moduleRegistry;
 
+    @Autowired
+    private IntygTextsService textsService;
+
     @PostConstruct
     public void initializeJaxbContext() throws JAXBException {
         // We need to register DatePeriodType with the JAXBContext explicitly for some reason.
@@ -84,8 +87,17 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     @PrometheusTimeMethod
     public RegisterCertificateResponseType registerCertificate(String logicalAddress, RegisterCertificateType registerCertificate) {
         try {
-            String intygsTyp = getIntygsTyp(registerCertificate);
-            ModuleApi api = moduleRegistry.getModuleApi(intygsTyp, registerCertificate.getIntyg().getVersion());
+            final String intygsTyp = getIntygsTyp(registerCertificate);
+            final String version = registerCertificate.getIntyg().getVersion();
+
+            //Major version validation
+            ModuleApi api = moduleRegistry.getModuleApi(intygsTyp, version);
+
+            //Minor version validation
+            if (!textsService.isVersionSupported(intygsTyp, version)) {
+               return makeInvalidCertificateVersionResult(registerCertificate);
+            }
+
             String xml = xmlToString(registerCertificate);
             ValidateXmlResponse validationResponse = api.validateXml(xml);
             String additionalInfo = api.getAdditionalInfo(registerCertificate.getIntyg());
@@ -154,19 +166,19 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         return response;
     }
 
-    private RegisterCertificateResponseType makeInvalidCertificateVersionResult(RegisterCertificateType registerCertificate) {
+    private RegisterCertificateResponseType makeInvalidCertificateVersionResult(final RegisterCertificateType registerCertificate) {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
 
-        final String majorVersion = StringUtils.substringBefore(registerCertificate.getIntyg().getVersion(), ".");
+        final String version = registerCertificate.getIntyg().getVersion();
         final String typ = registerCertificate.getIntyg().getTyp().getCode();
-        final String message = MessageFormat.format("Certificate with type: {0} does not support major version: {1}", typ, majorVersion);
+        final String message = MessageFormat.format("Certificate with type: {0} does not support version: {1}", typ, version);
 
         response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, message));
 
         final String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
         final String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
         final String logMessage = MessageFormat.format("Failed to create Certificate with id {0} issued by {1} : "
-                + "Certificate type {2} does not support major version: {3}", certificateId, issuedBy, typ, majorVersion);
+                + "Certificate type {2} does not support version: {3}", certificateId, issuedBy, typ, version);
         LOGGER.error(LogMarkers.VALIDATION, logMessage);
         return response;
     }

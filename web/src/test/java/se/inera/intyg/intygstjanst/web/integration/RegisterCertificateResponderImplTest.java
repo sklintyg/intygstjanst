@@ -25,6 +25,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import se.inera.intyg.common.services.texts.IntygTextsService;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
@@ -70,12 +71,16 @@ public class RegisterCertificateResponderImplTest {
     @Mock
     private ModuleApi moduleApi;
 
+    @Mock
+    private IntygTextsService textsService;
+
     @InjectMocks
     private RegisterCertificateResponderImpl responder = new RegisterCertificateResponderImpl();
 
     @Before
     public void setUp() throws Exception {
         when(moduleRegistry.getModuleApi(INTYGSTYP.toLowerCase(), INTYGSVERSION)).thenReturn(moduleApi);
+        when(textsService.isVersionSupported(INTYGSTYP.toLowerCase(), INTYGSVERSION)).thenReturn(true);
         when(moduleRegistry.getModuleIdFromExternalId(INTYGSTYP)).thenReturn(INTYGSTYP.toLowerCase());
         when(moduleApi.validateXml(anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.VALID, new ArrayList<>()));
         responder.initializeJaxbContext();
