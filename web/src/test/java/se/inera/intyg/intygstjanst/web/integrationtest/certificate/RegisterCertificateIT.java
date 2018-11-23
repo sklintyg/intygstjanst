@@ -89,14 +89,17 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
     @Test
     public void registerCertificateSupportedIntygMajorVersionButIncorrectMinorVersion() {
 
-        final String incorrectVersion = "1.123";
+        final String incorrectVersion = "1.337";
+        final String errorMessage = "Certificate with type: LUSE does not support version: 1.337";
 
         requestTemplate.add("data", new RegisterIntygsData(intygsId, incorrectVersion, personId1));
 
         given()
                 .body(requestTemplate.render())
                 .when().post("inera-certificate/register-certificate-se/v3.0")
-                .then().statusCode(200).rootPath(BASE).body("result.resultCode", is("OK"));
+                .then().statusCode(200).rootPath(BASE)
+                    .body("result.resultCode", is("ERROR"))
+                    .body("result.resultText", is(errorMessage));
     }
 
 
