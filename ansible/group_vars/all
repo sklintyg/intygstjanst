@@ -19,6 +19,11 @@ config_version: "master"
 gitcrypt_key_name: "git-crypt4.key"
 gitcrypt_key_file: "./{{ gitcrypt_key_name }}"
 
+# Application resources
+# Note: end with slash, in order to copy only files inside the source folder, not the folder itself
+app_resources_src: "{{ playbook_dir }}/../src/main/resources/"
+app_resources_folder: "{{ inera_root }}/{{ inventory_hostname }}-resources"
+
 # Tomcat installation
 tomcat_service: "{{ inventory_hostname }}-tomcat"
 inera_tomcat_folder: "{{ inera_root }}/{{ tomcat_service }}"
