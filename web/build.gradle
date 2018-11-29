@@ -31,6 +31,13 @@ gretty {
     ]
 }
 
+task zipResources(type: ArchiveTask) {
+    from '../src/main/resources'
+    archiveName 'resources.zip'
+    archivePath '../devops/openshift/test/env'
+}
+
+build.dependsOn zipResources
 war.dependsOn createVersionPropertyFile
 
 dependencies {
