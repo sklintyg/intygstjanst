@@ -31,7 +31,7 @@ gretty {
     ]
 }
 
-task zipResources(type: ArchiveTask) {
+task zipResources(type: HashArchiveTask) {
     from '../src/main/resources'
     archiveName 'resources.zip'
     archivePath '../devops/openshift/test/env'
