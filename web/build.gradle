@@ -11,6 +11,18 @@ task restAssuredTest(type: Test) {
     include '**/*IT*'
 }
 
+task zipResources(type: ArchiveDirectoryTask) {
+    sourcePath '../src/main/resources'
+    include '*'
+    include '*/*' //to include contents of a folder present inside from directory
+    archiveName 'resources.zip'
+    destinationDir(file('../devops/openshift/test/env'))
+    archiveOnlyIfDiff true
+}
+
+build.dependsOn zipResources
+war.dependsOn createVersionPropertyFile
+
 gretty {
     def springProfiles = 'dev,embedded,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub'
     contextPath = '/inera-certificate'
@@ -30,15 +42,6 @@ gretty {
             "-Xmx512M"
     ]
 }
-
-task zipResources(type: ArchiveTask) {
-    from '../src/main/resources'
-    archiveName 'resources.zip'
-    archivePath '../devops/openshift/test/env'
-}
-
-build.dependsOn zipResources
-war.dependsOn createVersionPropertyFile
 
 dependencies {
     compile project(':intygstjanst-persistence')
