@@ -68,6 +68,7 @@ dependencies {
     compile "se.inera.intyg.common:doi:${commonVersion}"
     compile "se.inera.intyg.common:af00213:${commonVersion}"
     compile "se.inera.intyg.common:ag114:${commonVersion}"
+    compile "se.inera.intyg.common:ag7804:${commonVersion}"
 
 
     compile "org.apache.activemq:activemq-spring:${activeMqVersion}"
