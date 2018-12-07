@@ -4,7 +4,7 @@
 export DB_USERNAME=${DATABASE_USERNAME:-intyg}
 export DB_PASSWORD=${DATABASE_PASSWORD:-intyg}
 export DB_NAME=${DATABASE_NAME:-intygstjanst}
-export DB_SERVER=ind-sint-mysqlvip.ind1.sth.basefarm.net
+export DB_SERVER=ind-pint-mysqlvip.ind1.sth.basefarm.net
 export DB_PORT=3306
 
 export ACTIVEMQ_BROKER_USERNAME=${ACTIVEMQ_BROKER_USERNAME:-admin}
@@ -15,7 +15,7 @@ export REDIS_PORT=$REDIS_SERVICE_PORT
 export REDIS_HOST=$REDIS_SERVICE_HOST
 
 # dev profile is default for pipeline
-SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-qa,caching-enabled,redis-sentinel}
+SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod,caching-enabled,redis-sentinel}
 
 export CATALINA_OPTS_APPEND="\
 -Dspring.profiles.active=$SPRING_PROFILES_ACTIVE \
