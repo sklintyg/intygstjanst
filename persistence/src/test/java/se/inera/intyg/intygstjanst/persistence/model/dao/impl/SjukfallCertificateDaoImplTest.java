@@ -117,7 +117,10 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
 
         assertNotNull(resultList);
         assertEquals(3, resultList.size());
-        assertEquals(3, resultList.get(0).getSjukfallCertificateWorkCapacity().size());
+        assertEquals(3, resultList.stream()
+                .filter(s -> CARE_GIVER_2_ID.equals(s.getCareGiverId()))
+                .findFirst().get()
+                .getSjukfallCertificateWorkCapacity().size());
     }
 
     @Test
