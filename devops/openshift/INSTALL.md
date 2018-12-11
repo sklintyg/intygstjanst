@@ -25,15 +25,15 @@ Provided elsewhere:
 
 For all backing services their actual addresses and user accounts have to be known prior to start the installation procedure.  
 
-### 1.3 Integration / Firewall
+### 1.2 Integration / Firewall
 
 Intygstjänsten communicates in/out with the Inera Service Platform and thus needs firewall rules for that access.
 
-### 1.4 Certificates
+### 1.3 Certificates
 
 Intygstjänsten needs certificates, keystores and truststores for communicating over Tjänsteplattformen. The operations provider is responsible for installing these certificates in the appropriate OpenShift "secret", see detailed instructions in the OpenShift section.
 
-### 1.5 Message Queues
+### 1.4 Message Queues
 
 Two queues needs are required and depending on permissions those may be implicitly created by the application. The `<env>` placeholder shall be substituted with the actual name of the environment such as `stage` or `prod`.
 
