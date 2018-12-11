@@ -76,7 +76,7 @@ To run database migration tool:
 
 1. All Pre-Installation Requirements are fulfilled, se above
 2. Check if a database migration is required
-3. Ensure that the env secret and secret-envvar are up to date
+3. Ensure that the secrets env, certifikat and secret-envvar are up to date
 4. Ensure that the configmap and configmap-envvar are up to date
 5. Check that deployment works as expected 
 6. Fine-tune memory settings for container and java process
@@ -141,14 +141,16 @@ Open _&lt;env>/secret-vars.yaml_ and replace `<value>` with expected values:
 
     ACTIVEMQ_BROKER_USERNAME: <value>
     ACTIVEMQ_BROKER_PASSWORD: <value>
+    DATABASE_USERNAME: <value>
+    DATABASE_PASSWORD: <value>
     NTJP_WS_CERTIFICATE_PASSWORD: <value>
     NTJP_WS_KEY_MANAGER_PASSWORD: <value>
     NTJP_WS_TRUSTSTORE_PASSWORD: <value>
 
 Open _&lt;env>/configmap-vars.yaml_ and replace `<value>` with expected values. You may also need to update name of keystore/truststore files as well as their type (JKS or PKCS12)
 
-    REDIS_HOST: <value>
-    REDIS_PORT: <value>
+    REDIS_SERVICE_HOST: <value>
+    REDIS_SERVICE_PORT: <value>
     REDIS_SENTINEL_MASTER_NAME: <value>
     ACTIVEMQ_BROKER_URL: <value>
     ACTIVEMQ_DESTINATION_QUEUE_NAME: <value>
@@ -159,26 +161,27 @@ Open _&lt;env>/configmap-vars.yaml_ and replace `<value>` with expected values. 
    
 Note: Other properties might be used to define a `<value>`. As an example is the path to certificates indicated by the `CERTIFICATE_FOLDER` property and the truststore file might be defined like:
  
-	NTJP_WS_TRUSTSTORE_FILE: ${CERTIFICATE_FOLDER}/truststore.jks
+	NTJP_WS_TRUSTSTORE_FILE: ${certificate.folder}//truststore-ntjp.jks
     
         
 The _&lt;env>/config/recipients.json_ file may need to be updated with any new intyg recipients.
     
 ##### 2.4.1 Redis Sentinel Configuration
 
-Redis sentinel needs at least three URL:s passed in order to work correctly. These are specified in the _redis.host_ and _redis.port_ properties respectively:
+Redis sentinel needs at least three URL:s passed in order to work correctly. These are specified in the `REDIS_SERVICE_HOST` and `REDIS_SERVICE_PORT` variables respectively:
 
-    redis.host=host1;host2;host3
-    redis.port=26379;26379;26379
+    REDIS_SERVICE_HOST: "host1;host2;host3"
+    REDIS_SERVICE_PORT: "26379;26379;26379"
     
 ### 2.5 Prepare Certificates
 
-The `<env>` placeholder shall be substituted with the actual name of the environment such as `stage` or `prod`.
+The `<env>` placeholder might be substituted with the actual name of the environment such as `stage` or `prod`.
 
-Staging and Prod certificates are **never** committed to git. However, you may temporarily copy them to _&lt;env>/certifikat_ in order to install/update them. Typically, certificates have probably been installed separately. The important thing is that the deployment template **requires** a secret named: `intygstjanst-<env>-certifikat` to be available in the OpenShift project. It will be mounted to _/opt/intygstjanst-<env>/certifikat_ in the container file system.
+Staging and Prod certificates are **never** committed to git. However, you may temporarily copy them to _&lt;env>/certifikat_ in order to install/update them. Typically, certificates have probably been installed separately. The important thing is that the deployment template **requires** a secret named: `intygstjanst-<env>-certifikat` to be available in the OpenShift project. It will be mounted to _/opt/intygstjanst[-<env>]/certifikat_ in the container file system.
 
 
 ### 2.6 Creating Config and Secrets
+
 If you've finished updating the files above, it's now time to use **oc** to install them into OpenShift.
 All commands must be executed from the same folder as this markdown file, i.e. _/intygstjanst/devops/openshift_ 
 
@@ -199,6 +202,7 @@ Creates config map and secret from the contents of the _&lt;env>/env_ and _&lt;e
     > oc create secret generic intygstjanst-<env>-env --from-file=<env>/env/ --type=Opaque
     
 ##### 2.6.3 Create Secret with Certificates
+
 If this hasn't been done previously, you may **temporarily** copy keystores into the _&lt;env>/certifikat_ folder and then install them into OpenShift using this command:
 
     > oc create secret generic intygstjanst-<env>-certifikat --from-file=<env>/certifikat/ --type=Opaque
