@@ -210,6 +210,27 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
         assertEquals(2, resultList.size());
     }
 
+    @Test
+    public void testReplacedIntygIsNotExcludedAfterRevoked() {
+        String originalId = buildDefaultSjukfallCertificate();
+        String replacingId = buildReplacingSjukfallCertificate(originalId);
+
+        List<SjukfallCertificate> resultList = sjukfallCertificateDao
+                .findActiveSjukfallCertificateForCareUnits(CARE_GIVER_1_ID, Arrays.asList(CARE_UNIT_1_ID), MAX_DAGAR_SEDAN_AVSLUT);
+
+        assertEquals(1, resultList.size());
+        assertEquals(replacingId, resultList.get(0).getId());
+
+
+        sjukfallCertificateDao.revoke(replacingId);
+
+        List<SjukfallCertificate> resultList2 = sjukfallCertificateDao
+                .findActiveSjukfallCertificateForCareUnits(CARE_GIVER_1_ID, Arrays.asList(CARE_UNIT_1_ID), MAX_DAGAR_SEDAN_AVSLUT);
+
+        assertEquals(1, resultList2.size());
+        assertEquals(originalId, resultList2.get(0).getId());
+    }
+
     private String buildDefaultSjukfallCertificate() {
         SjukfallCertificate sc = buildSjukfallCertificate(CARE_GIVER_1_ID, CARE_UNIT_1_ID, CARE_UNIT_1_NAME,
                 defaultWorkCapacities(), false);

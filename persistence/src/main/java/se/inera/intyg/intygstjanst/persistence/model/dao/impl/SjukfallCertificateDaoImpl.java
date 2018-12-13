@@ -29,10 +29,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
+import com.google.common.base.Strings;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
@@ -62,6 +63,8 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
             + "INNER JOIN SJUKFALL_CERT sc ON sc.ID = r.TO_INTYG_ID AND "
             + "r.RELATION_KOD IN "
             + "     ('" + RelationKod.ERSATT.value() + "','" + RelationKod.KOMPLT.value() + "') "
+            + "JOIN SJUKFALL_CERT sc2 ON sc2.ID = r.FROM_INTYG_ID "
+            + " AND sc2.deleted = FALSE "
             + "WHERE sc.CIVIC_REGISTRATION_NUMBER IN (:pnrList)";
 
     @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
