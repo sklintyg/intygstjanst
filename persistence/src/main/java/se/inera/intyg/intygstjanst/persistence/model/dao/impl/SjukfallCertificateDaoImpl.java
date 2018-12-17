@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Strings;
+
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
@@ -49,22 +51,23 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(SjukfallCertificateDaoImpl.class);
 
-    private static final String BASE_QUERY =
-            "SELECT sc.civicRegistrationNumber "
+    private static final String BASE_QUERY = "SELECT sc.civicRegistrationNumber "
             + "FROM SjukfallCertificate sc "
             + "JOIN sc.sjukfallCertificateWorkCapacity scwc "
             + "WHERE sc.careGiverId = :careGiverHsaId "
             + "AND sc.careUnitId IN (:careUnitHsaId) "
-            + "AND ((scwc.fromDate <= :today AND scwc.toDate >= :today) "   // active today or...
-            + "  OR (scwc.toDate < :today AND scwc.toDate >= :recentlyClosed)) "  // recently closed
+            + "AND ((scwc.fromDate <= :today AND scwc.toDate >= :today) " // active today or...
+            + "  OR (scwc.toDate < :today AND scwc.toDate >= :recentlyClosed)) " // recently closed
             + "AND sc.deleted = FALSE";
 
+    // An intyg is excluded from being part of a Sjukfall if there is a relation KOMPLT or ERSATT to it,
+    // unless the intyg replacing or complementing it (e.g. the "from") has been revoked.
     private static final String EXCLUDE_REPLACED_INTYG_QUERY = "SELECT TO_INTYG_ID FROM RELATION r "
             + "INNER JOIN SJUKFALL_CERT sc ON sc.ID = r.TO_INTYG_ID AND "
             + "r.RELATION_KOD IN "
             + "     ('" + RelationKod.ERSATT.value() + "','" + RelationKod.KOMPLT.value() + "') "
-            + "JOIN SJUKFALL_CERT sc2 ON sc2.ID = r.FROM_INTYG_ID "
-            + " AND sc2.deleted = FALSE "
+            + "JOIN SJUKFALL_CERT sc2 ON sc2.ID = r.FROM_INTYG_ID " // Makes sure the intyg that replaces/complemements
+            + " AND sc2.deleted = FALSE "                           // an intyg hasn't been revoked.
             + "WHERE sc.CIVIC_REGISTRATION_NUMBER IN (:pnrList)";
 
     @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
@@ -152,8 +155,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         }
 
         // Next, fetch a list of all replaced/complemented intygsId for the patients in the list
-        List<String> replacedOrComplementedIntygsIdList =
-                replacedOrComplementedIntygForPersonnummerList(Arrays.asList(personnummer));
+        List<String> replacedOrComplementedIntygsIdList = replacedOrComplementedIntygForPersonnummerList(Arrays.asList(personnummer));
 
         // Prepare jpql query
         String jpql = "SELECT DISTINCT sc "
