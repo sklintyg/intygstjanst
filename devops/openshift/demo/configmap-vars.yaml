@@ -1,8 +1,22 @@
 apiVersion: v1
 data:
-  ACTIVEMQ_BROKER_URL: tcp://activemq-amq-tcp:61616
-  NTJP_WS_CERTIFICATE_TYPE: PKCS12
-  NTJP_WS_TRUSTSTORE_TYPE: JKS
+  SPRING_PROFILES_ACTIVE: "test,it-fk-stub,it-ts-stub,testability-api,caching-enabled"
+  NTJP_BASE_URL: "https://qa.esb.ntjp.se/vp"
+  INFRASTRUCTURE_DIRECTORY_LOGICALADDRESS: "SE165565594230-1000"
+  LOCALHOST_STUB_URL: "http://127.0.0.1:8080/inera-certificate/stubs"
+  NTJP_WS_CERTIFICATE_FILE: "${certificate.folder}/demo.intygstjanst.intygstjanster.se.p12"
+  NTJP_WS_CERTIFICATE_TYPE: "PKCS12"
+  NTJP_WS_TRUSTSTORE_FILE: "${certificate.folder}/truststore.jks"
+  NTJP_WS_TRUSTSTORE_TYPE: "JKS"
+  ACTIVEMQ_BROKER_URL: "${activemq.amq.tcp.port}?jms.nonBlockingRedelivery=true&jms.redeliveryPolicy.maximumRedeliveries=3&jms.redeliveryPolicy.maximumRedeliveryDelay=6000&jms.redeliveryPolicy.initialRedeliveryDelay=4000&jms.redeliveryPolicy.useExponentialBackOff=true&jms.redeliveryPolicy.backOffMultiplier=2"
+  ACTIVEMQ_DESTINATION_QUEUE_NAME: "demo.statistik.utlatande.queue"
+  STATISTICS_ENABLED: "false"
+  REDIS_HOST: "${redis.service.host}"
+  REDIS_PORT: "${redis.service.port}"
+  DB_NAME: "intyg"
+  DB_SERVER: "${mysql.service.host}"
+  DB_PORT: "${mysql.service.port}"
+  CONFIG_DIR: "${config.folder}"
 kind: ConfigMap
 metadata:
   name: intygstjanst-demo-configmap-envvar
