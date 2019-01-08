@@ -1,9 +1,8 @@
 apiVersion: v1
 data:
   SPRING_PROFILES_ACTIVE: "test,it-fk-stub,it-ts-stub,testability-api,caching-enabled"
-  NTJP_BASE_URL: "https://qa.esb.ntjp.se/vp"
+  NTJP_BASE_URL: "http://127.0.0.1:8080/inera-certificate/stubs"
   INFRASTRUCTURE_DIRECTORY_LOGICALADDRESS: "SE165565594230-1000"
-  LOCALHOST_STUB_URL: "http://127.0.0.1:8080/inera-certificate/stubs"
   NTJP_WS_CERTIFICATE_FILE: "${certificate.folder}/demo.intygstjanst.intygstjanster.se.p12"
   NTJP_WS_CERTIFICATE_TYPE: "PKCS12"
   NTJP_WS_TRUSTSTORE_FILE: "${certificate.folder}/truststore.jks"
