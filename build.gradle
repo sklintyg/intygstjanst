@@ -1,5 +1,5 @@
 plugins {
-    id "se.inera.intyg.plugin.common" version "1.0.68" apply false
+    id "se.inera.intyg.plugin.common" version "1.0.70" apply false
     id "org.akhikhl.gretty" version "1.4.2" apply false
 }
 
@@ -75,6 +75,8 @@ allprojects {
             it.version = se.inera.intyg.IntygPluginKt.findResolvedVersion(project, 'se.inera.intyg.infra')
         }
     }
+
 }
 
 task tagRelease(type: TagReleaseTask)
+
