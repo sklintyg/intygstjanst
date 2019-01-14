@@ -99,6 +99,11 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
         logEvent(MonitoringEvent.SEND_MESSAGE_TO_RECIPIENT, intygsId, recipient);
     }
 
+    @Override
+    public void logApprovedReceiversRegistered(String receivers, String intygsId) {
+        logEvent(MonitoringEvent.APPROVED_RECEIVER_REGISTERED, receivers, intygsId);
+    }
+
     private void logEvent(MonitoringEvent logEvent, Object... logMsgArgs) {
 
         StringBuilder logMsg = new StringBuilder();
@@ -120,7 +125,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
         STATISTICS_REVOKED("Certificate '{}' with type '{}', care unit '{}' - revoke sent to statistics"),
         STATISTICS_MESSAGE_SENT("Message with topic '{}' for certificate '{}' - sent to statistics"),
         SEND_MESSAGE_TO_CARE_RECEIVED("Message with id '{}', care unit recipient '{}' - was received and forwarded to its recipient."),
-        SEND_MESSAGE_TO_RECIPIENT("Message with id '{}' sent to recipient '{}'");
+        SEND_MESSAGE_TO_RECIPIENT("Message with id '{}' sent to recipient '{}'"),
+        APPROVED_RECEIVER_REGISTERED("Approved receiver '{}' registered for certificate '{}'");
 
         private final String msg;
 

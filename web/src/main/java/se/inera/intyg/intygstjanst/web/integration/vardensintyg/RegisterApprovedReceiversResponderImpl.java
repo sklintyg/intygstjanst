@@ -19,6 +19,8 @@
 package se.inera.intyg.intygstjanst.web.integration.vardensintyg;
 
 import com.google.common.base.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.ReceiverApprovalStatus;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversResponderInterface;
@@ -26,6 +28,7 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedrec
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversType;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.ReceiverService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
@@ -36,8 +39,11 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RegisterApprovedReceiversResponderImpl implements RegisterApprovedReceiversResponderInterface {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RegisterApprovedReceiversResponderImpl.class);
 
     @Autowired
     private ReceiverService receiverService;
@@ -45,8 +51,13 @@ public class RegisterApprovedReceiversResponderImpl implements RegisterApprovedR
     @Autowired
     private RecipientService recipientService;
 
+    @Autowired
+    private MonitoringLogService monitoringLogService;
+
     @Override
     public RegisterApprovedReceiversResponseType registerApprovedReceivers(String s, RegisterApprovedReceiversType request) {
+
+        LOG.debug("ENTER - registerApprovedReceivers");
 
         RegisterApprovedReceiversResponseType resp = new RegisterApprovedReceiversResponseType();
         ResultType resultType = new ResultType();
@@ -123,6 +134,15 @@ public class RegisterApprovedReceiversResponderImpl implements RegisterApprovedR
             }
             receiverService.registerApprovedReceiver(newReceiver);
         }
+
+        // Null-protect the logging, shouldn't be necessary though..
+        if (request.getApprovedReceivers() != null) {
+            String receivers = request.getApprovedReceivers().stream()
+                    .map(ar -> ar.getReceiverId() + ": " + ar.getApprovalStatus().name())
+                    .collect(Collectors.joining(", "));
+            monitoringLogService.logApprovedReceiversRegistered(receivers, request.getIntygId().getExtension());
+        }
+
 
         resultType.setResultCode(ResultCodeType.OK);
         resultType.setResultText("Successfully registered " + request.getApprovedReceivers().size() + " receivers for certificate '"

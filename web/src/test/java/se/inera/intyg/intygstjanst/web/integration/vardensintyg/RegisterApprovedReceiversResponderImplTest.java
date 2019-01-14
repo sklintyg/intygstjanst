@@ -29,6 +29,7 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedrec
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversType;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.ReceiverService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
@@ -64,6 +65,9 @@ public class RegisterApprovedReceiversResponderImplTest {
     @Mock
     private RecipientService recipientService;
 
+    @Mock
+    private MonitoringLogService monitoringLogService;
+
     @InjectMocks
     private RegisterApprovedReceiversResponderImpl testee;
 
@@ -82,6 +86,11 @@ public class RegisterApprovedReceiversResponderImplTest {
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
         verify(receiverService, times(2)).registerApprovedReceiver(any(ApprovedReceiver.class));
         verify(recipientService, times(2)).getRecipient(anyString());
+
+        ArgumentCaptor<String> receiversArgument = ArgumentCaptor.forClass(String.class);
+        verify(monitoringLogService, times(1)).logApprovedReceiversRegistered(receiversArgument.capture(), anyString());
+
+        assertEquals("FKASSA: YES, AF: YES", receiversArgument.getValue());
     }
 
     @Test
@@ -104,6 +113,8 @@ public class RegisterApprovedReceiversResponderImplTest {
 
         // This assert proves that FKASSA was added even though it wasn't part of the request.
         assertTrue(approvedReceivers.stream().anyMatch(ar -> "FKASSA".equals(ar.getReceiverId())));
+
+        verify(monitoringLogService, times(1)).logApprovedReceiversRegistered(anyString(), anyString());
     }
 
     @Test
@@ -114,6 +125,7 @@ public class RegisterApprovedReceiversResponderImplTest {
 
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
         verifyZeroInteractions(receiverService);
+        verifyZeroInteractions(monitoringLogService);
     }
 
     @Test
@@ -124,6 +136,8 @@ public class RegisterApprovedReceiversResponderImplTest {
 
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
         verifyZeroInteractions(receiverService);
+
+        verifyZeroInteractions(monitoringLogService);
     }
 
     @Test
@@ -134,6 +148,7 @@ public class RegisterApprovedReceiversResponderImplTest {
 
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
         verifyZeroInteractions(receiverService);
+        verifyZeroInteractions(monitoringLogService);
     }
 
     @Test
@@ -142,6 +157,7 @@ public class RegisterApprovedReceiversResponderImplTest {
 
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
         verifyZeroInteractions(receiverService);
+        verifyZeroInteractions(monitoringLogService);
     }
 
     @Test
@@ -151,6 +167,7 @@ public class RegisterApprovedReceiversResponderImplTest {
 
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
         verifyZeroInteractions(receiverService);
+        verifyZeroInteractions(monitoringLogService);
     }
 
     private RegisterApprovedReceiversType buildReq(String... receivers) {

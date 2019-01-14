@@ -35,4 +35,6 @@ public interface MonitoringLogService {
     void logStatisticsMessageSent(String certificateId, String topic);
     void logSendMessageToCareReceived(String messageId, String careUnit);
     void logSendMessageToRecipient(String messageId, String recipient);
+
+    void logApprovedReceiversRegistered(String receivers, String intygsId);
 }
