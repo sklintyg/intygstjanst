@@ -35,7 +35,7 @@ gretty {
     debugSuspend = false
 
     jvmArgs = [
-            "-Dresources.folder=${projectDir}/../src/main/resources",
+            "-Dresources.folder=classpath:",
             "-Dspring.profiles.active=" + springProfiles,
             "-Dcatalina.base=${buildDir}/catalina.base",
             "-Drecipient.config.file=${projectDir}/recipients-dev.json",
@@ -95,4 +95,6 @@ dependencies {
     // SetCertificateStatusResponder_1.0.xsd (as it exists in two different schemas)
     testRuntime "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     testRuntime "javax.servlet:servlet-api:${servletApiVersion}"
+
+    gretty "se.inera.intyg.refdata:refdata:${refDataVersion}"
 }
