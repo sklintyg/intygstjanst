@@ -35,7 +35,7 @@ gretty {
     debugSuspend = false
 
     jvmArgs = [
-            "-Dresources.folder=classpath:",
+            "-Dresources.folder=file://" + projectDir + "/../src/main/resources",
             "-Dspring.profiles.active=" + springProfiles,
             "-Dcatalina.base=${buildDir}/catalina.base",
             "-Drecipient.config.file=${projectDir}/recipients-dev.json",
@@ -96,5 +96,6 @@ dependencies {
     testRuntime "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     testRuntime "javax.servlet:servlet-api:${servletApiVersion}"
 
-    gretty "se.inera.intyg.refdata:refdata:${refDataVersion}"
+    // FIXME: activate when legacy handling of ref-data (src/main/resources) has been removed
+    // gretty "se.inera.intyg.refdata:refdata:${refDataVersion}"
 }
