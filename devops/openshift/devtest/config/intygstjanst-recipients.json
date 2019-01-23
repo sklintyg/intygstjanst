@@ -99,7 +99,8 @@
     "recipientType": "HUVUDMOTTAGARE",
     "logicalAddress": "AF",
     "certificateTypes" : [
-      "af00213"
+      "af00213",
+      "af00251"
     ],
     "active" : true,
     "trusted": true

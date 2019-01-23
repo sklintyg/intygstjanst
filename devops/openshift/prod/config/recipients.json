@@ -88,7 +88,8 @@
     "recipientType": "HUVUDMOTTAGARE",
     "logicalAddress": "NMTMOCKS",
     "certificateTypes" : [
-      "af00213"
+      "af00213",
+      "af00251"
     ],
     "active" : false,
     "trusted": true
