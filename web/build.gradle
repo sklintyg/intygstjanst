@@ -1,5 +1,5 @@
 apply plugin: 'war'
-apply plugin: 'org.akhikhl.gretty'
+apply plugin: 'org.gretty'
 
 test {
     exclude '**/*IT*'
@@ -24,6 +24,8 @@ build.dependsOn zipResources
 war.dependsOn createVersionPropertyFile
 
 gretty {
+    servletContainer = 'jetty9'
+    
     def springProfiles = 'dev,embedded,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub'
     contextPath = '/inera-certificate'
     contextConfigFile = file("src/main/webapp/WEB-INF/jetty-web.xml")
