@@ -8,6 +8,6 @@ export CATALINA_OPTS_APPEND="\
 -Drecipient.config.file=/opt/$APP_NAME/config/recipients.json \
 -Dcertificate.folder=/opt/$APP_NAME/certifikat \
 -Dcredentials.file=/opt/$APP_NAME/env/secret-env.properties \
--Dresources.folder=/tmp/resources \
+-Dresources.folder=classpath: \
 -Dfile.encoding=UTF-8 \
 -DbaseUrl=http://${APP_NAME}:8080"

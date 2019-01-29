@@ -1,5 +1,12 @@
 ---
 
+- name: Remove refdata
+  shell: rm -f {{ tomcat_lib }}/refdata*.jar
+
+- name: Download refdata
+  get_url: url=https://build-inera.nordicmedtest.se/nexus/repository/public/se/inera/intyg/refdata/refdata/1.0.0.13/refdata-1.0.0.13.jar
+    dest={{ tomcat_lib }}
+
 - name: Download activemq-client-{{ activemq_version }}.jar
   get_url:
     url: http://repo1.maven.org/maven2/org/apache/activemq/activemq-client/{{ activemq_version }}/activemq-client-{{ activemq_version }}.jar
