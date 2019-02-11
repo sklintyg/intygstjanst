@@ -35,12 +35,6 @@
       <property name="mapper" ref="objectMapper" />
     </bean>
 
-    <jaxrs:server id="healthCheckService" address="/health-check">
-      <jaxrs:serviceBeans>
-        <bean class="se.inera.intyg.intygstjanst.web.monitoring.HealthCheckController" />
-      </jaxrs:serviceBeans>
-    </jaxrs:server>
-
     <jaxrs:server id="sendMessageToCareStub" address="/api/send-message-to-care">
       <jaxrs:serviceBeans>
         <bean class="se.inera.intyg.intygstjanst.web.integration.stub.SendMessageToCareResponderStubRestApi" />
