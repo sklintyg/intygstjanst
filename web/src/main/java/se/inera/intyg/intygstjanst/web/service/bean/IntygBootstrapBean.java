@@ -18,8 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.service.bean;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +38,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+
 import se.inera.intyg.common.fk7263.support.Fk7263EntryPoint;
 import se.inera.intyg.common.lisjp.support.LisjpEntryPoint;
 import se.inera.intyg.common.support.model.CertificateState;
@@ -44,17 +57,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistory
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
-
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
 
 public class IntygBootstrapBean {
 
@@ -95,8 +97,8 @@ public class IntygBootstrapBean {
             }
             try {
                 Objects.requireNonNull(resourceFilename);
-                String moduleName = resourceFilename.split("__")[0];
-                String intygMajorTypeVersion = resourceFilename.split("\\.")[1];
+                String moduleName = resourceFilename.split("__", -1)[0];
+                String intygMajorTypeVersion = resourceFilename.split("\\.", -1)[1];
                 LOG.info("Bootstrapping certificate '{}' from module {} (version {})", resource.getFilename(), moduleName,
                         intygMajorTypeVersion);
                 String xmlString = Resources.toString(resource.getURL(), Charsets.UTF_8);
@@ -156,8 +158,8 @@ public class IntygBootstrapBean {
     private void bootstrapLocalCertificates() {
         List<Resource> metadataFiles = getResourceListing("bootstrap-intyg/*-metadata.json");
         List<Resource> contentFiles = getResourceListing("bootstrap-intyg/*-content.xml");
-        Collections.sort(metadataFiles, new ResourceFilenameComparator());
-        Collections.sort(contentFiles, new ResourceFilenameComparator());
+        metadataFiles.sort(new ResourceFilenameComparator());
+        contentFiles.sort(new ResourceFilenameComparator());
         int count = metadataFiles.size();
         for (int i = 0; i < count; i++) {
             Resource metadata = metadataFiles.get(i);
@@ -176,8 +178,8 @@ public class IntygBootstrapBean {
             if (arg0Filename == null || arg1Filename == null) {
                 throw new NullPointerException();
             }
-            String[] firstObjectsStrings = arg0Filename.split("-");
-            String[] secondObjectsStrings = arg1Filename.split("-");
+            String[] firstObjectsStrings = arg0Filename.split("-", -1);
+            String[] secondObjectsStrings = arg1Filename.split("-", -1);
             int first = 0, second = 0;
             final int indexOfInt = 1;
             try {

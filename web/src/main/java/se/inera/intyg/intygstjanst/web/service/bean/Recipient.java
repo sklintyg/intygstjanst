@@ -165,7 +165,7 @@ public class Recipient {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Recipient)) {
             return false;
         }
 

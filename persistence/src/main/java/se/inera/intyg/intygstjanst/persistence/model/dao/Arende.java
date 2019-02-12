@@ -130,7 +130,7 @@ public class Arende {
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        } else if (o == null || getClass() != o.getClass()) {
+        } else if (!(o instanceof Arende)) {
             return false;
         } else {
             Arende fragaSvar = (Arende) o;
