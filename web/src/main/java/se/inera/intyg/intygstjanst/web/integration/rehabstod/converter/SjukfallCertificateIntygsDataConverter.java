@@ -33,6 +33,7 @@ import se.riv.clinicalprocess.healthcond.rehabilitation.v1.Vardgivare;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,9 +87,7 @@ public class SjukfallCertificateIntygsDataConverter {
             return sysselsattningList;
         }
 
-        for (String employment : sc.getEmployment().split(",")) {
-            sysselsattningList.add(employment);
-        }
+        sysselsattningList.addAll(Arrays.asList(sc.getEmployment().split(",", -1)));
         return sysselsattningList;
     }
 

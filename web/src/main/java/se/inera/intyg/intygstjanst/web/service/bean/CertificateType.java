@@ -49,7 +49,7 @@ public class CertificateType {
             return true;
         } else if (obj == null) {
             return false;
-        } else if (getClass() != obj.getClass()) {
+        } else if (!(obj instanceof CertificateType)) {
             return false;
         }
         CertificateType other = (CertificateType) obj;
