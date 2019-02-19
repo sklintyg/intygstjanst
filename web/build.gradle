@@ -96,5 +96,5 @@ dependencies {
     testRuntime "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     testRuntime "javax.servlet:servlet-api:${servletApiVersion}"
 
-    gretty "se.inera.intyg.refdata:refdata:${refDataVersion}"
+    providedRuntime project(':intygstjanst-refdata')
 }

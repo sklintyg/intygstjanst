@@ -1,0 +1,4 @@
+[submodule "refdata"]
+	path = refdata
+	url = https://github.com/sklintyg/refdata.git
+	branch = devtest
