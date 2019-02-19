@@ -18,6 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,10 +39,6 @@ import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MonitoringLogServiceImplTest {
@@ -123,7 +123,8 @@ public class MonitoringLogServiceImplTest {
     public void shouldLogCertificateListedByCare() {
         final Personnummer citizenId = createPnr(CITIZEN);
         logService.logCertificateListedByCare(citizenId);
-        verifyLog(Level.INFO, "CERTIFICATE_LISTED_BY_CARE Certificates for citizen '" + citizenId.getPersonnummerHash() + "' - listed by care");
+        verifyLog(Level.INFO,
+                "CERTIFICATE_LISTED_BY_CARE Certificates for citizen '" + citizenId.getPersonnummerHash() + "' - listed by care");
     }
 
     @Test
@@ -141,9 +142,9 @@ public class MonitoringLogServiceImplTest {
 
     @Test
     public void shouldLogStatisticsSent() {
-        logService.logStatisticsSent(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
+        this.logService.logStatisticsSent(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, RECIPIENT);
         verifyLog(Level.INFO,
-                "STATISTICS_SENT Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - sent to statistics");
+                "STATISTICS_SENT Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT', sent to 'RECIPIENT' - sent to statistics");
     }
 
     @Test
