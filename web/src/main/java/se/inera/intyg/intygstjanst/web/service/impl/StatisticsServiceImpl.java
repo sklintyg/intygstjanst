@@ -18,8 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static java.lang.invoke.MethodHandles.lookup;
+
 import javax.jms.Queue;
 import javax.jms.TextMessage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +31,9 @@ import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
+
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
-
-
-import static java.lang.invoke.MethodHandles.lookup;
 
 @Service
 public class StatisticsServiceImpl implements StatisticsService {
@@ -98,7 +99,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             rc = sendIntygDataPointToStatistik(SENT, null, certificateId, certificateType, recipientId);
         }
         if (rc) {
-            monitoringLogService.logCertificateSent(certificateId, certificateType, careUnitId, recipientId);
+            monitoringLogService.logStatisticsSent(certificateId, certificateType, careUnitId, recipientId);
         }
         return rc;
     }
@@ -126,8 +127,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 certificateXml,
                 certificateId,
                 certificateType,
-                null
-        );
+                null);
     }
 
     private boolean sendIntygDataPointToStatistik(
