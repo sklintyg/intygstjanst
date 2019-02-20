@@ -1,5 +1,5 @@
 apply plugin: 'war'
-apply plugin: 'org.akhikhl.gretty'
+apply plugin: 'org.gretty'
 
 test {
     exclude '**/*IT*'
@@ -24,6 +24,8 @@ build.dependsOn zipResources
 war.dependsOn createVersionPropertyFile
 
 gretty {
+    servletContainer = 'jetty9'
+    
     def springProfiles = 'dev,embedded,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub'
     contextPath = '/inera-certificate'
     contextConfigFile = file("src/main/webapp/WEB-INF/jetty-web.xml")
@@ -33,7 +35,7 @@ gretty {
     debugSuspend = false
 
     jvmArgs = [
-            "-Dresources.folder=${projectDir}/../src/main/resources",
+            "-Dresources.folder=classpath:",
             "-Dspring.profiles.active=" + springProfiles,
             "-Dcatalina.base=${buildDir}/catalina.base",
             "-Drecipient.config.file=${projectDir}/recipients-dev.json",
@@ -60,6 +62,7 @@ dependencies {
     compile "se.inera.intyg.common:fk7263:${commonVersion}"
     compile "se.inera.intyg.common:ts-bas:${commonVersion}"
     compile "se.inera.intyg.common:ts-diabetes:${commonVersion}"
+    compile "se.inera.intyg.common:tstrk1009:${commonVersion}"
     compile "se.inera.intyg.common:luse:${commonVersion}"
     compile "se.inera.intyg.common:lisjp:${commonVersion}"
     compile "se.inera.intyg.common:luae_fs:${commonVersion}"
@@ -92,4 +95,6 @@ dependencies {
     // SetCertificateStatusResponder_1.0.xsd (as it exists in two different schemas)
     testRuntime "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     testRuntime "javax.servlet:servlet-api:${servletApiVersion}"
+
+    gretty "se.inera.intyg.refdata:refdata:${refDataVersion}"
 }

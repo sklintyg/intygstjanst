@@ -75,9 +75,6 @@
     </jaxws:outFaultInterceptors>
   </jaxws:endpoint>
 
-  <jaxws:endpoint address="/ping-for-configuration/v1.0"
-      implementor="se.inera.intyg.intygstjanst.web.integration.PingForConfigurationResponderImpl"/>
-
   <jaxws:endpoint address="/revoke-certificate/v1.0"
       implementor="se.inera.intyg.intygstjanst.web.integration.RevokeMedicalCertificateResponderImpl">
     <jaxws:outFaultInterceptors>

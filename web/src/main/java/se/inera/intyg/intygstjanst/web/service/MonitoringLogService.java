@@ -23,17 +23,29 @@ import se.inera.intyg.schemas.contract.Personnummer;
 public interface MonitoringLogService {
 
     void logCertificateRegistered(String certificateId, String certificateType, String careUnit);
+
     void logCertificateSent(String certificateId, String certificateType, String careUnit, String recipient);
+
     void logCertificateRevoked(String certificateId, String certificateType, String careUnit);
+
     void logCertificateRevokeSent(String certificateId, String certificateType, String careUnit, String recipientId);
+
     void logCertificateListedByCitizen(Personnummer citizenId);
+
     void logCertificateListedByCare(Personnummer citizenId);
+
     void logCertificateStatusChanged(String certificateId, String status);
+
     void logStatisticsCreated(String certificateId, String certificateType, String careUnit);
-    void logStatisticsSent(String certificateId, String certificateType, String careUnit);
+
+    void logStatisticsSent(String certificateId, String certificateType, String careUnit, String recipient);
+
     void logStatisticsRevoked(String certificateId, String certificateType, String careUnit);
+
     void logStatisticsMessageSent(String certificateId, String topic);
+
     void logSendMessageToCareReceived(String messageId, String careUnit);
+
     void logSendMessageToRecipient(String messageId, String recipient);
 
     void logApprovedReceiversRegistered(String receivers, String intygsId);

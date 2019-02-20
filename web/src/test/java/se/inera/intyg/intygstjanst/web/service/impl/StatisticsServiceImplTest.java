@@ -18,10 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 import javax.jms.JMSException;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -32,23 +39,10 @@ import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.test.util.ReflectionTestUtils;
+
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StatisticsServiceImplTest {
@@ -135,7 +129,7 @@ public class StatisticsServiceImplTest {
         verify(message).setStringProperty(eq("certificate-id"), eq(id));
         verify(message).setStringProperty(eq("certificate-type"), eq(type));
         verify(message).setStringProperty(eq("certificate-recipient"), eq(recipient));
-        verify(monitoringLogService, only()).logCertificateSent(id, type, unit, recipient);
+        verify(monitoringLogService, only()).logStatisticsSent(id, type, unit, recipient);
 
     }
 

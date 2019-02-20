@@ -1,9 +1,12 @@
 #!groovy
 
-def buildVersion = "3.8.0.${BUILD_NUMBER}"
+def buildVersion = "3.9.0.${BUILD_NUMBER}"
 def buildRoot = JOB_BASE_NAME.replaceAll(/-.*/, "") // Keep everything up to the first dash
-def commonVersion = "3.9.0.+"
-def infraVersion = "3.9.0.+"
+
+def commonVersion = "3.10.0.+"
+def infraVersion = "3.10.0.+"
+def refDataVersion = "1.0.0.+"
+def versionFlags = "-DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DinfraVersion=${infraVersion} -DrefDataVersion=${refDataVersion}"
 
 stage('checkout') {
     node {
@@ -16,7 +19,7 @@ stage('build') {
     node {
         try {
             shgradle "--refresh-dependencies clean build testReport sonarqube -PcodeQuality -DgruntColors=false \
-                  -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DinfraVersion=${infraVersion}"
+                  ${versionFlags}"
         } finally {
             publishHTML allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'build/reports/allTests', \
                 reportFiles: 'index.html', reportName: 'JUnit results'
@@ -38,7 +41,7 @@ stage('restAssured') {
     node {
         try {
             shgradle "restAssuredTest -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/ \
-                  -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DinfraVersion=${infraVersion}"
+                  ${versionFlags}"
         } finally {
             publishHTML allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'web/build/reports/tests/restAssuredTest', \
                 reportFiles: 'index.html', reportName: 'RestAssured results'
@@ -48,7 +51,7 @@ stage('restAssured') {
 
 stage('tag and upload') {
     node {
-        shgradle "uploadArchives tagRelease -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DinfraVersion=${infraVersion}"
+        shgradle "uploadArchives tagRelease ${versionFlags}"
     }
 }
 
@@ -60,6 +63,7 @@ stage('propagate') {
                 [$class: 'StringParameterValue', name: 'INTYGSTJANST_BUILD_VERSION', value: buildVersion],
                 [$class: 'StringParameterValue', name: 'COMMON_VERSION', value: commonVersion],
                 [$class: 'StringParameterValue', name: 'INFRA_VERSION', value: infraVersion],
+                [$class: 'StringParameterValue', name: 'REF_DATA_VERSION', value: refDataVersion],
                 [$class: 'StringParameterValue', name: 'GIT_REF', value: gitRef],
                 [$class: 'StringParameterValue', name: 'RELEASE_FLAG', value: releaseFlag]
         ]

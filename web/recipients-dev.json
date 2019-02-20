@@ -21,7 +21,8 @@
     "logicalAddress" : "tsTestAdress",
     "certificateTypes" : [
       "ts-bas",
-      "ts-diabetes"
+      "ts-diabetes",
+      "tstrk1009"
     ],
     "active" : true,
     "trusted": true
@@ -45,6 +46,7 @@
     "certificateTypes" : [
       "ts-bas",
       "ts-diabetes",
+      "tstrk1009",
       "fk7263",
       "lisjp",
       "luse",
@@ -62,6 +64,7 @@
     "certificateTypes" : [
       "ts-bas",
       "ts-diabetes",
+      "tstrk1009",
       "fk7263",
       "lisjp",
       "luse",
@@ -99,7 +102,8 @@
     "recipientType": "HUVUDMOTTAGARE",
     "logicalAddress": "AF",
     "certificateTypes" : [
-      "af00213"
+      "af00213",
+      "af00251"
     ],
     "active" : true,
     "trusted": true

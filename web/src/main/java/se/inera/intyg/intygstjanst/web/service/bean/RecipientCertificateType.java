@@ -49,7 +49,7 @@ public class RecipientCertificateType extends CertificateType {
             return true;
         } else if (obj == null) {
             return false;
-        } else if (getClass() != obj.getClass()) {
+        } else if (!(obj instanceof RecipientCertificateType)) {
             return false;
         }
 

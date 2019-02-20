@@ -22,9 +22,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.common.util.logging.LogMarkers;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 @Service
 public class MonitoringLogServiceImpl implements MonitoringLogService {
@@ -75,8 +75,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     }
 
     @Override
-    public void logStatisticsSent(String certificateId, String certificateType, String careUnit) {
-        logEvent(MonitoringEvent.STATISTICS_SENT, certificateId, certificateType, careUnit);
+    public void logStatisticsSent(String certificateId, String certificateType, String careUnit, String recipient) {
+        logEvent(MonitoringEvent.STATISTICS_SENT, certificateId, certificateType, careUnit, recipient);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
         CERTIFICATE_LISTED_BY_CARE("Certificates for citizen '{}' - listed by care"),
         CERTIFICATE_STATUS_CHANGED("Certificate '{}' - changed to status '{}'"),
         STATISTICS_CREATED("Certificate '{}' with type '{}', care unit '{}' - sent to statistics"),
-        STATISTICS_SENT("Certificate '{}' with type '{}', care unit '{}' - sent to statistics"),
+        STATISTICS_SENT("Certificate '{}' with type '{}', care unit '{}', sent to '{}' - sent to statistics"),
         STATISTICS_REVOKED("Certificate '{}' with type '{}', care unit '{}' - revoke sent to statistics"),
         STATISTICS_MESSAGE_SENT("Message with topic '{}' for certificate '{}' - sent to statistics"),
         SEND_MESSAGE_TO_CARE_RECEIVED("Message with id '{}', care unit recipient '{}' - was received and forwarded to its recipient."),

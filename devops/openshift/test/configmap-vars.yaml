@@ -2,6 +2,8 @@ apiVersion: v1
 data:
   NTJP_WS_CERTIFICATE_TYPE: JKS
   NTJP_WS_TRUSTSTORE_TYPE: JKS
+  REFDATA_URL: "https://github.com/sklintyg/refdata/archive/devtest.zip"
+  RESOURCES_FOLDER: "classpath:refdata-devtest/src/main/resources"
 kind: ConfigMap
 metadata:
   name: intygstjanst-test-configmap-envvar

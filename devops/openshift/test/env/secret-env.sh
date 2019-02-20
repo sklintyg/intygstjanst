@@ -4,7 +4,7 @@
 export DB_USERNAME=${DATABASE_USERNAME:-intyg}
 export DB_PASSWORD=${DATABASE_PASSWORD:-intyg}
 export DB_NAME=${DATABASE_NAME:-intygstjanst_test}
-export DB_SERVER=mysql
+export DB_SERVER=$MYSQL_SERVICE_HOST
 export DB_PORT=$MYSQL_SERVICE_PORT
 
 export ACTIVEMQ_BROKER_USERNAME=${ACTIVEMQ_BROKER_USERNAME:-admin}
@@ -25,6 +25,5 @@ export CATALINA_OPTS_APPEND="\
 -Drecipient.config.file=/opt/$APP_NAME/config/intygstjanst-recipients.json \
 -Dcertificate.folder=/opt/$APP_NAME/certifikat \
 -Dcredentials.file=/opt/$APP_NAME/env/secret-env.properties \
--Dresources.folder=/tmp/resources \
 -Dfile.encoding=UTF-8 \
 -DbaseUrl=http://${APP_NAME}:8080"
