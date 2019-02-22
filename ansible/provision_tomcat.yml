@@ -1,0 +1,12 @@
+---
+
+- hosts: tomcat
+  serial: 1
+  become: yes
+  environment:
+    "{{ proxy_env }}"
+  roles:
+    - intygstjanst-systemvariabler
+    - intygstjanst-resurser
+    - intygstjanst-jarfiler
+    - config-folder

@@ -1,0 +1,8 @@
+---
+
+# Configuration repository
+environment_name: "lab"
+config_etc_folder: "{{ config_folder }}/{{ environment_name }}"
+
+# Spring profiles
+profiles: test,it-fk-stub,it-ts-stub,testability-api,wc-hsa-stub,caching-enabled

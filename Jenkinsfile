@@ -27,7 +27,29 @@ stage('build') {
     }
 }
 
-stage('tag') {
+stage('deploy') {
+    node {
+        util.run {
+            ansiblePlaybook extraVars: [version: buildVersion, ansible_ssh_port: "22", deploy_from_repo: "false"], \
+                installation: 'ansible-yum', inventory: 'ansible/inventory/intygstjanst/test', playbook: 'ansible/deploy.yml'
+            util.waitForServer('https://intygstjanst.inera.nordicmedtest.se/inera-certificate/version.jsp')
+        }
+    }
+}
+
+stage('restAssured') {
+    node {
+        try {
+            shgradle "restAssuredTest -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/ \
+                  ${versionFlags}"
+        } finally {
+            publishHTML allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'web/build/reports/tests/restAssuredTest', \
+                reportFiles: 'index.html', reportName: 'RestAssured results'
+        }
+    }
+}
+
+stage('tag and upload') {
     node {
         shgradle "uploadArchives tagRelease ${versionFlags}"
     }
