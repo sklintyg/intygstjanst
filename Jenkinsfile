@@ -29,7 +29,7 @@ stage('build') {
 
 stage('tag') {
     node {
-        shgradle "uploadArchives tagRelease ${versionFlags}"
+        shgradle "tagRelease ${versionFlags}"
     }
 }
 
