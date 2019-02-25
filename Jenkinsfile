@@ -5,7 +5,7 @@ def buildRoot = JOB_BASE_NAME.replaceAll(/-.*/, "") // Keep everything up to the
 
 def commonVersion = "3.10.0.+"
 def infraVersion = "3.10.0.+"
-def refDataVersion = "1.0.0.+"
+def refDataVersion = "1.0-SNAPSHOT"
 def versionFlags = "-DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DinfraVersion=${infraVersion} -DrefDataVersion=${refDataVersion}"
 
 stage('checkout') {
