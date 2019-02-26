@@ -5,7 +5,7 @@ def buildRoot = JOB_BASE_NAME.replaceAll(/-.*/, "") // Keep everything up to the
 
 def commonVersion = "3.10.0.+"
 def infraVersion = "3.10.0.+"
-def refDataVersion = "1.0.0.+"
+def refDataVersion = "1.0-SNAPSHOT"
 def versionFlags = "-DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DinfraVersion=${infraVersion} -DrefDataVersion=${refDataVersion}"
 
 stage('checkout') {
@@ -27,31 +27,9 @@ stage('build') {
     }
 }
 
-stage('deploy') {
+stage('tag') {
     node {
-        util.run {
-            ansiblePlaybook extraVars: [version: buildVersion, ansible_ssh_port: "22", deploy_from_repo: "false"], \
-                installation: 'ansible-yum', inventory: 'ansible/inventory/intygstjanst/test', playbook: 'ansible/deploy.yml'
-            util.waitForServer('https://intygstjanst.inera.nordicmedtest.se/inera-certificate/version.jsp')
-        }
-    }
-}
-
-stage('restAssured') {
-    node {
-        try {
-            shgradle "restAssuredTest -DbaseUrl=http://intygstjanst.inera.nordicmedtest.se/ \
-                  ${versionFlags}"
-        } finally {
-            publishHTML allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'web/build/reports/tests/restAssuredTest', \
-                reportFiles: 'index.html', reportName: 'RestAssured results'
-        }
-    }
-}
-
-stage('tag and upload') {
-    node {
-        shgradle "uploadArchives tagRelease ${versionFlags}"
+        shgradle "tagRelease ${versionFlags}"
     }
 }
 

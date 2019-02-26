@@ -16,8 +16,6 @@ data:
   DB_SERVER: "${mysql.service.host}"
   DB_PORT: "${mysql.service.port}"
   CONFIG_DIR: "${config.folder}"
-  RESOURCES_FOLDER: "classpath:refdata-master/src/main/resources"
-  REFDATA_URL: "https://github.com/sklintyg/refdata/archive/master.zip"
 kind: ConfigMap
 metadata:
   name: intygstjanst-demo-configmap-envvar
