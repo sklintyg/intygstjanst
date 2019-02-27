@@ -1,6 +1,0 @@
----
-# This playbook provisions the resources needed by intygstjansten 
-
-- include: provision_mysql.yml
-- include: provision_tomcat.yml
-- include: unlock_config_folder.yml
