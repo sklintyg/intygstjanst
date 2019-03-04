@@ -47,27 +47,27 @@ stage('build') {
 //    }
 //}
 
-stage('tag') {
+stage('upload') {
     node {
-        shgradle "tagRelease -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DinfraVersion=${infraVersion}"
+        shgradle "uploadArchives -DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DinfraVersion=${infraVersion}"
     }
 }
 
-stage('propagate') {
-    node {
-        gitRef = "v${buildVersion}"
-        releaseFlag = "${GIT_BRANCH.startsWith("release")}"
-        build job: "intygstjanst-dintyg-build", wait: false, parameters: [
-                [$class: 'StringParameterValue', name: 'INTYGSTJANST_BUILD_VERSION', value: buildVersion],
-                [$class: 'StringParameterValue', name: 'COMMON_VERSION', value: commonVersion],
-                [$class: 'StringParameterValue', name: 'INFRA_VERSION', value: infraVersion],
-                [$class: 'StringParameterValue', name: 'GIT_REF', value: gitRef],
-                [$class: 'StringParameterValue', name: 'RELEASE_FLAG', value: releaseFlag]
-        ]
-        build job: "${buildRoot}-webcert", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
-        build job: "${buildRoot}-minaintyg", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
-    }
-}
+//stage('propagate') {
+//    node {
+//        gitRef = "v${buildVersion}"
+//        releaseFlag = "${GIT_BRANCH.startsWith("release")}"
+//        build job: "intygstjanst-dintyg-build", wait: false, parameters: [
+//                [$class: 'StringParameterValue', name: 'INTYGSTJANST_BUILD_VERSION', value: buildVersion],
+//                [$class: 'StringParameterValue', name: 'COMMON_VERSION', value: commonVersion],
+//                [$class: 'StringParameterValue', name: 'INFRA_VERSION', value: infraVersion],
+//                [$class: 'StringParameterValue', name: 'GIT_REF', value: gitRef],
+//                [$class: 'StringParameterValue', name: 'RELEASE_FLAG', value: releaseFlag]
+//        ]
+//        build job: "${buildRoot}-webcert", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
+//        build job: "${buildRoot}-minaintyg", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
+//    }
+//}
 
 stage('notify') {
     node {
