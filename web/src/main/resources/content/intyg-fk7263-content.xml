@@ -1,4 +1,4 @@
-<registerMedicalCertificateType xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2" xmlns:ns4="urn:riv:insuranceprocess:healthreporting:mu7263:3" xmlns:ns3="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3">
+<ns3:RegisterMedicalCertificate xmlns:ns2="urn:riv:insuranceprocess:healthreporting:2" xmlns:ns4="urn:riv:insuranceprocess:healthreporting:mu7263:3" xmlns:ns3="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3">
     <ns3:lakarutlatande>
         <ns4:lakarutlatande-id>CERTIFICATE_ID</ns4:lakarutlatande-id>
         <ns4:typAvUtlatande>Läkarintyg enligt 3 kap, 8 § lagen (1962:381) om allmän försäkring</ns4:typAvUtlatande>
@@ -117,4 +117,4 @@
             </ns4:arbetsformaga>
         </ns4:funktionstillstand>
     </ns3:lakarutlatande>
-</registerMedicalCertificateType>
+</ns3:RegisterMedicalCertificate>

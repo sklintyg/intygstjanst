@@ -18,6 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v1;
 
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
+import static org.junit.Assert.assertTrue;
+
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -31,13 +40,9 @@ import org.stringtemplate.v4.STGroupFile;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.response.ValidatableResponse;
+
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
-
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.StringStartsWith.startsWith;
-import static org.junit.Assert.assertTrue;
 
 public class GetCertificateInsuranceProcessIT extends BaseIntegrationTest {
 
@@ -142,10 +147,12 @@ public class GetCertificateInsuranceProcessIT extends BaseIntegrationTest {
     }
 
     private String getRegisterMedicalCertificateSubstring(String originalRequest) {
-        final String endOfRequest = "</ns3:RegisterMedicalCertificate>";
-        int start = originalRequest.indexOf("<ns3:RegisterMedicalCertificate");
-        int end = originalRequest.indexOf(endOfRequest) + endOfRequest.length();
-        return originalRequest.substring(start, end);
+        Matcher m = Pattern.compile(".*(<ns[0-9]+:RegisterMedicalCertificate.*</ns[0-9]+:RegisterMedicalCertificate>).*",
+                Pattern.DOTALL).matcher(originalRequest);
+
+        assertTrue(m.find());
+
+        return m.group(1);
     }
 
     private String registerRequest(String intygId, String personId, String template) {
