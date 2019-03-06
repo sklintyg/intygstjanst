@@ -50,6 +50,8 @@ public class GetCertificateInsuranceProcessIT extends BaseIntegrationTest {
 
     private static final String INTYG_ID = "getCertificateInsuranceProcessITcertificateId";
     private static final String PERSON_ID = "19010101-0101";
+    static Pattern EXTRACT_MCERT_PATTERN = Pattern.compile(".*(<(ns\\d+:RegisterMedicalCertificate).*</\\2>).*",
+            Pattern.DOTALL);
 
     @Before
     public void setup() {
@@ -147,8 +149,7 @@ public class GetCertificateInsuranceProcessIT extends BaseIntegrationTest {
     }
 
     private String getRegisterMedicalCertificateSubstring(String originalRequest) {
-        Matcher m = Pattern.compile(".*(<ns[0-9]+:RegisterMedicalCertificate.*</ns[0-9]+:RegisterMedicalCertificate>).*",
-                Pattern.DOTALL).matcher(originalRequest);
+        Matcher m = EXTRACT_MCERT_PATTERN.matcher(originalRequest);
 
         assertTrue(m.find());
 
