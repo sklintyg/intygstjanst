@@ -22,7 +22,8 @@
     "certificateTypes" : [
       "ts-bas",
       "ts-diabetes",
-      "tstrk1009"
+      "tstrk1009",
+      "tstrk1062"
     ],
     "active" : true,
     "trusted": true
@@ -47,6 +48,7 @@
       "ts-bas",
       "ts-diabetes",
       "tstrk1009",
+      "tstrk1062",
       "fk7263",
       "lisjp",
       "luse",
@@ -65,6 +67,7 @@
       "ts-bas",
       "ts-diabetes",
       "tstrk1009",
+      "tstrk1062",
       "fk7263",
       "lisjp",
       "luse",
