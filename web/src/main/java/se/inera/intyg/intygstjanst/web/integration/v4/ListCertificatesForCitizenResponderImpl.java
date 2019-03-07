@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@SchemaValidation
+@SchemaValidation(type = SchemaValidation.SchemaValidationType.IN)
 public class ListCertificatesForCitizenResponderImpl implements ListCertificatesForCitizenResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ListCertificatesForCitizenResponderImpl.class);
