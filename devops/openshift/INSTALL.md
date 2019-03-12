@@ -279,6 +279,6 @@ The pod(s) running intygstjanst should become available within a few minutes use
 	> oc logs dc/intygstjanst
 
 ### 3.9 Routes
-IT should _only_ be accessible from inside of the OpenShift project using its _service_ name (e.g. http://intygstjanst-&lt;env>:8080) and from Nationella tjänsteplattformen, i.e. take care when setting up an OpenShift routes so the IT service isn't publicly accessible from the Internet.
+IT should _only_ be accessible from inside of the OpenShift project using its _service_ name (e.g. http://intygstjanst:8080) and from Nationella tjänsteplattformen, i.e. take care when setting up an OpenShift routes so the IT service isn't publicly accessible from the Internet.
 
 The security measures based on mutual TLS and PKI should nevertheless stop any attempts from unsolicited callers.
