@@ -19,7 +19,7 @@ The main update is activation of the new reference data concept (master data for
 
 Latest builds of refdata can be downloaded from the Inera Nexus server. 
 
-	https://build-inera.nordicmedtest.se/nexus/repository/releases/se/inera/intyg/refdata/refdata/1.0.0.<build-num>/refdata-1.0.0.<build-num>.jar]
+	https://build-inera.nordicmedtest.se/nexus/repository/releases/se/inera/intyg/refdata/refdata/1.0.0.<build-num>/refdata-1.0.0.<build-num>.jar
 
 ### 1.2 Other recommendations
 
