@@ -1,14 +1,17 @@
 apiVersion: v1
 data:
-  REDIS_SERVICE_HOST: ind-sint-redis1.ind1.sth.basefarm.net;ind-sint-redis2.ind1.sth.basefarm.net;ind-sint-redis3.ind1.sth.basefarm.net
-  REDIS_SERVICE_PORT: 26379;26379;26379
+  NTJP_BASE_URL: "https://qa.esb.ntjp.se/vp"
+  REDIS_SERVICE_HOST: "ind-sint-redis1.ind1.sth.basefarm.net;ind-sint-redis2.ind1.sth.basefarm.net;ind-sint-redis3.ind1.sth.basefarm.net"
+  REDIS_SERVICE_PORT: "26379;26379;26379"
   ACTIVEMQ_BROKER_URL: "failover:(tcp://ind-sint-activemq1.ind1.sth.basefarm.net:61616,tcp://ind-sint-activemq2.ind1.sth.basefarm.net:61616)?jms.nonBlockingRedelivery=true&jms.redeliveryPolicy.useExponentialBackOff=true&jms.redeliveryPolicy.backOffMultiplier=2&jms.redeliveryPolicy.maximumRedeliveries=30&jms.redeliveryPolicy.maximumRedeliveryDelay=3600000&jms.redeliveryPolicy.initialRedeliveryDelay=60000"
   TSBAS_SEND_CERTIFICATE_TO_RECIPIENT_REGISTERCERTIFICATE_VERSION: "v1"
-  ACTIVEMQ_DESTINATION_QUEUE_NAME: statistik.utlatande.queue
-  NTJP_WS_CERTIFICATE: ${certificate.folder}/qa.minaintyg.sjunet.org.p12
-  NTJP_WS_TRUSTSTORE: ${certificate.folder}/truststore-ntjp.jks
-  NTJP_WS_CERTIFICATE_TYPE: PKCS12
-  NTJP_WS_TRUSTSTORE_TYPE: JKS
+  ACTIVEMQ_DESTINATION_QUEUE_NAME: "statistik.utlatande.queue"
+  INFRASTRUCTURE_DIRECTORY_LOGICALADDRESS: "SE165565594230-1000"
+  REDIS_SENTINEL_MASTER_NAME: "ind-sint-redis"
+  NTJP_WS_CERTIFICATE: "${certificate.folder}/qa.minaintyg.sjunet.org.p12"
+  NTJP_WS_TRUSTSTORE: "${certificate.folder}/truststore-ntjp.jks"
+  NTJP_WS_CERTIFICATE_TYPE: "PKCS12"
+  NTJP_WS_TRUSTSTORE_TYPE: "JKS"
 kind: ConfigMap
 metadata:
   name: intygstjanst-configmap-envvar
