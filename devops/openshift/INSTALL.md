@@ -9,7 +9,7 @@ Installation of Web Application Intygstjänsten (IT) on OpenShift.
 
 Database schema doesn't need any updates.
 
-### 1.1 Configuration of reference data
+### 1.2 Configuration of reference data
 
 The main update is activation of the new reference data concept (master data for shared configurations). Refdata is provided as a JAR file and configured with the `REFDATA_URL` and `RESOURCES_FOLDER` parameters. Normally the default value of `RESOURCES_FOLDER` should be set to  `classpath:`. Three configuration updates is required in order to activate the new refdata:
 
@@ -21,7 +21,7 @@ Latest builds of refdata can be downloaded from the Inera Nexus server.
 
 	https://build-inera.nordicmedtest.se/nexus/repository/releases/se/inera/intyg/refdata/refdata/1.0.0.<build-num>/refdata-1.0.0.<build-num>.jar
 
-### 1.2 Other recommendations
+### 1.3 Other recommendations
 
 The following (well known) observations might require an action:
 
@@ -164,7 +164,7 @@ Syntax to create or replace the template:
 
 For security reasons, no secret properties or configuration may be checked into git. Thus, a number of placeholders needs to be replaced prior to creating or updating secrets and/or config maps.
 
-Open _&lt;env>/secret-vars.yaml_ and assign corrrect values:
+Open _&lt;env>/secret-vars.yaml_ and assign correct values:
 
     ACTIVEMQ_BROKER_USERNAME: "<username>"
     ACTIVEMQ_BROKER_PASSWORD: "<password>"
@@ -179,8 +179,8 @@ Open _&lt;env>/configmap-vars.yaml_ and replace `<value>` with expected values. 
     REFDATA_URL: "<url>"
     RESOURCES_FOLDER: "classpath:"
     NTJP_BASE_URL: "<url>"
-    REDIS_SERVICE_HOST: "<hostname1[;hostname2;...]>"
-    REDIS_SERVICE_PORT: "<port1[;port2;...]>"
+    REDIS_HOST: "<hostname1[;hostname2;...]>"
+    REDIS_PORT: "<port1[;port2;...]>"
     REDIS_SENTINEL_MASTER_NAME: "<name>"
     ACTIVEMQ_BROKER_URL: "<failover:(url1, url2, ...)>"
     ACTIVEMQ_DESTINATION_QUEUE_NAME: "statistik.utlatande.queue"
@@ -189,8 +189,8 @@ Open _&lt;env>/configmap-vars.yaml_ and replace `<value>` with expected values. 
     TSBAS_SEND_CERTIFICATE_TO_RECIPIENT_REGISTERCERTIFICATE_VERSION: "v1"
     NTJP_WS_CERTIFICATE_FILE: "${certificate.folder}/<filename>"
     NTJP_WS_TRUSTSTORE_FILE: "${certificate.folder}/<filename>"
-    NTJP_WS_CERTIFICATE_TYPE: "<JKS | PKCS12>"
-    NTJP_WS_TRUSTSTORE_TYPE: "<JKS | PKCS12>"
+    NTJP_WS_CERTIFICATE_TYPE: [ "JKS" | "PKCS12" ]
+    NTJP_WS_TRUSTSTORE_TYPE: [ "JKS" | "PKCS12" ]
    
 Note: Parameters shall follow the Java naming convention when used as in the value field, e.g. the path to certificates indicated by the `CERTIFICATE_FOLDER` property and the truststore file might be defined like:
  
@@ -202,9 +202,9 @@ The _&lt;env>/config/recipients.json_ file might have to be updated with new rec
 
 Redis sentinel requires at least three URL:s passed in order to work correctly. These are specified in the `REDIS_SERVICE_HOST` and `REDIS_SERVICE_PORT` parameters respectively:
 
-    REDIS_SERVICE_HOST: "host1;host2;host3"
-    REDIS_SERVICE_PORT: "26379;26379;26379"
-    REDIS_SENTINEL_MASTER_NAME: "<name>"
+    REDIS_HOST: "host1;host2;host3"
+    REDIS_PORT: "26379;26379;26379"
+    REDIS_SENTINEL_MASTER_NAME: "master"
     
 ### 3.5 Prepare Certificates
 
@@ -213,7 +213,7 @@ The `<env>` placeholder might be substituted with the actual name of the environ
 Staging and Prod certificates are **never** committed to git. However, you may temporarily copy them to _&lt;env>/certifikat_ in order to install/update them. Typically, certificates have probably been installed separately. The important thing is that the deployment template **requires** a secret named: `intygstjanst-<env>-certifikat` to be available in the OpenShift project. It will be mounted to _/opt/intygstjanst[-<env>]/certifikat_ in the container file system.
 
 
-### 2.6 Creating Config and Secrets
+### 3.6 Creating Config and Secrets
 
 If you've finished updating the files above, it's now time to use **oc** to install them into OpenShift.
 All commands must be executed from the same folder as this markdown file, i.e. _/intygstjanst/devops/openshift_ 
@@ -267,7 +267,7 @@ Alternatively, it's possible to use the deploytemplate-webapp file locally:
 ##### 3.7.1 Computing resources
 IT requires a lot of CPU, and especially for XML marshalling of certificates which also consumes significant amounts of Java heap memory.
 
-Minimum requirements are:
+Minimum production requirements are:
 
 1. 2x CPU Cores
 2. 2x GB RAM
