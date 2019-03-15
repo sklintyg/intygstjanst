@@ -3,7 +3,7 @@
     "id": "FKASSA",
     "name": "F\u00F6rs\u00E4kringskassan",
     "recipientType": "HUVUDMOTTAGARE",
-    "logicalAddress": "2021005521",
+    "logicalAddress": "NMTMOCKS",
     "certificateTypes": [
       "fk7263",
       "luse",
@@ -30,7 +30,7 @@
     "id" : "HSVARD",
     "name" : "Hälso- och sjukvården",
     "recipientType": "MOTTAGARE",
-    "logicalAddress" : "hsvardAdress",
+    "logicalAddress" : "NMTMOCKS",
     "certificateTypes" : [
       "ts-bas",
       "ts-diabetes",
@@ -47,7 +47,7 @@
     "id" : "INVANA",
     "name" : "Invånaren",
     "recipientType": "MOTTAGARE",
-    "logicalAddress" : "miAdress",
+    "logicalAddress" : "NMTMOCKS",
     "certificateTypes" : [
       "ts-bas",
       "ts-diabetes",
@@ -64,22 +64,22 @@
     "id": "SKV",
     "name": "Skatteverket",
     "recipientType": "DIREKTMOTTAGARE",
-    "logicalAddress": "Skatteverket",
+    "logicalAddress": "NMTMOCKS",
     "certificateTypes" : [
       "db"
     ],
-    "active"  : false,
+    "active"  : true,
     "trusted" : true
   },
   {
     "id": "SOS",
     "name": "Socialstyrelsen",
     "recipientType": "DIREKTMOTTAGARE",
-    "logicalAddress": "SOS",
+    "logicalAddress": "NMTMOCKS",
     "certificateTypes" : [
       "doi"
     ],
-    "active"  : false,
+    "active"  : true,
     "trusted" : true
   },
   {
@@ -88,10 +88,21 @@
     "recipientType": "HUVUDMOTTAGARE",
     "logicalAddress": "NMTMOCKS",
     "certificateTypes" : [
-      "af00213",
-      "af00251"
+      "af00213"
     ],
-    "active" : false,
+    "active" : true,
     "trusted": true
+  },
+  {
+    "id": "SKANDIA",
+    "name": "SKANDIA SSEK",
+    "recipientType": "MOTTAGARE",
+    "logicalAddress": "NMTMOCKS",
+    "certificateTypes": [
+      "fk7263",
+      "lisjp"
+    ],
+    "active" : true,
+    "trusted": false
   }
 ]

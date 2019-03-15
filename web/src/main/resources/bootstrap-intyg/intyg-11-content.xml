@@ -1,4 +1,4 @@
-<registerCertificateType xmlns:ns2="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3" xmlns:ns4="urn:riv:clinicalprocess:healthcond:certificate:3" xmlns:ns3="urn:riv:clinicalprocess:healthcond:certificate:types:3">
+<ns2:RegisterCertificate xmlns:ns2="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3" xmlns:ns4="urn:riv:clinicalprocess:healthcond:certificate:3" xmlns:ns3="urn:riv:clinicalprocess:healthcond:certificate:types:3">
     <ns2:intyg>
         <ns4:intygs-id>
             <ns3:root>SE2321000016-H489</ns3:root>
@@ -145,4 +145,4 @@
             <ns4:delsvar id="9002.1">Längden är 166 centimeter.</ns4:delsvar>
         </ns4:svar>
     </ns2:intyg>
-</registerCertificateType>
+</ns2:RegisterCertificate>

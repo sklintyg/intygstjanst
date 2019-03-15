@@ -18,10 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import static se.inera.intyg.common.support.Constants.KV_RELATION_CODE_SYSTEM;
+
+
+import java.text.MessageFormat;
+import java.util.List;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.IntygRelations;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.ListRelationsForCertificateResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.ListRelationsForCertificateResponseType;
@@ -36,15 +43,10 @@ import se.inera.intyg.intygstjanst.web.service.RelationService;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvRelation;
 
-import java.text.MessageFormat;
-import java.util.List;
-
-import static se.inera.intyg.common.support.Constants.KV_RELATION_CODE_SYSTEM;
-
 /**
  * Created by eriklupander on 2017-05-11.
  */
-@SchemaValidation
+@SchemaValidation(type = SchemaValidation.SchemaValidationType.IN)
 public class ListRelationsForCertificateResponderImpl implements ListRelationsForCertificateResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ListRelationsForCertificateResponderImpl.class);

@@ -24,13 +24,14 @@
 
     <include resource="logback-ocp-base.xml"/>
 
+    <logger name="org.apache.cxf" level="WARN" />
+
     <logger name="se.inera.intyg.intygstjanst.web.service.MonitoringLogService" level="INFO" additivity="false">
         <appender-ref ref="MONITORING" />
     </logger>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="VALIDATION"/>
     </root>
 
 </configuration>
