@@ -18,30 +18,32 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest;
 
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Iterator;
-import java.util.Map;
+import com.google.common.collect.ImmutableMap;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
-import com.google.common.collect.ImmutableMap;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
-import com.google.common.base.Throwables;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.Map;
 
 public class XPathExtractor {
     private XPath xpath;
@@ -56,8 +58,8 @@ public class XPathExtractor {
 
             xpath = XPathFactory.newInstance().newXPath();
             xpath.setNamespaceContext(new XPathNamespaceContext(namespaceMap));
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -72,8 +74,8 @@ public class XPathExtractor {
                 transformer.transform(new DOMSource(node), new StreamResult(writer));
                 return writer.toString();
             }
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
+        } catch (XPathExpressionException | TransformerException e) {
+            throw new RuntimeException(e);
         }
         return null;
     }

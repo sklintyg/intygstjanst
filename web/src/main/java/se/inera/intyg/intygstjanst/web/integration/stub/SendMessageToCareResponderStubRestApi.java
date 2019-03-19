@@ -95,7 +95,7 @@ public class SendMessageToCareResponderStubRestApi {
         try {
             return Response.ok(new ObjectMapper().writeValueAsString(messageIds)).build();
         } catch (JsonProcessingException e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
     }
 

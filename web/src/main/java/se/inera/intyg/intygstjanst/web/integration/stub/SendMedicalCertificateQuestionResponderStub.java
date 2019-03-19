@@ -18,25 +18,26 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
-import java.io.StringWriter;
-
-import javax.xml.bind.*;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
-
-import com.google.common.base.Throwables;
-
-// CHECKSTYLE:OFF LineLength
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.rivtabp20.v1.SendMedicalCertificateQuestionResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.*;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.ObjectFactory;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType;
+import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import java.io.StringWriter;
+
+// CHECKSTYLE:OFF LineLength
 // CHECKSTYLE:ON LineLength
 
 /**
@@ -57,7 +58,7 @@ public class SendMedicalCertificateQuestionResponderStub implements SendMedicalC
         try {
             jaxbContext = JAXBContext.newInstance(SendMedicalCertificateQuestionType.class);
         } catch (JAXBException e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
     }
 

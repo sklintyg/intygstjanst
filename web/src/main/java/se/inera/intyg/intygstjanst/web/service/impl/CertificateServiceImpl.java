@@ -20,7 +20,6 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -270,14 +269,13 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         sjukfallCertificateService.created(certificate);
     }
 
-    private String certificateReceivedForStatistics(CertificateHolder certificateHolder)
-            throws CertificateAlreadyExistsException, InvalidCertificateException {
+    private String certificateReceivedForStatistics(CertificateHolder certificateHolder) {
         try {
             ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType(), certificateHolder.getTypeVersion());
             return moduleApi.transformToStatisticsService(certificateHolder.getOriginalCertificate());
         } catch (ModuleNotFoundException | ModuleException e) {
             LOGGER.error("Module not found for certificate of type {}", certificateHolder.getType());
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -289,10 +287,9 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             certificateXml = moduleApi.transformToStatisticsService(certificate.getOriginalCertificate().getDocument());
         } catch (ModuleNotFoundException | ModuleException e) {
             LOGGER.error("Module not found for certificate of type {}", certificate.getType());
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
-        statisticsService.revoked(certificateXml, certificate.getId(), certificate.getType(),
-                certificate.getCareUnitId());
+        statisticsService.revoked(certificateXml, certificate.getId(), certificate.getType(), certificate.getCareUnitId());
 
     }
 

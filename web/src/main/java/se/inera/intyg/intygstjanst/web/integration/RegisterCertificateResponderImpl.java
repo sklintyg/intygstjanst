@@ -18,30 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import com.google.common.base.Throwables;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3._2000._09.xmldsig_.SignatureType;
 import org.w3._2002._06.xmldsig_filter2.XPathType;
-import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.ObjectFactory;
-import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponderInterface;
-import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
-import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
-import se.riv.clinicalprocess.healthcond.certificate.types.v3.DatePeriodType;
-import se.riv.clinicalprocess.healthcond.certificate.types.v3.PartialDateType;
-import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
-import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
-import se.riv.clinicalprocess.healthcond.certificate.v3.Relation;
-import javax.annotation.PostConstruct;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import java.io.StringWriter;
-import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.util.List;
 import se.inera.intyg.common.services.texts.IntygTextsService;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
@@ -57,6 +39,24 @@ import se.inera.intyg.common.support.modules.support.api.dto.ValidateXmlResponse
 import se.inera.intyg.common.util.logging.LogMarkers;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.schemas.contract.Personnummer;
+import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.ObjectFactory;
+import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.DatePeriodType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.PartialDateType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Relation;
+
+import javax.annotation.PostConstruct;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import java.io.StringWriter;
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @SchemaValidation
 public class RegisterCertificateResponderImpl implements RegisterCertificateResponderInterface {
@@ -116,15 +116,14 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             return makeInvalidCertificateResult(registerCertificate);
         } catch (JAXBException e) {
             LOGGER.error("JAXB error in Webservice: ", e);
-            Throwables.propagate(e);
+            throw new RuntimeException(e);
         } catch (UnsupportedOperationException e) {
             LOGGER.error("This webservice is not valid for the current certificate type {}", registerCertificate.getIntyg());
-            Throwables.propagate(e);
+            throw e;
         } catch (Exception e) {
-            LOGGER.error("Error in Webservice: ", e);
-            Throwables.propagate(e);
+            LOGGER.error("Unrecoverable exception in registerCertificate: ", e);
+            throw new RuntimeException(e);
         }
-        throw new RuntimeException("Unrecoverable exception in registerCertificate");
     }
 
     private RegisterCertificateResponseType storeIntyg(
