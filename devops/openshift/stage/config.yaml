@@ -1,0 +1,272 @@
+apiVersion: v1
+data:
+  certificate.properties: |
+    # Configuration and resource folders
+    config.dir=${config.folder}
+
+    # Mysql configuration
+    db.driver=com.mysql.jdbc.Driver
+
+    # Hibernate Configuration
+    hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
+    ntjp.base.url=https://qa.esb.ntjp.se:443/vp
+    infrastructure.directory.logicalAddress=SE165565594230-1000
+
+    #
+    ntjp.ws.certificate.file = ${certificate.folder}/qa.minaintyg.sjunet.org.p12
+    ntjp.ws.certificate.type = PKCS12
+    ntjp.ws.truststore.file = ${certificate.folder}/truststore-ntjp.jks
+    ntjp.ws.truststore.type = JKS
+    #
+    redis.sentinel.master.name=ind-sint-redis
+
+    # Endpoints for communicating with FK
+    registercertificatev1.endpoint.url=${ntjp.base.url}/clinicalprocess/healthcond/certificate/RegisterCertificate/1/rivtabp21
+    registercertificatev3.endpoint.url=${ntjp.base.url}/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21
+    registermedicalcertificatev3.endpoint.url=${ntjp.base.url}/RegisterMedicalCertificate/3/rivtabp20
+    revokecertificatev2.endpoint.url=${ntjp.base.url}/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21
+    revokemedicalcertificatev1.endpoint.url=${ntjp.base.url}/RevokeMedicalCertificate/1/rivtabp20
+    sendmedicalcertificatequestionv1.endpoint.url=${ntjp.base.url}/SendMedicalCertificateQuestion/1/rivtabp20
+    sendmessagetocarev2.endpoint.url=${ntjp.base.url}/clinicalprocess/healthcond/certificate/SendMessageToCare/2/rivtabp21
+    sendmessagetorecipientv2.endpoint.url=${ntjp.base.url}/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21
+
+    #
+    tsbas.send.certificate.to.recipient.registercertificate.version=v1
+
+    # Override to disable sending JMS messages to statistik-tj\u00E4nsten, since we don't have JMS connectivity in this env
+    statistics.enabled=true
+  logback-ocp.xml: |
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <!--
+           ~ Copyright (C) 2018 Inera AB (http://www.inera.se)
+      ~
+      ~ This file is part of sklintyg (https://github.com/sklintyg).
+      ~
+      ~ sklintyg is free software: you can redistribute it and/or modify
+      ~ it under the terms of the GNU General Public License as published by
+      ~ the Free Software Foundation, either version 3 of the License, or
+      ~ (at your option) any later version.
+      ~
+      ~ sklintyg is distributed in the hope that it will be useful,
+      ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+      ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+      ~ GNU General Public License for more details.
+      ~
+      ~ You should have received a copy of the GNU General Public License
+      ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+      -->
+    <configuration>
+        <!-- logback config for the Openshift Container Platform (OCP). Stream to stdout, use layout and appenders from infra. -->
+
+        <property name="APP_NAME" value="${APP_NAME:-intygstjanst}"/>
+
+        <!-- INTYG-7892: Ugly fix to avoid rebuild of infra and all applications for 2018-4 -->
+        <!-- The tags below comes from logback-ocp-base.xml in infra with changes to LINE -->
+        <!-- The changes to LINE will be implemented in 2019-1 and the block below will be removed -->
+        <property name="TIMESTAMP" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level"/>
+        <property name="SESSION" value="%X{req.sessionInfo:--}"/>
+        <property name="TRACE" value="%X{req.traceId:--}"/>
+        <property name="LINE" value="--- %-40.40logger{39} : %replace(%m%rEx){'[\r\n]+', '&#x000D;'}%nopex%n"/>
+
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <filter class="se.inera.intyg.infra.monitoring.logging.MarkerFilter">
+                <markers>Monitoring,Validation</markers>
+                <onMatch>DENY</onMatch>
+                <onMismatch>ACCEPT</onMismatch>
+            </filter>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>${TIMESTAMP} [console,${SESSION},${TRACE}] ${LINE}</pattern>
+            </encoder>
+        </appender>
+
+        <appender name="MONITORING" class="ch.qos.logback.core.ConsoleAppender">
+            <filter class="se.inera.intyg.infra.monitoring.logging.MarkerFilter">
+                <marker>Monitoring</marker>
+                <onMatch>ACCEPT</onMatch>
+                <onMismatch>DENY</onMismatch>
+            </filter>
+            <encoder class="se.inera.intyg.infra.monitoring.logging.UserPatternLayout">
+                <pattern>${TIMESTAMP} [monitoring,${SESSION},${TRACE},%user] ${LINE}</pattern>
+            </encoder>
+        </appender>
+
+        <appender name="VALIDATION" class="ch.qos.logback.core.ConsoleAppender">
+            <filter class="se.inera.intyg.infra.monitoring.logging.MarkerFilter">
+                <marker>Validation</marker>
+                <onMatch>ACCEPT</onMatch>
+                <onMismatch>DENY</onMismatch>
+            </filter>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>${TIMESTAMP} [validation,${SESSION},${TRACE}] ${LINE}</pattern>
+            </encoder>
+        </appender>
+
+        <appender name="PROCESS" class="ch.qos.logback.core.ConsoleAppender">
+            <filter class="se.inera.intyg.infra.monitoring.logging.MarkerFilter">
+                <markers>Monitoring,Validation</markers>
+                <onMatch>DENY</onMatch>
+                <onMismatch>ACCEPT</onMismatch>
+            </filter>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>${TIMESTAMP} [process,${SESSION},${TRACE}] ${LINE}</pattern>
+            </encoder>
+        </appender>
+
+        <appender name="ACCESS" class="ch.qos.logback.core.ConsoleAppender">
+            <filter class="se.inera.intyg.infra.monitoring.logging.MarkerFilter">
+                <markers>Monitoring,Validation</markers>
+                <onMatch>DENY</onMatch>
+                <onMismatch>ACCEPT</onMismatch>
+            </filter>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>${TIMESTAMP} [access,${SESSION},${TRACE}] ${LINE}</pattern>
+            </encoder>
+        </appender>
+
+        <appender name="FRONTEND" class="ch.qos.logback.core.ConsoleAppender">
+            <filter class="se.inera.intyg.infra.monitoring.logging.MarkerFilter">
+                <markers>Monitoring,Validation</markers>
+                <onMatch>DENY</onMatch>
+                <onMismatch>ACCEPT</onMismatch>
+            </filter>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>${TIMESTAMP} [frontend,${SESSION},${TRACE}] ${LINE}</pattern>
+            </encoder>
+        </appender>
+
+        <!-- End of fix for INTYG-7893 -->
+
+        <logger name="se.inera.intyg.intygstjanst" level="warn" />
+
+        <logger name="se.inera.intyg.intygstjanst.web.integration" level="info" />
+
+        <logger name="se.inera.intyg.intygstjanst.web.service.impl.StatisticsServiceImpl" level="info" />
+
+        <logger name="se.inera.intyg.intygstjanst.web.service.MonitoringLogService" level="info" additivity="false">
+            <appender-ref ref="MONITORING" />
+        </logger>
+
+        <root level="WARN">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="VALIDATION"/>
+        </root>
+
+    </configuration>
+  recipients.json: |
+    [
+      {
+        "id": "FKASSA",
+        "name": "F\u00F6rs\u00E4kringskassan",
+        "recipientType": "HUVUDMOTTAGARE",
+        "logicalAddress": "NMTMOCKS",
+        "certificateTypes": [
+          "fk7263",
+          "luse",
+          "lisjp",
+          "luae_fs",
+          "luae_na"
+        ],
+        "active"  : true,
+        "trusted" : true
+      },
+      {
+        "id" : "TRANSP",
+        "name" : "Transportstyrelsen",
+        "recipientType": "HUVUDMOTTAGARE",
+        "logicalAddress" : "2021006099",
+        "certificateTypes" : [
+          "ts-bas",
+          "ts-diabetes"
+        ],
+        "active"  : true,
+        "trusted" : true
+      },
+      {
+        "id" : "HSVARD",
+        "name" : "Hälso- och sjukvården",
+        "recipientType": "MOTTAGARE",
+        "logicalAddress" : "NMTMOCKS",
+        "certificateTypes" : [
+          "ts-bas",
+          "ts-diabetes",
+          "fk7263",
+          "lisjp",
+          "luse",
+          "luae_na",
+          "luae_fs"
+        ],
+        "active"  : true,
+        "trusted" : true
+      },
+      {
+        "id" : "INVANA",
+        "name" : "Invånaren",
+        "recipientType": "MOTTAGARE",
+        "logicalAddress" : "NMTMOCKS",
+        "certificateTypes" : [
+          "ts-bas",
+          "ts-diabetes",
+          "fk7263",
+          "lisjp",
+          "luse",
+          "luae_na",
+          "luae_fs"
+        ],
+        "active"  : true,
+        "trusted" : true
+      },
+      {
+        "id": "SKV",
+        "name": "Skatteverket",
+        "recipientType": "DIREKTMOTTAGARE",
+        "logicalAddress": "NMTMOCKS",
+        "certificateTypes" : [
+          "db"
+        ],
+        "active"  : true,
+        "trusted" : true
+      },
+      {
+        "id": "SOS",
+        "name": "Socialstyrelsen",
+        "recipientType": "DIREKTMOTTAGARE",
+        "logicalAddress": "NMTMOCKS",
+        "certificateTypes" : [
+          "doi"
+        ],
+        "active"  : true,
+        "trusted" : true
+      },
+      {
+        "id": "AF",
+        "name": "Arbetsförmedlingen",
+        "recipientType": "HUVUDMOTTAGARE",
+        "logicalAddress": "NMTMOCKS",
+        "certificateTypes" : [
+          "af00213"
+        ],
+        "active" : true,
+        "trusted": true
+      },
+      {
+        "id": "SKANDIA",
+        "name": "SKANDIA SSEK",
+        "recipientType": "MOTTAGARE",
+        "logicalAddress": "NMTMOCKS",
+        "certificateTypes": [
+          "fk7263",
+          "lisjp"
+        ],
+        "active" : true,
+        "trusted": false
+      }
+    ]
+kind: ConfigMap
+metadata:
+  creationTimestamp: 2019-04-05T15:03:01Z
+  name: intygstjanst-config
+  namespace: sintyg
+  resourceVersion: "72873620"
+  selfLink: /api/v1/namespaces/sintyg/configmaps/intygstjanst-config
+  uid: e7c938ee-57b3-11e9-935a-005056a1387d
