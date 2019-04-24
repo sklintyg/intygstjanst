@@ -1,18 +1,21 @@
 apiVersion: v1
 data:
-  NTJP_BASE_URL: "https://esb.ntjp.se/vp"
-  REDIS_SERVICE_HOST: "ind-pint-redis1.ind1.sth.basefarm.net;ind-pint-redis2.ind1.sth.basefarm.net;ind-pint-redis3.ind1.sth.basefarm.net"
-  REDIS_SERVICE_PORT: "26379;26379;26379"
-  ACTIVEMQ_BROKER_URL: "failover:(tcp://ind-pint-activemq1.ind1.sth.basefarm.net:61616,tcp://ind-pint-activemq2.ind1.sth.basefarm.net:61616)?jms.nonBlockingRedelivery=true&jms.redeliveryPolicy.useExponentialBackOff=true&jms.redeliveryPolicy.backOffMultiplier=2&jms.redeliveryPolicy.maximumRedeliveries=30&jms.redeliveryPolicy.maximumRedeliveryDelay=3600000&jms.redeliveryPolicy.initialRedeliveryDelay=60000"
-  TSBAS_SEND_CERTIFICATE_TO_RECIPIENT_REGISTERCERTIFICATE_VERSION: "v1"
-  ACTIVEMQ_DESTINATION_QUEUE_NAME: "statistik.utlatande.queue"
-  INFRASTRUCTURE_DIRECTORY_LOGICALADDRESS: "SE165565594230-1000"
-  REDIS_SENTINEL_MASTER_NAME: "ind-pint-redis"
-  NTJP_WS_CERTIFICATE: "${certificate.folder}/minaintyg.sjunet.org.p12"
-  NTJP_WS_TRUSTSTORE: "${certificate.folder}/truststore-ntjp.jks"
-  NTJP_WS_CERTIFICATE_TYPE: "PKCS12"
-  NTJP_WS_TRUSTSTORE_TYPE: "JKS"
+  ACTIVEMQ_BROKER_URL: failover:(tcp://ind-pint-activemq1.ind1.sth.basefarm.net:61616,tcp://ind-pint-activemq2.ind1.sth.basefarm.net:61616)?jms.nonBlockingRedelivery=true&jms.redeliveryPolicy.useExponentialBackOff=true&jms.redeliveryPolicy.backOffMultiplier=2&jms.redeliveryPolicy.maximumRedeliveries=30&jms.redeliveryPolicy.maximumRedeliveryDelay=3600000&jms.redeliveryPolicy.initialRedeliveryDelay=60000
+  ACTIVEMQ_DESTINATION_QUEUE_NAME: statistik.utlatande.queue
+  NTJP_WS_CERTIFICATE_FILE: ${certificate.folder}/minaintyg.sjunet.org.p12
+  NTJP_WS_CERTIFICATE_TYPE: PKCS12
+  NTJP_WS_TRUSTSTORE_FILE: ${certificate.folder}/truststore-ntjp.jks
+  NTJP_WS_TRUSTSTORE_TYPE: JKS
+  REDIS_SERVICE_HOST: ind-pint-redis1.ind1.sth.basefarm.net;ind-pint-redis2.ind1.sth.basefarm.net;ind-pint-redis3.ind1.sth.basefarm.net
+  REDIS_SERVICE_PORT: 26379;26379;26379
+  REFDATA_URL: file://localhost/opt/intygstjanst/env/refdata-1.0.0.67.jar
+  RESOURCES_FOLDER: 'classpath:'
+  TSBAS_SEND_CERTIFICATE_TO_RECIPIENT_REGISTERCERTIFICATE_VERSION: v1
 kind: ConfigMap
 metadata:
+  creationTimestamp: 2019-04-16T17:42:12Z
   name: intygstjanst-configmap-envvar
-type: Opaque
+  namespace: pintyg
+  resourceVersion: "76015530"
+  selfLink: /api/v1/namespaces/pintyg/configmaps/intygstjanst-configmap-envvar
+  uid: f73d577c-606e-11e9-935a-005056a1387d
