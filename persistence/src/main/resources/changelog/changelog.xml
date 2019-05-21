@@ -440,10 +440,23 @@
 	</changeSet>
 
 	<changeSet id="43" author="mww">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="RELATION" indexName="IDX_RELATION_FROM_INTYG_ID"/>
+			</not>
+		</preConditions>
 		<createIndex indexName="IDX_RELATION_FROM_INTYG_ID"
 				tableName="RELATION" unique="false">
 			<column name="FROM_INTYG_ID" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="44" author="mww">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="RELATION" indexName="IDX_RELATION_TO_INTYG_ID"/>
+			</not>
+		</preConditions>
 		<createIndex indexName="IDX_RELATION_TO_INTYG_ID"
 				tableName="RELATION" unique="false">
 			<column name="TO_INTYG_ID" />
