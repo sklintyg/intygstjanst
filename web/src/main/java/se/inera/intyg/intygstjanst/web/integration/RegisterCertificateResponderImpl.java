@@ -18,12 +18,23 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import java.io.StringWriter;
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3._2000._09.xmldsig_.SignatureType;
 import org.w3._2002._06.xmldsig_filter2.XPathType;
+
 import se.inera.intyg.common.services.texts.IntygTextsService;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
@@ -44,19 +55,11 @@ import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.Regi
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.DatePeriodType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.PQType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PartialDateType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Relation;
-
-import javax.annotation.PostConstruct;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import java.io.StringWriter;
-import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @SchemaValidation
 public class RegisterCertificateResponderImpl implements RegisterCertificateResponderInterface {
@@ -79,7 +82,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     public void initializeJaxbContext() throws JAXBException {
         // We need to register DatePeriodType with the JAXBContext explicitly for some reason.
         jaxbContext = JAXBContext.newInstance(RegisterCertificateType.class, DatePeriodType.class, SignatureType.class,
-                XPathType.class, PartialDateType.class);
+                XPathType.class, PartialDateType.class, PQType.class);
         objectFactory = new ObjectFactory();
     }
 
@@ -90,12 +93,12 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             final String intygsTyp = getIntygsTyp(registerCertificate);
             final String version = registerCertificate.getIntyg().getVersion();
 
-            //Major version validation
+            // Major version validation
             ModuleApi api = moduleRegistry.getModuleApi(intygsTyp, version);
 
-            //Minor version validation
+            // Minor version validation
             if (!textsService.isVersionSupported(intygsTyp, version)) {
-               return makeInvalidCertificateVersionResult(registerCertificate);
+                return makeInvalidCertificateVersionResult(registerCertificate);
             }
 
             String xml = xmlToString(registerCertificate);
