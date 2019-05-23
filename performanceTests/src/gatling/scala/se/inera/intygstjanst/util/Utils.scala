@@ -1,17 +1,13 @@
-package se.inera.intygstjanst
-
-import io.gatling.core.Predef._
-import io.gatling.http.Predef._
-import io.gatling.jdbc.Predef._
-import scala.concurrent.duration._
-import scala.io.Source._
-import collection.mutable.{ HashMap, MultiMap, Set }
-import scala.xml.XML
+package se.inera.intygstjanst.util
 
 import java.util.UUID
 
-import scalaj.http._
+import io.gatling.core.Predef._
+import io.gatling.http.Predef._
+import scalaj.http.{Http, HttpOptions, HttpResponse}
 
+import scala.io.Source.fromFile
+import scala.xml.XML
 object Utils {
 
   val baseUrl = System.getProperty("baseUrl", "http://localhost:8080" ) + "/inera-certificate"
@@ -21,12 +17,12 @@ object Utils {
     .get("/resources/statisticsresource/purge")
     .check(status.is(200)));
 
-  def storeWithCorrelation() = { 
+  def storeWithCorrelation() = {
     exec(session=>session.set("intygsId", UUID.randomUUID().toString()))
     .exec(http("Store certificates for ${personNr}")
       .post("/register-certificate/v3.0")
       .headers(Headers.store_certificate)
-      .body(ELFileBody("request-bodies/register-medical-certificate.xml"))
+      .body(ELFileBody("register-medical-certificate.xml"))
       .check(status.is(200)))
   }
 
@@ -42,7 +38,7 @@ object Utils {
 
   def clean() = {
     this.purgeQueue
-    val bufferedSource = fromFile("src/test/resources/data/intyg.csv")
+    val bufferedSource = fromFile("src/gatling/resources/data/intyg.csv")
     for (line <- bufferedSource.getLines) {
       val cols = line.split(",").map(_.trim)
       deleteCertificate(cols(0))
@@ -59,7 +55,7 @@ object Utils {
   }
 
   def preloadDatabase(): Unit = {
-    val bufferedSource = fromFile("src/test/resources/data/intyg.csv")
+    val bufferedSource = fromFile("src/gatling/resources/data/intyg.csv")
     for (line <- bufferedSource.getLines) {
       val cols = line.split(",").map(_.trim)
       storeCertificate(cols(0), cols(1))
@@ -69,7 +65,7 @@ object Utils {
 
   def storeCertificate(intygsId: String, personNr: String) = {
     var url = baseUrl + "/register-certificate/v3.0"
-    val origXml = XML.loadFile("src/test/resources/request-bodies/register-medical-certificate.xml").toString()
+    val origXml = XML.loadFile("src/gatling/resources/bodies/register-medical-certificate.xml").toString()
     Http(url)
       .postData(
         s"""
