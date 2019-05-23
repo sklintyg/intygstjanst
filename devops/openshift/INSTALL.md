@@ -9,7 +9,11 @@ Installation of Web Application Intygstjänsten (IT) on OpenShift.
 
 Database schema doesn't need any updates.
 
-### 1.1 Configuration of reference data
+### 1.2 Message objects
+
+No message (ActiveMQ) objects have been changed.
+
+### 1.3 Configuration of reference data
 
 The main update is activation of the new reference data concept (master data for shared configurations). Refdata is provided as a JAR file and configured with the `REFDATA_URL` and `RESOURCES_FOLDER` parameters. Normally the default value of `RESOURCES_FOLDER` should be set to  `classpath:`. Three configuration updates is required in order to activate the new refdata:
 
@@ -21,7 +25,7 @@ Latest builds of refdata can be downloaded from the Inera Nexus server.
 
 	https://build-inera.nordicmedtest.se/nexus/repository/releases/se/inera/intyg/refdata/refdata/1.0.0.<build-num>/refdata-1.0.0.<build-num>.jar]
 
-### 1.2 Other recommendations
+### 1.4 Other recommendations
 
 The following (well known) observations might require an action:
 
@@ -67,22 +71,26 @@ Two queues needs are required and depending on permissions those may be implicit
 - `statistik.utlatande.queue` -- sends certificates to Statistiktjänsten (ST) 
 - `internal.notification.queue` -- sends notifications to WebCert (WC)
 
-### 2.5 Database
+_Note: Message Queues are persistent and it's of great importance to know if any message object/format has been changed prior to an upgrade. Breaking changes shall be avoided as far as possible._ 
+
+### 2.6 Database
 
 A database for the application must have been created.  It's recommended to use character set `utf8mb4` and case-sensitive collation. 
 
-### 2.6 Access to Software Artifacts
+_Note: It's of great importance to know if an update includes database schema changes. Breaking changes shall be avoided as far as possible._
+
+### 2.7 Access to Software Artifacts
 
 Software artifacts are located at, and downloaded from:
 
 * From Installing Client - [https://build-inera.nordicmedtest.se/nexus/repository/releases/se/inera/intyg/intygstjanst/intygstjanst/maven-metadata.xml](https://build-inera.nordicmedtest.se/nexus/repository/releases/se/inera/intyg/intygstjanst/intygstjanst/maven-metadata.xml)
 * From OpenShift Cluster - docker.drift.inera.se/intyg/
 
-### 2.7 Access to OpenShift Cluster
+### 2.8 Access to OpenShift Cluster
 
 The OpenShift user account must have the right permissions to process, create, delete and replace objects. A VPN account and connection is required in order to access the OpenShift Cluster.
 
-### 2.8 Client Software Tools
+### 2.9 Client Software Tools
 
 The installation client must have **git** and **oc** (OpenShift Client) installed and if a database schema migration is required then **java** (Java 8) and **tar** is required in order to execute the migration tool (liquibase runner).
 
