@@ -1,24 +1,24 @@
-package se.inera.intygstjanst
+package se.inera.intygstjanst.simulations
+
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
-import io.gatling.jdbc.Predef._
-import io.gatling.core.session._
-import io.gatling.http.request.Body
+import io.gatling.http.request.ELFileBody
+import se.inera.intygstjanst.util.{Conf, Headers, Utils}
+
 import scala.concurrent.duration._
-import collection.mutable.{ HashMap, MultiMap, Set }
 
 class GetCertificates extends Simulation {
 
   val numberOfUsers = 100
 
-  val testpersonnummer = csv("data/intyg.csv").circular
+  val testpersonnummer = csv("intyg.csv").circular
 
   val scn = scenario("Get Certificates")
     .feed(testpersonnummer)
     .exec(http("Get Certificate 1.0")
       .post("/get-certificate/v1.0")
       .headers(Headers.get_certificate)
-      .body(ELFileBody("request-bodies/get-certificate.xml"))
+      .body(ELFileBody("get-certificate.xml"))
       .check(
         status.is(200),
         substring("<ns2:certificateId>")))

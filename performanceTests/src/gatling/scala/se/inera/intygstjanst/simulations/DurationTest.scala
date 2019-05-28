@@ -17,9 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intygstjanst
+package se.inera.intygstjanst.simulations
 
 import io.gatling.core.Predef._
+import se.inera.intygstjanst.util.{Conf, Utils}
+
 import scala.concurrent.duration._
 
 class DurationTest extends Simulation {

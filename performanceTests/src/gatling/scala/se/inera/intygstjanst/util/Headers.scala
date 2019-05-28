@@ -1,4 +1,4 @@
-package se.inera.intygstjanst
+package se.inera.intygstjanst.util
 
 object Headers {
 

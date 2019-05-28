@@ -30,21 +30,21 @@ I mappen src/test/resources/request-bodies finns xml-filer med SOAP-requests fö
 Lagrar 1000 intyg, 10 per testperson, från csv-filen med personnummer.
 Tömmer inte databasen efter körning, använd RemoveTestData för att tömma.
 
-- gradle gatlingSingleTest -DgatlingSimulation=StoreCertificates
+- gradle gatlingRun-se.inera.intygstjanst.simulations.StoreCertificates
 
 ### GetCertificates
 Preloadar databasen med personer och intyg.
 Lägger in medgivande och hämtar ut specifika intyg för en testperson.
 Tömmer databasen efter körning.
 
-- gradle gatlingSingleTest -DgatlingSimulation=GetCertificates
+- gradle gatlingRun-se.inera.intygstjanst.simulations.GetCertificates
 
 ### ListCertificates
 Preloadar databasen med personer och intyg.
 Lägger in medgivande och listar ut intyg.
 Tömmer databasen efter körning.
 
-- gradle gatlingSingleTest -DgatlingSimulation=ListCertificates
+- gradle gatlingRun-se.inera.intygstjanst.simulations.ListCertificates
 
 
 ### Testpersonnummer
@@ -62,9 +62,10 @@ Alternativt kan man ange -DbaseUrl=....... på kommandoraden.
 ### Exekvering från command-line
 Testerna körs genom att ge:
 
-- gradle gatling -DgatlingSimulation=TEST
+- gradle gatling-CLASS 
 
-där TEST är namnet på den test-class som ska exekveras.
+där CLASS är fully qualified path till simuleringen som ska exekveras
+(exempel se.inera.intygstjanst.simulations.ListCertificates)
 
 
 ## Hur följer jag upp utfallet?
