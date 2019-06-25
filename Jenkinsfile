@@ -1,10 +1,10 @@
 #!groovy
 
-def buildVersion = "3.9.0.${BUILD_NUMBER}"
+def buildVersion = "3.10.0.${BUILD_NUMBER}"
 def buildRoot = JOB_BASE_NAME.replaceAll(/-.*/, "") // Keep everything up to the first dash
 
-def commonVersion = "3.10.0.+"
-def infraVersion = "3.10.0.+"
+def commonVersion = "3.11.0.+"
+def infraVersion = "3.11.0.+"
 def refDataVersion = "1.0-SNAPSHOT"
 def versionFlags = "-DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DinfraVersion=${infraVersion} -DrefDataVersion=${refDataVersion}"
 
