@@ -60,6 +60,9 @@ public class CitizenControllerIT extends BaseIntegrationTest {
             .as(CertificateHolder[].class)[0];
 
         assertNotNull(ch.getId());
+        assertNotNull(ch.getAdditionalInfo());
+        assertNotNull(ch.getSigningDoctorName());
+        assertNotNull(ch.getSignedDate());
         assertNull(ch.getOriginalCertificate());
     }
 
