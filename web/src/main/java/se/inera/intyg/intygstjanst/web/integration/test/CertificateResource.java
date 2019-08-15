@@ -49,7 +49,10 @@ import com.google.common.io.Resources;
 
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.ReceiverApprovalStatus;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversType;
+import se.inera.intyg.common.support.model.common.internal.Utlatande;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
+import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -70,6 +73,9 @@ public class CertificateResource {
     private EntityManager entityManager;
 
     private TransactionTemplate transactionTemplate;
+
+    @Autowired
+    private IntygModuleRegistry moduleRegistry;
 
     @Autowired
     public void setTxManager(PlatformTransactionManager txManager) {
@@ -196,6 +202,9 @@ public class CertificateResource {
                 LOGGER.info("insert certificate {} ({})", certificate.getId(), certificate.getType());
                 OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), getXmlBody(certificateHolder),
                         certificate);
+                ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+                final Utlatande utlatande = moduleApi.getUtlatandeFromXml(originalCertificate.getDocument());
+                certificate.setAdditionalInfo(moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande)));
                 entityManager.persist(certificate);
                 entityManager.persist(originalCertificate);
                 return Response.ok().build();

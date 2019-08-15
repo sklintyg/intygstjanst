@@ -19,20 +19,19 @@
 
 package se.inera.intyg.intygstjanst.web.integration;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.ws.rs.GET;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.common.db.support.DbModuleEntryPoint;
 import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
@@ -49,12 +48,10 @@ import se.inera.intyg.intygstjanst.web.service.RelationService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 /**
- * Internal REST endpoint for citizen oriented data.
+ * Internal REST endpoint for citizen oriented data. POST is used to not expose personal identities in URLs (and log files).
  */
 @Path("/citizens")
 public class CitizenController {
-
-    static final List<String> EXCLUDED_CERTIFICATES = Arrays.asList(DbModuleEntryPoint.MODULE_ID, DoiModuleEntryPoint.MODULE_ID);
 
     static final Logger LOG = LoggerFactory.getLogger(CitizenController.class);
 
@@ -67,18 +64,39 @@ public class CitizenController {
     @Autowired
     private MonitoringLogService monitoringLogService;
 
+    //
+    public static class ListParameters {
+        private String id;
+        private boolean archived;
+
+        public String getId() {
+            return id;
+        }
+
+        public boolean isArchived() {
+            return archived;
+        }
+
+        public static ListParameters of(String id, boolean archived) {
+            final ListParameters p = new ListParameters();
+            p.id = id;
+            p.archived = archived;
+            return p;
+        }
+    }
 
     @PrometheusTimeMethod
-    @GET
-    @Path("/{id}/certificates")
+    @POST
+    @Path("/certificates")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<CertificateHolder> getCertificates(@PathParam("id") String id, @QueryParam("archived") boolean archived) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public List<CertificateHolder> getCertificates(@RequestBody ListParameters parameters) {
 
         final long t0 = System.currentTimeMillis();
 
-        final Optional<Personnummer> pnr = Personnummer.createPersonnummer(id);
+        final Optional<Personnummer> pnr = Personnummer.createPersonnummer(parameters.getId());
 
-        LOG.debug("List certificates for citizen, archived: {}", archived);
+        LOG.debug("List certificates for citizen, archived: {}", parameters.isArchived());
 
         if (!pnr.isPresent()) {
             return Collections.emptyList();
@@ -87,7 +105,7 @@ public class CitizenController {
         final List<CertificateHolder> certificateHolders = certificateService.listCertificatesForCitizen(pnr.get(),
             null, null, null)
             .stream()
-            .filter(c -> filter(c, archived))
+            .filter(c -> filter(c, parameters.isArchived()))
             .map(ConverterUtil::toCertificateHolder)
             .peek(this::addRelation)
             .collect(Collectors.toList());
@@ -102,14 +120,14 @@ public class CitizenController {
         return certificateHolders;
     }
 
-    private void addRelation(CertificateHolder ch) {
+    private void addRelation(final CertificateHolder ch) {
         final Optional<Relation> r = relationService.getParentRelation(ch.getId());
         if (r.isPresent()) {
             ch.setCertificateRelation(toCertificateRelation(r.get()));
         }
     }
 
-    private CertificateRelation toCertificateRelation(Relation relation) {
+    private CertificateRelation toCertificateRelation(final Relation relation) {
         final CertificateRelation cr = new CertificateRelation();
         cr.setFromIntygsId(relation.getFromIntygsId());
         cr.setToIntygsId(relation.getToIntygsId());

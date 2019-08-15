@@ -107,6 +107,8 @@ public class CertificateResourceTest {
         Certificate certificate = new Certificate("1");
         certificate.setOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "xml", certificate));
         when(txManager.getTransaction(any())).thenReturn(txStatus);
+        when(moduleRegistry.getModuleApi(any(), any())).thenReturn(moduleApi);
+        when(moduleApi.getAdditionalInfo(any())).thenReturn("additional info");
         certificateResource.insertCertificate(ConverterUtil.toCertificateHolder(certificate));
 
         ArgumentCaptor<Object> argument = ArgumentCaptor.forClass(Object.class);
