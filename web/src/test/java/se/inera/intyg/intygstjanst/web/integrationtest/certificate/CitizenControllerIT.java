@@ -25,17 +25,19 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import com.jayway.restassured.http.ContentType;
 import java.util.UUID;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
+import se.inera.intyg.intygstjanst.web.integration.CitizenController.ListParameters;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class CitizenControllerIT extends BaseIntegrationTest {
 
-    static final String PATH = "/inera-certificate/internalapi/citizens/{id}/certificates?archived={archived}";
+    static final String PATH = "/inera-certificate/internalapi/citizens/certificates";
 
     static final String PID = "201012121313";
 
@@ -51,8 +53,11 @@ public class CitizenControllerIT extends BaseIntegrationTest {
 
     @Test
     public void listAndParseNonArchivedCertificates() {
+        ListParameters params = ListParameters.of(PID, false);
         CertificateHolder ch = given().when()
-            .get(PATH, PID, false)
+            .contentType(ContentType.JSON)
+            .body(params)
+            .post(PATH)
             .then()
             .statusCode(200)
             .body("size()", greaterThan(0))
@@ -69,8 +74,11 @@ public class CitizenControllerIT extends BaseIntegrationTest {
 
     @Test
     public void listArchivedCertificates() {
+        ListParameters params = ListParameters.of(PID, true);
         given().when()
-            .get(PATH, PID, true)
+            .contentType(ContentType.JSON)
+            .body(params)
+            .post(PATH)
             .then()
             .statusCode(200)
             .body("size()", is(0));
@@ -78,8 +86,11 @@ public class CitizenControllerIT extends BaseIntegrationTest {
 
     @Test
     public void listCertificatesForUnkonwnUser() {
+        ListParameters params = ListParameters.of("-", true);
         given().when()
-            .get(PATH, "-", true)
+            .contentType(ContentType.JSON)
+            .body(params)
+            .post(PATH)
             .then()
             .statusCode(200)
             .body("size()", is(0));
