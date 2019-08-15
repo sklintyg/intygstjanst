@@ -18,17 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.service.bean;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,16 +38,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
-
 import se.inera.intyg.common.fk7263.support.Fk7263EntryPoint;
 import se.inera.intyg.common.lisjp.support.LisjpEntryPoint;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.common.util.integration.json.CustomObjectMapper;
@@ -102,20 +97,23 @@ public class IntygBootstrapBean {
                 LOG.info("Bootstrapping certificate '{}' from module {} (version {})", resource.getFilename(), moduleName,
                         intygMajorTypeVersion);
                 String xmlString = Resources.toString(resource.getURL(), Charsets.UTF_8);
-                bootstrapCertificate(xmlString,
-                        moduleRegistry.getModuleApi(moduleName, intygMajorTypeVersion).getUtlatandeFromXml(xmlString),
+
+                ModuleApi moduleApi = moduleRegistry.getModuleApi(moduleName, intygMajorTypeVersion);
+                bootstrapCertificate(xmlString, moduleApi,
                         moduleRegistry.getModuleEntryPoint(moduleName).getDefaultRecipient());
-            } catch (IOException | ModuleNotFoundException | ModuleException e) {
+            } catch (Exception e) {
                 LOG.error("Could not bootstrap certificate in file '{}'", resourceFilename, e);
             }
         }
     }
 
-    private void bootstrapCertificate(String xmlString, Utlatande utlatande, String defaultRecipient) {
+    private void bootstrapCertificate(String xmlString, ModuleApi moduleApi, String defaultRecipient) throws ModuleException {
+        final Utlatande utlatande = moduleApi.getUtlatandeFromXml(xmlString);
+        final String additonalInfo = moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande));
         transactionTemplate.execute((TransactionStatus status) -> {
             Certificate certificate = new Certificate(utlatande.getId());
             if (!entityManager.contains(certificate)) {
-                certificate.setAdditionalInfo(null); // Should this be populated?
+                certificate.setAdditionalInfo(additonalInfo);
                 certificate.setCareGiverId(utlatande.getGrundData().getSkapadAv().getVardenhet().getVardgivare().getVardgivarid());
                 certificate.setCareUnitId(utlatande.getGrundData().getSkapadAv().getVardenhet().getEnhetsid());
                 certificate.setCareUnitName(utlatande.getGrundData().getSkapadAv().getVardenhet().getEnhetsnamn());
@@ -206,6 +204,10 @@ public class IntygBootstrapBean {
                     String contentString = Resources.toString(content.getURL(), Charsets.UTF_8);
                     OriginalCertificate originalCertificate = new OriginalCertificate(certificate.getSignedDate(), contentString,
                             certificate);
+
+                    ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+                    final Utlatande utlatande = moduleApi.getUtlatandeFromXml(contentString);
+                    certificate.setAdditionalInfo(moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande)));
                     entityManager.persist(originalCertificate);
                     entityManager.persist(certificate);
                 } catch (Exception e) {

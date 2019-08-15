@@ -40,6 +40,16 @@
         <bean class="se.inera.intyg.intygstjanst.web.integration.stub.SendMessageToCareResponderStubRestApi" />
       </jaxrs:serviceBeans>
     </jaxrs:server>
+
+    <!-- Internal API -->
+    <jaxrs:server id="citizenController" address="/internalapi">
+      <jaxrs:serviceBeans>
+        <bean class="se.inera.intyg.intygstjanst.web.integration.CitizenController" />
+      </jaxrs:serviceBeans>
+      <jaxrs:providers>
+        <ref bean="jacksonJsonProvider" />
+      </jaxrs:providers>
+    </jaxrs:server>
   </beans>
 
   <beans profile="dev,testability-api,it-fk-stub">

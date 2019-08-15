@@ -18,6 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v3;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,12 +50,6 @@ import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 @SchemaValidation(type = SchemaValidation.SchemaValidationType.IN)
 public class ListCertificatesForCitizenResponderImpl implements ListCertificatesForCitizenResponderInterface {
 
@@ -71,7 +70,10 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
     @PrometheusTimeMethod
     public ListCertificatesForCitizenResponseType listCertificatesForCitizen(String logicalAddress,
             ListCertificatesForCitizenType parameters) {
-        LOGGER.debug("List certificates for citizen. arkiverade={}", parameters.isArkiverade());
+
+        final long t0 = System.currentTimeMillis();
+
+        LOGGER.debug("List certificates for citizen. archived {}", parameters.isArkiverade());
         ListCertificatesForCitizenResponseType response = new ListCertificatesForCitizenResponseType();
         response.setIntygsLista(new ListaType());
         response.getIntygsLista().getIntyg(); // initialize list for schema validation, if no certificates
@@ -94,7 +96,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         response.setResult(ResultTypeUtil.okResult());
         monitoringLogService.logCertificateListedByCitizen(personnummer.orElse(null));
 
-
+        LOGGER.info("Found {} certificates in {} ms", response.getIntygsLista().getIntyg().size(), (System.currentTimeMillis() - t0));
 
         return response;
     }
