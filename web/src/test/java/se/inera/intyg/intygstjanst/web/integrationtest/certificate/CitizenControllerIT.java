@@ -31,7 +31,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
-import se.inera.intyg.intygstjanst.web.integration.CitizenController.ListParameters;
+import se.inera.intyg.intygstjanst.web.integration.CitizenController.RequestObject;
+import se.inera.intyg.intygstjanst.web.integration.CitizenController.ResponseObject;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
@@ -53,8 +54,8 @@ public class CitizenControllerIT extends BaseIntegrationTest {
 
     @Test
     public void listAndParseNonArchivedCertificates() {
-        ListParameters params = ListParameters.of(PID, false);
-        CertificateHolder ch = given().when()
+        RequestObject params = RequestObject.of(PID, false);
+        ResponseObject response = given().when()
             .contentType(ContentType.JSON)
             .body(params)
             .post(PATH)
@@ -62,7 +63,9 @@ public class CitizenControllerIT extends BaseIntegrationTest {
             .statusCode(200)
             .body("size()", greaterThan(0))
             .extract()
-            .as(CertificateHolder[].class)[0];
+            .as(ResponseObject[].class)[0];
+
+        CertificateHolder ch = response.getCertificate();
 
         assertNotNull(ch.getId());
         assertNotNull(ch.getAdditionalInfo());
@@ -74,7 +77,7 @@ public class CitizenControllerIT extends BaseIntegrationTest {
 
     @Test
     public void listArchivedCertificates() {
-        ListParameters params = ListParameters.of(PID, true);
+        RequestObject params = RequestObject.of(PID, true);
         given().when()
             .contentType(ContentType.JSON)
             .body(params)
@@ -86,7 +89,7 @@ public class CitizenControllerIT extends BaseIntegrationTest {
 
     @Test
     public void listCertificatesForUnkonwnUser() {
-        ListParameters params = ListParameters.of("-", true);
+        RequestObject params = RequestObject.of("-", true);
         given().when()
             .contentType(ContentType.JSON)
             .body(params)
