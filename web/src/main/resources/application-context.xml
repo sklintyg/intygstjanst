@@ -18,65 +18,67 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:http="http://cxf.apache.org/transports/http/configuration"
-    xmlns:cache="http://www.springframework.org/schema/cache"
-    xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-        http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
-        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:http="http://cxf.apache.org/transports/http/configuration"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+    http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
+    http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
 
-  <bean id="moduleRegistry" class="se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl"
-      depends-on="dbUpdate">
-    <property name="origin" value="INTYGSTJANST"/>
-  </bean>
-
-  <bean id="sjukfallEngineService" class="se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl"/>
-
-  <import resource="application-context-ws.xml"/>
-
-  <import resource="jaxrs-context.xml"/>
-
-  <!-- Import spring context of all module dependencies -->
-  <import resource="classpath*:module-config.xml"/>
-  <import resource="classpath*:it-module-cxf-servlet.xml"/>
-
-  <!-- Load version helper -->
-  <context:component-scan base-package="se.inera.intyg.common.services,
-      se.inera.intyg.common.support.services,
-      se.inera.intyg.common.util.integration.json"/>
-
-  <cache:annotation-driven cache-manager="cacheManager"/>
-
-  <!-- HSA stub-->
-  <import resource="classpath:hsa-stub-context.xml"/>
-  <!-- HSA service -->
-  <import resource="classpath:/hsa-services-config.xml"/>
-
-  <context:annotation-config/>
-  <context:component-scan
-      base-package="se.inera.intyg.intygstjanst.config,se.inera.intyg.intygstjanst.persistence,se.inera.intyg.intygstjanst.web"/>
-
-  <!-- Initializes caching, required by hsa-services-config.xml -->
-  <beans profile="caching-enabled">
-    <beans profile="!embedded">
-      <bean class="se.inera.intyg.infra.rediscache.core.BasicCacheConfiguration"/>
-    </beans>
-    <beans profile="embedded">
-      <bean class="se.inera.intyg.infra.rediscache.core.EmbeddedCacheConfiguration"/>
-    </beans>
-  </beans>
-
-  <beans profile="!caching-enabled">
-    <bean id="cacheManager" class="org.springframework.cache.support.NoOpCacheManager"/>
-  </beans>
-
-  <!-- If embedded is specified let's bootstrap data -->
-  <beans profile="embedded">
-    <bean id="IntygBootstrapBean" class="se.inera.intyg.intygstjanst.web.service.bean.IntygBootstrapBean">
-      <property name="txManager" ref="transactionManager"/>
+    <bean id="moduleRegistry" class="se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl"
+          depends-on="dbUpdate">
+        <property name="origin" value="INTYGSTJANST"/>
     </bean>
-  </beans>
+
+    <bean id="sjukfallEngineService" class="se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl"/>
+
+    <import resource="application-context-ws.xml"/>
+
+    <import resource="jaxrs-context.xml"/>
+
+    <bean id="internalApiFilter" class="se.inera.intyg.infra.security.filter.InternalApiFilter" />
+
+    <!-- Import spring context of all module dependencies -->
+    <import resource="classpath*:module-config.xml"/>
+    <import resource="classpath*:it-module-cxf-servlet.xml"/>
+    <!-- Load version helper -->
+    <context:component-scan base-package=
+        "se.inera.intyg.common.support.modules.support.api,
+         se.inera.intyg.common.services,
+	       se.inera.intyg.common.support.services,
+         se.inera.intyg.common.util.integration.json"/>
+
+    <cache:annotation-driven cache-manager="cacheManager"/>
+
+    <!-- HSA stub-->
+    <import resource="classpath:hsa-stub-context.xml"/>
+    <!-- HSA service -->
+    <import resource="classpath:/hsa-services-config.xml"/>
+
+    <context:annotation-config/>
+    <context:component-scan
+            base-package="se.inera.intyg.intygstjanst.config,se.inera.intyg.intygstjanst.persistence,se.inera.intyg.intygstjanst.web"/>
+
+    <!-- Initializes caching, required by hsa-services-config.xml -->
+    <beans profile="caching-enabled">
+        <beans profile="!embedded">
+            <bean class="se.inera.intyg.infra.rediscache.core.BasicCacheConfiguration"/>
+        </beans>
+        <beans profile="embedded">
+            <bean class="se.inera.intyg.infra.rediscache.core.EmbeddedCacheConfiguration"/>
+        </beans>
+    </beans>
+
+    <beans profile="!caching-enabled">
+        <bean id="cacheManager" class="org.springframework.cache.support.NoOpCacheManager"/>
+    </beans>
+
+    <!-- If embedded is specified let's bootstrap data -->
+    <beans profile="embedded">
+        <bean id="IntygBootstrapBean" class="se.inera.intyg.intygstjanst.web.service.bean.IntygBootstrapBean">
+            <property name="txManager" ref="transactionManager"/>
+        </bean>
+    </beans>
 </beans>
