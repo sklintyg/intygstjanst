@@ -35,12 +35,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.common.db.support.DbModuleEntryPoint;
 import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
-import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
+import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
@@ -65,7 +66,7 @@ public class CitizenController {
     private MonitoringLogService monitoringLogService;
 
     //
-    public static class ListParameters {
+    public static class RequestObject {
         private String id;
         private boolean archived;
 
@@ -77,11 +78,35 @@ public class CitizenController {
             return archived;
         }
 
-        public static ListParameters of(String id, boolean archived) {
-            final ListParameters p = new ListParameters();
+        public static RequestObject of(String id, boolean archived) {
+            final RequestObject p = new RequestObject();
             p.id = id;
             p.archived = archived;
             return p;
+        }
+    }
+
+    //
+    public static class ResponseObject {
+        private CertificateHolder certificate;
+        private List<CertificateRelation> relations;
+
+        public CertificateHolder getCertificate() {
+            return certificate;
+        }
+
+        public List<CertificateRelation> getRelations() {
+            return relations;
+        }
+
+        public void setRelations(List<CertificateRelation> relations) {
+            this.relations = relations;
+        }
+
+        public static ResponseObject of(CertificateHolder certificate) {
+            final ResponseObject r = new ResponseObject();
+            r.certificate = certificate;
+            return r;
         }
     }
 
@@ -90,7 +115,7 @@ public class CitizenController {
     @Path("/certificates")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public List<CertificateHolder> getCertificates(@RequestBody ListParameters parameters) {
+    public List<ResponseObject> getCertificates(@RequestBody RequestObject parameters) {
 
         final long t0 = System.currentTimeMillis();
 
@@ -102,28 +127,39 @@ public class CitizenController {
             return Collections.emptyList();
         }
 
-        final List<CertificateHolder> certificateHolders = certificateService.listCertificatesForCitizen(pnr.get(),
+        final List<ResponseObject> responseList = certificateService.listCertificatesForCitizen(pnr.get(),
             null, null, null)
             .stream()
             .filter(c -> filter(c, parameters.isArchived()))
             .map(ConverterUtil::toCertificateHolder)
-            .peek(this::addRelation)
+            .map(ResponseObject::of)
+            .peek(this::addRelations)
             .collect(Collectors.toList());
 
         // list is in ascending signed date order, and has to be reversed
-        Collections.reverse(certificateHolders);
+        Collections.reverse(responseList);
 
         monitoringLogService.logCertificateListedByCitizen(pnr.orElse(null));
 
-        LOG.info("Found {} certificates in {} ms", certificateHolders.size(), (System.currentTimeMillis() - t0));
+        LOG.info("Found {} certificates in {} ms", responseList.size(), (System.currentTimeMillis() - t0));
 
-        return certificateHolders;
+        return responseList;
     }
 
-    private void addRelation(final CertificateHolder ch) {
-        final Optional<Relation> r = relationService.getParentRelation(ch.getId());
-        if (r.isPresent()) {
-            ch.setCertificateRelation(toCertificateRelation(r.get()));
+    private void addRelations(final ResponseObject response) {
+        final List<CertificateRelation> relations  = relationService.getRelationGraph(response.getCertificate().getId())
+            .stream()
+            .filter(this::accessibleForUser)
+            .map(this::toCertificateRelation)
+            .collect(Collectors.toList());
+        response.setRelations(relations);
+    }
+
+    private boolean accessibleForUser(final Relation r) {
+        try {
+            return !certificateService.getCertificateForCare(r.getFromIntygsId()).isRevoked();
+        } catch (InvalidCertificateException e) {
+            throw new ServerException("Failed to get revoke status for related certificate: " + e);
         }
     }
 
@@ -143,7 +179,7 @@ public class CitizenController {
             case DoiModuleEntryPoint.MODULE_ID:
                 return false;
         }
-        if (c.isDeleted() == archived && c.getStates().stream().noneMatch(h -> h.getState() == CertificateState.CANCELLED)) {
+        if (c.isDeleted() == archived && !c.isRevoked()) {
             c.setOriginalCertificate(null);
             return true;
         }
