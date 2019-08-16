@@ -36,9 +36,20 @@
   </context-param>
 
   <filter>
+    <filter-name>internalApiFilter</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+
+
+  <filter>
     <filter-name>LogMDCFilter</filter-name>
     <filter-class>se.inera.intyg.infra.monitoring.logging.LogMDCServletFilter</filter-class>
   </filter>
+
+  <filter-mapping>
+    <filter-name>internalApiFilter</filter-name>
+    <url-pattern>/internalapi/*</url-pattern>
+  </filter-mapping>
 
   <filter-mapping>
     <filter-name>LogMDCFilter</filter-name>
