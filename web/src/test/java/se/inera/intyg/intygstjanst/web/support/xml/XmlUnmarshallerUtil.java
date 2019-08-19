@@ -20,11 +20,8 @@ package se.inera.intyg.intygstjanst.web.support.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.xml.bind.JAXBElement;
-
 import org.springframework.core.io.ClassPathResource;
-
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.intyg.common.support.xml.XmlMarshallerHelper;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
@@ -34,7 +31,8 @@ public final class XmlUnmarshallerUtil {
     private XmlUnmarshallerUtil() {
     }
 
-    public static RevokeMedicalCertificateRequestType getRevokeMedicalCertificateRequestTypeFromFile(final String filePath) throws IOException {
+    public static RevokeMedicalCertificateRequestType getRevokeMedicalCertificateRequestTypeFromFile(final String filePath)
+        throws IOException {
         JAXBElement<RevokeMedicalCertificateRequestType> jaxbElement = XmlMarshallerHelper.unmarshal(getInputStream(filePath));
         return jaxbElement.getValue();
     }

@@ -18,6 +18,14 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -28,40 +36,34 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
-import se.inera.intyg.intygstjanst.web.support.xml.XmlUnmarshallerUtil;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.Amneskod;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.ErrorCode;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
+import se.inera.intyg.intygstjanst.web.support.xml.XmlUnmarshallerUtil;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType.Komplettering;
 import se.riv.clinicalprocess.healthcond.certificate.v3.MeddelandeReferens;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
 @RunWith(MockitoJUnitRunner.class)
 public class SendMessageToCareValidatorTest {
+
     private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML =
-            "SendMessageToCareTest/sendmessagetocare.xml";
+        "SendMessageToCareTest/sendmessagetocare.xml";
+
     private static final Recipient FKASSA =
-            new RecipientBuilder()
-                    .setLogicalAddress("FKORG")
-                    .setName("Föräkringskassa")
-                    .setId("FKASSA")
-                    .setCertificateTypes("fk7263")
-                    .setActive(true)
-                    .setTrusted(true)
-                    .build();
+        new RecipientBuilder()
+            .setLogicalAddress("FKORG")
+            .setName("Föräkringskassa")
+            .setId("FKASSA")
+            .setCertificateTypes("fk7263")
+            .setActive(true)
+            .setTrusted(true)
+            .build();
+
     @Mock
     private RecipientService recipientService;
     @Mock
@@ -109,7 +111,7 @@ public class SendMessageToCareValidatorTest {
     public void testThatValidationOKIfCertificateExistsButCivicRegistrationNumberIsCorrect() throws Exception {
         List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType message = XmlUnmarshallerUtil
-                .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
+            .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         validateCertificateAndCivicRegistrationNumberConsistency(validationErrors, message.getPatientPersonId().getExtension(), message);
         assertTrue(validationErrors.isEmpty());
     }
@@ -118,12 +120,12 @@ public class SendMessageToCareValidatorTest {
     public void testThatValidationOKWhenSistaDatumForSvarIsNotSpecifiedForAnswer() throws Exception {
         List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType answerWithoutSistaDatumForSvar = XmlUnmarshallerUtil
-                .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
+            .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         answerWithoutSistaDatumForSvar.setSvarPa(new MeddelandeReferens());
         answerWithoutSistaDatumForSvar.setSistaDatumForSvar(null);
 
         SendMessageToCareType questionWithSistaDatumForSvar = XmlUnmarshallerUtil
-                .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
+            .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         questionWithSistaDatumForSvar.setSistaDatumForSvar(LocalDate.now());
         questionWithSistaDatumForSvar.setSvarPa(null);
 
@@ -224,7 +226,7 @@ public class SendMessageToCareValidatorTest {
     public void testThatValidationFailsIfCertificateDoesNotExist() throws Exception {
         List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType message = XmlUnmarshallerUtil
-                .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
+            .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         String certificateId = message.getIntygsId().getExtension();
         String civicRegistrationNumber = message.getPatientPersonId().getExtension();
         when(certificateService.getCertificateForCare(certificateId)).thenReturn(null);
@@ -237,7 +239,7 @@ public class SendMessageToCareValidatorTest {
     public void testThatValidationFailsIfCertificateExistsButCivicRegistrationNumberIsWrong() throws Exception {
         List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType message = XmlUnmarshallerUtil
-                .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
+            .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         validateCertificateAndCivicRegistrationNumberConsistency(validationErrors, "101010-1010", message);
         assertFalse(validationErrors.isEmpty());
         assertTrue(validationErrors.get(0).contains(ErrorCode.CIVIC_REGISTRATION_NUMBER_INCONSISTENCY_ERROR.toString()));
@@ -247,7 +249,7 @@ public class SendMessageToCareValidatorTest {
     public void testThatValidationFailsWhen_SvarPa_And_SistaDatumForSvar_AreSimultaneouslySpecified() throws Exception {
         List<String> validationErrors = new ArrayList<>();
         SendMessageToCareType sendMessageToCareType = XmlUnmarshallerUtil
-                .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
+            .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         sendMessageToCareType.setSvarPa(new MeddelandeReferens());
         sendMessageToCareType.setSistaDatumForSvar(LocalDate.now());
         validator.validateConsistencyForQuestionVsAnswer(sendMessageToCareType, validationErrors);
@@ -292,7 +294,7 @@ public class SendMessageToCareValidatorTest {
     @Test
     public void testThatValidationExceptionIsThrown() throws Exception {
         SendMessageToCareType sendMessageToCareType = XmlUnmarshallerUtil
-                .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
+            .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         List<String> res = validator.validateSendMessageToCare(sendMessageToCareType);
         assertFalse(res.isEmpty());
     }
@@ -331,8 +333,8 @@ public class SendMessageToCareValidatorTest {
     }
 
     private void validateCertificateAndCivicRegistrationNumberConsistency(List<String> validationErrors, String civicRegNumber,
-            SendMessageToCareType message)
-            throws Exception, InvalidCertificateException {
+        SendMessageToCareType message)
+        throws Exception, InvalidCertificateException {
         String certificateId = message.getIntygsId().getExtension();
         String civicRegistrationNumber = message.getPatientPersonId().getExtension();
         Certificate certificate = new Certificate(certificateId);
@@ -351,7 +353,7 @@ public class SendMessageToCareValidatorTest {
 
     private SendMessageToCareType buildSendMessageCareType(String meddelandeId, String amne) throws Exception {
         SendMessageToCareType sendMessageToCareType = XmlUnmarshallerUtil
-                .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
+            .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         MeddelandeReferens meddelandeReferens = new MeddelandeReferens();
         meddelandeReferens.setMeddelandeId(meddelandeId);
         sendMessageToCareType.setSvarPa(meddelandeReferens);
@@ -362,7 +364,7 @@ public class SendMessageToCareValidatorTest {
 
     private Personnummer createPnr(String pnr) {
         return Personnummer.createPersonnummer(pnr)
-                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 
 }

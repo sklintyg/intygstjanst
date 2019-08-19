@@ -81,7 +81,7 @@ public class ArendeConverterTest {
         assertEquals(sendMessageToCareType.getMeddelandeId(), sendMessageToCare.getMeddelandeId());
         assertEquals(sendMessageToCareType.getReferensId(), sendMessageToCare.getReferens());
         assertEquals(FIXED_TIME_INSTANT,
-                sendMessageToCare.getTimestamp().toInstant(ZoneId.systemDefault().getRules().getOffset(FIXED_TIME_INSTANT)));
+            sendMessageToCare.getTimestamp().toInstant(ZoneId.systemDefault().getRules().getOffset(FIXED_TIME_INSTANT)));
 
         Diff diff = XMLUnit.compareXML(loadXmlMessageFromFile(), sendMessageToCare.getMeddelande());
         assertTrue(diff.toString(), diff.similar());

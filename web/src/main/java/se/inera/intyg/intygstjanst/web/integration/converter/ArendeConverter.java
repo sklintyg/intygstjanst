@@ -22,7 +22,6 @@ import com.google.common.annotations.VisibleForTesting;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import se.inera.intyg.common.support.xml.XmlMarshallerHelper;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.ObjectFactory;
@@ -41,19 +40,19 @@ public final class ArendeConverter {
         ArendeConverter.systemClock = systemClock;
     }
 
-    public static Arende convertSendMessageToCare(SendMessageToCareType sendMessageToCareType) throws JAXBException {
+    public static Arende convertSendMessageToCare(SendMessageToCareType source) {
         Arende arende = new Arende();
-        arende.setIntygsId(sendMessageToCareType.getIntygsId().getExtension());
-        arende.setMeddelandeId(sendMessageToCareType.getMeddelandeId());
-        arende.setReferens(sendMessageToCareType.getReferensId());
+        arende.setIntygsId(source.getIntygsId().getExtension());
+        arende.setMeddelandeId(source.getMeddelandeId());
+        arende.setReferens(source.getReferensId());
         arende.setTimeStamp(LocalDateTime.now(systemClock));
-        arende.setLogiskAdressmottagare(sendMessageToCareType.getLogiskAdressMottagare());
-        arende.setAmne(sendMessageToCareType.getAmne().getCode());
-        arende.setMeddelande(convertToXmlString(sendMessageToCareType));
+        arende.setLogiskAdressmottagare(source.getLogiskAdressMottagare());
+        arende.setAmne(source.getAmne().getCode());
+        arende.setMeddelande(convertToXmlString(source));
         return arende;
     }
 
-    public static Arende convertSendMessageToRecipient(SendMessageToRecipientType source) throws JAXBException {
+    public static Arende convertSendMessageToRecipient(SendMessageToRecipientType source) {
         Arende arende = new Arende();
         arende.setIntygsId(source.getIntygsId().getExtension());
         arende.setMeddelandeId(source.getMeddelandeId());
@@ -73,7 +72,7 @@ public final class ArendeConverter {
 
     public static String convertToXmlString(SendMessageToRecipientType source) {
         se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.ObjectFactory objectFactory =
-                new se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.ObjectFactory();
+            new se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.ObjectFactory();
         JAXBElement<SendMessageToRecipientType> jaxbElement = objectFactory.createSendMessageToRecipient(source);
         return XmlMarshallerHelper.marshal(jaxbElement).replaceAll("[\\n\\t]", "");
     }

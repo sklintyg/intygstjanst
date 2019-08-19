@@ -57,7 +57,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterCertificateResponderImpl.class);
 
-   @Autowired
+    @Autowired
     private ModuleContainerApi moduleContainer;
 
     @Autowired
@@ -118,9 +118,9 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     }
 
     private RegisterCertificateResponseType storeIntyg(
-            final RegisterCertificateType registerCertificate,
-            final String intygsTyp,
-            final String xml, final String additionalInfo) throws CertificateAlreadyExistsException, InvalidCertificateException {
+        final RegisterCertificateType registerCertificate,
+        final String intygsTyp,
+        final String xml, final String additionalInfo) throws CertificateAlreadyExistsException, InvalidCertificateException {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
         CertificateHolder certificateHolder = toCertificateHolder(registerCertificate.getIntyg(), intygsTyp, xml, additionalInfo);
         moduleContainer.certificateReceived(certificateHolder);
@@ -142,7 +142,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
         String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
         LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId + " issued by " + issuedBy
-                + ": Certificate already exists - ignored.");
+            + ": Certificate already exists - ignored.");
         return response;
     }
 
@@ -152,7 +152,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
         String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
         LOGGER.error(LogMarkers.VALIDATION, "Failed to create Certificate with id " + certificateId + " issued by " + issuedBy
-                + ": Certificate ID already exists for another person.");
+            + ": Certificate ID already exists for another person.");
         return response;
     }
 
@@ -168,7 +168,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         final String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
         final String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
         final String logMessage = MessageFormat.format("Failed to create Certificate with id {0} issued by {1} : "
-                + "Certificate type {2} does not support version: {3}", certificateId, issuedBy, typ, version);
+            + "Certificate type {2} does not support version: {3}", certificateId, issuedBy, typ, version);
         LOGGER.error(LogMarkers.VALIDATION, logMessage);
         return response;
     }
@@ -197,7 +197,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     private CertificateRelation convertRelation(String intygsId, List<Relation> relations) {
         if (relations != null && relations.size() > 0) {
             return new CertificateRelation(intygsId, relations.get(0).getIntygsId().getExtension(),
-                    RelationKod.fromValue(relations.get(0).getTyp().getCode()), LocalDateTime.now());
+                RelationKod.fromValue(relations.get(0).getTyp().getCode()), LocalDateTime.now());
         }
         return null;
     }
@@ -211,7 +211,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         }
 
         return Personnummer.createPersonnummer(personId)
-                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
 
     }
 }

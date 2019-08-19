@@ -35,9 +35,6 @@ import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.Resu
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 import se.inera.intyg.common.support.xml.XmlMarshallerHelper;
 
-// CHECKSTYLE:OFF LineLength
-// CHECKSTYLE:ON LineLength
-
 /**
  * @author par.wenaker
  */
@@ -52,7 +49,7 @@ public class SendMedicalCertificateQuestionResponderStub implements SendMedicalC
 
     @Override
     public SendMedicalCertificateQuestionResponseType sendMedicalCertificateQuestion(AttributedURIType logicalAddress,
-            SendMedicalCertificateQuestionType request) {
+        SendMedicalCertificateQuestionType request) {
 
         SendMedicalCertificateQuestionResponseType response = new SendMedicalCertificateQuestionResponseType();
 
