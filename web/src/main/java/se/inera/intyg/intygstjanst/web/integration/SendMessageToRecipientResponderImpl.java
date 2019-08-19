@@ -86,8 +86,6 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
             try {
                 // try saving message in db, but always return response from recipient
                 arendeService.processIncomingMessage(ArendeConverter.convertSendMessageToRecipient(parameters));
-            } catch (JAXBException e) {
-                LOG.error("JAXB error in SendMessageToRecipientResponder: {}", e.getMessage());
             } catch (Exception e) {
                 LOG.error("Exception caught when saving messageToRecipient in db: {}", e.getMessage());
             }
