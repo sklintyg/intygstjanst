@@ -27,21 +27,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-
 import javax.persistence.PersistenceException;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.core.io.ClassPathResource;
-
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
+import se.inera.intyg.intygstjanst.web.support.xml.XmlUnmarshallerUtil;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator;
 import se.inera.intyg.intygstjanst.web.service.ArendeService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
@@ -151,22 +145,13 @@ public class SendMessageToCareResponderImplTest {
     }
 
     private SendMessageToCareType buildSendMessageToCareType() throws Exception {
-        SendMessageToCareType sendMessageToCareType = getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
-        return sendMessageToCareType;
+        return XmlUnmarshallerUtil.getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
     }
 
     private SendMessageToCareResponseType createClientResponse(ResultType resultType) {
         SendMessageToCareResponseType response = new SendMessageToCareResponseType();
         response.setResult(resultType);
         return response;
-    }
-
-    private SendMessageToCareType getSendMessageToCareTypeFromFile(String fileName) throws Exception {
-        JAXBContext jaxbContext = JAXBContext.newInstance(SendMessageToCareType.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        return unmarshaller.unmarshal(
-                new StreamSource(new ClassPathResource(fileName).getInputStream()),
-                SendMessageToCareType.class).getValue();
     }
 
 }

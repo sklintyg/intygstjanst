@@ -22,21 +22,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.core.io.ClassPathResource;
-
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
+import se.inera.intyg.intygstjanst.web.support.xml.XmlUnmarshallerUtil;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArendeServiceImplTest {
@@ -56,12 +50,7 @@ public class ArendeServiceImplTest {
     }
 
     private Arende loadFromFile(String fileName) throws Exception {
-        JAXBContext jaxbContext = JAXBContext.newInstance(SendMessageToCareType.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        SendMessageToCareType sendMessageToCareType = unmarshaller.unmarshal(
-                new StreamSource(new ClassPathResource(fileName).getInputStream()),
-                SendMessageToCareType.class).getValue();
-        return ArendeConverter.convertSendMessageToCare(sendMessageToCareType);
+        return ArendeConverter.convertSendMessageToCare(XmlUnmarshallerUtil.getSendMessageToCareTypeFromFile(fileName));
     }
 
 }

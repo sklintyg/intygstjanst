@@ -18,6 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
+import javax.xml.bind.JAXBElement;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -34,6 +43,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.common.support.xml.XmlMarshallerHelper;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
@@ -43,19 +53,6 @@ import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.schemas.contract.Personnummer;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import java.time.LocalDateTime;
-import java.util.Collections;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RevokeMedicalCertificateResponderImplTest {
@@ -88,12 +85,9 @@ public class RevokeMedicalCertificateResponderImplTest {
 
     private RevokeMedicalCertificateRequestType revokeRequest() throws Exception {
         if (cachedRevokeRequest == null) {
-            JAXBContext jaxbContext = JAXBContext.newInstance(RevokeMedicalCertificateRequestType.class);
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            JAXBElement<RevokeMedicalCertificateRequestType> request = unmarshaller.unmarshal(
-                    new StreamSource(new ClassPathResource("revoke-medical-certificate/revoke-medical-certificate-request.xml").getInputStream()),
-                    RevokeMedicalCertificateRequestType.class);
-            cachedRevokeRequest = request.getValue();
+            ClassPathResource resource = new ClassPathResource("revoke-medical-certificate/revoke-medical-certificate-request.xml");
+            JAXBElement<RevokeMedicalCertificateRequestType> jaxbElement = XmlMarshallerHelper.unmarshal(resource.getInputStream());
+            cachedRevokeRequest = jaxbElement.getValue();
         }
         return cachedRevokeRequest;
     }

@@ -18,13 +18,32 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.oxm.MarshallingFailureException;
+import org.springframework.oxm.XmlMappingException;
+
 import se.inera.intyg.common.services.texts.IntygTextsService;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -41,19 +60,13 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
-import se.riv.clinicalprocess.healthcond.certificate.v3.*;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import java.lang.reflect.Field;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Enhet;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.HosPersonal;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Patient;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Vardgivare;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterCertificateResponderImplTest {
@@ -75,6 +88,7 @@ public class RegisterCertificateResponderImplTest {
     private IntygTextsService textsService;
 
     @InjectMocks
+    @Spy
     private RegisterCertificateResponderImpl responder = new RegisterCertificateResponderImpl();
 
     @Before
@@ -83,7 +97,6 @@ public class RegisterCertificateResponderImplTest {
         when(textsService.isVersionSupported(INTYGSTYP.toLowerCase(), INTYGSVERSION)).thenReturn(true);
         when(moduleRegistry.getModuleIdFromExternalId(INTYGSTYP)).thenReturn(INTYGSTYP.toLowerCase());
         when(moduleApi.validateXml(anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.VALID, new ArrayList<>()));
-        responder.initializeJaxbContext();
     }
 
     @Test
@@ -98,6 +111,7 @@ public class RegisterCertificateResponderImplTest {
 
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
                 createRequest(intygId, enhetId, enhetNamn, vardgivareId, skapadAvNamn, patientId, signeringstidpunkt));
+
         assertNotNull(res);
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
 
@@ -118,8 +132,10 @@ public class RegisterCertificateResponderImplTest {
     @Test
     public void registerCertificateValidationErrorsTest() throws Exception {
         when(moduleApi.validateXml(anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.INVALID, Arrays.asList("fel")));
+
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
                 createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "patientId", LocalDateTime.now()));
+
         assertNotNull(res);
         assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
         assertEquals(ErrorIdType.VALIDATION_ERROR, res.getResult().getErrorId());
@@ -131,9 +147,12 @@ public class RegisterCertificateResponderImplTest {
 
     @Test
     public void registerCertificateCertificateAlreadyExistsTest() throws Exception {
+
         doThrow(new CertificateAlreadyExistsException("intygId")).when(moduleContainer).certificateReceived(any(CertificateHolder.class));
+
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
                 createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
+
         assertNotNull(res);
         assertEquals(ResultCodeType.INFO, res.getResult().getResultCode());
         assertEquals("Certificate already exists", res.getResult().getResultText());
@@ -145,8 +164,10 @@ public class RegisterCertificateResponderImplTest {
     @Test
     public void registerCertificateInvalidCertificateExceptionTest() throws Exception {
         doThrow(new InvalidCertificateException("intygId", null)).when(moduleContainer).certificateReceived(any(CertificateHolder.class));
+
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
                 createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
+
         assertNotNull(res);
         assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
         assertEquals(ErrorIdType.VALIDATION_ERROR, res.getResult().getErrorId());
@@ -158,18 +179,15 @@ public class RegisterCertificateResponderImplTest {
 
     @Test
     public void registerCertificateJaxbExceptionTest() throws Exception {
-        JAXBContext jaxbContextMock = mock(JAXBContext.class);
-        Field field = RegisterCertificateResponderImpl.class.getDeclaredField("jaxbContext");
-        field.setAccessible(true);
-        field.set(responder, jaxbContextMock);
-        when(jaxbContextMock.createMarshaller()).thenThrow(new JAXBException(""));
+        doThrow(new MarshallingFailureException("Marshalling Failure")).
+            when(responder).xmlToString(any(RegisterCertificateType.class));
 
         try {
             responder.registerCertificate(LOGICAL_ADDRESS,
                     createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
             fail("should throw");
         } catch (RuntimeException e) {
-            assertTrue(e.getCause() instanceof JAXBException);
+            assertTrue(e.getCause() instanceof XmlMappingException);
             verify(moduleApi, never()).validateXml(anyString());
             verify(moduleContainer, never()).certificateReceived(any(CertificateHolder.class));
         }
@@ -192,6 +210,7 @@ public class RegisterCertificateResponderImplTest {
     @Test
     public void registerCertificateOtherExceptionTest() throws Exception {
         doThrow(new RuntimeException("intygId")).when(moduleContainer).certificateReceived(any(CertificateHolder.class));
+
         try {
             responder.registerCertificate(LOGICAL_ADDRESS,
                     createRequest("intygId", "enhetId", "enhetNamn",
