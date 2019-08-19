@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
 
 public interface ReceiverService {
+
     @Transactional
     void registerApprovedReceiver(ApprovedReceiver approvedReceiver);
 

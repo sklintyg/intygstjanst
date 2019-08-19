@@ -18,6 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
+import static org.junit.Assert.assertEquals;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -27,9 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
-
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * DAO test, uses @ContextConfiguration e.g. real DB.

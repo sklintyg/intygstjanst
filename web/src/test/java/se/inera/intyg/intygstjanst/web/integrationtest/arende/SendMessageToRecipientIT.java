@@ -22,8 +22,13 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
+import com.jayway.restassured.internal.matcher.xml.XmlXsdMatcher;
 import java.util.UUID;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,14 +36,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
-
-import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.internal.matcher.xml.XmlXsdMatcher;
-
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
@@ -75,31 +72,35 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
         String enhetsId = "123456";
         requestTemplate.add("data", new ArendeData(INTYG_ID, "KOMPL", PERSON_ID, enhetsId));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/send-message-to-recipient/v2.0").then().statusCode(200).rootPath(BASE)
-                .body("result.resultCode", is("OK"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/send-message-to-recipient/v2.0").then().statusCode(200)
+            .rootPath(BASE)
+            .body("result.resultCode", is("OK"));
     }
 
     @Test
     public void responseRespectsSchema() throws Exception {
         IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", LUSE_VERSION, PERSON_ID, false);
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_2.1.xsd").getURL(), Charsets.UTF_8);
+            new ClassPathResource("interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_2.1.xsd").getURL(),
+            Charsets.UTF_8);
 
         requestTemplate.add("data", new ArendeData(INTYG_ID, "KOMPL", PERSON_ID, "123456"));
 
         given().filter(
-                new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendMessageToRecipientResponder:2"),
-                        "soap:Envelope/soap:Body/lc:SendMessageToRecipientResponse"))
-                .body(requestTemplate.render()).when().post("inera-certificate/send-message-to-recipient/v2.0").then()
-                .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
+            new BodyExtractorFilter(
+                ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SendMessageToRecipientResponder:2"),
+                "soap:Envelope/soap:Body/lc:SendMessageToRecipientResponse"))
+            .body(requestTemplate.render()).when().post("inera-certificate/send-message-to-recipient/v2.0").then()
+            .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
     @Test
     public void messageForNonExistantCertificateIsNotAccepted() throws Exception {
         requestTemplate.add("data", new ArendeData(INTYG_ID_NON_EXISTANT, "KOMPL", PERSON_ID, "123456"));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/send-message-to-recipient/v2.0").then().statusCode(200).rootPath(BASE)
-                .body("result.resultCode", is("ERROR"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/send-message-to-recipient/v2.0").then().statusCode(200)
+            .rootPath(BASE)
+            .body("result.resultCode", is("ERROR"));
     }
 
     @Test
@@ -107,8 +108,9 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
         String enhetsId = "<root>123456</root>"; // This brakes the XML Schema
         requestTemplate.add("data", new ArendeData(INTYG_ID, "KOMPL", PERSON_ID, enhetsId));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/send-message-to-recipient/v2.0").then().statusCode(200).rootPath(BASE)
-                .body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/send-message-to-recipient/v2.0").then().statusCode(200)
+            .rootPath(BASE)
+            .body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
     private XmlXsdMatcher matchesXsd(String xsd) {
@@ -117,6 +119,7 @@ public class SendMessageToRecipientIT extends BaseIntegrationTest {
 
     @SuppressWarnings("unused")
     private static class ArendeData {
+
         public final String intygsId;
         public final String arende;
         public final String personId;

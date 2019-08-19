@@ -18,16 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
+import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.base.Strings;
-
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 import se.inera.intyg.common.fk7263.schemas.insuranceprocess.healthreporting.validator.VardAdresseringsTypeValidator;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
 
 public class RevokeRequestValidator {
+
     private RevokeType revokeRequest = null;
     private List<String> validationErrors = new ArrayList<>();
 

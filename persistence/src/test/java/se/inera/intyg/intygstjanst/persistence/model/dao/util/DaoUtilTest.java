@@ -18,12 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.util;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
 import se.inera.intyg.schemas.contract.Personnummer;
-
-
-import static org.junit.Assert.assertEquals;
 
 public class DaoUtilTest {
 

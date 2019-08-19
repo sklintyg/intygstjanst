@@ -68,8 +68,9 @@ public class RevokeCertificateIT extends BaseIntegrationTest {
         STGroup templateGroupForRevoke = new STGroupFile("integrationtests/revokecertificate/requests.stg");
         ST requestTemplateForRevoke = templateGroupForRevoke.getInstanceOf("request");
         requestTemplateForRevoke.add("data", new RevokeIntygsData(intygsIdNotExists, personId1));
-        given().body(requestTemplateForRevoke.render()).when().post("inera-certificate/revoke-certificate-rivta/v2.0").then().statusCode(200)
-                .rootPath(REVOKE_BASE).body("result.resultCode", is("ERROR"));
+        given().body(requestTemplateForRevoke.render()).when().post("inera-certificate/revoke-certificate-rivta/v2.0").then()
+            .statusCode(200)
+            .rootPath(REVOKE_BASE).body("result.resultCode", is("ERROR"));
     }
 
     @Test
@@ -77,22 +78,24 @@ public class RevokeCertificateIT extends BaseIntegrationTest {
         STGroup templateGroupForRevoke = new STGroupFile("integrationtests/revokecertificate/requests.stg");
         ST requestTemplateForRevoke = templateGroupForRevoke.getInstanceOf("request");
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/RevokeCertificateInteraction/RevokeCertificateResponder_2.1.xsd").getURL(), Charsets.UTF_8);
+            new ClassPathResource("interactions/RevokeCertificateInteraction/RevokeCertificateResponder_2.1.xsd").getURL(), Charsets.UTF_8);
 
         requestTemplateForRevoke.add("data", new RevokeIntygsData(intygsIdNotExists, personId1));
 
-        given().filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:RevokeCertificateResponder:2"),
+        given().filter(
+            new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:RevokeCertificateResponder:2"),
                 "soap:Envelope/soap:Body/lc:RevokeCertificateResponse")).body(requestTemplateForRevoke.render()).when()
-                .post("inera-certificate/revoke-certificate-rivta/v2.0").then()
-                .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
+            .post("inera-certificate/revoke-certificate-rivta/v2.0").then()
+            .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
     @Test
     public void faultTransformerTest() {
         ST requestTemplateForRevoke = new STGroupFile("integrationtests/revokecertificate/requests.stg").getInstanceOf("request");
         requestTemplateForRevoke.add("data", new RevokeIntygsData("<tag></tag>", personId1));
-        given().body(requestTemplateForRevoke.render()).when().post("inera-certificate/revoke-certificate-rivta/v2.0").then().statusCode(200)
-                .rootPath(REVOKE_BASE).body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
+        given().body(requestTemplateForRevoke.render()).when().post("inera-certificate/revoke-certificate-rivta/v2.0").then()
+            .statusCode(200)
+            .rootPath(REVOKE_BASE).body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
     @After

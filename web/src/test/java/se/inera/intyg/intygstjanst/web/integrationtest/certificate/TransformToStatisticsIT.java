@@ -23,18 +23,6 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.io.ByteArrayInputStream;
-import java.io.StringReader;
-import java.util.UUID;
-
-import javax.xml.bind.JAXB;
-import javax.xml.transform.stream.StreamSource;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.oclc.purl.dsdl.svrl.SchematronOutputType;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.google.common.base.Charsets;
 import com.helger.schematron.svrl.SVRLHelper;
 import com.helger.schematron.xslt.SchematronResourceSCH;
@@ -42,13 +30,21 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
-
+import java.io.ByteArrayInputStream;
+import java.io.StringReader;
+import java.util.UUID;
+import javax.xml.bind.JAXB;
+import javax.xml.transform.stream.StreamSource;
+import org.junit.Before;
+import org.junit.Test;
+import org.oclc.purl.dsdl.svrl.SchematronOutputType;
+import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
 
-public class TransformToStatisticsIT extends BaseIntegrationTest{
+public class TransformToStatisticsIT extends BaseIntegrationTest {
 
     private String intygsId = UUID.randomUUID().toString();
     private String personId1 = "192703104321";
@@ -68,9 +64,9 @@ public class TransformToStatisticsIT extends BaseIntegrationTest{
         IntegrationTestUtil.registerMedicalCertificate(intygsId, personId1);
 
         XmlPath xml = given().contentType(ContentType.XML).pathParams("id", intygsId, "action", "created").accept(ContentType.XML).expect()
-                .statusCode(200).when()
-                .get("inera-certificate/resources/statisticsresource/{id}/{action}").then().rootPath("RegisterCertificate")
-                .body("intyg.intygs-id.extension", is(intygsId)).extract().body().xmlPath();
+            .statusCode(200).when()
+            .get("inera-certificate/resources/statisticsresource/{id}/{action}").then().rootPath("RegisterCertificate")
+            .body("intyg.intygs-id.extension", is(intygsId)).extract().body().xmlPath();
 
         if (!validateFk7263OutputSchematron(xml.prettyPrint())) {
             fail();
@@ -87,7 +83,7 @@ public class TransformToStatisticsIT extends BaseIntegrationTest{
             throw new IllegalArgumentException("Invalid Schematron!");
         }
         SchematronOutputType result = schematronResource
-                .applySchematronValidationToSVRL((new StreamSource(new ByteArrayInputStream(xml.getBytes(Charsets.UTF_8)))));
+            .applySchematronValidationToSVRL((new StreamSource(new ByteArrayInputStream(xml.getBytes(Charsets.UTF_8)))));
         return SVRLHelper.getAllFailedAssertions(result).size() == 0;
     }
 }

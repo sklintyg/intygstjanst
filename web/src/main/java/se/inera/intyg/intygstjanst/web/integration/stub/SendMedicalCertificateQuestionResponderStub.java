@@ -18,6 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
+import java.io.StringWriter;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +35,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequest
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import java.io.StringWriter;
 
 // CHECKSTYLE:OFF LineLength
 // CHECKSTYLE:ON LineLength
@@ -64,7 +63,7 @@ public class SendMedicalCertificateQuestionResponderStub implements SendMedicalC
 
     @Override
     public SendMedicalCertificateQuestionResponseType sendMedicalCertificateQuestion(AttributedURIType logicalAddress,
-            SendMedicalCertificateQuestionType request) {
+        SendMedicalCertificateQuestionType request) {
 
         SendMedicalCertificateQuestionResponseType response = new SendMedicalCertificateQuestionResponseType();
 

@@ -18,11 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.builder;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
 
 /**
  * Created by eriklupander on 2016-02-04.

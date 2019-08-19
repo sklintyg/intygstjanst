@@ -18,23 +18,20 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.test;
 
+import com.google.common.base.Joiner;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.Queue;
 import javax.jms.TextMessage;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.JmsUtils;
-
-import com.google.common.base.Joiner;
 
 /**
  * Class for consuming JMS messages sent to statistik (ST). Meant to be used for integration testing purposes.

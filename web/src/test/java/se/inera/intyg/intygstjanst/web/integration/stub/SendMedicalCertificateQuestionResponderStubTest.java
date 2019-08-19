@@ -26,8 +26,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.w3.wsaddressing10.AttributedURIType;
-
-import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.*;
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.InnehallType;
+import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.QuestionToFkType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;

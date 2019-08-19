@@ -18,11 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.test;
 
+import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
+import com.google.common.io.Resources;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
@@ -34,7 +36,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +43,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import com.google.common.base.Charsets;
-import com.google.common.base.Strings;
-import com.google.common.io.Resources;
-
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.ReceiverApprovalStatus;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversType;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
@@ -98,8 +94,8 @@ public class CertificateResource {
                 LOGGER.info("Deleting certificates for citizen {}", id);
                 @SuppressWarnings("unchecked")
                 List<String> certificates = entityManager
-                        .createQuery("SELECT c.id FROM Certificate c WHERE c.civicRegistrationNumber=:personId")
-                        .setParameter("personId", id).getResultList();
+                    .createQuery("SELECT c.id FROM Certificate c WHERE c.civicRegistrationNumber=:personId")
+                    .setParameter("personId", id).getResultList();
                 for (String certificate : certificates) {
                     deleteCertificate(certificate);
                 }
@@ -121,7 +117,7 @@ public class CertificateResource {
                 LOGGER.info("Deleting certificates for unit {}", id);
                 @SuppressWarnings("unchecked")
                 List<String> certificates = entityManager.createQuery("SELECT c.id FROM Certificate c WHERE c.careUnitId=:careUnitHsaId")
-                        .setParameter("careUnitHsaId", id).getResultList();
+                    .setParameter("careUnitHsaId", id).getResultList();
                 for (String certificate : certificates) {
                     deleteCertificate(certificate);
                 }
@@ -178,7 +174,7 @@ public class CertificateResource {
 
                 // Also delete any SjukfallCertificates
                 List<SjukfallCertificate> sjukfallCertificates = entityManager
-                        .createQuery("SELECT c FROM SjukfallCertificate c", SjukfallCertificate.class).getResultList();
+                    .createQuery("SELECT c FROM SjukfallCertificate c", SjukfallCertificate.class).getResultList();
                 for (SjukfallCertificate sjukfallCert : sjukfallCertificates) {
                     entityManager.remove(sjukfallCert);
                 }
@@ -201,7 +197,7 @@ public class CertificateResource {
             try {
                 LOGGER.info("insert certificate {} ({})", certificate.getId(), certificate.getType());
                 OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), getXmlBody(certificateHolder),
-                        certificate);
+                    certificate);
                 ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
                 final Utlatande utlatande = moduleApi.getUtlatandeFromXml(originalCertificate.getDocument());
                 certificate.setAdditionalInfo(moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande)));
@@ -227,10 +223,10 @@ public class CertificateResource {
 
                 @SuppressWarnings("unchecked")
                 List<ApprovedReceiver> approvedReceivers =
-                        entityManager
-                                .createQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId=:certificateId")
-                                .setParameter("certificateId", id)
-                                .getResultList();
+                    entityManager
+                        .createQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId=:certificateId")
+                        .setParameter("certificateId", id)
+                        .getResultList();
 
                 for (ApprovedReceiver ar : approvedReceivers) {
                     entityManager.remove(ar);
@@ -251,7 +247,7 @@ public class CertificateResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response registerApprovedReceivers(@PathParam("id") final String id,
-                                              @RequestBody final RegisterApprovedReceiversType registerApprovedReceiversType) {
+        @RequestBody final RegisterApprovedReceiversType registerApprovedReceiversType) {
 
         return transactionTemplate.execute(status -> {
             String receiverId = null;
@@ -290,14 +286,14 @@ public class CertificateResource {
             return certificateHolder.getOriginalCertificate();
         } else {
             return Resources.toString(new ClassPathResource("content/intyg-" + certificateHolder.getType() + "-content.xml").getURL(),
-                    Charsets.UTF_8)
-                    .replace("CERTIFICATE_ID", certificateHolder.getId())
-                    .replace("PATIENT_CRN", certificateHolder.getCivicRegistrationNumber().getPersonnummer())
-                    .replace("CAREUNIT_ID", certificateHolder.getCareUnitId())
-                    .replace("CAREUNIT_NAME", certificateHolder.getCareUnitName())
-                    .replace("CAREGIVER_ID", certificateHolder.getCareGiverId())
-                    .replace("DOCTOR_NAME", certificateHolder.getSigningDoctorName())
-                    .replace("SIGNED_DATE", certificateHolder.getSignedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+                Charsets.UTF_8)
+                .replace("CERTIFICATE_ID", certificateHolder.getId())
+                .replace("PATIENT_CRN", certificateHolder.getCivicRegistrationNumber().getPersonnummer())
+                .replace("CAREUNIT_ID", certificateHolder.getCareUnitId())
+                .replace("CAREUNIT_NAME", certificateHolder.getCareUnitName())
+                .replace("CAREGIVER_ID", certificateHolder.getCareGiverId())
+                .replace("DOCTOR_NAME", certificateHolder.getSigningDoctorName())
+                .replace("SIGNED_DATE", certificateHolder.getSignedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
         }
     }
 

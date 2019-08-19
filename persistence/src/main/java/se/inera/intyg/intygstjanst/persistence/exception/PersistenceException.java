@@ -26,6 +26,6 @@ public class PersistenceException extends Exception {
 
     public PersistenceException(String certificateId, Personnummer civicRegistrationNumber) {
         super(String.format("Certificate '%s' does not exist for user '%s'.", certificateId,
-                Personnummer.getPersonnummerHashSafe(civicRegistrationNumber)));
+            Personnummer.getPersonnummerHashSafe(civicRegistrationNumber)));
     }
 }

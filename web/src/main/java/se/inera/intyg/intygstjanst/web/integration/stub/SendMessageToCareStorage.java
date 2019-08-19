@@ -18,14 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Component;
 
 @Component
 public class SendMessageToCareStorage {
+
     private Map<MessageKey, String> messages = new ConcurrentHashMap<>();
 
     public int getCount() {
@@ -46,8 +49,8 @@ public class SendMessageToCareStorage {
 
     public Set<MessageKey> getMessagesIdsForLogicalAddress(String logicalAddress) {
         return messages.keySet().stream().
-                filter(k -> k.logicalAddress.equals(logicalAddress)).
-                collect(Collectors.toSet());
+            filter(k -> k.logicalAddress.equals(logicalAddress)).
+            collect(Collectors.toSet());
     }
 
     public List<String> getMessagesForCertificateId(String certificateId) {
@@ -61,6 +64,7 @@ public class SendMessageToCareStorage {
     }
 
     public static final class MessageKey {
+
         public final String certificateId;
         public final String messageId;
         public final String logicalAddress;

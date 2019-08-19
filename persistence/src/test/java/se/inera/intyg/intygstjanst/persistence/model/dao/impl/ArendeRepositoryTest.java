@@ -18,6 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
+import static org.junit.Assert.assertEquals;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -28,9 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
-
-
-import static org.junit.Assert.assertEquals;
 
 public class ArendeRepositoryTest extends TestSupport {
 

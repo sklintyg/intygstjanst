@@ -18,6 +18,24 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,19 +59,13 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
-import se.riv.clinicalprocess.healthcond.certificate.v3.*;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import java.lang.reflect.Field;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Enhet;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.HosPersonal;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Patient;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Vardgivare;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterCertificateResponderImplTest {
@@ -97,7 +109,7 @@ public class RegisterCertificateResponderImplTest {
         final LocalDateTime signeringstidpunkt = LocalDateTime.now();
 
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
-                createRequest(intygId, enhetId, enhetNamn, vardgivareId, skapadAvNamn, patientId, signeringstidpunkt));
+            createRequest(intygId, enhetId, enhetNamn, vardgivareId, skapadAvNamn, patientId, signeringstidpunkt));
         assertNotNull(res);
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
 
@@ -119,7 +131,7 @@ public class RegisterCertificateResponderImplTest {
     public void registerCertificateValidationErrorsTest() throws Exception {
         when(moduleApi.validateXml(anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.INVALID, Arrays.asList("fel")));
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
-                createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "patientId", LocalDateTime.now()));
+            createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "patientId", LocalDateTime.now()));
         assertNotNull(res);
         assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
         assertEquals(ErrorIdType.VALIDATION_ERROR, res.getResult().getErrorId());
@@ -133,7 +145,7 @@ public class RegisterCertificateResponderImplTest {
     public void registerCertificateCertificateAlreadyExistsTest() throws Exception {
         doThrow(new CertificateAlreadyExistsException("intygId")).when(moduleContainer).certificateReceived(any(CertificateHolder.class));
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
-                createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
+            createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
         assertNotNull(res);
         assertEquals(ResultCodeType.INFO, res.getResult().getResultCode());
         assertEquals("Certificate already exists", res.getResult().getResultText());
@@ -146,7 +158,7 @@ public class RegisterCertificateResponderImplTest {
     public void registerCertificateInvalidCertificateExceptionTest() throws Exception {
         doThrow(new InvalidCertificateException("intygId", null)).when(moduleContainer).certificateReceived(any(CertificateHolder.class));
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
-                createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
+            createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
         assertNotNull(res);
         assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
         assertEquals(ErrorIdType.VALIDATION_ERROR, res.getResult().getErrorId());
@@ -166,7 +178,7 @@ public class RegisterCertificateResponderImplTest {
 
         try {
             responder.registerCertificate(LOGICAL_ADDRESS,
-                    createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
+                createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
             fail("should throw");
         } catch (RuntimeException e) {
             assertTrue(e.getCause() instanceof JAXBException);
@@ -181,7 +193,7 @@ public class RegisterCertificateResponderImplTest {
 
         try {
             responder.registerCertificate(LOGICAL_ADDRESS,
-                    createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "patientId", LocalDateTime.now()));
+                createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "patientId", LocalDateTime.now()));
             fail("should throw");
         } catch (UnsupportedOperationException e) {
             verify(moduleApi).validateXml(anyString());
@@ -194,8 +206,8 @@ public class RegisterCertificateResponderImplTest {
         doThrow(new RuntimeException("intygId")).when(moduleContainer).certificateReceived(any(CertificateHolder.class));
         try {
             responder.registerCertificate(LOGICAL_ADDRESS,
-                    createRequest("intygId", "enhetId", "enhetNamn",
-                            "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
+                createRequest("intygId", "enhetId", "enhetNamn",
+                    "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
             fail("should throw");
         } catch (RuntimeException e) {
             verify(moduleApi).validateXml(anyString());
@@ -204,8 +216,8 @@ public class RegisterCertificateResponderImplTest {
     }
 
     private RegisterCertificateType createRequest(String intygId, String enhetId, String enhetNamn,
-                                                  String vardgivareId, String skapadAvNamn, String patientId,
-                                                  LocalDateTime signeringstidpunkt) {
+        String vardgivareId, String skapadAvNamn, String patientId,
+        LocalDateTime signeringstidpunkt) {
 
         RegisterCertificateType parameters = new RegisterCertificateType();
         parameters.setIntyg(new Intyg());
@@ -232,7 +244,7 @@ public class RegisterCertificateResponderImplTest {
 
     private Personnummer createPnr(String pnr) {
         return Personnummer.createPersonnummer(pnr)
-                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 
 }

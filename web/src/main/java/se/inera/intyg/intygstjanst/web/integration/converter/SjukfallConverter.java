@@ -18,6 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.converter;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.validate.SamordningsnummerValidator;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -26,10 +29,6 @@ import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sj
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukskrivningsgrader;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Converts the output format from infra/sjukfall/engine {@link se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet} to
@@ -47,9 +46,9 @@ public class SjukfallConverter {
     public List<Sjukfall> toSjukfall(List<se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet> sjukfallList) {
         return sjukfallList.stream().map(sf -> {
             se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall sjukfall =
-                    new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall();
+                new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall();
             se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Diagnoskod diagnoskod =
-                    new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Diagnoskod();
+                new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Diagnoskod();
 
             diagnoskod.setCode(sf.getDiagnosKod().getCleanedCode());
             sjukfall.setDiagnoskod(diagnoskod);
@@ -89,8 +88,8 @@ public class SjukfallConverter {
     private PersonId buildPersonId(Optional<Personnummer> personnummer) {
         PersonId personId = new PersonId();
         personId.setRoot(SamordningsnummerValidator.isSamordningsNummer(personnummer)
-                            ? KODVERK_SAMORDNINGSNUMMER
-                            : KODVERK_PERSONNUMMER);
+            ? KODVERK_SAMORDNINGSNUMMER
+            : KODVERK_PERSONNUMMER);
 
         personnummer.ifPresent(pnr -> personId.setExtension(pnr.getPersonnummer()));
 

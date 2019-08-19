@@ -19,6 +19,8 @@
 package se.inera.intyg.intygstjanst.web.integration.vardensintyg;
 
 import com.google.common.base.Strings;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +39,6 @@ import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.ApprovalStatusType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class RegisterApprovedReceiversResponderImpl implements RegisterApprovedReceiversResponderInterface {
 
@@ -63,19 +62,19 @@ public class RegisterApprovedReceiversResponderImpl implements RegisterApprovedR
         ResultType resultType = new ResultType();
 
         if (request.getIntygId() == null
-                || Strings.isNullOrEmpty(request.getIntygId().getExtension())) {
+            || Strings.isNullOrEmpty(request.getIntygId().getExtension())) {
             resultType.setResultCode(ResultCodeType.ERROR);
             resultType.setResultText(
-                    "Request to registerApprovedReceiver is missing required parameter 'intygs-id'");
+                "Request to registerApprovedReceiver is missing required parameter 'intygs-id'");
             resp.setResult(resultType);
             return resp;
         }
 
         if (request.getTypAvIntyg() == null
-                || Strings.isNullOrEmpty(request.getTypAvIntyg().getCode())) {
+            || Strings.isNullOrEmpty(request.getTypAvIntyg().getCode())) {
             resultType.setResultCode(ResultCodeType.ERROR);
             resultType.setResultText(
-                    "Request to registerApprovedReceiver is missing required parameter 'typAvIntyg'");
+                "Request to registerApprovedReceiver is missing required parameter 'typAvIntyg'");
             resp.setResult(resultType);
             return resp;
         }
@@ -87,7 +86,7 @@ public class RegisterApprovedReceiversResponderImpl implements RegisterApprovedR
             if (Strings.isNullOrEmpty(receiverApprovalStatus.getReceiverId())) {
                 resultType.setResultCode(ResultCodeType.ERROR);
                 resultType.setResultText(
-                        "Request to registerApprovedReceiver contained receiverId that was null or empty.");
+                    "Request to registerApprovedReceiver contained receiverId that was null or empty.");
                 resp.setResult(resultType);
                 return resp;
             }
@@ -98,8 +97,8 @@ public class RegisterApprovedReceiversResponderImpl implements RegisterApprovedR
             } catch (RecipientUnknownException e) {
                 resultType.setResultCode(ResultCodeType.ERROR);
                 resultType.setResultText(
-                        "Request to registerApprovedReceiver contained unknown receiverId '" + receiverApprovalStatus.getReceiverId()
-                                + "'");
+                    "Request to registerApprovedReceiver contained unknown receiverId '" + receiverApprovalStatus.getReceiverId()
+                        + "'");
                 resp.setResult(resultType);
                 return resp;
             }
@@ -138,15 +137,14 @@ public class RegisterApprovedReceiversResponderImpl implements RegisterApprovedR
         // Null-protect the logging, shouldn't be necessary though..
         if (request.getApprovedReceivers() != null) {
             String receivers = request.getApprovedReceivers().stream()
-                    .map(ar -> ar.getReceiverId() + ": " + ar.getApprovalStatus().name())
-                    .collect(Collectors.joining(", "));
+                .map(ar -> ar.getReceiverId() + ": " + ar.getApprovalStatus().name())
+                .collect(Collectors.joining(", "));
             monitoringLogService.logApprovedReceiversRegistered(receivers, request.getIntygId().getExtension());
         }
 
-
         resultType.setResultCode(ResultCodeType.OK);
         resultType.setResultText("Successfully registered " + request.getApprovedReceivers().size() + " receivers for certificate '"
-                + request.getIntygId().getExtension() + "'");
+            + request.getIntygId().getExtension() + "'");
         resp.setResult(resultType);
         return resp;
     }

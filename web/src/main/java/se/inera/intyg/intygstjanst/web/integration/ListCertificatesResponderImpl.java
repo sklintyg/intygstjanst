@@ -19,10 +19,8 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
-
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.rivtabp20.v1.ListCertificatesResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesResponseType;
@@ -49,10 +47,10 @@ public class ListCertificatesResponderImpl implements ListCertificatesResponderI
         ListCertificatesResponseType response = new ListCertificatesResponseType();
 
         List<Certificate> certificates = certificateService.listCertificatesForCitizen(
-                createPnr(parameters.getNationalIdentityNumber()),
-                parameters.getCertificateType(),
-                parameters.getFromDate(),
-                parameters.getToDate());
+            createPnr(parameters.getNationalIdentityNumber()),
+            parameters.getCertificateType(),
+            parameters.getFromDate(),
+            parameters.getToDate());
 
         for (Certificate certificate : certificates) {
             if (parameters.getCertificateType().isEmpty() || !(certificate.isDeleted() || certificate.isRevoked())) {
@@ -66,7 +64,7 @@ public class ListCertificatesResponderImpl implements ListCertificatesResponderI
 
     private Personnummer createPnr(String personId) {
         return Personnummer.createPersonnummer(personId)
-                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 
 }

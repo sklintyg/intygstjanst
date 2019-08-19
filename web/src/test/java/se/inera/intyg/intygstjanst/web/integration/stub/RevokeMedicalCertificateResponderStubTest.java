@@ -23,14 +23,12 @@ import static org.mockito.Mockito.verify;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
-
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 
@@ -53,8 +51,8 @@ public class RevokeMedicalCertificateResponderStubTest {
         JAXBContext jaxbContext = JAXBContext.newInstance(RevokeMedicalCertificateRequestType.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         RevokeMedicalCertificateRequestType request = unmarshaller.unmarshal(
-                new StreamSource(new ClassPathResource("revoke-medical-certificate/revoke-medical-certificate-request.xml").getInputStream()),
-                RevokeMedicalCertificateRequestType.class).getValue();
+            new StreamSource(new ClassPathResource("revoke-medical-certificate/revoke-medical-certificate-request.xml").getInputStream()),
+            RevokeMedicalCertificateRequestType.class).getValue();
 
         stub.revokeMedicalCertificate(null, request);
 

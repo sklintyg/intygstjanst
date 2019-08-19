@@ -19,6 +19,9 @@
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
 import com.google.common.base.Strings;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -29,10 +32,6 @@ import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareVa
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Component
 public class SendMessageToRecipientValidator {

@@ -19,10 +19,9 @@
 package se.inera.intyg.intygstjanst.web.service.builder;
 
 import com.google.common.base.Joiner;
+import java.util.List;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
-
-import java.util.List;
 
 /**
  * Recipient object.

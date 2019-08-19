@@ -23,17 +23,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static se.inera.intyg.common.support.stub.MedicalCertificatesStore.*;
+import static se.inera.intyg.common.support.stub.MedicalCertificatesStore.MAKULERAD;
+import static se.inera.intyg.common.support.stub.MedicalCertificatesStore.MAKULERAD_JA;
+import static se.inera.intyg.common.support.stub.MedicalCertificatesStore.MAKULERAD_NEJ;
+import static se.inera.intyg.common.support.stub.MedicalCertificatesStore.MEDDELANDE;
+import static se.inera.intyg.common.support.stub.MedicalCertificatesStore.PERSONNUMMER;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
-
+import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -110,22 +114,23 @@ public class FkStubResourceTest {
         Map<String, String> v3 = newHashMap();
         v3.put(PERSONNUMMER, "19121212-3333");
         v3.put(MAKULERAD, MAKULERAD_JA);
-        Map<String,Map<String,String>> expected = newHashMap();
+        Map<String, Map<String, String>> expected = newHashMap();
         expected.put("1", v1);
         expected.put("2", v2);
         expected.put("3", v3);
         when(store.getAll()).thenReturn(expected);
 
-        Map<String,Map<String,String>> result = stub.certificatesJson();
+        Map<String, Map<String, String>> result = stub.certificatesJson();
 
         assertEquals(expected, result);
     }
-    
+
     @Test
     public void testClear() throws Exception {
         stub.clear();
         verify(store).clear();
     }
+
     @Test
     public void testClearJson() throws Exception {
         stub.clearJson();

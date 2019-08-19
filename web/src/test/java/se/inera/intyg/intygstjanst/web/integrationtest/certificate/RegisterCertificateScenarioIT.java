@@ -18,22 +18,22 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.core.Is.is;
+
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
-
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.core.Is.is;
-
 public class RegisterCertificateScenarioIT extends BaseIntegrationTest {
+
     private String intygsId = "123456";
     private String personId = "192703104321";
     private String versionsId = "1.0";
@@ -59,8 +59,9 @@ public class RegisterCertificateScenarioIT extends BaseIntegrationTest {
         ST requestTemplateForRegister = getRequestTemplate("register/request_default.stg");
         requestTemplateForRegister.add("data", new RegisterIntygsData(intygsId, versionsId, personId));
 
-        given().body(requestTemplateForRegister.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200)
-                .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
+        given().body(requestTemplateForRegister.render()).when().post("inera-certificate/register-certificate-se/v3.0").then()
+            .statusCode(200)
+            .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
 
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
         STGroup templateGroupGet = new STGroupFile("integrationtests/getcertificate/requests.stg");
@@ -68,7 +69,7 @@ public class RegisterCertificateScenarioIT extends BaseIntegrationTest {
         requestTemplateGet.add("data", new RegisterIntygsData(intygsId, versionsId, personId));
 
         given().body(requestTemplateGet.render()).when().post("inera-certificate/get-certificate-se/v2.0").then().statusCode(200)
-                .rootPath(GET_BASE).body("intyg.intygs-id.extension", is(intygsId));
+            .rootPath(GET_BASE).body("intyg.intygs-id.extension", is(intygsId));
     }
 
     @After

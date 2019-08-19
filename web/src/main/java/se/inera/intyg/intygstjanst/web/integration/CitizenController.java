@@ -67,6 +67,7 @@ public class CitizenController {
 
     //
     public static class RequestObject {
+
         private String id;
         private boolean archived;
 
@@ -88,6 +89,7 @@ public class CitizenController {
 
     //
     public static class ResponseObject {
+
         private CertificateHolder certificate;
         private List<CertificateRelation> relations;
 
@@ -147,7 +149,7 @@ public class CitizenController {
     }
 
     private void addRelations(final ResponseObject response) {
-        final List<CertificateRelation> relations  = relationService.getRelationGraph(response.getCertificate().getId())
+        final List<CertificateRelation> relations = relationService.getRelationGraph(response.getCertificate().getId())
             .stream()
             .filter(this::accessibleForUser)
             .map(this::toCertificateRelation)

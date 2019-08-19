@@ -18,6 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +47,6 @@ import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-import java.util.Optional;
-
 public class SendMedicalCertificateResponderImpl implements SendMedicalCertificateResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SendMedicalCertificateResponderImpl.class);
@@ -64,7 +63,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
     @Override
     @PrometheusTimeMethod
     public SendMedicalCertificateResponseType sendMedicalCertificate(
-            final AttributedURIType logicalAddress, final SendMedicalCertificateRequestType request) {
+        final AttributedURIType logicalAddress, final SendMedicalCertificateRequestType request) {
 
         SendMedicalCertificateResponseType response = new SendMedicalCertificateResponseType();
 
@@ -105,20 +104,20 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             // return with ERROR response if certificate was not found
 
             LOGGER.info(String
-                    .format("Tried to send certificate '%s' for patient '%s' but certificate does not exist", certId, personnummerHash));
+                .format("Tried to send certificate '%s' for patient '%s' but certificate does not exist", certId, personnummerHash));
 
             response.setResult(ResultOfCallUtil
-                    .failResult(String.format("No certificate '%s' found to send for patient '%s'.", certId, personnummerHash)));
+                .failResult(String.format("No certificate '%s' found to send for patient '%s'.", certId, personnummerHash)));
 
             return response;
 
         } catch (CertificateRevokedException e) {
             // return with INFO response if certificate was revoked before
             LOGGER.info(String
-                    .format("Tried to send certificate '%s' for patient '%s' which is revoked", certId, personnummerHash));
+                .format("Tried to send certificate '%s' for patient '%s' which is revoked", certId, personnummerHash));
 
             response.setResult(ResultOfCallUtil
-                    .infoResult(String.format("Certificate '%s' has been revoked.", certId)));
+                .infoResult(String.format("Certificate '%s' has been revoked.", certId)));
 
             return response;
 
@@ -127,8 +126,8 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             final String issuedBy = safeGetIssuedBy(request);
 
             LOGGER.error(LogMarkers.VALIDATION,
-                    String.format("Validation error found for send certificate '%s' issued by '%s' for patient '%s': %s",
-                            certId, issuedBy, personnummerHash, e.getMessage()));
+                String.format("Validation error found for send certificate '%s' issued by '%s' for patient '%s': %s",
+                    certId, issuedBy, personnummerHash, e.getMessage()));
 
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             return response;
@@ -151,7 +150,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
     private String safeGetCertificateId(SendMedicalCertificateRequestType request) {
         // Initialize log context info if available
         if (request.getSend() != null && request.getSend().getLakarutlatande() != null
-                && request.getSend().getLakarutlatande().getLakarutlatandeId() != null) {
+            && request.getSend().getLakarutlatande().getLakarutlatandeId() != null) {
             return request.getSend().getLakarutlatande().getLakarutlatandeId();
         }
         return null;
@@ -168,9 +167,9 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
     private String safeGetIssuedBy(SendMedicalCertificateRequestType request) {
         // Initialize log context info if available
         if (request.getSend().getAdressVard() != null
-                && request.getSend().getAdressVard().getHosPersonal() != null
-                && request.getSend().getAdressVard().getHosPersonal().getEnhet() != null
-                && request.getSend().getAdressVard().getHosPersonal().getEnhet().getEnhetsId() != null) {
+            && request.getSend().getAdressVard().getHosPersonal() != null
+            && request.getSend().getAdressVard().getHosPersonal().getEnhet() != null
+            && request.getSend().getAdressVard().getHosPersonal().getEnhet().getEnhetsId() != null) {
             return request.getSend().getAdressVard().getHosPersonal().getEnhet().getEnhetsId().getExtension();
         }
         return null;

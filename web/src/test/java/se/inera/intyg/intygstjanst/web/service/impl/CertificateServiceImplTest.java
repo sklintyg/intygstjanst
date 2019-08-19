@@ -18,12 +18,27 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,8 +46,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
@@ -59,21 +72,6 @@ import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.intyg.schemas.contract.Personnummer;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.AdditionalMatchers.or;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CertificateServiceImplTest {
@@ -129,25 +127,25 @@ public class CertificateServiceImplTest {
 
     private Recipient createRecipient() {
         return new RecipientBuilder()
-                .setLogicalAddress(RECIPIENT_LOGICALADDRESS)
-                .setName(RECIPIENT_NAME)
-                .setId(RECIPIENT_ID)
-                .setCertificateTypes(RECIPIENT_CERTIFICATETYPES)
-                .setActive(true)
-                .setTrusted(true)
-                .build();
+            .setLogicalAddress(RECIPIENT_LOGICALADDRESS)
+            .setName(RECIPIENT_NAME)
+            .setId(RECIPIENT_ID)
+            .setCertificateTypes(RECIPIENT_CERTIFICATETYPES)
+            .setActive(true)
+            .setTrusted(true)
+            .build();
     }
 
     @Before
     public void setup() {
         when(recipientService.getPrimaryRecipientHsvard()).thenReturn(
-                new RecipientBuilder().setLogicalAddress("TEST")
-                        .setName("Hälso- och sjukvården")
-                        .setId(HSVARD_ID)
-                        .setCertificateTypes("fk7263")
-                        .setActive(true)
-                        .setTrusted(true)
-                        .build());
+            new RecipientBuilder().setLogicalAddress("TEST")
+                .setName("Hälso- och sjukvården")
+                .setId(HSVARD_ID)
+                .setCertificateTypes("fk7263")
+                .setActive(true)
+                .setTrusted(true)
+                .build());
 
         doNothing().when(relationService).storeRelation(any(Relation.class));
     }
@@ -160,7 +158,7 @@ public class CertificateServiceImplTest {
         certificateHolder.setCertificateRelation(new CertificateRelation("id", "id-0", RelationKod.ERSATT, LocalDateTime.now()));
 
         ArgumentCaptor<OriginalCertificate> originalCertificateCaptor = ArgumentCaptor
-                .forClass(OriginalCertificate.class);
+            .forClass(OriginalCertificate.class);
         when(certificateDao.storeOriginalCertificate(originalCertificateCaptor.capture())).thenReturn(1L);
 
         Certificate certificate = certificateService.storeCertificate(certificateHolder);
@@ -192,8 +190,8 @@ public class CertificateServiceImplTest {
         certificateHolder.setOriginalCertificate("original");
 
         when(certificateDao.getCertificate(
-                or(isNull(), any(Personnummer.class)),
-                or(isNull(), anyString()))).thenThrow((new PersistenceException(CERTIFICATE_ID, null)));
+            or(isNull(), any(Personnummer.class)),
+            or(isNull(), anyString()))).thenThrow((new PersistenceException(CERTIFICATE_ID, null)));
 
         certificateService.storeCertificate(certificateHolder);
     }
@@ -204,8 +202,8 @@ public class CertificateServiceImplTest {
         certificateHolder.setId("id");
         certificateHolder.setOriginalCertificate("original");
         when(certificateDao.getCertificate(
-                or(isNull(), any(Personnummer.class)),
-                or(isNull(), anyString()))).thenReturn(new Certificate());
+            or(isNull(), any(Personnummer.class)),
+            or(isNull(), anyString()))).thenReturn(new Certificate());
 
         certificateService.storeCertificate(certificateHolder);
     }
@@ -261,7 +259,7 @@ public class CertificateServiceImplTest {
     public void testSendRevokedCertificate() throws Exception {
         Certificate revokedCertificate = new Certificate(CERTIFICATE_ID);
         revokedCertificate
-                .setStates(Arrays.asList(new CertificateStateHistoryEntry("target", CertificateState.CANCELLED, LocalDateTime.now())));
+            .setStates(Arrays.asList(new CertificateStateHistoryEntry("target", CertificateState.CANCELLED, LocalDateTime.now())));
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(revokedCertificate);
         certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fkassa");
     }
@@ -311,14 +309,14 @@ public class CertificateServiceImplTest {
 
         // verify status CANCELLED is set
         verify(certificateDao).updateStatus(CERTIFICATE_ID, civicRegistrationNumber, CertificateState.CANCELLED, "HSVARD",
-                null);
+            null);
     }
 
     @Test(expected = InvalidCertificateException.class)
     public void testRevokeCertificateGetThrowsPersistenceException() throws Exception {
         final Personnummer civicRegistrationNumber = createPnr("191212121212");
         when(certificateDao.getCertificate(civicRegistrationNumber, CERTIFICATE_ID))
-                .thenThrow(new PersistenceException(CERTIFICATE_ID, civicRegistrationNumber));
+            .thenThrow(new PersistenceException(CERTIFICATE_ID, civicRegistrationNumber));
         certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
     }
 
@@ -327,7 +325,7 @@ public class CertificateServiceImplTest {
         final Personnummer civicRegistrationNumber = createPnr("191212121212");
         when(certificateDao.getCertificate(civicRegistrationNumber, CERTIFICATE_ID)).thenReturn(new Certificate(CERTIFICATE_ID));
         doThrow(new PersistenceException(CERTIFICATE_ID, civicRegistrationNumber)).when(certificateDao).updateStatus(CERTIFICATE_ID,
-                civicRegistrationNumber, CertificateState.CANCELLED, "HSVARD", null);
+            civicRegistrationNumber, CertificateState.CANCELLED, "HSVARD", null);
         certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
     }
 
@@ -405,8 +403,8 @@ public class CertificateServiceImplTest {
         final CertificateState state = CertificateState.SENT;
         final LocalDateTime timestamp = LocalDateTime.now();
         doThrow(new PersistenceException(CERTIFICATE_ID, PERSONNUMMER)).when(certificateDao).updateStatus(CERTIFICATE_ID, PERSONNUMMER,
-                state, target,
-                timestamp);
+            state, target,
+            timestamp);
         certificateService.setCertificateState(PERSONNUMMER, CERTIFICATE_ID, target, state, timestamp);
     }
 
@@ -536,7 +534,7 @@ public class CertificateServiceImplTest {
 
     private Personnummer createPnr(String pnr) {
         return Personnummer.createPersonnummer(pnr)
-                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 
 }

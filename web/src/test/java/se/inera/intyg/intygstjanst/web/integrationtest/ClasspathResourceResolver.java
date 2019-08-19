@@ -20,7 +20,6 @@ package se.inera.intyg.intygstjanst.web.integrationtest;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.apache.cxf.common.xmlschema.LSInputImpl;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;

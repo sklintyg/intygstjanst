@@ -18,6 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +41,12 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
 import se.inera.intyg.intygstjanst.web.integration.validator.RevokeRequestValidator;
-import se.inera.intyg.intygstjanst.web.service.*;
+import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
+import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.schemas.contract.Personnummer;
-
-import java.util.Optional;
 
 public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCertificateResponderInterface {
 
@@ -68,7 +71,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
     @Override
     @PrometheusTimeMethod
     public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress,
-            RevokeMedicalCertificateRequestType request) {
+        RevokeMedicalCertificateRequestType request) {
 
         RevokeMedicalCertificateResponseType response = new RevokeMedicalCertificateResponseType();
 
@@ -83,10 +86,10 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
             Certificate certificate = certificateService.revokeCertificate(personnummer.orElse(null), certId);
 
             certificate.getStates().stream()
-                    .filter(entry -> CertificateState.SENT.equals(entry.getState()))
-                    .map(CertificateStateHistoryEntry::getTarget)
-                    .distinct()
-                    .forEach(recipient -> senderService.sendCertificateRevocation(certificate, recipient, request.getRevoke()));
+                .filter(entry -> CertificateState.SENT.equals(entry.getState()))
+                .map(CertificateStateHistoryEntry::getTarget)
+                .distinct()
+                .forEach(recipient -> senderService.sendCertificateRevocation(certificate, recipient, request.getRevoke()));
 
             certificateService.revokeCertificateForStatistics(certificate);
             sjukfallCertificateService.revoked(certificate);
@@ -95,30 +98,30 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
         } catch (InvalidCertificateException e) {
             // return with ERROR response if certificate was not found
             LOGGER.info("Tried to revoke certificate '" + certId + "' for patient '"
-                    + pnrHash + "' but certificate does not exist");
+                + pnrHash + "' but certificate does not exist");
             response.setResult(ResultOfCallUtil.failResult("No certificate '" + certId
-                    + "' found to revoke for patient '" + pnrHash + "'."));
+                + "' found to revoke for patient '" + pnrHash + "'."));
             return response;
 
         } catch (CertificateRevokedException e) {
             // return with INFO response if certificate was revoked before
             LOGGER.info("Tried to revoke certificate '" + certId + "' for patient '"
-                    + pnrHash + "' which already is revoked");
+                + pnrHash + "' which already is revoked");
             response.setResult(ResultOfCallUtil.infoResult("Certificate '" + certId + "' is already revoked."));
             return response;
 
         } catch (CertificateValidationException e) {
             // return with ERROR response if certificate had validation errors
             LOGGER.info(LogMarkers.VALIDATION, "Validation error found for revoke certificate '" + certId
-                    + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + pnrHash + ": " + e.getMessage());
+                + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + pnrHash + ": " + e.getMessage());
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             return response;
 
         } catch (SubsystemCallException e) {
             LOGGER.warn("Encountered an exception when sending a revocation to subsystem '" + e.getSubsystemId() + "'");
             response.setResult(
-                    ResultOfCallUtil
-                            .failResult("Informing subsystem '" + e.getSubsystemId() + "' about revoked certificate resulted in error"));
+                ResultOfCallUtil
+                    .failResult("Informing subsystem '" + e.getSubsystemId() + "' about revoked certificate resulted in error"));
             return response;
         }
 
@@ -129,7 +132,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
     protected String safeGetCertificateId(RevokeMedicalCertificateRequestType request) {
         // Initialize log context info if available
         if (request.getRevoke() != null && request.getRevoke().getLakarutlatande() != null
-                && request.getRevoke().getLakarutlatande().getLakarutlatandeId() != null) {
+            && request.getRevoke().getLakarutlatande().getLakarutlatandeId() != null) {
             return request.getRevoke().getLakarutlatande().getLakarutlatandeId();
         }
         return null;
@@ -146,9 +149,9 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
     protected String safeGetIssuedBy(RevokeMedicalCertificateRequestType request) {
         // Initialize log context info if available
         if (request.getRevoke().getAdressVard() != null
-                && request.getRevoke().getAdressVard().getHosPersonal() != null
-                && request.getRevoke().getAdressVard().getHosPersonal().getEnhet() != null
-                && request.getRevoke().getAdressVard().getHosPersonal().getEnhet().getEnhetsId() != null) {
+            && request.getRevoke().getAdressVard().getHosPersonal() != null
+            && request.getRevoke().getAdressVard().getHosPersonal().getEnhet() != null
+            && request.getRevoke().getAdressVard().getHosPersonal().getEnhet().getEnhetsId() != null) {
             return request.getRevoke().getAdressVard().getHosPersonal().getEnhet().getEnhetsId().getExtension();
         }
         return null;

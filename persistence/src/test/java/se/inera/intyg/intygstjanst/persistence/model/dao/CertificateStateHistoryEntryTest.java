@@ -18,20 +18,20 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.junit.Test;
 
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 /**
  *
  */
 public class CertificateStateHistoryEntryTest {
+
     @Test
     public void testOrdering() {
         CertificateStateHistoryEntry e1 = new CertificateStateHistoryEntry(null, null, LocalDateTime.parse("2013-08-20T12:00:01"));
@@ -40,7 +40,7 @@ public class CertificateStateHistoryEntryTest {
         CertificateStateHistoryEntry e4 = new CertificateStateHistoryEntry(null, null, LocalDateTime.now());
         e4.setTimestamp(null);
 
-        Collection<CertificateStateHistoryEntry> c = Arrays.asList( e1, e2, e3, e4 );
+        Collection<CertificateStateHistoryEntry> c = Arrays.asList(e1, e2, e3, e4);
 
         List<CertificateStateHistoryEntry> r = CertificateStateHistoryEntry.BY_TIMESTAMP_DESC.sortedCopy(c);
 

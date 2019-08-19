@@ -18,6 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -29,14 +36,6 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.riv.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
-
-import java.util.Arrays;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListKnownRecipientsResponderImplTest {
@@ -51,21 +50,21 @@ public class ListKnownRecipientsResponderImplTest {
         final String recipientId = "recipientId";
         final String recipientName = "recipientName";
         when(recipientService.listRecipients()).thenReturn(Arrays.asList(new RecipientBuilder()
-                        .setLogicalAddress("logicalAddress")
-                        .setName(recipientName)
-                        .setId(recipientId)
-                        .setCertificateTypes("certificateTypes")
-                        .setActive(true)
-                        .setTrusted(true)
-                        .build(),
-                new RecipientBuilder()
-                        .setLogicalAddress("logicalAddress2")
-                        .setName("name2")
-                        .setId("id2")
-                        .setCertificateTypes("certificateTypes")
-                        .setActive(true)
-                        .setTrusted(false)
-                        .build()));
+                .setLogicalAddress("logicalAddress")
+                .setName(recipientName)
+                .setId(recipientId)
+                .setCertificateTypes("certificateTypes")
+                .setActive(true)
+                .setTrusted(true)
+                .build(),
+            new RecipientBuilder()
+                .setLogicalAddress("logicalAddress2")
+                .setName("name2")
+                .setId("id2")
+                .setCertificateTypes("certificateTypes")
+                .setActive(true)
+                .setTrusted(false)
+                .build()));
         ListKnownRecipientsResponseType response = responder.listKnownRecipients("", new ListKnownRecipientsType());
         assertNotNull(response);
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());

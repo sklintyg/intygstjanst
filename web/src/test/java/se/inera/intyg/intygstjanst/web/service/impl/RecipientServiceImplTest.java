@@ -18,6 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,14 +34,6 @@ import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.intyg.intygstjanst.web.service.repo.RecipientRepoImpl;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.startsWith;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RecipientServiceImplTest {
@@ -61,57 +58,57 @@ public class RecipientServiceImplTest {
 
     private Recipient createFkRecipient() {
         return new RecipientBuilder()
-                .setLogicalAddress(FK_RECIPIENT_LOGICALADDRESS)
-                .setName(FK_RECIPIENT_NAME)
-                .setId(FK_RECIPIENT_ID)
-                .setCertificateTypes(FK_RECIPIENT_CERTIFICATETYPES)
-                .setActive(true)
-                .setTrusted(true)
-                .build();
+            .setLogicalAddress(FK_RECIPIENT_LOGICALADDRESS)
+            .setName(FK_RECIPIENT_NAME)
+            .setId(FK_RECIPIENT_ID)
+            .setCertificateTypes(FK_RECIPIENT_CERTIFICATETYPES)
+            .setActive(true)
+            .setTrusted(true)
+            .build();
     }
 
     private Recipient createTsRecipient() {
         return new RecipientBuilder()
-                .setLogicalAddress(TS_RECIPIENT_LOGICALADDRESS)
-                .setName(TS_RECIPIENT_NAME)
-                .setId(TS_RECIPIENT_ID)
-                .setCertificateTypes(TS_RECIPIENT_CERTIFICATETYPES)
-                .setActive(true)
-                .setTrusted(true)
-                .build();
+            .setLogicalAddress(TS_RECIPIENT_LOGICALADDRESS)
+            .setName(TS_RECIPIENT_NAME)
+            .setId(TS_RECIPIENT_ID)
+            .setCertificateTypes(TS_RECIPIENT_CERTIFICATETYPES)
+            .setActive(true)
+            .setTrusted(true)
+            .build();
     }
 
     private Recipient createHsvardRecipient() {
         return new RecipientBuilder()
-                .setLogicalAddress("Meh2")
-                .setName("Meh2")
-                .setId("HSVARD")
-                .setCertificateTypes("fk7263,ts-bas,ts-diabetes")
-                .setActive(true)
-                .setTrusted(true)
-                .build();
+            .setLogicalAddress("Meh2")
+            .setName("Meh2")
+            .setId("HSVARD")
+            .setCertificateTypes("fk7263,ts-bas,ts-diabetes")
+            .setActive(true)
+            .setTrusted(true)
+            .build();
     }
 
     private Recipient createInvanaRecipient() {
         return new RecipientBuilder()
-                .setLogicalAddress("Meh")
-                .setName("Meh")
-                .setId("INVANA")
-                .setCertificateTypes("fk7263,ts-bas,ts-diabetes")
-                .setActive(true)
-                .setTrusted(true)
-                .build();
+            .setLogicalAddress("Meh")
+            .setName("Meh")
+            .setId("INVANA")
+            .setCertificateTypes("fk7263,ts-bas,ts-diabetes")
+            .setActive(true)
+            .setTrusted(true)
+            .build();
     }
 
     private Recipient createUntrustedRecipient() {
         return new RecipientBuilder()
-                .setLogicalAddress("UNTRUSTED_ADDRESS")
-                .setName("UNTRUSTED_NAME")
-                .setId("UNTRUSTED_ID")
-                .setCertificateTypes("fk7263,ts-bas,ts-diabetes")
-                .setActive(true)
-                .setTrusted(false)
-                .build();
+            .setLogicalAddress("UNTRUSTED_ADDRESS")
+            .setName("UNTRUSTED_NAME")
+            .setId("UNTRUSTED_ID")
+            .setCertificateTypes("fk7263,ts-bas,ts-diabetes")
+            .setActive(true)
+            .setTrusted(false)
+            .build();
     }
 
     @Before

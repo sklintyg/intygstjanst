@@ -18,6 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.vardensintyg;
 
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
+
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.response.ValidatableResponse;
@@ -27,9 +30,6 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
-
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
 
 public class ListPossibleReceiversResponderImplIT extends BaseIntegrationTest {
 
@@ -44,8 +44,8 @@ public class ListPossibleReceiversResponderImplIT extends BaseIntegrationTest {
     @Test
     public void testListPossibleReceiversLisjp() {
         givenRequest("af00213")
-                .body("receiverList.receiverId", is("AF"))
-                .body("receiverList.receiverType", is("HUVUDMOTTAGARE"));
+            .body("receiverList.receiverId", is("AF"))
+            .body("receiverList.receiverType", is("HUVUDMOTTAGARE"));
     }
 
     private ValidatableResponse givenRequest(String intygTyp) {
@@ -53,9 +53,9 @@ public class ListPossibleReceiversResponderImplIT extends BaseIntegrationTest {
         requestTemplate.add("intygTyp", intygTyp);
 
         return given()
-                .body(requestTemplate.render())
-                .when().post("inera-certificate/list-possible-receivers/v1.0")
-                .then().statusCode(200)
-                .rootPath("Envelope.Body.ListPossibleReceiversResponse.");
+            .body(requestTemplate.render())
+            .when().post("inera-certificate/list-possible-receivers/v1.0")
+            .then().statusCode(200)
+            .rootPath("Envelope.Body.ListPossibleReceiversResponse.");
     }
 }

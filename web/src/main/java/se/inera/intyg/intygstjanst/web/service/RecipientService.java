@@ -18,31 +18,26 @@
  */
 package se.inera.intyg.intygstjanst.web.service;
 
+import java.util.List;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
-
-import java.util.List;
 
 public interface RecipientService {
 
     /**
      * Get the {@link Recipient} that corresponds to a given logical address.
      *
-     * @param logicalAddress
-     *            the logical address to check
+     * @param logicalAddress the logical address to check
      * @return {@link Recipient}
-     * @throws RecipientUnknownException
      */
     Recipient getRecipientForLogicalAddress(String logicalAddress) throws RecipientUnknownException;
 
     /**
      * Get the {@link Recipient} that corresponds to a given id.
      *
-     * @param recipientId
-     *            the id to check
+     * @param recipientId the id to check
      * @return {@link Recipient}
-     * @throws RecipientUnknownException
      */
     Recipient getRecipient(String recipientId) throws RecipientUnknownException;
 
@@ -56,8 +51,7 @@ public interface RecipientService {
     /**
      * Get a list of registered recipients for a specific certificate}.
      *
-     * @param certificateId
-     *            the certificate id
+     * @param certificateId the certificate id
      * @return a List of {@link Recipient}
      */
     List<Recipient> listRecipients(String certificateId);

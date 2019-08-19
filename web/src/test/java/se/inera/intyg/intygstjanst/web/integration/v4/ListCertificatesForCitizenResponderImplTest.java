@@ -18,19 +18,27 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import se.inera.intyg.common.db.support.DbModuleEntryPoint;
 import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
 import se.inera.intyg.common.fk7263.support.Fk7263EntryPoint;
@@ -54,16 +62,6 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.IntygsStatus;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.AdditionalMatchers.or;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.isNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListCertificatesForCitizenResponderImplTest {
@@ -106,7 +104,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
 
         ListCertificatesForCitizenType parameters = createListCertificatesRequest(civicRegistrationNumber, certificateTypes, fromDate,
-                toDate, false);
+            toDate, false);
 
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
@@ -130,7 +128,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
 
         ListCertificatesForCitizenType parameters = createListCertificatesRequest(civicRegistrationNumber, certificateTypes, fromDate,
-                toDate, false);
+            toDate, false);
 
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
@@ -156,7 +154,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
 
         ListCertificatesForCitizenType parameters = createListCertificatesRequest(civicRegistrationNumber, certificateTypes, fromDate,
-                toDate, true);
+            toDate, true);
 
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
@@ -182,7 +180,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
 
         ListCertificatesForCitizenType parameters = createListCertificatesRequest(civicRegistrationNumber, certificateTypes, fromDate,
-                toDate, false);
+            toDate, false);
 
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
@@ -200,11 +198,11 @@ public class ListCertificatesForCitizenResponderImplTest {
         // Given
         LocalDateTime firstStatusSaved = LocalDateTime.of(2017, 4, 7, 15, 15);
         LocalDateTime[] timestamps = {
-                firstStatusSaved,
-                firstStatusSaved.plusHours(1),
-                firstStatusSaved.plusHours(2),
-                firstStatusSaved.plusHours(3),
-                firstStatusSaved.plusHours(4),
+            firstStatusSaved,
+            firstStatusSaved.plusHours(1),
+            firstStatusSaved.plusHours(2),
+            firstStatusSaved.plusHours(3),
+            firstStatusSaved.plusHours(4),
         };
         Personnummer pnr = createPnr("19121212-1212");
         List<String> certificateTypes = Collections.singletonList("fk7263");
@@ -213,17 +211,17 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         Certificate certificate = new Certificate();
         certificate.setStates(Arrays.asList(
-                new CertificateStateHistoryEntry(FKASSA_RECIPIENT_ID, CertificateState.SENT, timestamps[0]),
-                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.SENT, timestamps[1]),
-                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.DELETED, timestamps[2]),
-                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.RESTORED, timestamps[3]),
-                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.CANCELLED, timestamps[4])));
+            new CertificateStateHistoryEntry(FKASSA_RECIPIENT_ID, CertificateState.SENT, timestamps[0]),
+            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.SENT, timestamps[1]),
+            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.DELETED, timestamps[2]),
+            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.RESTORED, timestamps[3]),
+            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.CANCELLED, timestamps[4])));
         List<Certificate> result = Arrays.asList(certificate);
 
         when(certificateService.listCertificatesForCitizen(pnr, certificateTypes, fromDate, toDate)).thenReturn(result);
 
         ListCertificatesForCitizenType parameters = createListCertificatesRequest(pnr, certificateTypes, fromDate,
-                toDate, false, FKASSA_RECIPIENT_ID);
+            toDate, false, FKASSA_RECIPIENT_ID);
 
         // When
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
@@ -252,11 +250,11 @@ public class ListCertificatesForCitizenResponderImplTest {
         // Given
         LocalDateTime firstStatusSaved = LocalDateTime.of(2017, 4, 7, 15, 15);
         LocalDateTime[] timestamps = {
-                firstStatusSaved,
-                firstStatusSaved.plusHours(1),
-                firstStatusSaved.plusHours(2),
-                firstStatusSaved.plusHours(3),
-                firstStatusSaved.plusHours(4),
+            firstStatusSaved,
+            firstStatusSaved.plusHours(1),
+            firstStatusSaved.plusHours(2),
+            firstStatusSaved.plusHours(3),
+            firstStatusSaved.plusHours(4),
         };
         Personnummer pnr = createPnr("19121212-1212");
         List<String> certificateTypes = Collections.singletonList("fk7263");
@@ -265,17 +263,17 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         Certificate certificate = new Certificate();
         certificate.setStates(Arrays.asList(
-                new CertificateStateHistoryEntry(FKASSA_RECIPIENT_ID, CertificateState.SENT, timestamps[0]),
-                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.SENT, timestamps[1]),
-                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.DELETED, timestamps[2]),
-                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.RESTORED, timestamps[3]),
-                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.CANCELLED, timestamps[4])));
+            new CertificateStateHistoryEntry(FKASSA_RECIPIENT_ID, CertificateState.SENT, timestamps[0]),
+            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.SENT, timestamps[1]),
+            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.DELETED, timestamps[2]),
+            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.RESTORED, timestamps[3]),
+            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.CANCELLED, timestamps[4])));
         List<Certificate> result = Arrays.asList(certificate);
 
         when(certificateService.listCertificatesForCitizen(pnr, certificateTypes, fromDate, toDate)).thenReturn(result);
 
         ListCertificatesForCitizenType parameters = createListCertificatesRequest(pnr, certificateTypes, fromDate,
-                toDate, false, MINA_INTYG_RECIPIENT_ID);
+            toDate, false, MINA_INTYG_RECIPIENT_ID);
 
         // When
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
@@ -340,7 +338,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
 
         ListCertificatesForCitizenType parameters = createListCertificatesRequest(civicRegistrationNumber, certificateTypes, fromDate,
-                toDate, false);
+            toDate, false);
 
         ListCertificatesForCitizenResponseType response = responder.listCertificatesForCitizen(null, parameters);
 
@@ -350,12 +348,12 @@ public class ListCertificatesForCitizenResponderImplTest {
     }
 
     private ListCertificatesForCitizenType createListCertificatesRequest(Personnummer civicRegistrationNumber, List<String> types,
-            LocalDate fromDate, LocalDate toDate, boolean arkiverad) {
+        LocalDate fromDate, LocalDate toDate, boolean arkiverad) {
         return createListCertificatesRequest(civicRegistrationNumber, types, fromDate, toDate, arkiverad, FKASSA_RECIPIENT_ID);
     }
 
     private ListCertificatesForCitizenType createListCertificatesRequest(Personnummer civicRegistrationNumber, List<String> types,
-            LocalDate fromDate, LocalDate toDate, boolean arkiverad, String partId) {
+        LocalDate fromDate, LocalDate toDate, boolean arkiverad, String partId) {
         ListCertificatesForCitizenType parameters = new ListCertificatesForCitizenType();
         parameters.setPersonId(new PersonId());
         parameters.getPersonId().setExtension(civicRegistrationNumber.getPersonnummer());
@@ -378,7 +376,7 @@ public class ListCertificatesForCitizenResponderImplTest {
 
     private Personnummer createPnr(String pnr) {
         return Personnummer.createPersonnummer(pnr)
-                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 
 }

@@ -18,6 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v4;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,12 +49,6 @@ import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 @SchemaValidation(type = SchemaValidation.SchemaValidationType.IN)
 public class ListCertificatesForCitizenResponderImpl implements ListCertificatesForCitizenResponderInterface {
 
@@ -69,26 +68,26 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
     @Override
     @PrometheusTimeMethod
     public ListCertificatesForCitizenResponseType listCertificatesForCitizen(String logicalAddress,
-            ListCertificatesForCitizenType parameters) {
+        ListCertificatesForCitizenType parameters) {
         LOGGER.debug("List certificates for citizen. arkiverade={}", parameters.isArkiverade());
         ListCertificatesForCitizenResponseType response = new ListCertificatesForCitizenResponseType();
         response.setIntygsLista(new ListaType());
         response.getIntygsLista().getIntyg(); // initialize list for schema validation, if no certificates
 
         Optional<Personnummer> personnummer =
-                Personnummer.createPersonnummer(parameters.getPersonId().getExtension());
+            Personnummer.createPersonnummer(parameters.getPersonId().getExtension());
 
         List<Certificate> certificates = certificateService.listCertificatesForCitizen(
-                personnummer.orElse(null),
-                toStringList(parameters.getIntygTyp()),
-                parameters.getFromDatum(),
-                parameters.getTomDatum());
+            personnummer.orElse(null),
+            toStringList(parameters.getIntygTyp()),
+            parameters.getFromDatum(),
+            parameters.getTomDatum());
 
         response.getIntygsLista().getIntyg().addAll(certificates.stream()
-                .filter(c -> !EXCLUDED_CERTIFICATES.contains(c.getType()))
-                .filter(c -> c.isDeleted() == parameters.isArkiverade())
-                .map(c -> convert(c, parameters.getPart().getCode()))
-                .collect(Collectors.toList()));
+            .filter(c -> !EXCLUDED_CERTIFICATES.contains(c.getType()))
+            .filter(c -> c.isDeleted() == parameters.isArkiverade())
+            .map(c -> convert(c, parameters.getPart().getCode()))
+            .collect(Collectors.toList()));
 
         monitoringLogService.logCertificateListedByCitizen(personnummer.orElse(null));
 
@@ -109,8 +108,8 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
             // Unified handling of all certificate types, maintaining a simple module api
             Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
             intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
-                    .filter(ch -> CertificateStateFilterUtil.filter(ch, part))
-                    .collect(Collectors.toList())));
+                .filter(ch -> CertificateStateFilterUtil.filter(ch, part))
+                .collect(Collectors.toList())));
             return intyg;
 
         } catch (ModuleNotFoundException | ModuleException e) {

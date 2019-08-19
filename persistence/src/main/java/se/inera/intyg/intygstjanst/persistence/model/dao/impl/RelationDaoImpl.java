@@ -44,15 +44,15 @@ public class RelationDaoImpl implements RelationDao {
     @Override
     public List<Relation> getChildren(String intygsId) {
         return entityManager.createQuery("SELECT r FROM Relation r WHERE r.toIntygsId = :intygsId", Relation.class)
-                .setParameter("intygsId", intygsId)
-                .getResultList();
+            .setParameter("intygsId", intygsId)
+            .getResultList();
     }
 
     @Override
     public List<Relation> getParent(String intygsId) {
         return entityManager.createQuery("SELECT r FROM Relation r WHERE r.fromIntygsId = :intygsId", Relation.class)
-                .setParameter("intygsId", intygsId)
-                .getResultList();
+            .setParameter("intygsId", intygsId)
+            .getResultList();
     }
 
     @Override
@@ -62,8 +62,8 @@ public class RelationDaoImpl implements RelationDao {
         buildParentGraph(intygsId, graph);
 
         return graph.stream()
-                .sorted(Comparator.comparing(Relation::getCreated))
-                .collect(Collectors.toList());
+            .sorted(Comparator.comparing(Relation::getCreated))
+            .collect(Collectors.toList());
     }
 
     @Override

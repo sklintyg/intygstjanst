@@ -18,6 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.vardensintyg;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -38,18 +49,6 @@ import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.ApprovalS
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
 
 ;
 
@@ -80,7 +79,7 @@ public class RegisterApprovedReceiversResponderImplTest {
         when(recipientService.getRecipient("AF")).thenReturn(recipientAf);
 
         when(recipientService.listRecipients(new CertificateType("lisjp")))
-                .thenReturn(Arrays.asList(recipientFk, recipientAf));
+            .thenReturn(Arrays.asList(recipientFk, recipientAf));
 
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq("FKASSA", "AF"));
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
@@ -101,7 +100,7 @@ public class RegisterApprovedReceiversResponderImplTest {
         when(recipientService.getRecipient("AF")).thenReturn(recipientAf);
 
         when(recipientService.listRecipients(new CertificateType("lisjp")))
-                .thenReturn(Arrays.asList(recipientFk, recipientAf));
+            .thenReturn(Arrays.asList(recipientFk, recipientAf));
 
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq("AF"));
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());

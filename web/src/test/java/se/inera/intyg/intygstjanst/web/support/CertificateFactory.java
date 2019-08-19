@@ -19,16 +19,16 @@
 package se.inera.intyg.intygstjanst.web.support;
 
 
+import java.time.LocalDateTime;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.schemas.contract.Personnummer;
-
-import java.time.LocalDateTime;
 
 /**
  * @author andreaskaltenbach
  */
 public final class CertificateFactory {
+
     private static final String INTYG_TYPE = "fk7263";
     private static final java.lang.String INTYG_TYPE_VERSION = "1.0";
 
@@ -60,7 +60,8 @@ public final class CertificateFactory {
         return buildCertificate(certificateId, certificateType, certificateTypeVersion, VALID_FROM, VALID_TO);
     }
 
-    public static Certificate buildCertificate(String certificateId, String certificateType, String certificateTypeVersion, String validFrom, String validTo) {
+    public static Certificate buildCertificate(String certificateId, String certificateType, String certificateTypeVersion,
+        String validFrom, String validTo) {
         Certificate certificate = new Certificate(certificateId);
         certificate.setCivicRegistrationNumber(CIVIC_REGISTRATION_NUMBER);
         certificate.setType(certificateType);

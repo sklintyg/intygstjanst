@@ -18,6 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients.v1.ListKnownRecipientsResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients.v1.ListKnownRecipientsResponseType;
@@ -27,9 +29,6 @@ import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.v1.u
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.riv.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class ListKnownRecipientsResponderImpl implements ListKnownRecipientsResponderInterface {
 
@@ -41,14 +40,14 @@ public class ListKnownRecipientsResponderImpl implements ListKnownRecipientsResp
     public ListKnownRecipientsResponseType listKnownRecipients(String logicalAddress, ListKnownRecipientsType request) {
         ListKnownRecipientsResponseType response = new ListKnownRecipientsResponseType();
         List<RecipientType> recipientTypeList = recipientService.listRecipients().stream()
-                .map(r -> {
-                    RecipientType recipientType = new RecipientType();
-                    recipientType.setId(r.getId());
-                    recipientType.setName(r.getName());
-                    recipientType.setTrusted(r.isTrusted());
-                    return recipientType;
-                })
-                .collect(Collectors.toList());
+            .map(r -> {
+                RecipientType recipientType = new RecipientType();
+                recipientType.setId(r.getId());
+                recipientType.setName(r.getName());
+                recipientType.setTrusted(r.isTrusted());
+                return recipientType;
+            })
+            .collect(Collectors.toList());
 
         if (recipientTypeList.isEmpty()) {
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "No recipients found!"));

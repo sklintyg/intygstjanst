@@ -23,11 +23,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ArendeRepository extends JpaRepository<Arende, Long> {
+
     /**
      * Should return a {@link Arende} matching the search criteria.
-     *
-     * @param meddelandeId
-     * @return
      */
     Arende findByMeddelandeId(String meddelandeId);
 }

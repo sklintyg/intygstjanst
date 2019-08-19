@@ -18,6 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.config.jms;
 
+import javax.jms.ConnectionFactory;
+import javax.jms.Queue;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.pool.PooledConnectionFactory;
@@ -30,9 +32,6 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.jms.support.destination.DynamicDestinationResolver;
 import se.inera.intyg.intygstjanst.web.integration.test.Receiver;
-
-import javax.jms.ConnectionFactory;
-import javax.jms.Queue;
 
 /**
  * Creates connection factory and JMS templates for communicating with ActiveMQ. Note that this JmsConfig creates its
