@@ -18,16 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.List;
-
 import javax.xml.bind.JAXBException;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
@@ -40,8 +39,6 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.S
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @SchemaValidation
 public class SendMessageToRecipientResponderImpl implements SendMessageToRecipientResponderInterface {
@@ -67,7 +64,7 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
         checkNotNull(parameters);
 
         LOG.debug("Send message to recipient request received. logicalAddress={} messageId={}", logicalAddress,
-                parameters.getMeddelandeId());
+            parameters.getMeddelandeId());
         try {
             List<String> validationErrors = validator.validate(parameters);
             if (!validationErrors.isEmpty()) {
@@ -83,7 +80,7 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
         }
 
         SendMessageToRecipientResponseType response = sendMessageToRecipientResponder
-                .sendMessageToRecipient(parameters.getLogiskAdressMottagare(), parameters);
+            .sendMessageToRecipient(parameters.getLogiskAdressMottagare(), parameters);
         if (response.getResult().getResultCode() != ResultCodeType.ERROR) {
             monitoringLog.logSendMessageToRecipient(parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());
             try {

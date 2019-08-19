@@ -21,7 +21,6 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import se.inera.intyg.common.util.logging.LogMarkers;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -40,7 +39,7 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
 
     @Override
     public void logCertificateSent(String certificateId, String certificateType, String careUnit,
-            String recipient) {
+        String recipient) {
         logEvent(MonitoringEvent.CERTIFICATE_SENT, certificateId, certificateType, careUnit, recipient);
     }
 

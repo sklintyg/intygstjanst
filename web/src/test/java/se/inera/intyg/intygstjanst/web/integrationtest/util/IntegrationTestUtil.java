@@ -18,22 +18,20 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.util;
 
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.core.Is.is;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
-
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
 import se.inera.intyg.schemas.contract.Personnummer;
-
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.core.Is.is;
 
 public class IntegrationTestUtil {
 
@@ -52,13 +50,14 @@ public class IntegrationTestUtil {
         LISJP
     }
 
-    public static void registerCertificateFromTemplate(String intygsId, String versionsId, String personId, IntegrationTestCertificateType type) {
+    public static void registerCertificateFromTemplate(String intygsId, String versionsId, String personId,
+        IntegrationTestCertificateType type) {
         String filePath = getFilePath(type);
         registerCertificateFromTemplate(intygsId, versionsId, personId, filePath);
     }
 
     public static void registerCertificateWithDateParameters(String intygsId, String personId, IntegrationTestCertificateType type,
-                                                             int fromDaysRelativeToNow, int toDaysRelativeToNow) {
+        int fromDaysRelativeToNow, int toDaysRelativeToNow) {
         String filePath = getFilePath(type);
         STGroup templateGroup = new STGroupFile(filePath);
         ST requestTemplate = templateGroup.getInstanceOf("requestParameterized");
@@ -72,7 +71,7 @@ public class IntegrationTestUtil {
 
     private static void executeRegisterCertificate(ST requestTemplate) {
         given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200)
-                .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
+            .rootPath(REGISTER_BASE).body("result.resultCode", is("OK"));
     }
 
     private static void applyToFromDatesToRequestTemplate(ST requestTemplate, int fromDaysRelativeToNow, int toDaysRelativeToNow) {
@@ -120,15 +119,17 @@ public class IntegrationTestUtil {
     }
 
     public static void givenIntyg(String intygId, String intygTyp, String intygTypeVersion, String personId, boolean deletedByCareGiver) {
-        given().contentType("application/json;charset=utf-8").body(certificate(intygId, intygTyp, intygTypeVersion, personId, deletedByCareGiver))
-                .post("inera-certificate/resources/certificate/").then().statusCode(200);
+        given().contentType("application/json;charset=utf-8")
+            .body(certificate(intygId, intygTyp, intygTypeVersion, personId, deletedByCareGiver))
+            .post("inera-certificate/resources/certificate/").then().statusCode(200);
     }
 
     public static void revokeCertificate(String intygsId, String personId) {
         ST requestTemplateForRevoke = getRequestTemplate("revokecertificate/requests.stg");
         requestTemplateForRevoke.add("data", new RevokeIntygsData(intygsId, personId));
-        given().body(requestTemplateForRevoke.render()).when().post("inera-certificate/revoke-certificate-rivta/v2.0").then().statusCode(200)
-                .rootPath(REVOKE_BASE).body("result.resultCode", is("OK"));
+        given().body(requestTemplateForRevoke.render()).when().post("inera-certificate/revoke-certificate-rivta/v2.0").then()
+            .statusCode(200)
+            .rootPath(REVOKE_BASE).body("result.resultCode", is("OK"));
 
     }
 
@@ -138,7 +139,7 @@ public class IntegrationTestUtil {
         requestTemplateForRevoke.add("personId", personId);
         requestTemplateForRevoke.add("meddelande", meddelande);
         given().body(requestTemplateForRevoke.render()).when().post("inera-certificate/revoke-certificate/v1.0").then().statusCode(200)
-                .rootPath(REVOKE_MEDICAL_BASE).body("result.resultCode", is("OK"));
+            .rootPath(REVOKE_MEDICAL_BASE).body("result.resultCode", is("OK"));
     }
 
     public static void registerMedicalCertificate(String intygsId, String personId) {
@@ -153,7 +154,7 @@ public class IntegrationTestUtil {
             applyToFromDatesToRequestTemplate(requestTemplateForRegister, -2, 2);
         }
         given().body(requestTemplateForRegister.render()).when().post("inera-certificate/register-certificate/v3.0").then().statusCode(200)
-                .rootPath(REGISTER_MEDICAL_BASE).body("result.resultCode", is("OK"));
+            .rootPath(REGISTER_MEDICAL_BASE).body("result.resultCode", is("OK"));
     }
 
     public static void sendCertificateToRecipient(String intygsId, String personId) {
@@ -161,11 +162,13 @@ public class IntegrationTestUtil {
         requestTemplateRecipient.add("data", new SendIntygsData(intygsId, personId));
         requestTemplateRecipient.add("mottagare", "FKASSA");
 
-        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v2.0").then().statusCode(200)
-                .rootPath(SEND_BASE).body("result.resultCode", is("OK"));
+        given().body(requestTemplateRecipient.render()).when().post("inera-certificate/send-certificate-to-recipient/v2.0").then()
+            .statusCode(200)
+            .rootPath(SEND_BASE).body("result.resultCode", is("OK"));
     }
 
-    private static CertificateHolder certificate(String intygId, String intygTyp, String intygTypeVersion, String personId, boolean deletedByCareGiver) {
+    private static CertificateHolder certificate(String intygId, String intygTyp, String intygTypeVersion, String personId,
+        boolean deletedByCareGiver) {
         CertificateHolder certificate = new CertificateHolder();
         certificate.setId(intygId);
         certificate.setType(intygTyp);
@@ -176,7 +179,8 @@ public class IntegrationTestUtil {
         certificate.setCareUnitName("CareUnitName");
         certificate.setSigningDoctorName("Singing Doctor");
         certificate.setCivicRegistrationNumber(createPnr(personId));
-        certificate.setCertificateStates(Arrays.asList(new CertificateStateHolder("HSVARD", CertificateState.RECEIVED, LocalDateTime.now())));
+        certificate
+            .setCertificateStates(Arrays.asList(new CertificateStateHolder("HSVARD", CertificateState.RECEIVED, LocalDateTime.now())));
         certificate.setDeletedByCareGiver(deletedByCareGiver);
         return certificate;
     }
@@ -194,11 +198,12 @@ public class IntegrationTestUtil {
 
     private static Personnummer createPnr(String pnr) {
         return Personnummer.createPersonnummer(pnr)
-                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 
     @SuppressWarnings("unused")
     protected static class RevokeIntygsData {
+
         public final String intygsId;
         public final String personId;
 
@@ -210,6 +215,7 @@ public class IntegrationTestUtil {
 
     @SuppressWarnings("unused")
     protected static class RegisterIntygsData {
+
         public final String intygsId;
         public final String intygsVersion;
         public final String personId;
@@ -223,6 +229,7 @@ public class IntegrationTestUtil {
 
     @SuppressWarnings("unused")
     protected static class SendIntygsData {
+
         public final String intygsId;
         public final String personId;
 

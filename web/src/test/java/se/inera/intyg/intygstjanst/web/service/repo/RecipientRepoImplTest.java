@@ -18,15 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.service.repo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.util.ReflectionTestUtils;
-import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
-import se.inera.intyg.intygstjanst.web.exception.ServerException;
-import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -35,10 +31,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.util.ReflectionTestUtils;
+import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.exception.ServerException;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
 public class RecipientRepoImplTest {
 
@@ -57,7 +56,7 @@ public class RecipientRepoImplTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
         Recipient[] rec = objectMapper.readValue(Files.newInputStream(Paths.get(uri)),
-                Recipient[].class);
+            Recipient[].class);
         allRecipients = Arrays.asList(rec);
 
         repo.init();
@@ -84,28 +83,28 @@ public class RecipientRepoImplTest {
         }
         // Make sure the recipients loaded by init() still remain!
         assertEquals(String.format("Expected 5 recipients after update, was %s", repo.listRecipients().size()),
-                5, repo.listRecipients().size());
+            5, repo.listRecipients().size());
         assertTrue(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }
 
     @Test
     public void testAddingRecipientToFile() throws IOException {
         assertEquals(String.format("Expected 5 recipients before update, was %s", repo.listRecipients().size()),
-                5, repo.listRecipients().size());
+            5, repo.listRecipients().size());
 
         // Change file and update
         injectRecipientFile("recipients_updated.json");
         repo.update();
 
         assertEquals(String.format("Expected 6 recipients after update, was %s", repo.listRecipients().size()),
-                6, repo.listRecipients().size());
+            6, repo.listRecipients().size());
         assertFalse(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }
 
     @Test
     public void testChangedRecipientInFile() throws IOException, RecipientUnknownException {
         assertEquals(String.format("Expected 5 recipients before update, was %s", repo.listRecipients().size()),
-                5, repo.listRecipients().size());
+            5, repo.listRecipients().size());
         assertEquals("Transportstyrelsen", repo.getRecipient("TRANSP").getName());
 
         // Change file and update
@@ -113,7 +112,7 @@ public class RecipientRepoImplTest {
         repo.update();
 
         assertEquals(String.format("Expected 5 recipients after update, was %s", repo.listRecipients().size()),
-                5, repo.listRecipients().size());
+            5, repo.listRecipients().size());
         assertEquals("Changed", repo.getRecipient("TRANSP").getName());
         assertTrue(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }
@@ -126,8 +125,8 @@ public class RecipientRepoImplTest {
         recipients.add(repo.getRecipientInvana());
 
         List<Recipient> exp = allRecipients.stream()
-                .filter(r -> r.getId().equals("FKASSA") || r.getId().equals("INVANA") || r.getId().equals("HSVARD"))
-                .collect(Collectors.toList());
+            .filter(r -> r.getId().equals("FKASSA") || r.getId().equals("INVANA") || r.getId().equals("HSVARD"))
+            .collect(Collectors.toList());
 
         assertEquals(3, recipients.size());
         assertTrue(recipients.containsAll(exp));

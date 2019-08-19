@@ -22,7 +22,6 @@ import static java.lang.invoke.MethodHandles.lookup;
 
 import javax.jms.Queue;
 import javax.jms.TextMessage;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,6 @@ import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
-
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
@@ -89,10 +87,10 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public boolean sent(
-            final String certificateId,
-            final String certificateType,
-            final String careUnitId,
-            final String recipientId) {
+        final String certificateId,
+        final String certificateType,
+        final String careUnitId,
+        final String recipientId) {
 
         boolean rc = true;
         if (enabled) {
@@ -117,25 +115,25 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private boolean sendIntygDataPointToStatistik(
-            final String actionType,
-            final String certificateXml,
-            final String certificateId,
-            final String certificateType) {
+        final String actionType,
+        final String certificateXml,
+        final String certificateId,
+        final String certificateType) {
 
         return sendIntygDataPointToStatistik(
-                actionType,
-                certificateXml,
-                certificateId,
-                certificateType,
-                null);
+            actionType,
+            certificateXml,
+            certificateId,
+            certificateType,
+            null);
     }
 
     private boolean sendIntygDataPointToStatistik(
-            final String actionType,
-            final String certificateXml,
-            final String certificateId,
-            final String certificateType,
-            final String certificateRecipientId) {
+        final String actionType,
+        final String certificateXml,
+        final String certificateId,
+        final String certificateType,
+        final String certificateRecipientId) {
 
         try {
             return send(session -> {

@@ -21,12 +21,10 @@ package se.inera.intyg.intygstjanst.web.integration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateType;
@@ -54,7 +52,7 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
     @Override
     @PrometheusTimeMethod
     public GetRecipientsForCertificateResponseType getRecipientsForCertificate(String logicalAddress,
-            GetRecipientsForCertificateType request) {
+        GetRecipientsForCertificateType request) {
 
         GetRecipientsForCertificateResponseType response = new GetRecipientsForCertificateResponseType();
 
@@ -64,7 +62,7 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
         if (recipientList.isEmpty()) {
             LOGGER.error("No recipients found for certificate {}", intygsId);
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR,
-                    String.format("No recipients found for certificate id: %s", intygsId)));
+                String.format("No recipients found for certificate id: %s", intygsId)));
         } else {
             response.getRecipient().addAll(getRecipientTypeList(recipientList));
 
@@ -87,10 +85,10 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
 
     private List<RecipientType> getRecipientTypeList(List<Recipient> recipientList) {
         return recipientList.stream()
-                .map(r -> {
-                    return createRecipientType(r);
-                })
-                .collect(Collectors.toList());
+            .map(r -> {
+                return createRecipientType(r);
+            })
+            .collect(Collectors.toList());
     }
 
     private List<Recipient> getRecipientList(String logicalAddress, String intygsId) {
@@ -99,7 +97,7 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
         try {
             // Get approved recipients
             recipientList = recipientService.listRecipients(intygsId).stream()
-                    .filter(Recipient::isActive).collect(Collectors.toList());
+                .filter(Recipient::isActive).collect(Collectors.toList());
 
             // There might be zero recipients...
             // Then get the main receiver for this certificate's type
@@ -108,8 +106,8 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
                 if (StringUtils.isNotBlank(intygsTyp)) {
                     CertificateType certificateType = new CertificateType(intygsTyp);
                     recipientList = recipientService.listRecipients(certificateType).stream()
-                            .filter(r -> r.getRecipientType().equals(CertificateRecipientType.HUVUDMOTTAGARE))
-                            .collect(Collectors.toList());
+                        .filter(r -> r.getRecipientType().equals(CertificateRecipientType.HUVUDMOTTAGARE))
+                        .collect(Collectors.toList());
                 }
             }
         } catch (Exception e) {

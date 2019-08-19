@@ -26,18 +26,18 @@ import java.util.List;
 public interface SjukfallCertificateDao {
 
     List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(
-            String careGiverHsaId,
-            List<String> careUnitHsaIds,
-            int maxDagarSedanAvslut);
+        String careGiverHsaId,
+        List<String> careUnitHsaIds,
+        int maxDagarSedanAvslut);
 
     List<SjukfallCertificate> findActiveSjukfallCertificateForPersonOnCareUnits(
-            String careGiverHsaId,
-            List<String> careUnitHsaIds,
-            String personnummer,
-            int maxDagarSedanAvslut);
+        String careGiverHsaId,
+        List<String> careUnitHsaIds,
+        String personnummer,
+        int maxDagarSedanAvslut);
 
     List<SjukfallCertificate> findSjukfallCertificateForPerson(
-            String personnummer);
+        String personnummer);
 
     void store(SjukfallCertificate sjukfallCert);
 

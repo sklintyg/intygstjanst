@@ -18,8 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static se.inera.intyg.common.support.Constants.KV_INTYGSTYP_CODE_SYSTEM;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,12 +61,6 @@ import se.inera.intyg.intygstjanst.web.service.bean.CertificateTypeInfo;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static se.inera.intyg.common.support.Constants.KV_INTYGSTYP_CODE_SYSTEM;
-
 /**
  * @author andreaskaltenbach
  */
@@ -97,7 +96,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Override
     @Transactional(readOnly = true)
     public List<Certificate> listCertificatesForCitizen(Personnummer civicRegistrationNumber, List<String> certificateTypes,
-            LocalDate fromDate, LocalDate toDate) {
+        LocalDate fromDate, LocalDate toDate) {
         assertPersonnummer(civicRegistrationNumber);
 
         return certificateDao.findCertificate(civicRegistrationNumber, certificateTypes, fromDate, toDate, null);
@@ -110,10 +109,10 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     @Override
-    @Transactional(readOnly = true, noRollbackFor = { PersistenceException.class })
+    @Transactional(readOnly = true, noRollbackFor = {PersistenceException.class})
     public Certificate getCertificateForCitizen(Personnummer civicRegistrationNumber, String certificateId)
-            throws InvalidCertificateException,
-            CertificateRevokedException {
+        throws InvalidCertificateException,
+        CertificateRevokedException {
 
         assertPersonnummer(civicRegistrationNumber);
 
@@ -136,7 +135,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     @Override
-    @Transactional(readOnly = true, noRollbackFor = { PersistenceException.class })
+    @Transactional(readOnly = true, noRollbackFor = {PersistenceException.class})
     public Certificate getCertificateForCare(String certificateId) throws InvalidCertificateException {
 
         Certificate certificate = null;
@@ -175,7 +174,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Override
     @Transactional
     public SendStatus sendCertificate(Personnummer civicRegistrationNumber, String certificateId, String recipientId)
-            throws InvalidCertificateException, CertificateRevokedException, RecipientUnknownException {
+        throws InvalidCertificateException, CertificateRevokedException, RecipientUnknownException {
 
         Certificate certificate = null;
         try {
@@ -206,9 +205,9 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     @Override
-    @Transactional(noRollbackFor = { InvalidCertificateException.class, PersistenceException.class })
+    @Transactional(noRollbackFor = {InvalidCertificateException.class, PersistenceException.class})
     public void setCertificateState(Personnummer civicRegistrationNumber, String certificateId, String target,
-            CertificateState state, LocalDateTime timestamp) throws InvalidCertificateException {
+        CertificateState state, LocalDateTime timestamp) throws InvalidCertificateException {
         try {
             certificateDao.updateStatus(certificateId, civicRegistrationNumber, state, target, timestamp);
         } catch (PersistenceException e) {
@@ -217,9 +216,9 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     @Override
-    @Transactional(noRollbackFor = { InvalidCertificateException.class, PersistenceException.class })
+    @Transactional(noRollbackFor = {InvalidCertificateException.class, PersistenceException.class})
     public void setCertificateState(String certificateId, String target,
-            CertificateState state, LocalDateTime timestamp) throws InvalidCertificateException {
+        CertificateState state, LocalDateTime timestamp) throws InvalidCertificateException {
         try {
             certificateDao.updateStatus(certificateId, state, target, timestamp);
         } catch (PersistenceException e) {
@@ -228,10 +227,10 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     @Override
-    @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = { InvalidCertificateException.class,
-            CertificateRevokedException.class })
+    @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = {InvalidCertificateException.class,
+        CertificateRevokedException.class})
     public Certificate revokeCertificate(Personnummer civicRegistrationNumber, String certificateId)
-            throws InvalidCertificateException, CertificateRevokedException {
+        throws InvalidCertificateException, CertificateRevokedException {
 
         Certificate certificate = null;
         try {
@@ -249,7 +248,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         }
 
         setCertificateState(civicRegistrationNumber, certificateId,
-                recipientService.getPrimaryRecipientHsvard().getId(), CertificateState.CANCELLED, null);
+            recipientService.getPrimaryRecipientHsvard().getId(), CertificateState.CANCELLED, null);
 
         return certificate;
     }
@@ -257,7 +256,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Override
     @Transactional
     public void certificateReceived(CertificateHolder certificateHolder)
-            throws CertificateAlreadyExistsException, InvalidCertificateException {
+        throws CertificateAlreadyExistsException, InvalidCertificateException {
         LOGGER.debug("Certificate received {}", certificateHolder.getId());
         Certificate certificate = storeCertificate(certificateHolder);
         LOGGER.debug("Certificate stored {}", certificateHolder.getId());
@@ -265,7 +264,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
         String transformedXml = certificateReceivedForStatistics(certificateHolder);
         statisticsService.created(transformedXml, certificate.getId(), certificate.getType(),
-                certificate.getCareUnitId());
+            certificate.getCareUnitId());
         sjukfallCertificateService.created(certificate);
     }
 
@@ -295,7 +294,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     @VisibleForTesting
     Certificate storeCertificate(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException,
-            InvalidCertificateException {
+        InvalidCertificateException {
         Certificate certificate = ConverterUtil.toCertificate(certificateHolder);
 
         // ensure that certificate does not exist yet
@@ -307,22 +306,22 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
         // add initial RECEIVED state using current time as receiving timestamp
         CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(
-                recipientService.getPrimaryRecipientHsvard().getId(), CertificateState.RECEIVED, LocalDateTime.now());
+            recipientService.getPrimaryRecipientHsvard().getId(), CertificateState.RECEIVED, LocalDateTime.now());
         certificate.addState(state);
         certificateDao.store(certificate);
         storeOriginalCertificate(certificateHolder.getOriginalCertificate(), certificate);
         if (certificateHolder.getCertificateRelation() != null) {
             CertificateRelation rel = certificateHolder.getCertificateRelation();
             relationService.storeRelation(
-                    new Relation(certificateHolder.getId(), rel.getToIntygsId(), rel.getRelationKod().value(), LocalDateTime.now()));
+                new Relation(certificateHolder.getId(), rel.getToIntygsId(), rel.getRelationKod().value(), LocalDateTime.now()));
         }
         return certificate;
     }
 
     @Override
-    @Transactional(readOnly = true, noRollbackFor = { PersistenceException.class })
+    @Transactional(readOnly = true, noRollbackFor = {PersistenceException.class})
     public CertificateHolder getCertificate(String certificateId, Personnummer personId, boolean checkConsent)
-            throws InvalidCertificateException {
+        throws InvalidCertificateException {
 
         Certificate certificate = null;
         try {
@@ -345,7 +344,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     private void checkForExistingCertificate(String certificateId, Personnummer personnummer) throws CertificateAlreadyExistsException,
-            PersistenceException {
+        PersistenceException {
         if (certificateDao.getCertificate(personnummer, certificateId) != null) {
             throw new CertificateAlreadyExistsException(certificateId);
         }
@@ -356,11 +355,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     /**
-     *
-     * @param utlatandeXml
-     *            the received certificate utlatande xml
-     * @param certificate
-     *            the {@link Certificate} generated from the utlatandeXml, or <code>null</code> if unknown.
+     * @param utlatandeXml the received certificate utlatande xml
+     * @param certificate the {@link Certificate} generated from the utlatandeXml, or <code>null</code> if unknown.
      */
     private void storeOriginalCertificate(String utlatandeXml, Certificate certificate) {
         OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), utlatandeXml, certificate);

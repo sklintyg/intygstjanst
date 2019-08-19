@@ -30,13 +30,11 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
@@ -127,15 +125,15 @@ public class GetCertificateResponderImplTest {
         // Given
         final String intygId = "intyg-1";
         CertificateHolder mockedReturnValue = createResponse(false,
-                new CertificateStateHolder(MINA_INTYG_RECIPIENT_ID, CertificateState.DELETED, TIMESTAMP));
+            new CertificateStateHolder(MINA_INTYG_RECIPIENT_ID, CertificateState.DELETED, TIMESTAMP));
 
         // When
         when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(mockedReturnValue);
         GetCertificateResponseType fromFk = responder.getCertificate(LOGICAL_ADDRESS,
-                createRequest(intygId, FKASSA_RECIPIENT_ID));
+            createRequest(intygId, FKASSA_RECIPIENT_ID));
         when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(mockedReturnValue);
         GetCertificateResponseType fromMinaIntyg = responder.getCertificate(LOGICAL_ADDRESS,
-                createRequest(intygId, MINA_INTYG_RECIPIENT_ID));
+            createRequest(intygId, MINA_INTYG_RECIPIENT_ID));
 
         // Then
         assertNotNull(fromFk.getIntyg());
@@ -172,7 +170,7 @@ public class GetCertificateResponderImplTest {
         holder.setTypeVersion("1.0");
         holder.setDeletedByCareGiver(deletedByCareGiver);
         holder.setOriginalCertificate(
-                "<registerCertificateType xmlns:ns2=\"urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3\"><ns2:intyg></ns2:intyg></registerCertificateType>");
+            "<registerCertificateType xmlns:ns2=\"urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3\"><ns2:intyg></ns2:intyg></registerCertificateType>");
         holder.setCertificateStates(Arrays.asList(statusItems));
         return holder;
     }

@@ -21,9 +21,7 @@ package se.inera.intyg.intygstjanst.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javax.annotation.PostConstruct;
-
 import org.apache.cxf.Bus;
 import org.apache.cxf.feature.LoggingFeature;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +43,10 @@ import se.inera.intyg.infra.monitoring.MonitoringConfiguration;
 @EnableTransactionManagement
 @DependsOn("transactionManager")
 @PropertySources({
-        @PropertySource("classpath:default.properties"),
-        @PropertySource("file:${credentials.file}"),
-        @PropertySource("classpath:version.properties"),
-        @PropertySource("file:${config.file}"),
+    @PropertySource("classpath:default.properties"),
+    @PropertySource("file:${credentials.file}"),
+    @PropertySource("classpath:version.properties"),
+    @PropertySource("file:${config.file}"),
 })
 @ImportResource({"classpath:META-INF/cxf/cxf.xml"})
 @Import(MonitoringConfiguration.class)

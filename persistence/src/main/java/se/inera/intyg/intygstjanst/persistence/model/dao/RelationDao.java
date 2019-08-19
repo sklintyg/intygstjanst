@@ -24,7 +24,8 @@ import java.util.Optional;
 /**
  * Created by eriklupander on 2016-02-02.
  */
-public interface RelationDao  {
+public interface RelationDao {
+
     List<Relation> getChildren(String intygsId);
 
     List<Relation> getParent(String intygsId);
@@ -36,8 +37,7 @@ public interface RelationDao  {
     /**
      * A certificate cannot have more than zero or exactly one parent relation.
      *
-     * @return
-     *      The parent relation (e.g. relation that points at the Certificate the identified certificate originated from.
+     * @return The parent relation (e.g. relation that points at the Certificate the identified certificate originated from.
      */
     Optional<Relation> getParentRelation(String intygsId);
 }

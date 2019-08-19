@@ -18,21 +18,20 @@
  */
 package se.inera.intyg.intygstjanst.web.service.converter;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
+
 import com.google.common.collect.ImmutableList;
+import java.time.LocalDateTime;
 import org.junit.Test;
 import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
 import se.inera.intyg.common.fkparent.model.internal.Diagnos;
 import se.inera.intyg.common.lisjp.v1.model.internal.LisjpUtlatandeV1;
 import se.inera.intyg.common.ts_bas.v6.model.internal.TsBasUtlatandeV6;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-
-import java.time.LocalDateTime;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
 
 /**
  * Created by eriklupander on 2016-02-04.
@@ -71,7 +70,8 @@ public class CertificateToSjukfallCertificateConverterTest {
 
     @Test
     public void testStandardConvert() {
-        SjukfallCertificate sjukfallCertificate = testee.convertFk7263(getFactoryInstance().buildCert(CERT_TYPE_FK7263), getFactoryInstance().buildFk7263Utlatande());
+        SjukfallCertificate sjukfallCertificate = testee
+            .convertFk7263(getFactoryInstance().buildCert(CERT_TYPE_FK7263), getFactoryInstance().buildFk7263Utlatande());
         assertEquals(CERT_ID, sjukfallCertificate.getId());
         assertEquals(CERT_TYPE_FK7263, sjukfallCertificate.getType());
 

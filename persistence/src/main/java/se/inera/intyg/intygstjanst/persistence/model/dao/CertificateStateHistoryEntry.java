@@ -18,15 +18,14 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import java.time.LocalDateTime;
-
-import javax.annotation.Nonnull;
-import javax.persistence.*;
-
-import org.hibernate.annotations.Type;
-
 import com.google.common.collect.Ordering;
-
+import java.time.LocalDateTime;
+import javax.annotation.Nonnull;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import org.hibernate.annotations.Type;
 import se.inera.intyg.common.support.model.CertificateState;
 
 /**
@@ -96,8 +95,8 @@ public class CertificateStateHistoryEntry {
     @Override
     public String toString() {
         return "CertificateStateHistoryEntry{"
-                + "target='" + target + '\''
-                + ", state=" + state + ", timestamp="
-                + timestamp + '}';
+            + "target='" + target + '\''
+            + ", state=" + state + ", timestamp="
+            + timestamp + '}';
     }
 }

@@ -18,6 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,18 +48,6 @@ import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Li
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.AdditionalMatchers.or;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
 /**
  * @author eriklupander
@@ -92,7 +91,7 @@ public class ListSickLeavesForCareResponderImplTest {
     public void testListSickLeavesForCare() {
 
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
-                .thenReturn(buildSjukfallCertificates());
+            .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
         assertEquals(1, response.getSjukfallLista().getSjukfall().size());
@@ -122,7 +121,7 @@ public class ListSickLeavesForCareResponderImplTest {
     public void testListSickLeavesForCareForCorrectDoctor() {
 
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
-                .thenReturn(buildSjukfallCertificates());
+            .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, lakareId));
         assertEquals(1, response.getSjukfallLista().getSjukfall().size());
@@ -132,7 +131,7 @@ public class ListSickLeavesForCareResponderImplTest {
     public void testListSickLeavesForCareForInCorrectDoctorReturnsZeroRows() {
         lakareId.setExtension("other-doctor");
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
-                .thenReturn(buildSjukfallCertificates());
+            .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, lakareId));
         assertEquals(0, response.getSjukfallLista().getSjukfall().size());
@@ -142,7 +141,7 @@ public class ListSickLeavesForCareResponderImplTest {
     public void testListSickLeavesForCareReturns0WhenTooLargeMinSjukskrivningslangd() {
 
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
-                .thenReturn(buildSjukfallCertificates());
+            .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null, 100, 200));
         assertEquals(0, response.getSjukfallLista().getSjukfall().size());
@@ -152,7 +151,7 @@ public class ListSickLeavesForCareResponderImplTest {
     public void testListSickLeavesForCareReturns0WhenTooShortMaxSjukskrivningslangd() {
 
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
-                .thenReturn(buildSjukfallCertificates());
+            .thenReturn(buildSjukfallCertificates());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null, 1, 2));
         assertEquals(0, response.getSjukfallLista().getSjukfall().size());
@@ -161,7 +160,8 @@ public class ListSickLeavesForCareResponderImplTest {
     @Test
     public void testListSickLeavesForCareWhenZeroSjukfallCertsAreReturnedFromDao() {
 
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt())).thenReturn(new ArrayList<>());
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
+            .thenReturn(new ArrayList<>());
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
         assertEquals(0, response.getSjukfallLista().getSjukfall().size());
@@ -196,7 +196,7 @@ public class ListSickLeavesForCareResponderImplTest {
     }
 
     private ListSickLeavesForCareType buildParams(int maxDagarMellanIntyg, HsaId careUnitId, HsaId doctorId, int minSjukskrivningslangd,
-            int maxSjukskrivningslangd) {
+        int maxSjukskrivningslangd) {
         ListSickLeavesForCareType params = new ListSickLeavesForCareType();
         params.setEnhetsId(careUnitId);
         params.setMaxDagarMellanIntyg(maxDagarMellanIntyg);

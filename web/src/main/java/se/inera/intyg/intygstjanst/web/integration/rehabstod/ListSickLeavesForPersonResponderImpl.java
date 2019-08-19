@@ -19,11 +19,9 @@
 package se.inera.intyg.intygstjanst.web.integration.rehabstod;
 
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonType;
@@ -49,7 +47,7 @@ public class ListSickLeavesForPersonResponderImpl implements ListSickLeavesForPe
     @Override
     @PrometheusTimeMethod
     public ListSickLeavesForPersonResponseType listSickLeavesForPerson(
-            String logicalAddress, ListSickLeavesForPersonType parameters) {
+        String logicalAddress, ListSickLeavesForPersonType parameters) {
 
         ListSickLeavesForPersonResponseType response = new ListSickLeavesForPersonResponseType();
 
@@ -57,11 +55,11 @@ public class ListSickLeavesForPersonResponderImpl implements ListSickLeavesForPe
             Personnummer personnummer = parsePersonnummer(parameters);
 
             List<SjukfallCertificate> activeSjukfallCertificateForPerson =
-                    sjukfallCertificateDao.findSjukfallCertificateForPerson(personnummer.getPersonnummerWithDash());
+                sjukfallCertificateDao.findSjukfallCertificateForPerson(personnummer.getPersonnummerWithDash());
 
             IntygsLista intygsLista = new IntygsLista();
             intygsLista.getIntygsData()
-                    .addAll(new SjukfallCertificateIntygsDataConverter().buildIntygsData(activeSjukfallCertificateForPerson));
+                .addAll(new SjukfallCertificateIntygsDataConverter().buildIntygsData(activeSjukfallCertificateForPerson));
 
             response.setIntygsLista(intygsLista);
             response.setResult(createResultType(ResultCodeEnum.OK, null));
@@ -80,11 +78,12 @@ public class ListSickLeavesForPersonResponderImpl implements ListSickLeavesForPe
         result.setResultMessage(message);
         return result;
     }
+
     private Personnummer parsePersonnummer(ListSickLeavesForPersonType parameters) {
         String personnummer = parameters.getPersonId() != null && parameters.getPersonId().getExtension() != null
-                ? parameters.getPersonId().getExtension().trim()
-                : null;
+            ? parameters.getPersonId().getExtension().trim()
+            : null;
         return Personnummer.createPersonnummer(personnummer)
-                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 }

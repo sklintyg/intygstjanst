@@ -19,13 +19,18 @@
 package se.inera.intyg.intygstjanst.web.service.converter;
 
 import com.google.common.base.Strings;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
 import se.inera.intyg.common.fkparent.model.internal.Diagnos;
-import se.inera.intyg.common.lisjp.v1.model.internal.LisjpUtlatandeV1;
 import se.inera.intyg.common.lisjp.model.internal.Sjukskrivning;
+import se.inera.intyg.common.lisjp.v1.model.internal.LisjpUtlatandeV1;
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
 import se.inera.intyg.common.support.model.common.internal.Patient;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
@@ -33,12 +38,6 @@ import se.inera.intyg.intygstjanst.persistence.model.builder.SjukfallCertificate
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
-
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Converts a (fk7263) Certificate to a CertificateSjukfall.
@@ -63,15 +62,10 @@ public class CertificateToSjukfallCertificateConverter {
     /**
      * Converts a fk7263 certificate into a SjukfallCertificate.
      *
-     * @param certificate
-     *            fk7263 cert
-     * @param utlatande
-     *            fk7263 Utlatande (will perform instanceof check internally)
-     * @return
-     *         A SjukfallCertificate
-     * @throws
-     *             IllegalArgumentException
-     *             if fk7263 check fails.
+     * @param certificate fk7263 cert
+     * @param utlatande fk7263 Utlatande (will perform instanceof check internally)
+     * @return A SjukfallCertificate
+     * @throws IllegalArgumentException if fk7263 check fails.
      */
     //NOTE: See INTYG-7275
     public SjukfallCertificate convertFk7263(Certificate certificate, Utlatande utlatande) {
@@ -83,22 +77,22 @@ public class CertificateToSjukfallCertificateConverter {
         Fk7263Utlatande fkUtlatande = (Fk7263Utlatande) utlatande;
 
         return new SjukfallCertificateBuilder(Strings.nullToEmpty(certificate.getId()).trim())
-                .careGiverId(Strings.nullToEmpty(certificate.getCareGiverId()).trim())
-                .careUnitId(Strings.nullToEmpty(certificate.getCareUnitId()).trim())
-                .careUnitName(certificate.getCareUnitName())
-                .certificateType(certificate.getType())
-                .civicRegistrationNumber(Strings.nullToEmpty(certificate.getCivicRegistrationNumber().getPersonnummerWithDash()).trim())
-                .signingDoctorName(certificate.getSigningDoctorName())
-                .patientName(getPatientName(fkUtlatande.getGrundData().getPatient()))
-                .diagnoseCode(fkUtlatande.getDiagnosKod())
-                .signingDoctorId(Strings.nullToEmpty(fkUtlatande.getGrundData().getSkapadAv().getPersonId()).trim())
-                .signingDoctorName(fkUtlatande.getGrundData().getSkapadAv().getFullstandigtNamn())
-                .signingDateTime(certificate.getSignedDate())
-                .certificateType(certificate.getType())
-                .deleted(certificate.isRevoked())
-                .workCapacities(buildWorkCapacitiesFk7263(fkUtlatande))
-                .employment(buildFk7263Sysselsattning(fkUtlatande))
-                .build();
+            .careGiverId(Strings.nullToEmpty(certificate.getCareGiverId()).trim())
+            .careUnitId(Strings.nullToEmpty(certificate.getCareUnitId()).trim())
+            .careUnitName(certificate.getCareUnitName())
+            .certificateType(certificate.getType())
+            .civicRegistrationNumber(Strings.nullToEmpty(certificate.getCivicRegistrationNumber().getPersonnummerWithDash()).trim())
+            .signingDoctorName(certificate.getSigningDoctorName())
+            .patientName(getPatientName(fkUtlatande.getGrundData().getPatient()))
+            .diagnoseCode(fkUtlatande.getDiagnosKod())
+            .signingDoctorId(Strings.nullToEmpty(fkUtlatande.getGrundData().getSkapadAv().getPersonId()).trim())
+            .signingDoctorName(fkUtlatande.getGrundData().getSkapadAv().getFullstandigtNamn())
+            .signingDateTime(certificate.getSignedDate())
+            .certificateType(certificate.getType())
+            .deleted(certificate.isRevoked())
+            .workCapacities(buildWorkCapacitiesFk7263(fkUtlatande))
+            .employment(buildFk7263Sysselsattning(fkUtlatande))
+            .build();
     }
 
     // NUVARANDE_ARBETE|ARBETSSOKANDE|FORALDRALEDIG|STUDIER
@@ -119,15 +113,10 @@ public class CertificateToSjukfallCertificateConverter {
     /**
      * Converts a fk7263 certificate into a SjukfallCertificate.
      *
-     * @param certificate
-     *            fk7263 cert
-     * @param utlatande
-     *            fk7263 Utlatande (will perform instanceof check internally)
-     * @return
-     *         A SjukfallCertificate
-     * @throws
-     *             IllegalArgumentException
-     *             if fk7263 check fails.
+     * @param certificate fk7263 cert
+     * @param utlatande fk7263 Utlatande (will perform instanceof check internally)
+     * @return A SjukfallCertificate
+     * @throws IllegalArgumentException if fk7263 check fails.
      */
     public SjukfallCertificate convertLisjp(Certificate certificate, Utlatande utlatande) {
 
@@ -138,26 +127,26 @@ public class CertificateToSjukfallCertificateConverter {
         LisjpUtlatandeV1 lisjpUtlatandeV1 = (LisjpUtlatandeV1) utlatande;
 
         SjukfallCertificate sc = new SjukfallCertificateBuilder(Strings.nullToEmpty(certificate.getId()).trim())
-                .careGiverId(Strings.nullToEmpty(certificate.getCareGiverId()).trim())
-                .careUnitId(Strings.nullToEmpty(certificate.getCareUnitId()).trim())
-                .careUnitName(certificate.getCareUnitName())
-                .certificateType(certificate.getType())
-                .civicRegistrationNumber(Strings.nullToEmpty(certificate.getCivicRegistrationNumber().getPersonnummerWithDash()).trim())
-                .signingDoctorName(certificate.getSigningDoctorName())
-                .patientName(getPatientName(lisjpUtlatandeV1.getGrundData().getPatient()))
-                .diagnoseCode(lisjpUtlatandeV1.getDiagnoser().get(0).getDiagnosKod())
-                .signingDoctorId(Strings.nullToEmpty(lisjpUtlatandeV1.getGrundData().getSkapadAv().getPersonId()).trim())
-                .signingDoctorName(lisjpUtlatandeV1.getGrundData().getSkapadAv().getFullstandigtNamn())
-                .signingDateTime(certificate.getSignedDate())
-                .certificateType(certificate.getType())
-                .deleted(certificate.isRevoked())
-                .workCapacities(buildWorkCapacitiesLisjp(lisjpUtlatandeV1))
-                .employment(lisjpUtlatandeV1.getSysselsattning() != null ? lisjpUtlatandeV1.getSysselsattning()
-                        .stream()
-                        .filter(Objects::nonNull)
-                        .map(s -> s.getTyp().getId())
-                        .collect(Collectors.joining(",")) : null)
-                .build();
+            .careGiverId(Strings.nullToEmpty(certificate.getCareGiverId()).trim())
+            .careUnitId(Strings.nullToEmpty(certificate.getCareUnitId()).trim())
+            .careUnitName(certificate.getCareUnitName())
+            .certificateType(certificate.getType())
+            .civicRegistrationNumber(Strings.nullToEmpty(certificate.getCivicRegistrationNumber().getPersonnummerWithDash()).trim())
+            .signingDoctorName(certificate.getSigningDoctorName())
+            .patientName(getPatientName(lisjpUtlatandeV1.getGrundData().getPatient()))
+            .diagnoseCode(lisjpUtlatandeV1.getDiagnoser().get(0).getDiagnosKod())
+            .signingDoctorId(Strings.nullToEmpty(lisjpUtlatandeV1.getGrundData().getSkapadAv().getPersonId()).trim())
+            .signingDoctorName(lisjpUtlatandeV1.getGrundData().getSkapadAv().getFullstandigtNamn())
+            .signingDateTime(certificate.getSignedDate())
+            .certificateType(certificate.getType())
+            .deleted(certificate.isRevoked())
+            .workCapacities(buildWorkCapacitiesLisjp(lisjpUtlatandeV1))
+            .employment(lisjpUtlatandeV1.getSysselsattning() != null ? lisjpUtlatandeV1.getSysselsattning()
+                .stream()
+                .filter(Objects::nonNull)
+                .map(s -> s.getTyp().getId())
+                .collect(Collectors.joining(",")) : null)
+            .build();
 
         if (lisjpUtlatandeV1.getDiagnoser().size() > 1) {
             for (int a = 1; a < lisjpUtlatandeV1.getDiagnoser().size(); a++) {

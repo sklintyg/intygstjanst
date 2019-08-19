@@ -18,11 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
+import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -35,15 +39,10 @@ import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 
-import java.io.IOException;
-
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
-
 public class ListRelationsForCertificateIT extends BaseIntegrationTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ListRelationsForCertificateIT.class);
-    
+
     private static final String LIST_RELATIONS_FOR_CERTIFICATE_URL = "inera-certificate/list-relations-for-certificate/v1.0";
     private ST requestTemplate;
     private STGroup templateGroup;
@@ -51,7 +50,7 @@ public class ListRelationsForCertificateIT extends BaseIntegrationTest {
     @Before
     public void setup() throws IOException {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
-        
+
         // Setup String template resource
         templateGroup = new STGroupFile("integrationtests/listrelationsforcertificate/requests.stg");
         requestTemplate = templateGroup.getInstanceOf("request");
@@ -66,30 +65,32 @@ public class ListRelationsForCertificateIT extends BaseIntegrationTest {
     @Test
     public void responseRespectsSchema() throws Exception {
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/ListRelationsForCertificateInteraction/ListRelationsForCertificateResponder_1.0.xsd").getURL(),
-                Charsets.UTF_8);
+            new ClassPathResource("interactions/ListRelationsForCertificateInteraction/ListRelationsForCertificateResponder_1.0.xsd")
+                .getURL(),
+            Charsets.UTF_8);
 
         requestTemplate.add("data", new ListRelationsForCertificateRequestParameters("123456"));
 
         given().filter(
-                new BodyExtractorFilter(
-                        ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:ListRelationsForCertificateResponder:1"),
-                        "/soap:Envelope/soap:Body/*[local-name() = 'ListRelationsForCertificateResponse']"))
-                .body(requestTemplate.render()).when().post(LIST_RELATIONS_FOR_CERTIFICATE_URL).then()
-                .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
+            new BodyExtractorFilter(
+                ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:ListRelationsForCertificateResponder:1"),
+                "/soap:Envelope/soap:Body/*[local-name() = 'ListRelationsForCertificateResponse']"))
+            .body(requestTemplate.render()).when().post(LIST_RELATIONS_FOR_CERTIFICATE_URL).then()
+            .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
     @Test
     public void testMessageWithInvalidXMLFails() {
         ST brokenTemplate = templateGroup.getInstanceOf("brokenrequest");
         given().body(brokenTemplate.render())
-                .when()
-                .post(LIST_RELATIONS_FOR_CERTIFICATE_URL)
-                .then()
-                .statusCode(500);
+            .when()
+            .post(LIST_RELATIONS_FOR_CERTIFICATE_URL)
+            .then()
+            .statusCode(500);
     }
 
     private static class ListRelationsForCertificateRequestParameters {
+
         public final String intygsId;
 
         public ListRelationsForCertificateRequestParameters(String intygsId) {

@@ -18,6 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 // CHECKSTYLE:OFF LineLength
+
+import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
+
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +53,6 @@ import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
-
-import java.time.LocalDateTime;
-
-import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
 // CHECKSTYLE:ON LineLength
 
@@ -101,22 +101,22 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
                 } else {
                     LOGGER.error("Recipient {} is not available for certificate type {}", recipientId, certType.toString());
                     throw new ServerException(
-                            String.format("Recipient %s is not available for certificate type %s", recipientId, certType.toString()));
+                        String.format("Recipient %s is not available for certificate type %s", recipientId, certType.toString()));
                 }
             }
             moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion())
-                    .sendCertificateToRecipient(certificate.getOriginalCertificate().getDocument(), logicalAddress, recipientId);
+                .sendCertificateToRecipient(certificate.getOriginalCertificate().getDocument(), logicalAddress, recipientId);
 
             monitoringLogService.logCertificateSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(), recipientId);
 
         } catch (ModuleNotFoundException e) {
             LOGGER.error("The module '{}' was not found - not registered in application", certificate.getType());
             throw new MissingModuleException(String.format("The module '%s' was not found - not registered in application",
-                    certificate.getType()), e);
+                certificate.getType()), e);
 
         } catch (ModuleException e) {
             String message = String.format("Failed to send certificate '%s' of type '%s' to recipient '%s'", certificate.getId(),
-                    certificate.getType(), recipientId);
+                certificate.getType(), recipientId);
             throw new ServerException(message, e);
 
         } catch (RecipientUnknownException e) {
@@ -170,16 +170,16 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
         parameters.setQuestion(question);
 
         SendMedicalCertificateQuestionResponseType sendResponse = sendMedicalCertificateQuestionResponderInterface
-                .sendMedicalCertificateQuestion(logicalAddress, parameters);
+            .sendMedicalCertificateQuestion(logicalAddress, parameters);
 
         if (sendResponse.getResult().getResultCode() != OK) {
             String message = "Failed to send question to Försäkringskassan for revoking certificate '" + intygId
-                    + "'. Info from forsakringskassan: " + sendResponse.getResult().getInfoText();
+                + "'. Info from forsakringskassan: " + sendResponse.getResult().getInfoText();
             LOGGER.error(message);
             throw new SubsystemCallException(recipientService.getPrimaryRecipientFkassa().getId(), message);
         } else {
             monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(),
-                    certificate.getCareUnitId(), "FKASSA");
+                certificate.getCareUnitId(), "FKASSA");
         }
     }
 
@@ -190,17 +190,17 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
         AttributedURIType logicalAddress = getLogicalAddress(recipientId);
 
         RevokeMedicalCertificateResponseType sendResponse = revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(
-                logicalAddress,
-                request);
+            logicalAddress,
+            request);
 
         if (sendResponse.getResult().getResultCode() != OK) {
             String message = "Failed to send question to '" + recipientId + "' when revoking certificate '" + certificate.getId()
-                    + "'. Info from recipient: " + sendResponse.getResult().getInfoText();
+                + "'. Info from recipient: " + sendResponse.getResult().getInfoText();
             LOGGER.error(message);
             throw new SubsystemCallException(recipientId, message);
         } else {
             monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(),
-                    recipientId);
+                recipientId);
         }
     }
 

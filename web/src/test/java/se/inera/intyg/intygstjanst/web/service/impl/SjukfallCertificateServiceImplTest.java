@@ -18,6 +18,20 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
+
+import java.io.IOException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -32,21 +46,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
-
-import java.io.IOException;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.AdditionalMatchers.or;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.Silent.class)
 public class SjukfallCertificateServiceImplTest {
@@ -113,8 +112,8 @@ public class SjukfallCertificateServiceImplTest {
         when(certificateToSjukfallCertificateConverter.isConvertableFk7263(any())).thenReturn(true);
 
         when(certificateToSjukfallCertificateConverter.convertFk7263(
-                or(isNull(), any(Certificate.class)),
-                or(isNull(), any(Utlatande.class)))
+            or(isNull(), any(Certificate.class)),
+            or(isNull(), any(Utlatande.class)))
         ).thenReturn(mock(SjukfallCertificate.class));
 
         boolean result = testee.created(getFactoryInstance().buildCert(INTYG_TYPE_FK7263));
@@ -128,8 +127,8 @@ public class SjukfallCertificateServiceImplTest {
         when(certificateToSjukfallCertificateConverter.isConvertableLisjp(any())).thenReturn(true);
 
         when(certificateToSjukfallCertificateConverter.convertLisjp(
-                or(isNull(), any(Certificate.class)),
-                or(isNull(), any(Utlatande.class)))
+            or(isNull(), any(Certificate.class)),
+            or(isNull(), any(Utlatande.class)))
         ).thenReturn(mock(SjukfallCertificate.class));
 
         boolean result = testee.created(getFactoryInstance().buildCert(INTYG_TYPE_LISJP));

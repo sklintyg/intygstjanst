@@ -30,7 +30,7 @@ import se.inera.intyg.schemas.contract.Personnummer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-@ActiveProfiles({ "dev" })
+@ActiveProfiles({"dev"})
 @Transactional
 public abstract class TestSupport {
 

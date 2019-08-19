@@ -18,6 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
+
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import org.junit.After;
@@ -28,10 +32,6 @@ import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
-
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.StringStartsWith.startsWith;
 
 public class GetCertificateTypeInfoIT extends BaseIntegrationTest {
 
@@ -61,9 +61,10 @@ public class GetCertificateTypeInfoIT extends BaseIntegrationTest {
         IntegrationTestUtil.givenIntyg(INTYG_ID, "luse", LUSE_VERSION, PERSON_ID, false);
         requestTemplate.add("data", new IntygsData(INTYG_ID));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-type-info/v1.0").then().statusCode(200).rootPath(BASE)
-                .body("typ.code", is("luse"))
-                .body("typVersion", is(LUSE_VERSION));
+        given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-type-info/v1.0").then().statusCode(200)
+            .rootPath(BASE)
+            .body("typ.code", is("luse"))
+            .body("typVersion", is(LUSE_VERSION));
     }
 
     @Test
@@ -72,8 +73,8 @@ public class GetCertificateTypeInfoIT extends BaseIntegrationTest {
         String expected = "Failed to get certificate's type. Certificate with id fit-intyg-finnsinte is invalid or does not exist";
 
         given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-type-info/v1.0").then().statusCode(500)
-                .rootPath("Envelope.Body.Fault").body("faultcode", is("soap:Server"))
-                .body("faultstring", is(expected));
+            .rootPath("Envelope.Body.Fault").body("faultcode", is("soap:Server"))
+            .body("faultstring", is(expected));
     }
 
     @Test
@@ -82,11 +83,12 @@ public class GetCertificateTypeInfoIT extends BaseIntegrationTest {
 
         // GetCertificateType does not have a fault transformer, SoapFault is expected
         given().body(requestTemplate.render()).when().post("inera-certificate/get-certificate-type-info/v1.0").then().statusCode(500)
-                .rootPath("Envelope.Body.Fault").body("faultcode", is("soap:Client")).body("faultstring", startsWith("Unmarshalling Error"));
+            .rootPath("Envelope.Body.Fault").body("faultcode", is("soap:Client")).body("faultstring", startsWith("Unmarshalling Error"));
     }
 
     @SuppressWarnings("unused")
     private static class IntygsData {
+
         public final String intygsId;
 
         public IntygsData(String intygsId) {

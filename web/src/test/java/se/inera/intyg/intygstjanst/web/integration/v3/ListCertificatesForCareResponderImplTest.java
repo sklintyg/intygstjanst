@@ -18,6 +18,21 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,19 +59,6 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.IntygsStatus;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.AdditionalMatchers.or;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListCertificatesForCareResponderImplTest {
@@ -102,7 +104,7 @@ public class ListCertificatesForCareResponderImplTest {
         when(certificateService.listCertificatesForCare(civicRegistrationNumber, careUnit)).thenReturn(result);
 
         ListCertificatesForCareType parameters = createListCertificatesRequest(civicRegistrationNumber, createHsaId("vardgivare"),
-                createHsaId("enhet"));
+            createHsaId("enhet"));
 
         ListCertificatesForCareResponseType response = responder.listCertificatesForCare(null, parameters);
 
@@ -128,7 +130,7 @@ public class ListCertificatesForCareResponderImplTest {
         when(certificateService.listCertificatesForCare(civicRegistrationNumber, careUnit)).thenReturn(result);
 
         ListCertificatesForCareType parameters = createListCertificatesRequest(civicRegistrationNumber, createHsaId("vardgivare"),
-                createHsaId("enhet"));
+            createHsaId("enhet"));
 
         ListCertificatesForCareResponseType response = responder.listCertificatesForCare(null, parameters);
 
@@ -154,7 +156,7 @@ public class ListCertificatesForCareResponderImplTest {
         when(certificateService.listCertificatesForCare(civicRegistrationNumber, careUnit)).thenReturn(result);
 
         ListCertificatesForCareType parameters = createListCertificatesRequest(civicRegistrationNumber, createHsaId("vardgivare"),
-                createHsaId("enhet"));
+            createHsaId("enhet"));
 
         ListCertificatesForCareResponseType response = responder.listCertificatesForCare(null, parameters);
 
@@ -172,12 +174,12 @@ public class ListCertificatesForCareResponderImplTest {
         List<String> careUnit = Collections.singletonList("enhet");
         LocalDateTime firstStatusSaved = LocalDateTime.of(2017, 4, 7, 15, 15);
         LocalDateTime[] timestamps = {
-                firstStatusSaved,
-                firstStatusSaved.plusHours(1),
-                firstStatusSaved.plusHours(2),
-                firstStatusSaved.plusHours(3),
-                firstStatusSaved.plusHours(4),
-                firstStatusSaved.plusHours(5),
+            firstStatusSaved,
+            firstStatusSaved.plusHours(1),
+            firstStatusSaved.plusHours(2),
+            firstStatusSaved.plusHours(3),
+            firstStatusSaved.plusHours(4),
+            firstStatusSaved.plusHours(5),
         };
         Personnummer pnr = createPnr("19121212-1212");
         List<String> certificateTypes = Collections.singletonList("fk7263");
@@ -186,17 +188,17 @@ public class ListCertificatesForCareResponderImplTest {
 
         Certificate certificate = new Certificate();
         certificate.setStates(Arrays.asList(
-                new CertificateStateHistoryEntry(FKASSA_RECIPIENT_ID, CertificateState.SENT, timestamps[0]),
-                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.SENT, timestamps[1]),
-                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.DELETED, timestamps[3]),
-                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.RESTORED, timestamps[4]),
-                new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.CANCELLED, timestamps[5])));
+            new CertificateStateHistoryEntry(FKASSA_RECIPIENT_ID, CertificateState.SENT, timestamps[0]),
+            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.SENT, timestamps[1]),
+            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.DELETED, timestamps[3]),
+            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.RESTORED, timestamps[4]),
+            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.CANCELLED, timestamps[5])));
         List<Certificate> result = Arrays.asList(certificate);
 
         when(certificateService.listCertificatesForCare(pnr, careUnit)).thenReturn(result);
 
         ListCertificatesForCareType parameters = createListCertificatesRequest(pnr, createHsaId("vardgivare"),
-                createHsaId("enhet"));
+            createHsaId("enhet"));
 
         ListCertificatesForCareResponseType response = responder.listCertificatesForCare(null, parameters);
 
@@ -234,7 +236,7 @@ public class ListCertificatesForCareResponderImplTest {
     }
 
     private ListCertificatesForCareType createListCertificatesRequest(Personnummer civicRegistrationNumber, HsaId vardgivarId,
-            HsaId enhet) {
+        HsaId enhet) {
         ListCertificatesForCareType parameters = new ListCertificatesForCareType();
         parameters.setPersonId(new PersonId());
         parameters.getPersonId().setExtension(civicRegistrationNumber.getPersonnummer());
@@ -245,7 +247,7 @@ public class ListCertificatesForCareResponderImplTest {
 
     private Personnummer createPnr(String pnr) {
         return Personnummer.createPersonnummer(pnr)
-                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 
 }

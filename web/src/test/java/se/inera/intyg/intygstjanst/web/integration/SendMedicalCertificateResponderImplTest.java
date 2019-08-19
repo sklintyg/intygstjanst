@@ -18,7 +18,19 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ERROR;
+import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
+import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
+
 import iso.v21090.dt.v1.II;
+import java.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,22 +61,6 @@ import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.intyg.schemas.contract.Personnummer;
-
-import java.time.LocalDateTime;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ERROR;
-import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
-import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendMedicalCertificateResponderImplTest {
@@ -114,7 +110,7 @@ public class SendMedicalCertificateResponderImplTest {
         verify(recipientService).getPrimaryRecipientFkassa();
         verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
         verify(statisticsService).sent(
-                certificate.getId(), certificate.getType(), certificate.getCareUnitId(), createFkRecipient().getId());
+            certificate.getId(), certificate.getType(), certificate.getCareUnitId(), createFkRecipient().getId());
     }
 
     @Test
@@ -135,14 +131,14 @@ public class SendMedicalCertificateResponderImplTest {
     @Test
     public void testSendMedicalCertificateInvalidCertificate() throws Exception {
         when(certificateService.getCertificateForCare(CERTIFICATE_ID))
-                .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, PERSONNUMMER));
+            .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, PERSONNUMMER));
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), createRequest());
 
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals(
-                "No certificate 'Intygs-id-1234567890' found to send for patient '9a8b138a666f84da32e9383b49a15f46f6e08d2c492352aa0dfcc3f993773b0d'.",
-                response.getResult().getErrorText());
+            "No certificate 'Intygs-id-1234567890' found to send for patient '9a8b138a666f84da32e9383b49a15f46f6e08d2c492352aa0dfcc3f993773b0d'.",
+            response.getResult().getErrorText());
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
@@ -153,7 +149,7 @@ public class SendMedicalCertificateResponderImplTest {
     public void testSendMedicalCertificateCertificateRevoked() throws Exception {
         when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
         when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID))
-                .thenThrow(new CertificateRevokedException(CERTIFICATE_ID));
+            .thenThrow(new CertificateRevokedException(CERTIFICATE_ID));
 
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), createRequest());
 
@@ -236,7 +232,7 @@ public class SendMedicalCertificateResponderImplTest {
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: Wrong o.i.d. for Patient Id! Should be 1.2.752.129.2.1.3.1 or 1.2.752.129.2.1.3.3",
-                response.getResult().getErrorText());
+            response.getResult().getErrorText());
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
@@ -252,7 +248,7 @@ public class SendMedicalCertificateResponderImplTest {
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: Wrong format for person-id! Valid format is YYYYMMDD-XXXX or YYYYMMDD+XXXX.",
-                response.getResult().getErrorText());
+            response.getResult().getErrorText());
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
@@ -268,7 +264,7 @@ public class SendMedicalCertificateResponderImplTest {
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: Wrong format for person-id! Valid format is YYYYMMDD-XXXX or YYYYMMDD+XXXX.",
-                response.getResult().getErrorText());
+            response.getResult().getErrorText());
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
@@ -283,8 +279,8 @@ public class SendMedicalCertificateResponderImplTest {
         final Certificate certificate = createCertificate();
 
         doReturn(certificate)
-                .when(certificateService)
-                .getCertificateForCare(CERTIFICATE_ID);
+            .when(certificateService)
+            .getCertificateForCare(CERTIFICATE_ID);
 
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), request);
 
@@ -293,7 +289,7 @@ public class SendMedicalCertificateResponderImplTest {
         verify(recipientService).getPrimaryRecipientFkassa();
         verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
         verify(statisticsService).sent(
-                certificate.getId(), certificate.getType(), certificate.getCareUnitId(), createFkRecipient().getId());
+            certificate.getId(), certificate.getType(), certificate.getCareUnitId(), createFkRecipient().getId());
     }
 
     @Test
@@ -375,7 +371,7 @@ public class SendMedicalCertificateResponderImplTest {
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: Wrong o.i.d. for personalId! Should be 1.2.752.129.2.1.4.1",
-                response.getResult().getErrorText());
+            response.getResult().getErrorText());
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
@@ -418,7 +414,7 @@ public class SendMedicalCertificateResponderImplTest {
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No enhets-id found!\n" +
-                "Wrong o.i.d. for enhetsId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
+            "Wrong o.i.d. for enhetsId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
@@ -433,7 +429,7 @@ public class SendMedicalCertificateResponderImplTest {
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: Wrong o.i.d. for enhetsId! Should be 1.2.752.129.2.1.4.1",
-                response.getResult().getErrorText());
+            response.getResult().getErrorText());
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
@@ -490,7 +486,7 @@ public class SendMedicalCertificateResponderImplTest {
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No vardgivare-id found!\n" +
-                "Wrong o.i.d. for vardgivareId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
+            "Wrong o.i.d. for vardgivareId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
@@ -505,7 +501,7 @@ public class SendMedicalCertificateResponderImplTest {
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: Wrong o.i.d. for vardgivareId! Should be 1.2.752.129.2.1.4.1",
-                response.getResult().getErrorText());
+            response.getResult().getErrorText());
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
@@ -561,13 +557,13 @@ public class SendMedicalCertificateResponderImplTest {
 
     private Recipient createFkRecipient() {
         return new RecipientBuilder()
-                .setLogicalAddress(FK_RECIPIENT_LOGICALADDRESS)
-                .setName(FK_RECIPIENT_NAME)
-                .setId(FK_RECIPIENT_ID)
-                .setCertificateTypes(FK_RECIPIENT_CERTIFICATETYPES)
-                .setActive(true)
-                .setTrusted(true)
-                .build();
+            .setLogicalAddress(FK_RECIPIENT_LOGICALADDRESS)
+            .setName(FK_RECIPIENT_NAME)
+            .setId(FK_RECIPIENT_ID)
+            .setCertificateTypes(FK_RECIPIENT_CERTIFICATETYPES)
+            .setActive(true)
+            .setTrusted(true)
+            .build();
     }
 
     private SendMedicalCertificateRequestType createRequest() {

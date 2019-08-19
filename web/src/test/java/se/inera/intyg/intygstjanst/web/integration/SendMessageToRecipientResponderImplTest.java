@@ -20,26 +20,23 @@ package se.inera.intyg.intygstjanst.web.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.AdditionalMatchers.or;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-
 import javax.xml.bind.JAXBException;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
-
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
@@ -150,18 +147,18 @@ public class SendMessageToRecipientResponderImplTest {
         SendMessageToRecipientResponseType response = new SendMessageToRecipientResponseType();
         response.setResult(result);
         when(sendMessageToRecipientResponder.sendMessageToRecipient(anyString(), any(SendMessageToRecipientType.class)))
-                .thenReturn(response);
+            .thenReturn(response);
     }
 
     private void assertInvocations(
-            VerificationMode monitoringLogInvocation,
-            VerificationMode arendeServiceInvocation,
-            VerificationMode sendMessageToRecipientClientInvocation) throws JAXBException, InvalidCertificateException {
+        VerificationMode monitoringLogInvocation,
+        VerificationMode arendeServiceInvocation,
+        VerificationMode sendMessageToRecipientClientInvocation) throws JAXBException, InvalidCertificateException {
 
         verify(validator).validate(any(SendMessageToRecipientType.class)); // always call validator
         verify(arendeService, arendeServiceInvocation).processIncomingMessage(any(Arende.class));
         verify(monitoringLog, monitoringLogInvocation).logSendMessageToRecipient(or(isNull(), anyString()), anyString());
         verify(sendMessageToRecipientResponder, sendMessageToRecipientClientInvocation)
-                .sendMessageToRecipient(eq(LOGICAL_ADDRESS_RECIPIENT), any(SendMessageToRecipientType.class));
+            .sendMessageToRecipient(eq(LOGICAL_ADDRESS_RECIPIENT), any(SendMessageToRecipientType.class));
     }
 }

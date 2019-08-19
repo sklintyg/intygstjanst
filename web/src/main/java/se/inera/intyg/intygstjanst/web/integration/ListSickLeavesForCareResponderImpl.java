@@ -18,6 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
@@ -38,11 +42,6 @@ import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Li
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.SjukfallLista;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Created by eriklupander on 2017-02-15.
@@ -80,7 +79,7 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
 
         if (params.getMaxDagarMellanIntyg() < 0) {
             throw new IllegalArgumentException("Request to ListSickLeavesForCare has invalid value for parameter 'maxDagarMellanIntyg', "
-                    + "must be >= 0, was " + params.getMaxDagarMellanIntyg());
+                + "must be >= 0, was " + params.getMaxDagarMellanIntyg());
         }
 
         int maxSjukskrivningslangd = params.getMaxSjukskrivningslangd() != null ? params.getMaxSjukskrivningslangd() : MAX_LEN;
@@ -95,7 +94,7 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
 
         // Load sjukfallCertificates from DAO
         List<SjukfallCertificate> certificates = sjukfallCertificateDao
-                .findActiveSjukfallCertificateForCareUnits(careGiverHsaId, hsaIdList, 0);
+            .findActiveSjukfallCertificateForCareUnits(careGiverHsaId, hsaIdList, 0);
 
         // Convert to the IntygData format that the SjukfallEngine accepts.
         List<IntygData> intygDataList = sjukfallCertificateConverter.convert(certificates);
@@ -107,13 +106,13 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
         // Perform post-processing filtering of sjukskrivningslängder and läkare.
         List<HsaId> lakareList = params.getPersonalId().stream().filter(Objects::nonNull).collect(Collectors.toList());
         sjukfall = sjukfall.stream()
-                .filter(sf -> sf.getDagar() >= minstaSjukskrivningslangd)
-                .filter(sf -> sf.getDagar() < maxSjukskrivningslangd)
-                .filter(sf -> lakareList == null || lakareList.size() == 0
-                        || lakareList.stream()
-                        .map(id -> id.getExtension())
-                        .anyMatch(extension -> extension.equals(sf.getLakare().getId())))
-                .collect(Collectors.toList());
+            .filter(sf -> sf.getDagar() >= minstaSjukskrivningslangd)
+            .filter(sf -> sf.getDagar() < maxSjukskrivningslangd)
+            .filter(sf -> lakareList == null || lakareList.size() == 0
+                || lakareList.stream()
+                .map(id -> id.getExtension())
+                .anyMatch(extension -> extension.equals(sf.getLakare().getId())))
+            .collect(Collectors.toList());
 
         // Transform the output of the sjukfallengine into rivta TjK format and build the response object.
         SjukfallLista sjukfallLista = new SjukfallLista();

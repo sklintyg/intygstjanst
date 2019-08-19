@@ -18,14 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.util;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
 
 /**
  * Created by eriklupander on 2017-02-17.
@@ -55,7 +54,7 @@ public class SjukfallCertTestHelper {
     }
 
     private SjukfallCertificate buildSjukfallCertificate(String careGiverId, String careUnitId, String careUnitName,
-                                                         List<SjukfallCertificateWorkCapacity> workCapacities, boolean deleted) {
+        List<SjukfallCertificateWorkCapacity> workCapacities, boolean deleted) {
 
         SjukfallCertificate sc = new SjukfallCertificate(UUID.randomUUID().toString());
         sc.setCareGiverId(careGiverId);

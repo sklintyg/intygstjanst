@@ -18,6 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
@@ -27,10 +30,6 @@ import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.repo.RecipientRepo;
-
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Service
 public class RecipientServiceImpl implements RecipientService {
@@ -60,22 +59,22 @@ public class RecipientServiceImpl implements RecipientService {
     public List<Recipient> listRecipients(String certificateId) {
         // Get list of registered possible receivers.
         List<ApprovedReceiver> possibleReceivers =
-                approvedReceiverDao.getApprovedReceiverIdsForCertificate(certificateId);
+            approvedReceiverDao.getApprovedReceiverIdsForCertificate(certificateId);
 
         // Reduce to approved recipients
         return recipientRepo.listRecipients().stream()
-                .filter(isApprovedRecipient(possibleReceivers))
-                .collect(Collectors.toList());
+            .filter(isApprovedRecipient(possibleReceivers))
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Recipient> listRecipients(CertificateType certificateType) {
         // Filter out HSVARD and INVANA recipients, as these are in fact Webcert/intygstjansten and Mina intyg)
         return recipientRepo.listRecipients().stream()
-                .filter(r -> !getPrimaryRecipientHsvard().getId().equals(r.getId())
-                          && !getPrimaryRecipientInvana().getId().equals(r.getId()))
-                .filter(r -> r.getCertificateTypes().contains(certificateType.getCertificateTypeId()))
-                .collect(Collectors.toList());
+            .filter(r -> !getPrimaryRecipientHsvard().getId().equals(r.getId())
+                && !getPrimaryRecipientInvana().getId().equals(r.getId()))
+            .filter(r -> r.getCertificateTypes().contains(certificateType.getCertificateTypeId()))
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -100,11 +99,11 @@ public class RecipientServiceImpl implements RecipientService {
 
     private Predicate<Recipient> isApprovedRecipient(List<ApprovedReceiver> receivers) {
         return recipient -> !getPrimaryRecipientHsvard().getId().equals(recipient.getId())
-                && !getPrimaryRecipientInvana().getId().equals(recipient.getId())
-                && receivers.stream()
-                        .anyMatch(approvedReceiver -> approvedReceiver.isApproved()
-                                && approvedReceiver.getReceiverId().equals(recipient.getId())
-                        );
+            && !getPrimaryRecipientInvana().getId().equals(recipient.getId())
+            && receivers.stream()
+            .anyMatch(approvedReceiver -> approvedReceiver.isApproved()
+                && approvedReceiver.getReceiverId().equals(recipient.getId())
+            );
     }
 
 

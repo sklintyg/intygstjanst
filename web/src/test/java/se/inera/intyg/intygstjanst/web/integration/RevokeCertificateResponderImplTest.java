@@ -18,6 +18,19 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -43,20 +56,6 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
-
-import java.util.Arrays;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.AdditionalMatchers.or;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RevokeCertificateResponderImplTest {
@@ -89,19 +88,19 @@ public class RevokeCertificateResponderImplTest {
         final String logicalAddress = "logicalAddress";
 
         final Recipient recipient = new RecipientBuilder()
-                .setLogicalAddress(logicalAddress)
-                .setName("name")
-                .setId("id")
-                .setCertificateTypes("types")
-                .setActive(true)
-                .setTrusted(true)
-                .build();
+            .setLogicalAddress(logicalAddress)
+            .setName("name")
+            .setId("id")
+            .setCertificateTypes("types")
+            .setActive(true)
+            .setTrusted(true)
+            .build();
 
         final Certificate certificate = createCertificate(
-                certificateId,
-                new CertificateStateHistoryEntry("target1", CertificateState.SENT, null),
-                new CertificateStateHistoryEntry("target2", CertificateState.SENT, null),
-                new CertificateStateHistoryEntry("target1", CertificateState.SENT, null));
+            certificateId,
+            new CertificateStateHistoryEntry("target1", CertificateState.SENT, null),
+            new CertificateStateHistoryEntry("target2", CertificateState.SENT, null),
+            new CertificateStateHistoryEntry("target1", CertificateState.SENT, null));
 
         when(certificateService.revokeCertificate(any(), eq(certificateId))).thenReturn(certificate);
         when(recipientService.getRecipient(anyString())).thenReturn(recipient);
@@ -153,7 +152,7 @@ public class RevokeCertificateResponderImplTest {
         final String logicalAddress = "logicalAddress";
 
         when(certificateService.revokeCertificate(any(), eq(certificateId)))
-                .thenThrow(new InvalidCertificateException(certificateId, createPnr(patientId)));
+            .thenThrow(new InvalidCertificateException(certificateId, createPnr(patientId)));
 
         RevokeCertificateType request = new RevokeCertificateType();
         request.setIntygsId(new IntygId());
@@ -179,7 +178,7 @@ public class RevokeCertificateResponderImplTest {
         final String logicalAddress = "logicalAddress";
 
         when(certificateService.revokeCertificate(any(), eq(certificateId)))
-                .thenThrow(new CertificateRevokedException(certificateId));
+            .thenThrow(new CertificateRevokedException(certificateId));
 
         RevokeCertificateType request = new RevokeCertificateType();
         request.setIntygsId(new IntygId());
@@ -207,7 +206,7 @@ public class RevokeCertificateResponderImplTest {
 
     private Personnummer createPnr(String pnr) {
         return Personnummer.createPersonnummer(pnr)
-                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 
 }

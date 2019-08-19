@@ -20,14 +20,11 @@ package se.inera.intyg.intygstjanst.web.integration.stub;
 
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.JAXBException;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;

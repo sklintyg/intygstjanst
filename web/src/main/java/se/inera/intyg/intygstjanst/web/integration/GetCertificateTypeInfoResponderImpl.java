@@ -20,7 +20,6 @@ package se.inera.intyg.intygstjanst.web.integration;
 
 import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoType;
@@ -49,7 +48,7 @@ public class GetCertificateTypeInfoResponderImpl implements GetCertificateTypeIn
         final CertificateTypeInfo certificateTypeInfo = certificateService.getCertificateTypeInfo(request.getIntygsId());
         if (certificateTypeInfo == null) {
             throw new ServerException("Failed to get certificate's type. "
-                    + "Certificate with id " + request.getIntygsId() + " is invalid or does not exist");
+                + "Certificate with id " + request.getIntygsId() + " is invalid or does not exist");
         }
 
         GetCertificateTypeInfoResponseType response = new GetCertificateTypeInfoResponseType();

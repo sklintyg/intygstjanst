@@ -51,6 +51,7 @@ public abstract class BaseIntegrationTest {
 
     @SuppressWarnings("unused")
     protected class RegisterIntygsData {
+
         public final String intygsId;
         public final String intygsVersion;
         public final String personId;
@@ -64,6 +65,7 @@ public abstract class BaseIntegrationTest {
 
     @SuppressWarnings("unused")
     protected class RevokeIntygsData {
+
         public final String intygsId;
         public final String personId;
 

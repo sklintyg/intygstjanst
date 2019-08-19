@@ -20,6 +20,12 @@ package se.inera.intyg.intygstjanst.web.integration.validator;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -34,15 +40,9 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMe
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType.Komplettering;
 import se.riv.clinicalprocess.healthcond.certificate.v3.MeddelandeReferens;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 @Component
 public class SendMessageToCareValidator {
+
     public enum Amneskod {
         KOMPLT,
         AVSTMN,
@@ -112,7 +112,7 @@ public class SendMessageToCareValidator {
         } catch (Exception e) {
             validationErrors.add(ErrorCode.SUBJECT_NOT_SUPPORTED_ERROR.toString());
             validationErrors.add(" The supplied certificate subject is invalid. "
-                    + "Supported subjects are " + Stream.of(Amneskod.values()).map(Amneskod::name).collect(Collectors.joining(", ")));
+                + "Supported subjects are " + Stream.of(Amneskod.values()).map(Amneskod::name).collect(Collectors.joining(", ")));
         }
     }
 
@@ -122,9 +122,9 @@ public class SendMessageToCareValidator {
         if (lastDayOfReply != null && messageIsAnAnswer(sendMessageToCareType)) {
             validationErrors.add(ErrorCode.MESSAGE_TYPE_CONSISTENCY_ERROR.toString());
             validationErrors
-                    .add(" Message concerning certificate id " + sendMessageToCareType.getIntygsId().getExtension()
-                            + " is an answer to a question"
-                            + "and should not specify a last date of reply 'sistaSvarsDatum'.");
+                .add(" Message concerning certificate id " + sendMessageToCareType.getIntygsId().getExtension()
+                    + " is an answer to a question"
+                    + "and should not specify a last date of reply 'sistaSvarsDatum'.");
         }
     }
 
@@ -143,8 +143,8 @@ public class SendMessageToCareValidator {
             if (!sendMessageToCareType.getAmne().getCode().equals(amne) && !isPaminnelse(sendMessageToCareType)) {
                 validationErrors.add(ErrorCode.SUBJECT_CONSISTENCY_ERROR.toString());
                 validationErrors.add(" Message with meddelandeId " + meddelandeId + " referenced by reply message with id "
-                        + sendMessageToCareType.getMeddelandeId()
-                        + " regarding certificate with id " + sendMessageToCareType.getIntygsId().getExtension());
+                    + sendMessageToCareType.getMeddelandeId()
+                    + " regarding certificate with id " + sendMessageToCareType.getIntygsId().getExtension());
             }
         }
 
@@ -168,7 +168,7 @@ public class SendMessageToCareValidator {
             }
             Optional<Personnummer> suppliedCivicRegistrationNumber = Personnummer.createPersonnummer(civicRegistrationNumber);
             if (!(suppliedCivicRegistrationNumber.isPresent()
-                    && suppliedCivicRegistrationNumber.get().equals(certificate.getCivicRegistrationNumber()))) {
+                && suppliedCivicRegistrationNumber.get().equals(certificate.getCivicRegistrationNumber()))) {
                 validationErrors.add(ErrorCode.CIVIC_REGISTRATION_NUMBER_INCONSISTENCY_ERROR.toString());
             }
         } catch (InvalidCertificateException e) {
@@ -179,9 +179,9 @@ public class SendMessageToCareValidator {
     @VisibleForTesting
     void validatePaminnelse(SendMessageToCareType message, List<String> validationErrors) {
         boolean paminnelseSubjectMissing = !message.getAmne().getCode().equals(Amneskod.PAMINN.toString())
-                && message.getPaminnelseMeddelandeId() != null;
+            && message.getPaminnelseMeddelandeId() != null;
         boolean paminnelseIdMissing = message.getAmne().getCode().equals(Amneskod.PAMINN.toString())
-                && message.getPaminnelseMeddelandeId() == null;
+            && message.getPaminnelseMeddelandeId() == null;
         if (paminnelseSubjectMissing || paminnelseIdMissing) {
             validationErrors.add(ErrorCode.PAMINNELSE_ID_INCONSISTENCY_ERROR.toString());
         }
@@ -202,7 +202,7 @@ public class SendMessageToCareValidator {
 
     private boolean isPaminnelse(SendMessageToCareType sendMessageToCareType) {
         return sendMessageToCareType.getAmne().getCode().equals(Amneskod.PAMINN.toString())
-                && sendMessageToCareType.getPaminnelseMeddelandeId() != null;
+            && sendMessageToCareType.getPaminnelseMeddelandeId() != null;
     }
 
     private boolean messageIsAnAnswer(SendMessageToCareType sendMessageToCareType) {

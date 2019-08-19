@@ -18,6 +18,19 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.ERROR;
+import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.INFO;
+import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.OK;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -42,19 +55,6 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Part;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.ERROR;
-import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.INFO;
-import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.OK;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendCertificateToRecipientResponderImplTest {
@@ -92,8 +92,8 @@ public class SendCertificateToRecipientResponderImplTest {
         Certificate certificate = mock(Certificate.class);
 
         doReturn(certificate)
-                .when(certificateService)
-                .getCertificateForCare(CERTIFICATE_ID);
+            .when(certificateService)
+            .getCertificateForCare(CERTIFICATE_ID);
 
         doReturn("type").when(certificate).getType();
         doReturn("unit").when(certificate).getCareUnitId();
@@ -102,9 +102,10 @@ public class SendCertificateToRecipientResponderImplTest {
 
         assertEquals(OK, response.getResult().getResultCode());
 
-        ArgumentCaptor<SendCertificateToRecipientType.SkickatAv> captor = ArgumentCaptor.forClass(SendCertificateToRecipientType.SkickatAv.class);
+        ArgumentCaptor<SendCertificateToRecipientType.SkickatAv> captor = ArgumentCaptor
+            .forClass(SendCertificateToRecipientType.SkickatAv.class);
         verify(internalNotificationService, times(1))
-                .notifyCareIfSentByCitizen(any(Certificate.class), captor.capture());
+            .notifyCareIfSentByCitizen(any(Certificate.class), captor.capture());
         assertNotNull(captor.getValue().getPersonId());
         assertNull(captor.getValue().getHosPersonal());
     }
@@ -115,12 +116,12 @@ public class SendCertificateToRecipientResponderImplTest {
         Certificate certificate = mock(Certificate.class);
 
         doReturn(CertificateService.SendStatus.ALREADY_SENT)
-                .when(certificateService)
-                .sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "FKASSA");
+            .when(certificateService)
+            .sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "FKASSA");
 
         doReturn(certificate)
-                .when(certificateService)
-                .getCertificateForCare(CERTIFICATE_ID);
+            .when(certificateService)
+            .getCertificateForCare(CERTIFICATE_ID);
 
         SendCertificateToRecipientType request = createRequest();
         request.getMottagare().setCode("FKASSA");
@@ -134,7 +135,7 @@ public class SendCertificateToRecipientResponderImplTest {
     @Test
     public void testSendCertificateToRecipientInvalidCertificate() throws Exception {
         when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID))
-                .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, PERSONNUMMER));
+            .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, PERSONNUMMER));
 
         SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
 
@@ -147,7 +148,7 @@ public class SendCertificateToRecipientResponderImplTest {
     @Test
     public void testSendCertificateToRecipientCertificateRevoked() throws Exception {
         when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID))
-                .thenThrow(new CertificateRevokedException(CERTIFICATE_ID));
+            .thenThrow(new CertificateRevokedException(CERTIFICATE_ID));
 
         SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
 

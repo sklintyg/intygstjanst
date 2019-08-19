@@ -18,13 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.rehabstod.converter;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
 import org.junit.Test;
 import se.inera.intyg.intygstjanst.web.integration.util.SjukfallCertTestHelper;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsData;
-
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by eriklupander on 2016-02-04.

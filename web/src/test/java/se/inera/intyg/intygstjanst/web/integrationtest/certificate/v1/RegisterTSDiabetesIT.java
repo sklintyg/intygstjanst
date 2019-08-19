@@ -22,13 +22,15 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
-import org.junit.*;
-import org.stringtemplate.v4.*;
-
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.response.ValidatableResponse;
-
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
@@ -65,13 +67,14 @@ public class RegisterTSDiabetesIT extends BaseIntegrationTest {
         final String personId = "190101010101";
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_TS_DIABETES, TS_DIABETES_VERSION, personId, false);
 
-        givenRequest(INTYG_ID, personId).body("resultat.resultCode", is("INFO")).body("resultat.resultText", is("Certificate already exists"));
+        givenRequest(INTYG_ID, personId).body("resultat.resultCode", is("INFO"))
+            .body("resultat.resultText", is("Certificate already exists"));
     }
 
     @Test
     public void faultTransformerTest() {
         givenRequest("</tag>", "190101010101").body("resultat.resultCode", is("ERROR")).body("resultat.resultText",
-                startsWith("Unmarshalling Error"));
+            startsWith("Unmarshalling Error"));
     }
 
     private ValidatableResponse getTsDiabetesRequest(String intygId, String personId) {
@@ -80,7 +83,7 @@ public class RegisterTSDiabetesIT extends BaseIntegrationTest {
         requestTemplate.add("personId", personId);
 
         return given().body(requestTemplate.render()).when().post("inera-certificate/get-ts-diabetes/v1.0").then().statusCode(200)
-                .rootPath("Envelope.Body.GetTSDiabetesResponse.");
+            .rootPath("Envelope.Body.GetTSDiabetesResponse.");
     }
 
     private ValidatableResponse givenRequest(String intygId, String personId) {
@@ -89,6 +92,6 @@ public class RegisterTSDiabetesIT extends BaseIntegrationTest {
         requestTemplate.add("personId", personId);
 
         return given().body(requestTemplate.render()).when().post("inera-certificate/register-ts-diabetes/v1.0").then().statusCode(200)
-                .rootPath("Envelope.Body.RegisterTSDiabetesResponse.");
+            .rootPath("Envelope.Body.RegisterTSDiabetesResponse.");
     }
 }

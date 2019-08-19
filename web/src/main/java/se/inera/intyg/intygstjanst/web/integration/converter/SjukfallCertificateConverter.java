@@ -18,16 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.converter;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
 import se.inera.intyg.infra.sjukfall.dto.Formaga;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Converts JPA entity model {@link SjukfallCertificate} to the
@@ -59,8 +58,8 @@ public class SjukfallCertificateConverter {
     private List<Formaga> buildFormaga(List<SjukfallCertificateWorkCapacity> workCapacities) {
 
         return workCapacities.stream()
-                .map(this::buildFormaga)
-                .collect(Collectors.toList());
+            .map(this::buildFormaga)
+            .collect(Collectors.toList());
     }
 
     private Formaga buildFormaga(SjukfallCertificateWorkCapacity wc) {
