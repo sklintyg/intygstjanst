@@ -60,7 +60,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     public List<Certificate> findCertificate(Personnummer civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate,
-            List<String> careUnits) {
+        List<String> careUnits) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Certificate> query = criteriaBuilder.createQuery(Certificate.class);
         Root<Certificate> root = query.from(Certificate.class);
@@ -75,16 +75,16 @@ public class CertificateDaoImpl implements CertificateDao {
 
         // meta data has to match civic registration number
         predicates
-                .add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), DaoUtil.formatPnrForPersistence(civicRegistrationNumber)));
+            .add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), DaoUtil.formatPnrForPersistence(civicRegistrationNumber)));
 
         // filter by certificate types
         if (types != null && !types.isEmpty()) {
-            predicates.add(criteriaBuilder.lower(root.<String> get("type")).in(toLowerCase(types)));
+            predicates.add(criteriaBuilder.lower(root.<String>get("type")).in(toLowerCase(types)));
         }
 
         // filter by care unit
         if (careUnits != null && !careUnits.isEmpty()) {
-            predicates.add(root.<String> get("careUnitId").in(careUnits));
+            predicates.add(root.<String>get("careUnitId").in(careUnits));
         }
 
         if (fromDate != null) {
@@ -117,9 +117,9 @@ public class CertificateDaoImpl implements CertificateDao {
         if (civicRegistrationNumber != null && !certificate.getCivicRegistrationNumber().equals(civicRegistrationNumber)) {
 
             LOG.warn(String.format("Trying to access certificate '%s' for user '%s' but certificate's user is '%s'.",
-                    certificateId,
-                    civicRegistrationNumber.getPersonnummerHash(),
-                    certificate.getCivicRegistrationNumber().getPersonnummerHash()));
+                certificateId,
+                civicRegistrationNumber.getPersonnummerHash(),
+                certificate.getCivicRegistrationNumber().getPersonnummerHash()));
 
             throw new PersistenceException(certificateId, civicRegistrationNumber);
         }
@@ -140,8 +140,8 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     public void updateStatus(String id, Personnummer civicRegistrationNumber, CertificateState state, String target,
-            LocalDateTime timestamp)
-            throws PersistenceException {
+        LocalDateTime timestamp)
+        throws PersistenceException {
 
         Certificate certificate = entityManager.find(Certificate.class, id);
 
@@ -156,7 +156,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     public void updateStatus(String id, CertificateState state, String target, LocalDateTime timestamp)
-            throws PersistenceException {
+        throws PersistenceException {
 
         Certificate certificate = entityManager.find(Certificate.class, id);
 

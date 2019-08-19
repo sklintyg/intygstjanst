@@ -18,6 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import java.util.Optional;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +40,6 @@ import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 
-import java.util.Optional;
-
 @SchemaValidation
 public class SendCertificateToRecipientResponderImpl implements SendCertificateToRecipientResponderInterface {
 
@@ -58,7 +57,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
     @Override
     @PrometheusTimeMethod
     public SendCertificateToRecipientResponseType sendCertificateToRecipient(
-            final String logicalAddress, final SendCertificateToRecipientType request) {
+        final String logicalAddress, final SendCertificateToRecipientType request) {
 
         SendCertificateToRecipientResponseType response = new SendCertificateToRecipientResponseType();
 
@@ -71,16 +70,16 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
 
             final Certificate certificate = certificateService.getCertificateForCare(intygsId);
             final CertificateService.SendStatus sendStatus = certificateService.sendCertificate(personnummer.orElse(null), intygsId,
-                    mottagareId);
+                mottagareId);
 
             if (sendStatus == CertificateService.SendStatus.ALREADY_SENT) {
                 response.setResult(ResultTypeUtil.infoResult(
-                        String.format("Certificate '%s' already sent to '%s'.", intygsId, mottagareId)));
+                    String.format("Certificate '%s' already sent to '%s'.", intygsId, mottagareId)));
                 LOGGER.info("Certificate '{}' already sent to '{}'.", intygsId, mottagareId);
             } else {
                 response.setResult(ResultTypeUtil.okResult());
                 statisticsService.sent(
-                        certificate.getId(), certificate.getType(), certificate.getCareUnitId(), request.getMottagare().getCode());
+                    certificate.getId(), certificate.getType(), certificate.getCareUnitId(), request.getMottagare().getCode());
 
                 internalNotificationService.notifyCareIfSentByCitizen(certificate, request.getSkickatAv());
 
@@ -90,9 +89,9 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
         } catch (InvalidCertificateException ex) {
             // return ERROR if no such certificate does exist
             LOGGER.error("Certificate '{}' does not exist for user '{}'.",
-                    intygsId, personnummer.map(Personnummer::getPersonnummerHash).orElse(null));
+                intygsId, personnummer.map(Personnummer::getPersonnummerHash).orElse(null));
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR,
-                    String.format("Unknown certificate ID: %s", intygsId)));
+                String.format("Unknown certificate ID: %s", intygsId)));
         } catch (CertificateRevokedException ex) {
             // return INFO if certificate is revoked
             LOGGER.info("Certificate '{}' has been revoked.", intygsId);
@@ -101,14 +100,14 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
             // return ERROR if recipient is unknwon
             LOGGER.error("Unknown recipient ID: {}", mottagareId);
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR,
-                    String.format("Unknown recipient ID: %s", mottagareId)));
+                String.format("Unknown recipient ID: %s", mottagareId)));
         } catch (ServerException ex) {
             Throwable cause = ex.getCause();
             String message = cause instanceof ExternalServiceCallException ? cause.getMessage() : ex.getMessage();
             // return ERROR if certificate couldn't be sent
             LOGGER.error("Certificate '{}' couldn't be sent to '{}': {}", intygsId, mottagareId, message);
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.TECHNICAL_ERROR,
-                    String.format("Certificate '%s' couldn't be sent to recipient", intygsId)));
+                String.format("Certificate '%s' couldn't be sent to recipient", intygsId)));
         }
 
         return response;

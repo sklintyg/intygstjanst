@@ -18,11 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.web.support;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.google.common.collect.ImmutableList;
+import java.time.LocalDateTime;
 import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
 import se.inera.intyg.common.fkparent.model.internal.Diagnos;
-import se.inera.intyg.common.lisjp.v1.model.internal.LisjpUtlatandeV1;
 import se.inera.intyg.common.lisjp.model.internal.Sjukskrivning;
+import se.inera.intyg.common.lisjp.v1.model.internal.LisjpUtlatandeV1;
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
 import se.inera.intyg.common.support.model.common.internal.GrundData;
 import se.inera.intyg.common.support.model.common.internal.HoSPersonal;
@@ -30,14 +34,9 @@ import se.inera.intyg.common.support.model.common.internal.Patient;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.model.common.internal.Vardenhet;
 import se.inera.intyg.common.support.model.common.internal.Vardgivare;
-import se.inera.intyg.schemas.contract.Personnummer;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
-
-import java.time.LocalDateTime;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 /**
  * Created by eriklupander on 2016-02-15.
@@ -114,10 +113,12 @@ public class CertificateForSjukfallFactory {
         mockGrundData(utlatande);
         when(utlatande.getDiagnoser()).thenReturn(ImmutableList.of(Diagnos.create("J22", "", "", "")));
         when(utlatande.getSjukskrivningar()).thenReturn(ImmutableList.of(
-                Sjukskrivning.create(Sjukskrivning.SjukskrivningsGrad.HELT_NEDSATT, new InternalLocalDateInterval(START_DATE_100, END_DATE_100)),
-                Sjukskrivning.create(Sjukskrivning.SjukskrivningsGrad.NEDSATT_3_4, new InternalLocalDateInterval(START_DATE_75, END_DATE_75)),
-                Sjukskrivning.create(Sjukskrivning.SjukskrivningsGrad.NEDSATT_HALFTEN, new InternalLocalDateInterval(START_DATE_50, END_DATE_50)),
-                Sjukskrivning.create(Sjukskrivning.SjukskrivningsGrad.NEDSATT_1_4, new InternalLocalDateInterval(START_DATE_25, END_DATE_25)))
+            Sjukskrivning
+                .create(Sjukskrivning.SjukskrivningsGrad.HELT_NEDSATT, new InternalLocalDateInterval(START_DATE_100, END_DATE_100)),
+            Sjukskrivning.create(Sjukskrivning.SjukskrivningsGrad.NEDSATT_3_4, new InternalLocalDateInterval(START_DATE_75, END_DATE_75)),
+            Sjukskrivning
+                .create(Sjukskrivning.SjukskrivningsGrad.NEDSATT_HALFTEN, new InternalLocalDateInterval(START_DATE_50, END_DATE_50)),
+            Sjukskrivning.create(Sjukskrivning.SjukskrivningsGrad.NEDSATT_1_4, new InternalLocalDateInterval(START_DATE_25, END_DATE_25)))
         );
 
         return utlatande;

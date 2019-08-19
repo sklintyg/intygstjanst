@@ -18,6 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,12 +36,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.hibernate.annotations.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -163,8 +161,7 @@ public class Certificate {
     /**
      * Constructor that takes an id.
      *
-     * @param id
-     *            the id
+     * @param id the id
      */
     public Certificate(String id) {
         this.id = id;
@@ -325,7 +322,7 @@ public class Certificate {
      * Check if this certificate is currently deleted ("arkiverad") by the citizen.
      *
      * @return <code>true</code> if the latest {@link CertificateState} of either type <code>DELETED</code> or
-     *         <code>RESTORED</code> is <code>DELETED</code>, otherwise return <code>false</code>.
+     * <code>RESTORED</code> is <code>DELETED</code>, otherwise return <code>false</code>.
      */
     public boolean isDeleted() {
         for (CertificateStateHistoryEntry state : getStates()) {
@@ -345,9 +342,9 @@ public class Certificate {
     @Override
     public String toString() {
         return "Certificate{" + "id='" + id + '\'' + ", type='" + type + '\'' + ", typeVersion='" + typeVersion + '\''
-                + ", signingDoctorName='" + signingDoctorName + '\'' + ", careUnitName='" + careUnitName + '\''
-                + ", civicRegistrationNumber='" + civicRegistrationNumber + '\'' + ", signedDate=" + signedDate
-                + ", validFromDate='" + validFromDate + '\'' + ", validToDate='" + validToDate + '\'' + ", states=" + states + '}';
+            + ", signingDoctorName='" + signingDoctorName + '\'' + ", careUnitName='" + careUnitName + '\''
+            + ", civicRegistrationNumber='" + civicRegistrationNumber + '\'' + ", signedDate=" + signedDate
+            + ", validFromDate='" + validFromDate + '\'' + ", validToDate='" + validToDate + '\'' + ", states=" + states + '}';
     }
 
 }

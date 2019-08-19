@@ -21,9 +21,7 @@ package se.inera.intyg.intygstjanst.web.integration.util;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
-
 import org.springframework.core.io.ClassPathResource;
-
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 
 public class SendMessageToCareUtil {
@@ -32,7 +30,7 @@ public class SendMessageToCareUtil {
         JAXBContext jaxbContext = JAXBContext.newInstance(SendMessageToCareType.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         return unmarshaller.unmarshal(
-                new StreamSource(new ClassPathResource(fileName).getInputStream()),
-                SendMessageToCareType.class).getValue();
+            new StreamSource(new ClassPathResource(fileName).getInputStream()),
+            SendMessageToCareType.class).getValue();
     }
 }

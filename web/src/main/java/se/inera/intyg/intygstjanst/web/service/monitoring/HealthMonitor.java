@@ -20,9 +20,9 @@ package se.inera.intyg.intygstjanst.web.service.monitoring;
 
 import io.prometheus.client.Collector;
 import io.prometheus.client.Gauge;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
+import java.sql.Time;
+import java.util.Collections;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -30,9 +30,8 @@ import javax.jms.JMSException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.sql.Time;
-import java.util.Collections;
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Exposes health metrics as Prometheus values. To simplify any 3rd party scraping applications, all metrics produced
@@ -56,19 +55,19 @@ public class HealthMonitor extends Collector {
     private static final long START_TIME = System.currentTimeMillis();
 
     private static final Gauge UPTIME = Gauge.build()
-            .name(PREFIX + "uptime" + VALUE)
-            .help("Current uptime in seconds")
-            .register();
+        .name(PREFIX + "uptime" + VALUE)
+        .help("Current uptime in seconds")
+        .register();
 
     private static final Gauge DB_ACCESSIBLE = Gauge.build()
-            .name(PREFIX + "db_accessible" + NORMAL)
-            .help("0 == OK 1 == NOT OK")
-            .register();
+        .name(PREFIX + "db_accessible" + NORMAL)
+        .help("0 == OK 1 == NOT OK")
+        .register();
 
     private static final Gauge JMS_ACCESSIBLE = Gauge.build()
-            .name(PREFIX + "jms_accessible" + NORMAL)
-            .help("0 == OK 1 == NOT OK")
-            .register();
+        .name(PREFIX + "jms_accessible" + NORMAL)
+        .help("0 == OK 1 == NOT OK")
+        .register();
 
     private static final long MILLIS_PER_SECOND = 1000L;
 

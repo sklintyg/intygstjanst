@@ -41,6 +41,7 @@ import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class SetCertificateStatusIT extends BaseIntegrationTest {
+
     private ST requestTemplate;
     private ST requestTemplateResult;
     private String intygsId = "123456";
@@ -71,13 +72,13 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
         requestTemplate.add("data", new SetStatusIntygsData(intygsId));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v2.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK"));
+            .rootPath(BASE).body("result.resultCode", is("OK"));
 
         requestTemplateResult.add("data", new GetIntygsData(intygsId));
 
         given().body(requestTemplateResult.render()).when().post("inera-certificate/get-certificate-se/v2.0").then().statusCode(200)
-                .rootPath(GET_BASE).body("intyg.status.status[0].code", is(status)).body("intyg.status.status[1].code", is(status)).extract()
-                .response();
+            .rootPath(GET_BASE).body("intyg.status.status[0].code", is(status)).body("intyg.status.status[1].code", is(status)).extract()
+            .response();
     }
 
     @Test
@@ -86,22 +87,23 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
         requestTemplate.add("data", new SetStatusIntygsData(intygsIdNotExists));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v2.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("ERROR"));
+            .rootPath(BASE).body("result.resultCode", is("ERROR"));
 
     }
 
     @Test
     public void responseRespectsSchema() throws Exception {
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/SetCertificateStatusInteraction/SetCertificateStatusResponder_2.0.xsd").getURL(), Charsets.UTF_8);
+            new ClassPathResource("interactions/SetCertificateStatusInteraction/SetCertificateStatusResponder_2.0.xsd").getURL(),
+            Charsets.UTF_8);
 
         requestTemplate.add("data", new SetStatusIntygsData(intygsId));
 
         given().filter(
-                new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SetCertificateStatusResponder:2"),
-                        "soap:Envelope/soap:Body/lc:SetCertificateStatusResponse"))
-                .body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v2.0").then()
-                .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
+            new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:SetCertificateStatusResponder:2"),
+                "soap:Envelope/soap:Body/lc:SetCertificateStatusResponse"))
+            .body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v2.0").then()
+            .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
     @Test
@@ -109,7 +111,7 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
         requestTemplate.add("data", new SetStatusIntygsData("<tag></tag>"));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/set-certificate-status-rivta/v2.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
+            .rootPath(BASE).body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
     @After
@@ -119,6 +121,7 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
 
     @SuppressWarnings("unused")
     private class SetStatusIntygsData {
+
         public final String intygsId;
 
         SetStatusIntygsData(String intygsId) {
@@ -128,6 +131,7 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
 
     @SuppressWarnings("unused")
     private class GetIntygsData {
+
         public final String intygsId;
 
         GetIntygsData(String intygsId) {

@@ -18,8 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import org.hibernate.annotations.Type;
-
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,9 +28,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import org.hibernate.annotations.Type;
 
 /**
  * Created by eriklupander on 2016-02-02.

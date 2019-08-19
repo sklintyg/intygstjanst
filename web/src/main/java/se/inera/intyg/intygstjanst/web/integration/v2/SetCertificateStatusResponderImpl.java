@@ -28,11 +28,11 @@ import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.riv.clinicalprocess.healthcond.certificate.setCertificateStatus.v2.SetCertificateStatusResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.setCertificateStatus.v2.SetCertificateStatusResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.setCertificateStatus.v2.SetCertificateStatusType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
-import se.inera.intyg.intygstjanst.web.service.RecipientService;
 
 @SchemaValidation
 public class SetCertificateStatusResponderImpl implements SetCertificateStatusResponderInterface {
@@ -58,7 +58,7 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
             certificateService.setCertificateState(certificateId, target, certificateState, parameters.getTidpunkt());
             response.setResult(ResultTypeUtil.okResult());
             monitoringLogService.logCertificateStatusChanged(certificateId, certificateState.name());
-        } catch (RecipientUnknownException | InvalidCertificateException  | IllegalArgumentException e) {
+        } catch (RecipientUnknownException | InvalidCertificateException | IllegalArgumentException e) {
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, e.getMessage()));
         }
 

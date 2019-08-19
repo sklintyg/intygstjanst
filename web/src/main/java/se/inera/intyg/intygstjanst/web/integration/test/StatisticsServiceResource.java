@@ -18,22 +18,20 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.test;
 
+import com.google.common.collect.Lists;
 import java.util.List;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.common.collect.Lists;
-
 @Path("/statisticsresource")
 public class StatisticsServiceResource {
+
     private static final Logger LOG = LoggerFactory.getLogger(StatisticsServiceResource.class);
 
     @Autowired
@@ -61,7 +59,8 @@ public class StatisticsServiceResource {
     @Path("/purge")
     @Produces(MediaType.APPLICATION_JSON)
     public String purge() {
-        final int n = receiver.consume(msg -> { });
+        final int n = receiver.consume(msg -> {
+        });
         return String.format("{ \"numPurged\": %d }", n);
     }
 

@@ -18,6 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v3;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,10 +44,6 @@ import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.
 import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.ListaType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @SchemaValidation
 public class ListCertificatesForCareResponderImpl implements ListCertificatesForCareResponderInterface {
@@ -70,10 +69,10 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
         response.getIntygsLista().getIntyg();
 
         final Optional<Personnummer> personnummer =
-                Personnummer.createPersonnummer(parameters.getPersonId().getExtension());
+            Personnummer.createPersonnummer(parameters.getPersonId().getExtension());
 
         List<Certificate> certificates = certificateService.listCertificatesForCare(personnummer.orElse(null),
-                parameters.getEnhetsId().stream().map(HsaId::getExtension).collect(Collectors.toList()));
+            parameters.getEnhetsId().stream().map(HsaId::getExtension).collect(Collectors.toList()));
 
         for (Certificate certificate : certificates) {
             // If the certificate is deleted by the care giver it is not returned.
@@ -99,8 +98,8 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
             // Unified handling of all certificate types, maintaining a simple module api
             Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
             intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
-                    .filter(ch -> CertificateStateFilterUtil.filter(ch, HSVARD_PARTKOD))
-                    .collect(Collectors.toList())));
+                .filter(ch -> CertificateStateFilterUtil.filter(ch, HSVARD_PARTKOD))
+                .collect(Collectors.toList())));
             return intyg;
 
         } catch (ModuleNotFoundException | ModuleException e) {

@@ -18,6 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.vardensintyg;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -34,11 +38,6 @@ import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverTypeType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
-
-import java.util.Arrays;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListApprovedReceiversResponderImplTest {
@@ -91,7 +90,7 @@ public class ListApprovedReceiversResponderImplTest {
 
     private Recipient buildRecipient(String recipientId, String certTypes) {
         return new Recipient(LOGICAL_ADDRESS, recipientId + "-name", recipientId, CertificateRecipientType.HUVUDMOTTAGARE.name(), certTypes,
-                true, true);
+            true, true);
     }
 
     private ListApprovedReceiversType buildReq(String intygsId, String intygTyp) {

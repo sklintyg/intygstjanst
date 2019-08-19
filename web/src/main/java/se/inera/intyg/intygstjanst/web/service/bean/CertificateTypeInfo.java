@@ -24,6 +24,7 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
  * Created by marced on 2018-09-17.
  */
 public class CertificateTypeInfo {
+
     private TypAvIntyg typAvIntyg;
     private String version;
 

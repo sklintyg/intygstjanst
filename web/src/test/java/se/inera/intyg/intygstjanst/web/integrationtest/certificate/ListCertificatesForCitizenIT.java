@@ -18,17 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupFile;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
+import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
@@ -36,19 +30,24 @@ import com.google.common.io.Resources;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.response.Response;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;
 import se.inera.intyg.intygstjanst.web.integrationtest.ClasspathResourceResolver;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil.IntegrationTestCertificateType;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.StringStartsWith.startsWith;
-import static org.junit.Assert.assertTrue;
-
 public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
+
     private static final String BASE = "Envelope.Body.ListCertificatesForCitizenResponse.";
     private static final String defaultType = "luse";
     private String versionsId = "1.0";
@@ -82,22 +81,26 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then()
-                .statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0]", is(""));
+            .statusCode(200)
+            .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0]", is(""));
     }
 
     @Test
     public void listMultipleCertificatesShowAll() {
         ST requestTemplate = getRequestTemplate(true);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(0), versionsId, personId, IntegrationTestCertificateType.LUAENA);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(1), versionsId, personId, IntegrationTestCertificateType.LUSE);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(2), versionsId, personId, IntegrationTestCertificateType.LUAEFS);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(3), versionsId, personId, IntegrationTestCertificateType.LISJP);
+        IntegrationTestUtil
+            .registerCertificateFromTemplate(intygsId_alltypes.get(0), versionsId, personId, IntegrationTestCertificateType.LUAENA);
+        IntegrationTestUtil
+            .registerCertificateFromTemplate(intygsId_alltypes.get(1), versionsId, personId, IntegrationTestCertificateType.LUSE);
+        IntegrationTestUtil
+            .registerCertificateFromTemplate(intygsId_alltypes.get(2), versionsId, personId, IntegrationTestCertificateType.LUAEFS);
+        IntegrationTestUtil
+            .registerCertificateFromTemplate(intygsId_alltypes.get(3), versionsId, personId, IntegrationTestCertificateType.LISJP);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then()
-                .statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0].intyg.size()", is(4)).extract().response();
+            .statusCode(200)
+            .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0].intyg.size()", is(4)).extract().response();
 
         assertTrue(intygsId_alltypes.containsAll(extractIds(res)));
     }
@@ -105,15 +108,19 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
     @Test
     public void listMultipleCertificatesShowOnlyOneType() {
         ST requestTemplate = getRequestTemplate(false);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(0), versionsId, personId, IntegrationTestCertificateType.LUAENA);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(1), versionsId, personId, IntegrationTestCertificateType.LUSE);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(2), versionsId, personId, IntegrationTestCertificateType.LUAEFS);
-        IntegrationTestUtil.registerCertificateFromTemplate(intygsId_alltypes.get(3), versionsId, personId, IntegrationTestCertificateType.LISJP);
+        IntegrationTestUtil
+            .registerCertificateFromTemplate(intygsId_alltypes.get(0), versionsId, personId, IntegrationTestCertificateType.LUAENA);
+        IntegrationTestUtil
+            .registerCertificateFromTemplate(intygsId_alltypes.get(1), versionsId, personId, IntegrationTestCertificateType.LUSE);
+        IntegrationTestUtil
+            .registerCertificateFromTemplate(intygsId_alltypes.get(2), versionsId, personId, IntegrationTestCertificateType.LUAEFS);
+        IntegrationTestUtil
+            .registerCertificateFromTemplate(intygsId_alltypes.get(3), versionsId, personId, IntegrationTestCertificateType.LISJP);
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         Response res = given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then()
-                .statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0].intyg.size()", is(1)).extract().response();
+            .statusCode(200)
+            .rootPath(BASE).body("result.resultCode", is("OK")).body("intygsLista[0].intyg.size()", is(1)).extract().response();
 
         assertTrue(intygsId_alltypes.containsAll(extractIds(res)));
     }
@@ -126,25 +133,25 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("OK"));
+            .rootPath(BASE).body("result.resultCode", is("OK"));
     }
 
     @Test
     public void responseRespectsSchema() throws Exception {
         ST requestTemplate = getRequestTemplate(false);
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/ListCertificatesForCitizenInteraction/ListCertificatesForCitizenResponder_3.0.xsd")
-                        .getURL(),
-                Charsets.UTF_8);
+            new ClassPathResource("interactions/ListCertificatesForCitizenInteraction/ListCertificatesForCitizenResponder_3.0.xsd")
+                .getURL(),
+            Charsets.UTF_8);
 
         requestTemplate.add("data", new ListParameters(personId, defaultType));
 
         given().filter(
-                new BodyExtractorFilter(
-                        ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCitizenResponder:3"),
-                        "soap:Envelope/soap:Body/lc:ListCertificatesForCitizenResponse"))
-                .body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then()
-                .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
+            new BodyExtractorFilter(
+                ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCitizenResponder:3"),
+                "soap:Envelope/soap:Body/lc:ListCertificatesForCitizenResponse"))
+            .body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then()
+            .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
     @Test
@@ -153,8 +160,8 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
         requestTemplate.add("data", new ListParameters("<tag></tag>", defaultType));
 
         given().body(requestTemplate.render()).when().post("inera-certificate/list-certificates-for-citizen/v3.0").then().statusCode(200)
-                .rootPath(BASE).body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"))
-                .body("intygsLista.intyg.size()", is(0));
+            .rootPath(BASE).body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"))
+            .body("intygsLista.intyg.size()", is(0));
     }
 
     @After
@@ -178,6 +185,7 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
 
     @SuppressWarnings("unused")
     private static class ListParameters {
+
         public final String personId;
         public final String type;
 

@@ -18,20 +18,19 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.vardensintyg;
 
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
+
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.response.ValidatableResponse;
+import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
-
-import java.util.UUID;
-
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
 
 public class ListApprovedReceiversResponderImplIT extends BaseIntegrationTest {
 
@@ -56,13 +55,13 @@ public class ListApprovedReceiversResponderImplIT extends BaseIntegrationTest {
         requestTemplate.add("mottagare", "FBA");
 
         given().body(requestTemplate.render())
-                .when().post("inera-certificate/register-approved-receivers/v1.0")
-                .then().statusCode(200)
-                .rootPath("Envelope.Body.RegisterApprovedReceiversResponse.");
+            .when().post("inera-certificate/register-approved-receivers/v1.0")
+            .then().statusCode(200)
+            .rootPath("Envelope.Body.RegisterApprovedReceiversResponse.");
 
         givenRequest(intygsId)
-                .body("receiverList.find { it.receiverId == 'FKASSA' }.approvalStatus", is("YES"))
-                .body("receiverList.find { it.receiverId == 'FBA' }.approvalStatus", is("YES"));
+            .body("receiverList.find { it.receiverId == 'FKASSA' }.approvalStatus", is("YES"))
+            .body("receiverList.find { it.receiverId == 'FBA' }.approvalStatus", is("YES"));
     }
 
     private ValidatableResponse givenRequest(String intygsId) {
@@ -70,10 +69,10 @@ public class ListApprovedReceiversResponderImplIT extends BaseIntegrationTest {
         requestTemplate.add("intygsId", intygsId);
 
         return given()
-                .body(requestTemplate.render())
-                .when().post("inera-certificate/list-approved-receivers/v1.0")
-                .then().statusCode(200)
-                .rootPath("Envelope.Body.ListApprovedReceiversResponse.");
+            .body(requestTemplate.render())
+            .when().post("inera-certificate/list-approved-receivers/v1.0")
+            .then().statusCode(200)
+            .rootPath("Envelope.Body.ListApprovedReceiversResponse.");
     }
 
 }

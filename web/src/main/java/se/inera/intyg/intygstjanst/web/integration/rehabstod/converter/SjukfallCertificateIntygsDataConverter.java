@@ -19,6 +19,11 @@
 package se.inera.intyg.intygstjanst.web.integration.rehabstod.converter;
 
 import com.google.common.base.Strings;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
@@ -30,12 +35,6 @@ import se.riv.clinicalprocess.healthcond.rehabilitation.v1.HosPersonal;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsData;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.Patient;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.Vardgivare;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Converts a list of {@link SjukfallCertificate} into a list of {@link IntygsData}.
@@ -102,8 +101,8 @@ public class SjukfallCertificateIntygsDataConverter {
     private List<Formaga> buildFormaga(List<SjukfallCertificateWorkCapacity> workCapacities) {
 
         return workCapacities.stream()
-                .map(this::buildFormaga)
-                .collect(Collectors.toList());
+            .map(this::buildFormaga)
+            .collect(Collectors.toList());
     }
 
     private Formaga buildFormaga(SjukfallCertificateWorkCapacity wc) {

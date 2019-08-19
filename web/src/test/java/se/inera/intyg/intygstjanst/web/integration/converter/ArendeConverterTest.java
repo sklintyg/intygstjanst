@@ -23,28 +23,24 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
-
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
-
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
@@ -72,7 +68,7 @@ public class ArendeConverterTest {
     @Test
     public void testConvertToXmlString() throws Exception {
         String xmlResult = ArendeConverter
-                .convertToXmlString(getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML));
+            .convertToXmlString(getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML));
         String fileXml = loadXmlMessageFromFile();
         Diff diff = XMLUnit.compareXML(fileXml, xmlResult);
         assertTrue(diff.toString(), diff.similar());
@@ -87,7 +83,7 @@ public class ArendeConverterTest {
         assertEquals(sendMessageToCareType.getMeddelandeId(), sendMessageToCare.getMeddelandeId());
         assertEquals(sendMessageToCareType.getReferensId(), sendMessageToCare.getReferens());
         assertEquals(FIXED_TIME_INSTANT,
-                sendMessageToCare.getTimestamp().toInstant(ZoneId.systemDefault().getRules().getOffset(FIXED_TIME_INSTANT)));
+            sendMessageToCare.getTimestamp().toInstant(ZoneId.systemDefault().getRules().getOffset(FIXED_TIME_INSTANT)));
         Diff diff = XMLUnit.compareXML(loadXmlMessageFromFile(), sendMessageToCare.getMeddelande());
         assertTrue(diff.toString(), diff.similar());
     }
@@ -121,11 +117,11 @@ public class ArendeConverterTest {
         // arende.meddelande should be a string representation of original request
         try {
             JAXBContext jaxbContext = JAXBContext
-                    .newInstance(SendMessageToRecipientType.class);
+                .newInstance(SendMessageToRecipientType.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             @SuppressWarnings("unchecked")
             JAXBElement<SendMessageToRecipientType> jaxbMeddelande = (JAXBElement<SendMessageToRecipientType>) unmarshaller
-                    .unmarshal(new StringReader(arende.getMeddelande()));
+                .unmarshal(new StringReader(arende.getMeddelande()));
 
             assertNotNull(jaxbMeddelande.getValue());
             assertEquals(intygsId, jaxbMeddelande.getValue().getIntygsId().getExtension());
@@ -144,8 +140,8 @@ public class ArendeConverterTest {
         JAXBContext jaxbContext = JAXBContext.newInstance(SendMessageToCareType.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         return unmarshaller.unmarshal(
-                new StreamSource(new ClassPathResource(fileName).getInputStream()),
-                SendMessageToCareType.class).getValue();
+            new StreamSource(new ClassPathResource(fileName).getInputStream()),
+            SendMessageToCareType.class).getValue();
     }
 
 }

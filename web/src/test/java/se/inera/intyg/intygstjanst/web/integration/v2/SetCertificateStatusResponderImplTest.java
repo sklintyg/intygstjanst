@@ -18,6 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v2;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,27 +48,18 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.Part;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Statuskod;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
-import java.time.LocalDateTime;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @RunWith(MockitoJUnitRunner.class)
 public class SetCertificateStatusResponderImplTest {
+
     private static final Recipient FKASSA =
-            new RecipientBuilder()
-                    .setLogicalAddress("FKORG")
-                    .setName("Föräkringskassa")
-                    .setId("FKASSA")
-                    .setCertificateTypes("fk7263")
-                    .setActive(true)
-                    .setTrusted(true)
-                    .build();
+        new RecipientBuilder()
+            .setLogicalAddress("FKORG")
+            .setName("Föräkringskassa")
+            .setId("FKASSA")
+            .setCertificateTypes("fk7263")
+            .setActive(true)
+            .setTrusted(true)
+            .build();
 
     @Mock
     private CertificateService certificateService;
@@ -100,7 +100,7 @@ public class SetCertificateStatusResponderImplTest {
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
 
         verify(certificateService, never()).setCertificateState(anyString(), anyString(), any(CertificateState.class),
-                any(LocalDateTime.class));
+            any(LocalDateTime.class));
         verify(monitoringLogService, never()).logCertificateStatusChanged(anyString(), anyString());
     }
 
@@ -113,7 +113,7 @@ public class SetCertificateStatusResponderImplTest {
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
 
         verify(certificateService, never()).setCertificateState(anyString(), anyString(), any(CertificateState.class),
-                any(LocalDateTime.class));
+            any(LocalDateTime.class));
         verify(monitoringLogService, never()).logCertificateStatusChanged(anyString(), anyString());
     }
 

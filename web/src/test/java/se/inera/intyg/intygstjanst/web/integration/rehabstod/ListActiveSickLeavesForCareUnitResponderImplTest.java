@@ -18,6 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.rehabstod;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,18 +42,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by eriklupander on 2016-02-04.
@@ -109,8 +108,8 @@ public class ListActiveSickLeavesForCareUnitResponderImplTest {
         assertEquals(ResultCodeEnum.OK, responseType.getResultCode());
 
         verify(sjukfallCertificateDao, times(1))
-                .findActiveSjukfallCertificateForPersonOnCareUnits(CAREGIVER_HSAID, Arrays.asList(CAREUNIT_HSAID),
-                        "19121212-1212", MAX_DAGAR_SEDAN_AVSLUT);
+            .findActiveSjukfallCertificateForPersonOnCareUnits(CAREGIVER_HSAID, Arrays.asList(CAREUNIT_HSAID),
+                "19121212-1212", MAX_DAGAR_SEDAN_AVSLUT);
     }
 
     @Test
@@ -126,7 +125,8 @@ public class ListActiveSickLeavesForCareUnitResponderImplTest {
 
         ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
         verify(sjukfallCertificateDao, times(1)).findActiveSjukfallCertificateForCareUnits(anyString(), anyList(), anyInt());
-        verify(sjukfallCertificateDao, times(0)).findActiveSjukfallCertificateForPersonOnCareUnits(anyString(), anyList(), anyString(), anyInt());
+        verify(sjukfallCertificateDao, times(0))
+            .findActiveSjukfallCertificateForPersonOnCareUnits(anyString(), anyList(), anyString(), anyInt());
     }
 
     @Test
@@ -142,6 +142,7 @@ public class ListActiveSickLeavesForCareUnitResponderImplTest {
 
         ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
         verify(sjukfallCertificateDao, times(1)).findActiveSjukfallCertificateForCareUnits(anyString(), anyList(), anyInt());
-        verify(sjukfallCertificateDao, times(0)).findActiveSjukfallCertificateForPersonOnCareUnits(anyString(), anyList(), anyString(), anyInt());
+        verify(sjukfallCertificateDao, times(0))
+            .findActiveSjukfallCertificateForPersonOnCareUnits(anyString(), anyList(), anyString(), anyInt());
     }
 }

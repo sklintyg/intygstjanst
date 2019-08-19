@@ -68,8 +68,9 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
     public void registerCertificateWorks() {
         requestTemplate.add("data", new RegisterIntygsData(intygsId, versionsId, personId1));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200).rootPath(BASE)
-                .body("result.resultCode", is("OK"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200)
+            .rootPath(BASE)
+            .body("result.resultCode", is("OK"));
     }
 
     @Test
@@ -80,9 +81,9 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
         requestTemplate.add("data", new RegisterIntygsData(intygsId, incorrectVersion, personId1));
 
         given()
-                .body(requestTemplate.render())
-                .when().post("inera-certificate/register-certificate-se/v3.0")
-                .then().statusCode(200).rootPath(BASE).body("result.resultCode", is("ERROR"));
+            .body(requestTemplate.render())
+            .when().post("inera-certificate/register-certificate-se/v3.0")
+            .then().statusCode(200).rootPath(BASE).body("result.resultCode", is("ERROR"));
     }
 
 
@@ -95,58 +96,65 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
         requestTemplate.add("data", new RegisterIntygsData(intygsId, incorrectVersion, personId1));
 
         given()
-                .body(requestTemplate.render())
-                .when().post("inera-certificate/register-certificate-se/v3.0")
-                .then().statusCode(200).rootPath(BASE)
-                    .body("result.resultCode", is("ERROR"))
-                    .body("result.resultText", is(errorMessage));
+            .body(requestTemplate.render())
+            .when().post("inera-certificate/register-certificate-se/v3.0")
+            .then().statusCode(200).rootPath(BASE)
+            .body("result.resultCode", is("ERROR"))
+            .body("result.resultText", is(errorMessage));
     }
 
 
     @Test
     public void responseRespectsSchema() throws Exception {
         final String xsdString = Resources.toString(
-                new ClassPathResource("interactions/RegisterCertificateInteraction/RegisterCertificateResponder_3.1.xsd").getURL(), Charsets.UTF_8);
+            new ClassPathResource("interactions/RegisterCertificateInteraction/RegisterCertificateResponder_3.1.xsd").getURL(),
+            Charsets.UTF_8);
 
         requestTemplate.add("data", new RegisterIntygsData(intygsId, versionsId, personId1));
 
-        given().filter(new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3"),
+        given().filter(
+            new BodyExtractorFilter(ImmutableMap.of("lc", "urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3"),
                 "soap:Envelope/soap:Body/lc:RegisterCertificateResponse")).body(requestTemplate.render()).when()
-                .post("inera-certificate/register-certificate-se/v3.0").then()
-                .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
+            .post("inera-certificate/register-certificate-se/v3.0").then()
+            .body(matchesXsd(xsdString).with(new ClasspathResourceResolver()));
     }
 
     @Test
     public void registerSameCertificateTwiceReturnsInfoResult() {
         requestTemplate.add("data", new RegisterIntygsData(intygsId, versionsId, personId1));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200).rootPath(BASE)
-                .body("result.resultCode", is("OK"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200)
+            .rootPath(BASE)
+            .body("result.resultCode", is("OK"));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200).rootPath(BASE)
-                .body("result.resultCode", is("INFO"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200)
+            .rootPath(BASE)
+            .body("result.resultCode", is("INFO"));
     }
 
     @Test
     public void registerSameCertificateForDifferentPersonsReturnsErrorResult() {
         requestTemplate.add("data", new RegisterIntygsData(intygsId, versionsId, personId1));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200).rootPath(BASE)
-                .body("result.resultCode", is("OK"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200)
+            .rootPath(BASE)
+            .body("result.resultCode", is("OK"));
 
         ST requestTemplate2 = templateGroup.getInstanceOf("request");
         requestTemplate2.add("data", new RegisterIntygsData(intygsId, versionsId, personId2));
 
-        given().body(requestTemplate2.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200).rootPath(BASE)
-                .body("result.resultCode", is("ERROR"));
+        given().body(requestTemplate2.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200)
+            .rootPath(BASE)
+            .body("result.resultCode", is("ERROR"));
     }
 
     @Test
     public void faultTransformerTest() {
         requestTemplate.add("data", new RegisterIntygsData("<tag></tag>", versionsId, personId1));
 
-        given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200).rootPath(BASE)
-                .body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
+        given().body(requestTemplate.render()).when().post("inera-certificate/register-certificate-se/v3.0").then().statusCode(200)
+            .rootPath(BASE)
+            .body("result.resultCode", is("ERROR")).body("result.resultText", startsWith("Unmarshalling Error"));
     }
 
     @After

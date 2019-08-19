@@ -18,18 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.rehab;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
-import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
-
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
 public class ListSickleavesForPatientIT extends BaseIntegrationTest {
 
@@ -48,7 +47,8 @@ public class ListSickleavesForPatientIT extends BaseIntegrationTest {
         IntegrationTestUtil.deleteCertificatesForCitizen(PERSON_ID);
     }
 
-    private static final String REQUEST_WITH_PATIENTID = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:riv:itintegration:registry:1\" xmlns:urn1=\"urn:riv:clinicalprocess:healthcond:rehabilitation:ListSickLeavesForPersonResponder:1\" xmlns:urn2=\"urn:riv:clinicalprocess:healthcond:certificate:types:2\">\n"
+    private static final String REQUEST_WITH_PATIENTID =
+        "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:riv:itintegration:registry:1\" xmlns:urn1=\"urn:riv:clinicalprocess:healthcond:rehabilitation:ListSickLeavesForPersonResponder:1\" xmlns:urn2=\"urn:riv:clinicalprocess:healthcond:certificate:types:2\">\n"
             +
             "   <soapenv:Header>\n" +
             "      <urn:LogicalAddress>1</urn:LogicalAddress>\n" +
@@ -68,16 +68,17 @@ public class ListSickleavesForPatientIT extends BaseIntegrationTest {
 
     @Test
     public void testListSickLeavesForPerson() {
-        IntegrationTestUtil.registerCertificateWithDateParameters(INTYG_ID, PERSON_ID, IntegrationTestUtil.IntegrationTestCertificateType.LISJP,
+        IntegrationTestUtil
+            .registerCertificateWithDateParameters(INTYG_ID, PERSON_ID, IntegrationTestUtil.IntegrationTestCertificateType.LISJP,
                 14, 21);
 
         given().with().body(REQUEST_WITH_PATIENTID.replace("{{patientId}}", PERSON_ID))
-                .expect()
-                .statusCode(200)
-                .body(BASE + "result.resultCode", is("OK"))
-                .body(BASE + "intygsLista.intygsData.size()", equalTo(1))
-                .when()
-                .post("inera-certificate/list-sick-leaves-for-person/v1.0");
+            .expect()
+            .statusCode(200)
+            .body(BASE + "result.resultCode", is("OK"))
+            .body(BASE + "intygsLista.intygsData.size()", equalTo(1))
+            .when()
+            .post("inera-certificate/list-sick-leaves-for-person/v1.0");
     }
 
 }

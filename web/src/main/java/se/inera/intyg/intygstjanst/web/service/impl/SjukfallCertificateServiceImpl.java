@@ -18,6 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import java.util.Arrays;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +35,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by eriklupander on 2016-02-03.
@@ -115,7 +114,7 @@ public class SjukfallCertificateServiceImpl implements SjukfallCertificateServic
 
             LOG.debug("Will not mark SjukfallCert {} as deleted. Is of unsupported intygstyp, is smittskydd or does not"
                     + " have a diagnoseCode.",
-                    certificate.getId());
+                certificate.getId());
             return false;
 
         } catch (ModuleNotFoundException | ModuleException e) {

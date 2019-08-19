@@ -18,8 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 
 /**
  * @author rogerlindsjo
@@ -29,24 +29,18 @@ public interface CertificateSenderService {
     /**
      * Sends given certificate to the destined target.
      *
-     * @param certificate
-     *            the certificate
-     * @param recipientId
-     *            The identifier of the recipient.
-     * @throws javax.xml.ws.WebServiceException
-     *             if the web service call does not succeed
+     * @param certificate the certificate
+     * @param recipientId The identifier of the recipient.
+     * @throws javax.xml.ws.WebServiceException if the web service call does not succeed
      */
     void sendCertificate(Certificate certificate, String recipientId);
 
     /**
      * Sends a message to a recipient that a certificate has been revoked.
      *
-     * @param certificate
-     *            The now revoked certificate
-     * @param recipientId
-     *            The id of the recipient.
-     * @param revokeData
-     *            Data of who requested the revoke, when etc.
+     * @param certificate The now revoked certificate
+     * @param recipientId The id of the recipient.
+     * @param revokeData Data of who requested the revoke, when etc.
      */
     void sendCertificateRevocation(Certificate certificate, String recipientId, RevokeType revokeData);
 }

@@ -20,7 +20,6 @@ package se.inera.intyg.intygstjanst.web.integration.converter;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -49,11 +48,11 @@ public final class ConverterUtil {
         certificate.setAdditionalInfo(certificateHolder.getAdditionalInfo());
         if (certificateHolder.getCertificateStates() != null) {
             List<CertificateStateHistoryEntry> certificateStates = new ArrayList<>(
-                    certificateHolder.getCertificateStates().size());
+                certificateHolder.getCertificateStates().size());
             for (CertificateStateHolder certificateStateHolder : certificateHolder.getCertificateStates()) {
                 certificateStates
-                        .add(new CertificateStateHistoryEntry(certificateStateHolder.getTarget(), certificateStateHolder.getState(),
-                                certificateStateHolder.getTimestamp()));
+                    .add(new CertificateStateHistoryEntry(certificateStateHolder.getTarget(), certificateStateHolder.getState(),
+                        certificateStateHolder.getTimestamp()));
             }
             certificate.setStates(certificateStates);
         }
@@ -66,7 +65,7 @@ public final class ConverterUtil {
         certificateHolder.setType(certificate.getType());
         certificateHolder.setTypeVersion(certificate.getTypeVersion());
         certificateHolder.setOriginalCertificate(certificate.getOriginalCertificate() == null ? null
-                : certificate.getOriginalCertificate().getDocument());
+            : certificate.getOriginalCertificate().getDocument());
         certificateHolder.setCareUnitId(certificate.getCareUnitId());
         certificateHolder.setCareUnitName(certificate.getCareUnitName());
         certificateHolder.setCareGiverId(certificate.getCareGiverId());
@@ -81,7 +80,7 @@ public final class ConverterUtil {
         List<CertificateStateHolder> certificateStates = new ArrayList<>(certificate.getStates().size());
         for (CertificateStateHistoryEntry certificateStateEntry : certificate.getStates()) {
             certificateStates.add(new CertificateStateHolder(certificateStateEntry.getTarget(), certificateStateEntry.getState(),
-                    certificateStateEntry.getTimestamp()));
+                certificateStateEntry.getTimestamp()));
         }
         certificateHolder.setCertificateStates(certificateStates);
         certificateHolder.setRevoked(certificate.isRevoked());

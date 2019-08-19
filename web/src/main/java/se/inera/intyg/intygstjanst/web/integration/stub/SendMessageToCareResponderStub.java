@@ -20,16 +20,13 @@ package se.inera.intyg.intygstjanst.web.integration.stub;
 
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.JAXBException;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponseType;
@@ -41,6 +38,7 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 @Transactional
 @SchemaValidation
 public class SendMessageToCareResponderStub implements SendMessageToCareResponderInterface {
+
     private static final Logger LOG = LoggerFactory.getLogger(SendMessageToCareResponderStub.class);
 
     @Autowired

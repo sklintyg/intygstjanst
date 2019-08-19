@@ -18,10 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.service.repo;
 
+import java.util.List;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
-
-import java.util.List;
 
 public interface RecipientRepo {
 

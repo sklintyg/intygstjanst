@@ -21,11 +21,11 @@ package se.inera.intyg.intygstjanst.web.integration.stub;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -34,14 +34,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class SendMessageToCareResponderStubRestApi {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SendMessageToCareResponderStubRestApi.class);
 
     @Autowired
@@ -97,7 +97,7 @@ public class SendMessageToCareResponderStubRestApi {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMessagesForLogicalAddress(@QueryParam("address") String address) {
         Map<String, Set<SendMessageToCareStorage.MessageKey>> messageIds = ImmutableMap.of("messages",
-                storage.getMessagesIdsForLogicalAddress(address));
+            storage.getMessagesIdsForLogicalAddress(address));
         try {
             return Response.ok(new ObjectMapper().writeValueAsString(messageIds)).build();
         } catch (JsonProcessingException e) {

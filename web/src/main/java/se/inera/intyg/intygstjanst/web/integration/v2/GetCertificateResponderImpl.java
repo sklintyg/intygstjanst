@@ -18,6 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v2;
 
+import java.io.StringReader;
+import java.util.stream.Collectors;
+import javax.xml.bind.JAXB;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,10 +40,6 @@ import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertif
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
-
-import javax.xml.bind.JAXB;
-import java.io.StringReader;
-import java.util.stream.Collectors;
 
 @SchemaValidation
 public class GetCertificateResponderImpl implements GetCertificateResponderInterface {
@@ -76,7 +75,7 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
     protected Intyg convertCertificate(CertificateHolder certificateHolder, String part) {
         try {
             RegisterCertificateType jaxbObject =
-                    JAXB.unmarshal(new StringReader(certificateHolder.getOriginalCertificate()), RegisterCertificateType.class);
+                JAXB.unmarshal(new StringReader(certificateHolder.getOriginalCertificate()), RegisterCertificateType.class);
             Intyg intyg = jaxbObject.getIntyg();
 
             // If OriginalCertificate is not a RegisterCertificateType, try to convert it
@@ -87,9 +86,9 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
             }
 
             intyg.getStatus()
-                    .addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
-                            .filter(ch -> CertificateStateFilterUtil.filter(ch, part))
-                            .collect(Collectors.toList())));
+                .addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
+                    .filter(ch -> CertificateStateFilterUtil.filter(ch, part))
+                    .collect(Collectors.toList())));
             return intyg;
 
         } catch (Exception e) {

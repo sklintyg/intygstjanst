@@ -18,11 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.hsa;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.integration.hsa.services.HsaOrganizationsService;
-
-import java.util.List;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 
 /**

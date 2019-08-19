@@ -18,6 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static java.lang.invoke.MethodHandles.lookup;
+
+import javax.jms.Queue;
+import javax.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +33,6 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.service.InternalNotificationService;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientType;
-
-import javax.jms.Queue;
-import javax.jms.TextMessage;
-
-import static java.lang.invoke.MethodHandles.lookup;
 
 @Service
 public class InternalNotificationServiceImpl implements InternalNotificationService {
@@ -60,16 +59,16 @@ public class InternalNotificationServiceImpl implements InternalNotificationServ
 
         // Only notify internal if citizen sent
         if (skickatAv != null && skickatAv.getPersonId() != null
-                && skickatAv.getHosPersonal() == null) {
+            && skickatAv.getHosPersonal() == null) {
             notifyCertificateSentByCitizenToRecipient(certificate.getId(),
-                    certificate.getType(), certificate.getTypeVersion(), certificate.getCareUnitId());
+                certificate.getType(), certificate.getTypeVersion(), certificate.getCareUnitId());
         }
     }
 
     private void notifyCertificateSentByCitizenToRecipient(String certificateId, String certificateType, String certificateTypeVersion,
-            String careUnitId) {
+        String careUnitId) {
         boolean rc = sendCertificateSentByCitizienToInternalNotificationQueue(SENT, certificateId, certificateType, certificateTypeVersion,
-                careUnitId);
+            careUnitId);
         if (rc) {
             LOG.debug("Internal notification was sent");
         } else {
@@ -78,11 +77,11 @@ public class InternalNotificationServiceImpl implements InternalNotificationServ
     }
 
     private boolean sendCertificateSentByCitizienToInternalNotificationQueue(
-            final String actionType,
-            final String certificateId,
-            final String certificateType,
-            final String certificateTypeVersion,
-            final String careUnitId) {
+        final String actionType,
+        final String certificateId,
+        final String certificateType,
+        final String certificateTypeVersion,
+        final String careUnitId) {
 
         try {
             return send(session -> {

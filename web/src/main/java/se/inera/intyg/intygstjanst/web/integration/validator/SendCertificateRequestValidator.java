@@ -18,16 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
+import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.base.Strings;
-
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType;
 import se.inera.intyg.common.fk7263.schemas.insuranceprocess.healthreporting.validator.VardAdresseringsTypeValidator;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
 
 public class SendCertificateRequestValidator {
+
     private SendType sendRequest = null;
     private List<String> validationErrors = new ArrayList<>();
 

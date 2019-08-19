@@ -69,7 +69,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
     @Override
     @PrometheusTimeMethod
     public ListCertificatesForCitizenResponseType listCertificatesForCitizen(String logicalAddress,
-            ListCertificatesForCitizenType parameters) {
+        ListCertificatesForCitizenType parameters) {
 
         final long t0 = System.currentTimeMillis();
 
@@ -79,19 +79,19 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         response.getIntygsLista().getIntyg(); // initialize list for schema validation, if no certificates
 
         Optional<Personnummer> personnummer =
-                Personnummer.createPersonnummer(parameters.getPersonId().getExtension());
+            Personnummer.createPersonnummer(parameters.getPersonId().getExtension());
 
         List<Certificate> certificates = certificateService.listCertificatesForCitizen(
-                personnummer.orElse(null),
-                toStringList(parameters.getIntygTyp()),
-                parameters.getFromDatum(),
-                parameters.getTomDatum());
+            personnummer.orElse(null),
+            toStringList(parameters.getIntygTyp()),
+            parameters.getFromDatum(),
+            parameters.getTomDatum());
 
         response.getIntygsLista().getIntyg().addAll(certificates.stream()
-                .filter(c -> !EXCLUDED_CERTIFICATES.contains(c.getType()))
-                .filter(c -> c.isDeleted() == parameters.isArkiverade())
-                .map(c -> convert(c, parameters.getPart().getCode()))
-                .collect(Collectors.toList()));
+            .filter(c -> !EXCLUDED_CERTIFICATES.contains(c.getType()))
+            .filter(c -> c.isDeleted() == parameters.isArkiverade())
+            .map(c -> convert(c, parameters.getPart().getCode()))
+            .collect(Collectors.toList()));
 
         response.setResult(ResultTypeUtil.okResult());
         monitoringLogService.logCertificateListedByCitizen(personnummer.orElse(null));
@@ -115,10 +115,10 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
 
             // Unified handling of all certificate types, maintaining a simple module api
             Intyg intyg = moduleApi.getIntygFromUtlatande(
-                    moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
+                moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
             intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
-                    .filter(ch -> CertificateStateFilterUtil.filter(ch, part))
-                    .collect(Collectors.toList())));
+                .filter(ch -> CertificateStateFilterUtil.filter(ch, part))
+                .collect(Collectors.toList())));
             return intyg;
 
         } catch (ModuleNotFoundException | ModuleException e) {

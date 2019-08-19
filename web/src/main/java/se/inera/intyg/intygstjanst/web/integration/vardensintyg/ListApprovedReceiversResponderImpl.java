@@ -19,6 +19,7 @@
 package se.inera.intyg.intygstjanst.web.integration.vardensintyg;
 
 import com.google.common.base.Strings;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,6 @@ import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.ApprovalS
 import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverRegistrationType;
 import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverTypeType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
-
-import java.util.List;
 
 public class ListApprovedReceiversResponderImpl implements ListApprovedReceiversResponderInterface {
 
@@ -76,7 +75,7 @@ public class ListApprovedReceiversResponderImpl implements ListApprovedReceivers
 
             } catch (RecipientUnknownException e) {
                 LOG.error("RecipientUnknownException when building list of approved receivers for intyg-id '{}'",
-                        intygsId.getExtension());
+                    intygsId.getExtension());
                 throw new ServerException(e.getMessage());
             }
         }

@@ -95,12 +95,12 @@ public class IntygBootstrapBean {
                 String moduleName = resourceFilename.split("__", -1)[0];
                 String intygMajorTypeVersion = resourceFilename.split("\\.", -1)[1];
                 LOG.info("Bootstrapping certificate '{}' from module {} (version {})", resource.getFilename(), moduleName,
-                        intygMajorTypeVersion);
+                    intygMajorTypeVersion);
                 String xmlString = Resources.toString(resource.getURL(), Charsets.UTF_8);
 
                 ModuleApi moduleApi = moduleRegistry.getModuleApi(moduleName, intygMajorTypeVersion);
                 bootstrapCertificate(xmlString, moduleApi,
-                        moduleRegistry.getModuleEntryPoint(moduleName).getDefaultRecipient());
+                    moduleRegistry.getModuleEntryPoint(moduleName).getDefaultRecipient());
             } catch (Exception e) {
                 LOG.error("Could not bootstrap certificate in file '{}'", resourceFilename, e);
             }
@@ -121,15 +121,15 @@ public class IntygBootstrapBean {
                 certificate.setDeletedByCareGiver(false);
                 OriginalCertificate originalCertificate;
                 originalCertificate = new OriginalCertificate(utlatande.getGrundData().getSigneringsdatum(),
-                        xmlString, certificate);
+                    xmlString, certificate);
                 certificate.setOriginalCertificate(originalCertificate);
                 certificate.setSignedDate(utlatande.getGrundData().getSigneringsdatum());
                 certificate.setSigningDoctorName(utlatande.getGrundData().getSkapadAv().getFullstandigtNamn());
                 certificate.setStates(Arrays.asList(
-                        new CertificateStateHistoryEntry("HSVARD", CertificateState.RECEIVED,
-                                utlatande.getGrundData().getSigneringsdatum().plusMinutes(1)),
-                        new CertificateStateHistoryEntry(defaultRecipient, CertificateState.SENT,
-                                utlatande.getGrundData().getSigneringsdatum().plusMinutes(2))));
+                    new CertificateStateHistoryEntry("HSVARD", CertificateState.RECEIVED,
+                        utlatande.getGrundData().getSigneringsdatum().plusMinutes(1)),
+                    new CertificateStateHistoryEntry(defaultRecipient, CertificateState.SENT,
+                        utlatande.getGrundData().getSigneringsdatum().plusMinutes(2))));
                 certificate.setType(utlatande.getTyp());
                 certificate.setTypeVersion(utlatande.getTextVersion() != null ? utlatande.getTextVersion() : DEFAULT_TYPE_VERSION_FALLBACK);
                 certificate.setValidFromDate(null);
@@ -169,6 +169,7 @@ public class IntygBootstrapBean {
     }
 
     private static class ResourceFilenameComparator implements Comparator<Resource> {
+
         @Override
         public int compare(Resource arg0, Resource arg1) {
             String arg0Filename = arg0.getFilename();
@@ -203,7 +204,7 @@ public class IntygBootstrapBean {
                     Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
                     String contentString = Resources.toString(content.getURL(), Charsets.UTF_8);
                     OriginalCertificate originalCertificate = new OriginalCertificate(certificate.getSignedDate(), contentString,
-                            certificate);
+                        certificate);
 
                     ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
                     final Utlatande utlatande = moduleApi.getUtlatandeFromXml(contentString);
@@ -246,12 +247,12 @@ public class IntygBootstrapBean {
 
                         if (certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
                             SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertFk7263(certificate,
-                                    utlatande);
+                                utlatande);
                             entityManager.persist(sjukfallCertificate);
                         }
                         if (certificateToSjukfallCertificateConverter.isConvertableLisjp(utlatande)) {
                             SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertLisjp(certificate,
-                                    utlatande);
+                                utlatande);
                             entityManager.persist(sjukfallCertificate);
                         }
                     } catch (Exception e) {

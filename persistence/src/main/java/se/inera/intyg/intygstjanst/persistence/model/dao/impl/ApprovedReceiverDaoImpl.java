@@ -19,12 +19,9 @@
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import org.springframework.stereotype.Repository;
-
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
@@ -43,16 +40,16 @@ public class ApprovedReceiverDaoImpl implements ApprovedReceiverDao {
     @Override
     public List<ApprovedReceiver> getApprovedReceiverIdsForCertificate(String intygsId) {
         return entityManager.createQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId = :intygsId", ApprovedReceiver.class)
-                .setParameter("intygsId", intygsId)
-                .getResultList();
+            .setParameter("intygsId", intygsId)
+            .getResultList();
     }
 
     @Override
     public void clearApprovedReceiversForCertificate(String intygsId) {
         List<ApprovedReceiver> resultList = entityManager
-                .createQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId = :intygsId", ApprovedReceiver.class)
-                .setParameter("intygsId", intygsId)
-                .getResultList();
+            .createQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId = :intygsId", ApprovedReceiver.class)
+            .setParameter("intygsId", intygsId)
+            .getResultList();
         for (ApprovedReceiver ar : resultList) {
             entityManager.remove(ar);
         }

@@ -52,7 +52,7 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
     @Override
     @PrometheusTimeMethod
     public SetCertificateStatusResponseType setCertificateStatus(AttributedURIType logicalAddress,
-            SetCertificateStatusRequestType request) {
+        SetCertificateStatusRequestType request) {
 
         SetCertificateStatusResponseType response = new SetCertificateStatusResponseType();
 
@@ -66,11 +66,11 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
             target = recipientService.getRecipient(target).getId();
 
             certificateService.setCertificateState(
-                    createPnr(request.getNationalIdentityNumber()),
-                    request.getCertificateId(),
-                    target,
-                    CertificateState.valueOf(request.getStatus().name()),
-                    request.getTimestamp());
+                createPnr(request.getNationalIdentityNumber()),
+                request.getCertificateId(),
+                target,
+                CertificateState.valueOf(request.getStatus().name()),
+                request.getTimestamp());
 
             response.setResult(ResultOfCallUtil.okResult());
             monitoringLogService.logCertificateStatusChanged(request.getCertificateId(), request.getStatus().name());
@@ -84,7 +84,7 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
 
     private Personnummer createPnr(String personId) {
         return Personnummer.createPersonnummer(personId)
-                .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
     }
 
 }

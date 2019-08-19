@@ -19,14 +19,12 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import java.util.Optional;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -81,14 +79,14 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
             nofifyStakeholders(request, certificate);
 
             monitoringService.logCertificateRevoked(certificate.getId(), certificate.getType(),
-                    certificate.getCareUnitId());
+                certificate.getCareUnitId());
 
             response.setResult(ResultTypeUtil.okResult());
         } catch (InvalidCertificateException e) {
             // Send APPLICATION_ERROR to trigger retransmission in the client. This is because this revoke request
             // could arrive before the register request and we want to avoid race conditions.
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR,
-                    "Certificate " + certificateId + " does not exist for patient."));
+                "Certificate " + certificateId + " does not exist for patient."));
             LOG.warn("Certificate '{}' does not exist for patient '{}'.", certificateId, getPersonnummerHash(personnummer));
         } catch (CertificateRevokedException e) {
             response.setResult(ResultTypeUtil.infoResult("Certificate " + certificateId + " is already revoked."));
@@ -107,16 +105,16 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
 
     private void nofifyStakeholders(RevokeCertificateType request, Certificate certificate) {
         certificate.getStates().stream()
-                .filter(entry -> CertificateState.SENT.equals(entry.getState()))
-                .map(CertificateStateHistoryEntry::getTarget)
-                .distinct()
-                .forEach(recipient -> {
-                    try {
-                        externalRevokeClient.revokeCertificate(recipientService.getRecipient(recipient).getLogicalAddress(), request);
-                    } catch (RecipientUnknownException e) {
-                        LOG.warn("Could not find the logicalAddress to send revoke to {}", recipient);
-                    }
-                });
+            .filter(entry -> CertificateState.SENT.equals(entry.getState()))
+            .map(CertificateStateHistoryEntry::getTarget)
+            .distinct()
+            .forEach(recipient -> {
+                try {
+                    externalRevokeClient.revokeCertificate(recipientService.getRecipient(recipient).getLogicalAddress(), request);
+                } catch (RecipientUnknownException e) {
+                    LOG.warn("Could not find the logicalAddress to send revoke to {}", recipient);
+                }
+            });
 
         certificateService.revokeCertificateForStatistics(certificate);
         sjukfallCertificateService.revoked(certificate);

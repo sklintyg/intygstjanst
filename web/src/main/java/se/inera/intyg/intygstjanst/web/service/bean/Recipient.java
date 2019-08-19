@@ -18,13 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.web.service.bean;
 
-import com.google.common.base.Joiner;
-
-import java.util.Arrays;
-import java.util.List;
-
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notEmpty;
+
+import com.google.common.base.Joiner;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Recipient object.
@@ -49,23 +48,16 @@ public class Recipient {
     /**
      * Constructor for recipient object.
      *
-     * @param logicalAddress
-     *            a recipient's logical address
-     * @param name
-     *            a recipient's name
-     * @param id
-     *            a recipient's identifier
-     * @param recipientType
-     *            a recipient's type: HUVUDMOTTAGARE, DIREKTMOTTAGARE, MOTTAGARE
-     * @param certificateTypes
-     *            a comma-separated string of the type of certificates this recipient support
-     * @param active
-     *            if the recipient is active
-     * @param trusted
-     *            if the recipient can be trusted with information about sekretessmarkerade patients
+     * @param logicalAddress a recipient's logical address
+     * @param name a recipient's name
+     * @param id a recipient's identifier
+     * @param recipientType a recipient's type: HUVUDMOTTAGARE, DIREKTMOTTAGARE, MOTTAGARE
+     * @param certificateTypes a comma-separated string of the type of certificates this recipient support
+     * @param active if the recipient is active
+     * @param trusted if the recipient can be trusted with information about sekretessmarkerade patients
      */
     public Recipient(String logicalAddress, String name, String id, String recipientType, String certificateTypes, boolean active,
-            boolean trusted) {
+        boolean trusted) {
         hasText(logicalAddress, "logicalAddress must not be empty");
         hasText(name, "name must not be empty");
         hasText(id, "id must not be empty");
@@ -84,23 +76,16 @@ public class Recipient {
     /**
      * Constructor for recipient object.
      *
-     * @param logicalAddress
-     *            a recipient's logical address
-     * @param name
-     *            a recipient's name
-     * @param id
-     *            a recipient's identifier
-     * @param recipientType
-     *            a recipient's type: HUVUDMOTTAGARE, DIREKTMOTTAGARE, MOTTAGARE
-     * @param certificateTypes
-     *            a list of the type of certificates this recipient support
-     * @param active
-     *            if the recipient is active
-     * @param trusted
-     *            if the recipient can be trusted with information about sekretessmarkerade patients
+     * @param logicalAddress a recipient's logical address
+     * @param name a recipient's name
+     * @param id a recipient's identifier
+     * @param recipientType a recipient's type: HUVUDMOTTAGARE, DIREKTMOTTAGARE, MOTTAGARE
+     * @param certificateTypes a list of the type of certificates this recipient support
+     * @param active if the recipient is active
+     * @param trusted if the recipient can be trusted with information about sekretessmarkerade patients
      */
     public Recipient(String logicalAddress, String name, String id, String recipientType, List<String> certificateTypes, boolean active,
-            boolean trusted) {
+        boolean trusted) {
         hasText(logicalAddress, "logicalAddress must not be empty");
         hasText(name, "name must not be empty");
         hasText(id, "id must not be empty");
@@ -152,12 +137,12 @@ public class Recipient {
     @Override
     public String toString() {
         return "logicalAddress: " + logicalAddress
-                + " name: " + name
-                + " id: " + id
-                + " recipientType: " + recipientType.name()
-                + " certificateTypes: " + Joiner.on(SEPARATOR).join(certificateTypes)
-                + " active: " + active
-                + " trusted: " + trusted;
+            + " name: " + name
+            + " id: " + id
+            + " recipientType: " + recipientType.name()
+            + " certificateTypes: " + Joiner.on(SEPARATOR).join(certificateTypes)
+            + " active: " + active
+            + " trusted: " + trusted;
     }
 
     @Override

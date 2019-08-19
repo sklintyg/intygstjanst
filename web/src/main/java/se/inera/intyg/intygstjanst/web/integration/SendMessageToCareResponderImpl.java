@@ -19,13 +19,11 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import java.util.List;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
@@ -42,6 +40,7 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
 @SchemaValidation
 public class SendMessageToCareResponderImpl implements SendMessageToCareResponderInterface {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SendMessageToCareResponderImpl.class);
 
     @Autowired
@@ -67,15 +66,15 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
         if (!validationErrors.isEmpty()) {
             SendMessageToCareResponseType response = new SendMessageToCareResponseType();
             String resultText = "Validation of SendMessageToCareType failed for message with meddelandeid " + parameters.getMeddelandeId()
-                    + ": "
-                    + validationErrors.toString();
+                + ": "
+                + validationErrors.toString();
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, resultText));
             LOGGER.error(resultText);
             return response;
         }
 
         SendMessageToCareResponseType response = sendMessageToCareResponder.sendMessageToCare(parameters.getLogiskAdressMottagare(),
-                parameters);
+            parameters);
 
         if (response.getResult().getResultCode() != ResultCodeType.ERROR) {
             logService.logSendMessageToCareReceived(parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());
@@ -85,7 +84,7 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
                 arendeService.processIncomingMessage(arende);
             } catch (Exception e) {
                 LOGGER.error("Could not save information about request of type SendMessageToCareType with meddelande id "
-                        + parameters.getMeddelandeId() + ": " + e.getMessage());
+                    + parameters.getMeddelandeId() + ": " + e.getMessage());
             }
         }
 

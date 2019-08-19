@@ -20,15 +20,12 @@ package se.inera.intyg.intygstjanst.web.integration;
 
 import static se.inera.intyg.common.support.Constants.KV_RELATION_CODE_SYSTEM;
 
-
 import java.text.MessageFormat;
 import java.util.List;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.IntygRelations;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.ListRelationsForCertificateResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.ListRelationsForCertificateResponseType;
@@ -60,7 +57,7 @@ public class ListRelationsForCertificateResponderImpl implements ListRelationsFo
     @Override
     @PrometheusTimeMethod
     public ListRelationsForCertificateResponseType listRelationsForCertificate(String logicalAddress,
-            ListRelationsForCertificateType listRelationsForCertificateType) {
+        ListRelationsForCertificateType listRelationsForCertificateType) {
         long start = System.currentTimeMillis();
         ListRelationsForCertificateResponseType response = new ListRelationsForCertificateResponseType();
         for (String intygsId : listRelationsForCertificateType.getIntygsId()) {
@@ -69,7 +66,7 @@ public class ListRelationsForCertificateResponderImpl implements ListRelationsFo
         }
 
         LOGGER.info("Loading relations for {} intygsId took {} ms", listRelationsForCertificateType.getIntygsId().size(),
-                System.currentTimeMillis() - start);
+            System.currentTimeMillis() - start);
         return response;
     }
 
@@ -91,9 +88,9 @@ public class ListRelationsForCertificateResponderImpl implements ListRelationsFo
     }
 
     private se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.Relation convertRelation(
-            Relation r, boolean makulerat) {
+        Relation r, boolean makulerat) {
         se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.Relation intygRelation =
-                new se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.Relation();
+            new se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.Relation();
         intygRelation.setFranIntygsId(buildIntygId(r.getFromIntygsId()));
         intygRelation.setTillIntygsId(buildIntygId(r.getToIntygsId()));
         intygRelation.setSkapad(r.getCreated());

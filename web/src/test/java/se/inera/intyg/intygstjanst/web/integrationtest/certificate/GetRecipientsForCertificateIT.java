@@ -18,9 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
+import static com.jayway.restassured.RestAssured.given;
+
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.response.ValidatableResponse;
+import java.util.UUID;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,10 +31,6 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
-
-import java.util.UUID;
-
-import static com.jayway.restassured.RestAssured.given;
 
 public class GetRecipientsForCertificateIT extends BaseIntegrationTest {
 
@@ -56,14 +55,14 @@ public class GetRecipientsForCertificateIT extends BaseIntegrationTest {
         requestTemplate.add("mottagare", "FKASSA");
 
         given().body(requestTemplate.render())
-                .when().post("inera-certificate/register-approved-receivers/v1.0")
-                .then().statusCode(200)
-                .rootPath("Envelope.Body.RegisterApprovedReceiversResponse.");
+            .when().post("inera-certificate/register-approved-receivers/v1.0")
+            .then().statusCode(200)
+            .rootPath("Envelope.Body.RegisterApprovedReceiversResponse.");
 
         givenRequest(intygsId)
-                .body("recipient.size()", Matchers.is(1))
-                .body("recipient.find { it.id == 'FKASSA' }.name", Matchers.is("Försäkringskassan"))
-                .body("recipient.find { it.id == 'FKASSA' }.type", Matchers.is("HUVUDMOTTAGARE"));
+            .body("recipient.size()", Matchers.is(1))
+            .body("recipient.find { it.id == 'FKASSA' }.name", Matchers.is("Försäkringskassan"))
+            .body("recipient.find { it.id == 'FKASSA' }.type", Matchers.is("HUVUDMOTTAGARE"));
     }
 
     @Test
@@ -76,16 +75,16 @@ public class GetRecipientsForCertificateIT extends BaseIntegrationTest {
         requestTemplate.add("mottagare", "FBA");
 
         given().body(requestTemplate.render())
-                .when().post("inera-certificate/register-approved-receivers/v1.0")
-                .then().statusCode(200)
-                .rootPath("Envelope.Body.RegisterApprovedReceiversResponse.");
+            .when().post("inera-certificate/register-approved-receivers/v1.0")
+            .then().statusCode(200)
+            .rootPath("Envelope.Body.RegisterApprovedReceiversResponse.");
 
         givenRequest(intygsId)
-                .body("recipient.size()", Matchers.is(2))
-                .body("recipient.find { it.id == 'FKASSA' }.name", Matchers.is("Försäkringskassan"))
-                .body("recipient.find { it.id == 'FKASSA' }.type", Matchers.is("HUVUDMOTTAGARE"))
-                .body("recipient.find { it.id == 'FBA' }.name", Matchers.is("Försäkringsbolaget AB"))
-                .body("recipient.find { it.id == 'FBA' }.type", Matchers.is("MOTTAGARE"));
+            .body("recipient.size()", Matchers.is(2))
+            .body("recipient.find { it.id == 'FKASSA' }.name", Matchers.is("Försäkringskassan"))
+            .body("recipient.find { it.id == 'FKASSA' }.type", Matchers.is("HUVUDMOTTAGARE"))
+            .body("recipient.find { it.id == 'FBA' }.name", Matchers.is("Försäkringsbolaget AB"))
+            .body("recipient.find { it.id == 'FBA' }.type", Matchers.is("MOTTAGARE"));
     }
 
     private ValidatableResponse givenRequest(String intygsId) {
@@ -93,10 +92,10 @@ public class GetRecipientsForCertificateIT extends BaseIntegrationTest {
         requestTemplate.add("intygsId", intygsId);
 
         return given()
-                .body(requestTemplate.render())
-                .when().post("inera-certificate/get-recipients-for-certificate/v1.1")
-                .then().statusCode(200)
-                .rootPath("Envelope.Body.GetRecipientsForCertificateResponse.");
+            .body(requestTemplate.render())
+            .when().post("inera-certificate/get-recipients-for-certificate/v1.1")
+            .then().statusCode(200)
+            .rootPath("Envelope.Body.GetRecipientsForCertificateResponse.");
     }
 
     /*

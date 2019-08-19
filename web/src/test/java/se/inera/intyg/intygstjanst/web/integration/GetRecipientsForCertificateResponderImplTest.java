@@ -30,7 +30,6 @@ import static se.inera.intyg.common.support.Constants.KV_INTYGSTYP_CODE_SYSTEM;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +37,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponseType;
@@ -76,7 +74,7 @@ public class GetRecipientsForCertificateResponderImplTest {
         when(recipientService.listRecipients(any(String.class))).thenReturn(getRecipientList(true, true));
 
         GetRecipientsForCertificateResponseType res =
-                responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
+            responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
 
         assertNotNull(res);
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
@@ -98,7 +96,7 @@ public class GetRecipientsForCertificateResponderImplTest {
         when(certificateService.getCertificateTypeInfo(any(String.class))).thenReturn(createCertificateType(null, null));
 
         GetRecipientsForCertificateResponseType res =
-                responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
+            responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
 
         assertNotNull(res);
         assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
@@ -118,10 +116,11 @@ public class GetRecipientsForCertificateResponderImplTest {
 
         when(recipientService.listRecipients(any(String.class))).thenReturn(new ArrayList<>());
         when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(getRecipientList(true, true));
-        when(certificateService.getCertificateTypeInfo(any(String.class))).thenReturn(createCertificateType(LisjpEntryPoint.MODULE_ID, DEFAULT_TYPE_VERSION));
+        when(certificateService.getCertificateTypeInfo(any(String.class)))
+            .thenReturn(createCertificateType(LisjpEntryPoint.MODULE_ID, DEFAULT_TYPE_VERSION));
 
         GetRecipientsForCertificateResponseType res =
-                responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
+            responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
 
         assertNotNull(res);
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
@@ -147,7 +146,7 @@ public class GetRecipientsForCertificateResponderImplTest {
         when(recipientService.listRecipients(any(String.class))).thenReturn(getRecipientList(false, true));
 
         GetRecipientsForCertificateResponseType res =
-                responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
+            responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
 
         assertNotNull(res);
         assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
@@ -164,7 +163,7 @@ public class GetRecipientsForCertificateResponderImplTest {
         when(recipientService.listRecipients(any(String.class))).thenReturn(getRecipientList(true, false));
 
         GetRecipientsForCertificateResponseType res =
-                responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
+            responder.getRecipientsForCertificate(LOGICAL_ADDRESS, createRecipientsForCertificateRequest(intygsId));
 
         assertNotNull(res);
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
@@ -195,13 +194,13 @@ public class GetRecipientsForCertificateResponderImplTest {
 
     private List<Recipient> getRecipientList(boolean active, boolean trusted) {
         return Collections.singletonList(new RecipientBuilder()
-                .setLogicalAddress("logicalAddress")
-                .setName("recipientName")
-                .setId("recipientId")
-                .setCertificateTypes("certificateTypes")
-                .setActive(active)
-                .setTrusted(trusted)
-                .build());
+            .setLogicalAddress("logicalAddress")
+            .setName("recipientName")
+            .setId("recipientId")
+            .setCertificateTypes("certificateTypes")
+            .setActive(active)
+            .setTrusted(trusted)
+            .build());
     }
 
 }

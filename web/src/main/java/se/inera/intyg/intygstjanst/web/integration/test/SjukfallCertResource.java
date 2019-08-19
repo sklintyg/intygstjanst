@@ -19,13 +19,15 @@
 package se.inera.intyg.intygstjanst.web.integration.test;
 
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.*;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
-
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 
 /**
@@ -93,7 +94,7 @@ public class SjukfallCertResource {
                 try {
                     @SuppressWarnings("unchecked")
                     List<SjukfallCertificate> certificates = entityManager.createQuery("SELECT sc FROM SjukfallCertificate sc")
-                            .getResultList();
+                        .getResultList();
                     for (SjukfallCertificate sjukfallCert : certificates) {
                         entityManager.remove(sjukfallCert);
                     }
