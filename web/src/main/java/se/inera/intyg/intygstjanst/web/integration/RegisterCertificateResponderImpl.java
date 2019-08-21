@@ -18,20 +18,16 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import java.io.StringWriter;
+import com.google.common.annotations.VisibleForTesting;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.w3._2000._09.xmldsig_.SignatureType;
-import org.w3._2002._06.xmldsig_filter2.XPathType;
+import org.springframework.oxm.XmlMappingException;
 import se.inera.intyg.common.services.texts.IntygTextsService;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
@@ -44,6 +40,7 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.common.support.modules.support.api.dto.ValidateXmlResponse;
+import se.inera.intyg.common.support.xml.XmlMarshallerHelper;
 import se.inera.intyg.common.util.logging.LogMarkers;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -51,9 +48,6 @@ import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.Obje
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
-import se.riv.clinicalprocess.healthcond.certificate.types.v3.DatePeriodType;
-import se.riv.clinicalprocess.healthcond.certificate.types.v3.PQType;
-import se.riv.clinicalprocess.healthcond.certificate.types.v3.PartialDateType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Relation;
@@ -63,9 +57,6 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterCertificateResponderImpl.class);
 
-    private ObjectFactory objectFactory;
-    private JAXBContext jaxbContext;
-
     @Autowired
     private ModuleContainerApi moduleContainer;
 
@@ -74,14 +65,6 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
 
     @Autowired
     private IntygTextsService textsService;
-
-    @PostConstruct
-    public void initializeJaxbContext() throws JAXBException {
-        // We need to register DatePeriodType with the JAXBContext explicitly for some reason.
-        jaxbContext = JAXBContext.newInstance(RegisterCertificateType.class, DatePeriodType.class, SignatureType.class,
-            XPathType.class, PartialDateType.class, PQType.class);
-        objectFactory = new ObjectFactory();
-    }
 
     @Override
     @PrometheusTimeMethod
@@ -98,7 +81,9 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
                 return makeInvalidCertificateVersionResult(registerCertificate);
             }
 
+            // Marshal certificate
             String xml = xmlToString(registerCertificate);
+
             ValidateXmlResponse validationResponse = api.validateXml(xml);
             String additionalInfo = api.getAdditionalInfo(registerCertificate.getIntyg());
 
@@ -114,7 +99,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             return makeInvalidCertificateVersionResult(registerCertificate);
         } catch (InvalidCertificateException e) {
             return makeInvalidCertificateResult(registerCertificate);
-        } catch (JAXBException e) {
+        } catch (XmlMappingException e) {
             LOGGER.error("JAXB error in Webservice: ", e);
             throw new RuntimeException(e);
         } catch (UnsupportedOperationException e) {
@@ -124,6 +109,12 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             LOGGER.error("Unrecoverable exception in registerCertificate: ", e);
             throw new RuntimeException(e);
         }
+    }
+
+    @VisibleForTesting
+    String xmlToString(RegisterCertificateType registerCertificate) {
+        JAXBElement<RegisterCertificateType> jaxbElement = new ObjectFactory().createRegisterCertificate(registerCertificate);
+        return XmlMarshallerHelper.marshal(jaxbElement);
     }
 
     private RegisterCertificateResponseType storeIntyg(
@@ -180,13 +171,6 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             + "Certificate type {2} does not support version: {3}", certificateId, issuedBy, typ, version);
         LOGGER.error(LogMarkers.VALIDATION, logMessage);
         return response;
-    }
-
-    private String xmlToString(RegisterCertificateType registerCertificate) throws JAXBException {
-        StringWriter stringWriter = new StringWriter();
-        JAXBElement<RegisterCertificateType> requestElement = objectFactory.createRegisterCertificate(registerCertificate);
-        jaxbContext.createMarshaller().marshal(requestElement, stringWriter);
-        return stringWriter.toString();
     }
 
     private String getIntygsTyp(RegisterCertificateType certificateType) {

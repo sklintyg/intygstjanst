@@ -36,13 +36,13 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
-import se.inera.intyg.intygstjanst.web.integration.util.SendMessageToCareUtil;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.Amneskod;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.ErrorCode;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
+import se.inera.intyg.intygstjanst.web.support.xml.XmlUnmarshallerUtil;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType.Komplettering;
@@ -53,6 +53,7 @@ public class SendMessageToCareValidatorTest {
 
     private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML =
         "SendMessageToCareTest/sendmessagetocare.xml";
+
     private static final Recipient FKASSA =
         new RecipientBuilder()
             .setLogicalAddress("FKORG")
@@ -62,6 +63,7 @@ public class SendMessageToCareValidatorTest {
             .setActive(true)
             .setTrusted(true)
             .build();
+
     @Mock
     private RecipientService recipientService;
     @Mock
@@ -108,7 +110,7 @@ public class SendMessageToCareValidatorTest {
     @Test
     public void testThatValidationOKIfCertificateExistsButCivicRegistrationNumberIsCorrect() throws Exception {
         List<String> validationErrors = new ArrayList<>();
-        SendMessageToCareType message = SendMessageToCareUtil
+        SendMessageToCareType message = XmlUnmarshallerUtil
             .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         validateCertificateAndCivicRegistrationNumberConsistency(validationErrors, message.getPatientPersonId().getExtension(), message);
         assertTrue(validationErrors.isEmpty());
@@ -117,12 +119,12 @@ public class SendMessageToCareValidatorTest {
     @Test
     public void testThatValidationOKWhenSistaDatumForSvarIsNotSpecifiedForAnswer() throws Exception {
         List<String> validationErrors = new ArrayList<>();
-        SendMessageToCareType answerWithoutSistaDatumForSvar = SendMessageToCareUtil
+        SendMessageToCareType answerWithoutSistaDatumForSvar = XmlUnmarshallerUtil
             .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         answerWithoutSistaDatumForSvar.setSvarPa(new MeddelandeReferens());
         answerWithoutSistaDatumForSvar.setSistaDatumForSvar(null);
 
-        SendMessageToCareType questionWithSistaDatumForSvar = SendMessageToCareUtil
+        SendMessageToCareType questionWithSistaDatumForSvar = XmlUnmarshallerUtil
             .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         questionWithSistaDatumForSvar.setSistaDatumForSvar(LocalDate.now());
         questionWithSistaDatumForSvar.setSvarPa(null);
@@ -223,7 +225,7 @@ public class SendMessageToCareValidatorTest {
     @Test
     public void testThatValidationFailsIfCertificateDoesNotExist() throws Exception {
         List<String> validationErrors = new ArrayList<>();
-        SendMessageToCareType message = SendMessageToCareUtil
+        SendMessageToCareType message = XmlUnmarshallerUtil
             .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         String certificateId = message.getIntygsId().getExtension();
         String civicRegistrationNumber = message.getPatientPersonId().getExtension();
@@ -236,7 +238,7 @@ public class SendMessageToCareValidatorTest {
     @Test
     public void testThatValidationFailsIfCertificateExistsButCivicRegistrationNumberIsWrong() throws Exception {
         List<String> validationErrors = new ArrayList<>();
-        SendMessageToCareType message = SendMessageToCareUtil
+        SendMessageToCareType message = XmlUnmarshallerUtil
             .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         validateCertificateAndCivicRegistrationNumberConsistency(validationErrors, "101010-1010", message);
         assertFalse(validationErrors.isEmpty());
@@ -246,7 +248,7 @@ public class SendMessageToCareValidatorTest {
     @Test
     public void testThatValidationFailsWhen_SvarPa_And_SistaDatumForSvar_AreSimultaneouslySpecified() throws Exception {
         List<String> validationErrors = new ArrayList<>();
-        SendMessageToCareType sendMessageToCareType = SendMessageToCareUtil
+        SendMessageToCareType sendMessageToCareType = XmlUnmarshallerUtil
             .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         sendMessageToCareType.setSvarPa(new MeddelandeReferens());
         sendMessageToCareType.setSistaDatumForSvar(LocalDate.now());
@@ -291,7 +293,7 @@ public class SendMessageToCareValidatorTest {
 
     @Test
     public void testThatValidationExceptionIsThrown() throws Exception {
-        SendMessageToCareType sendMessageToCareType = SendMessageToCareUtil
+        SendMessageToCareType sendMessageToCareType = XmlUnmarshallerUtil
             .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         List<String> res = validator.validateSendMessageToCare(sendMessageToCareType);
         assertFalse(res.isEmpty());
@@ -350,7 +352,7 @@ public class SendMessageToCareValidatorTest {
     }
 
     private SendMessageToCareType buildSendMessageCareType(String meddelandeId, String amne) throws Exception {
-        SendMessageToCareType sendMessageToCareType = SendMessageToCareUtil
+        SendMessageToCareType sendMessageToCareType = XmlUnmarshallerUtil
             .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         MeddelandeReferens meddelandeReferens = new MeddelandeReferens();
         meddelandeReferens.setMeddelandeId(meddelandeId);

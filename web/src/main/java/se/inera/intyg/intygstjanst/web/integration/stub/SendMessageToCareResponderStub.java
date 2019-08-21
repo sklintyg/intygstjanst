@@ -20,7 +20,6 @@ package se.inera.intyg.intygstjanst.web.integration.stub;
 
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,11 +51,6 @@ public class SendMessageToCareResponderStub implements SendMessageToCareResponde
             storeMessage(parameters, logicalAddress);
             LOG.info("STUB Received question concerning certificate with id: " + parameters.getIntygsId().getExtension());
             resultType.setResultCode(ResultCodeType.OK);
-        } catch (JAXBException e) {
-            resultType.setResultCode(ResultCodeType.ERROR);
-            resultType.setResultText("Error occurred when marshalling message to xml. " + e.getMessage());
-            response.setResult(resultType);
-            return response;
         } catch (Exception e) {
             LOG.error("STUB failed: {}", e);
             throw e;
@@ -65,11 +59,11 @@ public class SendMessageToCareResponderStub implements SendMessageToCareResponde
         return response;
     }
 
-    private String marshalCertificate(SendMessageToCareType parameters) throws JAXBException {
+    private String marshalCertificate(SendMessageToCareType parameters) {
         return ArendeConverter.convertToXmlString(parameters);
     }
 
-    public void storeMessage(SendMessageToCareType sendMessageToCareType, String logicalAddress) throws JAXBException {
+    public void storeMessage(SendMessageToCareType sendMessageToCareType, String logicalAddress) {
         String certificateId = sendMessageToCareType.getIntygsId().getExtension();
         String messageId = sendMessageToCareType.getMeddelandeId();
         String xmlBlob = marshalCertificate(sendMessageToCareType);

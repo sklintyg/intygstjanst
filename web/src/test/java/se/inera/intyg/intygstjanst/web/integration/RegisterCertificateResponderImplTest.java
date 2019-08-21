@@ -25,24 +25,23 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.oxm.MarshallingFailureException;
+import org.springframework.oxm.XmlMappingException;
 import se.inera.intyg.common.services.texts.IntygTextsService;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -87,6 +86,7 @@ public class RegisterCertificateResponderImplTest {
     private IntygTextsService textsService;
 
     @InjectMocks
+    @Spy
     private RegisterCertificateResponderImpl responder = new RegisterCertificateResponderImpl();
 
     @Before
@@ -95,7 +95,6 @@ public class RegisterCertificateResponderImplTest {
         when(textsService.isVersionSupported(INTYGSTYP.toLowerCase(), INTYGSVERSION)).thenReturn(true);
         when(moduleRegistry.getModuleIdFromExternalId(INTYGSTYP)).thenReturn(INTYGSTYP.toLowerCase());
         when(moduleApi.validateXml(anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.VALID, new ArrayList<>()));
-        responder.initializeJaxbContext();
     }
 
     @Test
@@ -110,6 +109,7 @@ public class RegisterCertificateResponderImplTest {
 
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
             createRequest(intygId, enhetId, enhetNamn, vardgivareId, skapadAvNamn, patientId, signeringstidpunkt));
+
         assertNotNull(res);
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
 
@@ -130,8 +130,10 @@ public class RegisterCertificateResponderImplTest {
     @Test
     public void registerCertificateValidationErrorsTest() throws Exception {
         when(moduleApi.validateXml(anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.INVALID, Arrays.asList("fel")));
+
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
             createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "patientId", LocalDateTime.now()));
+
         assertNotNull(res);
         assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
         assertEquals(ErrorIdType.VALIDATION_ERROR, res.getResult().getErrorId());
@@ -143,9 +145,12 @@ public class RegisterCertificateResponderImplTest {
 
     @Test
     public void registerCertificateCertificateAlreadyExistsTest() throws Exception {
+
         doThrow(new CertificateAlreadyExistsException("intygId")).when(moduleContainer).certificateReceived(any(CertificateHolder.class));
+
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
             createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
+
         assertNotNull(res);
         assertEquals(ResultCodeType.INFO, res.getResult().getResultCode());
         assertEquals("Certificate already exists", res.getResult().getResultText());
@@ -157,8 +162,10 @@ public class RegisterCertificateResponderImplTest {
     @Test
     public void registerCertificateInvalidCertificateExceptionTest() throws Exception {
         doThrow(new InvalidCertificateException("intygId", null)).when(moduleContainer).certificateReceived(any(CertificateHolder.class));
+
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
             createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
+
         assertNotNull(res);
         assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
         assertEquals(ErrorIdType.VALIDATION_ERROR, res.getResult().getErrorId());
@@ -170,18 +177,15 @@ public class RegisterCertificateResponderImplTest {
 
     @Test
     public void registerCertificateJaxbExceptionTest() throws Exception {
-        JAXBContext jaxbContextMock = mock(JAXBContext.class);
-        Field field = RegisterCertificateResponderImpl.class.getDeclaredField("jaxbContext");
-        field.setAccessible(true);
-        field.set(responder, jaxbContextMock);
-        when(jaxbContextMock.createMarshaller()).thenThrow(new JAXBException(""));
+        doThrow(new MarshallingFailureException("Marshalling Failure")).
+            when(responder).xmlToString(any(RegisterCertificateType.class));
 
         try {
             responder.registerCertificate(LOGICAL_ADDRESS,
                 createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
             fail("should throw");
         } catch (RuntimeException e) {
-            assertTrue(e.getCause() instanceof JAXBException);
+            assertTrue(e.getCause() instanceof XmlMappingException);
             verify(moduleApi, never()).validateXml(anyString());
             verify(moduleContainer, never()).certificateReceived(any(CertificateHolder.class));
         }
@@ -204,6 +208,7 @@ public class RegisterCertificateResponderImplTest {
     @Test
     public void registerCertificateOtherExceptionTest() throws Exception {
         doThrow(new RuntimeException("intygId")).when(moduleContainer).certificateReceived(any(CertificateHolder.class));
+
         try {
             responder.registerCertificate(LOGICAL_ADDRESS,
                 createRequest("intygId", "enhetId", "enhetNamn",

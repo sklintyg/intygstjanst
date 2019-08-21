@@ -19,12 +19,10 @@
 package se.inera.intyg.intygstjanst.web.integration.converter;
 
 import com.google.common.annotations.VisibleForTesting;
-import java.io.StringWriter;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import javax.xml.bind.JAXBElement;
+import se.inera.intyg.common.support.xml.XmlMarshallerHelper;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.ObjectFactory;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
@@ -42,29 +40,7 @@ public final class ArendeConverter {
         ArendeConverter.systemClock = systemClock;
     }
 
-    public static String convertToXmlString(SendMessageToCareType sendMessageToCareType) throws JAXBException {
-        ObjectFactory objectFactory = new ObjectFactory();
-        JAXBContext jaxbContext = JAXBContext
-            .newInstance(SendMessageToCareType.class);
-        Marshaller marshaller = jaxbContext.createMarshaller();
-        StringWriter stringWriter = new StringWriter();
-        marshaller.marshal(objectFactory.createSendMessageToCare(sendMessageToCareType), stringWriter);
-        return stringWriter.toString().replaceAll("[\\n\\t]", "");
-    }
-
-    public static Arende convertSendMessageToCare(SendMessageToCareType sendMessageToCareType) throws JAXBException {
-        Arende arende = new Arende();
-        arende.setIntygsId(sendMessageToCareType.getIntygsId().getExtension());
-        arende.setMeddelandeId(sendMessageToCareType.getMeddelandeId());
-        arende.setReferens(sendMessageToCareType.getReferensId());
-        arende.setTimeStamp(LocalDateTime.now(systemClock));
-        arende.setLogiskAdressmottagare(sendMessageToCareType.getLogiskAdressMottagare());
-        arende.setAmne(sendMessageToCareType.getAmne().getCode());
-        arende.setMeddelande(convertToXmlString(sendMessageToCareType));
-        return arende;
-    }
-
-    public static Arende convertSendMessageToRecipient(SendMessageToRecipientType source) throws JAXBException {
+    public static Arende convertSendMessageToCare(SendMessageToCareType source) {
         Arende arende = new Arende();
         arende.setIntygsId(source.getIntygsId().getExtension());
         arende.setMeddelandeId(source.getMeddelandeId());
@@ -76,14 +52,28 @@ public final class ArendeConverter {
         return arende;
     }
 
-    public static String convertToXmlString(SendMessageToRecipientType source) throws JAXBException {
+    public static Arende convertSendMessageToRecipient(SendMessageToRecipientType source) {
+        Arende arende = new Arende();
+        arende.setIntygsId(source.getIntygsId().getExtension());
+        arende.setMeddelandeId(source.getMeddelandeId());
+        arende.setReferens(source.getReferensId());
+        arende.setTimeStamp(LocalDateTime.now(systemClock));
+        arende.setLogiskAdressmottagare(source.getLogiskAdressMottagare());
+        arende.setAmne(source.getAmne().getCode());
+        arende.setMeddelande(convertToXmlString(source));
+        return arende;
+    }
+
+    public static String convertToXmlString(SendMessageToCareType sendMessageToCareType) {
+        ObjectFactory objectFactory = new ObjectFactory();
+        JAXBElement<SendMessageToCareType> jaxbElement = objectFactory.createSendMessageToCare(sendMessageToCareType);
+        return XmlMarshallerHelper.marshal(jaxbElement).replaceAll("[\\n\\t]", "");
+    }
+
+    public static String convertToXmlString(SendMessageToRecipientType source) {
         se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.ObjectFactory objectFactory =
             new se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.ObjectFactory();
-        JAXBContext jaxbContext = JAXBContext
-            .newInstance(SendMessageToRecipientType.class);
-        Marshaller marshaller = jaxbContext.createMarshaller();
-        StringWriter stringWriter = new StringWriter();
-        marshaller.marshal(objectFactory.createSendMessageToRecipient(source), stringWriter);
-        return stringWriter.toString().replaceAll("[\\n\\t]", "");
+        JAXBElement<SendMessageToRecipientType> jaxbElement = objectFactory.createSendMessageToRecipient(source);
+        return XmlMarshallerHelper.marshal(jaxbElement).replaceAll("[\\n\\t]", "");
     }
 }

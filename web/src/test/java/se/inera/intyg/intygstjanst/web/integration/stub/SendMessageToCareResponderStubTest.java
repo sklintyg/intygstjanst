@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import se.inera.intyg.intygstjanst.web.integration.util.SendMessageToCareUtil;
+import se.inera.intyg.intygstjanst.web.support.xml.XmlUnmarshallerUtil;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -67,7 +67,7 @@ public class SendMessageToCareResponderStubTest {
     }
 
     private SendMessageToCareType buildSendMessageToCare(String intygsId, String meddelandeId) throws Exception {
-        SendMessageToCareType sendMessageToCareType = SendMessageToCareUtil
+        SendMessageToCareType sendMessageToCareType = XmlUnmarshallerUtil
             .getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         sendMessageToCareType.getIntygsId().setExtension(intygsId);
         sendMessageToCareType.setMeddelandeId(meddelandeId);
