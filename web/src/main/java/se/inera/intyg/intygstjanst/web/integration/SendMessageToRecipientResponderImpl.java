@@ -21,7 +21,6 @@ package se.inera.intyg.intygstjanst.web.integration;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
-import javax.xml.bind.JAXBException;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
