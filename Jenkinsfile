@@ -24,6 +24,16 @@ stage('build') {
             publishHTML allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'build/reports/allTests', \
                 reportFiles: 'index.html', reportName: 'JUnit results'
         }
+        releaseFlag = "${GIT_BRANCH.startsWith("release")}"
+        build job: "intygstjanst-test-pipeline", wait: false, parameters: [
+                [$class: 'StringParameterValue', name: 'INTYGSTJANST_BUILD_VERSION', value: buildVersion],
+                [$class: 'StringParameterValue', name: 'COMMON_VERSION', value: commonVersion],
+                [$class: 'StringParameterValue', name: 'INFRA_VERSION', value: infraVersion],
+                [$class: 'StringParameterValue', name: 'REF_DATA_VERSION', value: refDataVersion],
+                [$class: 'StringParameterValue', name: 'GIT_REF', value: gitRef],
+                [$class: 'StringParameterValue', name: 'RELEASE_FLAG', value: releaseFlag],
+                [$class: 'StringParameterValue', name: 'WAR', value: 'build/libs/intygstjanst-${buildVersion}.war']
+        ]
     }
 }
 
@@ -33,6 +43,7 @@ stage('tag and upload') {
     }
 }
 
+/*
 stage('propagate') {
     node {
         gitRef = "v${buildVersion}"
@@ -49,6 +60,7 @@ stage('propagate') {
         build job: "${buildRoot}-minaintyg", wait: false, parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: GIT_BRANCH]]
     }
 }
+*/
 
 stage('notify') {
     node {
