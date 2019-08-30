@@ -1,7 +1,0 @@
-{
-  "appVersion": "3.10.0",
-  "commonVersion": "3.11.0.+",
-  "infraVersion": "3.11.0.+",
-  "refDataVersion": "1.0-SNAPSHOT",
-  "backingServices": "-"
-}
