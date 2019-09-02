@@ -1,7 +1,10 @@
 apiVersion: v1
 data:
-  NTJP_WS_CERTIFICATE_TYPE: JKS
-  NTJP_WS_TRUSTSTORE_TYPE: JKS
+  SPRING_PROFILES_ACTIVE: "test,testability-api,caching-enabled,it-fk-stub,it-ts-stub,wc-hsa-stub,it-af-stub"
+  NTJP_WS_CERTIFICATE_FILE: "${certificate.folder}/demo.intygstjanst.intygstjanster.se.p12"
+  NTJP_WS_CERTIFICATE_TYPE: "PKCS12"
+  NTJP_WS_TRUSTSTORE_FILE: "${certificate.folder}/truststore.jks"
+  NTJP_WS_TRUSTSTORE_TYPE: "JKS"
 kind: ConfigMap
 metadata:
   name: intygstjanst-test-configmap-envvar
