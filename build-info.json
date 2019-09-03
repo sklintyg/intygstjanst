@@ -2,7 +2,6 @@
   "appVersion": "3.10.TEST",
   "commonVersion": "3.11.0.+",
   "infraVersion": "3.11.0.+",
-  "backingServices": "-",
   "buildArgs": "--refresh-dependencies clean build testReport sonarqube -PcodeQuality -DgruntColors=false",
   "uploadArchives": true
 }
