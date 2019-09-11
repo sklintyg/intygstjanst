@@ -92,6 +92,10 @@ public class IntygBootstrapBean {
             }
             try {
                 Objects.requireNonNull(resourceFilename);
+                if (resourceFilename.contains("locked")) {
+                    continue;
+                }
+
                 String moduleName = resourceFilename.split("__", -1)[0];
                 String intygMajorTypeVersion = resourceFilename.split("\\.", -1)[1];
                 LOG.info("Bootstrapping certificate '{}' from module {} (version {})", resource.getFilename(), moduleName,

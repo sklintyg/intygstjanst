@@ -42,9 +42,10 @@
     </jaxrs:server>
 
     <!-- Internal API -->
-    <jaxrs:server id="citizenController" address="/internalapi">
+    <jaxrs:server id="internalApi" address="/internalapi">
       <jaxrs:serviceBeans>
         <bean class="se.inera.intyg.intygstjanst.web.integration.CitizenController" />
+        <bean class="se.inera.intyg.intygstjanst.web.integration.intyginfo.IntygInfoController" />
       </jaxrs:serviceBeans>
       <jaxrs:providers>
         <ref bean="jacksonJsonProvider" />
