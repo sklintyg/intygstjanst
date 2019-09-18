@@ -19,9 +19,12 @@
 
 package se.inera.intyg.intygstjanst.web.integration;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -54,6 +57,8 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @Path("/citizens")
 public class CitizenController {
 
+    public static final Set<String> EXCLUDED_CITIZEN_CERTIFICATES =
+        new HashSet<>(Arrays.asList(DbModuleEntryPoint.MODULE_ID, DoiModuleEntryPoint.MODULE_ID));
     static final Logger LOG = LoggerFactory.getLogger(CitizenController.class);
 
     @Autowired
@@ -176,10 +181,8 @@ public class CitizenController {
 
     // returns true for an accepted certificate (clear XML content)
     private boolean filter(final Certificate c, final boolean archived) {
-        switch (c.getType()) {
-            case DbModuleEntryPoint.MODULE_ID:
-            case DoiModuleEntryPoint.MODULE_ID:
-                return false;
+        if (EXCLUDED_CITIZEN_CERTIFICATES.contains(c.getType())) {
+            return false;
         }
         if (c.isDeleted() == archived && !c.isRevoked()) {
             c.setOriginalCertificate(null);
