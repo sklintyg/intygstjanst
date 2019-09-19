@@ -47,7 +47,7 @@ public class IntygInfoController {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getCertificate(@PathParam("id") String id) {
+    public Response getIntygInfo(@PathParam("id") String id) {
 
         Optional<ItIntygInfo> intygInfo = intygInfoService.getIntygInfo(id);
 
