@@ -196,10 +196,6 @@ public class SendMessageToCareValidator {
         }
     }
 
-    private Personnummer createPnr(String pnr) {
-        return Personnummer.createPersonnummer(pnr).orElse(null);
-    }
-
     private boolean isPaminnelse(SendMessageToCareType sendMessageToCareType) {
         return sendMessageToCareType.getAmne().getCode().equals(Amneskod.PAMINN.toString())
             && sendMessageToCareType.getPaminnelseMeddelandeId() != null;

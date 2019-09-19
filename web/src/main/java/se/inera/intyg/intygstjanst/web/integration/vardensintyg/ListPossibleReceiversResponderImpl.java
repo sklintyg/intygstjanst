@@ -20,8 +20,6 @@ package se.inera.intyg.intygstjanst.web.integration.vardensintyg;
 
 import com.google.common.base.Strings;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listpossiblereceivers.v1.ListPossibleReceiversResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listpossiblereceivers.v1.ListPossibleReceiversResponseType;
@@ -35,8 +33,6 @@ import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.Certifica
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 
 public class ListPossibleReceiversResponderImpl implements ListPossibleReceiversResponderInterface {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ListPossibleReceiversResponderImpl.class);
 
     @Autowired
     private RecipientService recipientService;

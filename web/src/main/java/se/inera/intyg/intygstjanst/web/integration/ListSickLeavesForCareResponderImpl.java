@@ -24,8 +24,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.annotations.SchemaValidation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
@@ -49,7 +47,6 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 @SchemaValidation
 public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCareResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ListSickLeavesForCareResponderImpl.class);
     private static final int MAX_LEN = Integer.MAX_VALUE;
 
     @Autowired

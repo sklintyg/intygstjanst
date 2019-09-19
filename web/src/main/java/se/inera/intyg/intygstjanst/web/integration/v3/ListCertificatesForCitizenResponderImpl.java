@@ -19,7 +19,6 @@
 package se.inera.intyg.intygstjanst.web.integration.v3;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,8 +26,6 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import se.inera.intyg.common.db.support.DbModuleEntryPoint;
-import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
@@ -38,6 +35,7 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.web.integration.CitizenController;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 import se.inera.intyg.intygstjanst.web.integration.util.CertificateStateFilterUtil;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
@@ -54,8 +52,6 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 public class ListCertificatesForCitizenResponderImpl implements ListCertificatesForCitizenResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ListCertificatesForCitizenResponderImpl.class);
-
-    private static final List<String> EXCLUDED_CERTIFICATES = Arrays.asList(DbModuleEntryPoint.MODULE_ID, DoiModuleEntryPoint.MODULE_ID);
 
     @Autowired
     private CertificateService certificateService;
@@ -88,7 +84,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
             parameters.getTomDatum());
 
         response.getIntygsLista().getIntyg().addAll(certificates.stream()
-            .filter(c -> !EXCLUDED_CERTIFICATES.contains(c.getType()))
+            .filter(c -> !CitizenController.EXCLUDED_CITIZEN_CERTIFICATES.contains(c.getType()))
             .filter(c -> c.isDeleted() == parameters.isArkiverade())
             .map(c -> convert(c, parameters.getPart().getCode()))
             .collect(Collectors.toList()));
