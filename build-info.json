@@ -1,0 +1,8 @@
+{
+  "appVersion": "3.9.1",
+  "commonVersion": "3.10.0.+",
+  "infraVersion": "3.10.0.+",
+  "buildArgs": "--refresh-dependencies clean build testReport sonarqube -PcodeQuality -DgruntColors=false",
+  "tests": [ "restAssuredTest" ],
+  "uploadArchives": true
+}
