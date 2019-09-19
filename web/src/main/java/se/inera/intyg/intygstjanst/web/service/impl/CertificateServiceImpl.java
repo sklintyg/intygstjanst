@@ -163,8 +163,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             return null;
         }
 
-        TypAvIntyg typAvIntyg = null;
-        typAvIntyg = new TypAvIntyg();
+        TypAvIntyg typAvIntyg = new TypAvIntyg();
         typAvIntyg.setCode(cert.getType());
         typAvIntyg.setCodeSystem(KV_INTYGSTYP_CODE_SYSTEM);
 

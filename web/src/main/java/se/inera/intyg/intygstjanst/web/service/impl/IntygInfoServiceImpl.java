@@ -64,7 +64,7 @@ public class IntygInfoServiceImpl implements IntygInfoService {
     private RelationService relationService;
 
     @Override
-    public ItIntygInfo getIntygInfo(String id) {
+    public Optional<ItIntygInfo> getIntygInfo(String id) {
 
         try {
             Certificate certificate = certificateService.getCertificateForCare(id);
@@ -118,12 +118,12 @@ public class IntygInfoServiceImpl implements IntygInfoService {
 
             addEvents(response, certificate);
 
-            return response;
+            return Optional.of(response);
         } catch (InvalidCertificateException e) {
-            LOG.error("Intyg not found", e);
+            LOG.info("Intyg not found", e);
         }
 
-        return null;
+        return Optional.empty();
     }
 
     private void addEvents(ItIntygInfo response, Certificate certificate) {
@@ -178,6 +178,8 @@ public class IntygInfoServiceImpl implements IntygInfoService {
                 case FRLANG:
                     event = new IntygInfoEvent(Source.INTYGSTJANSTEN, relation.getCreated(), IntygInfoEventType.IS007);
                     break;
+                default:
+
             }
 
             if (event != null) {
