@@ -65,6 +65,8 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
             } else {
                 GetCertificateResponseType response = new GetCertificateResponseType();
                 response.setIntyg(convertCertificate(certificate, request.getPart().getCode()));
+                moduleContainer.logCertificateRetrieved(certificate.getId(), certificate.getType(), certificate.getCareUnitId(),
+                    request.getPart().getCode());
                 return response;
             }
         } catch (InvalidCertificateException e) {

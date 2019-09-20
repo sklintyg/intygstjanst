@@ -45,6 +45,7 @@ public class MonitoringLogServiceImplTest {
     private static final String CERTIFICATE_ID = "CERTIFICATE_ID";
     private static final String CERTIFICATE_TYPE = "CERTIFICATE_TYPE";
     private static final String CARE_UNIT = "CARE_UNIT";
+    private static final String PART = "PART";
     private static final String RECIPIENT = "RECIPIENT";
     private static final String CITIZEN = "191212121212";
     private static final String STATUS = "STATUS";
@@ -76,6 +77,13 @@ public class MonitoringLogServiceImplTest {
         logService.logCertificateRegistered(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
         verifyLog(Level.INFO,
             "CERTIFICATE_REGISTERED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - registered");
+    }
+
+    @Test
+    public void shouldLogCertificateRetrieved() {
+        logService.logCertificateRetrieved(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, PART);
+        verifyLog(Level.INFO,
+            "CERTIFICATE_RETRIEVED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - retrieved by part 'PART'");
     }
 
     private void verifyLog(Level logLevel, String logMessage) {

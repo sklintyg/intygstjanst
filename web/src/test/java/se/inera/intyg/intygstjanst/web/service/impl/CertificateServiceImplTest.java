@@ -151,6 +151,20 @@ public class CertificateServiceImplTest {
     }
 
     @Test
+    public void testLogCertificateRetrieved() {
+        certificateService.logCertificateRetrieved("id", "type", "enhethsaid", "part");
+        verify(monitoringLogService)
+            .logCertificateRetrieved("id", "type", "enhethsaid", "part");
+    }
+
+    @Test
+    public void testLogCertificateRetrievedNoPart() {
+        certificateService.logCertificateRetrieved("id", "type", "enhethsaid", null);
+        verify(monitoringLogService)
+            .logCertificateRetrieved("id", "type", "enhethsaid", "N/A");
+    }
+
+    @Test
     public void testStoreCertificateHappyCase() throws Exception {
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId("id");
