@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -68,6 +69,8 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 public class CertificateServiceImpl implements CertificateService, ModuleContainerApi {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateServiceImpl.class);
+
+    private static final String GET_CERTIFICATE_NO_PART = "N/A";
 
     @Autowired
     private RecipientService recipientService;
@@ -334,6 +337,12 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         }
 
         return ConverterUtil.toCertificateHolder(certificate);
+    }
+
+    @Override
+    public void logCertificateRetrieved(String certificateId, String certificateType, String careUnit, String partId) {
+        monitoringLogService.logCertificateRetrieved(certificateId, certificateType, careUnit,
+            StringUtils.isEmpty(partId) ? GET_CERTIFICATE_NO_PART : partId);
     }
 
     private void assertPersonnummer(Personnummer civicRegistrationNumber) {

@@ -38,6 +38,11 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     }
 
     @Override
+    public void logCertificateRetrieved(String certificateId, String certificateType, String careUnit, String partId) {
+        logEvent(MonitoringEvent.CERTIFICATE_RETRIEVED, certificateId, certificateType, careUnit, partId);
+    }
+
+    @Override
     public void logCertificateSent(String certificateId, String certificateType, String careUnit,
         String recipient) {
         logEvent(MonitoringEvent.CERTIFICATE_SENT, certificateId, certificateType, careUnit, recipient);
@@ -113,6 +118,7 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
 
     private enum MonitoringEvent {
         CERTIFICATE_REGISTERED("Certificate '{}' with type '{}', care unit '{}' - registered"),
+        CERTIFICATE_RETRIEVED("Certificate '{}' with type '{}', care unit '{}' - retrieved by part '{}'"),
         CERTIFICATE_SENT("Certificate '{}' with type '{}', care unit '{}' - sent to '{}'"),
         CERTIFICATE_REVOKED("Certificate '{}' with type '{}', care unit '{}' - revoked"),
         CERTIFICATE_REVOKE_SENT("Certificate '{}' with type '{}', care unit '{}' - revoke sent to '{}'"),

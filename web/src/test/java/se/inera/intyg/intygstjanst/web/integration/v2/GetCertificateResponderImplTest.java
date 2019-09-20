@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static se.inera.intyg.intygstjanst.web.support.CertificateFactory.CARE_UNIT_ID;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -57,11 +58,11 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 @RunWith(MockitoJUnitRunner.class)
 public class GetCertificateResponderImplTest {
 
+    protected static final String INTYG_TYPE = "test-type";
     private static final String LOGICAL_ADDRESS = "logicalAddress";
     private static final LocalDateTime TIMESTAMP = LocalDateTime.now();
-    private static final String FKASSA_RECIPIENT_ID = "FKASSA";
-    private static final String MINA_INTYG_RECIPIENT_ID = "INVANA";
-
+    private static final String FKASSA_PART_ID = "FKASSA";
+    private static final String CITIZEN_PART_ID = "INVANA";
     @Mock
     private ModuleContainerApi moduleContainer;
 
@@ -77,20 +78,21 @@ public class GetCertificateResponderImplTest {
     @Test
     public void getCertificateTest() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
         final String intygId = "intyg-1";
-        when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(createResponse(false));
+        when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(createResponse(intygId, false));
         GetCertificateResponseType res = responder.getCertificate(LOGICAL_ADDRESS, createRequest(intygId));
         assertNotNull(res.getIntyg());
         assertEquals(1, res.getIntyg().getStatus().size());
         assertEquals(StatusKod.SENTTO.name(), res.getIntyg().getStatus().get(0).getStatus().getCode());
-        assertEquals("FKASSA", res.getIntyg().getStatus().get(0).getPart().getCode());
+        assertEquals(FKASSA_PART_ID, res.getIntyg().getStatus().get(0).getPart().getCode());
         assertEquals(TIMESTAMP, res.getIntyg().getStatus().get(0).getTidpunkt());
         verify(moduleContainer).getCertificate(intygId, null, false);
+        verify(moduleContainer).logCertificateRetrieved(intygId, INTYG_TYPE, CARE_UNIT_ID, FKASSA_PART_ID);
     }
 
     @Test
     public void getCertificateOldFormat() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
         final String intygId = "intyg-1";
-        final CertificateHolder response = createResponse(false);
+        final CertificateHolder response = createResponse(intygId, false);
         response.setOriginalCertificate("<old></old>");
         when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(response);
         when(moduleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
@@ -100,7 +102,7 @@ public class GetCertificateResponderImplTest {
         assertNotNull(res.getIntyg());
         assertEquals(1, res.getIntyg().getStatus().size());
         assertEquals(StatusKod.SENTTO.name(), res.getIntyg().getStatus().get(0).getStatus().getCode());
-        assertEquals("FKASSA", res.getIntyg().getStatus().get(0).getPart().getCode());
+        assertEquals(FKASSA_PART_ID, res.getIntyg().getStatus().get(0).getPart().getCode());
         assertEquals(TIMESTAMP, res.getIntyg().getStatus().get(0).getTidpunkt());
         verify(moduleContainer).getCertificate(intygId, null, false);
     }
@@ -115,7 +117,7 @@ public class GetCertificateResponderImplTest {
     @Test(expected = ServerException.class)
     public void getCertificateDeletedByCaregiver() throws InvalidCertificateException {
         final String intygId = "intyg-1";
-        when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(createResponse(true));
+        when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(createResponse(intygId, true));
         responder.getCertificate(LOGICAL_ADDRESS, createRequest(intygId));
     }
 
@@ -124,16 +126,16 @@ public class GetCertificateResponderImplTest {
         // See INTYG-3629
         // Given
         final String intygId = "intyg-1";
-        CertificateHolder mockedReturnValue = createResponse(false,
-            new CertificateStateHolder(MINA_INTYG_RECIPIENT_ID, CertificateState.DELETED, TIMESTAMP));
+        CertificateHolder mockedReturnValue = createResponse(intygId, false,
+            new CertificateStateHolder(CITIZEN_PART_ID, CertificateState.DELETED, TIMESTAMP));
 
         // When
         when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(mockedReturnValue);
         GetCertificateResponseType fromFk = responder.getCertificate(LOGICAL_ADDRESS,
-            createRequest(intygId, FKASSA_RECIPIENT_ID));
+            createRequest(intygId, FKASSA_PART_ID));
         when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(mockedReturnValue);
         GetCertificateResponseType fromMinaIntyg = responder.getCertificate(LOGICAL_ADDRESS,
-            createRequest(intygId, MINA_INTYG_RECIPIENT_ID));
+            createRequest(intygId, CITIZEN_PART_ID));
 
         // Then
         assertNotNull(fromFk.getIntyg());
@@ -142,12 +144,12 @@ public class GetCertificateResponderImplTest {
         assertNotNull(fromMinaIntyg.getIntyg());
         assertEquals(1, fromMinaIntyg.getIntyg().getStatus().size());
         assertEquals(StatusKod.DELETE.name(), fromMinaIntyg.getIntyg().getStatus().get(0).getStatus().getCode());
-        assertEquals(MINA_INTYG_RECIPIENT_ID, fromMinaIntyg.getIntyg().getStatus().get(0).getPart().getCode());
+        assertEquals(CITIZEN_PART_ID, fromMinaIntyg.getIntyg().getStatus().get(0).getPart().getCode());
         assertEquals(TIMESTAMP, fromMinaIntyg.getIntyg().getStatus().get(0).getTidpunkt());
     }
 
     private GetCertificateType createRequest(String id) {
-        return createRequest(id, FKASSA_RECIPIENT_ID);
+        return createRequest(id, FKASSA_PART_ID);
     }
 
     private GetCertificateType createRequest(String id, String part) {
@@ -160,18 +162,20 @@ public class GetCertificateResponderImplTest {
         return parameters;
     }
 
-    private CertificateHolder createResponse(boolean deletedByCareGiver) {
-        return createResponse(deletedByCareGiver, new CertificateStateHolder(FKASSA_RECIPIENT_ID, CertificateState.SENT, TIMESTAMP));
+    private CertificateHolder createResponse(String intygId, boolean deletedByCareGiver) {
+        return createResponse(intygId, deletedByCareGiver, new CertificateStateHolder(FKASSA_PART_ID, CertificateState.SENT, TIMESTAMP));
     }
 
-    private CertificateHolder createResponse(boolean deletedByCareGiver, CertificateStateHolder... statusItems) {
+    private CertificateHolder createResponse(String intygId, boolean deletedByCareGiver, CertificateStateHolder... statusItems) {
         CertificateHolder holder = new CertificateHolder();
-        holder.setType("test-type");
+        holder.setType(INTYG_TYPE);
         holder.setTypeVersion("1.0");
+        holder.setId(intygId);
         holder.setDeletedByCareGiver(deletedByCareGiver);
         holder.setOriginalCertificate(
             "<registerCertificateType xmlns:ns2=\"urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3\"><ns2:intyg></ns2:intyg></registerCertificateType>");
         holder.setCertificateStates(Arrays.asList(statusItems));
+        holder.setCareUnitId(CARE_UNIT_ID);
         return holder;
     }
 }

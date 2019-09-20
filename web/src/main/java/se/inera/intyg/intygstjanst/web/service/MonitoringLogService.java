@@ -24,6 +24,8 @@ public interface MonitoringLogService {
 
     void logCertificateRegistered(String certificateId, String certificateType, String careUnit);
 
+    void logCertificateRetrieved(String certificateId, String certificateType, String careUnit, String partId);
+
     void logCertificateSent(String certificateId, String certificateType, String careUnit, String recipient);
 
     void logCertificateRevoked(String certificateId, String certificateType, String careUnit);
