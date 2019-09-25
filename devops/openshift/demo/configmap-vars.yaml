@@ -9,7 +9,7 @@ data:
   NTJP_WS_TRUSTSTORE_TYPE: "JKS"
   ACTIVEMQ_BROKER_URL: "${broker.amq.tcp.port}?jms.nonBlockingRedelivery=true&jms.redeliveryPolicy.maximumRedeliveries=3&jms.redeliveryPolicy.maximumRedeliveryDelay=6000&jms.redeliveryPolicy.initialRedeliveryDelay=4000&jms.redeliveryPolicy.useExponentialBackOff=true&jms.redeliveryPolicy.backOffMultiplier=2"
   ACTIVEMQ_DESTINATION_QUEUE_NAME: "demo.statistik.utlatande.queue"
-  STATISTICS_ENABLED: "false"
+  STATISTICS_ENABLED: "true"
   REDIS_HOST: "${redis.service.host}"
   REDIS_PORT: "${redis.service.port}"
   DB_NAME: "intyg"
