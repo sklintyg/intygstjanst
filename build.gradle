@@ -74,6 +74,8 @@ allprojects {
         options.encoding = "UTF-8"
     }
 
+    uploadArchives.enabled = false
+
     [install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom*.whenConfigured { pom ->
         pom.dependencies.findAll {dep -> dep.groupId == 'se.inera.intyg.common'}.each {
             it.version = se.inera.intyg.IntygPluginKt.findResolvedVersion(project, 'se.inera.intyg.common')
