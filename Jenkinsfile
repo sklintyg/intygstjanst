@@ -16,7 +16,7 @@ stage('checkout') {
 stage('owasp') {
     node {
         try {
-            shgradle "clean dependencyCheckAggregate ${versionFlags}"
+            shgradle "--refresh-dependencies clean dependencyCheckAggregate ${versionFlags}"
         } finally {
             publishHTML allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'build/reports', \
                 reportFiles: 'dependency-check-report.html', reportName: 'OWASP dependency-check'
