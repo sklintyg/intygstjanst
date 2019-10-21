@@ -20,14 +20,17 @@ package se.inera.intyg.intygstjanst.web.integration.stub;
 
 import static org.mockito.Mockito.verify;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.core.io.ClassPathResource;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
-import se.inera.intyg.intygstjanst.web.support.xml.XmlUnmarshallerUtil;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RevokeMedicalCertificateResponderStubTest {
@@ -45,8 +48,11 @@ public class RevokeMedicalCertificateResponderStubTest {
     @Test
     public void testName() throws Exception {
         // read request from file
-        String filePath = "revoke-medical-certificate/revoke-medical-certificate-request.xml";
-        RevokeMedicalCertificateRequestType request = XmlUnmarshallerUtil.getRevokeMedicalCertificateRequestTypeFromFile(filePath);
+        JAXBContext jaxbContext = JAXBContext.newInstance(RevokeMedicalCertificateRequestType.class);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        RevokeMedicalCertificateRequestType request = unmarshaller.unmarshal(
+            new StreamSource(new ClassPathResource("revoke-medical-certificate/revoke-medical-certificate-request.xml").getInputStream()),
+            RevokeMedicalCertificateRequestType.class).getValue();
 
         stub.revokeMedicalCertificate(null, request);
 
