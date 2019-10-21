@@ -39,6 +39,8 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.S
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
+import javax.xml.bind.JAXBException;
+
 @SchemaValidation
 public class SendMessageToRecipientResponderImpl implements SendMessageToRecipientResponderInterface {
 
@@ -85,6 +87,8 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
             try {
                 // try saving message in db, but always return response from recipient
                 arendeService.processIncomingMessage(ArendeConverter.convertSendMessageToRecipient(parameters));
+            } catch (JAXBException e) {
+                LOG.error("JAXB error in SendMessageToRecipientResponder: {}", e.getMessage());
             } catch (Exception e) {
                 LOG.error("Exception caught when saving messageToRecipient in db: {}", e.getMessage());
             }

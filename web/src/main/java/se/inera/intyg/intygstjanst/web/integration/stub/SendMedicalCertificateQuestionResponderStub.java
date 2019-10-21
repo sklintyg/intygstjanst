@@ -18,12 +18,14 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
+import java.io.StringWriter;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.oxm.XmlMappingException;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
@@ -33,7 +35,9 @@ import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequest
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
-import se.inera.intyg.common.support.xml.XmlMarshallerHelper;
+
+// CHECKSTYLE:OFF LineLength
+// CHECKSTYLE:ON LineLength
 
 /**
  * @author par.wenaker
@@ -44,8 +48,18 @@ public class SendMedicalCertificateQuestionResponderStub implements SendMedicalC
 
     private static final Logger LOG = LoggerFactory.getLogger(SendMedicalCertificateQuestionResponderStub.class);
 
+    private final JAXBContext jaxbContext;
+
     @Autowired
     private MedicalCertificatesStore medicalCertificatesStore;
+
+    public SendMedicalCertificateQuestionResponderStub() {
+        try {
+            jaxbContext = JAXBContext.newInstance(SendMedicalCertificateQuestionType.class);
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public SendMedicalCertificateQuestionResponseType sendMedicalCertificateQuestion(AttributedURIType logicalAddress,
@@ -54,27 +68,34 @@ public class SendMedicalCertificateQuestionResponderStub implements SendMedicalC
         SendMedicalCertificateQuestionResponseType response = new SendMedicalCertificateQuestionResponseType();
 
         try {
-            JAXBElement<SendMedicalCertificateQuestionType> jaxbElement = new ObjectFactory().createSendMedicalCertificateQuestion(request);
-            XmlMarshallerHelper.marshal(jaxbElement);
-
             String id = request.getQuestion().getLakarutlatande().getLakarutlatandeId();
             String meddelande = request.getQuestion().getFraga().getMeddelandeText();
 
+            marshalCertificate(request);
             LOG.info("STUB Received question concerning certificate with id: " + id);
             if (request.getQuestion().getAmne().equals(Amnetyp.MAKULERING_AV_LAKARINTYG)) {
                 medicalCertificatesStore.makulera(id, meddelande);
             }
-
-        } catch (XmlMappingException e) {
+        } catch (JAXBException e) {
             response.setResult(ResultOfCallUtil.failResult("Unable to marshal certificate information"));
             return response;
         } catch (Exception e) {
             LOG.error("STUB failed: {}", e);
             throw e;
         }
-
         response.setResult(ResultOfCallUtil.okResult());
         return response;
+    }
+
+    private String marshalCertificate(SendMedicalCertificateQuestionType request) throws JAXBException {
+
+        StringWriter stringWriter = new StringWriter();
+
+        JAXBElement<SendMedicalCertificateQuestionType> jaxbElement = new ObjectFactory().createSendMedicalCertificateQuestion(request);
+
+        jaxbContext.createMarshaller().marshal(jaxbElement, stringWriter);
+
+        return stringWriter.toString();
     }
 
 }
