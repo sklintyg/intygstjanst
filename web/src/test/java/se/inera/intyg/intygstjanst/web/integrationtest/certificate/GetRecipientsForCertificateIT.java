@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Inera AB (http://www.inera.se)
+ * Copyright (C) 2020 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -20,16 +20,19 @@ package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
 import static com.jayway.restassured.RestAssured.given;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.response.ValidatableResponse;
 import java.util.UUID;
+
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
+
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
+import com.jayway.restassured.response.ValidatableResponse;
+
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 
 public class GetRecipientsForCertificateIT extends BaseIntegrationTest {

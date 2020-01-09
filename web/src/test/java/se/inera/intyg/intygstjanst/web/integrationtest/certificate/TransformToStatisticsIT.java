@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Inera AB (http://www.inera.se)
+ * Copyright (C) 2020 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -23,6 +23,18 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
+import java.io.StringReader;
+import java.util.UUID;
+
+import javax.xml.bind.JAXB;
+import javax.xml.transform.stream.StreamSource;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.oclc.purl.dsdl.svrl.SchematronOutputType;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.google.common.base.Charsets;
 import com.helger.schematron.svrl.SVRLHelper;
 import com.helger.schematron.xslt.SchematronResourceSCH;
@@ -30,15 +42,7 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
-import java.io.ByteArrayInputStream;
-import java.io.StringReader;
-import java.util.UUID;
-import javax.xml.bind.JAXB;
-import javax.xml.transform.stream.StreamSource;
-import org.junit.Before;
-import org.junit.Test;
-import org.oclc.purl.dsdl.svrl.SchematronOutputType;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
