@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Inera AB (http://www.inera.se)
+ * Copyright (C) 2020 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -25,11 +25,14 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import com.jayway.restassured.http.ContentType;
 import java.util.UUID;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.jayway.restassured.http.ContentType;
+
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.intygstjanst.web.integration.CitizenController.RequestObject;
 import se.inera.intyg.intygstjanst.web.integration.CitizenController.ResponseObject;

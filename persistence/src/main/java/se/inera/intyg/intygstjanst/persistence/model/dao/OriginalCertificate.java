@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Inera AB (http://www.inera.se)
+ * Copyright (C) 2020 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,7 +31,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
 import org.hibernate.annotations.Type;
+
 import se.inera.intyg.common.support.model.ModelException;
 
 /**
