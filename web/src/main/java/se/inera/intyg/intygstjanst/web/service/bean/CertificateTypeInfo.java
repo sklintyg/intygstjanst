@@ -18,7 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.service.bean;
 
-import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
+import se.inera.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 
 /**
  * Created by marced on 2018-09-17.
