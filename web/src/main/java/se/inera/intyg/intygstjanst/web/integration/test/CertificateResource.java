@@ -43,6 +43,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
+import se.inera.clinicalprocess.healthcond.certificate.receiver.types.v1.ApprovalStatusType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.ReceiverApprovalStatus;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversType;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
@@ -55,7 +56,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
-import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.ApprovalStatusType;
 
 /**
  * @author andreaskaltenbach

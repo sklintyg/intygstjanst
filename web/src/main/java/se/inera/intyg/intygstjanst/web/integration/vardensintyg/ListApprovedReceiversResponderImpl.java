@@ -23,6 +23,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import se.inera.clinicalprocess.healthcond.certificate.receiver.types.v1.ApprovalStatusType;
+import se.inera.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverRegistrationType;
+import se.inera.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverTypeType;
+import se.inera.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversType;
@@ -33,10 +37,6 @@ import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
-import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.ApprovalStatusType;
-import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverRegistrationType;
-import se.riv.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverTypeType;
-import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 
 public class ListApprovedReceiversResponderImpl implements ListApprovedReceiversResponderInterface {
 
