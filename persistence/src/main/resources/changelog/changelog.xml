@@ -462,4 +462,16 @@
 			<column name="TO_INTYG_ID" />
 		</createIndex>
 	</changeSet>
+
+	<changeSet id="45" author="mww">
+		<addColumn tableName="CERTIFICATE">
+			<column name="TEST_CERTIFICATE" type="boolean" defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+		<createIndex indexName="IDX_CERTIFICATE_TEST_CERTIFICATE"
+				tableName="CERTIFICATE" unique="false">
+			<column name="TEST_CERTIFICATE" />
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>

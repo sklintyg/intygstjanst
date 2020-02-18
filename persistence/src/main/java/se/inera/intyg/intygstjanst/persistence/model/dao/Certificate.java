@@ -163,6 +163,12 @@ public class Certificate {
     private Collection<CertificateStateHistoryEntry> states = new ArrayList<>();
 
     /**
+     * If this certificate was registered at a time when the patient had testIndicator-flag.
+     */
+    @Column(name = "TEST_CERTIFICATE", nullable = false, columnDefinition = "TINYINT(1")
+    private boolean testCertificate = false;
+
+    /**
      * Constructor that takes an id.
      *
      * @param id the id
@@ -296,6 +302,14 @@ public class Certificate {
 
     public void setWireTapped(boolean wireTapped) {
         this.wireTapped = wireTapped;
+    }
+
+    public boolean isTestCertificate() {
+        return testCertificate;
+    }
+
+    public void setTestCertificate(boolean isTestCertificate) {
+        this.testCertificate = isTestCertificate;
     }
 
     public String getTypeVersion() {
