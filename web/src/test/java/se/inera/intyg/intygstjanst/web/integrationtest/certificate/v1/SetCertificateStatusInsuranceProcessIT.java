@@ -92,7 +92,7 @@ public class SetCertificateStatusInsuranceProcessIT extends BaseIntegrationTest 
     public void setCertificateStatusCertificateDoesNotExist() {
         givenRequest("fit-intyg-finnsinte", "190101010101", "FK", CertificateState.SENT.name(), LocalDateTime.now())
             .body("result.resultCode", is("ERROR")).body("result.errorId", is("VALIDATION_ERROR")).body("result.errorText", is(
-            "Certificate 'fit-intyg-finnsinte' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
+            "Unknown certificate ID: fit-intyg-finnsinte"));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class SetCertificateStatusInsuranceProcessIT extends BaseIntegrationTest 
         IntegrationTestUtil.givenIntyg(INTYG_ID, INTYG_TYP_FK7263, FK7263_VERSION, "19020202-0202", false);
         givenRequest("fit-intyg-finnsinte", "190101010101", "FK", CertificateState.SENT.name(), LocalDateTime.now())
             .body("result.resultCode", is("ERROR")).body("result.errorId", is("VALIDATION_ERROR")).body("result.errorText", is(
-            "Certificate 'fit-intyg-finnsinte' does not exist for user '416a6b845a3314138feda9649a016885b9c1cd16877dfa74abe3d2d5e6df9ba6'"));
+            "Unknown certificate ID: fit-intyg-finnsinte"));
     }
 
     @Test
