@@ -19,11 +19,13 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
+
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.rivtabp20.v1.SendMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType;
@@ -39,6 +41,7 @@ import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
+import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendCertificateRequestValidator;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
@@ -143,6 +146,11 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             // return ERROR if certificate couldn't be sent
             LOGGER.error("Certificate '{}' couldn't be sent: {}", safeGetCertificateId(request), message);
             response.setResult(ResultOfCallUtil.applicationErrorResult("Certificate couldn't be sent to recipient"));
+            return response;
+        } catch (TestCertificateException ex) {
+            LOGGER.error("Certificate '{}' couldn't be sent to recipient because it is a test certificate", certId);
+            response.setResult(ResultOfCallUtil.failResult(
+                String.format("Certificate '%s' couldn't be sent to recipient because it is a test certificate", certId)));
             return response;
         }
     }
