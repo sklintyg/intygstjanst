@@ -43,7 +43,7 @@ public class CitizenControllerIT extends BaseIntegrationTest {
 
     static final String PATH = "/inera-certificate/internalapi/citizens/certificates";
 
-    static final String PID = "201012121313";
+    static final String PID = "201212121212";
 
     @Before
     public void before() {

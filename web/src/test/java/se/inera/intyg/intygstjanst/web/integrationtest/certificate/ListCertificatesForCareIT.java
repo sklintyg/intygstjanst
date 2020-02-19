@@ -54,7 +54,7 @@ public class ListCertificatesForCareIT extends BaseIntegrationTest {
     private static final String BASE = "Envelope.Body.ListCertificatesForCareResponse.";
     private static final String CARE_UNIT_ID = "SE2321000016-H489";
     private ST requestTemplate;
-    private String personId1 = "192703104321";
+    private String personId1 = "191212121212";
     private List<String> intygsId = Arrays.asList("luae_na_1", "luse_1", "luae_fs_1", "lisjp_1", "fk7263_deletedByCareGiver");
     private String versionsId = "1.0";
 

@@ -51,7 +51,7 @@ import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.Regi
 public class TransformToStatisticsIT extends BaseIntegrationTest {
 
     private String intygsId = UUID.randomUUID().toString();
-    private String personId1 = "192703104321";
+    private String personId1 = "191212121212";
 
     @SuppressWarnings("unused")
     @Autowired

@@ -38,7 +38,7 @@ public class IntygInfoControllerIT extends BaseIntegrationTest {
     private String url = "/inera-certificate/internalapi/intygInfo/";
 
     private String intygsId = "123456";
-    private String personId1 = "192703104321";
+    private String personId1 = "191212121212";
     private String versionsId = "1.0";
 
     @Before
