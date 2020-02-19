@@ -58,7 +58,7 @@ public class ListCertificatesForCitizenIT extends BaseIntegrationTest {
 
     private String intygsId = "123456";
 
-    private String personId = "192703104322";
+    private String personId = "199005112389";
 
     private List<String> intygsId_alltypes = Arrays.asList("luae_na_1", "luse_1", "luae_fs_1", "lisjp_1");
 

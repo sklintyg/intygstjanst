@@ -33,12 +33,14 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
 import se.inera.intyg.common.db.support.DbModuleEntryPoint;
 import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
 import se.inera.intyg.common.fk7263.support.Fk7263EntryPoint;
@@ -51,6 +53,7 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -345,6 +348,26 @@ public class ListCertificatesForCitizenResponderImplTest {
         verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
 
         assertEquals(2, response.getIntygsLista().getIntyg().size());
+    }
+
+    @Test (expected = ServerException.class)
+    public void listTestCertificateFK() throws Exception {
+        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
+        List<String> certificateTypes = Collections.singletonList("fk7263");
+        LocalDate fromDate = LocalDate.of(2000, 1, 1);
+        LocalDate toDate = LocalDate.of(2020, 12, 12);
+
+        Certificate certificate = new Certificate();
+        certificate.setTestCertificate(true);
+        Certificate certificate2 = new Certificate();
+        List<Certificate> result = Arrays.asList(certificate, certificate2);
+
+        when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
+
+        ListCertificatesForCitizenType parameters = createListCertificatesRequest(civicRegistrationNumber, certificateTypes, fromDate,
+            toDate, true);
+
+        responder.listCertificatesForCitizen(null, parameters);
     }
 
     private ListCertificatesForCitizenType createListCertificatesRequest(Personnummer civicRegistrationNumber, List<String> types,

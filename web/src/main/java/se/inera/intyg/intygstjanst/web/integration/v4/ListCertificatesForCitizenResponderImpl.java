@@ -22,10 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
@@ -34,6 +36,7 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.integration.CitizenController;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 import se.inera.intyg.intygstjanst.web.integration.util.CertificateStateFilterUtil;
@@ -79,6 +82,13 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
             parameters.getFromDatum(),
             parameters.getTomDatum());
 
+        final String partCode = parameters.getPart().getCode();
+        if (isInvalidPartForTestCertificates(certificates, partCode)) {
+            LOGGER.error("Failed to retrieve certificates because it is flagged as test certificate and part is set as: {} ", partCode);
+            throw new ServerException("Failed to retrieve certificates because it is flagged as test certificate and part is set as: "
+                + partCode);
+        }
+
         response.getIntygsLista().getIntyg().addAll(certificates.stream()
             .filter(c -> !CitizenController.EXCLUDED_CITIZEN_CERTIFICATES.contains(c.getType()))
             .filter(c -> c.isDeleted() == parameters.isArkiverade())
@@ -88,6 +98,17 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         monitoringLogService.logCertificateListedByCitizen(personnummer.orElse(null));
 
         return response;
+    }
+
+    /**
+     * Validate if the certificate list includes test certificates and the part asking for the certificates is a receiver of certificates.
+     * @param certificates  the certificates to validate.
+     * @param partCode  the part code.
+     * @return  true if the part isn't allowed to retrieve test certificates
+     */
+    private boolean isInvalidPartForTestCertificates(List<Certificate> certificates, String partCode) {
+        return certificates.stream().anyMatch(Certificate::isTestCertificate)
+            && !("HSVARD".equalsIgnoreCase(partCode) || "INVANA".equalsIgnoreCase(partCode));
     }
 
     private List<String> toStringList(List<TypAvIntyg> intygTyp) {
