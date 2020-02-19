@@ -26,11 +26,13 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
@@ -327,6 +329,24 @@ public class SendMessageToCareValidatorTest {
         List<String> validationErrors = new ArrayList<>();
         when(arendeRepository.findByMeddelandeId(eq(meddelandeId))).thenReturn(null);
         validator.validateMeddelandeId(meddelandeId, validationErrors);
+        assertTrue(validationErrors.isEmpty());
+    }
+
+    @Test
+    public void testValidationOfTestCertificateTrue() throws Exception {
+        final String certificateId = "certificate-id";
+        List<String> validationErrors = new ArrayList<>();
+        when(certificateService.isTestCertificate(eq(certificateId))).thenReturn(true);
+        validator.validateTestCertificate(certificateId, validationErrors);
+        assertFalse(validationErrors.isEmpty());
+    }
+
+    @Test
+    public void testValidationOfTestCertificateFalse() throws Exception {
+        final String certificateId = "certificate-id";
+        List<String> validationErrors = new ArrayList<>();
+        when(certificateService.isTestCertificate(eq(certificateId))).thenReturn(false);
+        validator.validateTestCertificate(certificateId, validationErrors);
         assertTrue(validationErrors.isEmpty());
     }
 
