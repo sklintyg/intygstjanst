@@ -33,12 +33,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +46,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
@@ -57,6 +60,9 @@ import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
+import se.inera.intyg.infra.integration.pu.model.Person;
+import se.inera.intyg.infra.integration.pu.model.PersonSvar;
+import se.inera.intyg.infra.integration.pu.services.PUService;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
@@ -116,6 +122,9 @@ public class CertificateServiceImplTest {
     @Mock
     private SjukfallCertificateService sjukfallCertificateService;
 
+    @Mock
+    private PUService puService;
+
     @InjectMocks
     private CertificateServiceImpl certificateService = new CertificateServiceImpl();
 
@@ -138,6 +147,10 @@ public class CertificateServiceImplTest {
 
     @Before
     public void setup() {
+        final Person person = new Person(null, false, false, "", "", "", "", "", "", false);
+        final PersonSvar personSvar = PersonSvar.found(person);
+        when(puService.getPerson(any())).thenReturn(personSvar);
+
         when(recipientService.getPrimaryRecipientHsvard()).thenReturn(
             new RecipientBuilder().setLogicalAddress("TEST")
                 .setName("Hälso- och sjukvården")
@@ -228,7 +241,7 @@ public class CertificateServiceImplTest {
         Certificate certificate = new Certificate(CERTIFICATE_ID);
         certificate.setCivicRegistrationNumber(PERSONNUMMER);
 
-        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
+        when(certificateDao.getCertificate(any(), any())).thenReturn(certificate);
 
         SendStatus res = certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
 
@@ -317,7 +330,7 @@ public class CertificateServiceImplTest {
     @Test
     public void testRevokeCertificate() throws Exception {
         final Personnummer civicRegistrationNumber = createPnr("191212121212");
-        when(certificateDao.getCertificate(civicRegistrationNumber, CERTIFICATE_ID)).thenReturn(new Certificate(CERTIFICATE_ID));
+        when(certificateDao.getCertificate(any(), any())).thenReturn(new Certificate(CERTIFICATE_ID));
         Certificate revokeCertificate = certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
         assertEquals(CERTIFICATE_ID, revokeCertificate.getId());
 
@@ -337,7 +350,7 @@ public class CertificateServiceImplTest {
     @Test(expected = InvalidCertificateException.class)
     public void testRevokeCertificateUpdateStatusThrowsPersistenceException() throws Exception {
         final Personnummer civicRegistrationNumber = createPnr("191212121212");
-        when(certificateDao.getCertificate(civicRegistrationNumber, CERTIFICATE_ID)).thenReturn(new Certificate(CERTIFICATE_ID));
+        when(certificateDao.getCertificate(any(), any())).thenReturn(new Certificate(CERTIFICATE_ID));
         doThrow(new PersistenceException(CERTIFICATE_ID, civicRegistrationNumber)).when(certificateDao).updateStatus(CERTIFICATE_ID,
             civicRegistrationNumber, CertificateState.CANCELLED, "HSVARD", null);
         certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
@@ -407,6 +420,8 @@ public class CertificateServiceImplTest {
         final String target = "FKASSA";
         final CertificateState state = CertificateState.SENT;
         final LocalDateTime timestamp = LocalDateTime.now();
+        final Certificate certificate = new Certificate();
+        when(certificateDao.getCertificate(any(), any())).thenReturn(certificate);
         certificateService.setCertificateState(PERSONNUMMER, CERTIFICATE_ID, target, state, timestamp);
         verify(certificateDao).updateStatus(CERTIFICATE_ID, PERSONNUMMER, state, target, timestamp);
     }
@@ -416,6 +431,8 @@ public class CertificateServiceImplTest {
         final String target = "FKASSA";
         final CertificateState state = CertificateState.SENT;
         final LocalDateTime timestamp = LocalDateTime.now();
+        final Certificate certificate = new Certificate();
+        when(certificateDao.getCertificate(any(), any())).thenReturn(certificate);
         doThrow(new PersistenceException(CERTIFICATE_ID, PERSONNUMMER)).when(certificateDao).updateStatus(CERTIFICATE_ID, PERSONNUMMER,
             state, target,
             timestamp);
@@ -427,6 +444,8 @@ public class CertificateServiceImplTest {
         final String target = "FKASSA";
         final CertificateState state = CertificateState.SENT;
         final LocalDateTime timestamp = LocalDateTime.now();
+        Certificate certificate = new Certificate();
+        when(certificateDao.getCertificate(any(), any())).thenReturn(certificate);
         certificateService.setCertificateState(CERTIFICATE_ID, target, state, timestamp);
         verify(certificateDao).updateStatus(CERTIFICATE_ID, state, target, timestamp);
     }
@@ -436,6 +455,8 @@ public class CertificateServiceImplTest {
         final String target = "FKASSA";
         final CertificateState state = CertificateState.SENT;
         final LocalDateTime timestamp = LocalDateTime.now();
+        final Certificate certificate = new Certificate();
+        when(certificateDao.getCertificate(any(), any())).thenReturn(certificate);
         doThrow(new PersistenceException(CERTIFICATE_ID, null)).when(certificateDao).updateStatus(CERTIFICATE_ID, state, target, timestamp);
         certificateService.setCertificateState(CERTIFICATE_ID, target, state, timestamp);
     }

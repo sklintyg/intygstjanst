@@ -20,11 +20,10 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static se.inera.intyg.common.support.Constants.KV_INTYGSTYP_CODE_SYSTEM;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +31,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
+
 import se.inera.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
@@ -44,6 +47,7 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
+import se.inera.intyg.infra.integration.pu.services.PUService;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
@@ -51,6 +55,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistory
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
@@ -95,6 +100,9 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     @Autowired
     private SjukfallCertificateService sjukfallCertificateService;
+
+    @Autowired
+    private PUService puService;
 
     @Override
     @Transactional(readOnly = true)
@@ -176,7 +184,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Override
     @Transactional
     public SendStatus sendCertificate(Personnummer civicRegistrationNumber, String certificateId, String recipientId)
-        throws InvalidCertificateException, CertificateRevokedException, RecipientUnknownException {
+        throws InvalidCertificateException, CertificateRevokedException, RecipientUnknownException, TestCertificateException {
 
         Certificate certificate = null;
         try {
@@ -197,6 +205,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             return SendStatus.ALREADY_SENT;
         }
 
+        assertIfTestCertificate(certificate);
+
         // Do send the certificate
         senderService.sendCertificate(certificate, recipientId);
 
@@ -207,10 +217,12 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     @Override
-    @Transactional(noRollbackFor = {InvalidCertificateException.class, PersistenceException.class})
+    @Transactional(noRollbackFor = {InvalidCertificateException.class, PersistenceException.class, TestCertificateException.class})
     public void setCertificateState(Personnummer civicRegistrationNumber, String certificateId, String target,
-        CertificateState state, LocalDateTime timestamp) throws InvalidCertificateException {
+        CertificateState state, LocalDateTime timestamp) throws InvalidCertificateException, TestCertificateException {
         try {
+            assertStateChangeSentIfTestCertificate(getCertificateForCare(certificateId), state);
+
             certificateDao.updateStatus(certificateId, civicRegistrationNumber, state, target, timestamp);
         } catch (PersistenceException e) {
             throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
@@ -218,10 +230,12 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     @Override
-    @Transactional(noRollbackFor = {InvalidCertificateException.class, PersistenceException.class})
+    @Transactional(noRollbackFor = {InvalidCertificateException.class, PersistenceException.class, TestCertificateException.class})
     public void setCertificateState(String certificateId, String target,
-        CertificateState state, LocalDateTime timestamp) throws InvalidCertificateException {
+        CertificateState state, LocalDateTime timestamp) throws InvalidCertificateException, TestCertificateException {
         try {
+            assertStateChangeSentIfTestCertificate(getCertificateForCare(certificateId), state);
+
             certificateDao.updateStatus(certificateId, state, target, timestamp);
         } catch (PersistenceException e) {
             throw new InvalidCertificateException(certificateId, null);
@@ -230,9 +244,9 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     @Override
     @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = {InvalidCertificateException.class,
-        CertificateRevokedException.class})
+        CertificateRevokedException.class, TestCertificateException.class})
     public Certificate revokeCertificate(Personnummer civicRegistrationNumber, String certificateId)
-        throws InvalidCertificateException, CertificateRevokedException {
+        throws InvalidCertificateException, CertificateRevokedException, TestCertificateException {
 
         Certificate certificate = null;
         try {
@@ -261,12 +275,14 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         throws CertificateAlreadyExistsException, InvalidCertificateException {
         LOGGER.debug("Certificate received {}", certificateHolder.getId());
         Certificate certificate = storeCertificate(certificateHolder);
+
         LOGGER.debug("Certificate stored {}", certificateHolder.getId());
         monitoringLogService.logCertificateRegistered(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
 
-        String transformedXml = certificateReceivedForStatistics(certificateHolder);
-        statisticsService.created(transformedXml, certificate.getId(), certificate.getType(),
-            certificate.getCareUnitId());
+        if (!certificate.isTestCertificate()) {
+            String transformedXml = certificateReceivedForStatistics(certificateHolder);
+            statisticsService.created(transformedXml, certificate.getId(), certificate.getType(), certificate.getCareUnitId());
+        }
         sjukfallCertificateService.created(certificate);
     }
 
@@ -282,6 +298,10 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     @Override
     public void revokeCertificateForStatistics(Certificate certificate) {
+        if (certificate.isTestCertificate()) {
+            return;
+        }
+
         String certificateXml;
         try {
             ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
@@ -291,7 +311,6 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             throw new RuntimeException(e);
         }
         statisticsService.revoked(certificateXml, certificate.getId(), certificate.getType(), certificate.getCareUnitId());
-
     }
 
     @VisibleForTesting
@@ -310,6 +329,9 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(
             recipientService.getPrimaryRecipientHsvard().getId(), CertificateState.RECEIVED, LocalDateTime.now());
         certificate.addState(state);
+
+        addTestCertificateFlagIfPatientIsTestIndicated(certificate);
+
         certificateDao.store(certificate);
         storeOriginalCertificate(certificateHolder.getOriginalCertificate(), certificate);
         if (certificateHolder.getCertificateRelation() != null) {
@@ -317,6 +339,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
             relationService.storeRelation(
                 new Relation(certificateHolder.getId(), rel.getToIntygsId(), rel.getRelationKod().value(), LocalDateTime.now()));
         }
+
         return certificate;
     }
 
@@ -337,6 +360,11 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         }
 
         return ConverterUtil.toCertificateHolder(certificate);
+    }
+
+    @Override
+    public boolean isTestCertificate(String certificateId) throws InvalidCertificateException {
+        return getCertificateForCare(certificateId).isTestCertificate();
     }
 
     @Override
@@ -370,5 +398,25 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), utlatandeXml, certificate);
         certificateDao.storeOriginalCertificate(original);
         certificate.setOriginalCertificate(original);
+    }
+
+    private boolean isPatientTestIndicated(Personnummer civicRegistrationNumber) {
+        return puService.getPerson(civicRegistrationNumber).getPerson().isTestIndicator();
+    }
+
+    private void addTestCertificateFlagIfPatientIsTestIndicated(Certificate certificate) {
+        certificate.setTestCertificate(isPatientTestIndicated(certificate.getCivicRegistrationNumber()));
+    }
+
+    private void assertStateChangeSentIfTestCertificate(Certificate certificate, CertificateState state) throws TestCertificateException {
+        if (state.equals(CertificateState.SENT)) {
+            assertIfTestCertificate(certificate);
+        }
+    }
+
+    private void assertIfTestCertificate(Certificate certificate) throws TestCertificateException {
+        if (certificate.isTestCertificate()) {
+            throw new TestCertificateException(certificate.getId());
+        }
     }
 }
