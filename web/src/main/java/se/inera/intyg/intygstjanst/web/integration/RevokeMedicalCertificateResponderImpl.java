@@ -19,12 +19,14 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
+
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
@@ -40,6 +42,7 @@ import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
+import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.integration.validator.RevokeRequestValidator;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
@@ -85,11 +88,13 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
 
             Certificate certificate = certificateService.revokeCertificate(personnummer.orElse(null), certId);
 
-            certificate.getStates().stream()
-                .filter(entry -> CertificateState.SENT.equals(entry.getState()))
-                .map(CertificateStateHistoryEntry::getTarget)
-                .distinct()
-                .forEach(recipient -> senderService.sendCertificateRevocation(certificate, recipient, request.getRevoke()));
+            if (!certificate.isTestCertificate()) {
+                certificate.getStates().stream()
+                    .filter(entry -> CertificateState.SENT.equals(entry.getState()))
+                    .map(CertificateStateHistoryEntry::getTarget)
+                    .distinct()
+                    .forEach(recipient -> senderService.sendCertificateRevocation(certificate, recipient, request.getRevoke()));
+            }
 
             certificateService.revokeCertificateForStatistics(certificate);
             sjukfallCertificateService.revoked(certificate);
@@ -123,6 +128,10 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
                 ResultOfCallUtil
                     .failResult("Informing subsystem '" + e.getSubsystemId() + "' about revoked certificate resulted in error"));
             return response;
+        } catch (TestCertificateException e) {
+            LOGGER.error("Failed to revoke test certificate '{}' because '{}", certId, e.getMessage());
+            response.setResult(ResultOfCallUtil.applicationErrorResult(
+                "Failed to revoke test certificate due to following error: " + e.getMessage()));
         }
 
         response.setResult(ResultOfCallUtil.okResult());

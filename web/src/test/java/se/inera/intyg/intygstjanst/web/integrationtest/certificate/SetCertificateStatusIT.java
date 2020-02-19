@@ -47,7 +47,7 @@ public class SetCertificateStatusIT extends BaseIntegrationTest {
     private ST requestTemplate;
     private ST requestTemplateResult;
     private String intygsId = "123456";
-    private String personId = "192703104321";
+    private String personId = "191212121212";
     private String versionsId = "1.0";
 
     private String intygsIdNotExists = "123456t";

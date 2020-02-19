@@ -44,6 +44,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
+import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.InternalNotificationService;
@@ -180,6 +181,18 @@ public class SendCertificateToRecipientResponderImplTest {
         assertEquals(ErrorIdType.TECHNICAL_ERROR, response.getResult().getErrorId());
         assertEquals("Certificate 'Intygs-id-1234567890' couldn't be sent to recipient", response.getResult().getResultText());
         verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID);
+    }
+
+    @Test
+    public void testSendTestCertificateToRecipientTestCertificateException() throws Exception {
+        when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, RECIPIENT_ID))
+            .thenThrow(new TestCertificateException(CERTIFICATE_ID));
+
+        SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
+
+        assertEquals(ERROR, response.getResult().getResultCode());
+        assertEquals(ErrorIdType.VALIDATION_ERROR, response.getResult().getErrorId());
+        assertEquals("Certificate 'Intygs-id-1234567890' couldn't be sent to recipient because it is a test certificate", response.getResult().getResultText());
     }
 
     private SendCertificateToRecipientType createRequest() {

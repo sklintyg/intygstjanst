@@ -21,11 +21,13 @@ package se.inera.intyg.intygstjanst.web.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateTypeInfo;
 import se.inera.intyg.schemas.contract.Personnummer;
 
@@ -100,17 +102,18 @@ public interface CertificateService {
      * @throws se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException if the certificate does not exist or
      * the certificate id and civicRegistrationNumber didn't match
      * @throws se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException if the certificate has been revoked
+     * @throws TestCertificateException if the certificate is a test certificate
      * @returns SendStatus further subclassifying the outcome of a successful send
      */
     SendStatus sendCertificate(Personnummer civicRegistrationNumber, String certificateId, String recipientId)
-        throws InvalidCertificateException, CertificateRevokedException, RecipientUnknownException;
+        throws InvalidCertificateException, CertificateRevokedException, RecipientUnknownException, TestCertificateException;
 
     void setCertificateState(Personnummer civicRegistrationNumber, String certificateId, String target, CertificateState state,
         LocalDateTime timestamp)
-        throws InvalidCertificateException;
+        throws InvalidCertificateException, TestCertificateException;
 
     void setCertificateState(String certificateId, String target, CertificateState state, LocalDateTime timestamp)
-        throws InvalidCertificateException;
+        throws InvalidCertificateException, TestCertificateException;
 
     /**
      * Revokes the certificate.
@@ -122,8 +125,15 @@ public interface CertificateService {
      * @throws CertificateRevokedException if the certificate has been revoked
      */
     Certificate revokeCertificate(Personnummer civicRegistrationNumber, String certificateId)
-        throws InvalidCertificateException, CertificateRevokedException;
+        throws InvalidCertificateException, CertificateRevokedException, TestCertificateException;
 
     void revokeCertificateForStatistics(Certificate certificate);
 
+    /**
+     * Check if the certificate is flagged as test certificate.
+     * @param certificateId the certificate ID
+     * @return  true if the certificate is a test certificate
+     * @throws InvalidCertificateException if the certificate cannot be found.
+     */
+    boolean isTestCertificate(String certificateId) throws InvalidCertificateException;
 }

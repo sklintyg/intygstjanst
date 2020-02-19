@@ -50,8 +50,8 @@ public class RegisterCertificateIT extends BaseIntegrationTest {
 
     private String intygsId = "123456";
 
-    private String personId1 = "192703104321";
-    private String personId2 = "195206172339";
+    private String personId1 = "191212121212";
+    private String personId2 = "201212121212";
     private String versionsId = "1.0";
 
     private STGroup templateGroup;

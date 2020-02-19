@@ -18,16 +18,19 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
+
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
@@ -60,7 +63,8 @@ public class SendMessageToCareValidator {
         REFERENCED_MESSAGE_NOT_FOUND_ERROR,
         KOMPLETTERING_INCONSISTENCY_ERROR,
         PAMINNELSE_ID_INCONSISTENCY_ERROR,
-        MEDDELANDE_ID_NOT_UNIQUE_ERROR
+        MEDDELANDE_ID_NOT_UNIQUE_ERROR,
+        TEST_CERTIFICATE
     }
 
     @Autowired
@@ -84,8 +88,9 @@ public class SendMessageToCareValidator {
         validatePaminnelse(sendMessageToCareType, validationErrors);
         validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
         validateConsistencyForKomplettering(sendMessageToCareType, validationErrors);
-        return validationErrors;
+        validateTestCertificate(sendMessageToCareType.getIntygsId().getExtension(), validationErrors);
 
+        return validationErrors;
     }
 
     @VisibleForTesting
@@ -170,6 +175,18 @@ public class SendMessageToCareValidator {
             if (!(suppliedCivicRegistrationNumber.isPresent()
                 && suppliedCivicRegistrationNumber.get().equals(certificate.getCivicRegistrationNumber()))) {
                 validationErrors.add(ErrorCode.CIVIC_REGISTRATION_NUMBER_INCONSISTENCY_ERROR.toString());
+            }
+        } catch (InvalidCertificateException e) {
+            validationErrors.add(e.getMessage());
+        }
+    }
+
+    @VisibleForTesting
+    void validateTestCertificate(String certificateId, List<String> validationErrors) {
+        try {
+            if (certificateService.isTestCertificate(certificateId)) {
+                validationErrors.add(ErrorCode.TEST_CERTIFICATE.toString());
+                validationErrors.add(" The supplied certificate is invalid. Messages cannot be sent for test certificates.");
             }
         } catch (InvalidCertificateException e) {
             validationErrors.add(e.getMessage());

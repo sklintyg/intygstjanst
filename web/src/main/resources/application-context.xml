@@ -57,6 +57,16 @@
     <!-- HSA service -->
     <import resource="classpath:/hsa-services-config.xml"/>
 
+    <!-- PU stub-->
+    <import resource="classpath:pu-stub-context.xml" />
+    <!-- PU service -->
+    <import resource="classpath:pu-services-config.xml" />
+    <import resource="classpath:pu-ignite-config.xml" />
+
+    <!-- Use the same PU validator for both prod and test. Set as primary so it is used instead of the default validator in infra -->
+    <bean id="puResponseValidator" class="se.inera.intyg.intygstjanst.web.integration.validator.IntygstjanstPUResponseValidator" primary="true"/>
+
+
     <context:annotation-config/>
     <context:component-scan
             base-package="se.inera.intyg.intygstjanst.config,se.inera.intyg.intygstjanst.persistence,se.inera.intyg.intygstjanst.web"/>

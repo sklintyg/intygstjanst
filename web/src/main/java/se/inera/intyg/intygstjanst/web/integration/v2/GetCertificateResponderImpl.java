@@ -20,11 +20,14 @@ package se.inera.intyg.intygstjanst.web.integration.v2;
 
 import java.io.StringReader;
 import java.util.stream.Collectors;
+
 import javax.xml.bind.JAXB;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
@@ -35,10 +38,12 @@ import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.integration.util.CertificateStateFilterUtil;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.Part;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 
 @SchemaValidation
@@ -52,13 +57,24 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
     @Autowired
     private IntygModuleRegistry moduleRegistry;
 
+    @Autowired
+    private CertificateService certificateService;
+
     @Override
     @PrometheusTimeMethod
     public GetCertificateResponseType getCertificate(String logicalAddress, GetCertificateType request) {
 
-        String certificateId = request.getIntygsId().getExtension();
+        final String certificateId = request.getIntygsId().getExtension();
+        final Part part = request.getPart();
 
         try {
+            if (isInvalidPartForTestCertificate(certificateId, part.getCode())) {
+                LOGGER.error("Failed to retrieve certificate: '{}' because it is flagged as test certificate and part is set as: {} ",
+                    certificateId, part.getCode());
+                throw new ServerException("Failed to retrieve certificate: " + certificateId
+                    + " because it is flagged as test certificate and part is set as: " + part.getCode());
+            }
+
             CertificateHolder certificate = moduleContainer.getCertificate(certificateId, null, false);
             if (certificate.isDeletedByCareGiver()) {
                 throw new ServerException("Certificate with id " + certificateId + " is deleted from intygstjansten");
@@ -72,6 +88,16 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
         } catch (InvalidCertificateException e) {
             throw new ServerException("Certificate with id " + certificateId + " is invalid or does not exist");
         }
+    }
+
+    /**
+     * Validate if the certificate is a test certificate and the part asking for the certificate is a receiver of certificates.
+     * @param certificateId  the certificates to validate.
+     * @param partCode  the part code.
+     * @return  true if the part isn't allowed to retrieve test certificates
+     */
+    private boolean isInvalidPartForTestCertificate(String certificateId, String partCode) throws InvalidCertificateException {
+        return certificateService.isTestCertificate(certificateId) && !"HSVARD".equalsIgnoreCase(partCode);
     }
 
     protected Intyg convertCertificate(CertificateHolder certificateHolder, String part) {

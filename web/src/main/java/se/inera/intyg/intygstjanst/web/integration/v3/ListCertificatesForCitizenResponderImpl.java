@@ -22,10 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
@@ -46,6 +48,7 @@ import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.
 import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.v3.ListCertificatesForCitizenType;
 import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.v3.ListaType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 
 @SchemaValidation(type = SchemaValidation.SchemaValidationType.IN)
@@ -83,6 +86,14 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
             parameters.getFromDatum(),
             parameters.getTomDatum());
 
+        final String partCode = parameters.getPart().getCode();
+        if (isInvalidPartForTestCertificates(certificates, partCode)) {
+            LOGGER.error("Failed to retrieve certificates because it is flagged as test certificate and part is set as: {} ", partCode);
+            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR,
+                "Failed to retrieve certificates because it is flagged as test certificate and part is set as: " + partCode));
+            return response;
+        }
+
         response.getIntygsLista().getIntyg().addAll(certificates.stream()
             .filter(c -> !CitizenController.EXCLUDED_CITIZEN_CERTIFICATES.contains(c.getType()))
             .filter(c -> c.isDeleted() == parameters.isArkiverade())
@@ -95,6 +106,17 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         LOGGER.info("Found {} certificates in {} ms", response.getIntygsLista().getIntyg().size(), (System.currentTimeMillis() - t0));
 
         return response;
+    }
+
+    /**
+     * Validate if the certificate list includes test certificates and the part asking for the certificates is a receiver of certificates.
+     * @param certificates  the certificates to validate.
+     * @param partCode  the part code.
+     * @return  true if the part isn't allowed to retrieve test certificates
+     */
+    private boolean isInvalidPartForTestCertificates(List<Certificate> certificates, String partCode) {
+        return certificates.stream().anyMatch(Certificate::isTestCertificate)
+            && !("HSVARD".equalsIgnoreCase(partCode) || "INVANA".equalsIgnoreCase(partCode));
     }
 
     private List<String> toStringList(List<TypAvIntyg> intygTyp) {

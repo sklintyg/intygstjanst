@@ -86,7 +86,7 @@ public class GetCertificateInsuranceProcessIT extends BaseIntegrationTest {
 
     @Test
     public void getCertificateWrongPerson() {
-        IntegrationTestUtil.registerMedicalCertificate(INTYG_ID, "19020202-0202");
+        IntegrationTestUtil.registerMedicalCertificate(INTYG_ID, "19121212-1212");
 
         givenRequest(INTYG_ID, PERSON_ID).body("result.resultCode", is("ERROR")).body("result.errorId", is("VALIDATION_ERROR")).body(
             "result.errorText",

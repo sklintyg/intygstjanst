@@ -19,10 +19,12 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import java.util.Optional;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -31,6 +33,7 @@ import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
+import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.InternalNotificationService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
@@ -108,6 +111,10 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
             LOGGER.error("Certificate '{}' couldn't be sent to '{}': {}", intygsId, mottagareId, message);
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.TECHNICAL_ERROR,
                 String.format("Certificate '%s' couldn't be sent to recipient", intygsId)));
+        } catch (TestCertificateException ex) {
+            LOGGER.error("Certificate '{}' couldn't be sent to recipient because it is a test certificate", intygsId);
+            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR,
+                String.format("Certificate '%s' couldn't be sent to recipient because it is a test certificate", intygsId)));
         }
 
         return response;

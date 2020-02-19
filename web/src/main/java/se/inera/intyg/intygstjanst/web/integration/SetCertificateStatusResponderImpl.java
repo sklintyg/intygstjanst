@@ -19,8 +19,11 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import org.apache.cxf.annotations.SchemaValidation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
+
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtabp20.v1.SetCertificateStatusResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusResponseType;
@@ -29,6 +32,7 @@ import se.inera.intyg.common.support.integration.module.exception.InvalidCertifi
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
@@ -39,6 +43,8 @@ import se.inera.intyg.schemas.contract.Personnummer;
  */
 @SchemaValidation
 public class SetCertificateStatusResponderImpl implements SetCertificateStatusResponderInterface {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SetCertificateStatusResponderImpl.class);
 
     @Autowired
     private CertificateService certificateService;
@@ -77,6 +83,10 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
 
         } catch (RecipientUnknownException | InvalidCertificateException e) {
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
+        } catch (TestCertificateException e) {
+            LOGGER.error("Certificate '{}' couldn't be sent to recipient because it is a test certificate", request.getCertificateId());
+            response.setResult(ResultOfCallUtil.failResult(
+                "Cannot set the certificate to SENT as it is flagged as a test certificate"));
         }
 
         return response;

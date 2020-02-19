@@ -53,7 +53,7 @@ public class SendCertificateToRecipientIT extends BaseIntegrationTest {
     private STGroup templateGroupRecipient;
     private STGroup templateGroupRegister;
 
-    private String personId1 = "192703104321";
+    private String personId1 = "191212121212";
     private String intygsId = "123456";
     private String versionsId = "1.0";
 

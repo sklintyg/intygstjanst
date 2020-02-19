@@ -31,11 +31,13 @@ import static se.inera.intyg.intygstjanst.web.support.CertificateFactory.CARE_UN
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
@@ -48,6 +50,7 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateType;
@@ -72,12 +75,23 @@ public class GetCertificateResponderImplTest {
     @Mock
     private IntygModuleRegistry moduleRegistry;
 
+    @Mock
+    private CertificateService certificateService;
+
     @InjectMocks
     private GetCertificateResponderInterface responder = new GetCertificateResponderImpl();
+
+    @Test(expected = ServerException.class)
+    public void getTestCertificateAsCertificateReceiver() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
+        final String intygId = "intyg-1";
+        when(certificateService.isTestCertificate(any())).thenReturn(true);
+        responder.getCertificate(LOGICAL_ADDRESS, createRequest(intygId));
+    }
 
     @Test
     public void getCertificateTest() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
         final String intygId = "intyg-1";
+        when(certificateService.isTestCertificate(any())).thenReturn(false);
         when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(createResponse(intygId, false));
         GetCertificateResponseType res = responder.getCertificate(LOGICAL_ADDRESS, createRequest(intygId));
         assertNotNull(res.getIntyg());
@@ -94,6 +108,7 @@ public class GetCertificateResponderImplTest {
         final String intygId = "intyg-1";
         final CertificateHolder response = createResponse(intygId, false);
         response.setOriginalCertificate("<old></old>");
+        when(certificateService.isTestCertificate(any())).thenReturn(false);
         when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(response);
         when(moduleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()))).thenReturn(mock(Utlatande.class));
@@ -110,6 +125,7 @@ public class GetCertificateResponderImplTest {
     @Test(expected = ServerException.class)
     public void getCertificateNotFound() throws InvalidCertificateException {
         final String intygId = "intyg-1";
+        when(certificateService.isTestCertificate(any())).thenReturn(false);
         when(moduleContainer.getCertificate(intygId, null, false)).thenThrow(new InvalidCertificateException(intygId, null));
         responder.getCertificate(LOGICAL_ADDRESS, createRequest(intygId));
     }
@@ -117,6 +133,7 @@ public class GetCertificateResponderImplTest {
     @Test(expected = ServerException.class)
     public void getCertificateDeletedByCaregiver() throws InvalidCertificateException {
         final String intygId = "intyg-1";
+        when(certificateService.isTestCertificate(any())).thenReturn(false);
         when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(createResponse(intygId, true));
         responder.getCertificate(LOGICAL_ADDRESS, createRequest(intygId));
     }
@@ -130,6 +147,7 @@ public class GetCertificateResponderImplTest {
             new CertificateStateHolder(CITIZEN_PART_ID, CertificateState.DELETED, TIMESTAMP));
 
         // When
+        when(certificateService.isTestCertificate(any())).thenReturn(false);
         when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(mockedReturnValue);
         GetCertificateResponseType fromFk = responder.getCertificate(LOGICAL_ADDRESS,
             createRequest(intygId, FKASSA_PART_ID));
