@@ -108,10 +108,10 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
                 return makeInvalidCertificateVersionResult(registerCertificate);
             }
 
-            final Optional<RegisterCertificateResponseType> testCertificateResponse =
-                validateIfTestCertificate(registerCertificate.getIntyg().getPatient().getPersonId().getExtension());
-            if (testCertificateResponse.isPresent()) {
-                return testCertificateResponse.get();
+            final Optional<RegisterCertificateResponseType> validatePersonError =
+                validatePersonInPU(registerCertificate.getIntyg().getPatient().getPersonId().getExtension());
+            if (validatePersonError.isPresent()) {
+                return validatePersonError.get();
             }
 
             String xml = xmlToString(registerCertificate);
@@ -198,7 +198,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         return response;
     }
 
-    private Optional<RegisterCertificateResponseType> validateIfTestCertificate(String socialSecurityNumber) {
+    private Optional<RegisterCertificateResponseType> validatePersonInPU(String socialSecurityNumber) {
         final Optional<Personnummer> personnummer = Personnummer.createPersonnummer(socialSecurityNumber);
         if (personnummer.isPresent()) {
             final PersonSvar personSvar = puService.getPerson(personnummer.get());
