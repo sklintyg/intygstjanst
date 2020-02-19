@@ -37,7 +37,7 @@ import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 public class RegisterCertificateScenarioIT extends BaseIntegrationTest {
 
     private String intygsId = "123456";
-    private String personId = "192703104321";
+    private String personId = "191212121212";
     private String versionsId = "1.0";
 
     private static final String REGISTER_BASE = "Envelope.Body.RegisterCertificateResponse.";

@@ -55,6 +55,9 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.ValidateXmlResponse;
 import se.inera.intyg.common.support.modules.support.api.dto.ValidationStatus;
+import se.inera.intyg.infra.integration.pu.model.Person;
+import se.inera.intyg.infra.integration.pu.model.PersonSvar;
+import se.inera.intyg.infra.integration.pu.services.PUService;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
@@ -89,11 +92,17 @@ public class RegisterCertificateResponderImplTest {
     @Mock
     private IntygTextsService textsService;
 
+    @Mock
+    private PUService puService;
+
     @InjectMocks
     private RegisterCertificateResponderImpl responder = new RegisterCertificateResponderImpl();
 
     @Before
     public void setUp() throws Exception {
+        final Person person = new Person(null, false, false, "", "", "", "", "", "", false);
+        final PersonSvar personSvar = PersonSvar.found(person);
+        when(puService.getPerson(any())).thenReturn(personSvar);
         when(moduleRegistry.getModuleApi(INTYGSTYP.toLowerCase(), INTYGSVERSION)).thenReturn(moduleApi);
         when(textsService.isVersionSupported(INTYGSTYP.toLowerCase(), INTYGSVERSION)).thenReturn(true);
         when(moduleRegistry.getModuleIdFromExternalId(INTYGSTYP)).thenReturn(INTYGSTYP.toLowerCase());
@@ -134,7 +143,7 @@ public class RegisterCertificateResponderImplTest {
     public void registerCertificateValidationErrorsTest() throws Exception {
         when(moduleApi.validateXml(anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.INVALID, Arrays.asList("fel")));
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
-            createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "patientId", LocalDateTime.now()));
+            createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
         assertNotNull(res);
         assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
         assertEquals(ErrorIdType.VALIDATION_ERROR, res.getResult().getErrorId());
@@ -172,6 +181,40 @@ public class RegisterCertificateResponderImplTest {
     }
 
     @Test
+    public void registerCertificateInvalidPersonnummer() throws Exception {
+        RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
+            createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "felaktigt personnummer", LocalDateTime.now()));
+        assertNotNull(res);
+        assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
+        assertEquals(ErrorIdType.VALIDATION_ERROR, res.getResult().getErrorId());
+        assertEquals("Social security number is not of correct format.", res.getResult().getResultText());
+    }
+
+    @Test
+    public void registerCertificatePatientNotExists() throws Exception {
+        final String personId = "19300807-7723";
+        when(puService.getPerson(Personnummer.createPersonnummer(personId).get())).thenReturn(PersonSvar.notFound());
+        RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
+            createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19300807-7723", LocalDateTime.now()));
+        assertNotNull(res);
+        assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
+        assertEquals(ErrorIdType.VALIDATION_ERROR, res.getResult().getErrorId());
+        assertEquals("No person exists in PU Service with the social security number", res.getResult().getResultText());
+    }
+
+    @Test
+    public void registerCertificatePUServiceError() throws Exception {
+        final String personId = "20121212-1212";
+        when(puService.getPerson(Personnummer.createPersonnummer(personId).get())).thenReturn(PersonSvar.error());
+        RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
+            createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "20121212-1212", LocalDateTime.now()));
+        assertNotNull(res);
+        assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
+        assertEquals(ErrorIdType.TECHNICAL_ERROR, res.getResult().getErrorId());
+        assertEquals("Error calling PU Service to validate social security number", res.getResult().getResultText());
+    }
+
+    @Test
     public void registerCertificateJaxbExceptionTest() throws Exception {
         JAXBContext jaxbContextMock = mock(JAXBContext.class);
         Field field = RegisterCertificateResponderImpl.class.getDeclaredField("jaxbContext");
@@ -196,7 +239,7 @@ public class RegisterCertificateResponderImplTest {
 
         try {
             responder.registerCertificate(LOGICAL_ADDRESS,
-                createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "patientId", LocalDateTime.now()));
+                createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
             fail("should throw");
         } catch (UnsupportedOperationException e) {
             verify(moduleApi).validateXml(anyString());

@@ -22,16 +22,20 @@ import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3._2000._09.xmldsig_.SignatureType;
 import org.w3._2002._06.xmldsig_filter2.XPathType;
+
 import se.inera.intyg.common.services.texts.IntygTextsService;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
@@ -45,6 +49,9 @@ import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.common.support.modules.support.api.dto.ValidateXmlResponse;
 import se.inera.intyg.common.util.logging.LogMarkers;
+import se.inera.intyg.infra.integration.pu.model.PersonSvar;
+import se.inera.intyg.infra.integration.pu.model.PersonSvar.Status;
+import se.inera.intyg.infra.integration.pu.services.PUService;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.ObjectFactory;
@@ -75,6 +82,9 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     @Autowired
     private IntygTextsService textsService;
 
+    @Autowired
+    private PUService puService;
+
     @PostConstruct
     public void initializeJaxbContext() throws JAXBException {
         // We need to register DatePeriodType with the JAXBContext explicitly for some reason.
@@ -96,6 +106,12 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             // Minor version validation
             if (!textsService.isVersionSupported(intygsTyp, version)) {
                 return makeInvalidCertificateVersionResult(registerCertificate);
+            }
+
+            final Optional<RegisterCertificateResponseType> testCertificateResponse =
+                validateIfTestCertificate(registerCertificate.getIntyg().getPatient().getPersonId().getExtension());
+            if (testCertificateResponse.isPresent()) {
+                return testCertificateResponse.get();
             }
 
             String xml = xmlToString(registerCertificate);
@@ -179,6 +195,32 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         final String logMessage = MessageFormat.format("Failed to create Certificate with id {0} issued by {1} : "
             + "Certificate type {2} does not support version: {3}", certificateId, issuedBy, typ, version);
         LOGGER.error(LogMarkers.VALIDATION, logMessage);
+        return response;
+    }
+
+    private Optional<RegisterCertificateResponseType> validateIfTestCertificate(String socialSecurityNumber) {
+        final Optional<Personnummer> personnummer = Personnummer.createPersonnummer(socialSecurityNumber);
+        if (personnummer.isPresent()) {
+            final PersonSvar personSvar = puService.getPerson(personnummer.get());
+            if (personSvar.getStatus().equals(Status.NOT_FOUND)) {
+                LOGGER.error("Patient not found in PU Service. Returning a Logical error");
+                return Optional.of(makeValidationErrorResult("No person exists in PU Service with the social security number"));
+            } else if (personSvar.getStatus().equals(Status.ERROR)) {
+                LOGGER.error("Error when calling PU Service. Returning a Technical error");
+                return Optional.of(makeTechnicalErrorResult("Error calling PU Service to validate social security number"));
+            } else {
+                LOGGER.info("The patient is found in PU Service");
+                return Optional.empty();
+            }
+        } else {
+            LOGGER.error("Patients social security number is not correct. Returning a Logical error");
+            return Optional.of(makeValidationErrorResult("Social security number is not of correct format."));
+        }
+    }
+
+    private RegisterCertificateResponseType makeTechnicalErrorResult(String errorString) {
+        RegisterCertificateResponseType response = new RegisterCertificateResponseType();
+        response.setResult(ResultTypeUtil.errorResult(ErrorIdType.TECHNICAL_ERROR, errorString));
         return response;
     }
 
