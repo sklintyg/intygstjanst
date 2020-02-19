@@ -33,6 +33,7 @@ import java.util.Arrays;
 
 import javax.xml.bind.JAXBException;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -45,6 +46,7 @@ import se.inera.intyg.common.support.integration.module.exception.InvalidCertifi
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToRecipientValidator;
 import se.inera.intyg.intygstjanst.web.service.ArendeService;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
@@ -73,8 +75,16 @@ public class SendMessageToRecipientResponderImplTest {
     @Mock
     private SendMessageToRecipientResponderInterface sendMessageToRecipientResponder;
 
+    @Mock
+    private CertificateService certificateService;
+
     @InjectMocks
     private SendMessageToRecipientResponderImpl responder;
+
+    @Before
+    public void setup() throws InvalidCertificateException {
+        when(certificateService.isTestCertificate(any())).thenReturn(false);
+    }
 
     @Test
     public void sendMessageToRecipientTest() throws Exception {
@@ -82,6 +92,15 @@ public class SendMessageToRecipientResponderImplTest {
         SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
         assertInvocations(times(1), times(1), times(1));
+    }
+
+    @Test
+    public void sendMessageToRecipientOnTestCertificate() throws Exception {
+        when(certificateService.isTestCertificate(any())).thenReturn(true);
+        setupClientResponse(ResultTypeUtil.okResult());
+        SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
+        assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
+        assertInvocations(times(1), times(1), times(0));
     }
 
     @Test
