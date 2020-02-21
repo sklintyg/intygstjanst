@@ -18,15 +18,18 @@
  */
 package se.inera.intyg.intygstjanst.web.service.converter;
 
-import com.google.common.base.Strings;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.google.common.base.Strings;
+
 import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
 import se.inera.intyg.common.fkparent.model.internal.Diagnos;
 import se.inera.intyg.common.lisjp.model.internal.Sjukskrivning;
@@ -92,6 +95,7 @@ public class CertificateToSjukfallCertificateConverter {
             .deleted(certificate.isRevoked())
             .workCapacities(buildWorkCapacitiesFk7263(fkUtlatande))
             .employment(buildFk7263Sysselsattning(fkUtlatande))
+            .testCertificate(certificate.isTestCertificate())
             .build();
     }
 
@@ -146,6 +150,7 @@ public class CertificateToSjukfallCertificateConverter {
                 .filter(Objects::nonNull)
                 .map(s -> s.getTyp().getId())
                 .collect(Collectors.joining(",")) : null)
+            .testCertificate(certificate.isTestCertificate())
             .build();
 
         if (lisjpUtlatandeV1.getDiagnoser().size() > 1) {
