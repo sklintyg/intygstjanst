@@ -18,9 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.rehabstod;
 
-import com.google.common.base.Strings;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.common.base.Strings;
+
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitType;
@@ -32,9 +36,6 @@ import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallCertificateIntygsDataConverter;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsLista;
-
-// CHECKSTYLE:OFF LineLength
-// CHECKSTYLE:ON LineLength
 
 /**
  * Implements TjK for retrieving intygsdata for sjukfall.
@@ -62,18 +63,24 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
             return response;
         }
 
-        String careUnitHsaId = parameters.getEnhetsId().getExtension();
-        String careGiverHsaId = hsaService.getHsaIdForVardgivare(careUnitHsaId);
+        final String careUnitHsaId = parameters.getEnhetsId().getExtension();
+        final String careGiverHsaId = hsaService.getHsaIdForVardgivare(careUnitHsaId);
+        final String personnummer = getPersonnummer(parameters);
+        final int maxDagarSedanAvslut = getMaxDagarSedanAvslut(parameters);
+        final List<String> hsaIdList = getHsaIdList(careUnitHsaId);
 
-        String personnummer = parameters.getPersonId() != null && parameters.getPersonId().getExtension() != null
-            ? parameters.getPersonId().getExtension().trim()
-            : null;
+        final List<SjukfallCertificate> activeSjukfallCertificateForCareUnits =
+            getSjukfallCertificates(careGiverHsaId, hsaIdList, personnummer, maxDagarSedanAvslut);
 
-        int maxDagarSedanAvslut = parameters.getMaxDagarSedanAvslut() != null ? parameters.getMaxDagarSedanAvslut() : 0;
-        List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(careUnitHsaId);
-        hsaIdList.add(careUnitHsaId); // add care unit HSAId to list
+        return getResponse(response, activeSjukfallCertificateForCareUnits);
+    }
 
-        List<SjukfallCertificate> activeSjukfallCertificateForCareUnits;
+    /**
+     * Retrieves list of SjukfallCertificate based on the arguments and making sure that no test certificates are included.
+     */
+    private List<SjukfallCertificate> getSjukfallCertificates(String careGiverHsaId, List<String> hsaIdList, String personnummer,
+        int maxDagarSedanAvslut) {
+        final List<SjukfallCertificate> activeSjukfallCertificateForCareUnits;
         if (!Strings.isNullOrEmpty(personnummer)) {
             Personnummer pnr = Personnummer.createPersonnummer(personnummer)
                 .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
@@ -85,12 +92,10 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
                 .findActiveSjukfallCertificateForCareUnits(careGiverHsaId, hsaIdList, maxDagarSedanAvslut);
         }
 
-        response.setResultCode(ResultCodeEnum.OK);
-        IntygsLista intygsLista = new IntygsLista();
-        intygsLista.getIntygsData()
-            .addAll(new SjukfallCertificateIntygsDataConverter().buildIntygsData(activeSjukfallCertificateForCareUnits));
-        response.setIntygsLista(intygsLista);
-        return response;
+        return activeSjukfallCertificateForCareUnits
+                    .stream()
+                    .filter(sjukfallCertificate -> !sjukfallCertificate.isTestCertificate())
+                    .collect(Collectors.toList());
     }
 
     private boolean hasNoCareUnitId(ListActiveSickLeavesForCareUnitType parameters) {
@@ -98,4 +103,29 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
             || parameters.getEnhetsId().getExtension().trim().length() == 0;
     }
 
+    private String getPersonnummer(ListActiveSickLeavesForCareUnitType parameters) {
+        return parameters.getPersonId() != null && parameters.getPersonId().getExtension() != null
+            ? parameters.getPersonId().getExtension().trim()
+            : null;
+    }
+
+    private int getMaxDagarSedanAvslut(ListActiveSickLeavesForCareUnitType parameters) {
+        return parameters.getMaxDagarSedanAvslut() != null ? parameters.getMaxDagarSedanAvslut() : 0;
+    }
+
+    private List<String> getHsaIdList(String careUnitHsaId) {
+        List<String> hsaIdList = hsaService.getHsaIdForUnderenheter(careUnitHsaId);
+        hsaIdList.add(careUnitHsaId); // add care unit HSAId to list
+        return hsaIdList;
+    }
+
+    private ListActiveSickLeavesForCareUnitResponseType getResponse(ListActiveSickLeavesForCareUnitResponseType response,
+        List<SjukfallCertificate> activeSjukfallCertificateForCareUnits) {
+        response.setResultCode(ResultCodeEnum.OK);
+        IntygsLista intygsLista = new IntygsLista();
+        intygsLista.getIntygsData()
+            .addAll(new SjukfallCertificateIntygsDataConverter().buildIntygsData(activeSjukfallCertificateForCareUnits));
+        response.setIntygsLista(intygsLista);
+        return response;
+    }
 }

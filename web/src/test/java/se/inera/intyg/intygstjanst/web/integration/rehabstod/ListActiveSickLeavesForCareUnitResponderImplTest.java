@@ -29,15 +29,19 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ResultCodeEnum;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
@@ -144,5 +148,31 @@ public class ListActiveSickLeavesForCareUnitResponderImplTest {
         verify(sjukfallCertificateDao, times(1)).findActiveSjukfallCertificateForCareUnits(anyString(), anyList(), anyInt());
         verify(sjukfallCertificateDao, times(0))
             .findActiveSjukfallCertificateForPersonOnCareUnits(anyString(), anyList(), anyString(), anyInt());
+    }
+
+    @Test
+    public void testFilteringOfTestCertificates() {
+        final SjukfallCertificate realSjukfallCertificate = new SjukfallCertificate("realSjukfallCertificateId");
+        final SjukfallCertificate testSjukfallCertificate = new SjukfallCertificate("testSjukfallCertificateId");
+        testSjukfallCertificate.setTestCertificate(true);
+        final List<SjukfallCertificate> sjukfallCertificateList = Arrays.asList(realSjukfallCertificate, testSjukfallCertificate);
+
+        when(hsaService.getHsaIdForVardgivare(CAREUNIT_HSAID)).thenReturn(CAREGIVER_HSAID);
+        when(hsaService.getHsaIdForUnderenheter(CAREUNIT_HSAID)).thenReturn(new ArrayList<>());
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyList(), anyInt()))
+            .thenReturn(sjukfallCertificateList);
+
+        ListActiveSickLeavesForCareUnitType params = new ListActiveSickLeavesForCareUnitType();
+        params.setEnhetsId(hsaId);
+        PersonId patientId = new PersonId();
+        patientId.setExtension(" ");
+        params.setPersonId(patientId);
+
+        ListActiveSickLeavesForCareUnitResponseType responseType = testee.listActiveSickLeavesForCareUnit("", params);
+
+        assertNotNull(responseType);
+        assertEquals(ResultCodeEnum.OK, responseType.getResultCode());
+        assertEquals(1, responseType.getIntygsLista().getIntygsData().size());
+        assertEquals("realSjukfallCertificateId", responseType.getIntygsLista().getIntygsData().get(0).getIntygsId());
     }
 }

@@ -19,9 +19,12 @@
 package se.inera.intyg.intygstjanst.web.integration.rehabstod;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonType;
@@ -54,12 +57,12 @@ public class ListSickLeavesForPersonResponderImpl implements ListSickLeavesForPe
         try {
             Personnummer personnummer = parsePersonnummer(parameters);
 
-            List<SjukfallCertificate> activeSjukfallCertificateForPerson =
-                sjukfallCertificateDao.findSjukfallCertificateForPerson(personnummer.getPersonnummerWithDash());
+            List<SjukfallCertificate> activeSjukfallCertificateForPerson = getSjukfallCertificate(personnummer);
 
             IntygsLista intygsLista = new IntygsLista();
             intygsLista.getIntygsData()
-                .addAll(new SjukfallCertificateIntygsDataConverter().buildIntygsData(activeSjukfallCertificateForPerson));
+                .addAll(new SjukfallCertificateIntygsDataConverter().buildIntygsData(
+                    activeSjukfallCertificateForPerson));
 
             response.setIntygsLista(intygsLista);
             response.setResult(createResultType(ResultCodeEnum.OK, null));
@@ -70,6 +73,16 @@ public class ListSickLeavesForPersonResponderImpl implements ListSickLeavesForPe
         }
 
         return response;
+    }
+
+    /**
+     * Retrieves list of SjukfallCertificate for the patient and making sure that no test certificates are included.
+     */
+    private List<SjukfallCertificate> getSjukfallCertificate(Personnummer personnummer) {
+        return sjukfallCertificateDao.findSjukfallCertificateForPerson(personnummer.getPersonnummerWithDash())
+            .stream()
+            .filter(sjukfallCertificate -> !sjukfallCertificate.isTestCertificate())
+            .collect(Collectors.toList());
     }
 
     private ResultType createResultType(ResultCodeEnum resultCode, String message) {
