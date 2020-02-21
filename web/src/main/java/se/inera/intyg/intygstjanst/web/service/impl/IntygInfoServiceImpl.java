@@ -21,11 +21,13 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
@@ -75,6 +77,8 @@ public class IntygInfoServiceImpl implements IntygInfoService {
             response.setIntygId(certificate.getId());
             response.setIntygType(certificate.getType());
             response.setIntygVersion(certificate.getTypeVersion());
+
+            response.setTestCertificate(certificate.isTestCertificate());
 
             response.setSignedDate(certificate.getSignedDate());
             response.setReceivedDate(certificate.getOriginalCertificate().getReceived());
