@@ -20,15 +20,22 @@ package se.inera.intyg.intygstjanst.web.integration.rehabstod;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ResultCodeEnum;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
 
@@ -64,6 +71,29 @@ public class ListSickLeavesForPersonResponderImplTest {
         ListSickLeavesForPersonResponseType responseType = testee.listSickLeavesForPerson("", params);
         assertNotNull(responseType);
         assertEquals(ResultCodeEnum.OK, responseType.getResult().getResultCode());
+    }
+
+    @Test
+    public void testFilteringOfTestCertificates() {
+        PersonId patientId = new PersonId();
+        patientId.setExtension("191212121212");
+
+        final SjukfallCertificate realSjukfallCertificate = new SjukfallCertificate("realSjukfallCertificateId");
+        final SjukfallCertificate testSjukfallCertificate = new SjukfallCertificate("testSjukfallCertificateId");
+        testSjukfallCertificate.setTestCertificate(true);
+        final List<SjukfallCertificate> sjukfallCertificateList = Arrays.asList(realSjukfallCertificate, testSjukfallCertificate);
+
+        when(sjukfallCertificateDao.findSjukfallCertificateForPerson(anyString())).thenReturn(sjukfallCertificateList);
+
+        ListSickLeavesForPersonType params = new ListSickLeavesForPersonType();
+        params.setPersonId(patientId);
+
+        ListSickLeavesForPersonResponseType responseType = testee.listSickLeavesForPerson("", params);
+
+        assertNotNull(responseType);
+        assertEquals(ResultCodeEnum.OK, responseType.getResult().getResultCode());
+        assertEquals(1, responseType.getIntygsLista().getIntygsData().size());
+        assertEquals("realSjukfallCertificateId", responseType.getIntygsLista().getIntygsData().get(0).getIntygsId());
     }
 
 }

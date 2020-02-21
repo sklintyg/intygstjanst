@@ -139,6 +139,12 @@ public class SjukfallCertificate {
     @JoinColumn(name = "CERTIFICATE_ID")
     private List<SjukfallCertificateWorkCapacity> sjukfallCertificateWorkCapacity;
 
+    /**
+     * If this certificate was registered at a time when the patient had testIndicator-flag.
+     */
+    @Column(name = "TEST_CERTIFICATE", nullable = false, columnDefinition = "TINYINT(1")
+    private boolean testCertificate = false;
+
     private SjukfallCertificate() {
     }
 
@@ -275,5 +281,13 @@ public class SjukfallCertificate {
 
     public void setEmployment(String employment) {
         this.employment = employment;
+    }
+
+    public void setTestCertificate(boolean isTestCertificate) {
+        this.testCertificate = isTestCertificate;
+    }
+
+    public boolean isTestCertificate() {
+        return testCertificate;
     }
 }
