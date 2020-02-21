@@ -35,7 +35,7 @@ import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 public class ListSickleavesForPatientIT extends BaseIntegrationTest {
 
     private static final String INTYG_ID = "listActiveSickleavesForCareUnitITcertificateId1";
-    private static final String PERSON_ID = "201212121212";
+    private static final String PERSON_ID = "190101010101";
 
     @Before
     public void setup() {
