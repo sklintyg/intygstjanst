@@ -100,6 +100,11 @@ public class SjukfallCertificateBuilder {
         return this;
     }
 
+    public SjukfallCertificateBuilder testCertificate(boolean isTestCertificate) {
+        certificate.setTestCertificate(isTestCertificate);
+        return this;
+    }
+
     public SjukfallCertificate build() {
         return certificate;
     }
