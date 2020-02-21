@@ -62,7 +62,10 @@
     "numberOfRecipients": {
       "type": "number"
     },
-    "events":  {
+    "testCertificate": {
+      "type": "boolean"
+    },
+    "events": {
       "type": "array",
       "items": {
         "type": "object",
