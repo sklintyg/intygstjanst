@@ -3,6 +3,5 @@
   "commonVersion": "3.13.0.+",
   "infraVersion": "3.13.0.+",
   "buildArgs": "--refresh-dependencies clean build testReport -PcodeQuality -DgruntColors=false",
-  "tests": [ "restAssuredTest" ],
-  "propagate": [ "minaintyg", "webcert" ]
+  "tests": [ "restAssuredTest" ]
 }
