@@ -69,26 +69,33 @@ dependencies {
     compile "se.inera.intyg.common:ag7804:${commonVersion}"
 
 
-    compile "org.apache.activemq:activemq-spring:${activeMqVersion}"
-    compile "org.springframework:spring-jms:${springVersion}"
-    compile "org.springframework:spring-webmvc:${springVersion}"
-    compile "mysql:mysql-connector-java:${mysqlVersion}"
+    compile "com.sun.activation:javax.activation:${javaxActivationVersion}"
+
+    compile "org.apache.activemq:activemq-spring"
+    compile "org.apache.cxf:cxf-rt-features-logging:${cxfVersion}"
+    compile "org.springframework:spring-jms"
+    compile "org.springframework:spring-webmvc"
+    compile "mysql:mysql-connector-java"
 
     compileOnly "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
-    compileOnly "javax.servlet:servlet-api:${servletApiVersion}"
+    compileOnly "javax.servlet:javax.servlet-api"
 
-    testCompile "org.assertj:assertj-core:${assertjVersion}"
-    testCompile "org.springframework:spring-test:${springVersion}"
-    testCompile "xmlunit:xmlunit:${xmlUnitVersion}"
-    testCompile "com.jayway.restassured:rest-assured:${restassuredVersion}"
-    testCompile "com.jayway.restassured:json-schema-validator:${jsonSchemaValidatorVersion}"
+    testCompile "org.assertj:assertj-core"
+    testCompile "org.springframework:spring-test"
+    testCompile "org.xmlunit:xmlunit-legacy"
+
+    testCompile "io.rest-assured:rest-assured"
+    testCompile "io.rest-assured:json-schema-validator"
+    testCompile "com.sun.xml.bind:jaxb-osgi:2.3.2" // Can remove when rest-assured in BOM > version 4.0
+
+    testCompile "org.hamcrest:hamcrest-library"
     testCompile "org.antlr:ST4:${stAntlr4Version}"
     testCompile "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
 
     // We explicitly declare this as a testRuntime dependency so Restassured tests loads the correct XSD for
     // SetCertificateStatusResponder_1.0.xsd (as it exists in two different schemas)
     testRuntime "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
-    testRuntime "javax.servlet:servlet-api:${servletApiVersion}"
+    testRuntime "javax.servlet:javax.servlet-api"
 
     gretty "se.inera.intyg.refdata:refdata:${refDataVersion}"
 }

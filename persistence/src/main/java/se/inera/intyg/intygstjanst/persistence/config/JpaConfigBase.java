@@ -84,9 +84,9 @@ public abstract class JpaConfigBase {
         return transactionManager;
     }
 
-    @SuppressWarnings("ContextJavaBeanUnresolvedMethodsInspection")
-    @Bean(name = "dataSource", destroyMethod = "shutdown")
-    DataSource dataSource() {
+    //@SuppressWarnings("ContextJavaBeanUnresolvedMethodsInspection")
+    @Bean(name = "dataSource", destroyMethod = "close")
+    HikariDataSource dataSource() {
         LOG.info("Initialize data-source with url: {}", url);
 
         final HikariConfig config = new HikariConfig();

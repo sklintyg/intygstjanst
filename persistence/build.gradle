@@ -6,13 +6,20 @@ jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 dependencies {
     compile "se.inera.intyg.common:common-support:${commonVersion}"
 
-    compile "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:${jpaHibernateVersion}"
-    compile "org.jadira.usertype:usertype.extended:${jadiraUserTypeVersion}"
-    compile "org.liquibase:liquibase-core:${liquibaseVersion}"
-    compile "org.springframework.data:spring-data-jpa:${springDataVersion}"
-    compile "org.springframework:spring-tx:${springVersion}"
-    compile "com.zaxxer:HikariCP-java6:${hikariCPVersion}"
-    compile "com.h2database:h2:${h2Version}"
+    //compile "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:${jpaHibernateVersion}"
 
-    testCompile "org.springframework:spring-test:${springVersion}"
+    // Exclude and import of non-BOM version of Hibernate due to
+    // bug in BOM-version 5.4.12
+    compile ("org.springframework.data:spring-data-jpa") {
+        exclude group: "org.hibernate", module: "hibernate-core"
+    }
+    compile "org.hibernate:hibernate-core:${hibernateVersion}"
+    compile "org.hibernate:hibernate-hikaricp:${hibernateVersion}"
+
+    compile "org.jadira.usertype:usertype.core:${jadiraUserTypeVersion}"
+    compile "org.liquibase:liquibase-core"
+    compile "org.springframework:spring-tx"
+    compile "com.h2database:h2"
+
+    testCompile "org.springframework:spring-test"
 }

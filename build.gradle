@@ -1,6 +1,7 @@
 plugins {
-    id "se.inera.intyg.plugin.common" version "2.0.11" apply false
-    id "org.gretty" version "2.3.1" apply false
+    id "se.inera.intyg.plugin.common" version "3.1.0" apply false
+    id "org.gretty" version "3.0.1" apply false
+    id "io.spring.dependency-management" version "1.0.9.RELEASE"
 }
 
 ext {
@@ -15,29 +16,20 @@ ext {
     rivtaClinicalprocessSchemasVersion = "4.0.5"
     rivtaItintegrationMonitoringSchemasVersion = "1.0.0.5"
 
-    activeMqVersion = "5.13.5"
-    assertjVersion = "3.6.2"
+    cxfVersion = "3.2.4"
     geronimoJmsVersion = "1.1.1"
-    hikariCPVersion = "2.3.5"
-    jadiraUserTypeVersion = "5.0.0.GA"
-    jpaHibernateVersion = "1.0.0.Final"
-    jsonSchemaValidatorVersion = "2.8.0"
-    liquibaseVersion = "3.3.5"
-    restassuredVersion = "2.8.0"
-    servletApiVersion = "2.5"
-    springDataVersion = "1.11.12.RELEASE"
-    springVersion = "4.3.16.RELEASE"
-    stAntlr4Version = "4.0.8"
-    xmlUnitVersion = "1.4"
+    hibernateVersion = "5.3.15.Final" // included because of bug in BOM version 5.4.12
+    jadiraUserTypeVersion = "6.0.1.GA"
+    javaxActivationVersion = "1.2.0"
+    stAntlr4Version = "4.3"
 
-    mockitoVersion = "2.16.0"
-    mysqlVersion = "5.1.46"
-    h2Version = "1.4.196"
+    springbootMavenBomVersion = "2.2.5.RELEASE"
 }
 
 allprojects {
     apply plugin: 'se.inera.intyg.plugin.common'
     apply plugin: 'maven'
+    apply plugin: "io.spring.dependency-management"
 
     repositories {
         mavenLocal()
@@ -50,17 +42,23 @@ allprojects {
         }
     }
 
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:${springbootMavenBomVersion}"
+        }
+    }
+
     dependencies {
         testCompile "se.inera.intyg.refdata:refdata:${refDataVersion}"
         testCompile "junit:junit:4.+"
-        testCompile "org.mockito:mockito-core:${mockitoVersion}"
+        testCompile "org.mockito:mockito-core"
     }
 
     group = 'se.inera.intyg.intygstjanst'
     version = System.properties['buildVersion'] ?: '0-SNAPSHOT'
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = 11
+    targetCompatibility = 11
 
     task createVersionPropertyFile(type: VersionPropertyFileTask)
 

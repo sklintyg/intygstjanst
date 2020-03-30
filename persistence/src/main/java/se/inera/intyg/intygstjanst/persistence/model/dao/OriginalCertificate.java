@@ -19,6 +19,7 @@
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 import javax.persistence.Basic;
@@ -65,7 +66,7 @@ public class OriginalCertificate {
     @Column(name = "DOCUMENT")
     private byte[] document;
 
-    @OneToOne(optional = true, fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CERTIFICATE_ID")
     private Certificate certificate;
 
@@ -108,19 +109,11 @@ public class OriginalCertificate {
             return new byte[0];
         }
 
-        try {
-            return data.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new ModelException("Failed to convert String to bytes!", e);
-        }
+        return data.getBytes(StandardCharsets.UTF_8);
     }
 
     private String fromBytes(byte[] bytes) {
-        try {
-            return new String(bytes, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new ModelException("Failed to convert bytes to String!", e);
-        }
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     public Certificate getCertificate() {

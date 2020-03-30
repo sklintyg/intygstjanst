@@ -28,7 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import javax.jms.JMSException;
@@ -217,6 +217,6 @@ public class StatisticsServiceImplTest {
 
         assertFalse(created);
         verify(template, only()).send(any(Queue.class), any(MessageCreator.class));
-        verifyZeroInteractions(monitoringLogService);
+        verifyNoInteractions(monitoringLogService);
     }
 }
