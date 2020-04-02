@@ -48,9 +48,10 @@ public class SendMessageToCareStorage {
     }
 
     public Set<MessageKey> getMessagesIdsForLogicalAddress(String logicalAddress) {
-        return messages.keySet().stream().
-            filter(k -> k.logicalAddress.equals(logicalAddress)).
-            collect(Collectors.toSet());
+        return messages.keySet()
+            .stream().filter(k -> k.logicalAddress
+                .equals(logicalAddress))
+            .collect(Collectors.toSet());
     }
 
     public List<String> getMessagesForCertificateId(String certificateId) {
