@@ -18,6 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.io.Resources;
@@ -50,6 +54,7 @@ import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
+import se.inera.intyg.infra.testdata.TestDataTransformer;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -72,6 +77,9 @@ public class CertificateResource {
 
     @Autowired
     private IntygModuleRegistry moduleRegistry;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     public void setTxManager(PlatformTransactionManager txManager) {
@@ -192,24 +200,7 @@ public class CertificateResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/")
     public Response insertCertificate(final CertificateHolder certificateHolder) {
-        return transactionTemplate.execute(status -> {
-            Certificate certificate = ConverterUtil.toCertificate(certificateHolder);
-            try {
-                LOGGER.info("insert certificate {} ({})", certificate.getId(), certificate.getType());
-                OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), getXmlBody(certificateHolder),
-                    certificate);
-                ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
-                final Utlatande utlatande = moduleApi.getUtlatandeFromXml(originalCertificate.getDocument());
-                certificate.setAdditionalInfo(moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande)));
-                entityManager.persist(certificate);
-                entityManager.persist(originalCertificate);
-                return Response.ok().build();
-            } catch (Exception e) {
-                status.setRollbackOnly();
-                LOGGER.warn("insert certificate {} ({}) failed", certificate.getId(), certificate.getType(), e);
-                return Response.serverError().build();
-            }
-        });
+        return insertCertificatetoDB(certificateHolder);
     }
 
     @DELETE
@@ -274,11 +265,40 @@ public class CertificateResource {
         });
     }
 
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/testdata/")
+    public Response insertTestDataCertificate(CertificateWrapper cert) throws JsonProcessingException {
+        JsonNode intyg = TestDataTransformer.transformIntyg(cert.getCertificate());
+        final CertificateHolder certificateHolder = objectMapper.treeToValue(intyg, CertificateHolder.class);
+
+        return insertCertificatetoDB(certificateHolder);
+    }
+
+    private Response insertCertificatetoDB(CertificateHolder certificateHolder) {
+        return transactionTemplate.execute(status -> {
+            Certificate certificate = ConverterUtil.toCertificate(certificateHolder);
+            try {
+                LOGGER.info("insert certificate {} ({})", certificate.getId(), certificate.getType());
+                OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), getXmlBody(certificateHolder),
+                    certificate);
+                ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+                final Utlatande utlatande = moduleApi.getUtlatandeFromXml(originalCertificate.getDocument());
+                certificate.setAdditionalInfo(moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande)));
+                entityManager.persist(certificate);
+                entityManager.persist(originalCertificate);
+                return Response.ok().build();
+            } catch (Exception e) {
+                status.setRollbackOnly();
+                LOGGER.warn("insert certificate {} ({}) failed", certificate.getId(), certificate.getType(), e);
+                return Response.serverError().build();
+            }
+        });
+    }
+
     private boolean parseApprovalStatus(String approvalStatus) {
-        if (approvalStatus != null && approvalStatus.equals(ApprovalStatusType.YES.value())) {
-            return true;
-        }
-        return false;
+        return approvalStatus != null && approvalStatus.equals(ApprovalStatusType.YES.value());
     }
 
     private String getXmlBody(CertificateHolder certificateHolder) throws IOException {
@@ -294,6 +314,19 @@ public class CertificateResource {
                 .replace("CAREGIVER_ID", certificateHolder.getCareGiverId())
                 .replace("DOCTOR_NAME", certificateHolder.getSigningDoctorName())
                 .replace("SIGNED_DATE", certificateHolder.getSignedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+        }
+    }
+
+    private static class CertificateWrapper
+    {
+        public JsonNode certificate;
+
+        public JsonNode getCertificate() {
+            return certificate;
+        }
+
+        public void setCertificate(JsonNode certificate) {
+            this.certificate = certificate;
         }
     }
 
