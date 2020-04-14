@@ -8,13 +8,7 @@ dependencies {
 
     //compile "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:${jpaHibernateVersion}"
 
-    // Exclude and import of non-BOM version of Hibernate due to
-    // bug in BOM-version 5.4.12
-    compile ("org.springframework.data:spring-data-jpa") {
-        exclude group: "org.hibernate", module: "hibernate-core"
-    }
-    compile "org.hibernate:hibernate-core:${hibernateVersion}"
-    compile "org.hibernate:hibernate-hikaricp:${hibernateVersion}"
+    compile "org.springframework.data:spring-data-jpa"
 
     compile "org.jadira.usertype:usertype.core:${jadiraUserTypeVersion}"
     compile "org.liquibase:liquibase-core"
