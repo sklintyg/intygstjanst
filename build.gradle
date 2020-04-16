@@ -67,6 +67,13 @@ allprojects {
             }
         }
 
+        compile "javax.annotation:javax.annotation-api"
+        compile "jakarta.xml.bind:jakarta.xml.bind-api"
+        compile "jakarta.xml.ws:jakarta.xml.ws-api"
+
+        // testCompile "org.glassfish.jaxb:jaxb-runtime"
+        compile "com.sun.xml.messaging.saaj:saaj-impl"
+
         testCompile "se.inera.intyg.refdata:refdata:${refDataVersion}"
         testCompile "junit:junit:4.+"
         testCompile "org.mockito:mockito-core"
