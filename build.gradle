@@ -21,6 +21,7 @@ ext {
     hibernateVersion = "5.3.15.Final" // included because of bug in BOM version 5.4.12
     jadiraUserTypeVersion = "6.0.1.GA"
     javaxActivationVersion = "1.2.0"
+    jakartaJwsApiVersion = "2.1.0"
     stAntlr4Version = "4.3"
 
     springbootMavenBomVersion = "2.2.5.RELEASE"
@@ -70,8 +71,7 @@ allprojects {
         compile "javax.annotation:javax.annotation-api"
         compile "jakarta.xml.bind:jakarta.xml.bind-api"
         compile "jakarta.xml.ws:jakarta.xml.ws-api"
-
-        // testCompile "org.glassfish.jaxb:jaxb-runtime"
+        compile "jakarta.jws:jakarta.jws-api:${jakartaJwsApiVersion}"
         compile "com.sun.xml.messaging.saaj:saaj-impl"
 
         testCompile "se.inera.intyg.refdata:refdata:${refDataVersion}"
