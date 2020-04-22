@@ -21,7 +21,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import javax.jms.Queue;
 import org.junit.Test;
@@ -61,7 +61,7 @@ public class InternalNotificationServiceImplTest {
     @Test
     public void testDoesNotNotifiyWhenVardIsSkickadAv() {
         testee.notifyCareIfSentByCitizen(buildCert(), buildSkickadAv(true));
-        verifyZeroInteractions(jmsTemplate);
+        verifyNoInteractions(jmsTemplate);
     }
 
     private SendCertificateToRecipientType.SkickatAv buildSkickadAv(boolean isSentByVard) {

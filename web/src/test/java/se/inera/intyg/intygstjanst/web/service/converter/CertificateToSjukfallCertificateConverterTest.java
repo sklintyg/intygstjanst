@@ -96,10 +96,10 @@ public class CertificateToSjukfallCertificateConverterTest {
         assertEquals(START_DATE_25, sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(3).getFromDate());
         assertEquals(END_DATE_25, sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(3).getToDate());
 
-        assertEquals(new Integer(100), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(0).getCapacityPercentage());
-        assertEquals(new Integer(75), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(1).getCapacityPercentage());
-        assertEquals(new Integer(50), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(2).getCapacityPercentage());
-        assertEquals(new Integer(25), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(3).getCapacityPercentage());
+        assertEquals(Integer.valueOf(100), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(0).getCapacityPercentage());
+        assertEquals(Integer.valueOf(75), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(1).getCapacityPercentage());
+        assertEquals(Integer.valueOf(50), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(2).getCapacityPercentage());
+        assertEquals(Integer.valueOf(25), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(3).getCapacityPercentage());
     }
 
     @Test
@@ -131,10 +131,10 @@ public class CertificateToSjukfallCertificateConverterTest {
         assertEquals(START_DATE_25, sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(3).getFromDate());
         assertEquals(END_DATE_25, sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(3).getToDate());
 
-        assertEquals(new Integer(100), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(0).getCapacityPercentage());
-        assertEquals(new Integer(75), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(1).getCapacityPercentage());
-        assertEquals(new Integer(50), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(2).getCapacityPercentage());
-        assertEquals(new Integer(25), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(3).getCapacityPercentage());
+        assertEquals(Integer.valueOf(100), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(0).getCapacityPercentage());
+        assertEquals(Integer.valueOf(75), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(1).getCapacityPercentage());
+        assertEquals(Integer.valueOf(50), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(2).getCapacityPercentage());
+        assertEquals(Integer.valueOf(25), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(3).getCapacityPercentage());
 
     }
 
@@ -162,7 +162,7 @@ public class CertificateToSjukfallCertificateConverterTest {
         assertEquals(1, sjukfallCertificate.getSjukfallCertificateWorkCapacity().size());
         assertEquals(START_DATE_100, sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(0).getFromDate());
         assertEquals(END_DATE_100, sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(0).getToDate());
-        assertEquals(new Integer(100), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(0).getCapacityPercentage());
+        assertEquals(Integer.valueOf(100), sjukfallCertificate.getSjukfallCertificateWorkCapacity().get(0).getCapacityPercentage());
     }
 
     @Test

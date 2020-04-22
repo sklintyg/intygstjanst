@@ -18,7 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.vardensintyg;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
@@ -30,9 +30,9 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.response.ValidatableResponse;
+import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.response.ValidatableResponse;
 
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 

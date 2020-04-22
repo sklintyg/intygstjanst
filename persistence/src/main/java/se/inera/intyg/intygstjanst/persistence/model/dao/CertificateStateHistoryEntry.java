@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 import java.time.LocalDateTime;
 
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -51,7 +52,7 @@ public class CertificateStateHistoryEntry {
 
     private static final Ordering<LocalDateTime> ORDERING_DESC_TIME_NULL_LAST = Ordering.<LocalDateTime>natural().reverse().nullsFirst();
 
-    static final Ordering<CertificateStateHistoryEntry> BY_TIMESTAMP_DESC = new Ordering<CertificateStateHistoryEntry>() {
+    static final Ordering<CertificateStateHistoryEntry> BY_TIMESTAMP_DESC = new Ordering<>() {
         @Override
         public int compare(@Nonnull CertificateStateHistoryEntry left, @Nonnull CertificateStateHistoryEntry right) {
             return ORDERING_DESC_TIME_NULL_LAST.compare(left.timestamp, right.timestamp);
@@ -65,11 +66,7 @@ public class CertificateStateHistoryEntry {
     public CertificateStateHistoryEntry(String target, CertificateState state, LocalDateTime timestamp) {
         this.target = target;
         this.state = state;
-        if (timestamp != null) {
-            this.timestamp = timestamp;
-        } else {
-            this.timestamp = LocalDateTime.now();
-        }
+        this.timestamp = Objects.requireNonNullElseGet(timestamp, LocalDateTime::now);
     }
 
     public String getTarget() {

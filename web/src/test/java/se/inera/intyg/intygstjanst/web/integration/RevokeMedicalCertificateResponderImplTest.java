@@ -132,8 +132,8 @@ public class RevokeMedicalCertificateResponderImplTest {
 
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
     }
 
     @Test
@@ -159,8 +159,8 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals("No certificate 'intygs-id-1234567890' found to revoke for patient '" + PERSONNUMMER.getPersonnummerHash() + "'.",
             response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
     }
 
     @Test
@@ -171,8 +171,8 @@ public class RevokeMedicalCertificateResponderImplTest {
 
         assertEquals(ResultCodeEnum.INFO, response.getResult().getResultCode());
         assertEquals("Certificate 'intygs-id-1234567890' is already revoked.", response.getResult().getInfoText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
     }
 
     @Test
@@ -184,9 +184,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No Patient element found!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -198,9 +198,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No Lakarutlatande Id found!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -212,9 +212,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No Lakarutlatande Id found!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -227,9 +227,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: Wrong o.i.d. for Patient Id! Should be 1.2.752.129.2.1.3.1 or 1.2.752.129.2.1.3.3",
             response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -242,9 +242,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: Wrong format for person-id! Valid format is YYYYMMDD-XXXX or YYYYMMDD+XXXX.",
             response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -257,9 +257,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: Wrong format for person-id! Valid format is YYYYMMDD-XXXX or YYYYMMDD+XXXX.",
             response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -297,9 +297,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No signeringstidpunkt found!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -311,9 +311,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No vardReferens found!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -325,9 +325,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No avsantTidpunkt found!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -339,9 +339,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No vardAdress element found!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -353,9 +353,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No SkapadAvHosPersonal element found!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -368,9 +368,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: Wrong o.i.d. for personalId! Should be 1.2.752.129.2.1.4.1",
             response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -382,9 +382,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No personal-id found!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -396,9 +396,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No enhet element found!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -411,9 +411,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No enhets-id found!\n" +
             "Wrong o.i.d. for enhetsId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -426,9 +426,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: Wrong o.i.d. for enhetsId! Should be 1.2.752.129.2.1.4.1",
             response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -440,9 +440,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No enhets-id found!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -454,9 +454,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No enhetsnamn found!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -468,9 +468,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No vardgivare element found!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -483,9 +483,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No vardgivare-id found!\n" +
             "Wrong o.i.d. for vardgivareId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -498,9 +498,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: Wrong o.i.d. for vardgivareId! Should be 1.2.752.129.2.1.4.1",
             response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -512,9 +512,9 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No vardgivare-id found!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 
     @Test
@@ -526,8 +526,8 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals("Validation Error(s) found: No vardgivarenamn found!", response.getResult().getErrorText());
-        Mockito.verifyZeroInteractions(statisticsService);
-        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-        Mockito.verifyZeroInteractions(certificateService);
+        Mockito.verifyNoInteractions(statisticsService);
+        Mockito.verifyNoInteractions(sjukfallCertificateService);
+        Mockito.verifyNoInteractions(certificateService);
     }
 }

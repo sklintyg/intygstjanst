@@ -23,7 +23,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ERROR;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
@@ -127,7 +127,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService).getPrimaryRecipientFkassa();
         verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
-        verifyZeroInteractions(statisticsService);
+        verifyNoInteractions(statisticsService);
     }
 
     @Test
@@ -144,7 +144,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
-        verifyZeroInteractions(statisticsService);
+        verifyNoInteractions(statisticsService);
     }
 
     @Test
@@ -160,7 +160,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService).getPrimaryRecipientFkassa();
         verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
-        verifyZeroInteractions(statisticsService);
+        verifyNoInteractions(statisticsService);
     }
 
     @Test
@@ -177,7 +177,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService).getPrimaryRecipientFkassa();
         verify(certificateService).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
-        verifyZeroInteractions(statisticsService);
+        verifyNoInteractions(statisticsService);
     }
 
     @Test
@@ -192,7 +192,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
-        verifyZeroInteractions(statisticsService);
+        verifyNoInteractions(statisticsService);
     }
 
     @Test
@@ -207,7 +207,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
-        verifyZeroInteractions(statisticsService);
+        verifyNoInteractions(statisticsService);
     }
 
     @Test
@@ -222,7 +222,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
-        verifyZeroInteractions(statisticsService);
+        verifyNoInteractions(statisticsService);
     }
 
     @Test
@@ -238,7 +238,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
-        verifyZeroInteractions(statisticsService);
+        verifyNoInteractions(statisticsService);
     }
 
     @Test
@@ -254,7 +254,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
-        verifyZeroInteractions(statisticsService);
+        verifyNoInteractions(statisticsService);
     }
 
     @Test
@@ -270,7 +270,7 @@ public class SendMedicalCertificateResponderImplTest {
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();
         verify(certificateService, never()).sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID);
-        verifyZeroInteractions(statisticsService);
+        verifyNoInteractions(statisticsService);
     }
 
     @Test

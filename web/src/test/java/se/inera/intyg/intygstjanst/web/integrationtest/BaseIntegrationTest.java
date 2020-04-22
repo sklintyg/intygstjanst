@@ -21,7 +21,7 @@ package se.inera.intyg.intygstjanst.web.integrationtest;
 import org.junit.After;
 import org.junit.Before;
 
-import com.jayway.restassured.RestAssured;
+import io.restassured.RestAssured;
 
 /**
  * Base class for REST / SOAP in-container tests for Intygstjänsten.

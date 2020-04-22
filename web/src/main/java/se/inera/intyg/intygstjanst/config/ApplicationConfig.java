@@ -21,9 +21,10 @@ package se.inera.intyg.intygstjanst.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
 import org.apache.cxf.Bus;
-import org.apache.cxf.feature.LoggingFeature;
+import org.apache.cxf.ext.logging.LoggingFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -84,6 +85,7 @@ public class ApplicationConfig implements TransactionManagementConfigurer {
         return loggingFeature;
     }
 
+    @Nonnull
     @Override
     public PlatformTransactionManager annotationDrivenTransactionManager() {
         return transactionManager;

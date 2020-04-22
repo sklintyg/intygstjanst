@@ -30,7 +30,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
@@ -503,9 +503,9 @@ public class CertificateServiceImplTest {
             assertTrue(e.getCause() instanceof ModuleNotFoundException);
             verify(certificateDao).store(any(Certificate.class));
             verify(monitoringLogService).logCertificateRegistered(CERTIFICATE_ID, certificateType, "enhet-1");
-            verifyZeroInteractions(moduleApi);
-            verifyZeroInteractions(statisticsService);
-            verifyZeroInteractions(sjukfallCertificateService);
+            verifyNoInteractions(moduleApi);
+            verifyNoInteractions(statisticsService);
+            verifyNoInteractions(sjukfallCertificateService);
         }
     }
 
@@ -530,8 +530,8 @@ public class CertificateServiceImplTest {
             assertTrue(e.getCause() instanceof ModuleException);
             verify(certificateDao).store(any(Certificate.class));
             verify(monitoringLogService).logCertificateRegistered(CERTIFICATE_ID, certificateType, "enhet-1");
-            verifyZeroInteractions(statisticsService);
-            verifyZeroInteractions(sjukfallCertificateService);
+            verifyNoInteractions(statisticsService);
+            verifyNoInteractions(sjukfallCertificateService);
         }
     }
 

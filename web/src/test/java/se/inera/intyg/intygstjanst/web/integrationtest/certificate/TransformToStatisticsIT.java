@@ -18,7 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -32,16 +32,16 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.oclc.purl.dsdl.svrl.SchematronOutputType;
+import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Charsets;
 import com.helger.schematron.svrl.SVRLHelper;
 import com.helger.schematron.xslt.SchematronResourceSCH;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.xml.XmlPath;
+import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.http.ContentType;
+import io.restassured.path.xml.XmlPath;
 
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
