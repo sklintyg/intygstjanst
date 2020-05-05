@@ -28,7 +28,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -102,9 +102,9 @@ public class IntygInfoServiceImplTest {
         Optional<ItIntygInfo> intygInfo = testee.getIntygInfo("not_found");
 
         assertFalse(intygInfo.isPresent());
-        verifyZeroInteractions(recipientService);
-        verifyZeroInteractions(moduleRegistry);
-        verifyZeroInteractions(relationService);
+        verifyNoInteractions(recipientService);
+        verifyNoInteractions(moduleRegistry);
+        verifyNoInteractions(relationService);
     }
 
     @Test

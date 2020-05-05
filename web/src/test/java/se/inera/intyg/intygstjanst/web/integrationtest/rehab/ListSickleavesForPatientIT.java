@@ -18,7 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.rehab;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
@@ -26,8 +26,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
+import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
 
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;

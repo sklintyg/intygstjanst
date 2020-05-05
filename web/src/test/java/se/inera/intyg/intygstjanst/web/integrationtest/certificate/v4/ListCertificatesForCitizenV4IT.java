@@ -18,8 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate.v4;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static io.restassured.RestAssured.given;
+import static io.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertTrue;
 
@@ -38,9 +38,9 @@ import org.stringtemplate.v4.STGroupFile;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.response.Response;
+import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.response.Response;
 
 import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.BodyExtractorFilter;

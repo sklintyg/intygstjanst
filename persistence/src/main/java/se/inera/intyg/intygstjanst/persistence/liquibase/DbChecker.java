@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import liquibase.LabelExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,7 @@ public class DbChecker {
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(connection);
             Liquibase liquibase = new Liquibase(script, new ClassLoaderResourceAccessor(), database);
             LOG.info(database.getConnection().getURL());
-            List<ChangeSet> changeSets = liquibase.listUnrunChangeSets(null);
+            List<ChangeSet> changeSets = liquibase.listUnrunChangeSets(null, new LabelExpression());
             if (!changeSets.isEmpty()) {
                 StringBuilder errors = new StringBuilder();
                 for (ChangeSet changeSet : changeSets) {

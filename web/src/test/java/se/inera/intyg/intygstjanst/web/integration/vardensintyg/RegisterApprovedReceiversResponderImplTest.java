@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -50,7 +50,6 @@ import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
-;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterApprovedReceiversResponderImplTest {
@@ -123,8 +122,8 @@ public class RegisterApprovedReceiversResponderImplTest {
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, req);
 
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
-        verifyZeroInteractions(receiverService);
-        verifyZeroInteractions(monitoringLogService);
+        verifyNoInteractions(receiverService);
+        verifyNoInteractions(monitoringLogService);
     }
 
     @Test
@@ -134,9 +133,9 @@ public class RegisterApprovedReceiversResponderImplTest {
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, req);
 
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
-        verifyZeroInteractions(receiverService);
+        verifyNoInteractions(receiverService);
 
-        verifyZeroInteractions(monitoringLogService);
+        verifyNoInteractions(monitoringLogService);
     }
 
     @Test
@@ -146,8 +145,8 @@ public class RegisterApprovedReceiversResponderImplTest {
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, req);
 
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
-        verifyZeroInteractions(receiverService);
-        verifyZeroInteractions(monitoringLogService);
+        verifyNoInteractions(receiverService);
+        verifyNoInteractions(monitoringLogService);
     }
 
     @Test
@@ -155,8 +154,8 @@ public class RegisterApprovedReceiversResponderImplTest {
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq(""));
 
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
-        verifyZeroInteractions(receiverService);
-        verifyZeroInteractions(monitoringLogService);
+        verifyNoInteractions(receiverService);
+        verifyNoInteractions(monitoringLogService);
     }
 
     @Test
@@ -165,8 +164,8 @@ public class RegisterApprovedReceiversResponderImplTest {
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq("OKAND"));
 
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
-        verifyZeroInteractions(receiverService);
-        verifyZeroInteractions(monitoringLogService);
+        verifyNoInteractions(receiverService);
+        verifyNoInteractions(monitoringLogService);
     }
 
     private RegisterApprovedReceiversType buildReq(String... receivers) {

@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -156,7 +156,7 @@ public class CertificateSenderServiceImplTest {
     @Test
     public void testSendWithDefaultRecipient() throws ModuleException {
         senderService.sendCertificate(certificate, null);
-        verify(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_DEFAULT_LOGICALADDRESS), Mockito.isNull(String.class));
+        verify(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_DEFAULT_LOGICALADDRESS), Mockito.isNull());
     }
 
     @Test(expected = ServerException.class)
@@ -196,7 +196,7 @@ public class CertificateSenderServiceImplTest {
         revokeData.setMeddelande(meddelande);
         senderService.sendCertificateRevocation(certificate, RECIPIENT_ID, revokeData);
 
-        verifyZeroInteractions(revokeMedicalCertificateResponderInterface);
+        verifyNoInteractions(revokeMedicalCertificateResponderInterface);
         verify(monitoringLogService).logCertificateRevokeSent(anyString(), anyString(), anyString(), anyString());
         ArgumentCaptor<AttributedURIType> uriCaptor = ArgumentCaptor.forClass(AttributedURIType.class);
         ArgumentCaptor<SendMedicalCertificateQuestionType> requestCaptor = ArgumentCaptor
@@ -219,7 +219,7 @@ public class CertificateSenderServiceImplTest {
         revokeData.setLakarutlatande(new LakarutlatandeEnkelType());
         senderService.sendCertificateRevocation(certificate, RECIPIENT_ID, revokeData);
 
-        verifyZeroInteractions(revokeMedicalCertificateResponderInterface);
+        verifyNoInteractions(revokeMedicalCertificateResponderInterface);
         verify(monitoringLogService).logCertificateRevokeSent(anyString(), anyString(), anyString(), anyString());
         ArgumentCaptor<AttributedURIType> uriCaptor = ArgumentCaptor.forClass(AttributedURIType.class);
         ArgumentCaptor<SendMedicalCertificateQuestionType> requestCaptor = ArgumentCaptor
@@ -256,7 +256,7 @@ public class CertificateSenderServiceImplTest {
         revokeData.getLakarutlatande().setLakarutlatandeId(CERTIFICATE_ID);
         senderService.sendCertificateRevocation(certificate, nonFkRecipient, revokeData);
 
-        verifyZeroInteractions(sendMedicalCertificateQuestionResponderInterface);
+        verifyNoInteractions(sendMedicalCertificateQuestionResponderInterface);
         verify(monitoringLogService).logCertificateRevokeSent(anyString(), anyString(), anyString(), anyString());
         ArgumentCaptor<AttributedURIType> uriCaptor = ArgumentCaptor.forClass(AttributedURIType.class);
         ArgumentCaptor<RevokeMedicalCertificateRequestType> requestCaptor = ArgumentCaptor

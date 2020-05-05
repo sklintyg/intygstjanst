@@ -32,6 +32,7 @@ import static se.inera.intyg.common.support.model.CertificateState.SENT;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -344,9 +345,9 @@ public class CertificateDaoImplTest extends TestSupport {
         Certificate certificate = buildCertificate();
         entityManager.persist(certificate);
 
-        LocalDateTime lastMonth = LocalDateTime.now().minusWeeks(4);
-        LocalDateTime lastWeek = LocalDateTime.now().minusWeeks(1);
-        LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
+        LocalDateTime lastMonth = LocalDateTime.now().minusWeeks(4).truncatedTo(ChronoUnit.MICROS);
+        LocalDateTime lastWeek = LocalDateTime.now().minusWeeks(1).truncatedTo(ChronoUnit.MICROS);
+        LocalDateTime yesterday = LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MICROS);
 
         certificateDao.updateStatus(CERTIFICATE_ID, CIVIC_REGISTRATION_NUMBER, DELETED, "FKASSA", lastWeek);
         certificateDao.updateStatus(CERTIFICATE_ID, CIVIC_REGISTRATION_NUMBER, SENT, "FKASSA", lastMonth);

@@ -19,7 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.integrationtest.certificate;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -31,7 +31,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.jayway.restassured.http.ContentType;
+import io.restassured.http.ContentType;
 
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.intygstjanst.web.integration.CitizenController.RequestObject;

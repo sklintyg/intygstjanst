@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
 
@@ -72,7 +72,7 @@ public class SjukfallCertificateServiceImplTest {
         Certificate certificate = getFactoryInstance().buildCert("other");
         certificate.setType("other");
         testee.created(certificate);
-        verifyZeroInteractions(sjukfallCertificateDao);
+        verifyNoInteractions(sjukfallCertificateDao);
     }
 
     @Test

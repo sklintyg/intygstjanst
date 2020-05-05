@@ -20,12 +20,12 @@ package se.inera.intyg.intygstjanst.web.integrationtest;
 
 import java.util.Map;
 
-import com.jayway.restassured.builder.ResponseBuilder;
-import com.jayway.restassured.filter.Filter;
-import com.jayway.restassured.filter.FilterContext;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.FilterableRequestSpecification;
-import com.jayway.restassured.specification.FilterableResponseSpecification;
+import io.restassured.builder.ResponseBuilder;
+import io.restassured.filter.Filter;
+import io.restassured.filter.FilterContext;
+import io.restassured.response.Response;
+import io.restassured.specification.FilterableRequestSpecification;
+import io.restassured.specification.FilterableResponseSpecification;
 
 public class BodyExtractorFilter implements Filter {
 
