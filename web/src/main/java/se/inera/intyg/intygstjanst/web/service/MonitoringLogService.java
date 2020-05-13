@@ -51,4 +51,11 @@ public interface MonitoringLogService {
     void logSendMessageToRecipient(String messageId, String recipient);
 
     void logApprovedReceiversRegistered(String receivers, String intygsId);
+
+    /**
+     * Log that the test certificate has been erased.
+     * @param certificateId Id of the certificate.
+     * @param careUnit  Care unit from which the certificate was issued from
+     */
+    void logTestCertificateErased(String certificateId, String careUnit);
 }

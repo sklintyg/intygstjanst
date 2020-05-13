@@ -84,6 +84,16 @@ public class RelationDaoImpl implements RelationDao {
         }
     }
 
+    @Override
+    public void eraseTestCertificates(List<String> ids) {
+        for (String id: ids) {
+            final List<Relation> relationList = getGraph(id);
+            for (Relation relation: relationList) {
+                entityManager.remove(relation);
+            }
+        }
+    }
+
     /**
      * Starting with a given intyg, builds a graph of descendants.
      */

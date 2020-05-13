@@ -40,4 +40,10 @@ public interface RelationDao {
      * @return The parent relation (e.g. relation that points at the Certificate the identified certificate originated from.
      */
     Optional<Relation> getParentRelation(String intygsId);
+
+    /**
+     * Erase any data related to test certificates passed as ids.
+     * @param ids   Certificate ids.
+     */
+    void eraseTestCertificates(List<String> ids);
 }

@@ -62,4 +62,11 @@ public class ApprovedReceiverDaoImpl implements ApprovedReceiverDao {
     public void store(ApprovedReceiver approvedReceiver) {
         entityManager.persist(approvedReceiver);
     }
+
+    @Override
+    public void eraseTestCertificates(List<String> ids) {
+        for (String id: ids) {
+            clearApprovedReceiversForCertificate(id);
+        }
+    }
 }

@@ -111,4 +111,17 @@ public interface CertificateDao {
      */
     void removeCertificatesDeletedByCareGiver(Personnummer civicRegistrationNumber);
 
+    /**
+     * Find test certificates with signed dates within passed date/time interval.
+     * @param from  From datetime. Can be null.
+     * @param to    To datetime. Can be null.
+     * @return  List of matching test certificates.
+     */
+    List<Certificate> findTestCertificates(LocalDateTime from, LocalDateTime to);
+
+    /**
+     * Erase any data related to test certificates passed as ids.
+     * @param ids   Certificate ids.
+     */
+    void eraseTestCertificates(List<String> ids);
 }

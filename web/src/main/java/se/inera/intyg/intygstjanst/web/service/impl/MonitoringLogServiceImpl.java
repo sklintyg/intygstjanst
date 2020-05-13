@@ -108,6 +108,11 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
         logEvent(MonitoringEvent.APPROVED_RECEIVER_REGISTERED, receivers, intygsId);
     }
 
+    @Override
+    public void logTestCertificateErased(String certificateId, String careUnit) {
+        logEvent(MonitoringEvent.TEST_CERTIFICATE_ERASED, certificateId, careUnit);
+    }
+
     private void logEvent(MonitoringEvent logEvent, Object... logMsgArgs) {
 
         StringBuilder logMsg = new StringBuilder();
@@ -131,7 +136,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
         STATISTICS_MESSAGE_SENT("Message with topic '{}' for certificate '{}' - sent to statistics"),
         SEND_MESSAGE_TO_CARE_RECEIVED("Message with id '{}', care unit recipient '{}' - was received and forwarded to its recipient."),
         SEND_MESSAGE_TO_RECIPIENT("Message with id '{}' sent to recipient '{}'"),
-        APPROVED_RECEIVER_REGISTERED("Approved receiver '{}' registered for certificate '{}'");
+        APPROVED_RECEIVER_REGISTERED("Approved receiver '{}' registered for certificate '{}'"),
+        TEST_CERTIFICATE_ERASED("Test certificate '{}' on care unit '{}' was erased");
 
         private final String msg;
 
