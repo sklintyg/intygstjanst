@@ -32,6 +32,7 @@ import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.web.service.RelationService;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.ObjectFactory;
@@ -58,6 +59,9 @@ public class TestDataResource {
 
     @Autowired
     private SjukfallCertificateService sjukfallCertificateService;
+
+    @Autowired
+    private RelationService relationService;
 
     @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
     private EntityManager entityManager;
@@ -87,6 +91,14 @@ public class TestDataResource {
                         entityManager.remove(certificate.getOriginalCertificate());
                     }
                     entityManager.remove(certificate);
+                }
+
+                // Also delete any Relation
+                List<se.inera.intyg.intygstjanst.persistence.model.dao.Relation> relations = entityManager
+                    .createQuery("SELECT r FROM Relation r",
+                        se.inera.intyg.intygstjanst.persistence.model.dao.Relation.class).getResultList();
+                for (se.inera.intyg.intygstjanst.persistence.model.dao.Relation relation : relations) {
+                    entityManager.remove(relation);
                 }
 
                 // Also delete any SjukfallCertificates
@@ -134,6 +146,14 @@ public class TestDataResource {
                     certificate);
 
                 certificate.setOriginalCertificate(originalCertificate);
+
+                if (intyg.getRelation() != null) {
+                    Relation rel = intyg.getRelation().get(0);
+                    relationService.storeRelation(
+                        new se.inera.intyg.intygstjanst.persistence.model.dao.Relation(certificate.getId(),
+                            rel.getIntygsId().getExtension(),
+                            rel.getTyp().getCode(), LocalDateTime.now()));
+                }
 
                 entityManager.persist(certificate);
                 entityManager.persist(originalCertificate);
