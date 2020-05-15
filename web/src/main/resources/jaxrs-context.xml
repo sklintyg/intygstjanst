@@ -64,6 +64,8 @@
         <ref bean="sjukfallCertBean" />
         <ref bean="fkBean" />
         <ref bean="statisticsServiceBean" />
+
+        <ref bean="testDataBean" />
       </jaxrs:serviceBeans>
       <jaxrs:providers>
         <ref bean="jacksonJsonProvider" />
@@ -81,6 +83,10 @@
       <property name="txManager" ref="transactionManager"/>
     </bean>
     <bean id="fkBean" class="se.inera.intyg.intygstjanst.web.integration.stub.FkStubResource" />
+
+    <bean id="testDataBean" class="se.inera.intyg.intygstjanst.web.integration.testdata.TestDataResource">
+      <property name="txManager" ref="transactionManager"/>
+    </bean>
   </beans>
 
 </beans>
