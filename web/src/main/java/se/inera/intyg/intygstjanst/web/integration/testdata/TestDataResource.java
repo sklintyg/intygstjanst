@@ -23,10 +23,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.w3._2000._09.xmldsig_.SignatureType;
 import org.w3._2002._06.xmldsig_filter2.XPathType;
-import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi2;
-import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.infra.testdata.TestDataTransformer;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -120,7 +118,7 @@ public class TestDataResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/")
-    public Response insertTestDataCertificate(CertificateWrapper cert) {
+    public Response insertTestDataCertificate(TestDataWrapper cert) {
         JsonNode intygJson = TestDataTransformer.transformIntyg(cert.getData());
         JsonNode internalModelJson = intygJson.path("model");
         String intygsTyp = internalModelJson.path("typ").asText();
@@ -148,11 +146,12 @@ public class TestDataResource {
                 certificate.setOriginalCertificate(originalCertificate);
 
                 if (intyg.getRelation() != null) {
-                    Relation rel = intyg.getRelation().get(0);
-                    relationService.storeRelation(
-                        new se.inera.intyg.intygstjanst.persistence.model.dao.Relation(certificate.getId(),
-                            rel.getIntygsId().getExtension(),
-                            rel.getTyp().getCode(), LocalDateTime.now()));
+                    for (Relation rel : intyg.getRelation()) {
+                        relationService.storeRelation(
+                            new se.inera.intyg.intygstjanst.persistence.model.dao.Relation(certificate.getId(),
+                                rel.getIntygsId().getExtension(),
+                                rel.getTyp().getCode(), LocalDateTime.now()));
+                    }
                 }
 
                 entityManager.persist(certificate);
@@ -201,17 +200,7 @@ public class TestDataResource {
 //            }
 //            certificate.setStates(certificateStates);
 //        }
-//
-//        certificateHolder.setCertificateRelation(convertRelation(intyg.getIntygsId().getExtension(), intyg.getRelation()));
         return certificate;
-    }
-
-    private CertificateRelation convertRelation(String intygsId, List<Relation> relations) {
-        if (relations != null && relations.size() > 0) {
-            return new CertificateRelation(intygsId, relations.get(0).getIntygsId().getExtension(),
-                RelationKod.fromValue(relations.get(0).getTyp().getCode()), LocalDateTime.now());
-        }
-        return null;
     }
 
     private Personnummer createPnr(Intyg intyg) {
@@ -227,7 +216,7 @@ public class TestDataResource {
 
     }
 
-    private static class CertificateWrapper {
+    private static class TestDataWrapper {
 
         public JsonNode data;
 
