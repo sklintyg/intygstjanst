@@ -42,7 +42,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
-import se.inera.intyg.intygstjanst.web.integration.testcertificate.dto.TestCertificateEraseResult;
 import se.inera.intyg.intygstjanst.web.service.EraseTestCertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 
@@ -105,12 +104,12 @@ public class TestCertificateServiceImplTest {
 
     @Test
     public void testEraseTestCertificateSingleCertificate() throws Exception {
-        final List<Certificate> certificateList = new ArrayList<>(1);
+        final var certificateList = new ArrayList<Certificate>(1);
         certificateList.add(testCertificateSingle);
 
         doReturn(certificateList).when(certificateDao).findTestCertificates(any(), any());
 
-        final TestCertificateEraseResult actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
+        final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
 
         assertEquals(1, actualEraseResult.getErasedCount());
         assertEquals(0, actualEraseResult.getFailedCount());
@@ -120,14 +119,14 @@ public class TestCertificateServiceImplTest {
 
     @Test
     public void testEraseTestCertificateSingleCertificateFailed() throws Exception {
-        final List<Certificate> certificateList = new ArrayList<>(1);
+        final var certificateList = new ArrayList<Certificate>(1);
         certificateList.add(testCertificateSingle);
 
         doReturn(certificateList).when(certificateDao).findTestCertificates(any(), any());
 
         doThrow(new RuntimeException()).when(eraseTestCertificateService).eraseTestCertificates(any());
 
-        final TestCertificateEraseResult actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
+        final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
 
         assertEquals(0, actualEraseResult.getErasedCount());
         assertEquals(1, actualEraseResult.getFailedCount());
@@ -137,14 +136,14 @@ public class TestCertificateServiceImplTest {
 
     @Test
     public void testEraseTestCertificateSingleCertificateMissingCareUnit() throws Exception {
-        final List<Certificate> certificateList = new ArrayList<>(1);
+        final var certificateList = new ArrayList<Certificate>(1);
         certificateList.add(testCertificateSingle);
 
         doReturn(certificateList).when(certificateDao).findTestCertificates(any(), any());
 
         doThrow(new RuntimeException()).when(certificateDao).getCertificate(null, TEST_CERTIFICATE_SINGLE_ID);
 
-        final TestCertificateEraseResult actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
+        final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
 
         assertEquals(1, actualEraseResult.getErasedCount());
         assertEquals(0, actualEraseResult.getFailedCount());
@@ -156,14 +155,14 @@ public class TestCertificateServiceImplTest {
     public void testEraseFullGraphWhenAllMatchFindQuery() throws Exception {
         setUpTestDataWithFullRelationGraph();
 
-        final List<Certificate> certificateList = new ArrayList<>(3);
+        final var certificateList = new ArrayList<Certificate>(3);
         certificateList.add(testCertificateRoot);
         certificateList.add(testCertificateBranch);
         certificateList.add(testCertificateLeaf);
 
         doReturn(certificateList).when(certificateDao).findTestCertificates(any(), any());
 
-        final TestCertificateEraseResult actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
+        final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
 
         assertEquals(3, actualEraseResult.getErasedCount());
         assertEquals(0, actualEraseResult.getFailedCount());
@@ -175,12 +174,12 @@ public class TestCertificateServiceImplTest {
     public void testEraseFullGraphWhenRootMatchFindQuery() throws Exception {
         setUpTestDataWithFullRelationGraph();
 
-        final List<Certificate> certificateList = new ArrayList<>(1);
+        final var certificateList = new ArrayList<Certificate>(1);
         certificateList.add(testCertificateRoot);
 
         doReturn(certificateList).when(certificateDao).findTestCertificates(any(), any());
 
-        final TestCertificateEraseResult actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
+        final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
 
         assertEquals(3, actualEraseResult.getErasedCount());
         assertEquals(0, actualEraseResult.getFailedCount());
@@ -192,12 +191,12 @@ public class TestCertificateServiceImplTest {
     public void testEraseFullGraphWhenBranchMatchFindQuery() throws Exception {
         setUpTestDataWithFullRelationGraph();
 
-        final List<Certificate> certificateList = new ArrayList<>(1);
+        final var certificateList = new ArrayList<Certificate>(1);
         certificateList.add(testCertificateBranch);
 
         doReturn(certificateList).when(certificateDao).findTestCertificates(any(), any());
 
-        final TestCertificateEraseResult actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
+        final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
 
         assertEquals(3, actualEraseResult.getErasedCount());
         assertEquals(0, actualEraseResult.getFailedCount());
@@ -209,12 +208,12 @@ public class TestCertificateServiceImplTest {
     public void testEraseFullGraphWhenLeafMatchFindQuery() throws Exception {
         setUpTestDataWithFullRelationGraph();
 
-        final List<Certificate> certificateList = new ArrayList<>(1);
+        final var certificateList = new ArrayList<Certificate>(1);
         certificateList.add(testCertificateLeaf);
 
         doReturn(certificateList).when(certificateDao).findTestCertificates(any(), any());
 
-        final TestCertificateEraseResult actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
+        final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
 
         assertEquals(3 , actualEraseResult.getErasedCount());
         assertEquals(0, actualEraseResult.getFailedCount());
@@ -226,13 +225,13 @@ public class TestCertificateServiceImplTest {
     public void testEraseFullGraphAndSingleCertificate() throws Exception {
         setUpTestDataWithFullRelationGraph();
 
-        final List<Certificate> certificateList = new ArrayList<>(2);
+        final var certificateList = new ArrayList<Certificate>(2);
         certificateList.add(testCertificateLeaf);
         certificateList.add(testCertificateSingle);
 
         doReturn(certificateList).when(certificateDao).findTestCertificates(any(), any());
 
-        final TestCertificateEraseResult actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
+        final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
 
         assertEquals(4 , actualEraseResult.getErasedCount());
         assertEquals(0, actualEraseResult.getFailedCount());
@@ -244,7 +243,7 @@ public class TestCertificateServiceImplTest {
     public void testEraseFullGraphSucessAndSingleCertificateFailed() throws Exception {
         setUpTestDataWithFullRelationGraph();
 
-        final List<Certificate> certificateList = new ArrayList<>(2);
+        final var certificateList = new ArrayList<Certificate>(2);
         certificateList.add(testCertificateLeaf);
         certificateList.add(testCertificateSingle);
 
@@ -256,7 +255,7 @@ public class TestCertificateServiceImplTest {
             }
         }));
 
-        final TestCertificateEraseResult actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
+        final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
 
         assertEquals(3 , actualEraseResult.getErasedCount());
         assertEquals(1, actualEraseResult.getFailedCount());
@@ -268,7 +267,7 @@ public class TestCertificateServiceImplTest {
     public void testEraseFullGraphFailedAndSingleCertificateSuccess() throws Exception {
         setUpTestDataWithFullRelationGraph();
 
-        final List<Certificate> certificateList = new ArrayList<>(2);
+        final var certificateList = new ArrayList<Certificate>(2);
         certificateList.add(testCertificateLeaf);
         certificateList.add(testCertificateSingle);
 
@@ -280,7 +279,7 @@ public class TestCertificateServiceImplTest {
             }
         }));
 
-        final TestCertificateEraseResult actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
+        final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
 
         assertEquals(1 , actualEraseResult.getErasedCount());
         assertEquals(3, actualEraseResult.getFailedCount());
@@ -289,15 +288,15 @@ public class TestCertificateServiceImplTest {
     }
 
     private void setUpTestDataWithFullRelationGraph() {
-        final Relation relationRootToBranch = mock(Relation.class);
+        final var relationRootToBranch = mock(Relation.class);
         doReturn(TEST_CERTIFICATE_ROOT_ID).when(relationRootToBranch).getFromIntygsId();
         doReturn(TEST_CERTIFICATE_BRANCH_ID).when(relationRootToBranch).getToIntygsId();
 
-        final Relation relationBranchToLeaf = mock(Relation.class);
+        final var relationBranchToLeaf = mock(Relation.class);
         doReturn(TEST_CERTIFICATE_BRANCH_ID).when(relationBranchToLeaf).getFromIntygsId();
         doReturn(TEST_CERTIFICATE_LEAF_ID).when(relationBranchToLeaf).getToIntygsId();
 
-        final List<Relation> relationList = new ArrayList<>(2);
+        final var relationList = new ArrayList<Relation>(2);
         relationList.add(relationRootToBranch);
         relationList.add(relationBranchToLeaf);
 

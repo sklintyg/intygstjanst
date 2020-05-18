@@ -145,13 +145,13 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
 
     @Override
     public void eraseTestCertificates(List<String> ids) {
-        List<SjukfallCertificate> resultList = entityManager
+        final var sjukfallCertificateList = entityManager
             .createQuery("SELECT sc FROM SjukfallCertificate sc "
                 + "WHERE sc.id IN (:ids)", SjukfallCertificate.class)
             .setParameter("ids", ids)
             .getResultList();
 
-        for (SjukfallCertificate sjukfallCertificate: resultList) {
+        for (var sjukfallCertificate: sjukfallCertificateList) {
             entityManager.remove(sjukfallCertificate);
         }
     }

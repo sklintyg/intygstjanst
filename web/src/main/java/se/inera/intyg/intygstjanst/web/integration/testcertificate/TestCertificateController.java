@@ -28,8 +28,7 @@ import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
-import se.inera.intyg.intygstjanst.web.integration.testcertificate.dto.TestCertificateEraseRequest;
-import se.inera.intyg.intygstjanst.web.integration.testcertificate.dto.TestCertificateEraseResult;
+import se.inera.intyg.infra.testcertificate.dto.TestCertificateEraseRequest;
 import se.inera.intyg.intygstjanst.web.service.TestCertificateService;
 
 /**
@@ -56,8 +55,7 @@ public class TestCertificateController {
             return Response.status(400, "From date is after to date").build();
         }
 
-        final TestCertificateEraseResult eraseResult =
-            testCertificateService.eraseTestCertificates(eraseRequest.getFrom(), eraseRequest.getTo());
+        final var eraseResult = testCertificateService.eraseTestCertificates(eraseRequest.getFrom(), eraseRequest.getTo());
 
         return Response.ok(eraseResult).build();
     }

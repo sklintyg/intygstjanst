@@ -65,7 +65,7 @@ public class ApprovedReceiverDaoImpl implements ApprovedReceiverDao {
 
     @Override
     public void eraseTestCertificates(List<String> ids) {
-        for (String id: ids) {
+        for (var id: ids) {
             clearApprovedReceiversForCertificate(id);
         }
     }

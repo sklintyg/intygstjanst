@@ -30,11 +30,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.infra.testcertificate.dto.TestCertificateEraseResult;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
-import se.inera.intyg.intygstjanst.web.integration.testcertificate.dto.TestCertificateEraseResult;
 import se.inera.intyg.intygstjanst.web.service.EraseTestCertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.TestCertificateService;
@@ -61,32 +61,32 @@ public class TestCertificateServiceImpl implements TestCertificateService {
 
     @Override
     public TestCertificateEraseResult eraseTestCertificates(LocalDateTime from, LocalDateTime to) {
-        final Set<String> erasedTestCertificates = new HashSet<>();
-        final Set<String> failedTestCertificates = new HashSet<>();
+        final var erasedTestCertificateIds = new HashSet<String>();
+        final var failedTestCertificateIds = new HashSet<String>();
 
-        final List<Certificate> testCertificates = certificateDao.findTestCertificates(from, to);
+        final var testCertificates = certificateDao.findTestCertificates(from, to);
 
-        final Map<String, List<Relation>> testCertificatesWithRelations = getCertificateRelations(testCertificates);
+        final var testCertificatesWithRelationsMap = getCertificateRelations(testCertificates);
 
-        for (Certificate testCertificate: testCertificates) {
-            if (skipIfAlreadyErasedDueToRelation(testCertificate.getId(), erasedTestCertificates)) {
+        for (var testCertificate: testCertificates) {
+            if (skipIfAlreadyErasedDueToRelation(testCertificate.getId(), erasedTestCertificateIds)) {
                 continue;
             }
 
-            final List<String> idsToErase = getCertificateIdsToErase(testCertificate.getId(), testCertificatesWithRelations);
+            final var idsToErase = getCertificateIdsToErase(testCertificate.getId(), testCertificatesWithRelationsMap);
 
-            final Map<String, String> unitMap = getUnitMapForLogging(idsToErase);
+            final var unitMap = getUnitMapForLogging(idsToErase);
 
-            final List<String> idsToLog = new ArrayList<>(idsToErase.size());
+            final var idsToLog = new ArrayList<String>(idsToErase.size());
 
             try {
                 eraseTestCertificateService.eraseTestCertificates(idsToErase);
-                erasedTestCertificates.addAll(idsToErase);
+                erasedTestCertificateIds.addAll(idsToErase);
                 idsToLog.addAll(idsToErase);
             } catch (Exception ex) {
                 LOG.error(
                     String.format("Couldn't not erase certificate with ids %s when erasing test certificates", idsToErase.toString()), ex);
-                failedTestCertificates.addAll(idsToErase);
+                failedTestCertificateIds.addAll(idsToErase);
             }
 
             for (String idToLog: idsToLog) {
@@ -94,7 +94,7 @@ public class TestCertificateServiceImpl implements TestCertificateService {
             }
         }
 
-        return TestCertificateEraseResult.create(erasedTestCertificates.size(), failedTestCertificates.size());
+        return TestCertificateEraseResult.create(erasedTestCertificateIds.size(), failedTestCertificateIds.size());
     }
 
     private boolean skipIfAlreadyErasedDueToRelation(String id, Set<String> erasedTestCertificates) {
@@ -102,25 +102,25 @@ public class TestCertificateServiceImpl implements TestCertificateService {
     }
 
     private Map<String, List<Relation>> getCertificateRelations(List<Certificate> testCertificates) {
-        final Map<String, List<Relation>> testCertificatesWithRelations = new HashMap<>(testCertificates.size());
+        final var testCertificatesWithRelationsMap = new HashMap<String, List<Relation>>(testCertificates.size());
 
-        for (Certificate testCertificate : testCertificates) {
-            if (isCertificatePartOfRelations(testCertificate.getId(), testCertificatesWithRelations)) {
+        for (var testCertificate : testCertificates) {
+            if (isCertificatePartOfRelations(testCertificate.getId(), testCertificatesWithRelationsMap)) {
                 continue;
             }
 
-            final List<Relation> relationIds = relationDao.getGraph(testCertificate.getId());
-            if (relationIds != null && relationIds.size() > 0) {
-                testCertificatesWithRelations.put(testCertificate.getId(), relationIds);
+            final var relationList = relationDao.getGraph(testCertificate.getId());
+            if (relationList != null && relationList.size() > 0) {
+                testCertificatesWithRelationsMap.put(testCertificate.getId(), relationList);
             }
         }
 
-        return testCertificatesWithRelations;
+        return testCertificatesWithRelationsMap;
     }
 
     private boolean isCertificatePartOfRelations(String id, Map<String, List<Relation>> testCertificatesWithRelations) {
-        for (List<Relation> relationList: testCertificatesWithRelations.values()) {
-            for (Relation relation: relationList) {
+        for (var relationList: testCertificatesWithRelations.values()) {
+            for (var relation: relationList) {
                 if (id.equalsIgnoreCase(relation.getFromIntygsId()) || id.equalsIgnoreCase(relation.getToIntygsId())) {
                     return true;
                 }
@@ -130,10 +130,10 @@ public class TestCertificateServiceImpl implements TestCertificateService {
     }
 
     private List<String> getCertificateIdsToErase(String id, Map<String, List<Relation>> testCertificatesWithRelations) {
-        final List<String> idsToErase = new ArrayList<>();
+        final var idsToErase = new ArrayList<String>();
         idsToErase.add(id);
         if (testCertificatesWithRelations.containsKey(id)) {
-            for (Relation relation: testCertificatesWithRelations.get(id)) {
+            for (var relation: testCertificatesWithRelations.get(id)) {
                 if (relation.getFromIntygsId() != null && !idsToErase.contains(relation.getFromIntygsId())) {
                     idsToErase.add(relation.getFromIntygsId());
                 }
@@ -146,10 +146,10 @@ public class TestCertificateServiceImpl implements TestCertificateService {
     }
 
     private Map<String, String> getUnitMapForLogging(List<String> idsToErase) {
-        final Map<String, String> unitMap = new HashMap<>();
-        for (String idToErase: idsToErase) {
+        final var unitMap = new HashMap<String, String>();
+        for (var idToErase: idsToErase) {
             try {
-                final Certificate certificate = certificateDao.getCertificate(null, idToErase);
+                final var certificate = certificateDao.getCertificate(null, idToErase);
                 unitMap.put(idToErase, certificate.getCareUnitId());
             } catch (Exception ex) {
                 LOG.warn(String.format("Couldn't not retrieve certificate with id %s", idToErase), ex);

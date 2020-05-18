@@ -86,9 +86,9 @@ public class RelationDaoImpl implements RelationDao {
 
     @Override
     public void eraseTestCertificates(List<String> ids) {
-        for (String id: ids) {
-            final List<Relation> relationList = getGraph(id);
-            for (Relation relation: relationList) {
+        for (var id: ids) {
+            final var relationList = getGraph(id);
+            for (var relation: relationList) {
                 entityManager.remove(relation);
             }
         }

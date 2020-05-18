@@ -20,7 +20,7 @@
 package se.inera.intyg.intygstjanst.web.service;
 
 import java.time.LocalDateTime;
-import se.inera.intyg.intygstjanst.web.integration.testcertificate.dto.TestCertificateEraseResult;
+import se.inera.intyg.infra.testcertificate.dto.TestCertificateEraseResult;
 
 /**
  * Service for managing test certificates.
