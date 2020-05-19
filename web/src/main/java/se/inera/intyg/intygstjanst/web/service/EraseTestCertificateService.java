@@ -16,24 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.persistence.model.dao;
+
+package se.inera.intyg.intygstjanst.web.service;
 
 import java.util.List;
 
 /**
- * Created by eriklupander.
+ * Service for erasing test certificates
  */
-public interface ApprovedReceiverDao {
-
-    List<ApprovedReceiver> getApprovedReceiverIdsForCertificate(String intygsId);
-
-    void clearApprovedReceiversForCertificate(String intygsId);
-
-    void store(ApprovedReceiver approvedReceiver);
+public interface EraseTestCertificateService {
 
     /**
-     * Erase any data related to test certificates passed as ids.
-     * @param ids Certificate ids.
+     * This method will permanently erase all data related to the test certificates passed as argument.
+     * @param testCertificateIds    List of test certificate ids.
      */
-    void eraseTestCertificates(List<String> ids);
+    void eraseTestCertificates(List<String> testCertificateIds);
 }

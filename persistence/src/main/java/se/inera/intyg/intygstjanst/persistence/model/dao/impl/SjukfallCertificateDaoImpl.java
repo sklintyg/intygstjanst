@@ -143,6 +143,19 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         }
     }
 
+    @Override
+    public void eraseTestCertificates(List<String> ids) {
+        final var sjukfallCertificateList = entityManager
+            .createQuery("SELECT sc FROM SjukfallCertificate sc "
+                + "WHERE sc.id IN (:ids)", SjukfallCertificate.class)
+            .setParameter("ids", ids)
+            .getResultList();
+
+        for (var sjukfallCertificate: sjukfallCertificateList) {
+            entityManager.remove(sjukfallCertificate);
+        }
+    }
+
     private List<SjukfallCertificate> querySjukfallCertificatesForPersonnummer(String personnummer) {
 
         if (LOG.isDebugEnabled()) {

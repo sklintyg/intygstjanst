@@ -16,24 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import java.util.List;
+package se.inera.intyg.intygstjanst.web.service;
+
+import java.time.LocalDateTime;
+import se.inera.intyg.infra.testcertificate.dto.TestCertificateEraseResult;
 
 /**
- * Created by eriklupander.
+ * Service for managing test certificates.
  */
-public interface ApprovedReceiverDao {
-
-    List<ApprovedReceiver> getApprovedReceiverIdsForCertificate(String intygsId);
-
-    void clearApprovedReceiversForCertificate(String intygsId);
-
-    void store(ApprovedReceiver approvedReceiver);
+public interface TestCertificateService {
 
     /**
-     * Erase any data related to test certificates passed as ids.
-     * @param ids Certificate ids.
+     * Erase certificates flagged as test certificates that has been created within passed date ranges.
+     *
+     * Any related certificates (e.g. renewed, complemented etc) will also be erased.
+     *
+     * Important! When the test certificates are erased, it will not be possible to recover them.
+     *
      */
-    void eraseTestCertificates(List<String> ids);
+    TestCertificateEraseResult eraseTestCertificates(LocalDateTime from, LocalDateTime to);
 }

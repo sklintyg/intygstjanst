@@ -46,6 +46,7 @@
       <jaxrs:serviceBeans>
         <bean class="se.inera.intyg.intygstjanst.web.integration.CitizenController" />
         <bean class="se.inera.intyg.intygstjanst.web.integration.intyginfo.IntygInfoController" />
+        <bean class="se.inera.intyg.intygstjanst.web.integration.testcertificate.TestCertificateController" />
       </jaxrs:serviceBeans>
       <jaxrs:providers>
         <ref bean="jacksonJsonProvider" />

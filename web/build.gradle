@@ -48,6 +48,7 @@ dependencies {
     compile "se.inera.intyg.infra:monitoring:${infraVersion}"
     compile "se.inera.intyg.infra:security-filter:${infraVersion}"
     compile "se.inera.intyg.infra:intyginfo:${infraVersion}"
+    compile "se.inera.intyg.infra:testcertificate:${infraVersion}"
 
     compile "se.inera.intyg.common:common-support:${commonVersion}"
     compile "se.inera.intyg.common:integration-util:${commonVersion}"

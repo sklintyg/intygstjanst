@@ -190,6 +190,53 @@ public class CertificateDaoImpl implements CertificateDao {
         }
     }
 
+    @Override
+    public List<Certificate> findTestCertificates(LocalDateTime from, LocalDateTime to) {
+        final var criteriaBuilder = entityManager.getCriteriaBuilder();
+        final var query = criteriaBuilder.createQuery(Certificate.class);
+        final var queryRoot = query.from(Certificate.class);
+
+        final var predicates = new ArrayList<Predicate>();
+
+        predicates.add(
+            criteriaBuilder.isTrue(
+                queryRoot.get("testCertificate")
+            )
+        );
+
+        if (from != null) {
+            predicates.add(
+                criteriaBuilder.greaterThanOrEqualTo(
+                    queryRoot.get("signedDate"), from
+                )
+            );
+        }
+
+        if (to != null) {
+            predicates.add(
+                criteriaBuilder.lessThan(
+                    queryRoot.get("signedDate"), to
+                )
+            );
+        }
+
+        query.where(predicates.toArray(new Predicate[predicates.size()]));
+
+        return entityManager.createQuery(query).getResultList();
+    }
+
+    @Override
+    public void eraseTestCertificates(List<String> ids) {
+        for (var id: ids) {
+            try {
+                final var certificate = getCertificate(null, id);
+                entityManager.remove(certificate);
+            } catch (PersistenceException ex) {
+                LOG.warn(String.format("Couldn't find certificate with id %s when erasing test certificates", id), ex);
+            }
+        }
+    }
+
     private List<String> toLowerCase(List<String> list) {
         List<String> result = new ArrayList<>();
         for (String item : list) {

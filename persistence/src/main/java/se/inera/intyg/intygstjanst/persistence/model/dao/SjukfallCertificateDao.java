@@ -42,4 +42,10 @@ public interface SjukfallCertificateDao {
     void store(SjukfallCertificate sjukfallCert);
 
     void revoke(String id);
+
+    /**
+     * Erase any data related to test certificates passed as ids.
+     * @param ids   Certificate ids.
+     */
+    void eraseTestCertificates(List<String> ids);
 }
