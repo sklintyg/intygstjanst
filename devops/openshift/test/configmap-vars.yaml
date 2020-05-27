@@ -5,6 +5,7 @@ data:
   NTJP_WS_CERTIFICATE_TYPE: "PKCS12"
   NTJP_WS_TRUSTSTORE_FILE: "${certificate.folder}/truststore.jks"
   NTJP_WS_TRUSTSTORE_TYPE: "JKS"
+  REFDATA_URL: "https://build-inera.nordicmedtest.se/nexus/repository/snapshots/se/inera/intyg/refdata/refdata/1.0-SNAPSHOT/refdata-1.0-20200318.100934-75.jar"
 kind: ConfigMap
 metadata:
   name: intygstjanst-test-configmap-envvar
