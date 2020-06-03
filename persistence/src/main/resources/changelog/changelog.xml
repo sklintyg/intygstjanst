@@ -486,4 +486,11 @@
 			<column name="TEST_CERTIFICATE" />
 		</createIndex>
 	</changeSet>
+
+	<changeSet id="47" author="mww">
+		<createIndex indexName="IDX_ARENDE_INTYGS_ID"
+				tableName="ARENDE" unique="false">
+			<column name="INTYGS_ID" />
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>
