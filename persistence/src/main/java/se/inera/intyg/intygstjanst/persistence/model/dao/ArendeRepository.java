@@ -18,6 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -28,4 +29,11 @@ public interface ArendeRepository extends JpaRepository<Arende, Long> {
      * Should return a {@link Arende} matching the search criteria.
      */
     Arende findByMeddelandeId(String meddelandeId);
+
+    /**
+     * Find all messages for a single certificate.
+     * @param certificateId Id of certificate
+     * @return  List of messages
+     */
+    List<Arende> findByIntygsId(String certificateId);
 }
