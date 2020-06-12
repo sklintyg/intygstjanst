@@ -45,6 +45,10 @@ public class MessageController {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response findMessagesByCertificateId(@PathParam("certificateId") String certificateId) {
+        if (certificateId == null || certificateId.trim().isEmpty()) {
+            return Response.status(400, "Missing certificateId").build();
+        }
+
         final var messageList = messageService.findMessagesByCertificateId(certificateId);
         return Response.ok(messageList).build();
     }

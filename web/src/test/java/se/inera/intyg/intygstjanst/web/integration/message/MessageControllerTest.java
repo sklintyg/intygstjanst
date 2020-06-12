@@ -62,4 +62,23 @@ public class MessageControllerTest {
         assertTrue(actualResponse.hasEntity());
     }
 
+    @Test
+    public void testFindMessagesByCertificateIdFailedEmptyId() throws Exception {
+        final var certificateId = "";
+
+        final Response actualResponse = messageController.findMessagesByCertificateId(certificateId);
+
+        assertNotNull(actualResponse);
+        assertEquals(400, actualResponse.getStatus());
+    }
+
+    @Test
+    public void testFindMessagesByCertificateIdFailedNullId() throws Exception {
+        final String certificateId = null;
+
+        final Response actualResponse = messageController.findMessagesByCertificateId(certificateId);
+
+        assertNotNull(actualResponse);
+        assertEquals(400, actualResponse.getStatus());
+    }
 }
