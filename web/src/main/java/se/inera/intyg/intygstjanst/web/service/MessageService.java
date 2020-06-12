@@ -16,24 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.persistence.model.dao;
+
+package se.inera.intyg.intygstjanst.web.service;
 
 import java.util.List;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import se.inera.intyg.infra.message.dto.MessageFromIT;
 
-@Repository
-public interface ArendeRepository extends JpaRepository<Arende, Long> {
+public interface MessageService {
 
     /**
-     * Should return a {@link Arende} matching the search criteria.
-     */
-    Arende findByMeddelandeId(String meddelandeId);
-
-    /**
-     * Find all messages for a single certificate.
-     * @param certificateId Id of certificate
+     * Find messages related to a particular certificate.
+     * @param certificateId Id of the certificate
      * @return  List of messages
      */
-    List<Arende> findByIntygsId(String certificateId);
+    List<MessageFromIT> findMessagesByCertificateId(String certificateId);
 }
