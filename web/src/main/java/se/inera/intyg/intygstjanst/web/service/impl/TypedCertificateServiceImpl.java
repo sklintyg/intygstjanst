@@ -1,0 +1,136 @@
+package se.inera.intyg.intygstjanst.web.service.impl;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import se.inera.intyg.common.ag114.support.Ag114EntryPoint;
+import se.inera.intyg.common.ag7804.support.Ag7804EntryPoint;
+import se.inera.intyg.common.luae_fs.support.LuaefsEntryPoint;
+import se.inera.intyg.common.luae_na.support.LuaenaEntryPoint;
+import se.inera.intyg.common.luse.support.LuseEntryPoint;
+import se.inera.intyg.common.support.model.common.internal.Utlatande;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.support.api.ModuleApi;
+import se.inera.intyg.infra.certificate.dto.DiagnosedCertificate;
+import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.web.service.TypedCertificateService;
+import se.inera.intyg.intygstjanst.web.service.converter.CertificateToDiagnosedCertificateConverter;
+import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSickLeaveCertificateConverter;
+import se.inera.intyg.schemas.contract.Personnummer;
+
+@Service
+public class TypedCertificateServiceImpl implements TypedCertificateService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TypedCertificateServiceImpl.class);
+
+    private final CertificateDao certificateDao;
+
+    private final IntygModuleRegistry moduleRegistry;
+
+    private final CertificateToDiagnosedCertificateConverter certificateToDiagnosedCertificateConverter;
+    private final CertificateToSickLeaveCertificateConverter certificateToSickLeaveCertificateConverter;
+
+    @Autowired
+    public TypedCertificateServiceImpl(CertificateDao certificateDao, IntygModuleRegistry moduleRegistry,
+        CertificateToDiagnosedCertificateConverter certificateToDiagnosedCertificateConverter,
+        CertificateToSickLeaveCertificateConverter certificateToSickLeaveCertificateConverter) {
+        this.certificateDao = certificateDao;
+        this.moduleRegistry = moduleRegistry;
+        this.certificateToDiagnosedCertificateConverter = certificateToDiagnosedCertificateConverter;
+        this.certificateToSickLeaveCertificateConverter = certificateToSickLeaveCertificateConverter;
+    }
+
+    @Override
+    public List<DiagnosedCertificate> listDiagnosedCertificatesForCareUnits(List<String> units, List<String> certificateTypeList,
+        LocalDate fromDate, LocalDate toDate) {
+        LOGGER.info(""); //TODO
+
+        var certificates = certificateDao.findCertificate(units, certificateTypeList, fromDate, toDate);
+
+        return transformListToDiagnosedCertificates(certificates);
+    }
+
+    @Override
+    public List<DiagnosedCertificate> listDiagnosedCertificatesForPerson(Personnummer personId, List<String> certificateTypeList,
+        LocalDate fromDate, LocalDate toDate, List<String> units) {
+
+        var certificates = certificateDao.findCertificate(personId, certificateTypeList, fromDate, toDate, units);
+
+        return transformListToDiagnosedCertificates(certificates);
+    }
+
+    @Override
+    public List<SickLeaveCertificate> listSickLeaveCertificatesForPerson(Personnummer personId, List<String> certificateTypeList,
+        LocalDate fromDate, LocalDate toDate, List<String> units) {
+
+        var certificates = certificateDao.findCertificate(personId, certificateTypeList, fromDate, toDate, units);
+
+        return transformListToSickLeaveCertificates(certificates);
+    }
+
+    private List<DiagnosedCertificate> transformListToDiagnosedCertificates(List<Certificate> certificates) {
+
+        return certificates.stream().map(this::convertToDiagnosedCertificate).collect(Collectors.toList());
+    }
+
+    private DiagnosedCertificate convertToDiagnosedCertificate(Certificate certificate) {
+        try {
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+            Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
+
+            DiagnosedCertificate diagnosedCertificate;
+
+            switch (certificate.getType()) {
+                case LuseEntryPoint.MODULE_ID:
+                    diagnosedCertificate = certificateToDiagnosedCertificateConverter.convertLuse(certificate, utlatande);
+                    break;
+                case LuaefsEntryPoint.MODULE_ID:
+                    diagnosedCertificate = certificateToDiagnosedCertificateConverter.convertLuaefs(certificate, utlatande);
+                    break;
+                case LuaenaEntryPoint.MODULE_ID:
+                    diagnosedCertificate = certificateToDiagnosedCertificateConverter.convertLuaena(certificate, utlatande);
+                    break;
+                default:
+                    diagnosedCertificate = null; //TODO
+                    break;
+            }
+            return diagnosedCertificate;
+        } catch (Exception e) {
+            return null; //TODO
+        }
+    }
+
+    private List<SickLeaveCertificate> transformListToSickLeaveCertificates(List<Certificate> certificates) {
+        return certificates.stream().map(this::convertToSickLeaveCertificate).collect(Collectors.toList());
+    }
+
+    private SickLeaveCertificate convertToSickLeaveCertificate(Certificate certificate) {
+        try {
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+            Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
+
+            SickLeaveCertificate sickLeaveCertificate;
+
+            switch (certificate.getType()) {
+                case Ag7804EntryPoint.MODULE_ID:
+                    sickLeaveCertificate = certificateToSickLeaveCertificateConverter.convertAg7804(certificate, utlatande);
+                    break;
+                case Ag114EntryPoint.MODULE_ID:
+                    sickLeaveCertificate = certificateToSickLeaveCertificateConverter.convertAg114(certificate, utlatande);
+                    break;
+                default:
+                    sickLeaveCertificate = null; //TODO
+                    break;
+            }
+            return sickLeaveCertificate;
+        } catch (Exception e) {
+            return null; //TODO
+        }
+    }
+}

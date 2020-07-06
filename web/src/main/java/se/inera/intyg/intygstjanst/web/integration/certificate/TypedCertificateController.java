@@ -1,0 +1,102 @@
+package se.inera.intyg.intygstjanst.web.integration.certificate;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import se.inera.intyg.infra.certificate.dto.DiagnosedCertificate;
+import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate;
+import se.inera.intyg.infra.certificate.dto.TypedCertificateRequest;
+import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.web.service.TypedCertificateService;
+import se.inera.intyg.schemas.contract.Personnummer;
+
+/**
+ * Internal REST endpoint to retrieve certificates
+ */
+@Controller
+@Path("/typedcertificate")
+public class TypedCertificateController {
+
+    final TypedCertificateService typedCertificateService;
+
+    @Autowired
+    public TypedCertificateController(TypedCertificateService typedCertificateService) {
+        this.typedCertificateService = typedCertificateService;
+    }
+
+    @PrometheusTimeMethod
+    @GET
+    @Path("/diagnosed/unit")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public List<DiagnosedCertificate> listDiagnosedCertificatesForCareUnit(@RequestBody TypedCertificateRequest parameters) {
+        var units = parameters.getUnitIds();
+
+        if (units == null || units.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return typedCertificateService.listDiagnosedCertificatesForCareUnits(units,
+            parameters.getCertificateTypes(),
+            getLocalDate(parameters.getFromDate()),
+            getLocalDate(parameters.getToDate()));
+    }
+
+    @PrometheusTimeMethod
+    @POST
+    @Path("/diagnosed/person")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public List<DiagnosedCertificate> listDiagnosedCertificatesForCitizen(@RequestBody TypedCertificateRequest parameters) {
+        var optionalPersonnummer = Personnummer.createPersonnummer(parameters.getCivicRegistrationNumber());
+
+        if (optionalPersonnummer.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return typedCertificateService.listDiagnosedCertificatesForPerson(optionalPersonnummer.get(),
+            parameters.getCertificateTypes(),
+            getLocalDate(parameters.getFromDate()),
+            getLocalDate(parameters.getToDate()),
+            parameters.getUnitIds());
+    }
+
+    @PrometheusTimeMethod
+    @POST
+    @Path("/sickleave/person")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public List<SickLeaveCertificate> listSickLeaveCertificatesForCitizen(@RequestBody TypedCertificateRequest parameters) {
+        var optionalPersonnummer = Personnummer.createPersonnummer(parameters.getCivicRegistrationNumber());
+
+        if (optionalPersonnummer.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return typedCertificateService.listSickLeaveCertificatesForPerson(optionalPersonnummer.get(),
+            parameters.getCertificateTypes(),
+            getLocalDate(parameters.getFromDate()),
+            getLocalDate(parameters.getToDate()),
+            parameters.getUnitIds());
+    }
+
+    private LocalDate getLocalDate(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return null;
+        }
+
+        return localDateTime.toLocalDate();
+    }
+
+
+}

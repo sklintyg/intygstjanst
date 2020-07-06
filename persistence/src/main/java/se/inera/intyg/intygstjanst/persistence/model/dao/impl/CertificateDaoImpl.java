@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -33,13 +32,11 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
@@ -99,6 +96,46 @@ public class CertificateDaoImpl implements CertificateDao {
         }
 
         query.where(predicates.toArray(new Predicate[predicates.size()]));
+
+        // order by signed date
+        query.orderBy(criteriaBuilder.asc(root.get("signedDate")));
+
+        List<Certificate> tmpResult = entityManager.createQuery(query).getResultList();
+
+        return filterDuplicates(tmpResult);
+    }
+
+    @Override
+    public List<Certificate> findCertificate(List<String> careUnits, List<String> types, LocalDate fromDate, LocalDate toDate) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Certificate> query = criteriaBuilder.createQuery(Certificate.class);
+        Root<Certificate> root = query.from(Certificate.class);
+
+        root.fetch("states", JoinType.LEFT);
+
+        if (careUnits == null || careUnits.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // filter by care unit
+        predicates.add(root.<String>get("careUnitId").in(careUnits));
+
+        // filter by certificate types
+        if (types != null && !types.isEmpty()) {
+            predicates.add(criteriaBuilder.lower(root.<String>get("type")).in(toLowerCase(types)));
+        }
+
+        if (fromDate != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("signedDate"), fromDate.atStartOfDay()));
+        }
+
+        if (toDate != null) {
+            predicates.add(criteriaBuilder.lessThan(root.get("signedDate"), toDate.plusDays(1).atStartOfDay()));
+        }
+
+        query.where(predicates.toArray(new Predicate[0]));
 
         // order by signed date
         query.orderBy(criteriaBuilder.asc(root.get("signedDate")));
