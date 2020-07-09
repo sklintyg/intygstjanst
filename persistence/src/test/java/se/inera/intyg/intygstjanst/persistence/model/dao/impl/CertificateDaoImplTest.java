@@ -36,13 +36,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -150,6 +147,40 @@ public class CertificateDaoImplTest extends TestSupport {
         // filter by 'west' and 'east' -> both 'west'- and 'east'-based intyg
         certificate = certificateDao.findCertificate(CIVIC_REGISTRATION_NUMBER, null, null, null, Arrays.asList("west", "east"));
         assertEquals(2, certificate.size());
+    }
+
+    @Test
+    public void testFindCertificateWithCareUnitAsBase() {
+
+        // two certificates with different care units IDs
+        Certificate west = buildCertificate("1");
+        west.setCareUnitId("west");
+        entityManager.persist(west);
+
+        Certificate east = buildCertificate("2");
+        east.setCareUnitId("east");
+        entityManager.persist(east);
+
+        Certificate north = buildCertificate("3");
+        north.setCareUnitId("north");
+        entityManager.persist(north);
+
+        Certificate east2 = buildCertificate("4");
+        east2.setCareUnitId("east");
+        entityManager.persist(east2);
+
+        // no matching care unit ID, no certificates
+        List<Certificate> certificate = certificateDao.findCertificate(Collections.singletonList("center"), null, null, null);
+        assertEquals(0, certificate.size());
+
+        // filter by 'west' -> only return 'west'-based intyg
+        certificate = certificateDao.findCertificate(Collections.singletonList("west"), null, null, null);
+        assertEquals(1, certificate.size());
+        assertEquals(west, certificate.get(0));
+
+        // filter by 'west' and 'east' -> both 'west'- and 'east'-based intyg
+        certificate = certificateDao.findCertificate(Arrays.asList("west", "east"), null, null, null);
+        assertEquals(3, certificate.size());
     }
 
     @Test

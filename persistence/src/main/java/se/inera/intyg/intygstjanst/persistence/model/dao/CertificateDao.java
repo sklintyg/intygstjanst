@@ -21,7 +21,6 @@ package se.inera.intyg.intygstjanst.persistence.model.dao;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -44,6 +43,17 @@ public interface CertificateDao {
      */
     List<Certificate> findCertificate(Personnummer civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate,
         List<String> careUnits);
+
+    /**
+     * Retrieves a list of {@link Certificate} filtered by parameters.
+     *
+     * @param careUnits List of care units
+     * @param types Type of certificate
+     * @param fromDate From date when the certificate is valid
+     * @param toDate To data when the certificate is valid
+     * @return filtered list
+     */
+    List<Certificate> findCertificate(List<String> careUnits, List<String> types, LocalDate fromDate, LocalDate toDate);
 
     /**
      * Gets one {@link Certificate}.
