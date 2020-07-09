@@ -2,6 +2,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +77,7 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
 
     private List<DiagnosedCertificate> transformListToDiagnosedCertificates(List<Certificate> certificates) {
 
-        return certificates.stream().map(this::convertToDiagnosedCertificate).collect(Collectors.toList());
+        return certificates.stream().map(this::convertToDiagnosedCertificate).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     private DiagnosedCertificate convertToDiagnosedCertificate(Certificate certificate) {
@@ -97,12 +98,14 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
                     diagnosedCertificate = certificateToDiagnosedCertificateConverter.convertLuaena(certificate, utlatande);
                     break;
                 default:
-                    diagnosedCertificate = null; //TODO
+                    diagnosedCertificate = null;
+                    LOGGER.info("Certificate of type " + certificate.getType() + " could not be converted to DiagnosedCertificate!");
                     break;
             }
             return diagnosedCertificate;
         } catch (Exception e) {
-            return null; //TODO
+            LOGGER.error("Error converting certificate to DiagnosedCertificate!", e);
+            return null;
         }
     }
 
@@ -125,12 +128,14 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
                     sickLeaveCertificate = certificateToSickLeaveCertificateConverter.convertAg114(certificate, utlatande);
                     break;
                 default:
-                    sickLeaveCertificate = null; //TODO
+                    sickLeaveCertificate = null;
+                    LOGGER.info("Certificate of type " + certificate.getType() + " could not be converted to SickLeaveCertificate!");
                     break;
             }
             return sickLeaveCertificate;
         } catch (Exception e) {
-            return null; //TODO
+            LOGGER.error("Error converting certificate to SickLeaveCertificate!", e);
+            return null;
         }
     }
 }

@@ -21,7 +21,7 @@ public class CertificateToDiagnosedCertificateConverter {
         Utlatande statement) {
 
         if (!(statement instanceof LuaefsUtlatandeV1)) {
-            throw new IllegalArgumentException("Cannot convert " + statement.getClass().getName() + " to SickLeaveCertificate");
+            throw new IllegalArgumentException("Cannot convert " + statement.getClass().getName() + " to DiagnosedCertificate");
         }
 
         var typedStatement = (LuaefsUtlatandeV1) statement;
@@ -33,7 +33,7 @@ public class CertificateToDiagnosedCertificateConverter {
         Utlatande statement) {
 
         if (!(statement instanceof LuaenaUtlatandeV1)) {
-            throw new IllegalArgumentException("Cannot convert " + statement.getClass().getName() + " to SickLeaveCertificate");
+            throw new IllegalArgumentException("Cannot convert " + statement.getClass().getName() + " to DiagnosedCertificate");
         }
 
         var typedStatement = (LuaenaUtlatandeV1) statement;
@@ -45,7 +45,7 @@ public class CertificateToDiagnosedCertificateConverter {
         Utlatande statement) {
 
         if (!(statement instanceof LuseUtlatandeV1)) {
-            throw new IllegalArgumentException("Cannot convert " + statement.getClass().getName() + " to SickLeaveCertificate");
+            throw new IllegalArgumentException("Cannot convert " + statement.getClass().getName() + " to DiagnosedCertificate");
         }
 
         var typedStatement = (LuseUtlatandeV1) statement;

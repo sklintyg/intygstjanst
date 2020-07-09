@@ -1,7 +1,5 @@
 package se.inera.intyg.intygstjanst.web.integration.certificate;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.Consumes;
@@ -48,8 +46,8 @@ public class TypedCertificateController {
 
         return typedCertificateService.listDiagnosedCertificatesForCareUnits(units,
             parameters.getCertificateTypes(),
-            getLocalDate(parameters.getFromDate()),
-            getLocalDate(parameters.getToDate()));
+            parameters.getFromDate(),
+            parameters.getToDate());
     }
 
     @PrometheusTimeMethod
@@ -58,7 +56,7 @@ public class TypedCertificateController {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public List<DiagnosedCertificate> listDiagnosedCertificatesForCitizen(@RequestBody TypedCertificateRequest parameters) {
-        var optionalPersonnummer = Personnummer.createPersonnummer(parameters.getCivicRegistrationNumber());
+        var optionalPersonnummer = Personnummer.createPersonnummer(parameters.getPersonId());
 
         if (optionalPersonnummer.isEmpty()) {
             return Collections.emptyList();
@@ -66,8 +64,8 @@ public class TypedCertificateController {
 
         return typedCertificateService.listDiagnosedCertificatesForPerson(optionalPersonnummer.get(),
             parameters.getCertificateTypes(),
-            getLocalDate(parameters.getFromDate()),
-            getLocalDate(parameters.getToDate()),
+            parameters.getFromDate(),
+            parameters.getToDate(),
             parameters.getUnitIds());
     }
 
@@ -77,7 +75,7 @@ public class TypedCertificateController {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public List<SickLeaveCertificate> listSickLeaveCertificatesForCitizen(@RequestBody TypedCertificateRequest parameters) {
-        var optionalPersonnummer = Personnummer.createPersonnummer(parameters.getCivicRegistrationNumber());
+        var optionalPersonnummer = Personnummer.createPersonnummer(parameters.getPersonId());
 
         if (optionalPersonnummer.isEmpty()) {
             return Collections.emptyList();
@@ -85,17 +83,9 @@ public class TypedCertificateController {
 
         return typedCertificateService.listSickLeaveCertificatesForPerson(optionalPersonnummer.get(),
             parameters.getCertificateTypes(),
-            getLocalDate(parameters.getFromDate()),
-            getLocalDate(parameters.getToDate()),
+            parameters.getFromDate(),
+            parameters.getToDate(),
             parameters.getUnitIds());
-    }
-
-    private LocalDate getLocalDate(LocalDateTime localDateTime) {
-        if (localDateTime == null) {
-            return null;
-        }
-
-        return localDateTime.toLocalDate();
     }
 
 
