@@ -165,9 +165,9 @@ public class CertificateDaoImplTest extends TestSupport {
         north.setCareUnitId("north");
         entityManager.persist(north);
 
-        Certificate south = buildCertificate("4");
-        south.setCareUnitId("east");
-        entityManager.persist(south);
+        Certificate east2 = buildCertificate("4");
+        east2.setCareUnitId("east");
+        entityManager.persist(east2);
 
         // no matching care unit ID, no certificates
         List<Certificate> certificate = certificateDao.findCertificate(Collections.singletonList("center"), null, null, null);
