@@ -68,10 +68,12 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
     @Override
     public List<DiagnosedCertificate> listDiagnosedCertificatesForCareUnits(List<String> units, List<String> certificateTypeList,
         LocalDate fromDate, LocalDate toDate) {
-        LOGGER.info(""); //TODO
 
         var certificates = certificateDao.findCertificate(units, certificateTypeList, fromDate, toDate);
 
+        LOGGER.debug("Getting diagnosed certificates of types ("
+            + String.join(", ", certificateTypeList) + ") for units ("
+            + String.join(", ", units) + ")");
         return transformListToDiagnosedCertificates(certificates);
     }
 
@@ -81,6 +83,9 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
 
         var certificates = certificateDao.findCertificate(personId, certificateTypeList, fromDate, toDate, units);
 
+        LOGGER.debug("Getting diagnosed certificates of types ("
+            + String.join(", ", certificateTypeList) + ") for person on units ("
+            + String.join(", ", units) + ")");
         return transformListToDiagnosedCertificates(certificates);
     }
 
@@ -90,6 +95,9 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
 
         var certificates = certificateDao.findCertificate(personId, certificateTypeList, fromDate, toDate, units);
 
+        LOGGER.debug("Getting sickleave certificates of types ("
+            + String.join(", ", certificateTypeList) + ") for person on units ("
+            + String.join(", ", units) + ")");
         return transformListToSickLeaveCertificates(certificates);
     }
 
