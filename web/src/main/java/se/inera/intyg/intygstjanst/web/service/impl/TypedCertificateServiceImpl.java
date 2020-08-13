@@ -78,6 +78,17 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
     }
 
     @Override
+    public List<String> listDoctorsForCareUnits(List<String> units, List<String> certificateTypeList,
+        LocalDate fromDate, LocalDate toDate) {
+        var certificates = certificateDao.findCertificate(units, certificateTypeList, fromDate, toDate);
+
+        LOGGER.debug("Getting signing doctors for certificates of types ("
+            + String.join(", ", certificateTypeList) + ") for units ("
+            + String.join(", ", units) + ")");
+        return certificates.stream().map(Certificate::getSigningDoctorName).distinct().collect(Collectors.toList());
+    }
+
+    @Override
     public List<DiagnosedCertificate> listDiagnosedCertificatesForPerson(Personnummer personId, List<String> certificateTypeList,
         LocalDate fromDate, LocalDate toDate, List<String> units) {
 

@@ -34,4 +34,7 @@ public interface TypedCertificateService {
 
     List<SickLeaveCertificate> listSickLeaveCertificatesForPerson(Personnummer personId, List<String> certificateTypeList,
         LocalDate fromDate, LocalDate toDate, List<String> units);
+
+    List<String> listDoctorsForCareUnits(List<String> units, List<String> certificateTypes,
+        LocalDate fromDate, LocalDate toDate);
 }
