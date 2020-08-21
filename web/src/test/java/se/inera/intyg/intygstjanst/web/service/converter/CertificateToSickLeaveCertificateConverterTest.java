@@ -66,7 +66,7 @@ public class CertificateToSickLeaveCertificateConverterTest {
     private static final String CARE_GIVER_ID = "vardgivare-1";
     private static final String DIAGNOSE_CODE = "diag-1";
     private static final String DIAGNOSE_CODE_2 = "diag-2";
-    private static final String OCCUPATION = "NUVARANDE_ARBETE";
+    private static final String OCCUPATION = "Nuvarande arbete";
     private static final String HUNDRED_PERCENT = "100";
 
 
