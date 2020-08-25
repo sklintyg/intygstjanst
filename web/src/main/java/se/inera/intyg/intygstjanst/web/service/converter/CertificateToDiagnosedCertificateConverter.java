@@ -71,7 +71,7 @@ public class CertificateToDiagnosedCertificateConverter {
         return getBuild(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
     }
 
-    private static DiagnosedCertificate getBuild(Certificate certificate, ImmutableList<Diagnos> diagnosis, GrundData grundData) {
+    private static DiagnosedCertificate getBuild(Certificate certificate, ImmutableList<Diagnos> diagnoses, GrundData grundData) {
         return new DiagnosedCertificateBuilder(certificate.getId())
             .certificateType(certificate.getType())
             .personId(certificate.getCivicRegistrationNumber().getPersonnummerWithDash())
@@ -84,8 +84,8 @@ public class CertificateToDiagnosedCertificateConverter {
             .signingDateTime(certificate.getSignedDate())
             .deleted(certificate.isRevoked())
             .testCertificate(certificate.isTestCertificate())
-            .diagnoseCode(diagnosis != null ? diagnosis.get(0).getDiagnosKod() : null)
-            .secondaryDiagnoseCodes(buildSecondaryDiagnoseCodes(diagnosis))
+            .diagnoseCode(diagnoses != null ? diagnoses.get(0).getDiagnosKod() : null)
+            .secondaryDiagnoseCodes(buildSecondaryDiagnoseCodes(diagnoses))
             .build();
     }
 
