@@ -59,7 +59,7 @@ public class CertificateToSickLeaveCertificateConverter {
             .occupation(typedStatement.getSysselsattning() != null ? typedStatement.getSysselsattning()
                 .stream()
                 .filter(Objects::nonNull)
-                .map(s -> s.getTyp().getId())
+                .map(s -> s.getTyp().getLabel())
                 .collect(Collectors.joining(",")) : null)
             .build();
     }
@@ -79,7 +79,7 @@ public class CertificateToSickLeaveCertificateConverter {
             .occupation(typedStatement.getSysselsattning() != null ? typedStatement.getSysselsattning()
                 .stream()
                 .filter(Objects::nonNull)
-                .map(s -> s.getTyp().getId())
+                .map(s -> s.getTyp().getLabel())
                 .collect(Collectors.joining(",")) : null)
             .build();
     }
@@ -98,7 +98,7 @@ public class CertificateToSickLeaveCertificateConverter {
             .signingDateTime(certificate.getSignedDate())
             .deleted(certificate.isRevoked())
             .testCertificate(certificate.isTestCertificate())
-            .diagnoseCode(diagnoses != null ? diagnoses.get(0).getDiagnosKod() : null)
+            .diagnoseCode((diagnoses != null && !diagnoses.isEmpty()) ? diagnoses.get(0).getDiagnosKod() : null)
             .secondaryDiagnoseCodes(buildSecondaryDiagnoseCodes(diagnoses));
     }
 

@@ -114,7 +114,8 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
 
     private List<DiagnosedCertificate> transformListToDiagnosedCertificates(List<Certificate> certificates) {
 
-        return certificates.stream().map(this::convertToDiagnosedCertificate).filter(Objects::nonNull).collect(Collectors.toList());
+        return certificates.stream().filter(cert -> !cert.isRevoked()).map(this::convertToDiagnosedCertificate)
+            .filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     private DiagnosedCertificate convertToDiagnosedCertificate(Certificate certificate) {
@@ -147,7 +148,8 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
     }
 
     private List<SickLeaveCertificate> transformListToSickLeaveCertificates(List<Certificate> certificates) {
-        return certificates.stream().map(this::convertToSickLeaveCertificate).collect(Collectors.toList());
+        return certificates.stream().filter(cert -> !cert.isRevoked()).map(this::convertToSickLeaveCertificate)
+            .collect(Collectors.toList());
     }
 
     private SickLeaveCertificate convertToSickLeaveCertificate(Certificate certificate) {
