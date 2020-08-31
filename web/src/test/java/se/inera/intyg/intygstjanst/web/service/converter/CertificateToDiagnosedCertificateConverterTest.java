@@ -146,26 +146,26 @@ public class CertificateToDiagnosedCertificateConverterTest {
 
     private LuaefsUtlatandeV1 buildLuaefsStatement() {
         var statement = mock(LuaefsUtlatandeV1.class);
-        when(statement.getDiagnoser()).thenReturn(getDiagnosis());
+        when(statement.getDiagnoser()).thenReturn(getDiagnoses());
         when(statement.getGrundData()).thenReturn(getBasicData());
         return statement;
     }
 
     private LuaenaUtlatandeV1 buildLuaenaStatement() {
         var statement = mock(LuaenaUtlatandeV1.class);
-        when(statement.getDiagnoser()).thenReturn(getDiagnosis());
+        when(statement.getDiagnoser()).thenReturn(getDiagnoses());
         when(statement.getGrundData()).thenReturn(getBasicData());
         return statement;
     }
 
     private LuseUtlatandeV1 buildLuseStatement() {
         var statement = mock(LuseUtlatandeV1.class);
-        when(statement.getDiagnoser()).thenReturn(getDiagnosis());
+        when(statement.getDiagnoser()).thenReturn(getDiagnoses());
         when(statement.getGrundData()).thenReturn(getBasicData());
         return statement;
     }
 
-    private ImmutableList<Diagnos> getDiagnosis() {
+    private ImmutableList<Diagnos> getDiagnoses() {
         return ImmutableList
             .copyOf(java.util.List.of(Diagnos.create(DIAGNOSE_CODE, null, null, null),
                 Diagnos.create(DIAGNOSE_CODE_2, null, null, null)));

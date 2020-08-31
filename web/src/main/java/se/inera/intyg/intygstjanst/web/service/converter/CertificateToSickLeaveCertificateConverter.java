@@ -85,7 +85,7 @@ public class CertificateToSickLeaveCertificateConverter {
     }
 
     private static SickLeaveCertificateBuilder buildSickLeaveCertificateCommon(Certificate certificate, GrundData grundData,
-        ImmutableList<Diagnos> diagnosis) {
+        ImmutableList<Diagnos> diagnoses) {
         return new SickLeaveCertificateBuilder(certificate.getId())
             .certificateType(certificate.getType())
             .personId(certificate.getCivicRegistrationNumber().getPersonnummerWithDash())
@@ -98,8 +98,8 @@ public class CertificateToSickLeaveCertificateConverter {
             .signingDateTime(certificate.getSignedDate())
             .deleted(certificate.isRevoked())
             .testCertificate(certificate.isTestCertificate())
-            .diagnoseCode((diagnosis != null && !diagnosis.isEmpty()) ? diagnosis.get(0).getDiagnosKod() : null)
-            .secondaryDiagnoseCodes(buildSecondaryDiagnoseCodes(diagnosis));
+            .diagnoseCode((diagnoses != null && !diagnoses.isEmpty()) ? diagnoses.get(0).getDiagnosKod() : null)
+            .secondaryDiagnoseCodes(buildSecondaryDiagnoseCodes(diagnoses));
     }
 
 

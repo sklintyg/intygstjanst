@@ -21,7 +21,6 @@ package se.inera.intyg.intygstjanst.web.integration.certificate;
 import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -51,7 +50,7 @@ public class TypedCertificateController {
     }
 
     @PrometheusTimeMethod
-    @GET
+    @POST
     @Path("/diagnosed/unit")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -63,6 +62,24 @@ public class TypedCertificateController {
         }
 
         return typedCertificateService.listDiagnosedCertificatesForCareUnits(units,
+            parameters.getCertificateTypes(),
+            parameters.getFromDate(),
+            parameters.getToDate());
+    }
+
+    @PrometheusTimeMethod
+    @POST
+    @Path("/doctors")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public List<String> listDoctorsForCareUnit(@RequestBody TypedCertificateRequest parameters) {
+        var units = parameters.getUnitIds();
+
+        if (units == null || units.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return typedCertificateService.listDoctorsForCareUnits(units,
             parameters.getCertificateTypes(),
             parameters.getFromDate(),
             parameters.getToDate());

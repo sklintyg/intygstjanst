@@ -157,7 +157,7 @@ public class CertificateToSickLeaveCertificateConverterTest {
 
     private Ag114UtlatandeV1 buildAg114Statement() {
         var statement = mock(Ag114UtlatandeV1.class);
-        when(statement.getDiagnoser()).thenReturn(getDiagnosis());
+        when(statement.getDiagnoser()).thenReturn(getDiagnoses());
         when(statement.getGrundData()).thenReturn(getBasicData());
         when(statement.getSjukskrivningsgrad()).thenReturn(HUNDRED_PERCENT);
         when(statement.getSjukskrivningsperiod()).thenReturn(getSickLeavePeriod());
@@ -176,7 +176,7 @@ public class CertificateToSickLeaveCertificateConverterTest {
 
     private Ag7804UtlatandeV1 buildAg7804Statement() {
         var statement = mock(Ag7804UtlatandeV1.class);
-        when(statement.getDiagnoser()).thenReturn(getDiagnosis());
+        when(statement.getDiagnoser()).thenReturn(getDiagnoses());
         when(statement.getGrundData()).thenReturn(getBasicData());
         when(statement.getSjukskrivningar()).thenReturn(getSickLeaves());
         when(statement.getSysselsattning()).thenReturn(getOccupationAg7804());
@@ -199,7 +199,7 @@ public class CertificateToSickLeaveCertificateConverterTest {
         return ImmutableList.copyOf(new se.inera.intyg.common.ag7804.model.internal.Sysselsattning[]{occupation});
     }
 
-    private ImmutableList<Diagnos> getDiagnosis() {
+    private ImmutableList<Diagnos> getDiagnoses() {
         return ImmutableList
             .copyOf(java.util.List.of(Diagnos.create(DIAGNOSE_CODE, null, null, null),
                 Diagnos.create(DIAGNOSE_CODE_2, null, null, null)));
