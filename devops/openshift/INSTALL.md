@@ -23,7 +23,7 @@ The main update is activation of the new reference data concept (master data for
 
 Latest builds of refdata can be downloaded from the Inera Nexus server. 
 
-	https://build-inera.nordicmedtest.se/nexus/repository/releases/se/inera/intyg/refdata/refdata/1.0.0.<build-num>/refdata-1.0.0.<build-num>.jar]
+	https://nexus.drift.inera.se/repository/maven-releases/se/inera/intyg/refdata/refdata/1.0.0.<build-num>/refdata-1.0.0.<build-num>.jar]
 
 ### 1.4 Other recommendations
 
@@ -83,7 +83,7 @@ _Note: It's of great importance to know if an update includes database schema ch
 
 Software artifacts are located at, and downloaded from:
 
-* From Installing Client - [https://build-inera.nordicmedtest.se/nexus/repository/releases/se/inera/intyg/intygstjanst/intygstjanst/maven-metadata.xml](https://build-inera.nordicmedtest.se/nexus/repository/releases/se/inera/intyg/intygstjanst/intygstjanst/maven-metadata.xml)
+* From Installing Client - [https://nexus.drift.inera.se/repository/maven-releases/se/inera/intyg/intygstjanst/intygstjanst/maven-metadata.xml](https://nexus.drift.inera.se/repository/maven-releases/se/inera/intyg/intygstjanst/intygstjanst/maven-metadata.xml)
 * From OpenShift Cluster - docker.drift.inera.se/intyg/
 
 ### 2.8 Access to OpenShift Cluster
@@ -136,7 +136,7 @@ Replace `<version>` below with the actual application version.
 
 Fetch the actual version of the tool, the example below runs `wget` to retrieve the package (tarball).
 
-    > wget https://build-inera.nordicmedtest.se/nexus/repository/releases/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/<version>/intygstjanst-liquibase-runner-<version>.tar
+    > wget https://nexus.drift.inera.se/repository/maven-releases/se/inera/intyg/intygstjanst/intygstjanst-liquibase-runner/<version>/intygstjanst-liquibase-runner-<version>.tar
 
 
 Download onto a computer having Java installed and network access to the database and execute the runner.
