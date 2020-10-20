@@ -35,6 +35,20 @@ public interface CertificateDao {
     /**
      * Retrieves a list of {@link Certificate} filtered by parameters.
      *
+     * @param civicRegistrationNumber Civic registration number of patient
+     * @param careUnit The id of the care unit where the certificate was created
+     * @param fromDate From date when the certificate was signed
+     * @param toDate To date when the certificate was signed
+     * @param orderBy Field that list should be sorted according to
+     * @param orderAscending If list should be sorted ascending or not
+     * @return filtered list of certificates
+     */
+    List<Certificate> findCertificates(Personnummer civicRegistrationNumber, String careUnit, LocalDateTime fromDate, LocalDateTime toDate,
+                                        String orderBy, boolean orderAscending);
+
+    /**
+     * Retrieves a list of {@link Certificate} filtered by parameters.
+     *
      * @param civicRegistrationNumber Civic registration number
      * @param types Type of certificate
      * @param fromDate From date when the certificate is valid
