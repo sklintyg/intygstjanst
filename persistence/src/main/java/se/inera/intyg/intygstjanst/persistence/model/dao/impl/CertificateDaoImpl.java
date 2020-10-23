@@ -60,7 +60,7 @@ public class CertificateDaoImpl implements CertificateDao {
     private EntityManager entityManager;
 
     @Override
-    public List<Certificate> findCertificates(Personnummer civicRegistrationNumber, String careUnit,
+    public List<Certificate> findCertificates(Personnummer civicRegistrationNumber, String[] units,
         LocalDateTime fromDate, LocalDateTime toDate, String orderBy, boolean orderAscending) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Certificate> query = criteriaBuilder.createQuery(Certificate.class);
@@ -70,11 +70,11 @@ public class CertificateDaoImpl implements CertificateDao {
 
         if (civicRegistrationNumber != null) {
             predicates
-            .add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), DaoUtil.formatPnrForPersistence(civicRegistrationNumber)));
+                .add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), DaoUtil.formatPnrForPersistence(civicRegistrationNumber)));
         }
 
-        if (careUnit != null && !careUnit.isEmpty()) {
-            predicates.add(criteriaBuilder.equal(root.get("careUnitId"), careUnit));
+        if (units != null && units.length > 0) {
+            predicates.add(root.get("careUnitId").in(units));
         } else {
             return Collections.emptyList();
         }
@@ -309,7 +309,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     public void eraseTestCertificates(List<String> ids) {
-        for (var id: ids) {
+        for (var id : ids) {
             try {
                 final var certificate = getCertificate(null, id);
                 entityManager.remove(certificate);

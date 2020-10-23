@@ -42,8 +42,8 @@ import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.infra.certificate.dto.CertificateListRequest;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -55,7 +55,7 @@ public class CertificateListServiceImplTest {
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.now().plusMonths(-1);
     private static final String CIVIC_REGISTRATION_NUMBER_STRING = "191212121212";
     private static final String HSA_ID = "doctor-1";
-    private static final String CARE_UNIT_ID = "enhet-1";
+    private static final String[] CARE_UNIT_IDS = new String[]{"enhet-1"};
     private static final String CARE_UNIT_NAME = "Enhet1";
     private static final String CARE_GIVER_ID = "vardgivare-1";
     private static final String CERT_TYPE = "lisjp";
@@ -99,7 +99,7 @@ public class CertificateListServiceImplTest {
         List<Certificate> certificates;
         CertificateListRequest request = new CertificateListRequest();
         request.setCivicRegistrationNumber(CIVIC_REGISTRATION_NUMBER_STRING);
-        request.setUnitId(CARE_UNIT_ID);
+        request.setUnitIds(CARE_UNIT_IDS);
         request.setHsaId(HSA_ID);
         request.setStartFrom(0);
         request.setPageSize(10);
@@ -107,18 +107,17 @@ public class CertificateListServiceImplTest {
         creatorOfCert.setPersonId(HSA_ID);
         basicData.setSkapadAv(creatorOfCert);
 
-        if(sortList) {
+        if (sortList) {
             certificates = new ArrayList<>();
             certificates.add(buildCertificate(CERT_TYPE, CERT_ID));
             certificates.add(buildCertificate(CERT_TYPE, CERT_ID + "1"));
             request.setOrderBy("status");
             request.setOrderAscending(true);
         } else if (!isEmpty) {
-           certificates = Collections.singletonList(buildCertificate(CERT_TYPE, CERT_ID));
+            certificates = Collections.singletonList(buildCertificate(CERT_TYPE, CERT_ID));
         } else {
             certificates = Collections.emptyList();
         }
-
 
         when(patient.getPersonId()).thenReturn(CIVIC_REGISTRATION_NUMBER);
         when(basicData.getPatient()).thenReturn(patient);
@@ -131,7 +130,7 @@ public class CertificateListServiceImplTest {
         when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
         when(moduleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(convertedCertificate);
-        when(certificateDao.findCertificates(CIVIC_REGISTRATION_NUMBER, CARE_UNIT_ID,
+        when(certificateDao.findCertificates(CIVIC_REGISTRATION_NUMBER, CARE_UNIT_IDS,
             request.getFromDate(), request.getToDate(), request.getOrderBy(), request.isOrderAscending())).thenReturn(certificates);
         var response = certificateListService.listCertificatesForDoctor(request);
         assertEquals(certificates.size(), response.getCertificates().size());
@@ -144,7 +143,7 @@ public class CertificateListServiceImplTest {
         certificate.setSignedDate(CERT_SIGNING_DATETIME);
         certificate.setCivicRegistrationNumber(CIVIC_REGISTRATION_NUMBER);
         certificate.setCareGiverId(CARE_GIVER_ID);
-        certificate.setCareUnitId(CARE_UNIT_ID);
+        certificate.setCareUnitId(CARE_UNIT_IDS[0]);
         certificate.setCareUnitName(CARE_UNIT_NAME);
         certificate.setOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "XML", certificate));
         return certificate;
