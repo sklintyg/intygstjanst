@@ -36,15 +36,16 @@ public interface CertificateDao {
      * Retrieves a list of {@link Certificate} filtered by parameters.
      *
      * @param civicRegistrationNumber Civic registration number of patient
-     * @param careUnit The id of the care unit where the certificate was created
+     * @param units The unit ids of the care unit and/or sub units that the certificate was issued from
      * @param fromDate From date when the certificate was signed
      * @param toDate To date when the certificate was signed
      * @param orderBy Field that list should be sorted according to
      * @param orderAscending If list should be sorted ascending or not
      * @return filtered list of certificates
      */
-    List<Certificate> findCertificates(Personnummer civicRegistrationNumber, String careUnit, LocalDateTime fromDate, LocalDateTime toDate,
-                                        String orderBy, boolean orderAscending);
+    List<Certificate> findCertificates(Personnummer civicRegistrationNumber, String[] units, LocalDateTime fromDate,
+        LocalDateTime toDate,
+        String orderBy, boolean orderAscending);
 
     /**
      * Retrieves a list of {@link Certificate} filtered by parameters.
@@ -137,15 +138,17 @@ public interface CertificateDao {
 
     /**
      * Find test certificates with signed dates within passed date/time interval.
-     * @param from  From datetime. Can be null.
-     * @param to    To datetime. Can be null.
-     * @return  List of matching test certificates.
+     *
+     * @param from From datetime. Can be null.
+     * @param to To datetime. Can be null.
+     * @return List of matching test certificates.
      */
     List<Certificate> findTestCertificates(LocalDateTime from, LocalDateTime to);
 
     /**
      * Erase any data related to test certificates passed as ids.
-     * @param ids   Certificate ids.
+     *
+     * @param ids Certificate ids.
      */
     void eraseTestCertificates(List<String> ids);
 }

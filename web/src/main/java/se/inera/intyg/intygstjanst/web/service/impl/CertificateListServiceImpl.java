@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -63,12 +64,12 @@ public class CertificateListServiceImpl implements CertificateListService {
             || parameters.getCivicRegistrationNumber().equals("") ? null
             : Personnummer.createPersonnummer(parameters.getCivicRegistrationNumber()).get();
 
-        var certificates = certificateDao.findCertificates(civicRegistrationNumber, parameters.getUnitId(), parameters.getFromDate(),
+        var certificates = certificateDao.findCertificates(civicRegistrationNumber, parameters.getUnitIds(), parameters.getFromDate(),
             parameters.getToDate(), parameters.getOrderBy(), parameters.isOrderAscending());
         var sentCertificates = getSentCertificates(certificates);
-        LOGGER.debug("Getting signed certificates for unit (" + parameters.getUnitId() + ")");
+        LOGGER.debug("Getting signed certificates for units (" + Arrays.toString(parameters.getUnitIds()) + ")");
 
-       var certificateList = certificates.stream()
+        var certificateList = certificates.stream()
             .filter(cert -> !cert.isRevoked())
             .map(this::convertToUtlatande)
             .filter(Objects::nonNull)
@@ -77,10 +78,10 @@ public class CertificateListServiceImpl implements CertificateListService {
             .map(this::addCertificateTypeName)
             .collect(Collectors.toList());
 
-       sortList(certificateList, parameters.getOrderBy(), parameters.isOrderAscending());
-       certificateListResponse.setTotalCount(certificateList.size());
-       certificateListResponse.setCertificates(getSubList(certificateList, parameters.getStartFrom(), parameters.getPageSize()));
-       return certificateListResponse;
+        sortList(certificateList, parameters.getOrderBy(), parameters.isOrderAscending());
+        certificateListResponse.setTotalCount(certificateList.size());
+        certificateListResponse.setCertificates(getSubList(certificateList, parameters.getStartFrom(), parameters.getPageSize()));
+        return certificateListResponse;
     }
 
     private void sortList(List<CertificateListEntry> certificates, String orderBy, boolean ascending) {
@@ -146,7 +147,7 @@ public class CertificateListServiceImpl implements CertificateListService {
         return certificateListEntry;
     }
 
-    private List <CertificateListEntry> getSubList(List<CertificateListEntry>certificates, int startFrom, int pageSize) {
+    private List<CertificateListEntry> getSubList(List<CertificateListEntry> certificates, int startFrom, int pageSize) {
         if (pageSize > certificates.size()) {
             return certificates;
         } else {
