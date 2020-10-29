@@ -48,7 +48,7 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.common.support.modules.support.api.dto.ValidateXmlResponse;
-import se.inera.intyg.common.util.logging.LogMarkers;
+import se.inera.intyg.infra.monitoring.logging.LogMarkers;
 import se.inera.intyg.infra.integration.pu.model.PersonSvar;
 import se.inera.intyg.infra.integration.pu.model.PersonSvar.Status;
 import se.inera.intyg.infra.integration.pu.services.PUService;
