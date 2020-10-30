@@ -84,7 +84,7 @@
 
   <!-- Listener for external logback configuration file -->
   <listener>
-      <listener-class>se.inera.intyg.common.util.logging.LogbackConfiguratorContextListener</listener-class>
+      <listener-class>se.inera.intyg.infra.monitoring.logging.LogbackConfiguratorContextListener</listener-class>
   </listener>
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
