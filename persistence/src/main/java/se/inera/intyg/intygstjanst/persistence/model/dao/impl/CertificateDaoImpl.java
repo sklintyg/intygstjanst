@@ -54,9 +54,66 @@ import se.inera.intyg.schemas.contract.Personnummer;
 public class CertificateDaoImpl implements CertificateDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(CertificateDaoImpl.class);
+    private static final int MONTHS = -3;
 
     @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
     private EntityManager entityManager;
+
+    @Override
+    public List<Certificate> findCertificates(Personnummer civicRegistrationNumber, String[] units,
+        LocalDateTime fromDate, LocalDateTime toDate, String orderBy, boolean orderAscending, Set<String> types) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Certificate> query = criteriaBuilder.createQuery(Certificate.class);
+        Root<Certificate> root = query.from(Certificate.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (civicRegistrationNumber != null) {
+            predicates
+                .add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), DaoUtil.formatPnrForPersistence(civicRegistrationNumber)));
+        }
+
+        if (units != null && units.length > 0) {
+            predicates.add(root.get("careUnitId").in(units));
+        } else {
+            return Collections.emptyList();
+        }
+        if (types != null && !types.isEmpty()) {
+            List<String> typesList = new ArrayList<String>(types);
+            predicates.add(criteriaBuilder.lower(root.<String>get("type")).in(toLowerCase(typesList)));
+        }
+        if (toDate != null) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("signedDate"), toDate.plusDays(1)));
+        } else {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("signedDate"), LocalDateTime.now()));
+        }
+        if (fromDate != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("signedDate"), fromDate));
+        } else {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("signedDate"),
+                LocalDateTime.now().plusMonths(MONTHS)));
+        }
+
+        query.where(predicates.toArray(new Predicate[predicates.size()]));
+
+        if (!("status").equals(orderBy) && !("type").equals(orderBy)) {
+            if (orderAscending) {
+                query.orderBy(criteriaBuilder.asc(root.get(orderBy)), criteriaBuilder.asc(root.get("signedDate")));
+            } else {
+                query.orderBy(criteriaBuilder.desc(root.get(orderBy)), criteriaBuilder.desc(root.get("signedDate")));
+            }
+        } else {
+            if (orderAscending) {
+                query.orderBy(criteriaBuilder.asc(root.get("signedDate")));
+            } else {
+                query.orderBy(criteriaBuilder.desc(root.get("signedDate")));
+            }
+        }
+
+        List<Certificate> tmpResult = entityManager.createQuery(query).getResultList();
+        return filterDuplicates(tmpResult);
+    }
+
 
     @Override
     public List<Certificate> findCertificate(Personnummer civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate,
@@ -264,7 +321,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     public void eraseTestCertificates(List<String> ids) {
-        for (var id: ids) {
+        for (var id : ids) {
             try {
                 final var certificate = getCertificate(null, id);
                 entityManager.remove(certificate);
@@ -294,3 +351,4 @@ public class CertificateDaoImpl implements CertificateDao {
         return filtered;
     }
 }
+
