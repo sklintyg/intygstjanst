@@ -65,7 +65,7 @@ public class CertificateListServiceImpl implements CertificateListService {
             : Personnummer.createPersonnummer(parameters.getCivicRegistrationNumber()).get();
 
         var certificates = certificateDao.findCertificates(civicRegistrationNumber, parameters.getUnitIds(), parameters.getFromDate(),
-            parameters.getToDate(), parameters.getOrderBy(), parameters.isOrderAscending());
+            parameters.getToDate(), parameters.getOrderBy(), parameters.isOrderAscending(), parameters.getTypes());
         var sentCertificates = getSentCertificates(certificates);
         LOGGER.debug("Getting signed certificates for units (" + Arrays.toString(parameters.getUnitIds()) + ")");
 
