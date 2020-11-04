@@ -61,7 +61,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     public List<Certificate> findCertificates(Personnummer civicRegistrationNumber, String[] units,
-        LocalDateTime fromDate, LocalDateTime toDate, String orderBy, boolean orderAscending) {
+        LocalDateTime fromDate, LocalDateTime toDate, String orderBy, boolean orderAscending, Set<String> types) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Certificate> query = criteriaBuilder.createQuery(Certificate.class);
         Root<Certificate> root = query.from(Certificate.class);
@@ -78,8 +78,12 @@ public class CertificateDaoImpl implements CertificateDao {
         } else {
             return Collections.emptyList();
         }
+        if (types != null && !types.isEmpty()) {
+            List<String> typesList = new ArrayList<String>(types);
+            predicates.add(criteriaBuilder.lower(root.<String>get("type")).in(toLowerCase(typesList)));
+        }
         if (toDate != null) {
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("signedDate"), toDate));
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("signedDate"), toDate.plusDays(1)));
         } else {
             predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("signedDate"), LocalDateTime.now()));
         }
@@ -89,12 +93,20 @@ public class CertificateDaoImpl implements CertificateDao {
             predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("signedDate"),
                 LocalDateTime.now().plusMonths(MONTHS)));
         }
+
         query.where(predicates.toArray(new Predicate[predicates.size()]));
+
         if (!("status").equals(orderBy) && !("type").equals(orderBy)) {
             if (orderAscending) {
-                query.orderBy(criteriaBuilder.asc(root.get(orderBy)));
+                query.orderBy(criteriaBuilder.asc(root.get(orderBy)), criteriaBuilder.asc(root.get("signedDate")));
             } else {
-                query.orderBy(criteriaBuilder.desc(root.get(orderBy)));
+                query.orderBy(criteriaBuilder.desc(root.get(orderBy)), criteriaBuilder.desc(root.get("signedDate")));
+            }
+        } else {
+            if (orderAscending) {
+                query.orderBy(criteriaBuilder.asc(root.get("signedDate")));
+            } else {
+                query.orderBy(criteriaBuilder.desc(root.get("signedDate")));
             }
         }
 
@@ -339,3 +351,4 @@ public class CertificateDaoImpl implements CertificateDao {
         return filtered;
     }
 }
+
