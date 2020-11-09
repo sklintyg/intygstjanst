@@ -27,7 +27,9 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -97,12 +99,15 @@ public class CertificateListServiceImplTest {
 
     private void testGetCertificates(boolean isEmpty, boolean sortList) throws ModuleNotFoundException, ModuleException {
         List<Certificate> certificates;
+        Set<String> types = new HashSet<>();
         CertificateListRequest request = new CertificateListRequest();
         request.setCivicRegistrationNumber(CIVIC_REGISTRATION_NUMBER_STRING);
         request.setUnitIds(CARE_UNIT_IDS);
         request.setHsaId(HSA_ID);
         request.setStartFrom(0);
         request.setPageSize(10);
+        types.add(CERT_TYPE);
+        request.setTypes(types);
 
         creatorOfCert.setPersonId(HSA_ID);
         basicData.setSkapadAv(creatorOfCert);
@@ -131,7 +136,8 @@ public class CertificateListServiceImplTest {
         when(moduleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(convertedCertificate);
         when(certificateDao.findCertificates(CIVIC_REGISTRATION_NUMBER, CARE_UNIT_IDS,
-            request.getFromDate(), request.getToDate(), request.getOrderBy(), request.isOrderAscending())).thenReturn(certificates);
+            request.getFromDate(), request.getToDate(), request.getOrderBy(), request.isOrderAscending(), request.getTypes()))
+            .thenReturn(certificates);
         var response = certificateListService.listCertificatesForDoctor(request);
         assertEquals(certificates.size(), response.getCertificates().size());
     }
@@ -149,3 +155,4 @@ public class CertificateListServiceImplTest {
         return certificate;
     }
 }
+
