@@ -20,15 +20,15 @@
 
 <configuration>
 
-  <include resource="logback-dev-base.xml"/>
+  <property name="APP_NAME" value="${APP_NAME:-intygstjanst}"/>
 
+  <include resource="logback-dev-base.xml"/>
 
   <logger name="org.apache.cxf" level="warn" />
 
   <logger name="se.inera.intyg.intygstjanst.web.integration" level="info" />
   <logger name="se.inera.intyg.intygstjanst.web.service.impl.StatisticsServiceImpl" level="info" />
   <logger name="se.inera.intyg.intygstjanst.web.service.MonitoringLogService" level="info" />
-
 
   <root level="info">
     <appender-ref ref="CONSOLE" />
