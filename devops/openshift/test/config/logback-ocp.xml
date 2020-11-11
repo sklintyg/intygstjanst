@@ -24,8 +24,8 @@
 
     <include resource="logback-ocp-base.xml"/>
 
+    <logger name="se.inera.intyg.intygstjanst" level="warn" />
     <logger name="se.inera.intyg.intygstjanst.web.integration" level="info" />
-
     <logger name="se.inera.intyg.intygstjanst.web.service.impl.StatisticsServiceImpl" level="info" />
 
     <logger name="se.inera.intyg.intygstjanst.web.service.MonitoringLogService" level="info" additivity="false">

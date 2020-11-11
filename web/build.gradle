@@ -25,7 +25,7 @@ gretty {
     debugSuspend = false
 
     jvmArgs = [
-            "-Dlogback.file=classpath:logback-ocp.xml",
+            "-Dlogback.file=classpath:logback-dev.xml",
             "-Dspring.profiles.active=" + springProfiles,
             "-Dcatalina.base=${buildDir}/catalina.base",
             "-Drecipient.config.file=${projectDir}/recipients-dev.json",
