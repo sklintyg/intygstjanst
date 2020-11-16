@@ -43,6 +43,7 @@ import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -233,6 +234,11 @@ public class CertificateDaoImpl implements CertificateDao {
     public long storeOriginalCertificate(OriginalCertificate originalCertificate) {
         entityManager.persist(originalCertificate);
         return originalCertificate.getId();
+    }
+
+    @Override
+    public void storeCertificateMetadata(CertificateMetaData metadata) {
+        entityManager.persist(metadata);
     }
 
     @Override

@@ -151,4 +151,6 @@ public interface CertificateDao {
      * @param ids Certificate ids.
      */
     void eraseTestCertificates(List<String> ids);
+
+    void storeCertificateMetadata(CertificateMetaData metadata);
 }

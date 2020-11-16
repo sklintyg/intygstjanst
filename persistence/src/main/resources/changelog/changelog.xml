@@ -493,4 +493,62 @@
 			<column name="INTYGS_ID" />
 		</createIndex>
 	</changeSet>
+
+	<changeSet id="48" author="mj">
+		<createTable tableName="CERTIFICATE_METADATA">
+			<column name="CERTIFICATE_ID" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="DOCTOR_ID" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DOCTOR_NAME" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IS_REVOKED" type="boolean" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createTable tableName="REF_CERTIFICATE_TYPE">
+			<column name="ID" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="CODE" type="varchar(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="NAME" type="varchar(255)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createIndex indexName="IDX_DOCTOR_ID"
+				tableName="CERTIFICATE_METADATA" unique="false">
+			<column name="DOCTOR_ID" />
+		</createIndex>
+
+		<createIndex indexName="IDX_IS_REVOKED"
+				tableName="CERTIFICATE_METADATA" unique="false">
+			<column name="IS_REVOKED" />
+		</createIndex>
+
+		<sql>
+			INSERT INTO REF_CERTIFICATE_TYPE(ID, CODE, NAME) VALUES
+			('tstrk1062', 'TSTRK1062', 'Transportstyrelsens läkarintyg ADHD'),
+			('tstrk1009', 'TSTRK1009', 'Läkares anmälan till Transportstyrelsen'),
+			('ts-diabetes', 'TSTRK1031', 'Transportstyrelsens läkarintyg diabetes'),
+			('ts-bas', 'TSTRK1007', 'Transportstyrelsens läkarintyg högre körkortsbehörighet'),
+			('luse', 'FK7800', 'Läkarutlåtande för sjukersättning'),
+			('luae_na', 'FK7801', 'Läkarutlåtande för aktivitetsersättning vid nedsatt arbetsförmåga'),
+			('luae_fs', 'FK7802', 'Läkarutlåtande för aktivitetsersättning vid förlängd skolgång'),
+			('lisjp', 'FK7804', 'Läkarintyg för sjukpenning'),
+			('fk7263', 'FK7263', 'Läkarintyg FK 7263'),
+			('ag7804', 'AG7804', 'Läkarintyg om arbetsförmåga – arbetsgivaren'),
+			('ag114', 'AG1-14', 'Läkarintyg om arbetsförmåga – sjuklöneperioden'),
+			('af00251', 'AF00251', 'Läkarintyg för deltagare i arbetsmarknadspolitiska program'),
+			('af00213', 'AF00213', 'Arbetsförmedlingens medicinska utlåtande'),
+			('db', 'DB', 'Dödsbevis'),
+			('doi', 'DOI', 'Dödsorsaksintyg');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
