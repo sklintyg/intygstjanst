@@ -8,21 +8,28 @@ test {
 task restAssuredTest(type: Test) {
     outputs.upToDateWhen { false }
     systemProperty "integration.tests.baseUrl", System.properties['baseUrl'] ?: "http://localhost:8080/"
+    systemProperty "integration.tests.actuatorUrl", System.properties['actuatorUrl'] ?: "http://localhost:8180/"
     include '**/*IT*'
 }
 
 war.dependsOn createVersionPropertyFile
 
 gretty {
-    def springProfiles = 'dev,embedded,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub'
+    def springProfiles = 'dev,bootstrap,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub'
+    def instance = System.properties['instance'] ?: '0'
+    def useHttpPort = 8080 + (instance as Integer)
+    def useInternalHttpPort = 8180 + (instance as Integer)
+
 
     servletContainer = 'tomcat9'
     contextPath = '/inera-certificate'
 
     integrationTestTask = null
     scanInterval = 0
-    debugPort = 5005
+    debugPort = 8880 + (instance as Integer)
+    portPropertiesFileName = "gretty_ports_${instance}.properties"
     debugSuspend = false
+    serverConfigFile = "tomcat-gretty-${instance}.xml"
 
     jvmArgs = [
             "-Dlogback.file=classpath:logback-dev.xml",
@@ -31,7 +38,9 @@ gretty {
             "-Drecipient.config.file=${projectDir}/recipients-dev.json",
             "-Dcredentials.file=${projectDir}/certificate-credentials.properties",
             "-Dconfig.file=${projectDir}/certificate-dev.properties",
-            "-Xmx512M"
+            "-Xmx512M",
+            "-Ddev.http.port=${useHttpPort}",
+            "-Ddev.http.port.internal=${useInternalHttpPort}"
     ]
 }
 
