@@ -19,7 +19,6 @@
 package se.inera.intyg.intygstjanst.persistence.config;
 
 import java.sql.SQLException;
-
 import org.h2.tools.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @EnableJpaRepositories(basePackages = JpaConstants.REPOSITORY_PACKAGE_TO_SCAN)
-@Profile("embedded")
+@Profile("h2")
 public class JpaConfigDev extends JpaConfigBase {
 
     @Value("${db.httpPort}")

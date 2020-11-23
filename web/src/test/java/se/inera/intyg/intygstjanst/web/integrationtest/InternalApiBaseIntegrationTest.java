@@ -16,16 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.persistence.config;
+package se.inera.intyg.intygstjanst.web.integrationtest;
 
+import io.restassured.RestAssured;
+import org.junit.Before;
+import org.springframework.http.HttpStatus;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+public abstract class InternalApiBaseIntegrationTest extends BaseIntegrationTest {
 
-@Configuration
-@EnableJpaRepositories(basePackages = JpaConstants.REPOSITORY_PACKAGE_TO_SCAN)
-@Profile("!h2")
-public class JpaConfig extends JpaConfigBase {
+    public static final int OK = HttpStatus.OK.value();
+    public static final int NOT_FOUND = HttpStatus.NOT_FOUND.value();
+
+    /**
+     * Common setup for all tests
+     */
+    @Override
+    @Before
+    public void setupBase() {
+        super.setupBase();
+        RestAssured.baseURI = System.getProperty("integration.tests.actuatorUrl", "http://localhost:8081");
+    }
 
 }

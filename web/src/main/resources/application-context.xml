@@ -50,7 +50,9 @@
 	       se.inera.intyg.common.support.services,
          se.inera.intyg.common.util.integration.json"/>
 
-    <cache:annotation-driven cache-manager="cacheManager"/>
+    <!-- Cache -->
+    <!-- Initializes caching, required by hsa-services-config.xml -->
+    <import resource="classpath:basic-cache-config.xml" />
 
     <!-- HSA stub-->
     <import resource="classpath:hsa-stub-context.xml"/>
@@ -71,22 +73,8 @@
     <context:component-scan
             base-package="se.inera.intyg.intygstjanst.config,se.inera.intyg.intygstjanst.persistence,se.inera.intyg.intygstjanst.web"/>
 
-    <!-- Initializes caching, required by hsa-services-config.xml -->
-    <beans profile="caching-enabled">
-        <beans profile="!embedded">
-            <bean class="se.inera.intyg.infra.rediscache.core.BasicCacheConfiguration"/>
-        </beans>
-        <beans profile="embedded">
-            <bean class="se.inera.intyg.infra.rediscache.core.EmbeddedCacheConfiguration"/>
-        </beans>
-    </beans>
-
-    <beans profile="!caching-enabled">
-        <bean id="cacheManager" class="org.springframework.cache.support.NoOpCacheManager"/>
-    </beans>
-
-    <!-- If embedded is specified let's bootstrap data -->
-    <beans profile="embedded">
+    <!-- If bootstrap is specified let's bootstrap data -->
+    <beans profile="bootstrap">
         <bean id="IntygBootstrapBean" class="se.inera.intyg.intygstjanst.web.service.bean.IntygBootstrapBean">
             <property name="txManager" ref="transactionManager"/>
         </bean>
