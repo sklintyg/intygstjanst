@@ -550,5 +550,42 @@
 			('db', 'DB', 'Dödsbevis'),
 			('doi', 'DOI', 'Dödsorsaksintyg');
 		</sql>
+
+		<createTable tableName="POPULATE_FAILURES">
+			<column name="ID" type="bigint">
+				<constraints primaryKey="true" unique="true" nullable="false"/>
+			</column>
+			<column name="JOB_NAME" type="varchar(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="POPULATE_ID" type="varchar(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="TIMESTAMP" type="varchar(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="EXCEPTION" type="CLOB">
+				<constraints nullable="true"/>
+			</column>
+		</createTable>
+
+		<addAutoIncrement columnDataType="bigint"
+				columnName="ID" incrementBy="1" startWith="1"
+				tableName="POPULATE_FAILURES"/>
+
+		<createIndex indexName="IDX_POPULATE_FAILURES_POPULATE_ID"
+				tableName="POPULATE_FAILURES" unique="false">
+			<column name="POPULATE_ID"/>
+		</createIndex>
+
+		<createTable tableName="POPULATE_PROCESSED">
+			<column name="POPULATE_ID" type="varchar(255)">
+				<constraints primaryKey="true" primaryKeyName="PK_POPULATE_PROCESSED" nullable="false"/>
+			</column>
+			<column name="JOB_NAME" type="varchar(255)">
+				<constraints primaryKey="true" primaryKeyName="PK_POPULATE_PROCESSED" nullable="false"/>
+			</column>
+		</createTable>
+
 	</changeSet>
 </databaseChangeLog>
