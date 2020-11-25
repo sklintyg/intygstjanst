@@ -34,6 +34,9 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.PopulateFailures;
 import se.inera.intyg.intygstjanst.persistence.model.dao.PopulateFailuresRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.PopulateProcessedRepository;
 
+/**
+ * The part of the population solution that consumes batches from the queue and triggers the actual processing
+ */
 @Service
 public class PopulateConsumerService implements MessageListener {
 
@@ -99,7 +102,7 @@ public class PopulateConsumerService implements MessageListener {
 
     @Transactional
     public void processId(String jobName, String id) {
-        service.processIds(jobName, id);
+        service.processId(jobName, id);
         processedRepository.deleteByPopulateIdAndJobName(id, jobName);
         LOG.debug("Finished processing " + id);
     }

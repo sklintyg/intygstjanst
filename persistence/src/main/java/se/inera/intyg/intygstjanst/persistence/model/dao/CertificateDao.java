@@ -153,4 +153,12 @@ public interface CertificateDao {
     void eraseTestCertificates(List<String> ids);
 
     void storeCertificateMetadata(CertificateMetaData metadata);
+
+    /**
+     * Method to be used when populating Certificate with metadata.
+     *
+     * @param maxNumber Maxiumum number of certificate ids to return
+     * @return List of certificate Ids wothout metadata.
+     */
+    List<String> findCertificatesWithoutMetadata(int maxNumber);
 }

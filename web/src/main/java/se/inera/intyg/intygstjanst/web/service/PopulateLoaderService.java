@@ -18,7 +18,14 @@
  */
 package se.inera.intyg.intygstjanst.web.service;
 
+/**
+ * The part of the population solution that is scheduled and collecting the batches of ids to be put on queue
+ */
 public interface PopulateLoaderService {
 
+    /**
+     * Scheduled method to be triggered in short intervals during a restricted timespan to keep the queue filled with batches of ids to be
+     * processed
+     */
     void populate();
 }
