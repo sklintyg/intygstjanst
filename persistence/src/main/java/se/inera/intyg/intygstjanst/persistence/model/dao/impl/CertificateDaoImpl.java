@@ -98,16 +98,12 @@ public class CertificateDaoImpl implements CertificateDao {
 
         if (!("status").equals(orderBy) && !("type").equals(orderBy)) {
             if (orderAscending) {
-                query.orderBy(criteriaBuilder.asc(root.get(orderBy)), criteriaBuilder.asc(root.get("signedDate")));
+                query.orderBy(criteriaBuilder.asc(root.get(orderBy)), criteriaBuilder.desc(root.get("signedDate")));
             } else {
                 query.orderBy(criteriaBuilder.desc(root.get(orderBy)), criteriaBuilder.desc(root.get("signedDate")));
             }
         } else {
-            if (orderAscending) {
-                query.orderBy(criteriaBuilder.asc(root.get("signedDate")));
-            } else {
-                query.orderBy(criteriaBuilder.desc(root.get("signedDate")));
-            }
+            query.orderBy(criteriaBuilder.desc(root.get("signedDate")));
         }
 
         List<Certificate> tmpResult = entityManager.createQuery(query).getResultList();
