@@ -29,6 +29,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -62,7 +63,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     public List<Certificate> findCertificates(Personnummer civicRegistrationNumber, String[] units,
-        LocalDateTime fromDate, LocalDateTime toDate, String orderBy, boolean orderAscending, Set<String> types) {
+        LocalDateTime fromDate, LocalDateTime toDate, String orderBy, boolean orderAscending, Set<String> types, String doctorId) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Certificate> query = criteriaBuilder.createQuery(Certificate.class);
         Root<Certificate> root = query.from(Certificate.class);
@@ -74,6 +75,10 @@ public class CertificateDaoImpl implements CertificateDao {
                 .add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), DaoUtil.formatPnrForPersistence(civicRegistrationNumber)));
         }
 
+        if (doctorId != null) {
+            Join<Certificate, CertificateMetaData> certificateMetaData = root.join("certificateMetaData", JoinType.INNER);
+            predicates.add(criteriaBuilder.equal(certificateMetaData.get("doctorId"), doctorId));
+        }
         if (units != null && units.length > 0) {
             predicates.add(root.get("careUnitId").in(units));
         } else {

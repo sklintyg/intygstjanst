@@ -45,7 +45,7 @@ public interface CertificateDao {
      * @return filtered list of certificates
      */
     List<Certificate> findCertificates(Personnummer civicRegistrationNumber, String[] units, LocalDateTime fromDate,
-        LocalDateTime toDate, String orderBy, boolean orderAscending, Set<String> types);
+        LocalDateTime toDate, String orderBy, boolean orderAscending, Set<String> types, String doctorId);
 
     /**
      * Retrieves a list of {@link Certificate} filtered by parameters.
