@@ -15,10 +15,10 @@ task restAssuredTest(type: Test) {
 war.dependsOn createVersionPropertyFile
 
 gretty {
-    def springProfiles = 'dev,bootstrap,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub'
     def instance = System.properties['instance'] ?: '0'
     def useHttpPort = 8080 + (instance as Integer)
     def useInternalHttpPort = 8180 + (instance as Integer)
+    def applicationDir = "${rootProject.projectDir}/devops/dev"
 
 
     servletContainer = 'tomcat9'
@@ -29,15 +29,17 @@ gretty {
     debugPort = 8880 + (instance as Integer)
     portPropertiesFileName = "gretty_ports_${instance}.properties"
     debugSuspend = false
-    serverConfigFile = "tomcat-gretty-${instance}.xml"
+    serverConfigFile = "tomcat-gretty.xml"
 
     jvmArgs = [
-            "-Dlogback.file=classpath:logback-dev.xml",
-            "-Dspring.profiles.active=" + springProfiles,
             "-Dcatalina.base=${buildDir}/catalina.base",
-            "-Drecipient.config.file=${projectDir}/recipients-dev.json",
-            "-Dcredentials.file=${projectDir}/certificate-credentials.properties",
-            "-Dconfig.file=${projectDir}/certificate-dev.properties",
+            "-Dspring.profiles.active=dev,bootstrap,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub",
+            "-Dlogback.file=${applicationDir}/config/logback-dev.xml",
+            "-Djava.awt.headless=true",
+            "-Dfile.encoding=UTF-8",
+            "-Dapplication.dir=${applicationDir}",
+            "-Drecipient.config.file=${applicationDir}/config/recipients-dev.json",
+            "-Ddev.config.file=${applicationDir}/config/application-dev.properties",
             "-Xmx512M",
             "-Ddev.http.port=${useHttpPort}",
             "-Ddev.http.port.internal=${useInternalHttpPort}"

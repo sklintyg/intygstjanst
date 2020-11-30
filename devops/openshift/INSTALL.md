@@ -15,11 +15,10 @@ No message (ActiveMQ) objects have been changed.
 
 ### 1.3 Configuration of reference data
 
-The main update is activation of the new reference data concept (master data for shared configurations). Refdata is provided as a JAR file and configured with the `REFDATA_URL` and `RESOURCES_FOLDER` parameters. Normally the default value of `RESOURCES_FOLDER` should be set to  `classpath:`. Three configuration updates is required in order to activate the new refdata:
+The main update is activation of the new reference data concept (master data for shared configurations). Refdata is provided as a JAR file and configured with the `REFDATA_URL`. Two configuration updates are required in order to activate the new refdata:
 
-1. Parameter `REFDATA_URL` shall be set to the actual location of the refdata JAR artefact.
-2. Parameter `RESOURCES_FOLDER` or `-Dresources.folder=...` in `secret-env.sh` shall be set to `classpath:`. Though, it's recommended to remove this parameter from `secret-env.sh`. 
-3. The old `resources.zip` must be removed in order to enable the `REFDATA_URL` setting. 
+1. Parameter `REFDATA_URL` shall be set to the actual location of the refdata JAR artefact. 
+2. The old `resources.zip` must be removed in order to enable the `REFDATA_URL` setting. 
 
 Latest builds of refdata can be downloaded from the Inera Nexus server. 
 
@@ -203,14 +202,14 @@ Open _&lt;env>/configmap-vars.yaml_ and replace `<value>` with expected values. 
     INFRASTRUCTURE_DIRECTORY_LOGICALADDRESS: "<address>"
     REDIS_SENTINEL_MASTER_NAME: "<name>"
     TSBAS_SEND_CERTIFICATE_TO_RECIPIENT_REGISTERCERTIFICATE_VERSION: "v1"
-    NTJP_WS_CERTIFICATE_FILE: "${certificate.folder}/<filename>"
-    NTJP_WS_TRUSTSTORE_FILE: "${certificate.folder}/<filename>"
+    NTJP_WS_CERTIFICATE_FILE: "${application.dir}/certifikat/<filename>"
+    NTJP_WS_TRUSTSTORE_FILE: "${application.dir}/certifikat/<filename>"
     NTJP_WS_CERTIFICATE_TYPE: "<JKS | PKCS12>"
     NTJP_WS_TRUSTSTORE_TYPE: "<JKS | PKCS12>"
    
 Note: Parameters shall follow the Java naming convention when used as in the value field, e.g. the path to certificates indicated by the `CERTIFICATE_FOLDER` property and the truststore file might be defined like:
  
-	NTJP_WS_TRUSTSTORE_FILE: "${certificate.folder}/truststore-ntjp.jks"
+	NTJP_WS_TRUSTSTORE_FILE: "${application.dir}/certifikat/truststore-ntjp.jks"
         
 The _&lt;env>/config/recipients.json_ file might have to be updated with new recipients.
     
