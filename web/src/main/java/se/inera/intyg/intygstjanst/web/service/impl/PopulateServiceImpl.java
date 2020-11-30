@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
@@ -31,7 +33,7 @@ public class PopulateServiceImpl implements PopulateService {
     CertificateDao certificateDao;
 
     @Autowired
-    ModuleApi moduleApi;
+    private IntygModuleRegistryImpl moduleRegistry;
 
     // Add case for loading of ids to be added to queue
     @Override
@@ -80,12 +82,13 @@ public class PopulateServiceImpl implements PopulateService {
             certificateMetaData.setRevoked(certificate.isRevoked());
             certificateMetaData.setDoctorId(getDoctorId(certificate));
             certificateDao.storeCertificateMetadata(certificateMetaData);
-        } catch (PersistenceException | ModuleException e) {
+        } catch (PersistenceException | ModuleException | ModuleNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String getDoctorId(Certificate certificate) throws ModuleException {
+    private String getDoctorId(Certificate certificate) throws ModuleException, ModuleNotFoundException {
+        ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
         var utlatandeFromXml = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
         return utlatandeFromXml.getGrundData().getSkapadAv().getPersonId();
     }

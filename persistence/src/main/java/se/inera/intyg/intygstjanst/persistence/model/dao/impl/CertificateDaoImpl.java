@@ -80,7 +80,7 @@ public class CertificateDaoImpl implements CertificateDao {
             predicates.add(criteriaBuilder.equal(certificateMetaData.get("doctorId"), doctorId));
         }
         if (units != null && units.length > 0) {
-            predicates.add(root.get("careUnitId").in(units));
+            predicates.add(root.get("careUnitId").in((Object[]) units));
         } else {
             return Collections.emptyList();
         }
