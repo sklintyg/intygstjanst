@@ -340,8 +340,9 @@ public class CertificateDaoImpl implements CertificateDao {
     @Override
     public List<String> findCertificatesWithoutMetadata(int maxNumber) {
         String sql =
-            "SELECT c.id FROM CERTIFICATE c LEFT JOIN CERTIFICAET_METADATA cm ON c.ID = cm.ID WHERE cm.id IS NULL LIMIT " + maxNumber
-                + ";"; //TODO
+            "SELECT c.ID FROM CERTIFICATE c "
+                + "LEFT JOIN CERTIFICATE_METADATA cm ON c.ID = cm.CERTIFICATE_ID "
+                + "WHERE cm.CERTIFICATE_ID IS NULL LIMIT " + maxNumber + ";";
         return (List<String>) entityManager.createNativeQuery(sql).getResultList();
     }
 
