@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
@@ -16,6 +17,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.web.service.PopulateService;
 
+//See comments to add new populate job
 @Service
 public class PopulateServiceImpl implements PopulateService {
 
@@ -45,7 +47,9 @@ public class PopulateServiceImpl implements PopulateService {
             switch (jobName) {
                 case METADATA:
                     var idList = loadCertificateMetaDataIdsToProcess(adjustedBatchSize);
-                    jobLists.put(jobName.name(), idList);
+                    if (idList.size() > 0) {
+                        jobLists.put(jobName.name(), idList);
+                    }
                     break;
                 default:
                     throw new RuntimeException("Job name not recognized!");
@@ -58,6 +62,7 @@ public class PopulateServiceImpl implements PopulateService {
     // Add case for processing of ids for new jobs.
     // processing methods should throw exception if faulty! Success is otherwise assumed.
     @Override
+    @Transactional
     public void processId(String jobName, String id) {
         switch (JobNames.valueOf(jobName)) {
             case METADATA:

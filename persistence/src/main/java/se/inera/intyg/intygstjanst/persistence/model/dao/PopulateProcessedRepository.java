@@ -20,11 +20,13 @@ package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface PopulateProcessedRepository extends JpaRepository<PopulateProcessed, PopulateProcessedId>,
     PopulateProcessedRepositoryCustom {
 
     Optional<PopulateProcessed> findByPopulateIdAndJobName(String id, String jobName);
 
+    @Transactional
     void deleteByPopulateIdAndJobName(String id, String jobName);
 }

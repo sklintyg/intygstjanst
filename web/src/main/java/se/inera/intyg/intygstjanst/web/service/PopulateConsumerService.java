@@ -96,7 +96,7 @@ public class PopulateConsumerService implements MessageListener {
     @Transactional
     public void processFailedId(String jobName, String id, Exception e, List<String> failed) {
         addToPopulateFailures(jobName, id, e);
-        processedRepository.deleteByPopulateIdAndJobName(jobName, id);
+        processedRepository.deleteByPopulateIdAndJobName(id, jobName);
         failed.add(id);
     }
 
