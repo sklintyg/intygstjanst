@@ -29,13 +29,19 @@
   <div>
     <h3>Intygstjänsten</h3>
   </div>
-  <div style="width:50%">
+  <div>
     <h4 style="padding-bottom:5px;">Configuration info</h4>
 
     <div>Application version: <span><spring:message code="project.version"/></span></div>
     <div>Build number: <span><spring:message code="buildNumber"/></span></div>
     <div>Build time: <span><spring:message code="buildTime"/></span></div>
-    <div>Spring profiles: <span><%= System.getProperty("spring.profiles.active") %></span></div>
+    <div>
+      Spring profiles:
+      <div>
+        <span style="margin-left: 20px;">From SYSTEM (Primary):</span> <span class="label label-info"><%= System.getProperty("spring.profiles.active") %></span><br/>
+        <span style="margin-left: 20px;">From ENV (Secondary):</span> <span class="label label-info"><%= System.getenv("SPRING_PROFILES_ACTIVE") %></span>
+      </div>
+    </div>
   </div>
 </div>
 </body>
