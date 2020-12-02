@@ -126,8 +126,6 @@ public class CertificateListServiceImplTest {
 
         when(patient.getPersonId()).thenReturn(CIVIC_REGISTRATION_NUMBER);
         when(basicData.getPatient()).thenReturn(patient);
-        when(creatorOfCert.getPersonId()).thenReturn(HSA_ID);
-        when(basicData.getSkapadAv()).thenReturn(creatorOfCert);
         when(convertedCertificate.getTyp()).thenReturn(CERT_TYPE);
         when(convertedCertificate.getTextVersion()).thenReturn(CERT_TYPE_VERSION);
         when(convertedCertificate.getGrundData()).thenReturn(basicData);
