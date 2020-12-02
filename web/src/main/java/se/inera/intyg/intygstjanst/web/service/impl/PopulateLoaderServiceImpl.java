@@ -78,9 +78,10 @@ public class PopulateLoaderServiceImpl implements PopulateLoaderService {
             var idLists = service.getListsOfIdsToProcess(batchSize);
             for (Map.Entry<String, List<String>> entry : idLists.entrySet()) {
                 LOG.debug("Putting ids on queue: " + String.join(",", entry.getValue()));
-                if (idLists.size() > 0) {
-                    var size = idLists.size() < NR_OF_BATCHES ? NR_OF_BATCHES : (idLists.size() / NR_OF_BATCHES);
-                    chunked(entry.getValue().stream(), size).forEach(id -> putIdsOnQueue(entry.getKey(), id));
+                var batchSize = entry.getValue().size();
+                if (batchSize > 0) {
+                    var chunkSize = batchSize < NR_OF_BATCHES ? NR_OF_BATCHES : (batchSize / NR_OF_BATCHES);
+                    chunked(entry.getValue().stream(), chunkSize).forEach(id -> putIdsOnQueue(entry.getKey(), id));
                 }
             }
         }

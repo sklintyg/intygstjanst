@@ -83,12 +83,12 @@ public class PopulateConsumerService implements MessageListener {
         });
 
         if (failedIds.size() < idList.size()) {
-            LOG.info("Populate Loader successfully finished processing {} ids out of batch with size {} for job {}",
+            LOG.info("Populate Consumer successfully finished processing {} ids out of batch with size {} for job {}",
                 (idList.size() - failedIds.size()), idList.size(), jobName);
         }
 
         if (failedIds.size() > 0) {
-            LOG.warn("Populate Loader failed during processing of {} ids out of batch with size {} for job {}. These failed: {}",
+            LOG.warn("Populate Consumer failed during processing of {} ids out of batch with size {} for job {}. These failed: {}",
                 failedIds.size(), idList.size(), jobName, String.join(", ", failedIds));
         }
     }
