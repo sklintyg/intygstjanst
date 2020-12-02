@@ -90,6 +90,8 @@ dependencies {
     compile "org.springframework:spring-jms"
     compile "org.springframework:spring-webmvc"
     compile "mysql:mysql-connector-java"
+    compile "net.javacrumbs.shedlock:shedlock-spring:${shedlockSpringVersion}"
+    compile "net.javacrumbs.shedlock:shedlock-provider-redis-spring:${shedlockSpringVersion}"
 
     compileOnly "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
     compileOnly "javax.servlet:javax.servlet-api"

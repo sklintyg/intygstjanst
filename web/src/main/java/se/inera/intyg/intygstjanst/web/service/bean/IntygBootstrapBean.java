@@ -48,6 +48,7 @@ import se.inera.intyg.common.support.modules.support.api.exception.ModuleExcepti
 import se.inera.intyg.common.util.integration.json.CustomObjectMapper;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
@@ -141,6 +142,11 @@ public class IntygBootstrapBean {
                 certificate.setValidToDate(null);
                 certificate.setWireTapped(false);
 
+                CertificateMetaData metaData = new CertificateMetaData(certificate, utlatande.getGrundData().getSkapadAv().getPersonId(),
+                    utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), false);
+                certificate.setCertificateMetaData(metaData);
+
+                entityManager.persist(metaData);
                 entityManager.persist(originalCertificate);
                 entityManager.persist(certificate);
 
@@ -217,6 +223,12 @@ public class IntygBootstrapBean {
                         ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
                         final Utlatande utlatande = moduleApi.getUtlatandeFromXml(contentString);
                         certificate.setAdditionalInfo(moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande)));
+
+                        CertificateMetaData metaData = new CertificateMetaData(certificate,
+                            utlatande.getGrundData().getSkapadAv().getPersonId(),
+                            utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), false);
+
+                        entityManager.persist(metaData);
                         entityManager.persist(originalCertificate);
                         entityManager.persist(certificate);
                     } else {

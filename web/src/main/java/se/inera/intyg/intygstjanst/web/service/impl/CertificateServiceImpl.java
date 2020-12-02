@@ -20,10 +20,11 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static se.inera.intyg.common.support.Constants.KV_INTYGSTYP_CODE_SYSTEM;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
-
 import se.inera.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
@@ -51,6 +48,7 @@ import se.inera.intyg.infra.integration.pu.services.PUService;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
@@ -266,7 +264,16 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         setCertificateState(civicRegistrationNumber, certificateId,
             recipientService.getPrimaryRecipientHsvard().getId(), CertificateState.CANCELLED, null);
 
+        setCertificateMetadataRevoked(certificate);
+
         return certificate;
+    }
+
+    private void setCertificateMetadataRevoked(Certificate certificate) {
+        var certificateMetaData = certificate.getCertificateMetaData();
+        if (certificateMetaData != null) {
+            certificateMetaData.setRevoked(true);
+        }
     }
 
     @Override
@@ -334,6 +341,9 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
         certificateDao.store(certificate);
         storeOriginalCertificate(certificateHolder.getOriginalCertificate(), certificate);
+
+        storeCertificateMetadata(certificateHolder, certificate);
+
         if (certificateHolder.getCertificateRelation() != null) {
             CertificateRelation rel = certificateHolder.getCertificateRelation();
             relationService.storeRelation(
@@ -398,6 +408,13 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), utlatandeXml, certificate);
         certificateDao.storeOriginalCertificate(original);
         certificate.setOriginalCertificate(original);
+    }
+
+    private void storeCertificateMetadata(CertificateHolder certificateHolder, Certificate certificate) {
+        CertificateMetaData metadata = new CertificateMetaData(certificate, certificateHolder.getSigningDoctorId(),
+            certificateHolder.getSigningDoctorName(), certificateHolder.isRevoked());
+        certificateDao.storeCertificateMetadata(metadata);
+        certificate.setCertificateMetaData(metadata);
     }
 
     private boolean isPatientTestIndicated(Personnummer civicRegistrationNumber) {

@@ -18,12 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -36,13 +36,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.hibernate.annotations.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -76,16 +72,23 @@ public class Certificate {
     private OriginalCertificate originalCertificate;
 
     /**
+     * Added metadata for Certificates
+     */
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "certificate", cascade = CascadeType.REMOVE)
+    private CertificateMetaData certificateMetaData;
+
+    /**
      * Type of the certificate.
      */
     @Column(name = "CERTIFICATE_TYPE", nullable = false)
     private String type;
+
     /**
      * Version of of the certificate type.
      */
     @Column(name = "CERTIFICATE_TYPE_VERSION", nullable = false)
     private String typeVersion;
-
 
     /**
      * Name of the doctor that signed the certificate.
@@ -365,4 +368,11 @@ public class Certificate {
             + ", validFromDate='" + validFromDate + '\'' + ", validToDate='" + validToDate + '\'' + ", states=" + states + '}';
     }
 
+    public CertificateMetaData getCertificateMetaData() {
+        return certificateMetaData;
+    }
+
+    public void setCertificateMetaData(CertificateMetaData certificateMetaData) {
+        this.certificateMetaData = certificateMetaData;
+    }
 }

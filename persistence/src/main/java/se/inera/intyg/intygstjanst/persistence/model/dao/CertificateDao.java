@@ -45,7 +45,7 @@ public interface CertificateDao {
      * @return filtered list of certificates
      */
     List<Certificate> findCertificates(Personnummer civicRegistrationNumber, String[] units, LocalDateTime fromDate,
-        LocalDateTime toDate, String orderBy, boolean orderAscending, Set<String> types);
+        LocalDateTime toDate, String orderBy, boolean orderAscending, Set<String> types, String doctorId);
 
     /**
      * Retrieves a list of {@link Certificate} filtered by parameters.
@@ -151,4 +151,14 @@ public interface CertificateDao {
      * @param ids Certificate ids.
      */
     void eraseTestCertificates(List<String> ids);
+
+    void storeCertificateMetadata(CertificateMetaData metadata);
+
+    /**
+     * Method to be used when populating Certificate with metadata.
+     *
+     * @param maxNumber Maxiumum number of certificate ids to return
+     * @return List of certificate Ids wothout metadata.
+     */
+    List<String> findCertificatesWithoutMetadata(int maxNumber);
 }

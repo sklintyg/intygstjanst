@@ -29,6 +29,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -43,6 +44,7 @@ import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -61,7 +63,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     public List<Certificate> findCertificates(Personnummer civicRegistrationNumber, String[] units,
-        LocalDateTime fromDate, LocalDateTime toDate, String orderBy, boolean orderAscending, Set<String> types) {
+        LocalDateTime fromDate, LocalDateTime toDate, String orderBy, boolean orderAscending, Set<String> types, String doctorId) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Certificate> query = criteriaBuilder.createQuery(Certificate.class);
         Root<Certificate> root = query.from(Certificate.class);
@@ -73,8 +75,12 @@ public class CertificateDaoImpl implements CertificateDao {
                 .add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), DaoUtil.formatPnrForPersistence(civicRegistrationNumber)));
         }
 
+        if (doctorId != null) {
+            Join<Certificate, CertificateMetaData> certificateMetaData = root.join("certificateMetaData", JoinType.INNER);
+            predicates.add(criteriaBuilder.equal(certificateMetaData.get("doctorId"), doctorId));
+        }
         if (units != null && units.length > 0) {
-            predicates.add(root.get("careUnitId").in(units));
+            predicates.add(root.get("careUnitId").in((Object[]) units));
         } else {
             return Collections.emptyList();
         }
@@ -232,6 +238,11 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
+    public void storeCertificateMetadata(CertificateMetaData metadata) {
+        entityManager.persist(metadata);
+    }
+
+    @Override
     public void updateStatus(String id, Personnummer civicRegistrationNumber, CertificateState state, String target,
         LocalDateTime timestamp)
         throws PersistenceException {
@@ -325,6 +336,20 @@ public class CertificateDaoImpl implements CertificateDao {
                 LOG.warn(String.format("Couldn't find certificate with id %s when erasing test certificates", id), ex);
             }
         }
+    }
+
+    @Override
+    public List<String> findCertificatesWithoutMetadata(int maxNumber) {
+        String sql =
+            "SELECT c.ID FROM CERTIFICATE c "
+                + "WHERE c.ID NOT IN ("
+                + "SELECT cm.CERTIFICATE_ID FROM CERTIFICATE_METADATA cm WHERE c.ID = cm.CERTIFICATE_ID "
+                + "UNION ALL "
+                + "SELECT pp.POPULATE_ID FROM POPULATE_PROCESSED pp WHERE c.ID = pp.POPULATE_ID AND pp.JOB_NAME = 'METADATA' "
+                + "UNION ALL "
+                + "SELECT pf.POPULATE_ID FROM POPULATE_FAILURES pf WHERE c.ID = pf.POPULATE_ID AND pf.JOB_NAME = 'METADATA' "
+                + ") LIMIT " + maxNumber + ";";
+        return (List<String>) entityManager.createNativeQuery(sql).getResultList();
     }
 
     private List<String> toLowerCase(List<String> list) {

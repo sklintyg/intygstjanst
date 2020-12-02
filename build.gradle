@@ -23,6 +23,7 @@ ext {
     javaxActivationVersion = "1.2.0"
     jakartaJwsApiVersion = "2.1.0"
     stAntlr4Version = "4.3"
+    shedlockSpringVersion = "4.5.0"
 
     springbootMavenBomVersion = "2.2.5.RELEASE"
 }

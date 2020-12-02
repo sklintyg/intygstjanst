@@ -65,7 +65,7 @@ public class CertificateListServiceImpl implements CertificateListService {
             : Personnummer.createPersonnummer(parameters.getCivicRegistrationNumber()).get();
 
         var certificates = certificateDao.findCertificates(civicRegistrationNumber, parameters.getUnitIds(), parameters.getFromDate(),
-            parameters.getToDate(), parameters.getOrderBy(), parameters.isOrderAscending(), parameters.getTypes());
+            parameters.getToDate(), parameters.getOrderBy(), parameters.isOrderAscending(), parameters.getTypes(), parameters.getHsaId());
         var sentCertificates = getSentCertificates(certificates);
         LOGGER.debug("Getting signed certificates for units (" + Arrays.toString(parameters.getUnitIds()) + ")");
 
@@ -73,7 +73,6 @@ public class CertificateListServiceImpl implements CertificateListService {
             .filter(cert -> !cert.isRevoked())
             .map(this::convertToUtlatande)
             .filter(Objects::nonNull)
-            .filter(cert -> cert.getGrundData().getSkapadAv().getPersonId().equals(parameters.getHsaId()))
             .map(c -> convertToCertificateListEntry(c, sentCertificates))
             .map(this::addCertificateTypeName)
             .collect(Collectors.toList());

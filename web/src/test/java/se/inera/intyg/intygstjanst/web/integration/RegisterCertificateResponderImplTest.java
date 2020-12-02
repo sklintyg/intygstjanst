@@ -34,10 +34,8 @@ import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +43,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import se.inera.intyg.common.services.texts.IntygTextsService;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -274,6 +271,7 @@ public class RegisterCertificateResponderImplTest {
         parameters.getIntyg().getIntygsId().setExtension(intygId);
         parameters.getIntyg().setSkapadAv(new HosPersonal());
         parameters.getIntyg().getSkapadAv().setFullstandigtNamn(skapadAvNamn);
+        parameters.getIntyg().getSkapadAv().setPersonalId(new HsaId());
         parameters.getIntyg().getSkapadAv().setEnhet(new Enhet());
         parameters.getIntyg().getSkapadAv().getEnhet().setEnhetsnamn(enhetNamn);
         parameters.getIntyg().getSkapadAv().getEnhet().setEnhetsId(new HsaId());

@@ -126,8 +126,6 @@ public class CertificateListServiceImplTest {
 
         when(patient.getPersonId()).thenReturn(CIVIC_REGISTRATION_NUMBER);
         when(basicData.getPatient()).thenReturn(patient);
-        when(creatorOfCert.getPersonId()).thenReturn(HSA_ID);
-        when(basicData.getSkapadAv()).thenReturn(creatorOfCert);
         when(convertedCertificate.getTyp()).thenReturn(CERT_TYPE);
         when(convertedCertificate.getTextVersion()).thenReturn(CERT_TYPE_VERSION);
         when(convertedCertificate.getGrundData()).thenReturn(basicData);
@@ -136,7 +134,8 @@ public class CertificateListServiceImplTest {
         when(moduleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(convertedCertificate);
         when(certificateDao.findCertificates(CIVIC_REGISTRATION_NUMBER, CARE_UNIT_IDS,
-            request.getFromDate(), request.getToDate(), request.getOrderBy(), request.isOrderAscending(), request.getTypes()))
+            request.getFromDate(), request.getToDate(), request.getOrderBy(), request.isOrderAscending(), request.getTypes(),
+            request.getHsaId()))
             .thenReturn(certificates);
         var response = certificateListService.listCertificatesForDoctor(request);
         assertEquals(certificates.size(), response.getCertificates().size());

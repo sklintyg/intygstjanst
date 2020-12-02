@@ -23,6 +23,7 @@ import java.util.List;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 
 public final class ConverterUtil {
@@ -56,6 +57,8 @@ public final class ConverterUtil {
             }
             certificate.setStates(certificateStates);
         }
+        certificate.setCertificateMetaData(new CertificateMetaData(certificate, certificateHolder.getSigningDoctorId(),
+            certificateHolder.getSigningDoctorName(), certificateHolder.isRevoked()));
         return certificate;
     }
 
@@ -64,11 +67,13 @@ public final class ConverterUtil {
         certificateHolder.setId(certificate.getId());
         certificateHolder.setType(certificate.getType());
         certificateHolder.setTypeVersion(certificate.getTypeVersion());
-        certificateHolder.setOriginalCertificate(certificate.getOriginalCertificate() == null ? null
-            : certificate.getOriginalCertificate().getDocument());
+        certificateHolder.setOriginalCertificate(
+            certificate.getOriginalCertificate() == null ? null : certificate.getOriginalCertificate().getDocument());
         certificateHolder.setCareUnitId(certificate.getCareUnitId());
         certificateHolder.setCareUnitName(certificate.getCareUnitName());
         certificateHolder.setCareGiverId(certificate.getCareGiverId());
+        certificateHolder
+            .setSigningDoctorId(certificate.getCertificateMetaData() == null ? null : certificate.getCertificateMetaData().getDoctorId());
         certificateHolder.setSigningDoctorName(certificate.getSigningDoctorName());
         certificateHolder.setSignedDate(certificate.getSignedDate());
         certificateHolder.setCivicRegistrationNumber(certificate.getCivicRegistrationNumber());
