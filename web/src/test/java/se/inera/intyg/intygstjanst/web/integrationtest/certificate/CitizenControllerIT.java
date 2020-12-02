@@ -25,21 +25,18 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import io.restassured.http.ContentType;
 import java.util.UUID;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import io.restassured.http.ContentType;
-
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.intygstjanst.web.integration.CitizenController.RequestObject;
 import se.inera.intyg.intygstjanst.web.integration.CitizenController.ResponseObject;
-import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+import se.inera.intyg.intygstjanst.web.integrationtest.InternalApiBaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
-public class CitizenControllerIT extends BaseIntegrationTest {
+public class CitizenControllerIT extends InternalApiBaseIntegrationTest {
 
     static final String PATH = "/inera-certificate/internalapi/citizens/certificates";
 

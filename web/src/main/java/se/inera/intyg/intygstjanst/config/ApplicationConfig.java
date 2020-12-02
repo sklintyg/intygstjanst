@@ -44,10 +44,9 @@ import se.inera.intyg.infra.monitoring.MonitoringConfiguration;
 @EnableTransactionManagement
 @DependsOn("transactionManager")
 @PropertySources({
-    @PropertySource("classpath:default.properties"),
-    @PropertySource("file:${credentials.file}"),
+    @PropertySource("classpath:application.properties"),
     @PropertySource("classpath:version.properties"),
-    @PropertySource("file:${config.file}"),
+    @PropertySource(ignoreResourceNotFound = true, value = "file:${dev.config.file}")
 })
 @ImportResource({"classpath:META-INF/cxf/cxf.xml"})
 @Import(MonitoringConfiguration.class)

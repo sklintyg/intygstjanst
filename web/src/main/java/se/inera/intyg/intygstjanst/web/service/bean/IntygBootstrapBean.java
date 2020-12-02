@@ -117,7 +117,8 @@ public class IntygBootstrapBean {
         final String additonalInfo = moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande));
         transactionTemplate.execute((TransactionStatus status) -> {
             Certificate certificate = new Certificate(utlatande.getId());
-            if (!entityManager.contains(certificate)) {
+
+            if (entityManager.find(Certificate.class, certificate.getId()) == null) {
                 certificate.setAdditionalInfo(additonalInfo);
                 certificate.setCareGiverId(utlatande.getGrundData().getSkapadAv().getVardenhet().getVardgivare().getVardgivarid());
                 certificate.setCareUnitId(utlatande.getGrundData().getSkapadAv().getVardenhet().getEnhetsid());
@@ -158,6 +159,8 @@ public class IntygBootstrapBean {
                         entityManager.persist(certificateToSjukfallCertificateConverter.convertLisjp(certificate, utlatande));
                     }
                 }
+            } else {
+                LOG.info("Bootstrapping of certificate '{}' skipped. Already in database.", certificate.getId());
             }
             return null;
         });
@@ -212,21 +215,25 @@ public class IntygBootstrapBean {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 try {
                     Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
-                    String contentString = Resources.toString(content.getURL(), Charsets.UTF_8);
-                    OriginalCertificate originalCertificate = new OriginalCertificate(certificate.getSignedDate(), contentString,
-                        certificate);
+                    if (entityManager.find(Certificate.class, certificate.getId()) == null) {
+                        String contentString = Resources.toString(content.getURL(), Charsets.UTF_8);
+                        OriginalCertificate originalCertificate = new OriginalCertificate(certificate.getSignedDate(), contentString,
+                            certificate);
 
-                    ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
-                    final Utlatande utlatande = moduleApi.getUtlatandeFromXml(contentString);
-                    certificate.setAdditionalInfo(moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande)));
+                        ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+                        final Utlatande utlatande = moduleApi.getUtlatandeFromXml(contentString);
+                        certificate.setAdditionalInfo(moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande)));
 
-                    CertificateMetaData metaData = new CertificateMetaData(certificate,
-                        utlatande.getGrundData().getSkapadAv().getPersonId(), utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(),
-                        false);
+                        CertificateMetaData metaData = new CertificateMetaData(certificate,
+                            utlatande.getGrundData().getSkapadAv().getPersonId(),
+                            utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), false);
 
-                    entityManager.persist(metaData);
-                    entityManager.persist(originalCertificate);
-                    entityManager.persist(certificate);
+                        entityManager.persist(metaData);
+                        entityManager.persist(originalCertificate);
+                        entityManager.persist(certificate);
+                    } else {
+                        LOG.info("Bootstrapping of certificate '{}' skipped. Already in database.", certificate.getId());
+                    }
                 } catch (Exception e) {
                     status.setRollbackOnly();
                     LOG.error("Loading failed of {}: {}", metadata.getFilename(), e);
@@ -264,12 +271,20 @@ public class IntygBootstrapBean {
                         if (certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
                             SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertFk7263(certificate,
                                 utlatande);
-                            entityManager.persist(sjukfallCertificate);
+                            if (entityManager.find(SjukfallCertificate.class, sjukfallCertificate.getId()) == null) {
+                                entityManager.persist(sjukfallCertificate);
+                            } else {
+                                LOG.info("Bootstrapping of sjukfall '{}' skipped. Already in database.", sjukfallCertificate.getId());
+                            }
                         }
                         if (certificateToSjukfallCertificateConverter.isConvertableLisjp(utlatande)) {
                             SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertLisjp(certificate,
                                 utlatande);
-                            entityManager.persist(sjukfallCertificate);
+                            if (entityManager.find(SjukfallCertificate.class, sjukfallCertificate.getId()) == null) {
+                                entityManager.persist(sjukfallCertificate);
+                            } else {
+                                LOG.info("Bootstrapping of sjukfall '{}' skipped. Already in database.", sjukfallCertificate.getId());
+                            }
                         }
                     } catch (Exception e) {
                         status.setRollbackOnly();

@@ -26,11 +26,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
-
-import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
+import se.inera.intyg.intygstjanst.web.integrationtest.InternalApiBaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 
-public class IntygInfoControllerIT extends BaseIntegrationTest {
+public class IntygInfoControllerIT extends InternalApiBaseIntegrationTest {
 
     public static final int OK = HttpStatus.OK.value();
     public static final int NOT_FOUND = HttpStatus.NOT_FOUND.value();
@@ -55,7 +54,7 @@ public class IntygInfoControllerIT extends BaseIntegrationTest {
     public void getInfo() {
         given().expect().statusCode(OK)
             .when()
-            .get( url + intygsId)
+            .get(url + intygsId)
             .then()
             .body(matchesJsonSchemaInClasspath("integrationtests/intyginfo/get-intyginfo-response-schema.json"));
     }
@@ -64,7 +63,7 @@ public class IntygInfoControllerIT extends BaseIntegrationTest {
     public void getInfoNotFound() {
         given().expect().statusCode(NOT_FOUND)
             .when()
-            .get( url + "NOT_FOUND");
+            .get(url + "NOT_FOUND");
     }
 
 }

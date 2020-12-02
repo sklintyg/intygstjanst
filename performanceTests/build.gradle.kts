@@ -8,7 +8,7 @@ plugins {
 }
 
 ext {
-  set("gatlingBaseUrl", System.getProperty("certificate.baseUrl") ?: "http://localhost:9088")
+  set("gatlingBaseUrl", System.getProperty("certificate.baseUrl") ?: "http://localhost:8080")
 }
 
 val gatlingBaseUrlArg = "-DbaseUrl=${extra.get("gatlingBaseUrl")}"
