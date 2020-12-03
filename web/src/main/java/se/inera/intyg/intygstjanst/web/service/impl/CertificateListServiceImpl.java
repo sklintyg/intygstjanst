@@ -22,23 +22,18 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.common.support.model.common.internal.Utlatande;
-import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
-import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.infra.certificate.dto.CertificateListEntry;
 import se.inera.intyg.infra.certificate.dto.CertificateListRequest;
 import se.inera.intyg.infra.certificate.dto.CertificateListResponse;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.CertificateListService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
@@ -46,14 +41,12 @@ import se.inera.intyg.schemas.contract.Personnummer;
 public class CertificateListServiceImpl implements CertificateListService {
 
     private final CertificateDao certificateDao;
-    private final IntygModuleRegistry intygModuleRegistry;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateListServiceImpl.class);
 
     @Autowired
-    public CertificateListServiceImpl(CertificateDao certificateDao, IntygModuleRegistry intygModuleRegistry) {
+    public CertificateListServiceImpl(CertificateDao certificateDao) {
         this.certificateDao = certificateDao;
-        this.intygModuleRegistry = intygModuleRegistry;
     }
 
     @Override
@@ -66,15 +59,13 @@ public class CertificateListServiceImpl implements CertificateListService {
 
         var certificates = certificateDao.findCertificates(civicRegistrationNumber, parameters.getUnitIds(), parameters.getFromDate(),
             parameters.getToDate(), parameters.getOrderBy(), parameters.isOrderAscending(), parameters.getTypes(), parameters.getHsaId());
-        var sentCertificates = getSentCertificates(certificates);
         LOGGER.debug("Getting signed certificates for units (" + Arrays.toString(parameters.getUnitIds()) + ")");
+        var certificateTypes = certificateDao.getCertificateTypes();
 
         var certificateList = certificates.stream()
             .filter(cert -> !cert.isRevoked())
-            .map(this::convertToUtlatande)
-            .filter(Objects::nonNull)
-            .map(c -> convertToCertificateListEntry(c, sentCertificates))
-            .map(this::addCertificateTypeName)
+            .map(this::convertToCertificateListEntry)
+            .map(c -> addCertificateTypeName(c, certificateTypes))
             .collect(Collectors.toList());
 
         sortList(certificateList, parameters.getOrderBy(), parameters.isOrderAscending());
@@ -105,44 +96,26 @@ public class CertificateListServiceImpl implements CertificateListService {
         }
     }
 
-    private Utlatande convertToUtlatande(Certificate certificate) {
-        try {
-            ModuleApi moduleApi = intygModuleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
-            return moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
-        } catch (Exception e) {
-            LOGGER.error("Error converting certificate to utlatande.", e);
-            return null;
-        }
-    }
-
-    private CertificateListEntry convertToCertificateListEntry(Utlatande utlatande, List<Certificate> sentCertificates) {
+    private CertificateListEntry convertToCertificateListEntry(Certificate certificate) {
         CertificateListEntry certificateListEntry = new CertificateListEntry();
-        certificateListEntry.setCivicRegistrationNumber(utlatande.getGrundData().getPatient().getPersonId().getPersonnummer());
-        certificateListEntry.setSignedDate(utlatande.getGrundData().getSigneringsdatum());
-        certificateListEntry.setCertificateType(utlatande.getTyp());
-        certificateListEntry.setCertificateId(utlatande.getId());
-        certificateListEntry.setCertificateTypeVersion(utlatande.getTextVersion());
-        certificateListEntry.setSent(isCertificateSent(sentCertificates, utlatande.getId()));
+        certificateListEntry.setCivicRegistrationNumber(certificate.getCivicRegistrationNumber().getPersonnummer());
+        certificateListEntry.setSignedDate(certificate.getSignedDate());
+        certificateListEntry.setCertificateType(certificate.getType());
+        certificateListEntry.setCertificateId(certificate.getId());
+        certificateListEntry.setCertificateTypeVersion(certificate.getTypeVersion());
+        certificateListEntry.setSent(isCertificateSent(certificate));
         return certificateListEntry;
     }
 
-    private boolean isCertificateSent(List<Certificate> sentCertificates, String certificateId) {
-        return sentCertificates.stream().anyMatch(c -> c.getId().equals(certificateId));
+    private boolean isCertificateSent(Certificate certificate) {
+        return certificate.getStates().stream().anyMatch(state -> state.getState().equals(CertificateState.SENT));
     }
 
-    private List<Certificate> getSentCertificates(List<Certificate> certificates) {
-        return certificates.stream()
-            .filter(c -> c.getStates().stream().anyMatch(state -> state.getState() == CertificateState.SENT)).collect(Collectors.toList());
-    }
-
-    private CertificateListEntry addCertificateTypeName(CertificateListEntry certificateListEntry) {
-        try {
-            final ModuleEntryPoint moduleEntryPoint = intygModuleRegistry.getModuleEntryPoint(certificateListEntry.getCertificateType());
-            certificateListEntry.setCertificateTypeName(moduleEntryPoint.getModuleName());
-        } catch (ModuleNotFoundException e) {
-            certificateListEntry.setCertificateTypeName(certificateListEntry.getCertificateType());
-            LOGGER.error("Could not find ModuleEntryPoint for certificate type: " + certificateListEntry.getCertificateType());
-        }
+    private CertificateListEntry addCertificateTypeName(CertificateListEntry certificateListEntry,
+        List<CertificateType> certificateTypes) {
+        certificateListEntry.setCertificateTypeName(
+            certificateTypes.stream().filter(ct -> ct.getId().equals(certificateListEntry.getCertificateType()))
+                .map(CertificateType::getName).findFirst().orElse(certificateListEntry.getCertificateType()));
         return certificateListEntry;
     }
 
