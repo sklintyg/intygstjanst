@@ -38,9 +38,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import se.inera.intyg.common.support.model.common.internal.GrundData;
+import se.inera.intyg.common.support.model.common.internal.HoSPersonal;
+import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 
@@ -61,6 +65,9 @@ public class CertificateResourceTest {
 
     @Mock
     private ModuleApi moduleApi = mock(ModuleApi.class);
+
+    @Mock
+    private Utlatande utlatande = mock(Utlatande.class);
 
     @InjectMocks
     private CertificateResource certificateResource = new CertificateResource();
@@ -110,14 +117,24 @@ public class CertificateResourceTest {
         when(txManager.getTransaction(any())).thenReturn(txStatus);
         when(moduleRegistry.getModuleApi(any(), any())).thenReturn(moduleApi);
         when(moduleApi.getAdditionalInfo(any())).thenReturn("additional info");
+        when(moduleApi.getUtlatandeFromXml(any())).thenReturn(utlatande);
+        GrundData gd = new GrundData();
+        HoSPersonal sa = new HoSPersonal();
+        sa.setFullstandigtNamn("namn");
+        sa.setPersonId("id");
+        gd.setSkapadAv(sa);
+        when(utlatande.getGrundData()).thenReturn(gd);
+
         certificateResource.insertCertificate(ConverterUtil.toCertificateHolder(certificate));
 
         ArgumentCaptor<Object> argument = ArgumentCaptor.forClass(Object.class);
-        verify(entityManager, times(2)).persist(argument.capture());
+        verify(entityManager, times(3)).persist(argument.capture());
         List<Object> persistedObjects = argument.getAllValues();
         Certificate certificateArgument = (Certificate) persistedObjects.get(0);
         Assert.assertEquals(certificate.getId(), certificateArgument.getId());
-        OriginalCertificate originalCertificateArgument = (OriginalCertificate) persistedObjects.get(1);
+        CertificateMetaData metadataArgument = (CertificateMetaData) persistedObjects.get(1);
+        Assert.assertEquals(certificate.getId(), metadataArgument.getCertificateId());
+        OriginalCertificate originalCertificateArgument = (OriginalCertificate) persistedObjects.get(2);
         Assert.assertEquals(certificate.getId(), originalCertificateArgument.getCertificate().getId());
         verify(txManager).commit(txStatus);
     }
