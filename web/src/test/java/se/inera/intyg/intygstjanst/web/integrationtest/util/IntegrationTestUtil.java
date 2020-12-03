@@ -25,11 +25,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
-
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
@@ -179,6 +177,7 @@ public class IntegrationTestUtil {
         certificate.setCareGiverId("CareGiverId");
         certificate.setCareUnitId("CareUnitId");
         certificate.setCareUnitName("CareUnitName");
+        certificate.setSigningDoctorId("DoctorId");
         certificate.setSigningDoctorName("Singing Doctor");
         certificate.setCivicRegistrationNumber(createPnr(personId));
         certificate

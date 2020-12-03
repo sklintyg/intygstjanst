@@ -53,6 +53,7 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
@@ -201,7 +202,11 @@ public class CertificateResource {
                 ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
                 final Utlatande utlatande = moduleApi.getUtlatandeFromXml(originalCertificate.getDocument());
                 certificate.setAdditionalInfo(moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande)));
+                CertificateMetaData metaData = new CertificateMetaData(certificate, utlatande.getGrundData().getSkapadAv().getPersonId(),
+                    utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), false);
+                certificate.setCertificateMetaData(metaData);
                 entityManager.persist(certificate);
+                entityManager.persist(metaData);
                 entityManager.persist(originalCertificate);
                 return Response.ok().build();
             } catch (Exception e) {
