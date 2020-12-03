@@ -161,4 +161,10 @@ public interface CertificateDao {
      * @return List of certificate Ids wothout metadata.
      */
     List<String> findCertificatesWithoutMetadata(int maxNumber);
+
+    /**
+     * @return List of all certificate types
+     */
+    List<CertificateType> getCertificateTypes();
+
 }

@@ -20,7 +20,6 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,12 +36,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.support.model.common.internal.GrundData;
 import se.inera.intyg.common.support.model.common.internal.HoSPersonal;
-import se.inera.intyg.common.support.model.common.internal.Patient;
-import se.inera.intyg.common.support.model.common.internal.Utlatande;
-import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
-import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.infra.certificate.dto.CertificateListRequest;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -65,22 +59,13 @@ public class CertificateListServiceImplTest {
 
     @Mock
     private CertificateDao certificateDao;
-    @Mock
-    private IntygModuleRegistry moduleRegistry;
 
     @InjectMocks
     CertificateListServiceImpl certificateListService;
 
-    private final ModuleApi moduleApi = mock(ModuleApi.class);
-    private final Utlatande convertedCertificate = mock(Utlatande.class);
     private final GrundData basicData = mock(GrundData.class);
     private final HoSPersonal creatorOfCert = mock(HoSPersonal.class);
-    private final Patient patient = mock(Patient.class);
-    private final ModuleEntryPoint moduleEntryPoint = mock(ModuleEntryPoint.class);
-
-
     private final Personnummer CIVIC_REGISTRATION_NUMBER = Personnummer.createPersonnummer(CIVIC_REGISTRATION_NUMBER_STRING).get();
-
 
     @Test
     public void getEmptyListOfCertificates() throws ModuleNotFoundException, ModuleException {
@@ -124,15 +109,6 @@ public class CertificateListServiceImplTest {
             certificates = Collections.emptyList();
         }
 
-        when(patient.getPersonId()).thenReturn(CIVIC_REGISTRATION_NUMBER);
-        when(basicData.getPatient()).thenReturn(patient);
-        when(convertedCertificate.getTyp()).thenReturn(CERT_TYPE);
-        when(convertedCertificate.getTextVersion()).thenReturn(CERT_TYPE_VERSION);
-        when(convertedCertificate.getGrundData()).thenReturn(basicData);
-        when(moduleEntryPoint.getModuleName()).thenReturn(" ");
-        when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
-        when(moduleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
-        when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(convertedCertificate);
         when(certificateDao.findCertificates(CIVIC_REGISTRATION_NUMBER, CARE_UNIT_IDS,
             request.getFromDate(), request.getToDate(), request.getOrderBy(), request.isOrderAscending(), request.getTypes(),
             request.getHsaId()))

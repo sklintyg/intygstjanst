@@ -46,6 +46,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateType;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.schemas.contract.Personnummer;
 
@@ -350,6 +351,14 @@ public class CertificateDaoImpl implements CertificateDao {
                 + "SELECT pf.POPULATE_ID FROM POPULATE_FAILURES pf WHERE c.ID = pf.POPULATE_ID AND pf.JOB_NAME = 'METADATA' "
                 + ") LIMIT " + maxNumber + ";";
         return (List<String>) entityManager.createNativeQuery(sql).getResultList();
+    }
+
+    @Override
+    public List<CertificateType> getCertificateTypes() {
+        var criteriaBuilder = entityManager.getCriteriaBuilder();
+        var query = criteriaBuilder.createQuery(CertificateType.class);
+        query.from(CertificateType.class);
+        return entityManager.createQuery(query).getResultList();
     }
 
     private List<String> toLowerCase(List<String> list) {
