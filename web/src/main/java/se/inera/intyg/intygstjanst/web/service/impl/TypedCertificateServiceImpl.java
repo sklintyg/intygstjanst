@@ -85,7 +85,8 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
         LOGGER.debug("Getting signing doctors for certificates of types ("
             + String.join(", ", certificateTypeList) + ") for units ("
             + String.join(", ", units) + ")");
-        return certificates.stream().map(Certificate::getSigningDoctorName).distinct().collect(Collectors.toList());
+        return certificates.stream().filter(c -> !c.isRevoked()).map(Certificate::getSigningDoctorName).distinct()
+            .collect(Collectors.toList());
     }
 
     @Override
