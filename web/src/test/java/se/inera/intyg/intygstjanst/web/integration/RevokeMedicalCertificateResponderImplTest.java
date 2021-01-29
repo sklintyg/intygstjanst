@@ -19,7 +19,6 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,7 +50,6 @@ import se.inera.intyg.common.support.integration.module.exception.InvalidCertifi
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
-import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
@@ -117,23 +115,6 @@ public class RevokeMedicalCertificateResponderImplTest {
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
         Mockito.verify(certificateService, Mockito.times(1)).revokeCertificateForStatistics(certificate);
         Mockito.verify(sjukfallCertificateService, Mockito.only()).revoked(certificate);
-    }
-
-    @Test
-    public void testRevokeCertificateWithForsakringskassanReturningError() throws Exception {
-
-        Certificate certificate = new Certificate(CERTIFICATE_ID);
-        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TARGET, CertificateState.SENT, LocalDateTime.now());
-        certificate.setStates(Collections.singletonList(historyEntry));
-
-        when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
-        doThrow(new SubsystemCallException(TARGET)).when(certificateSenderService).sendCertificateRevocation(certificate, TARGET,
-            revokeRequest().getRevoke());
-
-        RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
-        assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
-        Mockito.verifyNoInteractions(statisticsService);
-        Mockito.verifyNoInteractions(sjukfallCertificateService);
     }
 
     @Test

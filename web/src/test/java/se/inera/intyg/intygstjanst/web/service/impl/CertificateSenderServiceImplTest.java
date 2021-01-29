@@ -26,7 +26,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -45,18 +44,13 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
-import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
-import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificate.rivtabp20.v3.RegisterMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.rivtabp20.v1.SendMedicalCertificateQuestionResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
@@ -68,7 +62,6 @@ import se.inera.intyg.intygstjanst.web.exception.MissingModuleException;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
-import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
@@ -96,17 +89,11 @@ public class CertificateSenderServiceImplTest {
     @Mock
     private RecipientService recipientService;
     @Mock
-    private CertificateService certificateService;
-    @Mock
     private IntygModuleRegistry moduleRegistry;
     @Mock
     private ModuleEntryPoint moduleEntryPoint;
     @Mock
     private ModuleApi moduleApi;
-    @Mock
-    private RegisterMedicalCertificateResponderInterface registerClient;
-    @Mock
-    private SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
     @Mock
     private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponderInterface;
     @Mock
@@ -185,65 +172,6 @@ public class CertificateSenderServiceImplTest {
     }
 
     @Test
-    public void sendCertificateRevocationTest() {
-        final String meddelande = "anledning till makulering";
-        SendMedicalCertificateQuestionResponseType sendMedicalCertificateQuestionResponse = new SendMedicalCertificateQuestionResponseType();
-        sendMedicalCertificateQuestionResponse.setResult(ResultOfCallUtil.okResult());
-        when(sendMedicalCertificateQuestionResponderInterface.sendMedicalCertificateQuestion(any(AttributedURIType.class),
-            any(SendMedicalCertificateQuestionType.class))).thenReturn(sendMedicalCertificateQuestionResponse);
-        RevokeType revokeData = new RevokeType();
-        revokeData.setLakarutlatande(new LakarutlatandeEnkelType());
-        revokeData.setMeddelande(meddelande);
-        senderService.sendCertificateRevocation(certificate, RECIPIENT_ID, revokeData);
-
-        verifyNoInteractions(revokeMedicalCertificateResponderInterface);
-        verify(monitoringLogService).logCertificateRevokeSent(anyString(), anyString(), anyString(), anyString());
-        ArgumentCaptor<AttributedURIType> uriCaptor = ArgumentCaptor.forClass(AttributedURIType.class);
-        ArgumentCaptor<SendMedicalCertificateQuestionType> requestCaptor = ArgumentCaptor
-            .forClass(SendMedicalCertificateQuestionType.class);
-        verify(sendMedicalCertificateQuestionResponderInterface).sendMedicalCertificateQuestion(uriCaptor.capture(),
-            requestCaptor.capture());
-
-        assertEquals(RECIPIENT_LOGICALADDRESS, uriCaptor.getValue().getValue());
-        assertEquals(Amnetyp.MAKULERING_AV_LAKARINTYG, requestCaptor.getValue().getQuestion().getAmne());
-        assertEquals(meddelande, requestCaptor.getValue().getQuestion().getFraga().getMeddelandeText());
-    }
-
-    @Test
-    public void sendCertificateRevocationNoMessageTest() {
-        SendMedicalCertificateQuestionResponseType sendMedicalCertificateQuestionResponse = new SendMedicalCertificateQuestionResponseType();
-        sendMedicalCertificateQuestionResponse.setResult(ResultOfCallUtil.okResult());
-        when(sendMedicalCertificateQuestionResponderInterface.sendMedicalCertificateQuestion(any(AttributedURIType.class),
-            any(SendMedicalCertificateQuestionType.class))).thenReturn(sendMedicalCertificateQuestionResponse);
-        RevokeType revokeData = new RevokeType();
-        revokeData.setLakarutlatande(new LakarutlatandeEnkelType());
-        senderService.sendCertificateRevocation(certificate, RECIPIENT_ID, revokeData);
-
-        verifyNoInteractions(revokeMedicalCertificateResponderInterface);
-        verify(monitoringLogService).logCertificateRevokeSent(anyString(), anyString(), anyString(), anyString());
-        ArgumentCaptor<AttributedURIType> uriCaptor = ArgumentCaptor.forClass(AttributedURIType.class);
-        ArgumentCaptor<SendMedicalCertificateQuestionType> requestCaptor = ArgumentCaptor
-            .forClass(SendMedicalCertificateQuestionType.class);
-        verify(sendMedicalCertificateQuestionResponderInterface).sendMedicalCertificateQuestion(uriCaptor.capture(),
-            requestCaptor.capture());
-
-        assertEquals(RECIPIENT_LOGICALADDRESS, uriCaptor.getValue().getValue());
-        assertEquals(Amnetyp.MAKULERING_AV_LAKARINTYG, requestCaptor.getValue().getQuestion().getAmne());
-        assertEquals("meddelande saknas", requestCaptor.getValue().getQuestion().getFraga().getMeddelandeText());
-    }
-
-    @Test(expected = SubsystemCallException.class)
-    public void sendCertificateRevocationFkErrorTest() {
-        SendMedicalCertificateQuestionResponseType sendMedicalCertificateQuestionResponse = new SendMedicalCertificateQuestionResponseType();
-        sendMedicalCertificateQuestionResponse.setResult(ResultOfCallUtil.failResult("error"));
-        when(sendMedicalCertificateQuestionResponderInterface.sendMedicalCertificateQuestion(any(AttributedURIType.class),
-            any(SendMedicalCertificateQuestionType.class))).thenReturn(sendMedicalCertificateQuestionResponse);
-        RevokeType revokeData = new RevokeType();
-        revokeData.setLakarutlatande(new LakarutlatandeEnkelType());
-        senderService.sendCertificateRevocation(certificate, RECIPIENT_ID, revokeData);
-    }
-
-    @Test
     public void sendCertificateRevocationDefaultStrategyTest() throws Exception {
         final String nonFkRecipient = "TS";
         RevokeMedicalCertificateResponseType revokeMedicalCertificateResponse = new RevokeMedicalCertificateResponseType();
@@ -256,7 +184,6 @@ public class CertificateSenderServiceImplTest {
         revokeData.getLakarutlatande().setLakarutlatandeId(CERTIFICATE_ID);
         senderService.sendCertificateRevocation(certificate, nonFkRecipient, revokeData);
 
-        verifyNoInteractions(sendMedicalCertificateQuestionResponderInterface);
         verify(monitoringLogService).logCertificateRevokeSent(anyString(), anyString(), anyString(), anyString());
         ArgumentCaptor<AttributedURIType> uriCaptor = ArgumentCaptor.forClass(AttributedURIType.class);
         ArgumentCaptor<RevokeMedicalCertificateRequestType> requestCaptor = ArgumentCaptor
