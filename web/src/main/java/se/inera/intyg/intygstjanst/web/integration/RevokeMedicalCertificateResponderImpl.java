@@ -44,11 +44,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistory
 import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
 import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.integration.validator.RevokeRequestValidator;
-import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
-import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
-import se.inera.intyg.intygstjanst.web.service.StatisticsService;
+import se.inera.intyg.intygstjanst.web.service.*;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCertificateResponderInterface {
@@ -69,6 +65,9 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
 
     @Autowired
     protected SjukfallCertificateService sjukfallCertificateService;
+
+    @Autowired
+    private RecipientService recipientService;
 
     @Transactional
     @Override
@@ -93,6 +92,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
                     .filter(entry -> CertificateState.SENT.equals(entry.getState()))
                     .map(CertificateStateHistoryEntry::getTarget)
                     .distinct()
+                    .filter(this::shallRevokeBeSentToRecipient)
                     .forEach(recipient -> senderService.sendCertificateRevocation(certificate, recipient, request.getRevoke()));
             }
 
@@ -136,6 +136,10 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
 
         response.setResult(ResultOfCallUtil.okResult());
         return response;
+    }
+
+    private boolean shallRevokeBeSentToRecipient(String recipient) {
+        return !recipient.equals(recipientService.getPrimaryRecipientFkassa().getId());
     }
 
     protected String safeGetCertificateId(RevokeMedicalCertificateRequestType request) {
