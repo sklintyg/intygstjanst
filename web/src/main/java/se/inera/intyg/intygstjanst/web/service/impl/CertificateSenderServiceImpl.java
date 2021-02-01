@@ -113,30 +113,23 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     @Override
     public void sendCertificateRevocation(Certificate certificate, String recipientId, RevokeType revokeData) {
-        //FK has removed possibility to revoke FK7263
-        if (!recipientId.equals(recipientService.getPrimaryRecipientFkassa().getId())) {
-            useDefaultRevocationStrategy(certificate, revokeData, recipientId);
-        }
-    }
-
-    private void useDefaultRevocationStrategy(Certificate certificate, RevokeType revokeData, String recipientId) {
         RevokeMedicalCertificateRequestType request = new RevokeMedicalCertificateRequestType();
         request.setRevoke(revokeData);
 
         AttributedURIType logicalAddress = getLogicalAddress(recipientId);
 
         RevokeMedicalCertificateResponseType sendResponse = revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(
-            logicalAddress,
-            request);
+                logicalAddress,
+                request);
 
         if (sendResponse.getResult().getResultCode() != OK) {
             String message = "Failed to send question to '" + recipientId + "' when revoking certificate '" + certificate.getId()
-                + "'. Info from recipient: " + sendResponse.getResult().getInfoText();
+                    + "'. Info from recipient: " + sendResponse.getResult().getInfoText();
             LOGGER.error(message);
             throw new SubsystemCallException(recipientId, message);
         } else {
             monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(),
-                recipientId);
+                    recipientId);
         }
     }
 

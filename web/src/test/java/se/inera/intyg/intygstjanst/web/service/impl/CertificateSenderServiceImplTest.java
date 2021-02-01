@@ -79,7 +79,8 @@ public class CertificateSenderServiceImplTest {
     private static final String CERTIFICATE_TYPE = "fk7263";
     private static final String CERTIFICATE_TYPE_VERSION = "1.0";
 
-    private static final String RECIPIENT_ID = "FKASSA";
+    private static final String RECIPIENT_ID_FKASSA = "FKASSA";
+    private static final String RECIPIENT_ID_TRANSP = "TRANSP";
     private static final String RECIPIENT_NAME = "Försäkringskassan";
     private static final String RECIPIENT_LOGICALADDRESS = "FKORG";
     private static final String RECIPIENT_DEFAULT_LOGICALADDRESS = "FKORG-DEFAULT";
@@ -103,7 +104,7 @@ public class CertificateSenderServiceImplTest {
 
     private static Recipient createRecipient() {
         return new RecipientBuilder()
-            .setId(RECIPIENT_ID)
+            .setId(RECIPIENT_ID_FKASSA)
             .setName(RECIPIENT_NAME)
             .setLogicalAddress(RECIPIENT_LOGICALADDRESS)
             .setCertificateTypes(RECIPIENT_CERTIFICATETYPES)
@@ -129,15 +130,14 @@ public class CertificateSenderServiceImplTest {
 
     @Before
     public void setupRecipientService() throws RecipientUnknownException {
-        when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(createRecipient());
+        when(recipientService.getRecipient(RECIPIENT_ID_FKASSA)).thenReturn(createRecipient());
         when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(Arrays.asList(createRecipient()));
-        when(recipientService.getPrimaryRecipientFkassa()).thenReturn(createRecipient());
     }
 
     @Test
     public void testSend() throws Exception {
-        senderService.sendCertificate(certificate, RECIPIENT_ID);
-        verify(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_LOGICALADDRESS), eq(RECIPIENT_ID));
+        senderService.sendCertificate(certificate, RECIPIENT_ID_FKASSA);
+        verify(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_LOGICALADDRESS), eq(RECIPIENT_ID_FKASSA));
     }
 
     @Test
@@ -150,30 +150,30 @@ public class CertificateSenderServiceImplTest {
     public void testSendWithFailingModule() throws Exception {
         // web service call fails
         doThrow(new ModuleException("")).when(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_LOGICALADDRESS),
-            eq(RECIPIENT_ID));
-        senderService.sendCertificate(certificate, RECIPIENT_ID);
+            eq(RECIPIENT_ID_FKASSA));
+        senderService.sendCertificate(certificate, RECIPIENT_ID_FKASSA);
     }
 
     @Test(expected = MissingModuleException.class)
     public void testSendWithModuleNotFound() throws Exception {
         doThrow(new ModuleNotFoundException("")).when(moduleRegistry).getModuleEntryPoint(CERTIFICATE_TYPE);
-        senderService.sendCertificate(certificate, RECIPIENT_ID);
+        senderService.sendCertificate(certificate, RECIPIENT_ID_FKASSA);
     }
 
     @Test(expected = ServerException.class)
     public void testSendWithUnknownRecipient() throws RecipientUnknownException {
-        when(recipientService.getRecipient(RECIPIENT_ID)).thenThrow(new RecipientUnknownException(""));
-        senderService.sendCertificate(certificate, RECIPIENT_ID);
+        when(recipientService.getRecipient(RECIPIENT_ID_FKASSA)).thenThrow(new RecipientUnknownException(""));
+        senderService.sendCertificate(certificate, RECIPIENT_ID_FKASSA);
     }
 
     @Test(expected = ServerException.class)
     public void testSendWithNoMatchingRecipient() {
-        senderService.sendCertificate(certificate, "TS");
+        senderService.sendCertificate(certificate, RECIPIENT_ID_TRANSP);
     }
 
     @Test
-    public void sendCertificateRevocationDefaultStrategyTest() throws Exception {
-        final String nonFkRecipient = "TS";
+    public void sendCertificateRevocationTest() throws Exception {
+        final String nonFkRecipient = RECIPIENT_ID_TRANSP;
         RevokeMedicalCertificateResponseType revokeMedicalCertificateResponse = new RevokeMedicalCertificateResponseType();
         revokeMedicalCertificateResponse.setResult(ResultOfCallUtil.okResult());
         when(revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(any(AttributedURIType.class),
@@ -195,8 +195,8 @@ public class CertificateSenderServiceImplTest {
     }
 
     @Test(expected = SubsystemCallException.class)
-    public void sendCertificateRevocationDefaultRecipientErrorTest() throws Exception {
-        final String nonFkRecipient = "TS";
+    public void sendCertificateRevocationRecipientErrorTest() throws Exception {
+        final String nonFkRecipient = RECIPIENT_ID_TRANSP;
         RevokeMedicalCertificateResponseType revokeMedicalCertificateResponse = new RevokeMedicalCertificateResponseType();
         revokeMedicalCertificateResponse.setResult(ResultOfCallUtil.failResult("error"));
         when(revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(any(AttributedURIType.class),
@@ -210,7 +210,7 @@ public class CertificateSenderServiceImplTest {
 
     @Test(expected = RuntimeException.class)
     public void sendCertificateRevocationUnknownRecipientTest() throws Exception {
-        final String nonFkRecipient = "TS";
+        final String nonFkRecipient = RECIPIENT_ID_TRANSP;
         when(recipientService.getRecipient(nonFkRecipient)).thenThrow(new RecipientUnknownException(""));
         RevokeType revokeData = new RevokeType();
         revokeData.setLakarutlatande(new LakarutlatandeEnkelType());
