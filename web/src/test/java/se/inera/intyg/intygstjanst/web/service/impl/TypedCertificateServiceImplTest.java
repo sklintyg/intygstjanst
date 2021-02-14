@@ -26,6 +26,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
@@ -33,6 +35,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
@@ -41,6 +44,7 @@ import se.inera.intyg.infra.certificate.dto.DiagnosedCertificate;
 import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToDiagnosedCertificateConverter;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSickLeaveCertificateConverter;
@@ -127,6 +131,22 @@ public class TypedCertificateServiceImplTest {
         assertEquals(1, sickLeaveCertificates.size());
     }
 
+    @Test
+    public void listDoctorsForCareUnits() throws ModuleNotFoundException, ModuleException {
+        List<Certificate> certificates = new ArrayList<>();
+        certificates.add(setDoctorName(buildCertificate(CERT_TYPE_AG7804), "DOCTOR ONE"));
+        certificates.add(setDoctorName(buildCertificate(CERT_TYPE_LUSE), "DOCTOR TWO"));
+        certificates.add(setRevoked(buildCertificate(CERT_TYPE_AG7804)));
+        when(certificateDao.findCertificate(any(), any(), any(), any())).thenReturn(certificates);
+
+        var doctorsNames = typedCertificateService.listDoctorsForCareUnits(Collections.singletonList(CARE_UNIT_ID),
+            Arrays.asList(CERT_TYPE_LUSE, CERT_TYPE_AG7804), null, null);
+
+        assertNotNull(doctorsNames);
+        assertEquals(2, doctorsNames.size());
+        assertEquals(Arrays.asList("DOCTOR ONE", "DOCTOR TWO"), doctorsNames);
+    }
+
     private Certificate buildCertificate(String type) {
         var certificate = new Certificate(CERT_ID);
         certificate.setType(type);
@@ -138,6 +158,17 @@ public class TypedCertificateServiceImplTest {
         certificate.setCareUnitId(CARE_UNIT_ID);
         certificate.setCareUnitName(CARE_UNIT_NAME);
         certificate.setOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "XML", certificate));
+        return certificate;
+    }
+
+    private Certificate setDoctorName(Certificate certificate, String name) {
+        certificate.setSigningDoctorName(name);
+        return certificate;
+    }
+
+    private Certificate setRevoked(Certificate certificate) {
+        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry("", CertificateState.CANCELLED, LocalDateTime.now());
+        certificate.setStates(Collections.singletonList(state));
         return certificate;
     }
 }
