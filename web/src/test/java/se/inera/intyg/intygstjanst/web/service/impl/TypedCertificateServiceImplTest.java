@@ -140,7 +140,7 @@ public class TypedCertificateServiceImplTest {
         when(certificateDao.findCertificate(any(), any(), any(), any())).thenReturn(certificates);
 
         var doctorsNames = typedCertificateService.listDoctorsForCareUnits(Collections.singletonList(CARE_UNIT_ID),
-            Arrays.asList(CERT_TYPE_LUSE, CERT_TYPE_AG7804),null,  null);
+            Arrays.asList(CERT_TYPE_LUSE, CERT_TYPE_AG7804), null, null);
 
         assertNotNull(doctorsNames);
         assertEquals(2, doctorsNames.size());
