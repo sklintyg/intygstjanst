@@ -21,24 +21,15 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
-import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
-import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
-import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.InnehallType;
-import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.rivtabp20.v1.SendMedicalCertificateQuestionResponderInterface;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.QuestionToFkType;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionResponseType;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
@@ -71,16 +62,10 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     private IntygModuleRegistry moduleRegistry;
 
     @Autowired
-    private SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionResponderInterface;
-
-    @Autowired
     private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponderInterface;
 
     @Autowired
     private MonitoringLogService monitoringLogService;
-
-    @Value("${fk7263.send.medical.certificate.answer.force.fullstandigtnamn}")
-    private String forceFullstandigtNamn;
 
     @Override
     public void sendCertificate(Certificate certificate, String recipientId) {
@@ -128,79 +113,23 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
     @Override
     public void sendCertificateRevocation(Certificate certificate, String recipientId, RevokeType revokeData) {
-        if (recipientId.equals(recipientService.getPrimaryRecipientFkassa().getId())) {
-            useFKRevocationStrategy(certificate, revokeData);
-        } else {
-            useDefaultRevocationStrategy(certificate, revokeData, recipientId);
-        }
-    }
-
-    private void useFKRevocationStrategy(Certificate certificate, RevokeType revokeData) {
-        String intygId = certificate.getId();
-        String vardref = revokeData.getVardReferensId();
-        String meddelande = revokeData.getMeddelande();
-        if (meddelande == null || meddelande.isEmpty()) {
-            meddelande = "meddelande saknas";
-        }
-
-        LocalDateTime signTs = revokeData.getLakarutlatande().getSigneringsTidpunkt();
-        LocalDateTime avsantTs = revokeData.getAvsantTidpunkt();
-        VardAdresseringsType vardAddress = revokeData.getAdressVard();
-
-        QuestionToFkType question = new QuestionToFkType();
-        question.setAmne(Amnetyp.MAKULERING_AV_LAKARINTYG);
-        question.setVardReferensId(vardref);
-        question.setAvsantTidpunkt(avsantTs);
-        question.setAdressVard(vardAddress);
-        question.setFraga(new InnehallType());
-        question.getFraga().setMeddelandeText(meddelande);
-        question.getFraga().setSigneringsTidpunkt(signTs);
-        question.setLakarutlatande(revokeData.getLakarutlatande());
-
-        // INTYG-4447: Temporary hack to mitigate problems in Anpassningsplattform requiring fullstandigtNamn to be present.
-        // Remove ASAP.
-        if ("true".equalsIgnoreCase(forceFullstandigtNamn)) {
-            question.getLakarutlatande().getPatient().setFullstandigtNamn("---");
-        }
-
-        AttributedURIType logicalAddress = new AttributedURIType();
-        logicalAddress.setValue(recipientService.getPrimaryRecipientFkassa().getLogicalAddress());
-
-        SendMedicalCertificateQuestionType parameters = new SendMedicalCertificateQuestionType();
-        parameters.setQuestion(question);
-
-        SendMedicalCertificateQuestionResponseType sendResponse = sendMedicalCertificateQuestionResponderInterface
-            .sendMedicalCertificateQuestion(logicalAddress, parameters);
-
-        if (sendResponse.getResult().getResultCode() != OK) {
-            String message = "Failed to send question to Försäkringskassan for revoking certificate '" + intygId
-                + "'. Info from forsakringskassan: " + sendResponse.getResult().getInfoText();
-            LOGGER.error(message);
-            throw new SubsystemCallException(recipientService.getPrimaryRecipientFkassa().getId(), message);
-        } else {
-            monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(),
-                certificate.getCareUnitId(), "FKASSA");
-        }
-    }
-
-    private void useDefaultRevocationStrategy(Certificate certificate, RevokeType revokeData, String recipientId) {
         RevokeMedicalCertificateRequestType request = new RevokeMedicalCertificateRequestType();
         request.setRevoke(revokeData);
 
         AttributedURIType logicalAddress = getLogicalAddress(recipientId);
 
         RevokeMedicalCertificateResponseType sendResponse = revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(
-            logicalAddress,
-            request);
+                logicalAddress,
+                request);
 
         if (sendResponse.getResult().getResultCode() != OK) {
             String message = "Failed to send question to '" + recipientId + "' when revoking certificate '" + certificate.getId()
-                + "'. Info from recipient: " + sendResponse.getResult().getInfoText();
+                    + "'. Info from recipient: " + sendResponse.getResult().getInfoText();
             LOGGER.error(message);
             throw new SubsystemCallException(recipientId, message);
         } else {
             monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(),
-                recipientId);
+                    recipientId);
         }
     }
 

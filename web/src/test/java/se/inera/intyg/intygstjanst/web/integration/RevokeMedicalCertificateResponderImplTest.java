@@ -19,7 +19,6 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,12 +50,8 @@ import se.inera.intyg.common.support.integration.module.exception.InvalidCertifi
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
-import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
-import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
-import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
-import se.inera.intyg.intygstjanst.web.service.StatisticsService;
+import se.inera.intyg.intygstjanst.web.service.*;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -64,7 +59,8 @@ public class RevokeMedicalCertificateResponderImplTest {
 
     private static final String CERTIFICATE_ID = "intygs-id-1234567890";
     private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").get();
-    private static final String TARGET = "FKASSA";
+    private static final String FKASSA = "FKASSA";
+    private static final String TRANSP = "TRANSP";
 
     private static final AttributedURIType ADDRESS = new AttributedURIType();
 
@@ -82,6 +78,9 @@ public class RevokeMedicalCertificateResponderImplTest {
 
     @Mock
     private SjukfallCertificateService sjukfallCertificateService;
+
+    @Mock
+    private RecipientService recipientService;
 
     @InjectMocks
     private RevokeMedicalCertificateResponderInterface responder = new RevokeMedicalCertificateResponderImpl();
@@ -101,18 +100,24 @@ public class RevokeMedicalCertificateResponderImplTest {
         return cachedRevokeRequest;
     }
 
+    private Recipient createRecipientForForsakringskassan() {
+        return new Recipient("logicalAddress", FKASSA, FKASSA, "HUVUDMOTTAGARE",
+                "certificateTypes", true, true);
+    }
+
     @Test
-    public void testRevokeCertificateWhichWasAlreadySentToForsakringskassan() throws Exception {
+    public void testRevokeCertificateWhichWasAlreadySentToTransportstyrelsen() throws Exception {
 
         Certificate certificate = new Certificate(CERTIFICATE_ID);
-        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TARGET, CertificateState.SENT, LocalDateTime.now());
+        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TRANSP, CertificateState.SENT, LocalDateTime.now());
         certificate.setStates(Collections.singletonList(historyEntry));
 
         when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
+        when(recipientService.getPrimaryRecipientFkassa()).thenReturn(createRecipientForForsakringskassan());
 
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
 
-        verify(certificateSenderService).sendCertificateRevocation(certificate, TARGET, revokeRequest().getRevoke());
+        verify(certificateSenderService).sendCertificateRevocation(certificate, TRANSP, revokeRequest().getRevoke());
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
         Mockito.verify(certificateService, Mockito.times(1)).revokeCertificateForStatistics(certificate);
@@ -120,32 +125,37 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeCertificateWithForsakringskassanReturningError() throws Exception {
-
-        Certificate certificate = new Certificate(CERTIFICATE_ID);
-        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TARGET, CertificateState.SENT, LocalDateTime.now());
-        certificate.setStates(Collections.singletonList(historyEntry));
-
-        when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
-        doThrow(new SubsystemCallException(TARGET)).when(certificateSenderService).sendCertificateRevocation(certificate, TARGET,
-            revokeRequest().getRevoke());
-
-        RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
-        assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
-        Mockito.verifyNoInteractions(statisticsService);
-        Mockito.verifyNoInteractions(sjukfallCertificateService);
-    }
-
-    @Test
-    public void testRevokeCertificateWhichWasNotSentToForsakringskassan() throws Exception {
+    public void testRevokeCertificateWhichWasNotSentToTransportstyrelsen() throws Exception {
 
         Certificate certificate = new Certificate(CERTIFICATE_ID);
 
         when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
+
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
+
+        verify(certificateSenderService, Mockito.never()).sendCertificateRevocation(certificate, TRANSP, revokeRequest().getRevoke());
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
         Mockito.verify(certificateService, times(1)).revokeCertificateForStatistics(certificate);
+        Mockito.verify(sjukfallCertificateService, Mockito.only()).revoked(certificate);
+    }
+
+    @Test
+    public void testRevokeCertificateIsNotSentToForsakringskassan() throws Exception {
+
+        Certificate certificate = new Certificate(CERTIFICATE_ID);
+        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(FKASSA, CertificateState.SENT, LocalDateTime.now());
+        certificate.setStates(Collections.singletonList(historyEntry));
+
+        when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(certificate);
+        when(recipientService.getPrimaryRecipientFkassa()).thenReturn(createRecipientForForsakringskassan());
+
+        RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
+
+        verify(certificateSenderService, Mockito.never()).sendCertificateRevocation(certificate, FKASSA, revokeRequest().getRevoke());
+
+        assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
+        Mockito.verify(certificateService, Mockito.times(1)).revokeCertificateForStatistics(certificate);
         Mockito.verify(sjukfallCertificateService, Mockito.only()).revoked(certificate);
     }
 
