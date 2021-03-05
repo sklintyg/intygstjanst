@@ -588,4 +588,16 @@
 		</createTable>
 
 	</changeSet>
+
+	<changeSet id="49" author="mww">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="CERTIFICATE" indexName="IDX_CERTIFICATE_CARE_UNIT_ID"/>
+			</not>
+		</preConditions>
+		<createIndex indexName="IDX_CERTIFICATE_CARE_UNIT_ID"
+				tableName="CERTIFICATE" unique="false">
+			<column name="CARE_UNIT_ID"/>
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>
