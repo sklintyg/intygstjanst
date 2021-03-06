@@ -43,19 +43,24 @@ public class CertificateMetaData {
     @Column(name = "IS_REVOKED")
     private boolean isRevoked;
 
+    @Column(name = "DIAGNOSES")
+    private String diagnoses;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CERTIFICATE_ID")
     private Certificate certificate;
 
+
     public CertificateMetaData() {
     }
 
-    public CertificateMetaData(Certificate certificate, String doctorId, String doctorName, boolean isRevoked) {
+    public CertificateMetaData(Certificate certificate, String doctorId, String doctorName, boolean isRevoked, String diagnoses) {
         this.certificateId = certificate.getId();
         this.doctorId = doctorId;
         this.doctorName = doctorName;
         this.isRevoked = isRevoked;
         this.certificate = certificate;
+        this.diagnoses = diagnoses;
     }
 
     public String getCertificateId() {
@@ -96,5 +101,13 @@ public class CertificateMetaData {
 
     public void setCertificate(Certificate certificate) {
         this.certificate = certificate;
+    }
+
+    public String getDiagnoses() {
+        return diagnoses;
+    }
+
+    public void setDiagnoses(String diagnoses) {
+        this.diagnoses = diagnoses;
     }
 }

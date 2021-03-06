@@ -21,8 +21,10 @@ package se.inera.intyg.intygstjanst.web.integration;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -33,6 +35,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3._2000._09.xmldsig_.SignatureType;
 import org.w3._2002._06.xmldsig_filter2.XPathType;
+import se.inera.intyg.common.fkparent.model.internal.Diagnos;
+import se.inera.intyg.common.luse.support.LuseEntryPoint;
+import se.inera.intyg.common.luse.v1.model.internal.LuseUtlatandeV1;
 import se.inera.intyg.common.services.texts.IntygTextsService;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
@@ -115,8 +120,15 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             ValidateXmlResponse validationResponse = api.validateXml(xml);
             String additionalInfo = api.getAdditionalInfo(registerCertificate.getIntyg());
 
+            final var utlatande = api.getUtlatandeFromXml(xml);
+            final var diagnosisList = new ArrayList(3);
+            if (utlatande.getTyp().equalsIgnoreCase(LuseEntryPoint.MODULE_ID)) {
+                final var luse = (LuseUtlatandeV1) utlatande;
+                diagnosisList.addAll(luse.getDiagnoser().stream().map(Diagnos::getDiagnosKod).collect(Collectors.toList()));
+            }
+
             if (!validationResponse.hasErrorMessages()) {
-                return storeIntyg(registerCertificate, intygsTyp, xml, additionalInfo);
+                return storeIntyg(registerCertificate, intygsTyp, xml, additionalInfo, diagnosisList);
             } else {
                 String validationErrors = String.join(";", validationResponse.getValidationErrors());
                 return makeValidationErrorResult(validationErrors);
@@ -142,9 +154,11 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     private RegisterCertificateResponseType storeIntyg(
         final RegisterCertificateType registerCertificate,
         final String intygsTyp,
-        final String xml, final String additionalInfo) throws CertificateAlreadyExistsException, InvalidCertificateException {
+        final String xml, final String additionalInfo, List<String> diagnosisList)
+        throws CertificateAlreadyExistsException, InvalidCertificateException {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
-        CertificateHolder certificateHolder = toCertificateHolder(registerCertificate.getIntyg(), intygsTyp, xml, additionalInfo);
+        CertificateHolder certificateHolder = toCertificateHolder(registerCertificate.getIntyg(), intygsTyp, xml, additionalInfo,
+            diagnosisList);
         moduleContainer.certificateReceived(certificateHolder);
         response.setResult(ResultTypeUtil.okResult());
         return response;
@@ -232,7 +246,9 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         return moduleRegistry.getModuleIdFromExternalId(certificateType.getIntyg().getTyp().getCode());
     }
 
-    private CertificateHolder toCertificateHolder(Intyg intyg, String type, String originalCertificate, String additionalInfo) {
+    private CertificateHolder toCertificateHolder(Intyg intyg, String type, String originalCertificate, String additionalInfo,
+        List<String> diagnosisList) {
+
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId(intyg.getIntygsId().getExtension());
         certificateHolder.setCareUnitId(intyg.getSkapadAv().getEnhet().getEnhetsId().getExtension());
@@ -247,6 +263,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         certificateHolder.setOriginalCertificate(originalCertificate);
         certificateHolder.setAdditionalInfo(additionalInfo);
         certificateHolder.setCertificateRelation(convertRelation(intyg.getIntygsId().getExtension(), intyg.getRelation()));
+        certificateHolder.setDiagnosisCodes(diagnosisList);
         return certificateHolder;
     }
 

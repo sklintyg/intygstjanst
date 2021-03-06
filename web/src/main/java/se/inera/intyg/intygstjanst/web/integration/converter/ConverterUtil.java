@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.web.integration.converter;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -58,7 +59,9 @@ public final class ConverterUtil {
             certificate.setStates(certificateStates);
         }
         certificate.setCertificateMetaData(new CertificateMetaData(certificate, certificateHolder.getSigningDoctorId(),
-            certificateHolder.getSigningDoctorName(), certificateHolder.isRevoked()));
+            certificateHolder.getSigningDoctorName(), certificateHolder.isRevoked(), null));
+        certificate.getCertificateMetaData().setDiagnoses(StringUtils.join(certificateHolder.getDiagnosisCodes()));
+
         return certificate;
     }
 

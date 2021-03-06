@@ -412,7 +412,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
     private void storeCertificateMetadata(CertificateHolder certificateHolder, Certificate certificate) {
         CertificateMetaData metadata = new CertificateMetaData(certificate, certificateHolder.getSigningDoctorId(),
-            certificateHolder.getSigningDoctorName(), certificateHolder.isRevoked());
+            certificateHolder.getSigningDoctorName(), certificateHolder.isRevoked(), null);
+        metadata.setDiagnoses(org.apache.commons.lang3.StringUtils.join(certificateHolder.getDiagnosisCodes()));
         certificateDao.storeCertificateMetadata(metadata);
         certificate.setCertificateMetaData(metadata);
     }

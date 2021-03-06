@@ -143,7 +143,7 @@ public class IntygBootstrapBean {
                 certificate.setWireTapped(false);
 
                 CertificateMetaData metaData = new CertificateMetaData(certificate, utlatande.getGrundData().getSkapadAv().getPersonId(),
-                    utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), false);
+                    utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), false, null);
                 certificate.setCertificateMetaData(metaData);
 
                 entityManager.persist(metaData);
@@ -226,7 +226,7 @@ public class IntygBootstrapBean {
 
                         CertificateMetaData metaData = new CertificateMetaData(certificate,
                             utlatande.getGrundData().getSkapadAv().getPersonId(),
-                            utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), false);
+                            utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), false, null);
 
                         entityManager.persist(metaData);
                         entityManager.persist(originalCertificate);

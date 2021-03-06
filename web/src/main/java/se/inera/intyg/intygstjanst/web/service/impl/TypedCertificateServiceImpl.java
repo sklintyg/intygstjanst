@@ -18,7 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -54,15 +56,18 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
 
     private final CertificateToDiagnosedCertificateConverter certificateToDiagnosedCertificateConverter;
     private final CertificateToSickLeaveCertificateConverter certificateToSickLeaveCertificateConverter;
+    private final ObjectMapper objectMapper;
 
     @Autowired
     public TypedCertificateServiceImpl(CertificateDao certificateDao, IntygModuleRegistry moduleRegistry,
         CertificateToDiagnosedCertificateConverter certificateToDiagnosedCertificateConverter,
-        CertificateToSickLeaveCertificateConverter certificateToSickLeaveCertificateConverter) {
+        CertificateToSickLeaveCertificateConverter certificateToSickLeaveCertificateConverter,
+        ObjectMapper objectMapper) {
         this.certificateDao = certificateDao;
         this.moduleRegistry = moduleRegistry;
         this.certificateToDiagnosedCertificateConverter = certificateToDiagnosedCertificateConverter;
         this.certificateToSickLeaveCertificateConverter = certificateToSickLeaveCertificateConverter;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -121,20 +126,22 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
 
     private DiagnosedCertificate convertToDiagnosedCertificate(Certificate certificate) {
         try {
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
-            Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
+//            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+//            Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
 
             DiagnosedCertificate diagnosedCertificate;
 
+            final List<String> diagnosisList = Arrays.asList(certificate.getCertificateMetaData().getDiagnoses().split("\\s*,\\s*"));
+
             switch (certificate.getType()) {
                 case LuseEntryPoint.MODULE_ID:
-                    diagnosedCertificate = certificateToDiagnosedCertificateConverter.convertLuse(certificate, utlatande);
+                    diagnosedCertificate = certificateToDiagnosedCertificateConverter.convertLuse(certificate, diagnosisList);
                     break;
                 case LuaefsEntryPoint.MODULE_ID:
-                    diagnosedCertificate = certificateToDiagnosedCertificateConverter.convertLuaefs(certificate, utlatande);
+                    diagnosedCertificate = certificateToDiagnosedCertificateConverter.convertLuaefs(certificate, diagnosisList);
                     break;
                 case LuaenaEntryPoint.MODULE_ID:
-                    diagnosedCertificate = certificateToDiagnosedCertificateConverter.convertLuaena(certificate, utlatande);
+                    diagnosedCertificate = certificateToDiagnosedCertificateConverter.convertLuaena(certificate, diagnosisList);
                     break;
                 default:
                     diagnosedCertificate = null;
