@@ -508,9 +508,6 @@
 			<column name="IS_REVOKED" type="boolean" defaultValueBoolean="false">
 				<constraints nullable="false"/>
 			</column>
-			<column name="DIAGNOSES" type="varchar(255)">
-				<constraints nullable="true"/>
-			</column>
 		</createTable>
 
 		<createTable tableName="REF_CERTIFICATE_TYPE">
@@ -590,5 +587,13 @@
 			</column>
 		</createTable>
 
+	</changeSet>
+
+	<changeSet id="49" author="mw">
+		<addColumn tableName="CERTIFICATE_METADATA">
+			<column name="DIAGNOSES" type="varchar(255)">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>
