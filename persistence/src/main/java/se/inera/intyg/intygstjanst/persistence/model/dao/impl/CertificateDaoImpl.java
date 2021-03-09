@@ -252,7 +252,7 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
-    public List<String> findDoctorIds(List<String> careUnits, List<String> types) {
+    public List<String> findDoctorIds(List<String> careUnits, List<String> types, LocalDate fromDate, LocalDate toDate) {
 
         if (!listContainsValues(careUnits)) {
             return Collections.emptyList();
@@ -269,12 +269,28 @@ public class CertificateDaoImpl implements CertificateDao {
             jpqlBuffer.append("AND c.type in (:typesValue) ");
         }
 
+        if (isNotNull(fromDate)) {
+            jpqlBuffer.append("AND c.signedDate >= :fromDateValue ");
+        }
+
+        if (isNotNull(toDate)) {
+            jpqlBuffer.append("AND c.signedDate < :toDateValue ");
+        }
+
         var query = entityManager
             .createQuery(jpqlBuffer.toString(), String.class)
             .setParameter("careUnitIdValue", careUnits);
 
         if (listContainsValues(types)) {
             query = query.setParameter("typesValue", types);
+        }
+
+        if (isNotNull(fromDate)) {
+            query = query.setParameter("fromDateValue", fromDate.atStartOfDay());
+        }
+
+        if (isNotNull(toDate)) {
+            query = query.setParameter("toDateValue", toDate.plusDays(1).atStartOfDay());
         }
 
         return query.getResultList();

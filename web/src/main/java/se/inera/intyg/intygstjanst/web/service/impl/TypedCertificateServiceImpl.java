@@ -103,7 +103,7 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
             + String.join(", ", units) + ")");
 
         if (useNewQuery) {
-            return certificateDao.findDoctorIds(units, certificateTypeList);
+            return certificateDao.findDoctorIds(units, certificateTypeList, fromDate, toDate);
         }
 
         final var certificates = certificateDao.findCertificate(units, certificateTypeList, fromDate, toDate);

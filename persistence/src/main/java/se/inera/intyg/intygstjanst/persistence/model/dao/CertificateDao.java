@@ -82,9 +82,11 @@ public interface CertificateDao {
      *
      * @param careUnits List of units (care units or sub units)
      * @param types Type of certificates
+     * @param fromDate From date when the certificate is valid
+     * @param toDate To data when the certificate is valid
      * @return List of hsa-id of doctors that have issued certificates matching the parameters.
      */
-    List<String> findDoctorIds(List<String> careUnits, List<String> types);
+    List<String> findDoctorIds(List<String> careUnits, List<String> types, LocalDate fromDate, LocalDate toDate);
 
     /**
      * Gets one {@link Certificate}.

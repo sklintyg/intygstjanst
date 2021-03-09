@@ -23,6 +23,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -30,9 +32,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.support.model.CertificateState;
@@ -78,10 +80,15 @@ public class TypedCertificateServiceImplTest {
     @Mock
     private CertificateToSickLeaveCertificateConverter sickLeaveCertificateConverter;
 
-    @InjectMocks
     private TypedCertificateServiceImpl typedCertificateService;
 
     private final ModuleApi moduleApi = mock(ModuleApi.class);
+
+    @Before
+    public void setup() {
+        typedCertificateService = new TypedCertificateServiceImpl(certificateDao, moduleRegistry, diagnosedCertificateConverter,
+            sickLeaveCertificateConverter, false);
+    }
 
     @Test
     public void listDiagnosedCertificatesForCareUnits() throws ModuleNotFoundException, ModuleException {
@@ -145,6 +152,34 @@ public class TypedCertificateServiceImplTest {
         assertNotNull(doctorsNames);
         assertEquals(2, doctorsNames.size());
         assertEquals(Arrays.asList("DOCTOR ONE", "DOCTOR TWO"), doctorsNames);
+    }
+
+    @Test
+    public void shallUseQueryWithMetaDataForFindingDiagnosCertificatesIfPropertyTrue() {
+        List<Certificate> certificates = Collections.singletonList(buildCertificate(CERT_TYPE_LUSE));
+        when(certificateDao.findCertificatesUsingMetaDataTable(any(), any(), any(), any(), any())).thenReturn(Collections.emptyList());
+
+        typedCertificateService = new TypedCertificateServiceImpl(certificateDao, moduleRegistry, diagnosedCertificateConverter,
+            sickLeaveCertificateConverter, true);
+
+        typedCertificateService.listDiagnosedCertificatesForCareUnits(Collections.singletonList(CARE_UNIT_ID),
+            Arrays.asList(CERT_TYPE_LUSE, CERT_TYPE_AG7804), null, null, Collections.emptyList());
+
+        verify(certificateDao, times(1)).findCertificatesUsingMetaDataTable(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    public void shallUseQueryWithMetaDataForFindingDoctorsIfPropertyTrue() {
+        List<Certificate> certificates = Collections.singletonList(buildCertificate(CERT_TYPE_LUSE));
+        when(certificateDao.findDoctorIds(any(), any(), any(), any())).thenReturn(Collections.emptyList());
+
+        typedCertificateService = new TypedCertificateServiceImpl(certificateDao, moduleRegistry, diagnosedCertificateConverter,
+            sickLeaveCertificateConverter, true);
+
+        typedCertificateService
+            .listDoctorsForCareUnits(Collections.singletonList(CARE_UNIT_ID), Arrays.asList(CERT_TYPE_LUSE, CERT_TYPE_AG7804), null, null);
+
+        verify(certificateDao, times(1)).findDoctorIds(any(), any(), any(), any());
     }
 
     private Certificate buildCertificate(String type) {
