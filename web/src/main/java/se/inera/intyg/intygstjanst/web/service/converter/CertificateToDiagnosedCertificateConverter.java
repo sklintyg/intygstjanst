@@ -44,7 +44,7 @@ public class CertificateToDiagnosedCertificateConverter {
 
         var typedStatement = (LuaefsUtlatandeV1) statement;
 
-        return getBuild(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
+        return convert(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
     }
 
     public DiagnosedCertificate convertLuaena(Certificate certificate,
@@ -56,7 +56,7 @@ public class CertificateToDiagnosedCertificateConverter {
 
         var typedStatement = (LuaenaUtlatandeV1) statement;
 
-        return getBuild(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
+        return convert(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
     }
 
     public DiagnosedCertificate convertLuse(Certificate certificate,
@@ -68,15 +68,22 @@ public class CertificateToDiagnosedCertificateConverter {
 
         var typedStatement = (LuseUtlatandeV1) statement;
 
-        return getBuild(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
+        return convert(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
     }
 
-    private static DiagnosedCertificate getBuild(Certificate certificate, ImmutableList<Diagnos> diagnoses, GrundData grundData) {
+    public DiagnosedCertificate convert(Certificate certificate, List<String> diagnoses) {
+        return getBuild(certificate, certificate.getCertificateMetaData().getDoctorId(), diagnoses);
+    }
+
+    public DiagnosedCertificate convert(Certificate certificate, ImmutableList<Diagnos> diagnoses, GrundData grundData) {
+        return getBuild(certificate, grundData.getSkapadAv().getPersonId(), toListOfCodes(diagnoses));
+    }
+
+    private static DiagnosedCertificate getBuild(Certificate certificate, String doctorId, List<String> diagnoses) {
         return new DiagnosedCertificateBuilder(certificate.getId())
             .certificateType(certificate.getType())
             .personId(certificate.getCivicRegistrationNumber().getPersonnummerWithDash())
-            .patientFullName(grundData.getPatient().getFullstandigtNamn())
-            .personalHsaId(grundData.getSkapadAv().getPersonId())
+            .personalHsaId(doctorId)
             .signingDoctorName(certificate.getSigningDoctorName())
             .careProviderId(certificate.getCareGiverId())
             .careUnitId(certificate.getCareUnitId())
@@ -84,16 +91,22 @@ public class CertificateToDiagnosedCertificateConverter {
             .signingDateTime(certificate.getSignedDate())
             .deleted(certificate.isRevoked())
             .testCertificate(certificate.isTestCertificate())
-            .diagnoseCode(diagnoses != null ? diagnoses.get(0).getDiagnosKod() : null)
+            .diagnoseCode(diagnoses != null ? diagnoses.get(0) : null)
             .secondaryDiagnoseCodes(buildSecondaryDiagnoseCodes(diagnoses))
             .build();
     }
 
-    private static List<String> buildSecondaryDiagnoseCodes(ImmutableList<Diagnos> diagnoseList) {
-        if (diagnoseList == null || diagnoseList.size() <= 1) {
+    private static List<String> buildSecondaryDiagnoseCodes(List<String> diagnoses) {
+        if (diagnoses == null || diagnoses.size() <= 1) {
             return null;
         }
 
-        return diagnoseList.stream().skip(1).map(Diagnos::getDiagnosKod).collect(Collectors.toList());
+        return diagnoses.stream().skip(1).collect(Collectors.toList());
+    }
+
+    private List<String> toListOfCodes(ImmutableList<Diagnos> diagnoses) {
+        return diagnoses.stream()
+            .map(Diagnos::getDiagnosKod)
+            .collect(Collectors.toList());
     }
 }

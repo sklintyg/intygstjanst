@@ -500,10 +500,10 @@
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
 			<column name="DOCTOR_ID" type="varchar(255)">
-				<constraints nullable="false" />
+				<constraints nullable="false"/>
 			</column>
 			<column name="DOCTOR_NAME" type="varchar(255)">
-				<constraints nullable="false" />
+				<constraints nullable="false"/>
 			</column>
 			<column name="IS_REVOKED" type="boolean" defaultValueBoolean="false">
 				<constraints nullable="false"/>
@@ -599,5 +599,13 @@
 				tableName="CERTIFICATE" unique="false">
 			<column name="CARE_UNIT_ID"/>
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="50" author="mw">
+		<addColumn tableName="CERTIFICATE_METADATA">
+			<column name="DIAGNOSES" type="varchar(255)">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>

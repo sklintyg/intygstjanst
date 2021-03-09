@@ -42,6 +42,7 @@ import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
+import se.inera.intyg.common.support.modules.support.api.dto.AdditionalMetaData;
 import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.infra.integration.pu.services.PUService;
@@ -411,10 +412,21 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     private void storeCertificateMetadata(CertificateHolder certificateHolder, Certificate certificate) {
-        CertificateMetaData metadata = new CertificateMetaData(certificate, certificateHolder.getSigningDoctorId(),
-            certificateHolder.getSigningDoctorName(), certificateHolder.isRevoked());
+        final var diagnoses = getDiagnoses(certificateHolder.getAdditionalMetaData());
+
+        final var metadata = new CertificateMetaData(certificate, certificateHolder.getSigningDoctorId(),
+            certificateHolder.getSigningDoctorName(), certificateHolder.isRevoked(), diagnoses);
+
         certificateDao.storeCertificateMetadata(metadata);
         certificate.setCertificateMetaData(metadata);
+    }
+
+    private String getDiagnoses(AdditionalMetaData additionalMetaData) {
+        if (additionalMetaData == null || additionalMetaData.getDiagnoses() == null || additionalMetaData.getDiagnoses().isEmpty()) {
+            return null;
+        }
+
+        return org.apache.commons.lang3.StringUtils.join(additionalMetaData.getDiagnoses());
     }
 
     private boolean isPatientTestIndicated(Personnummer civicRegistrationNumber) {

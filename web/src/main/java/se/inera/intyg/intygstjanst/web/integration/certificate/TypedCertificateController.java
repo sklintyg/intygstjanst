@@ -64,7 +64,8 @@ public class TypedCertificateController {
         return typedCertificateService.listDiagnosedCertificatesForCareUnits(units,
             parameters.getCertificateTypes(),
             parameters.getFromDate(),
-            parameters.getToDate());
+            parameters.getToDate(),
+            parameters.getDoctorIds());
     }
 
     @PrometheusTimeMethod

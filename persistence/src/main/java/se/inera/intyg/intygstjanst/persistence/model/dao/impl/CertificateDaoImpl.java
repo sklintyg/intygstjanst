@@ -206,6 +206,105 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
+    public List<Certificate> findCertificatesUsingMetaDataTable(List<String> careUnits, List<String> types, LocalDate fromDate,
+        LocalDate toDate, List<String> doctorIds) {
+
+        if (!listContainsValues(careUnits)) {
+            return Collections.emptyList();
+        }
+
+        final var criteriaBuilder = entityManager.getCriteriaBuilder();
+        final var query = criteriaBuilder.createQuery(Certificate.class);
+        final var root = query.from(Certificate.class);
+        final var certificateMetaData = root.join("certificateMetaData", JoinType.INNER);
+
+        root.fetch("states", JoinType.LEFT);
+        root.fetch("certificateMetaData", JoinType.INNER);
+        root.fetch("originalCertificate", JoinType.INNER);
+
+        final var listOfPredicates = new ArrayList<>();
+
+        listOfPredicates.add(root.<String>get("careUnitId").in(careUnits));
+
+        listOfPredicates.add(criteriaBuilder.equal(certificateMetaData.get("isRevoked"), false));
+
+        if (listContainsValues(doctorIds)) {
+            listOfPredicates.add(certificateMetaData.get("doctorId").in(doctorIds));
+        }
+
+        if (listContainsValues(types)) {
+            listOfPredicates.add(criteriaBuilder.lower(root.<String>get("type")).in(toLowerCase(types)));
+        }
+
+        if (isNotNull(fromDate)) {
+            listOfPredicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("signedDate"), fromDate.atStartOfDay()));
+        }
+
+        if (isNotNull(toDate)) {
+            listOfPredicates.add(criteriaBuilder.lessThan(root.get("signedDate"), toDate.plusDays(1).atStartOfDay()));
+        }
+
+        query.where(listOfPredicates.toArray(new Predicate[listOfPredicates.size()]));
+
+        query.orderBy(criteriaBuilder.asc(root.get("signedDate")));
+
+        return entityManager.createQuery(query).getResultList();
+    }
+
+    @Override
+    public List<String> findDoctorIds(List<String> careUnits, List<String> types, LocalDate fromDate, LocalDate toDate) {
+
+        if (!listContainsValues(careUnits)) {
+            return Collections.emptyList();
+        }
+
+        final var jpqlBuffer = new StringBuilder(200);
+        jpqlBuffer.append("SELECT DISTINCT cm.doctorId ");
+        jpqlBuffer.append("FROM CertificateMetaData cm ");
+        jpqlBuffer.append("JOIN cm.certificate c ");
+        jpqlBuffer.append("WHERE c.careUnitId in (:careUnitIdValue) ");
+        jpqlBuffer.append("AND cm.isRevoked = 0 ");
+
+        if (listContainsValues(types)) {
+            jpqlBuffer.append("AND c.type in (:typesValue) ");
+        }
+
+        if (isNotNull(fromDate)) {
+            jpqlBuffer.append("AND c.signedDate >= :fromDateValue ");
+        }
+
+        if (isNotNull(toDate)) {
+            jpqlBuffer.append("AND c.signedDate < :toDateValue ");
+        }
+
+        var query = entityManager
+            .createQuery(jpqlBuffer.toString(), String.class)
+            .setParameter("careUnitIdValue", careUnits);
+
+        if (listContainsValues(types)) {
+            query = query.setParameter("typesValue", types);
+        }
+
+        if (isNotNull(fromDate)) {
+            query = query.setParameter("fromDateValue", fromDate.atStartOfDay());
+        }
+
+        if (isNotNull(toDate)) {
+            query = query.setParameter("toDateValue", toDate.plusDays(1).atStartOfDay());
+        }
+
+        return query.getResultList();
+    }
+
+    private boolean isNotNull(Object object) {
+        return object != null;
+    }
+
+    private boolean listContainsValues(List list) {
+        return list != null && list.size() > 0;
+    }
+
+    @Override
     public Certificate getCertificate(Personnummer civicRegistrationNumber, String certificateId) throws PersistenceException {
         Certificate certificate = entityManager.find(Certificate.class, certificateId);
 

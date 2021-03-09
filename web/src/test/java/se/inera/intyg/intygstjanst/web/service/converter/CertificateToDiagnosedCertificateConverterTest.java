@@ -68,7 +68,6 @@ public class CertificateToDiagnosedCertificateConverterTest {
 
     private final Personnummer pNr = Personnummer.createPersonnummer(PERSONNUMMER).get();
 
-
     @Test
     public void convertLuaefs() {
         Certificate certificate = buildCertificate(CERT_TYPE_LUAEFS);
@@ -87,7 +86,6 @@ public class CertificateToDiagnosedCertificateConverterTest {
 
         assertEquals(DOC_ID, diagnosedCertificate.getPersonalHsaId());
         assertEquals(DOC_NAME, diagnosedCertificate.getPersonalFullName());
-        assertEquals(NAME, diagnosedCertificate.getPatientFullName());
         assertEquals(PERSONNUMMER, diagnosedCertificate.getPersonId());
 
         assertEquals(DIAGNOSE_CODE, diagnosedCertificate.getDiagnoseCode());
@@ -112,7 +110,6 @@ public class CertificateToDiagnosedCertificateConverterTest {
 
         assertEquals(DOC_ID, diagnosedCertificate.getPersonalHsaId());
         assertEquals(DOC_NAME, diagnosedCertificate.getPersonalFullName());
-        assertEquals(NAME, diagnosedCertificate.getPatientFullName());
         assertEquals(PERSONNUMMER, diagnosedCertificate.getPersonId());
 
         assertEquals(DIAGNOSE_CODE, diagnosedCertificate.getDiagnoseCode());
@@ -137,7 +134,6 @@ public class CertificateToDiagnosedCertificateConverterTest {
 
         assertEquals(DOC_ID, diagnosedCertificate.getPersonalHsaId());
         assertEquals(DOC_NAME, diagnosedCertificate.getPersonalFullName());
-        assertEquals(NAME, diagnosedCertificate.getPatientFullName());
         assertEquals(PERSONNUMMER, diagnosedCertificate.getPersonId());
 
         assertEquals(DIAGNOSE_CODE, diagnosedCertificate.getDiagnoseCode());

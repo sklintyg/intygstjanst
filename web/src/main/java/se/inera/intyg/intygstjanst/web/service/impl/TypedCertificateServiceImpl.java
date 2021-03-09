@@ -19,12 +19,14 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.ag114.support.Ag114EntryPoint;
 import se.inera.intyg.common.ag7804.support.Ag7804EntryPoint;
@@ -55,37 +57,59 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
     private final CertificateToDiagnosedCertificateConverter certificateToDiagnosedCertificateConverter;
     private final CertificateToSickLeaveCertificateConverter certificateToSickLeaveCertificateConverter;
 
+    private boolean useNewQuery;
+
     @Autowired
     public TypedCertificateServiceImpl(CertificateDao certificateDao, IntygModuleRegistry moduleRegistry,
         CertificateToDiagnosedCertificateConverter certificateToDiagnosedCertificateConverter,
-        CertificateToSickLeaveCertificateConverter certificateToSickLeaveCertificateConverter) {
+        CertificateToSickLeaveCertificateConverter certificateToSickLeaveCertificateConverter,
+        @Value("#{new Boolean('${use.certificate.metadata.query:false}')}") boolean useNewQuery) {
         this.certificateDao = certificateDao;
         this.moduleRegistry = moduleRegistry;
         this.certificateToDiagnosedCertificateConverter = certificateToDiagnosedCertificateConverter;
         this.certificateToSickLeaveCertificateConverter = certificateToSickLeaveCertificateConverter;
+        this.useNewQuery = useNewQuery;
     }
 
     @Override
     public List<DiagnosedCertificate> listDiagnosedCertificatesForCareUnits(List<String> units, List<String> certificateTypeList,
-        LocalDate fromDate, LocalDate toDate) {
-
-        var certificates = certificateDao.findCertificate(units, certificateTypeList, fromDate, toDate);
+        LocalDate fromDate, LocalDate toDate, List<String> doctorIds) {
 
         LOGGER.debug("Getting diagnosed certificates of types ("
             + String.join(", ", certificateTypeList) + ") for units ("
             + String.join(", ", units) + ")");
+
+        if (useNewQuery) {
+            return getDiagnosedCertificatesUsingMetaDataTable(units, certificateTypeList, fromDate, toDate, doctorIds);
+        }
+
+        final var certificates = certificateDao.findCertificate(units, certificateTypeList, fromDate, toDate);
         return transformListToDiagnosedCertificates(certificates);
     }
 
+    private List<DiagnosedCertificate> getDiagnosedCertificatesUsingMetaDataTable(List<String> units, List<String> certificateTypeList,
+        LocalDate fromDate, LocalDate toDate, List<String> doctorIds) {
+        final var certificates = certificateDao
+            .findCertificatesUsingMetaDataTable(units, certificateTypeList, fromDate, toDate, doctorIds);
+        return transformListWithMetaDataToDiagnosedCertificates(certificates);
+    }
+
     @Override
-    public List<String> listDoctorsForCareUnits(List<String> units, List<String> certificateTypeList,
-        LocalDate fromDate, LocalDate toDate) {
-        var certificates = certificateDao.findCertificate(units, certificateTypeList, fromDate, toDate);
+    public List<String> listDoctorsForCareUnits(List<String> units, List<String> certificateTypeList, LocalDate fromDate,
+        LocalDate toDate) {
 
         LOGGER.debug("Getting signing doctors for certificates of types ("
             + String.join(", ", certificateTypeList) + ") for units ("
             + String.join(", ", units) + ")");
-        return certificates.stream().filter(c -> !c.isRevoked()).map(Certificate::getSigningDoctorName).distinct()
+
+        if (useNewQuery) {
+            return certificateDao.findDoctorIds(units, certificateTypeList, fromDate, toDate);
+        }
+
+        final var certificates = certificateDao.findCertificate(units, certificateTypeList, fromDate, toDate);
+        return certificates.stream().filter(c -> !c.isRevoked())
+            .map(Certificate::getSigningDoctorName)
+            .distinct()
             .collect(Collectors.toList());
     }
 
@@ -111,6 +135,30 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
             + String.join(", ", certificateTypeList) + ") for person on units ("
             + String.join(", ", units) + ")");
         return transformListToSickLeaveCertificates(certificates);
+    }
+
+    private List<DiagnosedCertificate> transformListWithMetaDataToDiagnosedCertificates(List<Certificate> certificates) {
+        return certificates.stream()
+            .map(this::convertToDiagnosedCertificateFromCertificateWithMetaData)
+            .collect(Collectors.toList());
+    }
+
+    private DiagnosedCertificate convertToDiagnosedCertificateFromCertificateWithMetaData(Certificate certificate) {
+        final List<String> diagnosisList = Arrays.asList(
+            certificate.getCertificateMetaData()
+                .getDiagnoses()
+                .replaceAll("\\[|\\]", "")
+                .split("\\s*,\\s*")
+        );
+        return certificateToDiagnosedCertificateConverter.convert(certificate, diagnosisList);
+    }
+
+    private static List<String> buildSecondaryDiagnoseCodes(List<String> diagnoseList) {
+        if (diagnoseList == null || diagnoseList.size() <= 1) {
+            return null;
+        }
+
+        return diagnoseList.stream().skip(1).collect(Collectors.toList());
     }
 
     private List<DiagnosedCertificate> transformListToDiagnosedCertificates(List<Certificate> certificates) {

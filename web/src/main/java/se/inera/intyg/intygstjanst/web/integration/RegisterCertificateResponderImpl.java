@@ -43,8 +43,8 @@ import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
+import se.inera.intyg.common.support.modules.support.api.dto.AdditionalMetaData;
 import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
-import se.inera.intyg.common.support.modules.support.api.dto.ValidateXmlResponse;
 import se.inera.intyg.infra.integration.pu.model.PersonSvar;
 import se.inera.intyg.infra.integration.pu.model.PersonSvar.Status;
 import se.inera.intyg.infra.integration.pu.services.PUService;
@@ -111,12 +111,13 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
                 return validatePersonError.get();
             }
 
-            String xml = xmlToString(registerCertificate);
-            ValidateXmlResponse validationResponse = api.validateXml(xml);
-            String additionalInfo = api.getAdditionalInfo(registerCertificate.getIntyg());
+            final var xml = xmlToString(registerCertificate);
+            final var validationResponse = api.validateXml(xml);
+            final var additionalInfo = api.getAdditionalInfo(registerCertificate.getIntyg());
+            final var additionalMetaData = api.getAdditionalMetaData(registerCertificate.getIntyg()).orElse(null);
 
             if (!validationResponse.hasErrorMessages()) {
-                return storeIntyg(registerCertificate, intygsTyp, xml, additionalInfo);
+                return storeIntyg(registerCertificate, intygsTyp, xml, additionalInfo, additionalMetaData);
             } else {
                 String validationErrors = String.join(";", validationResponse.getValidationErrors());
                 return makeValidationErrorResult(validationErrors);
@@ -142,9 +143,11 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     private RegisterCertificateResponseType storeIntyg(
         final RegisterCertificateType registerCertificate,
         final String intygsTyp,
-        final String xml, final String additionalInfo) throws CertificateAlreadyExistsException, InvalidCertificateException {
+        final String xml, final String additionalInfo, AdditionalMetaData additionalMetaData)
+        throws CertificateAlreadyExistsException, InvalidCertificateException {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
-        CertificateHolder certificateHolder = toCertificateHolder(registerCertificate.getIntyg(), intygsTyp, xml, additionalInfo);
+        CertificateHolder certificateHolder = toCertificateHolder(registerCertificate.getIntyg(), intygsTyp, xml, additionalInfo,
+            additionalMetaData);
         moduleContainer.certificateReceived(certificateHolder);
         response.setResult(ResultTypeUtil.okResult());
         return response;
@@ -232,7 +235,9 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         return moduleRegistry.getModuleIdFromExternalId(certificateType.getIntyg().getTyp().getCode());
     }
 
-    private CertificateHolder toCertificateHolder(Intyg intyg, String type, String originalCertificate, String additionalInfo) {
+    private CertificateHolder toCertificateHolder(Intyg intyg, String type, String originalCertificate, String additionalInfo,
+        AdditionalMetaData additionalMetaData) {
+
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId(intyg.getIntygsId().getExtension());
         certificateHolder.setCareUnitId(intyg.getSkapadAv().getEnhet().getEnhetsId().getExtension());
@@ -247,6 +252,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         certificateHolder.setOriginalCertificate(originalCertificate);
         certificateHolder.setAdditionalInfo(additionalInfo);
         certificateHolder.setCertificateRelation(convertRelation(intyg.getIntygsId().getExtension(), intyg.getRelation()));
+        certificateHolder.setAdditionalMetaData(additionalMetaData);
         return certificateHolder;
     }
 

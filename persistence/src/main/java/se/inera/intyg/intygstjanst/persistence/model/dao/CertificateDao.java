@@ -71,6 +71,24 @@ public interface CertificateDao {
     List<Certificate> findCertificate(List<String> careUnits, List<String> types, LocalDate fromDate, LocalDate toDate);
 
     /**
+     * This method will replace findCertificate(careUnits, types, fromDate, toDate). For backward compatibility both methods will
+     * coexist until the new MetaData table is in full use. This method can be renamed and the old method removed from 2021-2 and after.
+     */
+    List<Certificate> findCertificatesUsingMetaDataTable(List<String> careUnits, List<String> types, LocalDate fromDate, LocalDate toDate,
+        List<String> doctorIds);
+
+    /**
+     * Retrieves a list of issuing doctors hsa-ids.
+     *
+     * @param careUnits List of units (care units or sub units)
+     * @param types Type of certificates
+     * @param fromDate From date when the certificate is valid
+     * @param toDate To data when the certificate is valid
+     * @return List of hsa-id of doctors that have issued certificates matching the parameters.
+     */
+    List<String> findDoctorIds(List<String> careUnits, List<String> types, LocalDate fromDate, LocalDate toDate);
+
+    /**
      * Gets one {@link Certificate}.
      *
      * @param civicRegistrationNumber the user's civic registration number or null, if no check for civic registration number is desired

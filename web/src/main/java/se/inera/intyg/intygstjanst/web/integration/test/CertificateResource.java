@@ -203,7 +203,8 @@ public class CertificateResource {
                 final Utlatande utlatande = moduleApi.getUtlatandeFromXml(originalCertificate.getDocument());
                 certificate.setAdditionalInfo(moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande)));
                 CertificateMetaData metaData = new CertificateMetaData(certificate, utlatande.getGrundData().getSkapadAv().getPersonId(),
-                    utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), certificate.isRevoked());
+                    utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), certificate.isRevoked(),
+                    ConverterUtil.getDiagnoses(certificateHolder.getAdditionalMetaData()));
                 certificate.setCertificateMetaData(metaData);
                 entityManager.persist(certificate);
                 entityManager.persist(metaData);

@@ -170,7 +170,8 @@ public class CertificateDaoImplTest extends TestSupport {
         entityManager.persist(east2);
 
         // no matching care unit ID, no certificates
-        List<Certificate> certificate = certificateDao.findCertificate(Collections.singletonList("center"), null, null, null);
+        List<Certificate> certificate = certificateDao
+            .findCertificate(Collections.singletonList("center"), null, null, null);
         assertEquals(0, certificate.size());
 
         // filter by 'west' -> only return 'west'-based intyg

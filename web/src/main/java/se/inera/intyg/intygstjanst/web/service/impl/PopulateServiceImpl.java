@@ -25,14 +25,15 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.common.support.modules.support.api.ModuleApi;
+import se.inera.intyg.common.support.modules.support.api.dto.AdditionalMetaData;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
+import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 import se.inera.intyg.intygstjanst.web.service.PopulateService;
 
 //See comments to add new populate job
@@ -98,21 +99,30 @@ public class PopulateServiceImpl implements PopulateService {
     private void processCertificateMetadataId(String id) {
         try {
             var certificate = certificateDao.getCertificate(null, id);
+
+            final var moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+            final var utlatandeFromXml = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
+            final var additionalMetaData = moduleApi.getAdditionalMetaData(moduleApi.getIntygFromUtlatande(utlatandeFromXml)).orElse(null);
+
             CertificateMetaData certificateMetaData = new CertificateMetaData();
             certificateMetaData.setCertificate(certificate);
             certificateMetaData.setCertificateId(certificate.getId());
             certificateMetaData.setDoctorName(certificate.getSigningDoctorName());
             certificateMetaData.setRevoked(certificate.isRevoked());
-            certificateMetaData.setDoctorId(getDoctorId(certificate));
+            certificateMetaData.setDoctorId(getDoctorId(utlatandeFromXml));
+            certificateMetaData.setDiagnoses(getDiagnoses(additionalMetaData));
+
             certificateDao.storeCertificateMetadata(certificateMetaData);
         } catch (PersistenceException | ModuleException | ModuleNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String getDoctorId(Certificate certificate) throws ModuleException, ModuleNotFoundException {
-        ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
-        var utlatandeFromXml = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
+    private String getDoctorId(Utlatande utlatandeFromXml) throws ModuleException, ModuleNotFoundException {
         return utlatandeFromXml.getGrundData().getSkapadAv().getPersonId();
+    }
+
+    private String getDiagnoses(AdditionalMetaData additionalMetaData) {
+        return ConverterUtil.getDiagnoses(additionalMetaData);
     }
 }
