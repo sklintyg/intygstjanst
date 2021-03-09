@@ -19,10 +19,13 @@
 package se.inera.intyg.intygstjanst.web.integration.converter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
+import se.inera.intyg.common.support.modules.support.api.dto.AdditionalMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
@@ -60,9 +63,18 @@ public final class ConverterUtil {
         }
         certificate.setCertificateMetaData(new CertificateMetaData(certificate, certificateHolder.getSigningDoctorId(),
             certificateHolder.getSigningDoctorName(), certificateHolder.isRevoked(), null));
-        certificate.getCertificateMetaData().setDiagnoses(StringUtils.join(certificateHolder.getDiagnosisCodes()));
+
+        final var diagnoses = getDiagnoses(certificateHolder.getAdditionalMetaData());
+        certificate.getCertificateMetaData().setDiagnoses(diagnoses);
 
         return certificate;
+    }
+
+    private static String getDiagnoses(AdditionalMetaData additionalMetaData) {
+        if (additionalMetaData == null || additionalMetaData.getDiagnoses() == null || additionalMetaData.getDiagnoses().isEmpty()) {
+            return null;
+        }
+        return StringUtils.join(additionalMetaData.getDiagnoses());
     }
 
     public static CertificateHolder toCertificateHolder(Certificate certificate) {
@@ -92,6 +104,30 @@ public final class ConverterUtil {
         }
         certificateHolder.setCertificateStates(certificateStates);
         certificateHolder.setRevoked(certificate.isRevoked());
+        certificateHolder.setAdditionalMetaData(certificate.getCertificateMetaData() != null ? getAdditionalMetaData(
+            certificate.getCertificateMetaData()) : null);
         return certificateHolder;
+    }
+
+    private static AdditionalMetaData getAdditionalMetaData(CertificateMetaData certificateMetaData) {
+        final var addtionalMetaData = new AdditionalMetaData();
+
+        final var diagnoses = getDiagnoses(certificateMetaData.getDiagnoses());
+
+        addtionalMetaData.setDiagnoses(diagnoses);
+
+        return addtionalMetaData;
+    }
+
+    private static List<String> getDiagnoses(String diagnosesAsString) {
+        if (diagnosesAsString == null || diagnosesAsString.trim().length() == 0) {
+            return Collections.emptyList();
+        }
+
+        return Arrays.asList(
+            diagnosesAsString
+                .replaceAll("\\[|\\]", "")
+                .split("\\s*,\\s*")
+        );
     }
 }

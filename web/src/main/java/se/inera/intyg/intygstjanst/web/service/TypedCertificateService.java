@@ -41,7 +41,7 @@ public interface TypedCertificateService {
      * @return List of certificates with diagnosis information
      */
     List<DiagnosedCertificate> listDiagnosedCertificatesForCareUnits(List<String> units, List<String> certificateTypeList,
-        LocalDate fromDate, LocalDate toDate);
+        LocalDate fromDate, LocalDate toDate, List<String> doctorIds);
 
     /**
      * List certificates for person with diagnosis information

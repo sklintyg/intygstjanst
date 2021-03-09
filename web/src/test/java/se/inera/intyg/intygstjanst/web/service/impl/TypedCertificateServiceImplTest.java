@@ -93,7 +93,7 @@ public class TypedCertificateServiceImplTest {
 
         var diagnosedCertificates = typedCertificateService
             .listDiagnosedCertificatesForCareUnits(Collections.singletonList(CARE_UNIT_ID), Collections.singletonList(CERT_TYPE_LUSE), null,
-                null);
+                null, null);
 
         assertNotNull(diagnosedCertificates);
         assertEquals(1, diagnosedCertificates.size());

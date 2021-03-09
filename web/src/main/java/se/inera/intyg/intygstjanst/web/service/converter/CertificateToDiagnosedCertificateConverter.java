@@ -18,9 +18,16 @@
  */
 package se.inera.intyg.intygstjanst.web.service.converter;
 
+import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
+import se.inera.intyg.common.fkparent.model.internal.Diagnos;
+import se.inera.intyg.common.luae_fs.v1.model.internal.LuaefsUtlatandeV1;
+import se.inera.intyg.common.luae_na.v1.model.internal.LuaenaUtlatandeV1;
+import se.inera.intyg.common.luse.v1.model.internal.LuseUtlatandeV1;
+import se.inera.intyg.common.support.model.common.internal.GrundData;
+import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.infra.certificate.builder.DiagnosedCertificateBuilder;
 import se.inera.intyg.infra.certificate.dto.DiagnosedCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -29,26 +36,54 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 public class CertificateToDiagnosedCertificateConverter {
 
     public DiagnosedCertificate convertLuaefs(Certificate certificate,
-        List<String> diagnosisList) {
-        return getBuild(certificate, diagnosisList);
+        Utlatande statement) {
+
+        if (!(statement instanceof LuaefsUtlatandeV1)) {
+            throw new IllegalArgumentException("Cannot convert " + statement.getClass().getName() + " to DiagnosedCertificate");
+        }
+
+        var typedStatement = (LuaefsUtlatandeV1) statement;
+
+        return convert(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
     }
 
     public DiagnosedCertificate convertLuaena(Certificate certificate,
-        List<String> diagnosisList) {
-        return getBuild(certificate, diagnosisList);
+        Utlatande statement) {
+
+        if (!(statement instanceof LuaenaUtlatandeV1)) {
+            throw new IllegalArgumentException("Cannot convert " + statement.getClass().getName() + " to DiagnosedCertificate");
+        }
+
+        var typedStatement = (LuaenaUtlatandeV1) statement;
+
+        return convert(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
     }
 
     public DiagnosedCertificate convertLuse(Certificate certificate,
-        List<String> diagnosisList) {
-        return getBuild(certificate, diagnosisList);
+        Utlatande statement) {
+
+        if (!(statement instanceof LuseUtlatandeV1)) {
+            throw new IllegalArgumentException("Cannot convert " + statement.getClass().getName() + " to DiagnosedCertificate");
+        }
+
+        var typedStatement = (LuseUtlatandeV1) statement;
+
+        return convert(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
     }
 
-    private static DiagnosedCertificate getBuild(Certificate certificate, List<String> diagnoses) {
+    public DiagnosedCertificate convert(Certificate certificate, List<String> diagnoses) {
+        return getBuild(certificate, certificate.getCertificateMetaData().getDoctorId(), diagnoses);
+    }
 
+    public DiagnosedCertificate convert(Certificate certificate, ImmutableList<Diagnos> diagnoses, GrundData grundData) {
+        return getBuild(certificate, grundData.getSkapadAv().getPersonId(), toListOfCodes(diagnoses));
+    }
+
+    private static DiagnosedCertificate getBuild(Certificate certificate, String doctorId, List<String> diagnoses) {
         return new DiagnosedCertificateBuilder(certificate.getId())
             .certificateType(certificate.getType())
             .personId(certificate.getCivicRegistrationNumber().getPersonnummerWithDash())
-            .personalHsaId(certificate.getCertificateMetaData().getDoctorId())
+            .personalHsaId(doctorId)
             .signingDoctorName(certificate.getSigningDoctorName())
             .careProviderId(certificate.getCareGiverId())
             .careUnitId(certificate.getCareUnitId())
@@ -61,11 +96,17 @@ public class CertificateToDiagnosedCertificateConverter {
             .build();
     }
 
-    private static List<String> buildSecondaryDiagnoseCodes(List<String> diagnoseList) {
-        if (diagnoseList == null || diagnoseList.size() <= 1) {
+    private static List<String> buildSecondaryDiagnoseCodes(List<String> diagnoses) {
+        if (diagnoses == null || diagnoses.size() <= 1) {
             return null;
         }
 
-        return diagnoseList.stream().skip(1).collect(Collectors.toList());
+        return diagnoses.stream().skip(1).collect(Collectors.toList());
+    }
+
+    private List<String> toListOfCodes(ImmutableList<Diagnos> diagnoses) {
+        return diagnoses.stream()
+            .map(Diagnos::getDiagnosKod)
+            .collect(Collectors.toList());
     }
 }
