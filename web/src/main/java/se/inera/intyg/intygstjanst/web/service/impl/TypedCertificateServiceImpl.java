@@ -74,6 +74,11 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
     @Override
     public List<DiagnosedCertificate> listDiagnosedCertificatesForCareUnits(List<String> units, List<String> certificateTypeList,
         LocalDate fromDate, LocalDate toDate, List<String> doctorIds) {
+
+        LOGGER.debug("Getting diagnosed certificates of types ("
+            + String.join(", ", certificateTypeList) + ") for units ("
+            + String.join(", ", units) + ")");
+
         if (useNewQuery) {
             return getDiagnosedCertificatesUsingMetaDataTable(units, certificateTypeList, fromDate, toDate, doctorIds);
         }
@@ -92,6 +97,11 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
     @Override
     public List<String> listDoctorsForCareUnits(List<String> units, List<String> certificateTypeList, LocalDate fromDate,
         LocalDate toDate) {
+
+        LOGGER.debug("Getting signing doctors for certificates of types ("
+            + String.join(", ", certificateTypeList) + ") for units ("
+            + String.join(", ", units) + ")");
+
         if (useNewQuery) {
             return certificateDao.findDoctorIds(units, certificateTypeList);
         }
