@@ -61,16 +61,15 @@ public final class ConverterUtil {
             }
             certificate.setStates(certificateStates);
         }
-        certificate.setCertificateMetaData(new CertificateMetaData(certificate, certificateHolder.getSigningDoctorId(),
-            certificateHolder.getSigningDoctorName(), certificateHolder.isRevoked(), null));
 
         final var diagnoses = getDiagnoses(certificateHolder.getAdditionalMetaData());
-        certificate.getCertificateMetaData().setDiagnoses(diagnoses);
+        certificate.setCertificateMetaData(new CertificateMetaData(certificate, certificateHolder.getSigningDoctorId(),
+            certificateHolder.getSigningDoctorName(), certificateHolder.isRevoked(), diagnoses));
 
         return certificate;
     }
 
-    private static String getDiagnoses(AdditionalMetaData additionalMetaData) {
+    public static String getDiagnoses(AdditionalMetaData additionalMetaData) {
         if (additionalMetaData == null || additionalMetaData.getDiagnoses() == null || additionalMetaData.getDiagnoses().isEmpty()) {
             return null;
         }
