@@ -18,8 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static se.inera.intyg.intygstjanst.web.integration.certificate.TypedCertificateController.NEW_LU_QUERY;
-
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +26,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.ag114.support.Ag114EntryPoint;
 import se.inera.intyg.common.ag7804.support.Ag7804EntryPoint;
@@ -58,20 +57,24 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
     private final CertificateToDiagnosedCertificateConverter certificateToDiagnosedCertificateConverter;
     private final CertificateToSickLeaveCertificateConverter certificateToSickLeaveCertificateConverter;
 
+    private boolean useNewQuery;
+
     @Autowired
     public TypedCertificateServiceImpl(CertificateDao certificateDao, IntygModuleRegistry moduleRegistry,
         CertificateToDiagnosedCertificateConverter certificateToDiagnosedCertificateConverter,
-        CertificateToSickLeaveCertificateConverter certificateToSickLeaveCertificateConverter) {
+        CertificateToSickLeaveCertificateConverter certificateToSickLeaveCertificateConverter,
+        @Value("#{new Boolean('${use.certificate.metadata.query:false}')}") boolean useNewQuery) {
         this.certificateDao = certificateDao;
         this.moduleRegistry = moduleRegistry;
         this.certificateToDiagnosedCertificateConverter = certificateToDiagnosedCertificateConverter;
         this.certificateToSickLeaveCertificateConverter = certificateToSickLeaveCertificateConverter;
+        this.useNewQuery = useNewQuery;
     }
 
     @Override
     public List<DiagnosedCertificate> listDiagnosedCertificatesForCareUnits(List<String> units, List<String> certificateTypeList,
         LocalDate fromDate, LocalDate toDate, List<String> doctorIds) {
-        if (NEW_LU_QUERY) {
+        if (useNewQuery) {
             return getDiagnosedCertificatesUsingMetaDataTable(units, certificateTypeList, fromDate, toDate, doctorIds);
         }
 
@@ -89,7 +92,7 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
     @Override
     public List<String> listDoctorsForCareUnits(List<String> units, List<String> certificateTypeList, LocalDate fromDate,
         LocalDate toDate) {
-        if (NEW_LU_QUERY) {
+        if (useNewQuery) {
             return certificateDao.findDoctorIds(units, certificateTypeList);
         }
 

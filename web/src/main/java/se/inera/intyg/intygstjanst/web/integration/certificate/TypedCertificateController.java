@@ -44,9 +44,6 @@ public class TypedCertificateController {
 
     final TypedCertificateService typedCertificateService;
 
-    // TODO: This need to be toggle through a configuration.
-    public final static boolean NEW_LU_QUERY = false;
-
     @Autowired
     public TypedCertificateController(TypedCertificateService typedCertificateService) {
         this.typedCertificateService = typedCertificateService;

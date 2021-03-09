@@ -114,7 +114,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
             final var xml = xmlToString(registerCertificate);
             final var validationResponse = api.validateXml(xml);
             final var additionalInfo = api.getAdditionalInfo(registerCertificate.getIntyg());
-            final var additionalMetaData = api.getAdditionalMetaData(registerCertificate.getIntyg());
+            final var additionalMetaData = api.getAdditionalMetaData(registerCertificate.getIntyg()).orElse(null);
 
             if (!validationResponse.hasErrorMessages()) {
                 return storeIntyg(registerCertificate, intygsTyp, xml, additionalInfo, additionalMetaData);
@@ -143,7 +143,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     private RegisterCertificateResponseType storeIntyg(
         final RegisterCertificateType registerCertificate,
         final String intygsTyp,
-        final String xml, final String additionalInfo, Optional<AdditionalMetaData> additionalMetaData)
+        final String xml, final String additionalInfo, AdditionalMetaData additionalMetaData)
         throws CertificateAlreadyExistsException, InvalidCertificateException {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
         CertificateHolder certificateHolder = toCertificateHolder(registerCertificate.getIntyg(), intygsTyp, xml, additionalInfo,
@@ -236,7 +236,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     }
 
     private CertificateHolder toCertificateHolder(Intyg intyg, String type, String originalCertificate, String additionalInfo,
-        Optional<AdditionalMetaData> additionalMetaData) {
+        AdditionalMetaData additionalMetaData) {
 
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId(intyg.getIntygsId().getExtension());
@@ -252,7 +252,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         certificateHolder.setOriginalCertificate(originalCertificate);
         certificateHolder.setAdditionalInfo(additionalInfo);
         certificateHolder.setCertificateRelation(convertRelation(intyg.getIntygsId().getExtension(), intyg.getRelation()));
-        certificateHolder.setAdditionalMetaData(additionalMetaData.orElse(null));
+        certificateHolder.setAdditionalMetaData(additionalMetaData);
         return certificateHolder;
     }
 
