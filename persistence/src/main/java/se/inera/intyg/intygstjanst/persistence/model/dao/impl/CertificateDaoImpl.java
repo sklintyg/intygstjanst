@@ -248,7 +248,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
         query.orderBy(criteriaBuilder.asc(root.get("signedDate")));
 
-        return entityManager.createQuery(query).getResultList();
+        return filterDuplicates(entityManager.createQuery(query).getResultList());
     }
 
     @Override
