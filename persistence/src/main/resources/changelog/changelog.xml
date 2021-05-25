@@ -608,4 +608,18 @@
 			</column>
 		</addColumn>
 	</changeSet>
+
+	<changeSet id="51" author="mww">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="CERTIFICATE" indexName="IDX_CERTIFICATE_CARE_UNIT_ID_CERTIFICATE_TYPE_SIGNED_DATE"/>
+			</not>
+		</preConditions>
+		<createIndex indexName="IDX_CERTIFICATE_CARE_UNIT_ID_CERTIFICATE_TYPE_SIGNED_DATE"
+				tableName="CERTIFICATE" unique="false">
+			<column name="CARE_UNIT_ID"/>
+			<column name="CERTIFICATE_TYPE"/>
+			<column name="SIGNED_DATE"/>
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>
