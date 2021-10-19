@@ -87,23 +87,7 @@ public class TypedCertificateServiceImplTest {
     @Before
     public void setup() {
         typedCertificateService = new TypedCertificateServiceImpl(certificateDao, moduleRegistry, diagnosedCertificateConverter,
-            sickLeaveCertificateConverter, false);
-    }
-
-    @Test
-    public void listDiagnosedCertificatesForCareUnits() throws ModuleNotFoundException, ModuleException {
-        List<Certificate> certificates = Collections.singletonList(buildCertificate(CERT_TYPE_LUSE));
-        when(certificateDao.findCertificate(any(), any(), any(), any())).thenReturn(certificates);
-        when(moduleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
-        when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(null);
-        when(diagnosedCertificateConverter.convertLuse(any(), any())).thenReturn(new DiagnosedCertificate());
-
-        var diagnosedCertificates = typedCertificateService
-            .listDiagnosedCertificatesForCareUnits(Collections.singletonList(CARE_UNIT_ID), Collections.singletonList(CERT_TYPE_LUSE), null,
-                null, null);
-
-        assertNotNull(diagnosedCertificates);
-        assertEquals(1, diagnosedCertificates.size());
+            sickLeaveCertificateConverter);
     }
 
     @Test
@@ -139,28 +123,9 @@ public class TypedCertificateServiceImplTest {
     }
 
     @Test
-    public void listDoctorsForCareUnits() throws ModuleNotFoundException, ModuleException {
-        List<Certificate> certificates = new ArrayList<>();
-        certificates.add(setDoctorName(buildCertificate(CERT_TYPE_AG7804), "DOCTOR ONE"));
-        certificates.add(setDoctorName(buildCertificate(CERT_TYPE_LUSE), "DOCTOR TWO"));
-        certificates.add(setRevoked(buildCertificate(CERT_TYPE_AG7804)));
-        when(certificateDao.findCertificate(any(), any(), any(), any())).thenReturn(certificates);
-
-        var doctorsNames = typedCertificateService.listDoctorsForCareUnits(Collections.singletonList(CARE_UNIT_ID),
-            Arrays.asList(CERT_TYPE_LUSE, CERT_TYPE_AG7804), null, null);
-
-        assertNotNull(doctorsNames);
-        assertEquals(2, doctorsNames.size());
-        assertEquals(Arrays.asList("DOCTOR ONE", "DOCTOR TWO"), doctorsNames);
-    }
-
-    @Test
-    public void shallUseQueryWithMetaDataForFindingDiagnosCertificatesIfPropertyTrue() {
+    public void shallUseQueryWithMetaDataForFindingDiagnosCertificates() {
         List<Certificate> certificates = Collections.singletonList(buildCertificate(CERT_TYPE_LUSE));
         when(certificateDao.findCertificatesUsingMetaDataTable(any(), any(), any(), any(), any())).thenReturn(Collections.emptyList());
-
-        typedCertificateService = new TypedCertificateServiceImpl(certificateDao, moduleRegistry, diagnosedCertificateConverter,
-            sickLeaveCertificateConverter, true);
 
         typedCertificateService.listDiagnosedCertificatesForCareUnits(Collections.singletonList(CARE_UNIT_ID),
             Arrays.asList(CERT_TYPE_LUSE, CERT_TYPE_AG7804), null, null, Collections.emptyList());
@@ -169,12 +134,9 @@ public class TypedCertificateServiceImplTest {
     }
 
     @Test
-    public void shallUseQueryWithMetaDataForFindingDoctorsIfPropertyTrue() {
+    public void shallUseQueryWithMetaDataForFindingDoctors() {
         List<Certificate> certificates = Collections.singletonList(buildCertificate(CERT_TYPE_LUSE));
         when(certificateDao.findDoctorIds(any(), any(), any(), any())).thenReturn(Collections.emptyList());
-
-        typedCertificateService = new TypedCertificateServiceImpl(certificateDao, moduleRegistry, diagnosedCertificateConverter,
-            sickLeaveCertificateConverter, true);
 
         typedCertificateService
             .listDoctorsForCareUnits(Collections.singletonList(CARE_UNIT_ID), Arrays.asList(CERT_TYPE_LUSE, CERT_TYPE_AG7804), null, null);
