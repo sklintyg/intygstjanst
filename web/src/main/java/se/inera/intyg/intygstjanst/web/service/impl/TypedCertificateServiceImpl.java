@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.ag114.support.Ag114EntryPoint;
 import se.inera.intyg.common.ag7804.support.Ag7804EntryPoint;
@@ -57,18 +56,14 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
     private final CertificateToDiagnosedCertificateConverter certificateToDiagnosedCertificateConverter;
     private final CertificateToSickLeaveCertificateConverter certificateToSickLeaveCertificateConverter;
 
-    private boolean useNewQuery;
-
     @Autowired
     public TypedCertificateServiceImpl(CertificateDao certificateDao, IntygModuleRegistry moduleRegistry,
         CertificateToDiagnosedCertificateConverter certificateToDiagnosedCertificateConverter,
-        CertificateToSickLeaveCertificateConverter certificateToSickLeaveCertificateConverter,
-        @Value("#{new Boolean('${use.certificate.metadata.query:false}')}") boolean useNewQuery) {
+        CertificateToSickLeaveCertificateConverter certificateToSickLeaveCertificateConverter) {
         this.certificateDao = certificateDao;
         this.moduleRegistry = moduleRegistry;
         this.certificateToDiagnosedCertificateConverter = certificateToDiagnosedCertificateConverter;
         this.certificateToSickLeaveCertificateConverter = certificateToSickLeaveCertificateConverter;
-        this.useNewQuery = useNewQuery;
     }
 
     @Override
@@ -79,12 +74,7 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
             + String.join(", ", certificateTypeList) + ") for units ("
             + String.join(", ", units) + ")");
 
-        if (useNewQuery) {
-            return getDiagnosedCertificatesUsingMetaDataTable(units, certificateTypeList, fromDate, toDate, doctorIds);
-        }
-
-        final var certificates = certificateDao.findCertificate(units, certificateTypeList, fromDate, toDate);
-        return transformListToDiagnosedCertificates(certificates);
+        return getDiagnosedCertificatesUsingMetaDataTable(units, certificateTypeList, fromDate, toDate, doctorIds);
     }
 
     private List<DiagnosedCertificate> getDiagnosedCertificatesUsingMetaDataTable(List<String> units, List<String> certificateTypeList,
@@ -102,15 +92,7 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
             + String.join(", ", certificateTypeList) + ") for units ("
             + String.join(", ", units) + ")");
 
-        if (useNewQuery) {
-            return certificateDao.findDoctorIds(units, certificateTypeList, fromDate, toDate);
-        }
-
-        final var certificates = certificateDao.findCertificate(units, certificateTypeList, fromDate, toDate);
-        return certificates.stream().filter(c -> !c.isRevoked())
-            .map(Certificate::getSigningDoctorName)
-            .distinct()
-            .collect(Collectors.toList());
+        return certificateDao.findDoctorIds(units, certificateTypeList, fromDate, toDate);
     }
 
     @Override
