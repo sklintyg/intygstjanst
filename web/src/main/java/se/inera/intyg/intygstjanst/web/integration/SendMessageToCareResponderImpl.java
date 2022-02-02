@@ -86,6 +86,9 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
                 LOGGER.error("Could not save information about request of type SendMessageToCareType with meddelande id "
                     + parameters.getMeddelandeId() + ": " + e.getMessage());
             }
+        } else {
+            LOGGER.error("Send message to care failed. {} {} {}", response.getResult().getResultCode(), response.getResult().getErrorId(),
+                response.getResult().getResultText());
         }
 
         return response;
