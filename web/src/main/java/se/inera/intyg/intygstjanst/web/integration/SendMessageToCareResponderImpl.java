@@ -65,9 +65,8 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
         List<String> validationErrors = validator.validateSendMessageToCare(parameters);
         if (!validationErrors.isEmpty()) {
             SendMessageToCareResponseType response = new SendMessageToCareResponseType();
-            String resultText = "Validation of SendMessageToCareType failed for message with meddelandeid " + parameters.getMeddelandeId()
-                + ": "
-                + validationErrors.toString();
+            String resultText = "Validation of SendMessageToCare failed for message with question id " + parameters.getMeddelandeId()
+                + " and certificate id " + parameters.getIntygsId().getExtension() + ". " + validationErrors;
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, resultText));
             LOGGER.error(resultText);
             return response;
@@ -83,11 +82,16 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
                 statisticsService.messageSent(arende.getMeddelande(), arende.getMeddelandeId(), arende.getAmne());
                 arendeService.processIncomingMessage(arende);
             } catch (Exception e) {
-                LOGGER.error("Could not save information about request of type SendMessageToCareType with meddelande id "
-                    + parameters.getMeddelandeId() + ": " + e.getMessage());
+                LOGGER.error("Could not save information about request of type SendMessageToCare with question id "
+                        + "{} and certificate id {}. {}", parameters.getMeddelandeId(), parameters.getIntygsId().getExtension(),
+                    e.getMessage());
             }
         } else {
-            LOGGER.error("Send message to care failed. {} {} {}", response.getResult().getResultCode(), response.getResult().getErrorId(),
+            LOGGER.error("SendMessageToCare failed for message with question id {} and certificate id {}. {} {} {}",
+                parameters.getMeddelandeId(),
+                parameters.getIntygsId().getExtension(),
+                response.getResult().getResultCode(),
+                response.getResult().getErrorId(),
                 response.getResult().getResultText());
         }
 

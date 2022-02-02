@@ -111,7 +111,7 @@ public class SendMessageToCareResponderImplTest {
         SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, buildSendMessageToCareType());
         assertEquals(ResultCodeType.ERROR, responseType.getResult().getResultCode());
         assertEquals(ErrorIdType.VALIDATION_ERROR, responseType.getResult().getErrorId());
-        assertEquals("Validation of SendMessageToCareType failed for message with meddelandeid 4: [fel]",
+        assertEquals("Validation of SendMessageToCare failed for message with question id 4 and certificate id intygsidextension. [fel]",
             responseType.getResult().getResultText());
         verify(fwdResponder, never()).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
         verify(statisticsService, times(0)).messageSent(anyString(), anyString(), anyString());
@@ -141,7 +141,7 @@ public class SendMessageToCareResponderImplTest {
     public void testSendMessageProcessThrowsException() throws Exception {
         when(fwdResponder.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
             .thenReturn(createClientResponse(ResultTypeUtil.okResult()));
-        when(sendMessageToCareService.processIncomingMessage(any(Arende.class))).thenThrow(new PersistenceException());
+        when(sendMessageToCareService.processIncomingMessage(any(Arende.class))).thenThrow(new PersistenceException("Exception message"));
 
         SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, buildSendMessageToCareType());
         assertEquals(ResultCodeType.OK, responseType.getResult().getResultCode());
