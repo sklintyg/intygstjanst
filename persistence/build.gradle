@@ -13,7 +13,7 @@ dependencies {
     compile "org.jadira.usertype:usertype.core:${jadiraUserTypeVersion}"
     compile "org.liquibase:liquibase-core"
     compile "org.springframework:spring-tx"
-    compile "com.h2database:h2"
+    compile "com.h2database:h2:${h2Version}"
 
     testCompile "org.springframework:spring-test"
 }
