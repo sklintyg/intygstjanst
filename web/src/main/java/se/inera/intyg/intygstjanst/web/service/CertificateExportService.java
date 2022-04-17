@@ -19,17 +19,13 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
-import java.io.IOException;
 import java.util.List;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import org.xml.sax.SAXException;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
 
 public interface CertificateExportService {
 
-    List<CertificateTextDTO> getCertificateTexts() throws IOException, ParserConfigurationException, TransformerException, SAXException;
+    List<CertificateTextDTO> getCertificateTexts();
 
     CertificateExportPageDTO getCertificateExportPage(String careProviderId, int page, int size);
 

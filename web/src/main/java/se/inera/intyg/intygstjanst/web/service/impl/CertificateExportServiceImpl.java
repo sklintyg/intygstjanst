@@ -25,12 +25,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.ws.rs.InternalServerErrorException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.data.domain.PageRequest;
@@ -49,6 +52,8 @@ import se.inera.intyg.intygstjanst.web.service.dto.CertificateXmlDTO;
 @Service
 public class CertificateExportServiceImpl implements CertificateExportService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CertificateExportServiceImpl.class);
+
     private static final String TEXTS_LOCATION = "classpath:texts/*";
     private static final String TYPE_ATTRIBUTE = "typ";
     private static final String VERSION_ATTRIBUTE = "version";
@@ -57,18 +62,21 @@ public class CertificateExportServiceImpl implements CertificateExportService {
     private final CertificateRepository certificateRepository;
     private final PathMatchingResourcePatternResolver resourceResolver;
 
-    public CertificateExportServiceImpl(CertificateRepository certificateRepository,
-        PathMatchingResourcePatternResolver resourceResolver) {
+    public CertificateExportServiceImpl(CertificateRepository certificateRepository, PathMatchingResourcePatternResolver resourceResolver) {
         this.certificateRepository = certificateRepository;
         this.resourceResolver = resourceResolver;
     }
 
     @Override
-    public List<CertificateTextDTO> getCertificateTexts() throws IOException, ParserConfigurationException, TransformerException,
-        SAXException {
-        final var resources = resourceResolver.getResources(TEXTS_LOCATION);
-        final var textFiles = Arrays.stream(resources).filter(this::isTextFile).collect(Collectors.toList());
-        return getCertificateTexts(textFiles);
+    public List<CertificateTextDTO> getCertificateTexts() {
+        try {
+            final var resources = resourceResolver.getResources(TEXTS_LOCATION);
+            final var textFiles = Arrays.stream(resources).filter(this::isTextFile).collect(Collectors.toList());
+            return getCertificateTexts(textFiles);
+        } catch (IOException | ParserConfigurationException | TransformerException | SAXException e) {
+            LOG.error("Failure fetching certificate texts.", e);
+            throw new InternalServerErrorException(e);
+        }
     }
 
     @Override
