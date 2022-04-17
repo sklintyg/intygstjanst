@@ -83,7 +83,7 @@ public class CertificateExportServiceImpl implements CertificateExportService {
         return new CertificateExportPageDTO(careProviderId, page, certificateCount, totalCertificates, totalRevoked,  certificateXmls);
     }
 
-    private ArrayList<CertificateTextDTO> getCertificateTexts(List<Resource> textFiles) throws IOException, ParserConfigurationException,
+    private List<CertificateTextDTO> getCertificateTexts(List<Resource> textFiles) throws IOException, ParserConfigurationException,
         SAXException, TransformerException {
         final var certificateTexts = new ArrayList<CertificateTextDTO>();
         for (final var textFile : textFiles) {
@@ -116,15 +116,12 @@ public class CertificateExportServiceImpl implements CertificateExportService {
         return stringWriter.toString();
     }
 
-    private ArrayList<CertificateXmlDTO> getCertificateXmls(List<Certificate> certificates) {
-        final var certificateXmls = new ArrayList<CertificateXmlDTO>();
-        for (final var certificate : certificates) {
-            final var certificateId = certificate.getId();
-            final var isRevoked = certificate.getCertificateMetaData().isRevoked();
-            final var certificateXml = certificate.getOriginalCertificate().getDocument();
-            certificateXmls.add(new CertificateXmlDTO(certificateId, isRevoked, certificateXml));
-        }
-
-        return certificateXmls;
+    private List<CertificateXmlDTO> getCertificateXmls(List<Certificate> certificates) {
+        return certificates.stream()
+            .map(certificate -> new CertificateXmlDTO(
+                certificate.getId(),
+                certificate.getCertificateMetaData().isRevoked(),
+                certificate.getOriginalCertificate().getDocument()))
+            .collect(Collectors.toList());
     }
 }
