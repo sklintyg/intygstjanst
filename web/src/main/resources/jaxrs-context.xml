@@ -50,6 +50,7 @@
         <bean class="se.inera.intyg.intygstjanst.web.integration.message.MessageController" />
         <bean class="se.inera.intyg.intygstjanst.web.integration.certificate.TypedCertificateController" />
         <bean class="se.inera.intyg.intygstjanst.web.integration.certificate.CertificateListController" />
+        <bean class="se.inera.intyg.intygstjanst.web.integration.certificateexport.CertificateExportController" />
       </jaxrs:serviceBeans>
       <jaxrs:providers>
         <ref bean="jacksonJsonProvider" />
