@@ -33,20 +33,21 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
-import se.inera.intyg.intygstjanst.web.service.CustomerTerminationService;
+import se.inera.intyg.intygstjanst.web.service.CertificateExportService;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateXmlDTO;
 
 @Service
-public class CustomerTerminationServiceImpl implements CustomerTerminationService {
+public class CertificateExportServiceImpl implements CertificateExportService {
 
     private static final String TEXTS_LOCATION = "classpath:texts/*";
     private static final String TYPE_ATTRIBUTE = "typ";
@@ -56,7 +57,7 @@ public class CustomerTerminationServiceImpl implements CustomerTerminationServic
     private final CertificateRepository certificateRepository;
     private final PathMatchingResourcePatternResolver resourceResolver;
 
-    public CustomerTerminationServiceImpl(CertificateRepository certificateRepository,
+    public CertificateExportServiceImpl(CertificateRepository certificateRepository,
         PathMatchingResourcePatternResolver resourceResolver) {
         this.certificateRepository = certificateRepository;
         this.resourceResolver = resourceResolver;
@@ -71,14 +72,15 @@ public class CustomerTerminationServiceImpl implements CustomerTerminationServic
     }
 
     @Override
-    public CertificateExportPageDTO getCertificateExportPage(String careProviderId, Pageable pageable) {
+    public CertificateExportPageDTO getCertificateExportPage(String careProviderId, int page, int size) {
+        final var pageable = PageRequest.of(page, size, Sort.by(Direction.ASC, "signedDate", "id"));
         final var certificatePage = certificateRepository.findCertificatesForCareProvider(careProviderId, pageable);
         final var certificates = certificatePage.getContent();
         final var totalCertificates = certificatePage.getTotalElements();
         final var totalRevoked = certificateRepository.findTotalRevokedForCareProvider(careProviderId);
         final var certificateXmls = getCertificateXmls(certificates);
-        final var certificateXmlPage = new PageImpl<>(certificateXmls, pageable, certificatePage.getTotalElements());
-        return new CertificateExportPageDTO(totalCertificates, totalRevoked, certificateXmlPage);
+        final var certificateCount = certificatePage.getNumberOfElements();
+        return new CertificateExportPageDTO(careProviderId, page, certificateCount, totalCertificates, totalRevoked,  certificateXmls);
     }
 
     private ArrayList<CertificateTextDTO> getCertificateTexts(List<Resource> textFiles) throws IOException, ParserConfigurationException,

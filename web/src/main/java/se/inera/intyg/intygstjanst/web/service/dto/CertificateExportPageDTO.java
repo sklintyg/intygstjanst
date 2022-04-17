@@ -19,18 +19,21 @@
 
 package se.inera.intyg.intygstjanst.web.service.dto;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Page;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CertificateExportPageDTO {
 
+    private String careProviderId;
+    private int page;
+    private int count;
     private long total;
     private long totalRevoked;
-    private Page<CertificateXmlDTO> certificateXmlPage;
+    private List<CertificateXmlDTO> certificateXmls;
 
 }

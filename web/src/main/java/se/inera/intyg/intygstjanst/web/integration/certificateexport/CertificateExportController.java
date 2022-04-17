@@ -17,12 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.integration.customertermination;
+package se.inera.intyg.intygstjanst.web.integration.certificateexport;
 
 import java.io.IOException;
 import java.util.List;
 import javax.ws.rs.GET;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -31,43 +33,36 @@ import javax.xml.transform.TransformerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.xml.sax.SAXException;
-import se.inera.intyg.intygstjanst.web.service.CustomerTerminationService;
+import se.inera.intyg.intygstjanst.web.service.CertificateExportService;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
 
 @Path("v1")
-public class CustomerTerminationController {
+public class CertificateExportController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CustomerTerminationController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CertificateExportController.class);
 
     @Autowired
-    CustomerTerminationService customerTerminationService;
+    CertificateExportService certificateExportService;
 
     @GET
     @Path("certificatetexts")
     @Produces(MediaType.APPLICATION_JSON)
-    public ResponseEntity<List<CertificateTextDTO>> getCertificateTexts() {
+    public List<CertificateTextDTO> getCertificateTexts() {
         try {
-            return ResponseEntity.ok(customerTerminationService.getCertificateTexts());
+            return certificateExportService.getCertificateTexts();
         } catch (IOException | ParserConfigurationException | TransformerException | SAXException e) {
             LOG.error("Failure fetching certificate texts.", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new InternalServerErrorException("Failure fetching certificate texts. " + e.getMessage());
         }
     }
 
     @GET
-    @Path("/certificates")
+    @Path("/certificates/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ResponseEntity<CertificateExportPageDTO> getCertificates(@QueryParam("id") String careProviderId, @QueryParam("size") int size,
+    public CertificateExportPageDTO getCertificates(@PathParam("id") String careProviderId, @QueryParam("size") int size,
         @QueryParam("page") int page) {
-        final var pageable = PageRequest.of(page, size, Sort.by(Direction.ASC, "signedDate", "id"));
-        final var certificateExportPage = customerTerminationService.getCertificateExportPage(careProviderId, pageable);
-        return ResponseEntity.ok(certificateExportPage);
+        return certificateExportService.getCertificateExportPage(careProviderId, page, size);
     }
 }

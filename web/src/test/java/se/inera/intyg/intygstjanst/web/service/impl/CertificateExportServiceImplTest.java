@@ -22,9 +22,9 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -54,7 +54,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 
 @ExtendWith(MockitoExtension.class)
-class CustomerTerminationServiceImplTest {
+class CertificateExportServiceImplTest {
 
     @Mock
     private CertificateRepository certificateRepository;
@@ -63,16 +63,19 @@ class CustomerTerminationServiceImplTest {
     private PathMatchingResourcePatternResolver resourceResolver;
 
     @InjectMocks
-    private CustomerTerminationServiceImpl customerTerminationService;
+    private CertificateExportServiceImpl customerTerminationService;
+
+    private static final int PAGE = 0;
+    private static final int SIZE = 2;
 
     private static final String CERTIFICATE_TYPE = "TEST_TYPE";
     private static final String CERTIFICATE_VERSION = "TEST_VERSION";
     private static final String CERTIFICATE_END_TAG = "</texter>";
     private static final String CERTIFICATE_START_TAG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-    private static final String RESOURCES_LOCATION = "classpath:CustomerTerminationServiceImplTest/*";
+    private static final String RESOURCES_LOCATION = "classpath:CertificateExportServiceImplTest/*";
     private static final String CARE_PROVIDER_ID = "CARE_PROVIDER_ID";
 
-    private static final Pageable PAGEABLE = PageRequest.of(0, 2, Sort.by(Direction.ASC, "signedDate", "id"));
+    private static final Pageable PAGEABLE = PageRequest.of(PAGE, SIZE, Sort.by(Direction.ASC, "signedDate", "id"));
 
     @Nested
     class GetCertificateTexts {
@@ -115,55 +118,40 @@ class CustomerTerminationServiceImplTest {
         @BeforeEach
         void setUp() {
             when(certificateRepository.findTotalRevokedForCareProvider(any(String.class))).thenReturn(1L);
-            when(certificateRepository.findCertificatesForCareProvider(CARE_PROVIDER_ID, PAGEABLE)).thenReturn(getCertificatePage());
+            when(certificateRepository.findCertificatesForCareProvider(eq(CARE_PROVIDER_ID), any(Pageable.class)))
+                .thenReturn(getCertificatePage());
         }
 
         @Test
-        public void shouldSetProperTotals() {
-            final var certificateExportPage = customerTerminationService.getCertificateExportPage(CARE_PROVIDER_ID, PAGEABLE);
+        public void shouldSetProperCounts() {
+            final var certificateExportPage = customerTerminationService.getCertificateExportPage(CARE_PROVIDER_ID, PAGE, SIZE);
 
             assertAll(
+                () -> assertEquals(CARE_PROVIDER_ID, certificateExportPage.getCareProviderId()),
+                () -> assertEquals(0, certificateExportPage.getPage()),
+                () -> assertEquals(3, certificateExportPage.getCount()),
                 () -> assertEquals(3, certificateExportPage.getTotal()),
-                () -> assertEquals(1, certificateExportPage.getTotalRevoked()),
-                () -> assertEquals(3, certificateExportPage.getCertificateXmlPage().getTotalElements())
+                () -> assertEquals(1, certificateExportPage.getTotalRevoked())
             );
-        }
-
-        @Test
-        public void shouldReuseReceivedPageable() {
-            final var certificateExportPage = customerTerminationService.getCertificateExportPage(CARE_PROVIDER_ID, PAGEABLE);
-            assertSame(PAGEABLE, certificateExportPage.getCertificateXmlPage().getPageable());
         }
 
         @Test
         public void shouldHaveCorrectNumberOfCertificates() {
-            final var certificateExportPage = customerTerminationService.getCertificateExportPage(CARE_PROVIDER_ID, PAGEABLE);
-            assertEquals(3, certificateExportPage.getCertificateXmlPage().getContent().size());
-        }
-
-        @Test
-        public void shouldUseConsistentSortingOfRecords() {
-            final var certificateExportPage = customerTerminationService.getCertificateExportPage(CARE_PROVIDER_ID, PAGEABLE);
-
-            assertAll(
-                () -> assertEquals("1", certificateExportPage.getCertificateXmlPage().getContent().get(0).getId()),
-                () -> assertEquals("2", certificateExportPage.getCertificateXmlPage().getContent().get(1).getId()),
-                () -> assertEquals("3", certificateExportPage.getCertificateXmlPage().getContent().get(2).getId())
-            );
+            final var certificateExportPage = customerTerminationService.getCertificateExportPage(CARE_PROVIDER_ID, PAGE, SIZE);
+            assertEquals(3, certificateExportPage.getCertificateXmls().size());
         }
 
         @Test
         public void shouldSetRevokedOnRevokedCertificatesOnly() {
-            final var certificateExportPage = customerTerminationService.getCertificateExportPage(CARE_PROVIDER_ID, PAGEABLE);
+            final var certificateExportPage = customerTerminationService.getCertificateExportPage(CARE_PROVIDER_ID, PAGE, SIZE);
 
             assertAll(
-                () -> assertFalse(certificateExportPage.getCertificateXmlPage().getContent().get(0).isRevoked()),
-                () -> assertTrue(certificateExportPage.getCertificateXmlPage().getContent().get(1).isRevoked()),
-                () -> assertFalse(certificateExportPage.getCertificateXmlPage().getContent().get(2).isRevoked())
+                () -> assertFalse(certificateExportPage.getCertificateXmls().get(0).isRevoked()),
+                () -> assertTrue(certificateExportPage.getCertificateXmls().get(1).isRevoked()),
+                () -> assertFalse(certificateExportPage.getCertificateXmls().get(2).isRevoked())
             );
         }
     }
-
 
     private Resource[] getTestResources() throws IOException {
         final var resourceResolver = new PathMatchingResourcePatternResolver();
