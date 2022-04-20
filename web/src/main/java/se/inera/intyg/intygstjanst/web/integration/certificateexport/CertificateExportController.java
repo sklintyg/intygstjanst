@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.intygstjanst.web.service.CertificateExportService;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.TerminationSummaryDTO;
 
 @Path("v1")
 public class CertificateExportController {
@@ -50,5 +51,12 @@ public class CertificateExportController {
     public CertificateExportPageDTO getCertificates(@PathParam("id") String careProviderId, @QueryParam("size") int size,
         @QueryParam("page") int page) {
         return certificateExportService.getCertificateExportPage(careProviderId, page, size);
+    }
+
+    @GET
+    @Path("/summary/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public TerminationSummaryDTO getTerminationSummary(@PathParam("id") String careProviderId) {
+        return certificateExportService.getSummary(careProviderId);
     }
 }

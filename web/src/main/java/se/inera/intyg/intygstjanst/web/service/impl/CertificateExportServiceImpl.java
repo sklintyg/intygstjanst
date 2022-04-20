@@ -23,7 +23,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import javax.ws.rs.InternalServerErrorException;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -42,12 +46,14 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
 import se.inera.intyg.intygstjanst.web.service.CertificateExportService;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateXmlDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.TerminationSummaryDTO;
 
 @Service
 public class CertificateExportServiceImpl implements CertificateExportService {
@@ -58,12 +64,17 @@ public class CertificateExportServiceImpl implements CertificateExportService {
     private static final String TYPE_ATTRIBUTE = "typ";
     private static final String VERSION_ATTRIBUTE = "version";
     private static final String XML_FILE_EXTENSION = ".xml";
+    private static final String APPLICATION_NAME = "Intygstjänst";
+
 
     private final CertificateRepository certificateRepository;
+    private final ArendeRepository arendeRepository;
     private final PathMatchingResourcePatternResolver resourceResolver;
 
-    public CertificateExportServiceImpl(CertificateRepository certificateRepository, PathMatchingResourcePatternResolver resourceResolver) {
+    public CertificateExportServiceImpl(CertificateRepository certificateRepository, ArendeRepository arendeRepository,
+        PathMatchingResourcePatternResolver resourceResolver) {
         this.certificateRepository = certificateRepository;
+        this.arendeRepository = arendeRepository;
         this.resourceResolver = resourceResolver;
     }
 
@@ -89,6 +100,21 @@ public class CertificateExportServiceImpl implements CertificateExportService {
         final var certificateXmls = getCertificateXmls(certificates);
         final var certificateCount = certificatePage.getNumberOfElements();
         return new CertificateExportPageDTO(careProviderId, page, certificateCount, totalCertificates, totalRevoked,  certificateXmls);
+    }
+
+    @Override
+    public TerminationSummaryDTO getSummary(String careProviderId) {
+        final var certificateIds = certificateRepository.findCertificateIdsForCareProvider(careProviderId);
+        final var certificateTypes = certificateRepository.findCertificateTypesForCareProvider(careProviderId);
+
+        final var terminationSummary = new TerminationSummaryDTO();
+        terminationSummary.setApplication(APPLICATION_NAME);
+        terminationSummary.setCarProviderId(careProviderId);
+        terminationSummary.setCertificates(certificateIds.size());
+        terminationSummary.setCertificatesByType(getCertificateTypeTotals(certificateTypes));
+        terminationSummary.setCertificatesRevoked(certificateRepository.findTotalRevokedForCareProvider(careProviderId));
+        terminationSummary.setMessages(arendeRepository.findMessageCountForCertificateIds(certificateIds));
+        return terminationSummary;
     }
 
     private List<CertificateTextDTO> getCertificateTexts(List<Resource> textFiles) throws IOException, ParserConfigurationException,
@@ -132,4 +158,13 @@ public class CertificateExportServiceImpl implements CertificateExportService {
                 certificate.getOriginalCertificate().getDocument()))
             .collect(Collectors.toList());
     }
+
+    private Map<String, Integer> getCertificateTypeTotals(List<String> certificateTypes) {
+        final var distinctTypes = certificateTypes.stream().distinct().collect(Collectors.toList());
+        return distinctTypes.stream()
+            .map(type -> Map.entry(type, Collections.frequency(certificateTypes, type)))
+            .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+            .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+    }
+
 }

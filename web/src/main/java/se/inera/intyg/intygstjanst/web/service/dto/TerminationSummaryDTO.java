@@ -17,19 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.service;
+package se.inera.intyg.intygstjanst.web.service.dto;
 
-import java.util.List;
-import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.TerminationSummaryDTO;
+import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public interface CertificateExportService {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class TerminationSummaryDTO {
 
-    List<CertificateTextDTO> getCertificateTexts();
-
-    CertificateExportPageDTO getCertificateExportPage(String careProviderId, int page, int size);
-
-    TerminationSummaryDTO getSummary(String carProviderId);
+    private String application;
+    private String carProviderId;
+    private long certificates;
+    private long certificatesRevoked;
+    private long messages;
+    private long relations;
+    private long sjukfall;
+    private long approvedReceivers;
+    private Map<String, Integer> certificatesByType;
 
 }

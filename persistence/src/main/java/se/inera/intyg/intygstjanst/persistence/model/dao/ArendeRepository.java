@@ -20,6 +20,8 @@ package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -36,4 +38,7 @@ public interface ArendeRepository extends JpaRepository<Arende, Long> {
      * @return  List of messages
      */
     List<Arende> findByIntygsId(String certificateId);
+
+    @Query("select count(a) from Arende a where a.intygsId in :certificateIds")
+    long findMessageCountForCertificateIds(@Param("certificateIds") List<String> certificateIds);
 }

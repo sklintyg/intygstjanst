@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,6 +32,12 @@ public interface CertificateRepository extends JpaRepository<Certificate, String
 
     @Query("select c from Certificate c where c.careGiverId = :careProviderId")
     Page<Certificate> findCertificatesForCareProvider(@Param("careProviderId") String careProviderId, Pageable pageable);
+
+    @Query("select c.type from Certificate c where c.careGiverId = :careProviderId order by c.type")
+    List<String> findCertificateTypesForCareProvider(@Param("careProviderId") String careProviderId);
+
+    @Query("select c.id from Certificate c where c.careGiverId = :careProviderId")
+    List<String> findCertificateIdsForCareProvider(@Param("careProviderId") String careProviderId);
 
     @Query("select count(c.id) FROM Certificate c "
         + "join CertificateMetaData cm on c.id = cm.certificateId "
