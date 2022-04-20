@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,9 +56,10 @@ public class CertificateExportServiceImpl implements CertificateExportService {
     private static final Logger LOG = LoggerFactory.getLogger(CertificateExportServiceImpl.class);
 
     private static final String TEXTS_LOCATION = "classpath:texts/*";
+    private static final String XML_FILE_EXTENSION = ".xml";
     private static final String TYPE_ATTRIBUTE = "typ";
     private static final String VERSION_ATTRIBUTE = "version";
-    private static final String XML_FILE_EXTENSION = ".xml";
+    private static final String ACTIVATION_DATE_ATTRIBUTE = "giltigFrom";
 
     private final CertificateRepository certificateRepository;
     private final PathMatchingResourcePatternResolver resourceResolver;
@@ -96,10 +98,12 @@ public class CertificateExportServiceImpl implements CertificateExportService {
         final var certificateTexts = new ArrayList<CertificateTextDTO>();
         for (final var textFile : textFiles) {
             final var textDocument = parseTextFile(textFile);
-            final var type = getTextAttribute(textDocument, TYPE_ATTRIBUTE);
-            final var version = getTextAttribute(textDocument, VERSION_ATTRIBUTE);
-            final var xml = getTextXml(textDocument);
-            certificateTexts.add(new CertificateTextDTO(type, version, xml));
+            if (isActive(textDocument)) {
+                final var type = getTextAttribute(textDocument, TYPE_ATTRIBUTE);
+                final var version = getTextAttribute(textDocument, VERSION_ATTRIBUTE);
+                final var xml = getTextXml(textDocument);
+                certificateTexts.add(new CertificateTextDTO(type, version, xml));
+            }
         }
 
         return certificateTexts;
@@ -107,6 +111,12 @@ public class CertificateExportServiceImpl implements CertificateExportService {
 
     private Document parseTextFile(Resource textFile) throws IOException, ParserConfigurationException, SAXException {
         return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(textFile.getInputStream());
+    }
+
+    private boolean isActive(Document textDocument) {
+        final var activationDate = getTextAttribute(textDocument, ACTIVATION_DATE_ATTRIBUTE);
+        final var activationLocalDate = LocalDate.parse(activationDate);
+        return activationLocalDate.isBefore(LocalDate.now()) || activationLocalDate.isEqual(LocalDate.now());
     }
 
     private String getTextAttribute(Document textDocument, String attribute) {
