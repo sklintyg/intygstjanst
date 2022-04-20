@@ -30,8 +30,6 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -47,7 +45,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.xml.sax.SAXException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
@@ -86,14 +83,14 @@ class CertificateExportServiceImplTest {
         }
 
         @Test
-        public void shouldSelectXmlFilesOnly() throws IOException, ParserConfigurationException, TransformerException, SAXException {
+        public void shouldSelectActiveCertificateTextsOnly() {
             final var certificateTexts = customerTerminationService.getCertificateTexts();
 
             assertEquals(1, certificateTexts.size());
         }
 
         @Test
-        public void shouldSetProperAttributes() throws IOException, ParserConfigurationException, TransformerException, SAXException {
+        public void shouldSetProperAttributes() {
             final var certificateTexts = customerTerminationService.getCertificateTexts();
 
             assertAll(
@@ -103,7 +100,7 @@ class CertificateExportServiceImplTest {
         }
 
         @Test
-        public void shouldIncludeEntireXmlFile() throws IOException, ParserConfigurationException, TransformerException, SAXException {
+        public void shouldIncludeEntireXmlFile() {
             final var certificateTexts = customerTerminationService.getCertificateTexts();
 
             assertAll(
