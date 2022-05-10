@@ -67,7 +67,7 @@ public class CertificateExportIT extends BaseIntegrationTest {
                 .extract().response().getBody().as(CERTIFICATE_TEXTS);
 
             assertAll(
-                () -> assertTrue(texts.size() >= 29)
+                () -> assertTrue(texts.size() >= 28)
             );
         }
     }
