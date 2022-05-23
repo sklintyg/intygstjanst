@@ -419,6 +419,26 @@ public class CertificateDaoImplTest extends TestSupport {
         assertEquals("Some text", original.getDocument());
     }
 
+    @Test
+    public void shouldEraseCertificates() {
+        final var certificate1 = buildCertificate("certificate1");
+        final var certificate2 = buildCertificate("certificate2");
+        certificateDao.store(certificate1);
+        certificateDao.store(certificate2);
+
+        final var erasedCount = certificateDao.eraseCertificates(List.of(certificate1.getId(), certificate2.getId()), "5678");
+
+        assertEquals(2, erasedCount);
+        assertNull(entityManager.find(Certificate.class, certificate1.getId()));
+        assertNull(entityManager.find(Certificate.class, certificate2.getId()));
+    }
+
+    @Test
+    public void shouldReturnZeroErasedIfCertificateNotFound() {
+        final var erasedCount = certificateDao.eraseCertificates(List.of("non-existant"), "5678");
+        assertEquals(0, erasedCount);
+    }
+
     private Personnummer createPnr(String pnr) {
         return Personnummer.createPersonnummer(pnr).get();
     }

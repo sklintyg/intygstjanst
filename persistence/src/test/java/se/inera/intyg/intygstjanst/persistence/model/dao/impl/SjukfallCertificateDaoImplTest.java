@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -229,6 +230,27 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
 
         assertEquals(1, resultList2.size());
         assertEquals(originalId, resultList2.get(0).getId());
+    }
+
+    @Test
+    public void shouldEraseSjukfallCertificates() {
+        final var certificate1 = buildSjukfallCertificate(CARE_GIVER_1_ID, CARE_UNIT_1_ID, CARE_UNIT_1_NAME, defaultWorkCapacities(), false);
+        final var certificate2 = buildSjukfallCertificate(CARE_GIVER_2_ID, CARE_UNIT_1_ID, CARE_UNIT_1_NAME, defaultWorkCapacities(), false);
+        entityManager.persist(certificate1);
+        entityManager.persist(certificate2);
+
+        final var erasedCount = sjukfallCertificateDao.eraseCertificates(List.of(certificate1.getId()), CARE_GIVER_1_ID);
+
+        assertEquals(1, erasedCount);
+        assertNull(entityManager.find(SjukfallCertificate.class, certificate1.getId()));
+        assertNotNull(entityManager.find(SjukfallCertificate.class, certificate2.getId()));
+    }
+
+    @Test
+    public void shouldReturnZeroIfNoCertificateFound() {
+        final var erasedCount = sjukfallCertificateDao.eraseCertificates(List.of("non-existant"), CARE_GIVER_1_ID);
+
+        assertEquals(0, erasedCount);
     }
 
     private String buildDefaultSjukfallCertificate() {

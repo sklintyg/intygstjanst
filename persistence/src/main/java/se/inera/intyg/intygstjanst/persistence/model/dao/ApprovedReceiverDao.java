@@ -36,4 +36,6 @@ public interface ApprovedReceiverDao {
      * @param ids Certificate ids.
      */
     void eraseTestCertificates(List<String> ids);
+
+    void eraseApprovedReceivers(List<String> certificateIds, String careProviderId);
 }

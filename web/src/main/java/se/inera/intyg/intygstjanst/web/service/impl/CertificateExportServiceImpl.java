@@ -24,11 +24,7 @@ import java.io.StringWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import javax.ws.rs.InternalServerErrorException;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -41,20 +37,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
+import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.service.CertificateExportService;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateXmlDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.TerminationSummaryDTO;
 
 @Service
 public class CertificateExportServiceImpl implements CertificateExportService {
@@ -65,18 +65,26 @@ public class CertificateExportServiceImpl implements CertificateExportService {
     private static final String XML_FILE_EXTENSION = ".xml";
     private static final String TYPE_ATTRIBUTE = "typ";
     private static final String VERSION_ATTRIBUTE = "version";
-    private static final String APPLICATION_NAME = "Intygstjänst";
     private static final String ACTIVATION_DATE_ATTRIBUTE = "giltigFrom";
 
     private final CertificateRepository certificateRepository;
     private final ArendeRepository arendeRepository;
     private final PathMatchingResourcePatternResolver resourceResolver;
+    private final ApprovedReceiverDao approvedReceiverDao;
+    private final RelationDao relationDao;
+    private final SjukfallCertificateDao sjukfallCertificateDao;
+    private final CertificateDao certificateDao;
 
     public CertificateExportServiceImpl(CertificateRepository certificateRepository, ArendeRepository arendeRepository,
-        PathMatchingResourcePatternResolver resourceResolver) {
+        PathMatchingResourcePatternResolver resourceResolver, ApprovedReceiverDao approvedReceiverDao, RelationDao relationDao,
+        SjukfallCertificateDao sjukfallCertificateDao, CertificateDao certificateDao) {
         this.certificateRepository = certificateRepository;
         this.arendeRepository = arendeRepository;
         this.resourceResolver = resourceResolver;
+        this.approvedReceiverDao = approvedReceiverDao;
+        this.relationDao = relationDao;
+        this.sjukfallCertificateDao = sjukfallCertificateDao;
+        this.certificateDao = certificateDao;
     }
 
     @Override
@@ -104,18 +112,44 @@ public class CertificateExportServiceImpl implements CertificateExportService {
     }
 
     @Override
-    public TerminationSummaryDTO getSummary(String careProviderId) {
-        final var certificateIds = certificateRepository.findCertificateIdsForCareProvider(careProviderId);
-        final var certificateTypes = certificateRepository.findCertificateTypesForCareProvider(careProviderId);
+    public void eraseCertificates(String careProviderId, int erasePageSize) {
+        final var erasePageable = PageRequest.of(0, erasePageSize, Sort.by(Direction.ASC, "signedDate", "id"));
+        Page<String> certificateIdPage = Page.empty();
+        int erasedMessagesTotal = 0;
+        int erasedSjukfallTotal = 0;
+        int erasedCertificatesTotal = 0;
+        int erasedCertificates = 0;
 
-        final var terminationSummary = new TerminationSummaryDTO();
-        terminationSummary.setApplication(APPLICATION_NAME);
-        terminationSummary.setCarProviderId(careProviderId);
-        terminationSummary.setCertificates(certificateIds.size());
-        terminationSummary.setCertificatesByType(getCertificateTypeTotals(certificateTypes));
-        terminationSummary.setCertificatesRevoked(certificateRepository.findTotalRevokedForCareProvider(careProviderId));
-        terminationSummary.setMessages(arendeRepository.findMessageCountForCertificateIds(certificateIds));
-        return terminationSummary;
+        try {
+            do {
+                erasedCertificates = 0;
+                certificateIdPage = certificateRepository.findCertificateIdsForCareProvider(careProviderId, erasePageable);
+                LOG.info("Starting batch erasure of {} certificates for care provider {}.", certificateIdPage.getNumberOfElements(),
+                    careProviderId);
+
+                final var certificateIds = certificateIdPage.getContent();
+                approvedReceiverDao.eraseApprovedReceivers(certificateIds, careProviderId);
+                relationDao.eraseCertificateRelations(certificateIds, careProviderId);
+                erasedMessagesTotal += eraseMessages(certificateIds, careProviderId);
+                erasedSjukfallTotal += sjukfallCertificateDao.eraseCertificates(certificateIds, careProviderId);
+                erasedCertificates = certificateDao.eraseCertificates(certificateIds, careProviderId);
+                erasedCertificatesTotal += erasedCertificates;
+
+                LOG.info("Completed batch erasure of {} certificates for care provider {}. Certificates remaining: {}.",
+                    certificateIds.size(), careProviderId, certificateIdPage.getTotalElements() - erasedCertificates);
+
+            } while (certificateIdPage.hasNext());
+
+            LOG.info("Successfully completed erasure of certificates for care provider {}. Total number of erased certificates: {}, "
+                    + "sjukfallCertificates: {}, messages: {}.", careProviderId, erasedCertificatesTotal, erasedSjukfallTotal,
+                erasedMessagesTotal);
+
+        } catch (Exception e) {
+            LOG.error("Error erasing certificates for care provider {}. Number of erased certificates: {}, sjukfallCertificates: {}, "
+                + "messages: {}. Certificates remaining: {}.", careProviderId, erasedCertificatesTotal, erasedSjukfallTotal,
+                erasedMessagesTotal, certificateIdPage.getTotalElements() - erasedCertificates, e);
+            throw e;
+        }
     }
 
     private List<CertificateTextDTO> getCertificateTexts(List<Resource> textFiles) throws IOException, ParserConfigurationException,
@@ -168,12 +202,19 @@ public class CertificateExportServiceImpl implements CertificateExportService {
             .collect(Collectors.toList());
     }
 
-    private Map<String, Integer> getCertificateTypeTotals(List<String> certificateTypes) {
-        final var distinctTypes = certificateTypes.stream().distinct().collect(Collectors.toList());
-        return distinctTypes.stream()
-            .map(type -> Map.entry(type, Collections.frequency(certificateTypes, type)))
-            .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-            .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-    }
+    private int eraseMessages(List<String> certificateIds, String careProviderId) {
+        int erasedMessagesCount = 0;
 
+        for (final var certificateId : certificateIds) {
+            final var messages = arendeRepository.findByIntygsId(certificateId);
+
+            if (!messages.isEmpty()) {
+                arendeRepository.deleteAll(messages);
+                erasedMessagesCount += messages.size();
+                LOG.debug("Erased {} messages for certificate {} from care provider {}.", messages.size(), certificateId, careProviderId);
+            }
+        }
+
+        return erasedMessagesCount;
+    }
 }

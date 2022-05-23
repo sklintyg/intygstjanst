@@ -48,4 +48,6 @@ public interface SjukfallCertificateDao {
      * @param ids   Certificate ids.
      */
     void eraseTestCertificates(List<String> ids);
+
+    int eraseCertificates(List<String> careProviderIds, String careProviderId);
 }

@@ -20,6 +20,7 @@
 package se.inera.intyg.intygstjanst.web.integration.certificateexport;
 
 import java.util.List;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -27,16 +28,19 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import se.inera.intyg.intygstjanst.web.service.CertificateExportService;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.TerminationSummaryDTO;
 
 @Path("v1")
 public class CertificateExportController {
 
     @Autowired
     CertificateExportService certificateExportService;
+
+    private static final int ERASE_CERTIFICATES_PAGE_SIZE = 1000;
 
     @GET
     @Path("certificatetexts")
@@ -53,10 +57,15 @@ public class CertificateExportController {
         return certificateExportService.getCertificateExportPage(careProviderId, page, size);
     }
 
-    @GET
-    @Path("/summary/{id}")
+    @DELETE
+    @Path("/certificates/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public TerminationSummaryDTO getTerminationSummary(@PathParam("id") String careProviderId) {
-        return certificateExportService.getSummary(careProviderId);
+    public ResponseEntity<String> eraseDataForCareProvider(@PathParam("id") String careProviderId) {
+        try {
+            certificateExportService.eraseCertificates(careProviderId, ERASE_CERTIFICATES_PAGE_SIZE);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

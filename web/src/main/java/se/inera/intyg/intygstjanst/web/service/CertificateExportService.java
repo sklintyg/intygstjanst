@@ -22,7 +22,6 @@ package se.inera.intyg.intygstjanst.web.service;
 import java.util.List;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.TerminationSummaryDTO;
 
 public interface CertificateExportService {
 
@@ -30,6 +29,6 @@ public interface CertificateExportService {
 
     CertificateExportPageDTO getCertificateExportPage(String careProviderId, int page, int size);
 
-    TerminationSummaryDTO getSummary(String carProviderId);
+    void eraseCertificates(String carProviderId, int erasePageSize);
 
 }
