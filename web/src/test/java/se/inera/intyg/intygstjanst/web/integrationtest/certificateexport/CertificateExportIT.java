@@ -252,7 +252,7 @@ public class CertificateExportIT extends BaseIntegrationTest {
     private void eraseCertificates(String careProviderId) {
         given()
             .when().delete(ERASE_CERTIFICATES_URL + careProviderId)
-            .then().statusCode(200);
+            .then().statusCode(204);
     }
 
     private void setupCertificatesForErase(String careProviderId) {

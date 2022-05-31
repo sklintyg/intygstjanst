@@ -124,10 +124,14 @@ public class CertificateExportServiceImpl implements CertificateExportService {
             do {
                 erasedCertificates = 0;
                 certificateIdPage = certificateRepository.findCertificateIdsForCareProvider(careProviderId, erasePageable);
-                LOG.info("Starting batch erasure of {} certificates for care provider {}.", certificateIdPage.getNumberOfElements(),
-                    careProviderId);
-
                 final var certificateIds = certificateIdPage.getContent();
+
+                if (certificateIds.isEmpty()) {
+                    break;
+                }
+
+                LOG.info("Starting batch erasure of {} certificates for care provider {}.", certificateIds.size(), careProviderId);
+
                 approvedReceiverDao.eraseApprovedReceivers(certificateIds, careProviderId);
                 relationDao.eraseCertificateRelations(certificateIds, careProviderId);
                 erasedMessagesTotal += eraseMessages(certificateIds, careProviderId);
@@ -203,18 +207,8 @@ public class CertificateExportServiceImpl implements CertificateExportService {
     }
 
     private int eraseMessages(List<String> certificateIds, String careProviderId) {
-        int erasedMessagesCount = 0;
-
-        for (final var certificateId : certificateIds) {
-            final var messages = arendeRepository.findByIntygsId(certificateId);
-
-            if (!messages.isEmpty()) {
-                arendeRepository.deleteAll(messages);
-                erasedMessagesCount += messages.size();
-                LOG.debug("Erased {} messages for certificate {} from care provider {}.", messages.size(), certificateId, careProviderId);
-            }
-        }
-
-        return erasedMessagesCount;
+        final var erasedArendeCount = arendeRepository.eraseArendenByCertificateIds(certificateIds);
+        LOG.debug("Erased {} Arenden for care provider {}.", erasedArendeCount, careProviderId);
+        return erasedArendeCount;
     }
 }

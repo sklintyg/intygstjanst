@@ -28,8 +28,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import se.inera.intyg.intygstjanst.web.service.CertificateExportService;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
@@ -60,12 +58,7 @@ public class CertificateExportController {
     @DELETE
     @Path("/certificates/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ResponseEntity<String> eraseDataForCareProvider(@PathParam("id") String careProviderId) {
-        try {
-            certificateExportService.eraseCertificates(careProviderId, ERASE_CERTIFICATES_PAGE_SIZE);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public void eraseDataForCareProvider(@PathParam("id") String careProviderId) {
+        certificateExportService.eraseCertificates(careProviderId, ERASE_CERTIFICATES_PAGE_SIZE);
     }
 }
