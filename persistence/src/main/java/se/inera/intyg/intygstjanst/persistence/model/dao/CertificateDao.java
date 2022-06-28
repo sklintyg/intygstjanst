@@ -170,6 +170,8 @@ public interface CertificateDao {
      */
     void eraseTestCertificates(List<String> ids);
 
+    int eraseCertificates(List<String> certificateIds, String careProviderId);
+
     void storeCertificateMetadata(CertificateMetaData metadata);
 
     /**

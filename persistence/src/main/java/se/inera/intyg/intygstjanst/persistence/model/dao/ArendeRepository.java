@@ -20,6 +20,8 @@ package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -36,4 +38,13 @@ public interface ArendeRepository extends JpaRepository<Arende, Long> {
      * @return  List of messages
      */
     List<Arende> findByIntygsId(String certificateId);
+
+    @Query("select a from Arende a where a.intygsId in :certificateIds")
+    List<Arende> getArendenByCertificateIds(@Param("certificateIds") List<String> certificateIds);
+
+    default int eraseArendenByCertificateIds(List<String> certificateIds) {
+        final var arendeList = getArendenByCertificateIds(certificateIds);
+        deleteAll(arendeList);
+        return arendeList.size();
+    }
 }

@@ -36,6 +36,7 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Strings;
 
+import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
@@ -154,6 +155,30 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         for (var sjukfallCertificate: sjukfallCertificateList) {
             entityManager.remove(sjukfallCertificate);
         }
+    }
+
+    @Override
+    @Transactional
+    public int eraseCertificates(List<String> certificateIds, String careProviderId) {
+        int erasedCertificatesCount = 0;
+
+        if (certificateIds.isEmpty()) {
+            return erasedCertificatesCount;
+        }
+
+        final var sjukfallCertificates = entityManager
+            .createQuery("SELECT sc FROM SjukfallCertificate sc WHERE sc.id in :certificateIds", SjukfallCertificate.class)
+            .setParameter("certificateIds", certificateIds)
+            .getResultList();
+
+        for (var sjukfallCertificate : sjukfallCertificates) {
+            entityManager.remove(sjukfallCertificate);
+            erasedCertificatesCount++;
+            LOG.debug("SjukfallCertificate with id {} from care provider {} was successfully erased.", sjukfallCertificate.getId(),
+                careProviderId);
+        }
+
+        return erasedCertificatesCount;
     }
 
     private List<SjukfallCertificate> querySjukfallCertificatesForPersonnummer(String personnummer) {

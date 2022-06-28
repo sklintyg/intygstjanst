@@ -86,6 +86,16 @@ public class RelationDaoImplTest extends TestSupport {
         assertEquals(1, graph.size());
     }
 
+    @Test
+    public void shouldEraseRelationsWhereToOrFromFieldHasCertificateForRemoval() {
+        buildRelationTree();
+
+        relationDao.eraseCertificateRelations(List.of(INTYG_1), "5678");
+
+        final var relations = entityManager.createQuery("SELECT r.id From Relation r", Long.class).getResultList();
+        assertEquals(2, relations.size());
+    }
+
     private void buildRelationTree() {
         Relation r0 = new Relation(INTYG_1, INTYG_0, RelationKod.FRLANG.value(), LocalDateTime.now().minusDays(30));
         Relation r1 = new Relation(INTYG_2, INTYG_1, RelationKod.ERSATT.value(), LocalDateTime.now().minusDays(20));

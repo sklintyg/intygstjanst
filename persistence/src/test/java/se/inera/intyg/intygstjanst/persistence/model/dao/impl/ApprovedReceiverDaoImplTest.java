@@ -76,6 +76,14 @@ public class ApprovedReceiverDaoImplTest extends TestSupport {
 
         List<ApprovedReceiver> allowedRecipientIds2 = approvedReceiverDao.getApprovedReceiverIdsForCertificate(intygsId2);
         assertEquals(1, allowedRecipientIds2.size());
+
+        approvedReceiverDao.eraseApprovedReceivers(List.of(intygsId, intygsId2), "CARE_PROVIDER_ID");
+
+        List<ApprovedReceiver> allowedRecipientIds3 = approvedReceiverDao.getApprovedReceiverIdsForCertificate(intygsId);
+        assertEquals(0, allowedRecipientIds3.size());
+
+        List<ApprovedReceiver> allowedRecipientIds4 = approvedReceiverDao.getApprovedReceiverIdsForCertificate(intygsId2);
+        assertEquals(0, allowedRecipientIds4.size());
     }
 
 }

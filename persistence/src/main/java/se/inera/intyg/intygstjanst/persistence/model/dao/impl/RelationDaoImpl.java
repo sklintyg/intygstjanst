@@ -27,8 +27,11 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
@@ -40,6 +43,8 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
  */
 @Repository
 public class RelationDaoImpl implements RelationDao {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RelationDaoImpl.class);
 
     @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
     private EntityManager entityManager;
@@ -90,6 +95,21 @@ public class RelationDaoImpl implements RelationDao {
             final var relationList = getGraph(id);
             for (var relation: relationList) {
                 entityManager.remove(relation);
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void eraseCertificateRelations(List<String> certificateIds, String careProviderId) {
+        for (final var certificateId : certificateIds) {
+            final var relationList = new ArrayList<Relation>();
+            relationList.addAll(getParent(certificateId));
+            relationList.addAll(getChildren(certificateId));
+            for (var relation : relationList) {
+                entityManager.remove(relation);
+                LOG.debug("Relation with id {} for certificate id {} from care provider {} was successfully erased.", relation.getId(),
+                    certificateId, careProviderId);
             }
         }
     }

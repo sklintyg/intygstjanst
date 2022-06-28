@@ -27,6 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -52,9 +53,11 @@ import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 
@@ -280,6 +283,64 @@ public class CertificateResource {
         });
     }
 
+    @DELETE
+    @Path("/deleteCertificates")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response deleteCertificates(@RequestBody List<String> certificateIds) {
+
+        LOGGER.info("Removing data for certificates {}", certificateIds);
+
+        delete(getMessages(certificateIds));
+        delete(getApprovedReceivers(certificateIds));
+        delete(getRelations(certificateIds));
+        delete(getSjukfallCertificates(certificateIds));
+        delete(getCertificates(certificateIds));
+
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("/{careProviderId}/certificateCount")
+    @Produces(MediaType.APPLICATION_JSON)
+    public int getCertificateCountForCareProvider(@PathParam("careProviderId") final String careProviderId) {
+        return getCertificateIdsForCareProvider(careProviderId).size();
+    }
+
+    @GET
+    @Path("/{careProviderId}/sjukfallCertificateCount")
+    @Produces(MediaType.APPLICATION_JSON)
+    public int getSjukfallCertificateCountForCareProvider(@PathParam("careProviderId") final String careProviderId) {
+        final var certificateIds = getCertificateIdsForCareProvider(careProviderId);
+        return getSjukfallCertificates(certificateIds).size();
+    }
+
+    @GET
+    @Path("/{careProviderId}/approvedReceiverCount")
+    @Produces(MediaType.APPLICATION_JSON)
+    public int getApprovedReceiversCountForCareProvider(@PathParam("careProviderId") final String careProviderId) {
+        final var certificateIds = getCertificateIdsForCareProvider(careProviderId);
+        return getApprovedReceivers(certificateIds).size();
+    }
+
+    @GET
+    @Path("/{careProviderId}/messageCount")
+    @Produces(MediaType.APPLICATION_JSON)
+    public int getMessagesCountForCareProvider(@PathParam("careProviderId") final String careProviderId) {
+        final var certificateIds = getCertificateIdsForCareProvider(careProviderId);
+        return getMessages(certificateIds).size();
+    }
+
+    @GET
+    @Path("/{careProviderId}/relationCount")
+    @Produces(MediaType.APPLICATION_JSON)
+    public int getRelationCountForCareProvider(@PathParam("careProviderId") final String careProviderId) {
+        final var certificateIds = getCertificateIdsForCareProvider(careProviderId);
+        return getRelations(certificateIds).size();
+    }
+
+
     private boolean parseApprovalStatus(String approvalStatus) {
         if (approvalStatus != null && approvalStatus.equals(ApprovalStatusType.YES.value())) {
             return true;
@@ -303,4 +364,48 @@ public class CertificateResource {
         }
     }
 
+    private List<String> getCertificateIdsForCareProvider(String careProviderId) {
+        return entityManager
+            .createQuery("Select c.id FROM Certificate c WHERE c.careGiverId = :careProviderId", String.class)
+            .setParameter("careProviderId", careProviderId)
+            .getResultList();
+    }
+
+    private List<Certificate> getCertificates(List<String> certificateIds) {
+        return runQuery("Select c FROM Certificate c WHERE c.id in :certificateIds", certificateIds, Certificate.class);
+    }
+
+    private List<SjukfallCertificate> getSjukfallCertificates(List<String> certificateIds) {
+        return runQuery("Select sc FROM SjukfallCertificate sc WHERE sc.id in :certificateIds", certificateIds, SjukfallCertificate.class);
+    }
+
+    private List<Arende> getMessages(List<String> certificateIds) {
+        return runQuery("SELECT a FROM Arende a WHERE a.intygsId in :certificateIds", certificateIds, Arende.class);
+    }
+
+    private List<Relation> getRelations(List<String> certificateIds) {
+        return runQuery("SELECT r FROM Relation r WHERE r.fromIntygsId in :certificateIds", certificateIds, Relation.class);
+    }
+
+    private List<ApprovedReceiver> getApprovedReceivers(List<String> certificateIds) {
+        return runQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId in :certificateIds", certificateIds,
+            ApprovedReceiver.class);
+    }
+
+    private <T> List<T> runQuery(String query, List<String> certificateIds, Class<T> clazz) {
+        if (certificateIds.isEmpty()) {
+            return List.of();
+        }
+
+        return entityManager
+            .createQuery(query, clazz)
+            .setParameter("certificateIds", certificateIds)
+            .getResultList();
+    }
+
+    private <T> void delete(List<T> items) {
+        for (T item : items) {
+            entityManager.remove(item);
+        }
+    }
 }

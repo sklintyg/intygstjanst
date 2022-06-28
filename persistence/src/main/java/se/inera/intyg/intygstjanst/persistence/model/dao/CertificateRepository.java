@@ -32,8 +32,11 @@ public interface CertificateRepository extends JpaRepository<Certificate, String
     @Query("select c from Certificate c where c.careGiverId = :careProviderId")
     Page<Certificate> findCertificatesForCareProvider(@Param("careProviderId") String careProviderId, Pageable pageable);
 
+    @Query("select c.id from Certificate c where c.careGiverId = :careProviderId")
+    Page<String> findCertificateIdsForCareProvider(@Param("careProviderId") String careProviderId, Pageable pageable);
+
     @Query("select count(c.id) FROM Certificate c "
         + "join CertificateMetaData cm on c.id = cm.certificateId "
-        + "where c.careGiverId = :careProviderId and cm.isRevoked = 1")
+        + "where c.careGiverId = :careProviderId and cm.isRevoked = true")
     long findTotalRevokedForCareProvider(@Param("careProviderId") String careProviderId);
 }

@@ -23,8 +23,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
@@ -36,6 +39,8 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
  */
 @Repository
 public class ApprovedReceiverDaoImpl implements ApprovedReceiverDao {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ApprovedReceiverDaoImpl.class);
 
     @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
     private EntityManager entityManager;
@@ -49,13 +54,21 @@ public class ApprovedReceiverDaoImpl implements ApprovedReceiverDao {
 
     @Override
     public void clearApprovedReceiversForCertificate(String intygsId) {
-        List<ApprovedReceiver> resultList = entityManager
-            .createQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId = :intygsId", ApprovedReceiver.class)
-            .setParameter("intygsId", intygsId)
-            .getResultList();
+        List<ApprovedReceiver> resultList = getApprovedReceivers(intygsId);
+        removeApprovedReceivers(resultList);
+    }
+
+    private void removeApprovedReceivers(List<ApprovedReceiver> resultList) {
         for (ApprovedReceiver ar : resultList) {
             entityManager.remove(ar);
         }
+    }
+
+    private List<ApprovedReceiver> getApprovedReceivers(String intygsId) {
+        return entityManager
+            .createQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId = :intygsId", ApprovedReceiver.class)
+            .setParameter("intygsId", intygsId)
+            .getResultList();
     }
 
     @Override
@@ -67,6 +80,19 @@ public class ApprovedReceiverDaoImpl implements ApprovedReceiverDao {
     public void eraseTestCertificates(List<String> ids) {
         for (var id: ids) {
             clearApprovedReceiversForCertificate(id);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void eraseApprovedReceivers(List<String> certificateIds, String careProviderId) {
+        for (var certificateId : certificateIds) {
+            final var approvedReceivers = getApprovedReceivers(certificateId);
+            if (!approvedReceivers.isEmpty()) {
+                removeApprovedReceivers(approvedReceivers);
+                LOG.debug("Successfully erased {} approved receivers for certificate id {} from care provider {}.",
+                    approvedReceivers.size(), certificateId, careProviderId);
+            }
         }
     }
 }

@@ -25,9 +25,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.UUID;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
+import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
@@ -67,6 +69,27 @@ public class IntegrationTestUtil {
         applyToFromDatesToRequestTemplate(requestTemplate, fromDaysRelativeToNow, toDaysRelativeToNow);
 
         executeRegisterCertificate(requestTemplate);
+    }
+
+    public static String registerCertificateForErase(IntegrationTestCertificateType type, String careProviderId, String relationId) {
+        final var filePath = getFilePath(type);
+        final var templateGroup = new STGroupFile(filePath);
+        final var relation = relationId != null ? getRelation(relationId, templateGroup) : "";
+        final var requestTemplate = templateGroup.getInstanceOf("requestParameterizedCareProvider");
+        final var certificateId = UUID.randomUUID().toString();
+        requestTemplate.add("intygId", certificateId);
+        requestTemplate.add("careProviderId", careProviderId);
+        requestTemplate.add("relation", relation);
+        executeRegisterCertificate(requestTemplate);
+        return certificateId;
+    }
+
+    private static String getRelation(String relationId, STGroupFile templateGroup) {
+        final var requestTemplate = templateGroup.getInstanceOf("requestParameterizedRelation");
+        requestTemplate.add("relationCode", RelationKod.FRLANG);
+        requestTemplate.add("relationName", RelationKod.FRLANG.getKlartext());
+        requestTemplate.add("relationId", relationId);
+        return requestTemplate.render();
     }
 
     private static void executeRegisterCertificate(ST requestTemplate) {

@@ -439,6 +439,27 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
+    @Transactional
+    public int eraseCertificates(List<String> certificateIds, String careProviderId) {
+        int erasedCertificatesCount = 0;
+        for (final var certificateId : certificateIds) {
+            final var certificate = entityManager.find(Certificate.class, certificateId);
+
+            if (certificate == null) {
+                LOG.error("Certificate with id {} from care provider {} was not found and could not be erased.", certificateId,
+                    careProviderId);
+                continue;
+            }
+
+            entityManager.remove(certificate);
+            erasedCertificatesCount++;
+            LOG.debug("Certificate with id {} from care provider {} was successfully erased.", certificateId, careProviderId);
+        }
+
+        return erasedCertificatesCount;
+    }
+
+    @Override
     public List<String> findCertificatesWithoutMetadata(int maxNumber) {
         String sql =
             "SELECT c.ID FROM CERTIFICATE c "

@@ -20,6 +20,7 @@
 package se.inera.intyg.intygstjanst.web.integration.certificateexport;
 
 import java.util.List;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -27,6 +28,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import se.inera.intyg.intygstjanst.web.service.CertificateExportService;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
@@ -36,6 +38,9 @@ public class CertificateExportController {
 
     @Autowired
     CertificateExportService certificateExportService;
+
+    @Value("${erase.certificates.page.size:1000}")
+    private int eraseCertificatesPageSize;
 
     @GET
     @Path("certificatetexts")
@@ -50,5 +55,12 @@ public class CertificateExportController {
     public CertificateExportPageDTO getCertificates(@PathParam("id") String careProviderId, @QueryParam("size") int size,
         @QueryParam("page") int page) {
         return certificateExportService.getCertificateExportPage(careProviderId, page, size);
+    }
+
+    @DELETE
+    @Path("/certificates/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void eraseDataForCareProvider(@PathParam("id") String careProviderId) {
+        certificateExportService.eraseCertificates(careProviderId, eraseCertificatesPageSize);
     }
 }

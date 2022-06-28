@@ -46,4 +46,10 @@ public interface RelationDao {
      * @param ids   Certificate ids.
      */
     void eraseTestCertificates(List<String> ids);
+
+    /**
+     * Erase any relations for certificates, passed as certificate ids, from specific care provider.
+     * @param ids   Certificate ids.
+     */
+    void eraseCertificateRelations(List<String> ids, String careProvider);
 }
