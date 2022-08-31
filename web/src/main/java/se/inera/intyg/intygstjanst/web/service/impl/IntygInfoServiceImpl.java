@@ -23,7 +23,6 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -41,6 +40,7 @@ import se.inera.intyg.infra.intyginfo.dto.IntygInfoEvent.Source;
 import se.inera.intyg.infra.intyginfo.dto.IntygInfoEventType;
 import se.inera.intyg.infra.intyginfo.dto.ItIntygInfo;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.web.integration.CitizenController;
@@ -55,14 +55,20 @@ public class IntygInfoServiceImpl implements IntygInfoService {
 
     private static final Logger LOG = LoggerFactory.getLogger(IntygInfoServiceImpl.class);
 
-    @Autowired
-    private CertificateService certificateService;
-    @Autowired
-    private RecipientService recipientService;
-    @Autowired
-    private IntygModuleRegistry moduleRegistry;
-    @Autowired
-    private RelationService relationService;
+    private final CertificateService certificateService;
+    private final RecipientService recipientService;
+    private final IntygModuleRegistry moduleRegistry;
+    private final RelationService relationService;
+    private final CertificateRepository certificateRepository;
+
+    public IntygInfoServiceImpl(CertificateService certificateService, RecipientService recipientService,
+        IntygModuleRegistry moduleRegistry, RelationService relationService, CertificateRepository certificateRepository) {
+        this.certificateService = certificateService;
+        this.recipientService = recipientService;
+        this.moduleRegistry = moduleRegistry;
+        this.relationService = relationService;
+        this.certificateRepository = certificateRepository;
+    }
 
     @Override
     public Optional<ItIntygInfo> getIntygInfo(String id) {
@@ -127,6 +133,11 @@ public class IntygInfoServiceImpl implements IntygInfoService {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public Long getCertificateCount(String hsaId) {
+        return certificateRepository.getCertificateCountForCareProvider(hsaId);
     }
 
     private void addEvents(ItIntygInfo response, Certificate certificate) {

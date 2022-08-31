@@ -24,4 +24,6 @@ import se.inera.intyg.infra.intyginfo.dto.ItIntygInfo;
 public interface IntygInfoService {
 
     Optional<ItIntygInfo> getIntygInfo(String id);
+
+    Long getCertificateCount(String hsaId);
 }

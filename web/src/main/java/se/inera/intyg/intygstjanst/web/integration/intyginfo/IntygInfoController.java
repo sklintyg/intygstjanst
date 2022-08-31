@@ -50,12 +50,19 @@ public class IntygInfoController {
 
         Optional<ItIntygInfo> intygInfo = intygInfoService.getIntygInfo(id);
 
-        if (!intygInfo.isPresent()) {
+        if (intygInfo.isEmpty()) {
             return Response.status(Status.NOT_FOUND).build();
         }
 
         return Response.ok(intygInfo.get()).build();
     }
 
+    @PrometheusTimeMethod
+    @GET
+    @Path("/{hsaId}/count")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Long getCertificateCountForCareProvider(@PathParam("hsaId") String hsaId) {
+        return intygInfoService.getCertificateCount(hsaId);
+    }
 
 }
