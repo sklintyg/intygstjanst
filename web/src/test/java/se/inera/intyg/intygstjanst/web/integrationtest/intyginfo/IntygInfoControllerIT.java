@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.web.integrationtest.intyginfo;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
 import org.junit.Before;
@@ -27,17 +28,18 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import se.inera.intyg.intygstjanst.web.integrationtest.InternalApiBaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
+import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil.IntegrationTestCertificateType;
 
 public class IntygInfoControllerIT extends InternalApiBaseIntegrationTest {
 
     public static final int OK = HttpStatus.OK.value();
     public static final int NOT_FOUND = HttpStatus.NOT_FOUND.value();
 
-    private String url = "/inera-certificate/internalapi/intygInfo/";
+    private final String url = "/inera-certificate/internalapi/intygInfo/";
 
-    private String intygsId = "123456";
-    private String personId1 = "191212121212";
-    private String versionsId = "1.0";
+    private final String intygsId = "123456";
+    private final String personId1 = "191212121212";
+    private final String versionsId = "1.0";
 
     @Before
     public void setup() {
@@ -65,4 +67,28 @@ public class IntygInfoControllerIT extends InternalApiBaseIntegrationTest {
             .get(url + "NOT_FOUND");
     }
 
+    @Test
+    public void shouldReturnZeroCountForCareProviderWithNoCertificates() {
+        final var careProviderId = "Non-existing care provider";
+
+        final var certificateCount = given()
+            .when().get(url + careProviderId + "/count")
+            .then().statusCode(OK).extract().body().as(Long.class);
+
+        assertEquals(0L, certificateCount.longValue());
+    }
+
+    @Test
+    public void shouldReturnNonZeroCountForCareProviderWithCertificates() {
+        final var careProviderId = "SE2321000999-TEST5";
+        final var certificateId = IntegrationTestUtil.registerCertificateForErase(IntegrationTestCertificateType.LISJP,
+            careProviderId, null);
+
+        final var certificateCount = given()
+            .when().get(url + careProviderId + "/count")
+            .then().statusCode(OK).extract().body().as(Long.class);
+
+        assertEquals(1L, certificateCount.longValue());
+        IntegrationTestUtil.deleteIntyg(certificateId);
+    }
 }

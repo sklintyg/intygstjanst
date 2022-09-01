@@ -59,6 +59,7 @@ import se.inera.intyg.infra.intyginfo.dto.IntygInfoEvent.Source;
 import se.inera.intyg.infra.intyginfo.dto.IntygInfoEventType;
 import se.inera.intyg.infra.intyginfo.dto.ItIntygInfo;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
@@ -81,9 +82,14 @@ public class IntygInfoServiceImplTest {
     private ModuleApi moduleApi;
     @Mock
     private ModuleEntryPoint moduleEntryPoint;
+    @Mock
+    private CertificateRepository certificateRepository;
 
     @InjectMocks
     private IntygInfoServiceImpl testee;
+
+    private static final String HSA_ID = "HSA_ID";
+    private static final Long CERTIFICATE_COUNT = 333L;
 
     @Before
     public void setup() throws ModuleNotFoundException {
@@ -232,6 +238,15 @@ public class IntygInfoServiceImplTest {
         expectedEvents.add(kompl);
 
         assertThat(intygInfo.getEvents(), containsInAnyOrder(expectedEvents.toArray(new IntygInfoEvent[0])));
+    }
+
+    @Test
+    public void shouldReturnResultFromDatabaseQuery() {
+        when(certificateRepository.getCertificateCountForCareProvider(HSA_ID)).thenReturn(CERTIFICATE_COUNT);
+
+        final var response = testee.getCertificateCount(HSA_ID);
+
+        assertEquals(CERTIFICATE_COUNT, response);
     }
 
     private Certificate getCertificate(String intygId, LocalDateTime received) throws InvalidCertificateException, ModuleException {

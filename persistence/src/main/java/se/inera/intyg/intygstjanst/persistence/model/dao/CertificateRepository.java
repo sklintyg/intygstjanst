@@ -39,4 +39,7 @@ public interface CertificateRepository extends JpaRepository<Certificate, String
         + "join CertificateMetaData cm on c.id = cm.certificateId "
         + "where c.careGiverId = :careProviderId and cm.isRevoked = true")
     long findTotalRevokedForCareProvider(@Param("careProviderId") String careProviderId);
+
+    @Query("select count(c.id) from Certificate c where c.careGiverId = :careProviderId")
+    Long getCertificateCountForCareProvider(@Param("careProviderId") String careProviderId);
 }
