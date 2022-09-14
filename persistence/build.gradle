@@ -6,7 +6,9 @@ jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 dependencies {
     compile "se.inera.intyg.common:common-support:${commonVersion}"
 
-    //compile "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:${jpaHibernateVersion}"
+    compile "org.hibernate:hibernate-core"
+    compile "org.hibernate:hibernate-hikaricp"
+    compile "org.hibernate:hibernate-entitymanager"
 
     compile "org.springframework.data:spring-data-jpa"
 
