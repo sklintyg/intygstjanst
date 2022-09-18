@@ -18,13 +18,11 @@ ext {
 
     cxfVersion = "3.5.3"
     geronimoJmsVersion = "1.1.1"
-    h2Version = "2.1.210"
     jadiraUserTypeVersion = "6.0.1.GA"
-    javaxActivationVersion = "1.2.0"
-    jakartaJwsApiVersion = "2.1.0"
+    jakartaJwsApiVersion = "3.0.0"
     picocliVersion = "4.6.3"
-    stAntlr4Version = "4.3"
-    shedlockSpringVersion = "4.5.0"
+    stAntlr4Version = "4.3.4"
+    shedlockSpringVersion = "4.42.0"
 
     springbootMavenBomVersion = "2.7.3"
 }

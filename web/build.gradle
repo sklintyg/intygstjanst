@@ -83,7 +83,7 @@ dependencies {
     compile "se.inera.intyg.common:ag7804:${commonVersion}"
 
 
-    compile "com.sun.activation:javax.activation:${javaxActivationVersion}"
+    compile "com.sun.activation:jakarta.activation"
 
     compile "org.apache.activemq:activemq-spring"
     compile "org.apache.cxf:cxf-rt-features-logging:${cxfVersion}"
