@@ -18,7 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
@@ -34,8 +33,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
-
-import se.inera.intyg.common.support.model.ModelException;
 
 /**
  * @author johannesc

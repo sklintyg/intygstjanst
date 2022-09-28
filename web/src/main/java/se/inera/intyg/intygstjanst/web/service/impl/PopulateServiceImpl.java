@@ -18,7 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,11 +43,7 @@ public class PopulateServiceImpl implements PopulateService {
     public enum JobNames { METADATA }
 
     // List all jobs that should be active
-    private static final List<JobNames> activeJobs = new ArrayList<>() {
-        {
-            add(JobNames.METADATA);
-        }
-    };
+    private static final List<JobNames> activeJobs = List.of(JobNames.METADATA);
 
     @Autowired
     CertificateDao certificateDao;

@@ -6,14 +6,16 @@ jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 dependencies {
     compile "se.inera.intyg.common:common-support:${commonVersion}"
 
-    //compile "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:${jpaHibernateVersion}"
+    compile "org.hibernate:hibernate-core"
+    compile "org.hibernate:hibernate-hikaricp"
+    compile "org.hibernate:hibernate-entitymanager"
 
     compile "org.springframework.data:spring-data-jpa"
 
     compile "org.jadira.usertype:usertype.core:${jadiraUserTypeVersion}"
     compile "org.liquibase:liquibase-core"
     compile "org.springframework:spring-tx"
-    compile "com.h2database:h2:${h2Version}"
+    compile "com.h2database:h2"
 
     testCompile "org.springframework:spring-test"
 }

@@ -27,8 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil.IntegrationTestCertificateType.LISJP;
 
+import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
-import io.restassured.mapper.TypeRef;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

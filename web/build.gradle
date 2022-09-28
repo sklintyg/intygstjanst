@@ -83,10 +83,11 @@ dependencies {
     compile "se.inera.intyg.common:ag7804:${commonVersion}"
 
 
-    compile "com.sun.activation:javax.activation:${javaxActivationVersion}"
+    compile "com.sun.activation:jakarta.activation"
 
     compile "org.apache.activemq:activemq-spring"
     compile "org.apache.cxf:cxf-rt-features-logging:${cxfVersion}"
+    compile "org.apache.cxf:cxf-rt-frontend-jaxws:${cxfVersion}"
     compile "org.springframework:spring-jms"
     compile "org.springframework:spring-webmvc"
     compile "mysql:mysql-connector-java"
@@ -102,7 +103,6 @@ dependencies {
 
     testCompile "io.rest-assured:rest-assured"
     testCompile "io.rest-assured:json-schema-validator"
-    testCompile "com.sun.xml.bind:jaxb-osgi:2.3.2" // Can remove when rest-assured in BOM > version 4.0
 
     testCompile "org.hamcrest:hamcrest-library"
     testCompile "org.antlr:ST4:${stAntlr4Version}"
