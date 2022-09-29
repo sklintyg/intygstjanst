@@ -10,6 +10,7 @@ task restAssuredTest(type: Test) {
     systemProperty "integration.tests.baseUrl", System.properties['baseUrl'] ?: "http://localhost:8080/"
     systemProperty "integration.tests.actuatorUrl", System.properties['actuatorUrl'] ?: "http://localhost:8180/"
     include '**/*IT*'
+    useJUnitPlatform()
 }
 
 war.dependsOn createVersionPropertyFile
