@@ -51,9 +51,9 @@ import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
 public class CertificateExportIT extends BaseIntegrationTest {
 
     private static final String INTERNAL_BASE_URI = System.getProperty("integration.tests.actuatorUrl", "http://localhost:8180/");
-    private static final String CERTIFICATE_TEXTS_URL = INTERNAL_BASE_URI + "inera-certificate/internalapi/v1/certificatetexts";
-    private static final String CERTIFICATES_URL = INTERNAL_BASE_URI + "inera-certificate/internalapi/v1/certificates/";
-    private static final String ERASE_CERTIFICATES_URL = INTERNAL_BASE_URI + "inera-certificate/internalapi/v1/certificates/";
+    private static final String CERTIFICATE_TEXTS_URL = INTERNAL_BASE_URI + "/inera-certificate/internalapi/v1/certificatetexts";
+    private static final String CERTIFICATES_URL = INTERNAL_BASE_URI + "/inera-certificate/internalapi/v1/certificates/";
+    private static final String ERASE_CERTIFICATES_URL = INTERNAL_BASE_URI + "/inera-certificate/internalapi/v1/certificates/";
 
     private static final String PERSON_ID = "191212121212";
     private static final String LISJP_VERSION = "1.3";
