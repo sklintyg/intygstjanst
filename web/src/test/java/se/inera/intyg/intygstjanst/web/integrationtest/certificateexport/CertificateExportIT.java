@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil.IntegrationTestCertificateType.LISJP;
 
+import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 import java.util.ArrayList;
@@ -43,14 +44,13 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.http.HttpStatus;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
-import se.inera.intyg.intygstjanst.web.integrationtest.BaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
 
-public class CertificateExportIT extends BaseIntegrationTest {
+public class CertificateExportIT {
 
-    private static final String INTERNAL_BASE_URI = System.getProperty("integration.tests.actuatorUrl", "http://localhost:8180/");
+    private static final String INTERNAL_BASE_URI = System.getProperty("integration.tests.actuatorUrl", "http://localhost:8081");
     private static final String CERTIFICATE_TEXTS_URL = INTERNAL_BASE_URI + "/inera-certificate/internalapi/v1/certificatetexts";
     private static final String CERTIFICATES_URL = INTERNAL_BASE_URI + "/inera-certificate/internalapi/v1/certificates/";
     private static final String ERASE_CERTIFICATES_URL = INTERNAL_BASE_URI + "/inera-certificate/internalapi/v1/certificates/";
@@ -70,6 +70,17 @@ public class CertificateExportIT extends BaseIntegrationTest {
 
     private ST requestTemplate;
     private final List<String> createdCertificates = new ArrayList<>();
+
+    @BeforeEach
+    public void setupBase() {
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+        RestAssured.baseURI = System.getProperty("integration.tests.baseUrl", "http://localhost:8080/");
+    }
+
+    @AfterEach
+    public void cleanupBase() {
+        RestAssured.reset();
+    }
 
     @Nested
     class CertificateTexts {
