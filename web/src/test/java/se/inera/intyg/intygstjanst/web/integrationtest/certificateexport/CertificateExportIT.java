@@ -33,14 +33,10 @@ import io.restassured.http.ContentType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.http.HttpStatus;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -99,16 +95,15 @@ public class CertificateExportIT {
     }
 
     @Nested
-    @TestInstance(Lifecycle.PER_CLASS)
     class CertificateExport {
 
-        @BeforeAll
+        @BeforeEach
         public void setup() {
             setupCertificatesForExport();
             setupRevoked("CertificateExportIT-2");
         }
 
-        @AfterAll
+        @AfterEach
         public void cleanUp() {
             deleteCertificates();
         }
