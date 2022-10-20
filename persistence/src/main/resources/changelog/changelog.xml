@@ -622,4 +622,16 @@
 			<column name="SIGNED_DATE"/>
 		</createIndex>
 	</changeSet>
+
+	<changeSet id="52" author="mh">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="CERTIFICATE" indexName="IDX_CERTIFICATE_CARE_GIVER_ID"/>
+			</not>
+		</preConditions>
+		<createIndex indexName="IDX_CERTIFICATE_CARE_GIVER_ID"
+				tableName="CERTIFICATE" unique="false">
+			<column name="CARE_GIVER_ID"/>
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>
