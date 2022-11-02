@@ -106,5 +106,15 @@ allprojects {
 
 }
 
+gradle.taskGraph.whenReady {
+    def runningRestAssuredTest = false
+    project('intygstjanst-web') { runningRestAssuredTest = gradle.taskGraph.getAllTasks().contains(restAssuredTest) }
+
+    if (runningRestAssuredTest) {
+        project('intygstjanst-web') { test.enabled(false) }
+        project('intygstjanst-persistence') { test.enabled(false) }
+    }
+}
+
 task tagRelease(type: TagReleaseTask)
 
