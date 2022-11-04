@@ -43,7 +43,8 @@ gretty {
             "-Ddev.config.file=${applicationDir}/config/application-dev.properties",
             "-Xmx512M",
             "-Ddev.http.port=${useHttpPort}",
-            "-Ddev.http.port.internal=${useInternalHttpPort}"
+            "-Ddev.http.port.internal=${useInternalHttpPort}",
+            "-Dxml.catalog.cacheEnabled=false"
     ]
 }
 
