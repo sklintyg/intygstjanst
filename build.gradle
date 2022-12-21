@@ -5,8 +5,8 @@ plugins {
 }
 
 ext {
-    commonVersion = System.properties['commonVersion'] ?: '3.18.0-SNAPSHOT'
-    infraVersion = System.properties['infraVersion'] ?: '3.18.0-SNAPSHOT'
+    commonVersion = System.properties['commonVersion'] ?: '3.19.0-SNAPSHOT'
+    infraVersion = System.properties['infraVersion'] ?: '3.19.0-SNAPSHOT'
     refDataVersion = System.properties['refDataVersion'] ?: '1.0-SNAPSHOT'
 
     schemasContractVersion = "2.1.8"
@@ -16,7 +16,7 @@ ext {
     rivtaClinicalprocessSchemasVersion = "4.0.5"
     rivtaItintegrationMonitoringSchemasVersion = "1.0.0.5"
 
-    cxfVersion = "3.5.3"
+    cxfVersion = "3.5.5"
     geronimoJmsVersion = "1.1.1"
     jadiraUserTypeVersion = "6.0.1.GA"
     jakartaJwsApiVersion = "3.0.0"
@@ -24,7 +24,7 @@ ext {
     stAntlr4Version = "4.3.4"
     shedlockSpringVersion = "4.42.0"
 
-    springbootMavenBomVersion = "2.7.3"
+    springbootMavenBomVersion = "2.7.6"
 }
 
 allprojects {
