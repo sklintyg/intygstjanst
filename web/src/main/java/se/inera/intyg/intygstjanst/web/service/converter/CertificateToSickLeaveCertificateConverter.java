@@ -28,7 +28,7 @@ import se.inera.intyg.common.ag114.v1.model.internal.Ag114UtlatandeV1;
 import se.inera.intyg.common.ag7804.model.internal.Sjukskrivning;
 import se.inera.intyg.common.ag7804.model.internal.Sjukskrivning.SjukskrivningsGrad;
 import se.inera.intyg.common.ag7804.v1.model.internal.Ag7804UtlatandeV1;
-import se.inera.intyg.common.agparent.model.internal.Diagnos;
+import se.inera.intyg.common.fkparent.model.internal.Diagnos;
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
 import se.inera.intyg.common.support.model.common.internal.GrundData;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
