@@ -19,17 +19,18 @@
 
 package se.inera.intyg.intygstjanst.web.integration.sickleave;
 
-import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
-import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestResponseDTO;
 
 @Path("/sickleave")
 public class ListActiveSickLeaveController {
@@ -45,8 +46,8 @@ public class ListActiveSickLeaveController {
     @Path("/active")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public List<SjukfallEnhet> getActiveSickLeaves(@RequestBody SickLeaveRequestDTO sickLeaveRequestDTO) {
-        // wrappa i ett response med listan som content
-        return sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
+    public ResponseEntity<SickLeaveRequestResponseDTO> getActiveSickLeaves(@RequestBody SickLeaveRequestDTO sickLeaveRequestDTO) {
+        final var activeSickLeavesForCareUnit = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
+        return new ResponseEntity<>(new SickLeaveRequestResponseDTO(activeSickLeavesForCareUnit), HttpStatus.OK);
     }
 }
