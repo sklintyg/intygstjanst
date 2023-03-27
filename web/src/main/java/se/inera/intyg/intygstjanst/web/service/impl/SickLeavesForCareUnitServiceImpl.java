@@ -52,12 +52,15 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
     }
 
     private static List<SjukfallEnhet> filterSickLeaves(String doctorId, String careUnitId, List<SjukfallEnhet> activeSickLeavesForUnit) {
+        List<SjukfallEnhet> filteredActiveSickleavesForUnit;
         if (careUnitId == null) {
-            return activeSickLeavesForUnit.stream()
+            filteredActiveSickleavesForUnit = activeSickLeavesForUnit.stream()
                 .filter(sickLeave -> sickLeave.getLakare().getId().equals(doctorId)).collect(Collectors.toList());
+        } else {
+            filteredActiveSickleavesForUnit = activeSickLeavesForUnit.stream()
+                .filter(sickLeave -> sickLeave.getVardenhet().getId().equals(careUnitId)).collect(Collectors.toList());
         }
-        return activeSickLeavesForUnit.stream()
-            .filter(sickLeave -> sickLeave.getVardenhet().getId().equals(careUnitId)).collect(Collectors.toList());
+        return filteredActiveSickleavesForUnit;
     }
 
     private static IntygParametrar getIntygParametrar(SickLeaveRequestDTO sickLeaveRequestDTO) {
