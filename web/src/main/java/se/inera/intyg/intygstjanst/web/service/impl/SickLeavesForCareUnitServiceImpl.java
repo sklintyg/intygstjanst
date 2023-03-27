@@ -48,10 +48,10 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
 
     @Override
     public List<SjukfallEnhet> getActiveSickLeavesForCareUnit(SickLeaveRequestDTO sickLeaveRequestDTO) {
-        final var intygParametrar = getIntygParametrar(sickLeaveRequestDTO);
         if (isNullOrEmpty(sickLeaveRequestDTO.getCareUnitId())) {
             throw new IllegalArgumentException("Parameter care unit id must be non-empty string");
         }
+        final var intygParametrar = getIntygParametrar(sickLeaveRequestDTO);
         final var intygData = intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted());
         final var activeSickLeavesForUnit = sjukfallEngine.beraknaSjukfallForEnhet(intygData, intygParametrar);
