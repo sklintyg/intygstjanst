@@ -46,7 +46,7 @@ import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallC
 import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
 
 @ExtendWith(MockitoExtension.class)
-class ListActiveSickLeaveServiceImplTest {
+class IntygDataServiceImplTest {
 
     private static final int MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 5;
     private static final String UNIT_ID = "unitId";
@@ -57,7 +57,7 @@ class ListActiveSickLeaveServiceImplTest {
     private SjukfallCertificateDao sjukfallCertificateDao;
     @Mock
     private IntygsDataConverter intygDataConverter;
-    private ListActiveSickLeaveServiceImpl listActiveSickLeaveCertificateService;
+    private IntygDataServiceImpl listActiveSickLeaveCertificateService;
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
     private static final String DOCTOR_HSA_ID = "doctor-1";
     private static final String DOCTOR_NAME = "doctor-1-name";
@@ -70,7 +70,7 @@ class ListActiveSickLeaveServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        listActiveSickLeaveCertificateService = new ListActiveSickLeaveServiceImpl(hsaService, sjukfallCertificateDao,
+        listActiveSickLeaveCertificateService = new IntygDataServiceImpl(hsaService, sjukfallCertificateDao,
             intygDataConverter);
     }
 
@@ -81,7 +81,7 @@ class ListActiveSickLeaveServiceImplTest {
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyList(),
             anyInt())).thenReturn(List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(false)));
 
-        final var result = listActiveSickLeaveCertificateService.get(UNIT_ID, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+        final var result = listActiveSickLeaveCertificateService.getIntygData(UNIT_ID, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
         assertEquals(2, result.size());
     }
 
@@ -96,7 +96,7 @@ class ListActiveSickLeaveServiceImplTest {
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyList(),
             anyInt())).thenReturn(List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(false)));
 
-        final var result = listActiveSickLeaveCertificateService.get(UNIT_ID, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+        final var result = listActiveSickLeaveCertificateService.getIntygData(UNIT_ID, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
         assertIterableEquals(expectedIntygData, result);
     }
 
@@ -107,7 +107,7 @@ class ListActiveSickLeaveServiceImplTest {
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyList(),
             anyInt())).thenReturn(List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(true)));
 
-        final var result = listActiveSickLeaveCertificateService.get(UNIT_ID, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+        final var result = listActiveSickLeaveCertificateService.getIntygData(UNIT_ID, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
         assertEquals(1, result.size());
     }
 

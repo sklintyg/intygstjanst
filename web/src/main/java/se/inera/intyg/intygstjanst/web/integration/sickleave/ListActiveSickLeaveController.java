@@ -46,7 +46,8 @@ public class ListActiveSickLeaveController {
     @Path("/active")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public ResponseEntity<SickLeaveRequestResponseDTO> getActiveSickLeaves(@RequestBody SickLeaveRequestDTO sickLeaveRequestDTO) {
+    public ResponseEntity<SickLeaveRequestResponseDTO> getActiveSickLeavesForCareUnit(
+        @RequestBody SickLeaveRequestDTO sickLeaveRequestDTO) {
         final var activeSickLeavesForCareUnit = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
         return new ResponseEntity<>(new SickLeaveRequestResponseDTO(activeSickLeavesForCareUnit), HttpStatus.OK);
     }

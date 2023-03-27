@@ -20,6 +20,7 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ import org.springframework.stereotype.Component;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
-import se.inera.intyg.intygstjanst.web.service.ListActiveSickLeaveService;
+import se.inera.intyg.intygstjanst.web.service.IntygDataService;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 
@@ -37,33 +38,41 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
 
     private static final Logger LOG = LoggerFactory.getLogger(SickLeavesForCareUnitServiceImpl.class);
     private final SjukfallEngineService sjukfallEngine;
-    private final ListActiveSickLeaveService listActiveSickLeaveService;
+    private final IntygDataService intygDataService;
 
     public SickLeavesForCareUnitServiceImpl(SjukfallEngineService sjukfallEngine,
-        ListActiveSickLeaveService listActiveSickLeaveService) {
+        IntygDataService intygDataService) {
         this.sjukfallEngine = sjukfallEngine;
-        this.listActiveSickLeaveService = listActiveSickLeaveService;
+        this.intygDataService = intygDataService;
     }
 
     @Override
     public List<SjukfallEnhet> getActiveSickLeavesForCareUnit(SickLeaveRequestDTO sickLeaveRequestDTO) {
         final var intygParametrar = getIntygParametrar(sickLeaveRequestDTO);
-        final var intygData = listActiveSickLeaveService.get(sickLeaveRequestDTO.getUnitId(),
+        if (isNullOrEmpty(sickLeaveRequestDTO.getCareUnitId())) {
+            throw new IllegalArgumentException("Parameter care unit id must be non-empty string");
+        }
+        final var intygData = intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted());
         final var activeSickLeavesForUnit = sjukfallEngine.beraknaSjukfallForEnhet(intygData, intygParametrar);
-        return filterSickLeaves(sickLeaveRequestDTO.getDoctorId(), sickLeaveRequestDTO.getCareUnitId(), activeSickLeavesForUnit);
+        return filterSickLeaves(sickLeaveRequestDTO.getDoctorId(), sickLeaveRequestDTO.getUnitId(), activeSickLeavesForUnit);
     }
 
-    private static List<SjukfallEnhet> filterSickLeaves(String doctorId, String careUnitId, List<SjukfallEnhet> activeSickLeavesForUnit) {
-        List<SjukfallEnhet> filteredActiveSickleavesForUnit;
-        if (careUnitId == null) {
+    private boolean isNullOrEmpty(String careUnitId) {
+        return careUnitId == null || careUnitId.length() == 0;
+    }
+
+    private static List<SjukfallEnhet> filterSickLeaves(String doctorId, String unitId, List<SjukfallEnhet> activeSickLeavesForUnit) {
+        List<SjukfallEnhet> filteredActiveSickleavesForUnit = new ArrayList<>(activeSickLeavesForUnit);
+        if (doctorId != null) {
             LOG.debug("Filtering response - a doctor shall only see patients 'sjukfall' he/she has issued certificates.");
             filteredActiveSickleavesForUnit = activeSickLeavesForUnit.stream()
                 .filter(sickLeave -> sickLeave.getLakare().getId().equals(doctorId)).collect(Collectors.toList());
-        } else {
+        }
+        if (unitId != null) {
             LOG.debug("Filtering response - query for care unit, only including 'sjukfall' with active intyg on specified care unit");
             filteredActiveSickleavesForUnit = activeSickLeavesForUnit.stream()
-                .filter(sickLeave -> sickLeave.getVardenhet().getId().equals(careUnitId)).collect(Collectors.toList());
+                .filter(sickLeave -> sickLeave.getVardenhet().getId().equals(unitId)).collect(Collectors.toList());
         }
         return filteredActiveSickleavesForUnit;
     }

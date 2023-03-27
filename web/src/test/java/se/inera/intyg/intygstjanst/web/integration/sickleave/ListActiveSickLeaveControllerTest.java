@@ -51,7 +51,7 @@ class ListActiveSickLeaveControllerTest {
     @Test
     void shouldCallGetActiveSickLeavesService() {
         final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
-        listActiveSickLeaveController.getActiveSickLeaves(sickLeaveRequestDTO);
+        listActiveSickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
         verify(sickLeavesForCareUnitService).getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
     }
 
@@ -62,7 +62,7 @@ class ListActiveSickLeaveControllerTest {
         final var expectedSickLeaveRequestResponseDTO = new ResponseEntity<>(new SickLeaveRequestResponseDTO(List.of(sjukfallEnhet)),
             HttpStatus.OK);
         when(sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO)).thenReturn(List.of(sjukfallEnhet));
-        final var result = listActiveSickLeaveController.getActiveSickLeaves(sickLeaveRequestDTO);
+        final var result = listActiveSickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
         assertEquals(expectedSickLeaveRequestResponseDTO, result);
     }
 }

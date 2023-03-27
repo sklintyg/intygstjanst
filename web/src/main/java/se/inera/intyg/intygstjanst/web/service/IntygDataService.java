@@ -22,7 +22,7 @@ package se.inera.intyg.intygstjanst.web.service;
 import java.util.List;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 
-public interface ListActiveSickLeaveService {
+public interface IntygDataService {
 
-    List<IntygData> get(String careUnitId, int maxDaysSinceSickLeaveCompleted);
+    List<IntygData> getIntygData(String careUnitId, int maxDaysSinceSickLeaveCompleted);
 }

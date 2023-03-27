@@ -29,16 +29,16 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallCertificateIntygsDataConverter;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
-import se.inera.intyg.intygstjanst.web.service.ListActiveSickLeaveService;
+import se.inera.intyg.intygstjanst.web.service.IntygDataService;
 
 @Component
-public class ListActiveSickLeaveServiceImpl implements ListActiveSickLeaveService {
+public class IntygDataServiceImpl implements IntygDataService {
 
     private final HsaService hsaService;
     private final SjukfallCertificateDao sjukfallCertificateDao;
     private final IntygsDataConverter intygDataConverter;
 
-    public ListActiveSickLeaveServiceImpl(HsaService hsaService, SjukfallCertificateDao sjukfallCertificateDao,
+    public IntygDataServiceImpl(HsaService hsaService, SjukfallCertificateDao sjukfallCertificateDao,
         IntygsDataConverter intygDataConverter) {
         this.hsaService = hsaService;
         this.sjukfallCertificateDao = sjukfallCertificateDao;
@@ -46,7 +46,7 @@ public class ListActiveSickLeaveServiceImpl implements ListActiveSickLeaveServic
     }
 
     @Override
-    public List<IntygData> get(String unitId, int maxDaysSinceSickLeaveCompleted) {
+    public List<IntygData> getIntygData(String unitId, int maxDaysSinceSickLeaveCompleted) {
         final var careGiverHsaId = hsaService.getHsaIdForVardgivare(unitId);
         final var hsaIdList = getHsaIdList(unitId);
         final var activeSickLeaveCertificateForCareUnits = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(careGiverHsaId,
