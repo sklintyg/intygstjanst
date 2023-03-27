@@ -22,6 +22,8 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
@@ -33,6 +35,7 @@ import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 @Component
 public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SickLeavesForCareUnitServiceImpl.class);
     private final SjukfallEngineService sjukfallEngine;
     private final ListActiveSickLeaveService listActiveSickLeaveService;
 
@@ -54,9 +57,11 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
     private static List<SjukfallEnhet> filterSickLeaves(String doctorId, String careUnitId, List<SjukfallEnhet> activeSickLeavesForUnit) {
         List<SjukfallEnhet> filteredActiveSickleavesForUnit;
         if (careUnitId == null) {
+            LOG.debug("Filtering response - a doctor shall only see patients 'sjukfall' he/she has issued certificates.");
             filteredActiveSickleavesForUnit = activeSickLeavesForUnit.stream()
                 .filter(sickLeave -> sickLeave.getLakare().getId().equals(doctorId)).collect(Collectors.toList());
         } else {
+            LOG.debug("Filtering response - query for care unit, only including 'sjukfall' with active intyg on specified care unit");
             filteredActiveSickleavesForUnit = activeSickLeavesForUnit.stream()
                 .filter(sickLeave -> sickLeave.getVardenhet().getId().equals(careUnitId)).collect(Collectors.toList());
         }
