@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
-import se.inera.intyg.intygstjanst.web.service.ListActiveSickLeaveCertificateService;
+import se.inera.intyg.intygstjanst.web.service.ListActiveSickLeaveService;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 
@@ -34,24 +34,24 @@ import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitService {
 
     private final SjukfallEngineService sjukfallEngine;
-    private final ListActiveSickLeaveCertificateService listActiveSickLeaveCertificateService;
+    private final ListActiveSickLeaveService listActiveSickLeaveService;
 
     public SickLeavesForCareUnitServiceImpl(SjukfallEngineService sjukfallEngine,
-        ListActiveSickLeaveCertificateService listActiveSickLeaveCertificateService) {
+        ListActiveSickLeaveService listActiveSickLeaveService) {
         this.sjukfallEngine = sjukfallEngine;
-        this.listActiveSickLeaveCertificateService = listActiveSickLeaveCertificateService;
+        this.listActiveSickLeaveService = listActiveSickLeaveService;
     }
 
     @Override
     public List<SjukfallEnhet> getActiveSickLeavesForCareUnit(SickLeaveRequestDTO sickLeaveRequestDTO) {
         final var intygParametrar = getIntygParametrar(sickLeaveRequestDTO);
-        final var intygData = listActiveSickLeaveCertificateService.get(sickLeaveRequestDTO.getUnitId(),
+        final var intygData = listActiveSickLeaveService.get(sickLeaveRequestDTO.getUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted());
         final var activeSickLeavesForUnit = sjukfallEngine.beraknaSjukfallForEnhet(intygData, intygParametrar);
-        return getSickLeaves(sickLeaveRequestDTO.getDoctorId(), sickLeaveRequestDTO.getCareUnitId(), activeSickLeavesForUnit);
+        return filterSickLeaves(sickLeaveRequestDTO.getDoctorId(), sickLeaveRequestDTO.getCareUnitId(), activeSickLeavesForUnit);
     }
 
-    private static List<SjukfallEnhet> getSickLeaves(String doctorId, String careUnitId, List<SjukfallEnhet> activeSickLeavesForUnit) {
+    private static List<SjukfallEnhet> filterSickLeaves(String doctorId, String careUnitId, List<SjukfallEnhet> activeSickLeavesForUnit) {
         if (careUnitId == null) {
             return activeSickLeavesForUnit.stream()
                 .filter(sickLeave -> sickLeave.getLakare().getId().equals(doctorId)).collect(Collectors.toList());

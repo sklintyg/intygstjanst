@@ -29,17 +29,16 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallCertificateIntygsDataConverter;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
-import se.inera.intyg.intygstjanst.web.service.ListActiveSickLeaveCertificateService;
-import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsData;
+import se.inera.intyg.intygstjanst.web.service.ListActiveSickLeaveService;
 
 @Component
-public class ListActiveSickLeaveCertificateServiceImpl implements ListActiveSickLeaveCertificateService {
+public class ListActiveSickLeaveServiceImpl implements ListActiveSickLeaveService {
 
     private final HsaService hsaService;
     private final SjukfallCertificateDao sjukfallCertificateDao;
     private final IntygsDataConverter intygDataConverter;
 
-    public ListActiveSickLeaveCertificateServiceImpl(HsaService hsaService, SjukfallCertificateDao sjukfallCertificateDao,
+    public ListActiveSickLeaveServiceImpl(HsaService hsaService, SjukfallCertificateDao sjukfallCertificateDao,
         IntygsDataConverter intygDataConverter) {
         this.hsaService = hsaService;
         this.sjukfallCertificateDao = sjukfallCertificateDao;
@@ -52,30 +51,26 @@ public class ListActiveSickLeaveCertificateServiceImpl implements ListActiveSick
         final var hsaIdList = getHsaIdList(unitId);
         final var activeSickLeaveCertificateForCareUnits = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(careGiverHsaId,
             hsaIdList, maxDaysSinceSickLeaveCompleted);
-        final var filteredSickLeaveCertificates = getFilteredSickLeaveCertificates(activeSickLeaveCertificateForCareUnits);
-        final var intygsData = convertToIntygsData(filteredSickLeaveCertificates);
-        return convertToIntygData(intygsData);
+        final var filteredSickLeaveCertificates = filterTestCertificates(activeSickLeaveCertificateForCareUnits);
+        return convertToIntygData(filteredSickLeaveCertificates);
     }
 
-    private static List<SjukfallCertificate> getFilteredSickLeaveCertificates(
+    private static List<SjukfallCertificate> filterTestCertificates(
         List<SjukfallCertificate> activeSickLeaveCertificateForCareUnits) {
         return activeSickLeaveCertificateForCareUnits.stream()
             .filter(sjukfallCertificate -> !sjukfallCertificate.isTestCertificate())
             .collect(Collectors.toList());
     }
 
-    private List<IntygData> convertToIntygData(List<IntygsData> intygsData) {
-        return intygsData.stream().map((intygDataConverter::map)).collect(Collectors.toList());
+    private List<IntygData> convertToIntygData(List<SjukfallCertificate> activeSjukfallCertificateForCareUnits) {
+        return new ArrayList<>(
+            new SjukfallCertificateIntygsDataConverter().buildIntygsData(activeSjukfallCertificateForCareUnits)).stream()
+            .map((intygDataConverter::map)).collect(Collectors.toList());
     }
 
     private List<String> getHsaIdList(String unitId) {
         final var hsaIdList = hsaService.getHsaIdForUnderenheter(unitId);
         hsaIdList.add(unitId);
         return hsaIdList;
-    }
-
-    private List<IntygsData> convertToIntygsData(List<SjukfallCertificate> activeSjukfallCertificateForCareUnits) {
-        return new ArrayList<>(
-            new SjukfallCertificateIntygsDataConverter().buildIntygsData(activeSjukfallCertificateForCareUnits));
     }
 }

@@ -36,7 +36,7 @@ import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.dto.Vardenhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
-import se.inera.intyg.intygstjanst.web.service.ListActiveSickLeaveCertificateService;
+import se.inera.intyg.intygstjanst.web.service.ListActiveSickLeaveService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,7 +45,7 @@ class SickLeavesForCareUnitServiceImplTest {
     @Mock
     private SjukfallEngineService sjukfallEngine;
     @Mock
-    private ListActiveSickLeaveCertificateService listActiveSickLeaveCertificateService;
+    private ListActiveSickLeaveService listActiveSickLeaveService;
 
     private SickLeavesForCareUnitServiceImpl sickLeavesForCareUnitService;
 
@@ -58,7 +58,7 @@ class SickLeavesForCareUnitServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sickLeavesForCareUnitService = new SickLeavesForCareUnitServiceImpl(sjukfallEngine, listActiveSickLeaveCertificateService);
+        sickLeavesForCareUnitService = new SickLeavesForCareUnitServiceImpl(sjukfallEngine, listActiveSickLeaveService);
     }
 
     @Test

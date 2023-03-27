@@ -46,7 +46,7 @@ import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallC
 import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
 
 @ExtendWith(MockitoExtension.class)
-class ListActiveSickLeaveCertificateServiceImplTest {
+class ListActiveSickLeaveServiceImplTest {
 
     private static final int MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 5;
     private static final String UNIT_ID = "unitId";
@@ -57,7 +57,7 @@ class ListActiveSickLeaveCertificateServiceImplTest {
     private SjukfallCertificateDao sjukfallCertificateDao;
     @Mock
     private IntygsDataConverter intygDataConverter;
-    private ListActiveSickLeaveCertificateServiceImpl listActiveSickLeaveCertificateService;
+    private ListActiveSickLeaveServiceImpl listActiveSickLeaveCertificateService;
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
     private static final String DOCTOR_HSA_ID = "doctor-1";
     private static final String DOCTOR_NAME = "doctor-1-name";
@@ -70,7 +70,7 @@ class ListActiveSickLeaveCertificateServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        listActiveSickLeaveCertificateService = new ListActiveSickLeaveCertificateServiceImpl(hsaService, sjukfallCertificateDao,
+        listActiveSickLeaveCertificateService = new ListActiveSickLeaveServiceImpl(hsaService, sjukfallCertificateDao,
             intygDataConverter);
     }
 
