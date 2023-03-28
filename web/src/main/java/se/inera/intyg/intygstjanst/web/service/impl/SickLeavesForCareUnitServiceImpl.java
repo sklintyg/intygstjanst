@@ -58,10 +58,10 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
         final var intygData = intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted());
         final var activeSickLeavesForUnit = sjukfallEngine.beraknaSjukfallForEnhet(intygData, intygParametrar);
-        final var filteredSickleaves = filterSickLeaves(sickLeaveRequestDTO.getDoctorId(), sickLeaveRequestDTO.getUnitId(),
+        final var filteredActiveSickleavesForUnit = filterSickLeaves(sickLeaveRequestDTO.getDoctorId(), sickLeaveRequestDTO.getUnitId(),
             activeSickLeavesForUnit);
-        decorateSickLeaveInformationService.decorate(filteredSickleaves);
-        return filteredSickleaves;
+        decorateSickLeaveInformationService.decorate(filteredActiveSickleavesForUnit);
+        return filteredActiveSickleavesForUnit;
     }
 
     private boolean isNullOrEmpty(String careUnitId) {
