@@ -26,45 +26,42 @@ import se.inera.intyg.infra.integration.hsatk.model.PersonInformation;
 import se.inera.intyg.infra.integration.hsatk.services.legacy.HsaEmployeeServiceImpl;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
-import se.inera.intyg.intygstjanst.web.service.UpdateSickLeaveInformationService;
+import se.inera.intyg.intygstjanst.web.service.DecorateSickLeaveInformationService;
 
-public class UpdateSickLeaveInformationServiceImpl implements UpdateSickLeaveInformationService {
+public class DecorateSickLeaveInformationServiceImpl implements DecorateSickLeaveInformationService {
 
     private final HsaEmployeeServiceImpl hsaEmployeeService;
 
-    public UpdateSickLeaveInformationServiceImpl(HsaEmployeeServiceImpl hsaEmployeeService) {
+    public DecorateSickLeaveInformationServiceImpl(HsaEmployeeServiceImpl hsaEmployeeService) {
         this.hsaEmployeeService = hsaEmployeeService;
     }
 
     @Override
-    public List<SjukfallEnhet> updateName(List<SjukfallEnhet> sickLeaves) {
-        return sickLeaves.stream()
-            .map(this::updateEmployeeName)
-            .collect(Collectors.collectingAndThen(Collectors.toList(),
-                this::updateDuplicateDoctorNamesWithHsaId));
+    public void decorate(List<SjukfallEnhet> sickLeaves) {
+        sickLeaves.forEach(this::updateEmployeeName);
+        decorateWithHsaId(sickLeaves);
     }
 
-    private SjukfallEnhet updateEmployeeName(SjukfallEnhet sickLeave) {
+    private void updateEmployeeName(SjukfallEnhet sickLeave) {
         if (sickLeave.getLakare() == null) {
-            return sickLeave;
+            return;
         }
         final var employeeName = getHsaEmployee(sickLeave.getLakare().getId());
-        return setEmployeeNameIfFound(sickLeave, employeeName);
+        setEmployeeNameIfFound(sickLeave, employeeName);
     }
 
-    private static SjukfallEnhet setEmployeeNameIfFound(SjukfallEnhet sickLeave, String employeeHsaName) {
+    private static void setEmployeeNameIfFound(SjukfallEnhet sickLeave, String employeeHsaName) {
         if (employeeHsaName != null) {
             sickLeave.getLakare().setNamn(employeeHsaName);
         } else {
             sickLeave.getLakare().setNamn(sickLeave.getLakare().getId());
         }
-        return sickLeave;
     }
 
     private String getHsaEmployee(String doctorId) {
         try {
             final var employee = hsaEmployeeService.getEmployee(doctorId, null, null);
-            if (employee.isEmpty()) {
+            if (employee == null || employee.isEmpty()) {
                 return doctorId;
             }
             return getName(employee);
@@ -77,11 +74,11 @@ public class UpdateSickLeaveInformationServiceImpl implements UpdateSickLeaveInf
         return employeeInfo.get(0).getGivenName() + " " + employeeInfo.get(0).getMiddleAndSurName();
     }
 
-    public List<SjukfallEnhet> updateDuplicateDoctorNamesWithHsaId(List<SjukfallEnhet> sickLeaves) {
+    public void decorateWithHsaId(List<SjukfallEnhet> sickLeaves) {
         long numberOfHsaIds = sickLeaves.stream().map(sickLeave -> sickLeave.getLakare().getId()).distinct().count();
         long numberOfLakareNames = sickLeaves.stream().map(sickLeave -> sickLeave.getLakare().getNamn()).distinct().count();
         if (numberOfHsaIds == numberOfLakareNames) {
-            return sickLeaves;
+            return;
         }
         sickLeaves.stream()
             .map(SjukfallEnhet::getLakare)
@@ -95,6 +92,5 @@ public class UpdateSickLeaveInformationServiceImpl implements UpdateSickLeaveInf
             .forEach(entry -> entry.getValue().forEach(lakare ->
                 lakare.setNamn(lakare.getNamn() + " (" + lakare.getId() + ")")
             ));
-        return sickLeaves;
     }
 }

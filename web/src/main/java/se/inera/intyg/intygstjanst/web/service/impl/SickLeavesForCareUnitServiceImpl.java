@@ -31,6 +31,7 @@ import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.intygstjanst.web.service.IntygDataService;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
+import se.inera.intyg.intygstjanst.web.service.DecorateSickLeaveInformationService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 
 @Component
@@ -39,11 +40,13 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
     private static final Logger LOG = LoggerFactory.getLogger(SickLeavesForCareUnitServiceImpl.class);
     private final SjukfallEngineService sjukfallEngine;
     private final IntygDataService intygDataService;
+    private final DecorateSickLeaveInformationService decorateSickLeaveInformationService;
 
     public SickLeavesForCareUnitServiceImpl(SjukfallEngineService sjukfallEngine,
-        IntygDataService intygDataService) {
+        IntygDataService intygDataService, DecorateSickLeaveInformationService decorateSickLeaveInformationService) {
         this.sjukfallEngine = sjukfallEngine;
         this.intygDataService = intygDataService;
+        this.decorateSickLeaveInformationService = decorateSickLeaveInformationService;
     }
 
     @Override
@@ -55,7 +58,10 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
         final var intygData = intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted());
         final var activeSickLeavesForUnit = sjukfallEngine.beraknaSjukfallForEnhet(intygData, intygParametrar);
-        return filterSickLeaves(sickLeaveRequestDTO.getDoctorId(), sickLeaveRequestDTO.getUnitId(), activeSickLeavesForUnit);
+        final var filteredSickleaves = filterSickLeaves(sickLeaveRequestDTO.getDoctorId(), sickLeaveRequestDTO.getUnitId(),
+            activeSickLeavesForUnit);
+        decorateSickLeaveInformationService.decorate(filteredSickleaves);
+        return filteredSickleaves;
     }
 
     private boolean isNullOrEmpty(String careUnitId) {

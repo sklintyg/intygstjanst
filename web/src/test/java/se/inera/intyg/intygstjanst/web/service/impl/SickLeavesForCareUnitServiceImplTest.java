@@ -25,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -33,11 +35,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.dto.Vardenhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.intygstjanst.web.service.IntygDataService;
+import se.inera.intyg.intygstjanst.web.service.DecorateSickLeaveInformationService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,7 +51,8 @@ class SickLeavesForCareUnitServiceImplTest {
     private SjukfallEngineService sjukfallEngine;
     @Mock
     private IntygDataService intygDataService;
-
+    @Mock
+    private DecorateSickLeaveInformationService decorateSickLeaveInformationService;
     private SickLeavesForCareUnitServiceImpl sickLeavesForCareUnitService;
 
     private static final String DOCTOR_ID = "doctorId";
@@ -55,42 +60,54 @@ class SickLeavesForCareUnitServiceImplTest {
     private static final String CARE_UNIT_ID = "careUnitId";
     private static final String ANOTHER_UNIT_ID = "anotherUnitId";
     private static final String UNIT_ID = "unitId";
+    private List<IntygData> intygData;
 
 
     @BeforeEach
     void setUp() {
-        sickLeavesForCareUnitService = new SickLeavesForCareUnitServiceImpl(sjukfallEngine, intygDataService);
+        sickLeavesForCareUnitService = new SickLeavesForCareUnitServiceImpl(sjukfallEngine, intygDataService,
+            decorateSickLeaveInformationService);
+        intygData = List.of(new IntygData(), new IntygData());
     }
 
     @Test
     void shouldReturnSjukfallEnhetList() {
         final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, null, CARE_UNIT_ID);
         final var expectedSickLeave = List.of(createSjukFallEnhet(null, null));
-        when(sjukfallEngine.beraknaSjukfallForEnhet(anyList(), any())).thenReturn(expectedSickLeave);
+        when(intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
+            sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())).thenReturn(intygData);
+        when(sjukfallEngine.beraknaSjukfallForEnhet(eq(intygData), any())).thenReturn(expectedSickLeave);
         final var result = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
+        verify(decorateSickLeaveInformationService).decorate(expectedSickLeave);
         assertIterableEquals(expectedSickLeave, result);
     }
 
     @Test
-    void shouldReturnSjukfallEnhetListSortedOnDoctorId() {
+    void shouldReturnSjukfallEnhetListFilteredOnDoctorId() {
         final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, DOCTOR_ID, CARE_UNIT_ID);
         final var expectedSickLeave = createSjukFallEnhet(DOCTOR_ID, null);
         final var sickLeaves = List.of(expectedSickLeave, createSjukFallEnhet(ANOTHER_DOCTOR_ID, UNIT_ID));
-        when(sjukfallEngine.beraknaSjukfallForEnhet(anyList(), any())).thenReturn(sickLeaves);
+        when(intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
+            sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())).thenReturn(intygData);
+        when(sjukfallEngine.beraknaSjukfallForEnhet(eq(intygData), any())).thenReturn(sickLeaves);
         final var result = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        assertEquals(expectedSickLeave, result.get(0));
+        verify(decorateSickLeaveInformationService).decorate(anyList());
         assertEquals(1, result.size());
+        assertEquals(expectedSickLeave, result.get(0));
     }
 
     @Test
-    void shouldReturnSjukfallEnhetListSortedOnCareUnit() {
+    void shouldReturnSjukfallEnhetListFiltereddOnCareUnit() {
         final var sickLeaveRequestDTO = getSickLeaveRequestDTO(UNIT_ID, null, CARE_UNIT_ID);
         final var expectedSickLeave = createSjukFallEnhet(null, UNIT_ID);
         final var sickLeaves = List.of(expectedSickLeave, createSjukFallEnhet(DOCTOR_ID, ANOTHER_UNIT_ID));
-        when(sjukfallEngine.beraknaSjukfallForEnhet(anyList(), any())).thenReturn(sickLeaves);
+        when(intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
+            sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())).thenReturn(intygData);
+        when(sjukfallEngine.beraknaSjukfallForEnhet(eq(intygData), any())).thenReturn(sickLeaves);
         final var result = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        assertEquals(expectedSickLeave, result.get(0));
+        verify(decorateSickLeaveInformationService).decorate(anyList());
         assertEquals(1, result.size());
+        assertEquals(expectedSickLeave, result.get(0));
     }
 
     @Test

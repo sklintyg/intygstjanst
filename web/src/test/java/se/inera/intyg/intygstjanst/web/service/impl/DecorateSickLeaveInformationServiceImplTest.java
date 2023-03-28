@@ -33,12 +33,12 @@ import se.inera.intyg.infra.integration.hsatk.model.PersonInformation;
 import se.inera.intyg.infra.integration.hsatk.services.legacy.HsaEmployeeServiceImpl;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
-import se.inera.intyg.intygstjanst.web.service.UpdateSickLeaveInformationService;
+import se.inera.intyg.intygstjanst.web.service.DecorateSickLeaveInformationService;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateSickLeaveInformationServiceImplTest {
+class DecorateSickLeaveInformationServiceImplTest {
 
-    private UpdateSickLeaveInformationService updateSickLeaveInformationService;
+    private DecorateSickLeaveInformationService decorateSickLeaveInformationService;
 
     @Mock
     private HsaEmployeeServiceImpl hsaEmployeeService;
@@ -49,7 +49,7 @@ class UpdateSickLeaveInformationServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        updateSickLeaveInformationService = new UpdateSickLeaveInformationServiceImpl(hsaEmployeeService);
+        decorateSickLeaveInformationService = new DecorateSickLeaveInformationServiceImpl(hsaEmployeeService);
     }
 
     @Test
@@ -60,9 +60,20 @@ class UpdateSickLeaveInformationServiceImplTest {
 
         when(hsaEmployeeService.getEmployee(DOCTOR_ID, null, null)).thenReturn(List.of(personInformation));
 
-        final var result = updateSickLeaveInformationService.updateName(sickLeaves);
+        decorateSickLeaveInformationService.decorate(sickLeaves);
 
-        assertEquals(expectedName, result.get(0).getLakare().getNamn());
+        assertEquals(expectedName, sickLeaves.get(0).getLakare().getNamn());
+    }
+
+    @Test
+    void shouldUpdateEmployeeNameWithHsaId() {
+        final var sickLeaves = List.of(createSjukFallEnhet(DOCTOR_ID, DOCTOR_NAME));
+
+        when(hsaEmployeeService.getEmployee(DOCTOR_ID, null, null)).thenReturn(null);
+
+        decorateSickLeaveInformationService.decorate(sickLeaves);
+
+        assertEquals(DOCTOR_ID, sickLeaves.get(0).getLakare().getNamn());
     }
 
     @Test
@@ -75,10 +86,10 @@ class UpdateSickLeaveInformationServiceImplTest {
         when(hsaEmployeeService.getEmployee(DOCTOR_ID, null, null)).thenReturn(List.of(personInformation));
         when(hsaEmployeeService.getEmployee(ANOTHER_DOCTOR_ID, null, null)).thenReturn(List.of(personInformation));
 
-        final var result = updateSickLeaveInformationService.updateName(sickLeaves);
+        decorateSickLeaveInformationService.decorate(sickLeaves);
 
-        assertEquals(expectedName, result.get(0).getLakare().getNamn());
-        assertEquals(secondExpectedName, result.get(1).getLakare().getNamn());
+        assertEquals(expectedName, sickLeaves.get(0).getLakare().getNamn());
+        assertEquals(secondExpectedName, sickLeaves.get(1).getLakare().getNamn());
     }
 
     @Test
@@ -90,10 +101,10 @@ class UpdateSickLeaveInformationServiceImplTest {
 
         when(hsaEmployeeService.getEmployee(DOCTOR_ID, null, null)).thenReturn(List.of(personInformation));
 
-        final var result = updateSickLeaveInformationService.updateName(sickLeaves);
+        decorateSickLeaveInformationService.decorate(sickLeaves);
 
-        assertEquals(expectedName, result.get(0).getLakare().getNamn());
-        assertEquals(secondExpectedName, result.get(1).getLakare().getNamn());
+        assertEquals(expectedName, sickLeaves.get(0).getLakare().getNamn());
+        assertEquals(secondExpectedName, sickLeaves.get(1).getLakare().getNamn());
     }
 
     private static PersonInformation getPersonInformation() {

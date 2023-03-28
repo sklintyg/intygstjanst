@@ -22,7 +22,7 @@ package se.inera.intyg.intygstjanst.web.service;
 import java.util.List;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 
-public interface UpdateSickLeaveInformationService {
+public interface DecorateSickLeaveInformationService {
 
-    List<SjukfallEnhet> updateName(List<SjukfallEnhet> sickLeaves);
+    void decorate(List<SjukfallEnhet> sickLeaves);
 }
