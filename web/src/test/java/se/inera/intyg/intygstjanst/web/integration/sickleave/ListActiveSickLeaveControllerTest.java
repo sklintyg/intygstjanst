@@ -34,7 +34,7 @@ import org.springframework.http.ResponseEntity;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestResponseDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 
 @ExtendWith(MockitoExtension.class)
 class ListActiveSickLeaveControllerTest {
@@ -59,7 +59,7 @@ class ListActiveSickLeaveControllerTest {
     void shouldReturnSickLeaveRequestResponseDTO() {
         final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
         final var sjukfallEnhet = new SjukfallEnhet();
-        final var expectedSickLeaveRequestResponseDTO = new ResponseEntity<>(new SickLeaveRequestResponseDTO(List.of(sjukfallEnhet)),
+        final var expectedSickLeaveRequestResponseDTO = new ResponseEntity<>(new SickLeaveResponseDTO(List.of(sjukfallEnhet)),
             HttpStatus.OK);
         when(sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO)).thenReturn(List.of(sjukfallEnhet));
         final var result = listActiveSickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);

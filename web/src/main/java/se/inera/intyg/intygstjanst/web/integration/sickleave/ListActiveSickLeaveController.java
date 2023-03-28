@@ -24,15 +24,15 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestResponseDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 
 @Path("/sickleave")
+@Controller
 public class ListActiveSickLeaveController {
 
     private final SickLeavesForCareUnitService sickLeavesForCareUnitService;
@@ -46,9 +46,9 @@ public class ListActiveSickLeaveController {
     @Path("/active")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public ResponseEntity<SickLeaveRequestResponseDTO> getActiveSickLeavesForCareUnit(
+    public SickLeaveResponseDTO getActiveSickLeavesForCareUnit(
         @RequestBody SickLeaveRequestDTO sickLeaveRequestDTO) {
         final var activeSickLeavesForCareUnit = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        return new ResponseEntity<>(new SickLeaveRequestResponseDTO(activeSickLeavesForCareUnit), HttpStatus.OK);
+        return new SickLeaveResponseDTO(activeSickLeavesForCareUnit);
     }
 }

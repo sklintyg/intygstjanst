@@ -22,12 +22,14 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.xml.ws.WebServiceException;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.integration.hsatk.model.PersonInformation;
 import se.inera.intyg.infra.integration.hsatk.services.legacy.HsaEmployeeServiceImpl;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.DecorateSickLeaveInformationService;
 
+@Service
 public class DecorateSickLeaveInformationServiceImpl implements DecorateSickLeaveInformationService {
 
     private final HsaEmployeeServiceImpl hsaEmployeeService;

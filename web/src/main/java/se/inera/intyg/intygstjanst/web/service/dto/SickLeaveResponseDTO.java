@@ -20,13 +20,15 @@
 package se.inera.intyg.intygstjanst.web.service.dto;
 
 import java.util.List;
+import lombok.Data;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 
-public class SickLeaveRequestResponseDTO {
+@Data
+public class SickLeaveResponseDTO {
 
     private final List<SjukfallEnhet> content;
 
-    public SickLeaveRequestResponseDTO(List<SjukfallEnhet> content) {
+    public SickLeaveResponseDTO(List<SjukfallEnhet> content) {
         this.content = content;
     }
 }

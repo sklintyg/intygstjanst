@@ -18,10 +18,9 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-       xmlns:http="http://cxf.apache.org/transports/http/configuration"
-       xmlns:cxf="http://cxf.apache.org/core"
-       xsi:schemaLocation="
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+    xmlns:http="http://cxf.apache.org/transports/http/configuration"
+    xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
         http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
         http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd">
@@ -49,6 +48,7 @@
         <bean class="se.inera.intyg.intygstjanst.web.integration.testcertificate.TestCertificateController" />
         <bean class="se.inera.intyg.intygstjanst.web.integration.message.MessageController" />
         <bean class="se.inera.intyg.intygstjanst.web.integration.certificate.TypedCertificateController" />
+        <bean class="se.inera.intyg.intygstjanst.web.integration.sickleave.ListActiveSickLeaveController" />
         <bean class="se.inera.intyg.intygstjanst.web.integration.certificate.CertificateListController" />
         <bean class="se.inera.intyg.intygstjanst.web.integration.certificateexport.CertificateExportController" />
       </jaxrs:serviceBeans>
