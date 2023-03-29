@@ -29,8 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
@@ -59,8 +57,7 @@ class ListActiveSickLeaveControllerTest {
     void shouldReturnSickLeaveRequestResponseDTO() {
         final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
         final var sjukfallEnhet = new SjukfallEnhet();
-        final var expectedSickLeaveRequestResponseDTO = new ResponseEntity<>(new SickLeaveResponseDTO(List.of(sjukfallEnhet)),
-            HttpStatus.OK);
+        final var expectedSickLeaveRequestResponseDTO = new SickLeaveResponseDTO(List.of(sjukfallEnhet));
         when(sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO)).thenReturn(List.of(sjukfallEnhet));
         final var result = listActiveSickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
         assertEquals(expectedSickLeaveRequestResponseDTO, result);
