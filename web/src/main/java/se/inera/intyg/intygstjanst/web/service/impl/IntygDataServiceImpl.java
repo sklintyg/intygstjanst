@@ -46,9 +46,9 @@ public class IntygDataServiceImpl implements IntygDataService {
     }
 
     @Override
-    public List<IntygData> getIntygData(String unitId, int maxDaysSinceSickLeaveCompleted) {
-        final var careGiverHsaId = hsaService.getHsaIdForVardgivare(unitId);
-        final var hsaIdList = getHsaIdList(unitId);
+    public List<IntygData> getIntygData(String careUnitId, int maxDaysSinceSickLeaveCompleted) {
+        final var careGiverHsaId = hsaService.getHsaIdForVardgivare(careUnitId);
+        final var hsaIdList = getHsaIdList(careUnitId);
         final var activeSickLeaveCertificateForCareUnits = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(careGiverHsaId,
             hsaIdList, maxDaysSinceSickLeaveCompleted);
         final var filteredSickLeaveCertificates = filterTestCertificates(activeSickLeaveCertificateForCareUnits);

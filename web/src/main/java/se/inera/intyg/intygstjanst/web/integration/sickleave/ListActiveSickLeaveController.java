@@ -24,6 +24,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
@@ -35,6 +36,7 @@ import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 @Controller
 public class ListActiveSickLeaveController {
 
+    private static final String UTF_8_CHARSET = ";charset=utf-8";
     private final SickLeavesForCareUnitService sickLeavesForCareUnitService;
 
     public ListActiveSickLeaveController(SickLeavesForCareUnitService sickLeavesForCareUnitService) {
@@ -44,11 +46,11 @@ public class ListActiveSickLeaveController {
     @PrometheusTimeMethod
     @POST
     @Path("/active")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
-    public SickLeaveResponseDTO getActiveSickLeavesForCareUnit(
+    public Response getActiveSickLeavesForCareUnit(
         @RequestBody SickLeaveRequestDTO sickLeaveRequestDTO) {
         final var activeSickLeavesForCareUnit = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        return new SickLeaveResponseDTO(activeSickLeavesForCareUnit);
+        return Response.ok(SickLeaveResponseDTO.create(activeSickLeavesForCareUnit)).build();
     }
 }

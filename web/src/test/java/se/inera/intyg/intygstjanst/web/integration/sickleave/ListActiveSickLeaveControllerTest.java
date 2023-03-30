@@ -24,6 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,9 +58,9 @@ class ListActiveSickLeaveControllerTest {
     void shouldReturnSickLeaveRequestResponseDTO() {
         final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
         final var sjukfallEnhet = new SjukfallEnhet();
-        final var expectedSickLeaveRequestResponseDTO = new SickLeaveResponseDTO(List.of(sjukfallEnhet));
+        final var expectedResponse = Response.ok(SickLeaveResponseDTO.create(List.of(sjukfallEnhet))).build();
         when(sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO)).thenReturn(List.of(sjukfallEnhet));
         final var result = listActiveSickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        assertEquals(expectedSickLeaveRequestResponseDTO, result);
+        assertEquals(expectedResponse.getEntity(), result.getEntity());
     }
 }

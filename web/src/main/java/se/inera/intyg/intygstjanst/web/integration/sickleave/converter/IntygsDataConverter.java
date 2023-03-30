@@ -45,7 +45,7 @@ public class IntygsDataConverter {
             to.setVardenhetNamn(from.getSkapadAv().getEnhet().getEnhetsnamn());
             to.setVardgivareId(from.getSkapadAv().getEnhet().getVardgivare().getVardgivarId().getExtension());
             to.setVardgivareNamn(from.getSkapadAv().getEnhet().getVardgivare().getVardgivarnamn());
-            to.setDiagnosKod(new DiagnosKod(from.getDiagnoskod()));
+            to.setDiagnosKod(DiagnosKod.create(from.getDiagnoskod()));
             to.setFormagor(mapFormagor(from.getArbetsformaga().getFormaga()));
             to.setSigneringsTidpunkt(from.getSigneringsTidpunkt());
             to.setEnkeltIntyg(from.isEnkeltIntyg());
@@ -61,7 +61,7 @@ public class IntygsDataConverter {
 
     private List<DiagnosKod> mapDiagnoser(List<String> from) {
         return Optional.ofNullable(from).orElse(Collections.emptyList()).stream()
-            .map(DiagnosKod::new)
+            .map(DiagnosKod::create)
             .collect(Collectors.toList());
     }
 

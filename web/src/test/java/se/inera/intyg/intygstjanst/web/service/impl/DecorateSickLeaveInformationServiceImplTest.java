@@ -123,7 +123,7 @@ class DecorateSickLeaveInformationServiceImplTest {
 
     private static SjukfallEnhet createSjukFallEnhet(String doctorId, String doctorName) {
         SjukfallEnhet sickLeaveUnit = new SjukfallEnhet();
-        Lakare lakare = new Lakare(doctorId, doctorName);
+        Lakare lakare = Lakare.create(doctorId, doctorName);
         sickLeaveUnit.setLakare(lakare);
         return sickLeaveUnit;
     }

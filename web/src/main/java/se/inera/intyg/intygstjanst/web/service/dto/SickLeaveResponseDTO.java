@@ -20,15 +20,42 @@
 package se.inera.intyg.intygstjanst.web.service.dto;
 
 import java.util.List;
-import lombok.Data;
+import java.util.Objects;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 
-@Data
+
 public class SickLeaveResponseDTO {
 
-    private final List<SjukfallEnhet> content;
+    private List<SjukfallEnhet> content;
 
-    public SickLeaveResponseDTO(List<SjukfallEnhet> content) {
+    public static SickLeaveResponseDTO create(List<SjukfallEnhet> content) {
+        final SickLeaveResponseDTO responseDTO = new SickLeaveResponseDTO();
+        responseDTO.content = content;
+        return responseDTO;
+    }
+
+    public void setContent(List<SjukfallEnhet> content) {
         this.content = content;
+    }
+
+    public List<SjukfallEnhet> getContent() {
+        return content;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final SickLeaveResponseDTO that = (SickLeaveResponseDTO) o;
+        return Objects.equals(content, that.content);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(content);
     }
 }

@@ -40,8 +40,8 @@ import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.dto.Vardenhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
-import se.inera.intyg.intygstjanst.web.service.IntygDataService;
 import se.inera.intyg.intygstjanst.web.service.DecorateSickLeaveInformationService;
+import se.inera.intyg.intygstjanst.web.service.IntygDataService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 
 @ExtendWith(MockitoExtension.class)
@@ -129,10 +129,10 @@ class SickLeavesForCareUnitServiceImplTest {
 
     private static SjukfallEnhet createSjukFallEnhet(String doctorId, String unitId) {
         SjukfallEnhet sickLeaveUnit = new SjukfallEnhet();
-        Lakare lakare = new Lakare(doctorId, null);
+        Lakare lakare = Lakare.create(doctorId, null);
         sickLeaveUnit.setLakare(lakare);
         sickLeaveUnit.setVardenhet(
-            new Vardenhet(unitId, null)
+            Vardenhet.create(unitId, null)
         );
 
         return sickLeaveUnit;
