@@ -34,7 +34,7 @@ public abstract class InternalApiBaseIntegrationTest extends BaseIntegrationTest
     @Before
     public void setupBase() {
         super.setupBase();
-        RestAssured.baseURI = System.getProperty("integration.tests.actuatorUrl", "http://localhost:8081");
+        RestAssured.baseURI = System.getProperty("integration.tests.actuatorUrl", "http://localhost:8180");
     }
 
 }
