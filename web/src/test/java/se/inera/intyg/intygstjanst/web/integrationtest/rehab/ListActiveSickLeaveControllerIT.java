@@ -256,7 +256,8 @@ public class ListActiveSickLeaveControllerIT extends InternalApiBaseIntegrationT
         sjukfallEnhet.setIntygLista(certificateIds);
         sjukfallEnhet.setAktivIntygsId(activeCertificate);
         sjukfallEnhet.setGrader(List.of(75));
-        sjukfallEnhet.setDagar(maxGap > 0 ? getDagarWithGap(fromDays, toDays, maxGap) : toDays.get(0) - fromDays.get(0) + 1);
+        sjukfallEnhet.setDagar(
+            maxGap > 0 ? getEffectiveNumberOfSickDaysByIntyg(fromDays, toDays, maxGap) : toDays.get(0) - fromDays.get(0) + 1);
         if (!recentlyCompleted) {
             sjukfallEnhet.setAktivGrad(75);
         }
@@ -264,7 +265,7 @@ public class ListActiveSickLeaveControllerIT extends InternalApiBaseIntegrationT
         return sjukfallEnhet;
     }
 
-    private int getDagarWithGap(List<Integer> fromDays, List<Integer> toDays, int gap) {
+    private int getEffectiveNumberOfSickDaysByIntyg(List<Integer> fromDays, List<Integer> toDays, int gap) {
         final var sjukfallIntygs = new ArrayList<SjukfallIntyg>();
         sjukfallIntygs.add(
             createIntyg(
