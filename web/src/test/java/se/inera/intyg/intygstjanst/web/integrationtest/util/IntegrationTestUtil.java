@@ -33,6 +33,7 @@ import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
+import se.inera.intyg.intygstjanst.web.integrationtest.rehab.ListActiveSickLeaveControllerIT.SickLeaveITConfigProvider;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 public class IntegrationTestUtil {
@@ -71,10 +72,42 @@ public class IntegrationTestUtil {
         executeRegisterCertificate(requestTemplate);
     }
 
+    public static void registerCertificateWithSickLeaveConfig(SickLeaveITConfigProvider sickLeaveITConfigProvider) {
+        String filePath = getFilePath(IntegrationTestCertificateType.LISJP);
+        final var templateGroup = new STGroupFile(filePath);
+        final var relation = sickLeaveITConfigProvider.getRelationsId() != null
+            ? getRelation(sickLeaveITConfigProvider.getRelationsId(), templateGroup, sickLeaveITConfigProvider.getRelationKod()) : "";
+        ST requestTemplate = templateGroup.getInstanceOf("requestParameterizedLocal");
+        addFieldsForSickLeaveConfig(requestTemplate, sickLeaveITConfigProvider, relation);
+        executeRegisterCertificate(requestTemplate);
+    }
+
+    private static void addFieldsForSickLeaveConfig(ST requestTemplate, SickLeaveITConfigProvider sickLeaveITConfigProvider,
+        String relation) {
+        requestTemplate.add("intygId", sickLeaveITConfigProvider.getCertificateId());
+        requestTemplate.add("personId", sickLeaveITConfigProvider.getPatientId());
+        if (!relation.isEmpty()) {
+            requestTemplate.add("relation", relation);
+        }
+        if (sickLeaveITConfigProvider.getDoctorId() != null) {
+            requestTemplate.add("doctorId", sickLeaveITConfigProvider.getDoctorId());
+        }
+        if (sickLeaveITConfigProvider.getCareProviderId() != null) {
+            requestTemplate.add("careProviderId", sickLeaveITConfigProvider.getCareProviderId());
+        }
+        if (sickLeaveITConfigProvider.getUnitId() != null) {
+            requestTemplate.add("unitId", sickLeaveITConfigProvider.getUnitId());
+        }
+        if (sickLeaveITConfigProvider.getDoctorName() != null) {
+            requestTemplate.add("doctorName", sickLeaveITConfigProvider.getDoctorName());
+        }
+        applyToFromDatesToRequestTemplate(requestTemplate, sickLeaveITConfigProvider.getFromDays(), sickLeaveITConfigProvider.getToDays());
+    }
+
     public static String registerCertificateForErase(IntegrationTestCertificateType type, String careProviderId, String relationId) {
         final var filePath = getFilePath(type);
         final var templateGroup = new STGroupFile(filePath);
-        final var relation = relationId != null ? getRelation(relationId, templateGroup) : "";
+        final var relation = relationId != null ? getRelation(relationId, templateGroup, RelationKod.FRLANG) : "";
         final var requestTemplate = templateGroup.getInstanceOf("requestParameterizedCareProvider");
         final var certificateId = UUID.randomUUID().toString();
         requestTemplate.add("intygId", certificateId);
@@ -84,10 +117,10 @@ public class IntegrationTestUtil {
         return certificateId;
     }
 
-    private static String getRelation(String relationId, STGroupFile templateGroup) {
+    private static String getRelation(String relationId, STGroupFile templateGroup, RelationKod relationKod) {
         final var requestTemplate = templateGroup.getInstanceOf("requestParameterizedRelation");
-        requestTemplate.add("relationCode", RelationKod.FRLANG);
-        requestTemplate.add("relationName", RelationKod.FRLANG.getKlartext());
+        requestTemplate.add("relationCode", relationKod);
+        requestTemplate.add("relationName", relationKod.getKlartext());
         requestTemplate.add("relationId", relationId);
         return requestTemplate.render();
     }

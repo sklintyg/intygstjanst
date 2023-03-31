@@ -43,7 +43,7 @@ public class SjukfallCertificateConverter {
             intyg.setIntygId(intyg.getIntygId());
             intyg.setEnkeltIntyg(false);
             intyg.setFormagor(buildFormaga(sc.getSjukfallCertificateWorkCapacity()));
-            intyg.setDiagnosKod(new DiagnosKod(sc.getDiagnoseCode()));
+            intyg.setDiagnosKod(DiagnosKod.create(sc.getDiagnoseCode()));
             intyg.setLakareId(sc.getSigningDoctorId());
             intyg.setLakareNamn(sc.getSigningDoctorName());
             intyg.setSigneringsTidpunkt(sc.getSigningDateTime());
