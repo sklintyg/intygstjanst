@@ -295,7 +295,7 @@ public class ListActiveSickLeaveControllerIT extends InternalApiBaseIntegrationT
         return new Jackson2Mapper(((type, charset) -> new CustomObjectMapper()));
     }
 
-    public class SickLeaveITConfigProvider {
+    public static class SickLeaveITConfigProvider {
 
         private final String careProviderId;
         private final String certificateId;
