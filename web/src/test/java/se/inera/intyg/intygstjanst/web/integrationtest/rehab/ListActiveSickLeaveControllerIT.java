@@ -28,6 +28,8 @@ import io.restassured.http.ContentType;
 import io.restassured.internal.mapping.Jackson2Mapper;
 import io.restassured.mapper.ObjectMapper;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -36,11 +38,16 @@ import org.junit.jupiter.api.Test;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.util.integration.json.CustomObjectMapper;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
+import se.inera.intyg.infra.sjukfall.dto.Formaga;
+import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.Patient;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.infra.sjukfall.dto.SjukfallIntyg;
 import se.inera.intyg.infra.sjukfall.dto.Vardenhet;
 import se.inera.intyg.infra.sjukfall.dto.Vardgivare;
+import se.inera.intyg.infra.sjukfall.engine.LocalDateInterval;
+import se.inera.intyg.infra.sjukfall.engine.SjukfallLangdCalculator;
 import se.inera.intyg.intygstjanst.web.integrationtest.InternalApiBaseIntegrationTest;
 import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
@@ -50,10 +57,8 @@ public class ListActiveSickLeaveControllerIT extends InternalApiBaseIntegrationT
 
     private static final String CERTIFICATE_ID_1 = "certificateId1";
     private static final String CERTIFICATE_ID_2 = "certificateId2";
-
     private static final String PATIENT_ID_1 = "191212121212";
     private static final String PATIENT_ID_2 = "190101010101";
-
     private static final String UNIT_ID = "TSTNMT2321000156-ALMC";
     private static final String ANOTHER_UNIT_ID = "TSTNMT2321000156-ALMP";
     private static final String CARE_UNIT_ID = "TSTNMT2321000156-ALMC";
@@ -65,12 +70,13 @@ public class ListActiveSickLeaveControllerIT extends InternalApiBaseIntegrationT
     private static final String ANOTHER_EMPLOYEE_HSA_ID = "TSTNMT2321000156-1079";
     private static final String BASE_URI = "http://localhost:8180";
     private static final String API_ENDPOINT = "inera-certificate/internalapi/sickleave/active";
-    private static final String REQUEST_TEMPLATE = "requestParameterizedLocal";
+    private static final String REQUEST_LISJP_SIGN_DATE = "2015-12-07T15:48:05";
     private static final int STATUS_CODE = 200;
 
     @BeforeEach
     void beforeEach() {
         RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
+        deleteDataForCareProviders();
     }
 
     @AfterEach
@@ -93,8 +99,8 @@ public class ListActiveSickLeaveControllerIT extends InternalApiBaseIntegrationT
 
         final var sickLeaveRequestDTO = getRequest(null, CARE_UNIT_ID, null, 0, 0);
         final var expectedResponse = List.of(
-            getExpectSjukfallEnhet(0, 5, List.of(CERTIFICATE_ID_1), CERTIFICATE_ID_1, PATIENT_ID_1, false),
-            getExpectSjukfallEnhet(0, 5, List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_2, false));
+            getExpectSjukfallEnhet(List.of(0), List.of(5), List.of(CERTIFICATE_ID_1), CERTIFICATE_ID_1, PATIENT_ID_1, false, 0),
+            getExpectSjukfallEnhet(List.of(0), List.of(5), List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_2, false, 0));
         final var response = getResponse(sickLeaveRequestDTO);
 
         assertEquals(expectedResponse, response);
@@ -109,8 +115,8 @@ public class ListActiveSickLeaveControllerIT extends InternalApiBaseIntegrationT
 
         final var sickLeaveRequestDTO = getRequest(null, CARE_UNIT_ID, null, 0, 3);
         final var expectedResponse = List.of(
-            getExpectSjukfallEnhet(-5, -3, List.of(CERTIFICATE_ID_1), CERTIFICATE_ID_1, PATIENT_ID_1, true),
-            getExpectSjukfallEnhet(-5, -3, List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_2, true));
+            getExpectSjukfallEnhet(List.of(-5), List.of(-3), List.of(CERTIFICATE_ID_1), CERTIFICATE_ID_1, PATIENT_ID_1, true, 0),
+            getExpectSjukfallEnhet(List.of(-5), List.of(-3), List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_2, true, 0));
         final var response = getResponse(sickLeaveRequestDTO);
 
         assertEquals(expectedResponse, response);
@@ -127,7 +133,7 @@ public class ListActiveSickLeaveControllerIT extends InternalApiBaseIntegrationT
 
         final var sickLeaveRequestDTO = getRequest(null, CARE_UNIT_ID, null, 0, 0);
         final var expectedResponse = List.of(
-            getExpectSjukfallEnhet(0, 5, List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_2, false));
+            getExpectSjukfallEnhet(List.of(0), List.of(5), List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_2, false, 0));
         final var response = getResponse(sickLeaveRequestDTO);
 
         assertEquals(expectedResponse, response);
@@ -142,7 +148,7 @@ public class ListActiveSickLeaveControllerIT extends InternalApiBaseIntegrationT
 
         final var sickLeaveRequestDTO = getRequest(null, CARE_UNIT_ID, EMPLOYEE_HSA_ID, 0, 0);
         final var expectedResponse = List.of(
-            getExpectSjukfallEnhet(0, 5, List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_2, false));
+            getExpectSjukfallEnhet(List.of(0), List.of(5), List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_2, false, 0));
         final var response = getResponse(sickLeaveRequestDTO);
 
         assertEquals(expectedResponse, response);
@@ -157,7 +163,7 @@ public class ListActiveSickLeaveControllerIT extends InternalApiBaseIntegrationT
 
         final var sickLeaveRequestDTO = getRequest(UNIT_ID, CARE_UNIT_ID, null, 0, 0);
         final var expectedResponse = List.of(
-            getExpectSjukfallEnhet(0, 5, List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_2, false));
+            getExpectSjukfallEnhet(List.of(0), List.of(5), List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_2, false, 0));
         final var response = getResponse(sickLeaveRequestDTO);
 
         assertEquals(expectedResponse, response);
@@ -172,7 +178,9 @@ public class ListActiveSickLeaveControllerIT extends InternalApiBaseIntegrationT
 
         final var sickLeaveRequestDTO = getRequest(null, CARE_UNIT_ID, null, 5, 0);
         final var expectedResponse = List.of(
-            getExpectSjukfallEnhet(0, 20, List.of(CERTIFICATE_ID_1, CERTIFICATE_ID_2), CERTIFICATE_ID_1, PATIENT_ID_1, false));
+            getExpectSjukfallEnhet(List.of(0, 10), List.of(5, 20), List.of(CERTIFICATE_ID_1, CERTIFICATE_ID_2), CERTIFICATE_ID_1,
+                PATIENT_ID_1, false,
+                sickLeaveRequestDTO.getMaxCertificateGap()));
         final var response = getResponse(sickLeaveRequestDTO);
 
         assertEquals(expectedResponse, response);
@@ -185,7 +193,7 @@ public class ListActiveSickLeaveControllerIT extends InternalApiBaseIntegrationT
 
         final var sickLeaveRequestDTO = getRequest(null, CARE_UNIT_ID, null, 0, 0);
         final var expectedResponse = List.of(
-            getExpectSjukfallEnhet(0, 5, List.of(CERTIFICATE_ID_1), CERTIFICATE_ID_1, PATIENT_ID_1, false)
+            getExpectSjukfallEnhet(List.of(0), List.of(5), List.of(CERTIFICATE_ID_1), CERTIFICATE_ID_1, PATIENT_ID_1, false, 0)
         );
         final var response = getResponse(sickLeaveRequestDTO);
 
@@ -201,7 +209,7 @@ public class ListActiveSickLeaveControllerIT extends InternalApiBaseIntegrationT
 
         final var sickLeaveRequestDTO = getRequest(null, CARE_UNIT_ID, null, 0, 0);
         final var expectedResponse = List.of(
-            getExpectSjukfallEnhet(0, 5, List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_1, false));
+            getExpectSjukfallEnhet(List.of(0), List.of(5), List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_1, false, 0));
         final var response = getResponse(sickLeaveRequestDTO);
 
         assertEquals(expectedResponse, response);
@@ -216,14 +224,15 @@ public class ListActiveSickLeaveControllerIT extends InternalApiBaseIntegrationT
 
         final var sickLeaveRequestDTO = getRequest(null, CARE_UNIT_ID, null, 0, 0);
         final var expectedResponse = List.of(
-            getExpectSjukfallEnhet(0, 5, List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_1, false));
+            getExpectSjukfallEnhet(List.of(0), List.of(5), List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_1, false, 0));
         final var response = getResponse(sickLeaveRequestDTO);
 
         assertEquals(expectedResponse, response);
     }
 
-    private SjukfallEnhet getExpectSjukfallEnhet(int fromDays, int toDays, List<String> certificateIds, String activeCertificate,
-        String patientId, boolean recentlyCompleted) {
+    private SjukfallEnhet getExpectSjukfallEnhet(List<Integer> fromDays, List<Integer> toDays, List<String> certificateIds,
+        String activeCertificate,
+        String patientId, boolean recentlyCompleted, Integer maxGap) {
         final var sjukfallEnhet = new SjukfallEnhet();
         sjukfallEnhet.setVardgivare(
             Vardgivare.create(CARE_PROVIDER_ID, null)
@@ -241,16 +250,47 @@ public class ListActiveSickLeaveControllerIT extends InternalApiBaseIntegrationT
             DiagnosKod.create("S47")
         );
         sjukfallEnhet.setBiDiagnoser(Collections.emptyList());
-        sjukfallEnhet.setStart(LocalDate.now().plusDays(fromDays));
-        sjukfallEnhet.setSlut(LocalDate.now().plusDays(toDays));
+        sjukfallEnhet.setStart(LocalDate.now().plusDays(fromDays.get(0)));
+        sjukfallEnhet.setSlut(LocalDate.now().plusDays(toDays.get(toDays.size() - 1)));
         sjukfallEnhet.setIntyg(certificateIds.size());
         sjukfallEnhet.setIntygLista(certificateIds);
         sjukfallEnhet.setAktivIntygsId(activeCertificate);
         sjukfallEnhet.setGrader(List.of(75));
+        sjukfallEnhet.setDagar(maxGap > 0 ? getDagarWithGap(fromDays, toDays, maxGap) : toDays.get(0) - fromDays.get(0) + 1);
         if (!recentlyCompleted) {
             sjukfallEnhet.setAktivGrad(75);
         }
+
         return sjukfallEnhet;
+    }
+
+    private int getDagarWithGap(List<Integer> fromDays, List<Integer> toDays, int gap) {
+        final var sjukfallIntygs = new ArrayList<SjukfallIntyg>();
+        sjukfallIntygs.add(
+            createIntyg(
+                LocalDateTime.parse(REQUEST_LISJP_SIGN_DATE), gap,
+                new LocalDateInterval(LocalDate.now().plusDays(fromDays.get(0)), LocalDate.now().plusDays(toDays.get(0)))));
+        sjukfallIntygs.add(
+            createIntyg(
+                LocalDateTime.parse(REQUEST_LISJP_SIGN_DATE), gap,
+                new LocalDateInterval(LocalDate.now().plusDays(fromDays.get(1)), LocalDate.now().plusDays(toDays.get(1)))));
+        return SjukfallLangdCalculator.getEffectiveNumberOfSickDaysByIntyg(sjukfallIntygs, gap);
+    }
+
+    private SjukfallIntyg createIntyg(LocalDateTime signeringsTidpunkt, int gap, LocalDateInterval... intervals) {
+        final List<Formaga> formagor = new ArrayList<>();
+
+        for (LocalDateInterval i : intervals) {
+            int nedsattning = 100;
+            formagor.add(new Formaga(i.getStartDate(), i.getEndDate(), nedsattning));
+        }
+
+        IntygData intygData = new IntygData();
+        intygData.setFormagor(formagor);
+        intygData.setSigneringsTidpunkt(signeringsTidpunkt);
+
+        SjukfallIntyg.SjukfallIntygBuilder builder = new SjukfallIntyg.SjukfallIntygBuilder(intygData, LocalDate.now(), gap);
+        return builder.build();
     }
 
     private String formatPatientId(String patientId) {
