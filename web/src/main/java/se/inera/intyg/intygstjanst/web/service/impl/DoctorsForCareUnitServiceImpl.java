@@ -65,12 +65,12 @@ public class DoctorsForCareUnitServiceImpl implements DoctorsForCareUnitService 
         final var doctorIds = sjukfallCertificateDao.findDoctorsWithActiveSickLeavesForCareUnits(careGiverHsaId, subUnitIdsForCareUnit,
             maxDaysSinceSickLeaveCompleted);
 
-        final var convertToDoctors = convertToDoctors(doctorIds);
-        decorateWithHsaId(convertToDoctors);
-        return sortedActiveDoctorsForCareUnit(convertToDoctors);
+        final var activeDoctors = convertToDoctors(doctorIds);
+        decorateWithHsaId(activeDoctors);
+        return sortedDoctorsForCareUnit(activeDoctors);
     }
 
-    private List<Lakare> sortedActiveDoctorsForCareUnit(List<Lakare> doctorIdsConvertedToDoctors) {
+    private List<Lakare> sortedDoctorsForCareUnit(List<Lakare> doctorIdsConvertedToDoctors) {
         return doctorIdsConvertedToDoctors.stream()
             .sorted(Comparator.comparing(Lakare::getNamn))
             .collect(Collectors.toList());
