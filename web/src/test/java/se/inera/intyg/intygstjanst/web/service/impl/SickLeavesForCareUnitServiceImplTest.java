@@ -40,8 +40,8 @@ import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.dto.Vardenhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
-import se.inera.intyg.intygstjanst.web.service.DecorateSickLeaveInformationService;
 import se.inera.intyg.intygstjanst.web.service.IntygDataService;
+import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,7 +52,7 @@ class SickLeavesForCareUnitServiceImplTest {
     @Mock
     private IntygDataService intygDataService;
     @Mock
-    private DecorateSickLeaveInformationService decorateSickLeaveInformationService;
+    private SickLeaveInformationService sickLeaveInformationService;
     private SickLeavesForCareUnitServiceImpl sickLeavesForCareUnitService;
 
     private static final String DOCTOR_ID = "doctorId";
@@ -66,7 +66,7 @@ class SickLeavesForCareUnitServiceImplTest {
     @BeforeEach
     void setUp() {
         sickLeavesForCareUnitService = new SickLeavesForCareUnitServiceImpl(sjukfallEngine, intygDataService,
-            decorateSickLeaveInformationService);
+            sickLeaveInformationService);
         intygData = List.of(new IntygData(), new IntygData());
     }
 
@@ -78,7 +78,7 @@ class SickLeavesForCareUnitServiceImplTest {
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())).thenReturn(intygData);
         when(sjukfallEngine.beraknaSjukfallForEnhet(eq(intygData), any())).thenReturn(expectedSickLeave);
         final var result = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        verify(decorateSickLeaveInformationService).decorate(expectedSickLeave);
+        verify(sickLeaveInformationService).updateAndDecorateDoctorName(expectedSickLeave);
         assertIterableEquals(expectedSickLeave, result);
     }
 
@@ -91,7 +91,7 @@ class SickLeavesForCareUnitServiceImplTest {
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())).thenReturn(intygData);
         when(sjukfallEngine.beraknaSjukfallForEnhet(eq(intygData), any())).thenReturn(sickLeaves);
         final var result = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        verify(decorateSickLeaveInformationService).decorate(anyList());
+        verify(sickLeaveInformationService).updateAndDecorateDoctorName(anyList());
         assertEquals(1, result.size());
         assertEquals(expectedSickLeave, result.get(0));
     }
@@ -105,7 +105,7 @@ class SickLeavesForCareUnitServiceImplTest {
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())).thenReturn(intygData);
         when(sjukfallEngine.beraknaSjukfallForEnhet(eq(intygData), any())).thenReturn(sickLeaves);
         final var result = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        verify(decorateSickLeaveInformationService).decorate(anyList());
+        verify(sickLeaveInformationService).updateAndDecorateDoctorName(anyList());
         assertEquals(1, result.size());
         assertEquals(expectedSickLeave, result.get(0));
     }

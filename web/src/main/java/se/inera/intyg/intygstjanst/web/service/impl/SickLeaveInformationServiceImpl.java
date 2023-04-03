@@ -27,21 +27,26 @@ import se.inera.intyg.infra.integration.hsatk.model.PersonInformation;
 import se.inera.intyg.infra.integration.hsatk.services.legacy.HsaEmployeeServiceImpl;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
-import se.inera.intyg.intygstjanst.web.service.DecorateSickLeaveInformationService;
+import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 
 @Service
-public class DecorateSickLeaveInformationServiceImpl implements DecorateSickLeaveInformationService {
+public class SickLeaveInformationServiceImpl implements SickLeaveInformationService {
 
     private final HsaEmployeeServiceImpl hsaEmployeeService;
 
-    public DecorateSickLeaveInformationServiceImpl(HsaEmployeeServiceImpl hsaEmployeeService) {
+    public SickLeaveInformationServiceImpl(HsaEmployeeServiceImpl hsaEmployeeService) {
         this.hsaEmployeeService = hsaEmployeeService;
     }
 
     @Override
-    public void decorate(List<SjukfallEnhet> sickLeaves) {
+    public void updateAndDecorateDoctorName(List<SjukfallEnhet> sickLeaves) {
         sickLeaves.forEach(this::updateEmployeeName);
         decorateWithHsaId(sickLeaves);
+    }
+
+    @Override
+    public Lakare getEmployee(String doctorId) {
+        return Lakare.create(doctorId, getHsaEmployee(doctorId));
     }
 
     private void updateEmployeeName(SjukfallEnhet sickLeave) {

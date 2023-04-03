@@ -20,9 +20,12 @@
 package se.inera.intyg.intygstjanst.web.service;
 
 import java.util.List;
+import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 
-public interface DecorateSickLeaveInformationService {
+public interface SickLeaveInformationService {
 
-    void decorate(List<SjukfallEnhet> sickLeaves);
+    void updateAndDecorateDoctorName(List<SjukfallEnhet> sickLeaves);
+
+    Lakare getEmployee(String doctorId);
 }

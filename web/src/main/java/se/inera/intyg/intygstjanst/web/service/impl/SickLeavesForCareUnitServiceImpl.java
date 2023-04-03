@@ -25,28 +25,28 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.intygstjanst.web.service.IntygDataService;
+import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
-import se.inera.intyg.intygstjanst.web.service.DecorateSickLeaveInformationService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 
-@Component
+@Service
 public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SickLeavesForCareUnitServiceImpl.class);
     private final SjukfallEngineService sjukfallEngine;
     private final IntygDataService intygDataService;
-    private final DecorateSickLeaveInformationService decorateSickLeaveInformationService;
+    private final SickLeaveInformationService sickLeaveInformationService;
 
     public SickLeavesForCareUnitServiceImpl(SjukfallEngineService sjukfallEngine,
-        IntygDataService intygDataService, DecorateSickLeaveInformationService decorateSickLeaveInformationService) {
+        IntygDataService intygDataService, SickLeaveInformationService sickLeaveInformationService) {
         this.sjukfallEngine = sjukfallEngine;
         this.intygDataService = intygDataService;
-        this.decorateSickLeaveInformationService = decorateSickLeaveInformationService;
+        this.sickLeaveInformationService = sickLeaveInformationService;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
         final var activeSickLeavesForUnit = sjukfallEngine.beraknaSjukfallForEnhet(intygData, intygParametrar);
         final var filteredActiveSickleavesForUnit = filterSickLeaves(sickLeaveRequestDTO.getDoctorId(), sickLeaveRequestDTO.getUnitId(),
             activeSickLeavesForUnit);
-        decorateSickLeaveInformationService.decorate(filteredActiveSickleavesForUnit);
+        sickLeaveInformationService.updateAndDecorateDoctorName(filteredActiveSickleavesForUnit);
         return filteredActiveSickleavesForUnit;
     }
 

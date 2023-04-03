@@ -22,7 +22,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
@@ -31,7 +31,7 @@ import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallC
 import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
 import se.inera.intyg.intygstjanst.web.service.IntygDataService;
 
-@Component
+@Service
 public class IntygDataServiceImpl implements IntygDataService {
 
     private final HsaService hsaService;

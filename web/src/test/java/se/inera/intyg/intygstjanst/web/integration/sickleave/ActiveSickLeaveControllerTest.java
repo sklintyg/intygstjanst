@@ -31,26 +31,29 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.web.service.DoctorsForCareUnitService;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 
 @ExtendWith(MockitoExtension.class)
-class ListActiveSickLeaveControllerTest {
+class ActiveSickLeaveControllerTest {
 
     @Mock
     private SickLeavesForCareUnitService sickLeavesForCareUnitService;
-    private ListActiveSickLeaveController listActiveSickLeaveController;
+    @Mock
+    private DoctorsForCareUnitService doctorsForCareUnitService;
+    private ActiveSickLeaveController activeSickLeaveController;
 
     @BeforeEach
     void setUp() {
-        listActiveSickLeaveController = new ListActiveSickLeaveController(sickLeavesForCareUnitService);
+        activeSickLeaveController = new ActiveSickLeaveController(sickLeavesForCareUnitService, doctorsForCareUnitService);
     }
 
     @Test
     void shouldCallGetActiveSickLeavesService() {
         final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
-        listActiveSickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
+        activeSickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
         verify(sickLeavesForCareUnitService).getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
     }
 
@@ -60,7 +63,7 @@ class ListActiveSickLeaveControllerTest {
         final var sjukfallEnhet = new SjukfallEnhet();
         final var expectedResponse = Response.ok(SickLeaveResponseDTO.create(List.of(sjukfallEnhet))).build();
         when(sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO)).thenReturn(List.of(sjukfallEnhet));
-        final var result = listActiveSickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
+        final var result = activeSickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
         assertEquals(expectedResponse.getEntity(), result.getEntity());
     }
 }
