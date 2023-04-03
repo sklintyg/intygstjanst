@@ -26,29 +26,30 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
-import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallCertificateIntygsDataConverter;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
+import se.inera.intyg.intygstjanst.web.service.HsaServiceProvider;
 import se.inera.intyg.intygstjanst.web.service.IntygDataService;
 
 @Service
 public class IntygDataServiceImpl implements IntygDataService {
 
-    private final HsaService hsaService;
+
+    private final HsaServiceProvider hsaServiceProvider;
     private final SjukfallCertificateDao sjukfallCertificateDao;
     private final IntygsDataConverter intygDataConverter;
 
-    public IntygDataServiceImpl(HsaService hsaService, SjukfallCertificateDao sjukfallCertificateDao,
+    public IntygDataServiceImpl(HsaServiceProvider hsaServiceProvider, SjukfallCertificateDao sjukfallCertificateDao,
         IntygsDataConverter intygDataConverter) {
-        this.hsaService = hsaService;
+        this.hsaServiceProvider = hsaServiceProvider;
         this.sjukfallCertificateDao = sjukfallCertificateDao;
         this.intygDataConverter = intygDataConverter;
     }
 
     @Override
     public List<IntygData> getIntygData(String careUnitId, int maxDaysSinceSickLeaveCompleted) {
-        final var careGiverHsaId = hsaService.getHsaIdForVardgivare(careUnitId);
-        final var hsaIdList = getHsaIdList(careUnitId);
+        final var careGiverHsaId = hsaServiceProvider.getCareGiverHsaId(careUnitId);
+        final var hsaIdList = hsaServiceProvider.getUnitAndRelatedSubUnits(careUnitId);
         final var activeSickLeaveCertificateForCareUnits = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(careGiverHsaId,
             hsaIdList, maxDaysSinceSickLeaveCompleted);
         final var filteredSickLeaveCertificates = filterTestCertificates(activeSickLeaveCertificateForCareUnits);
@@ -66,11 +67,5 @@ public class IntygDataServiceImpl implements IntygDataService {
         return new ArrayList<>(
             new SjukfallCertificateIntygsDataConverter().buildIntygsData(activeSjukfallCertificateForCareUnits)).stream()
             .map((intygDataConverter::map)).collect(Collectors.toList());
-    }
-
-    private List<String> getHsaIdList(String unitId) {
-        final var hsaIdList = hsaService.getHsaIdForUnderenheter(unitId);
-        hsaIdList.add(unitId);
-        return hsaIdList;
     }
 }

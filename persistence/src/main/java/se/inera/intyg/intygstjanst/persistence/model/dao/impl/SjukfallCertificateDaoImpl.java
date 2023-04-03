@@ -18,24 +18,21 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
+import com.google.common.base.Strings;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-
-import com.google.common.base.Strings;
-
 import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
@@ -73,6 +70,12 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
 
     @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
     private EntityManager entityManager;
+
+    @Override
+    public List<String> findDoctorsWithActiveSickLeavesForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
+        int getMaxDaysSinceSickLeaveCompleted) {
+        return Collections.emptyList();
+    }
 
     @Override
     public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(
@@ -152,7 +155,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
             .setParameter("ids", ids)
             .getResultList();
 
-        for (var sjukfallCertificate: sjukfallCertificateList) {
+        for (var sjukfallCertificate : sjukfallCertificateList) {
             entityManager.remove(sjukfallCertificate);
         }
     }

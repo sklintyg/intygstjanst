@@ -17,13 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.service.dto;
+package se.inera.intyg.intygstjanst.web.service;
 
-import lombok.Data;
+import java.util.List;
 
-@Data
-public class DoctorsRequestDTO {
+public interface HsaServiceProvider {
 
-    private String careUnitId;
+    String getCareGiverHsaId(String careUnitId);
 
+    List<String> getUnitAndRelatedSubUnits(String careUnitId);
 }

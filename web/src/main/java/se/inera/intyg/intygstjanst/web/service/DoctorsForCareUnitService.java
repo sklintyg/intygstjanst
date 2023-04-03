@@ -21,9 +21,9 @@ package se.inera.intyg.intygstjanst.web.service;
 
 import java.util.List;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
-import se.inera.intyg.intygstjanst.web.service.dto.DoctorsRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
 
 public interface DoctorsForCareUnitService {
 
-    List<Lakare> getActiveDoctorsForCareUnit(DoctorsRequestDTO doctorsRequestDTO);
+    List<Lakare> getActiveDoctorsForCareUnit(PopulateFiltersRequestDTO populateFiltersRequestDTO);
 }

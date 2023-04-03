@@ -63,8 +63,7 @@ public class ActiveSickLeaveController {
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response populateFilters(@RequestBody PopulateFiltersRequestDTO populateFiltersRequestDTO) {
-        final var doctorsForCareUnit = doctorsForCareUnitService.getActiveDoctorsForCareUnit(
-            populateFiltersRequestDTO.getDoctorsRequestDTO());
+        final var doctorsForCareUnit = doctorsForCareUnitService.getActiveDoctorsForCareUnit(populateFiltersRequestDTO);
         return Response.ok(PopulateFiltersResponseDTO.create(doctorsForCareUnit)).build();
     }
 }

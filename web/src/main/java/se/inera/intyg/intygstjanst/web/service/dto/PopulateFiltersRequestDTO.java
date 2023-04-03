@@ -24,5 +24,8 @@ import lombok.Data;
 @Data
 public class PopulateFiltersRequestDTO {
 
-    private DoctorsRequestDTO doctorsRequestDTO;
+    private String careUnitId;
+    private String unitId;
+    private int maxCertificateGap;
+    private int maxDaysSinceSickLeaveCompleted;
 }

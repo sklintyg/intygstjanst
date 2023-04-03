@@ -45,9 +45,13 @@ public interface SjukfallCertificateDao {
 
     /**
      * Erase any data related to test certificates passed as ids.
-     * @param ids   Certificate ids.
+     *
+     * @param ids Certificate ids.
      */
     void eraseTestCertificates(List<String> ids);
 
     int eraseCertificates(List<String> careProviderIds, String careProviderId);
+
+    List<String> findDoctorsWithActiveSickLeavesForCareUnits(String careProviderHsaId, List<String> subUnitIdsForCareUnit,
+        int maxDaysSinceSickLeaveCompleted);
 }

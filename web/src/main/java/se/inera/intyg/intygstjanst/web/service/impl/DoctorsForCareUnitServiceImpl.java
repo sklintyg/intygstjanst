@@ -27,38 +27,68 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.service.DoctorsForCareUnitService;
+import se.inera.intyg.intygstjanst.web.service.HsaServiceProvider;
 import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
-import se.inera.intyg.intygstjanst.web.service.dto.DoctorsRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
 
 @Service
 public class DoctorsForCareUnitServiceImpl implements DoctorsForCareUnitService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DoctorsForCareUnitServiceImpl.class);
     private final SickLeaveInformationService sickLeaveInformationService;
+    private final SjukfallCertificateDao sjukfallCertificateDao;
+    private final HsaServiceProvider hsaServiceProvider;
 
-    public DoctorsForCareUnitServiceImpl(SickLeaveInformationService sickLeaveInformationService) {
+    public DoctorsForCareUnitServiceImpl(SickLeaveInformationService sickLeaveInformationService,
+        SjukfallCertificateDao sjukfallCertificateDao, HsaServiceProvider hsaServiceProvider) {
         this.sickLeaveInformationService = sickLeaveInformationService;
+        this.sjukfallCertificateDao = sjukfallCertificateDao;
+        this.hsaServiceProvider = hsaServiceProvider;
     }
 
     @Override
-    public List<Lakare> getActiveDoctorsForCareUnit(DoctorsRequestDTO doctorsRequestDTO) {
-        final var careUnitId = doctorsRequestDTO.getCareUnitId();
+    public List<Lakare> getActiveDoctorsForCareUnit(PopulateFiltersRequestDTO populateFiltersRequestDTO) {
+        final var careUnitId = populateFiltersRequestDTO.getCareUnitId();
+        final var maxDaysSinceSickLeaveCompleted = populateFiltersRequestDTO.getMaxDaysSinceSickLeaveCompleted();
 
         if (careUnitId == null || careUnitId.isEmpty()) {
             LOG.debug("No care unit id was provided, returning empty list.");
             return Collections.emptyList();
         }
+        final var careGiverHsaId = hsaServiceProvider.getCareGiverHsaId(careUnitId);
+        final var subUnitIdsForCareUnit = hsaServiceProvider.getUnitAndRelatedSubUnits(careUnitId);
 
         LOG.debug("Getting doctors with active sick leaves for care unit:  {}", careUnitId);
 
-        //TODO: Implement search that gets doctors with active sick leaves for care unit.
+        final var doctorIds = sjukfallCertificateDao.findDoctorsWithActiveSickLeavesForCareUnits(careGiverHsaId, subUnitIdsForCareUnit,
+            maxDaysSinceSickLeaveCompleted);
 
-        final var doctorIds = List.of("id1, id2");
+        final var convertToDoctors = convertToDoctors(doctorIds);
+        decorateWithHsaId(convertToDoctors);
+        return sortedActiveDoctorsForCareUnit(convertToDoctors);
+    }
 
-        return doctorIds.stream()
-            .map(sickLeaveInformationService::getEmployee)
+    private List<Lakare> sortedActiveDoctorsForCareUnit(List<Lakare> doctorIdsConvertedToDoctors) {
+        return doctorIdsConvertedToDoctors.stream()
             .sorted(Comparator.comparing(Lakare::getNamn))
             .collect(Collectors.toList());
+    }
+
+    private List<Lakare> convertToDoctors(List<String> doctorIds) {
+        return doctorIds.stream()
+            .map(sickLeaveInformationService::getEmployee)
+            .collect(Collectors.toList());
+    }
+
+    private void decorateWithHsaId(List<Lakare> doctorList) {
+        doctorList.stream()
+            .collect(Collectors.groupingBy(Lakare::getNamn))
+            .forEach((name, doctorNames) -> {
+                if (doctorNames.size() > 1) {
+                    doctorNames.forEach(lakare -> lakare.setNamn(lakare.getNamn() + " (" + lakare.getId() + ")"));
+                }
+            });
     }
 }
