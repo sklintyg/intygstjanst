@@ -58,11 +58,11 @@ public class DoctorsForCareUnitServiceImpl implements DoctorsForCareUnitService 
             return Collections.emptyList();
         }
         final var careGiverHsaId = hsaServiceProvider.getCareGiverHsaId(careUnitId);
-        final var subUnitIdsForCareUnit = hsaServiceProvider.getUnitAndRelatedSubUnits(careUnitId);
+        final var unitAndRelatedSubUnits = hsaServiceProvider.getUnitAndRelatedSubUnits(careUnitId);
 
         LOG.debug("Getting doctors with active sick leaves for care unit:  {}", careUnitId);
 
-        final var doctorIds = sjukfallCertificateDao.findDoctorsWithActiveSickLeavesForCareUnits(careGiverHsaId, subUnitIdsForCareUnit,
+        final var doctorIds = sjukfallCertificateDao.findDoctorsWithActiveSickLeavesForCareUnits(careGiverHsaId, unitAndRelatedSubUnits,
             maxDaysSinceSickLeaveCompleted);
 
         final var activeDoctors = convertToDoctors(doctorIds);
