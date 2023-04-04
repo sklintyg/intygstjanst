@@ -40,7 +40,7 @@ class DoctorsForCareUnitServiceImplTest {
     private SickLeaveInformationService sickLeaveInformationService;
     private DoctorsForCareUnitService doctorsForCareUnitService;
     private static final String DOCTOR_ID = "doctorId";
-    private static final String DOCTOR_NAME = "Arnold";
+    private static final String DOCTOR_NAME = "Bosse";
     private static final String ANOTHER_DOCTOR_NAME = "Ajla";
     private static final String ANOTHER_DOCTOR_ID = "anotherDoctorId";
 
@@ -78,8 +78,8 @@ class DoctorsForCareUnitServiceImplTest {
         when(sickLeaveInformationService.getEmployee(ANOTHER_DOCTOR_ID)).thenReturn(Lakare.create(ANOTHER_DOCTOR_ID, DOCTOR_NAME));
 
         final var expectedResult = List.of(
-            Lakare.create(ANOTHER_DOCTOR_ID, DOCTOR_NAME + " (" + ANOTHER_DOCTOR_ID + ")"),
-            Lakare.create(DOCTOR_ID, DOCTOR_NAME + " (" + DOCTOR_ID + ")"));
+            Lakare.create(DOCTOR_ID, DOCTOR_NAME + " (" + DOCTOR_ID + ")"),
+            Lakare.create(ANOTHER_DOCTOR_ID, DOCTOR_NAME + " (" + ANOTHER_DOCTOR_ID + ")"));
 
         final var result = doctorsForCareUnitService.getActiveDoctorsForCareUnit(sickLeaveCertificates);
 

@@ -40,22 +40,17 @@ public class DoctorsForCareUnitServiceImpl implements DoctorsForCareUnitService 
 
     @Override
     public List<Lakare> getActiveDoctorsForCareUnit(List<SjukfallCertificate> sickLeaveCertificates) {
-        final var activeDoctors = extractDoctorsFromCertificate(sickLeaveCertificates);
+        final var activeDoctors = extractDoctorsFromCertificateAndSortByName(sickLeaveCertificates);
         decorateWithHsaId(activeDoctors);
-        return sortedActiveDoctors(activeDoctors);
+        return activeDoctors;
     }
 
-    private List<Lakare> sortedActiveDoctors(List<Lakare> doctorIdsConvertedToDoctors) {
-        return doctorIdsConvertedToDoctors.stream()
-            .sorted(Comparator.comparing(Lakare::getNamn))
-            .collect(Collectors.toList());
-    }
-
-    private List<Lakare> extractDoctorsFromCertificate(List<SjukfallCertificate> doctorIds) {
+    private List<Lakare> extractDoctorsFromCertificateAndSortByName(List<SjukfallCertificate> doctorIds) {
         return doctorIds.stream()
             .map(SjukfallCertificate::getSigningDoctorId)
             .filter(Objects::nonNull)
             .map(sickLeaveInformationService::getEmployee)
+            .sorted(Comparator.comparing(Lakare::getNamn))
             .collect(Collectors.toList());
     }
 
