@@ -29,77 +29,51 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.service.DoctorsForCareUnitService;
-import se.inera.intyg.intygstjanst.web.service.HsaServiceProvider;
 import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
-import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
 
 @ExtendWith(MockitoExtension.class)
 class DoctorsForCareUnitServiceImplTest {
 
     @Mock
     private SickLeaveInformationService sickLeaveInformationService;
-    @Mock
-    private SjukfallCertificateDao sjukfallCertificateDao;
-    @Mock
-    private HsaServiceProvider hsaServiceProvider;
-
     private DoctorsForCareUnitService doctorsForCareUnitService;
-    private static final String CARE_UNIT_ID = "careUnitId";
     private static final String DOCTOR_ID = "doctorId";
     private static final String DOCTOR_NAME = "Arnold";
     private static final String ANOTHER_DOCTOR_NAME = "Ajla";
     private static final String ANOTHER_DOCTOR_ID = "anotherDoctorId";
-    private static final String ANOTHER_CARE_UNIT_ID = "anotherCareUnitId";
-    private static final String CARE_GIVER_HSA_ID = "careGiverHsaId";
-    private static final int MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED = 5;
 
     @BeforeEach
     void setUp() {
-        doctorsForCareUnitService = new DoctorsForCareUnitServiceImpl(sickLeaveInformationService, sjukfallCertificateDao,
-            hsaServiceProvider);
+        doctorsForCareUnitService = new DoctorsForCareUnitServiceImpl(sickLeaveInformationService);
     }
 
     @Test
     void shouldReturnEmptyList() {
-        final var populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
-        final var result = doctorsForCareUnitService.getActiveDoctorsForCareUnit(populateFiltersRequestDTO);
+        final var sickLeaveCertificates = List.of(new SjukfallCertificate(null));
+        final var result = doctorsForCareUnitService.getActiveDoctorsForCareUnit(sickLeaveCertificates);
         assertEquals(0, result.size());
     }
 
     @Test
     void shouldReturnSortedListOfDoctorsWithActiveSickLeaves() {
-        final var populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
-        populateFiltersRequestDTO.setCareUnitId(CARE_UNIT_ID);
-        populateFiltersRequestDTO.setMaxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED);
+        final var sickLeaveCertificates = List.of(getSjukfallCertificate(DOCTOR_ID), getSjukfallCertificate(ANOTHER_DOCTOR_ID));
 
-        when(hsaServiceProvider.getCareGiverHsaId(CARE_UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
-        when(hsaServiceProvider.getUnitAndRelatedSubUnits(CARE_UNIT_ID)).thenReturn(List.of(CARE_UNIT_ID, ANOTHER_CARE_UNIT_ID));
-        when(sjukfallCertificateDao.findDoctorsWithActiveSickLeavesForCareUnits(CARE_GIVER_HSA_ID,
-            List.of(CARE_UNIT_ID, ANOTHER_CARE_UNIT_ID), MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED))
-            .thenReturn(List.of(DOCTOR_ID, ANOTHER_DOCTOR_ID));
         when(sickLeaveInformationService.getEmployee(DOCTOR_ID)).thenReturn(Lakare.create(DOCTOR_ID, DOCTOR_NAME));
         when(sickLeaveInformationService.getEmployee(ANOTHER_DOCTOR_ID)).thenReturn(Lakare.create(ANOTHER_DOCTOR_ID, ANOTHER_DOCTOR_NAME));
 
         final var expectedResult = List.of(Lakare.create(ANOTHER_DOCTOR_ID, ANOTHER_DOCTOR_NAME), Lakare.create(DOCTOR_ID, DOCTOR_NAME));
 
-        final var result = doctorsForCareUnitService.getActiveDoctorsForCareUnit(populateFiltersRequestDTO);
+        final var result = doctorsForCareUnitService.getActiveDoctorsForCareUnit(sickLeaveCertificates);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     void shouldDecorateWithHsaId() {
-        final var populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
-        populateFiltersRequestDTO.setCareUnitId(CARE_UNIT_ID);
-        populateFiltersRequestDTO.setMaxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED);
+        final var sickLeaveCertificates = List.of(getSjukfallCertificate(DOCTOR_ID), getSjukfallCertificate(ANOTHER_DOCTOR_ID));
 
-        when(hsaServiceProvider.getCareGiverHsaId(CARE_UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
-        when(hsaServiceProvider.getUnitAndRelatedSubUnits(CARE_UNIT_ID)).thenReturn(List.of(CARE_UNIT_ID, ANOTHER_CARE_UNIT_ID));
-        when(sjukfallCertificateDao.findDoctorsWithActiveSickLeavesForCareUnits(CARE_GIVER_HSA_ID,
-            List.of(CARE_UNIT_ID, ANOTHER_CARE_UNIT_ID), MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED))
-            .thenReturn(List.of(DOCTOR_ID, ANOTHER_DOCTOR_ID));
         when(sickLeaveInformationService.getEmployee(DOCTOR_ID)).thenReturn(Lakare.create(DOCTOR_ID, DOCTOR_NAME));
         when(sickLeaveInformationService.getEmployee(ANOTHER_DOCTOR_ID)).thenReturn(Lakare.create(ANOTHER_DOCTOR_ID, DOCTOR_NAME));
 
@@ -107,8 +81,14 @@ class DoctorsForCareUnitServiceImplTest {
             Lakare.create(ANOTHER_DOCTOR_ID, DOCTOR_NAME + " (" + ANOTHER_DOCTOR_ID + ")"),
             Lakare.create(DOCTOR_ID, DOCTOR_NAME + " (" + DOCTOR_ID + ")"));
 
-        final var result = doctorsForCareUnitService.getActiveDoctorsForCareUnit(populateFiltersRequestDTO);
+        final var result = doctorsForCareUnitService.getActiveDoctorsForCareUnit(sickLeaveCertificates);
 
         assertEquals(expectedResult, result);
+    }
+
+    private SjukfallCertificate getSjukfallCertificate(String id) {
+        final var sjukfallCertificate = new SjukfallCertificate(id);
+        sjukfallCertificate.setSigningDoctorId(id);
+        return sjukfallCertificate;
     }
 }

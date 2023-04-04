@@ -33,7 +33,7 @@ import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
-import se.inera.intyg.intygstjanst.web.integrationtest.rehab.ActiveSickLeaveControllerIT.SickLeaveITConfigProvider;
+import se.inera.intyg.intygstjanst.web.integrationtest.rehab.SickLeaveControllerIT.SickLeaveITConfigProvider;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 public class IntegrationTestUtil {

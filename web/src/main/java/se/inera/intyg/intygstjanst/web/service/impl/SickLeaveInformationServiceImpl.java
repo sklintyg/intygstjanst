@@ -22,6 +22,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.xml.ws.WebServiceException;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.integration.hsatk.model.PersonInformation;
 import se.inera.intyg.infra.integration.hsatk.services.legacy.HsaEmployeeServiceImpl;
@@ -33,6 +34,7 @@ import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 public class SickLeaveInformationServiceImpl implements SickLeaveInformationService {
 
     private final HsaEmployeeServiceImpl hsaEmployeeService;
+    private static final String EMPLOYEE_NAME_CACHE_NAME = "employeeNameCache";
 
     public SickLeaveInformationServiceImpl(HsaEmployeeServiceImpl hsaEmployeeService) {
         this.hsaEmployeeService = hsaEmployeeService;
@@ -65,7 +67,8 @@ public class SickLeaveInformationServiceImpl implements SickLeaveInformationServ
         }
     }
 
-    private String getHsaEmployee(String doctorId) {
+    @Cacheable(value = EMPLOYEE_NAME_CACHE_NAME, key = "#doctorId")
+    public String getHsaEmployee(String doctorId) {
         try {
             final var employee = hsaEmployeeService.getEmployee(doctorId, null, null);
             if (employee == null || employee.isEmpty()) {

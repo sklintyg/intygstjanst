@@ -53,7 +53,7 @@ import se.inera.intyg.intygstjanst.web.integrationtest.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 
-public class ActiveSickLeaveControllerIT extends InternalApiBaseIntegrationTest {
+public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
 
     private static final String CERTIFICATE_ID_1 = "certificateId1";
     private static final String CERTIFICATE_ID_2 = "certificateId2";

@@ -72,7 +72,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     private EntityManager entityManager;
 
     @Override
-    public List<String> findDoctorsWithActiveSickLeavesForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
+    public List<SjukfallCertificate> findDoctorsWithActiveSickLeavesForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
         int getMaxDaysSinceSickLeaveCompleted) {
         return Collections.emptyList();
     }

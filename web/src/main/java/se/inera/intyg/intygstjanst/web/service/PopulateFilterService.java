@@ -20,10 +20,10 @@
 package se.inera.intyg.intygstjanst.web.service;
 
 import java.util.List;
-import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
 
-public interface DoctorsForCareUnitService {
+public interface PopulateFilterService {
 
-    List<Lakare> getActiveDoctorsForCareUnit(List<SjukfallCertificate> sickLeaveCertificates);
+    List<SjukfallCertificate> getActiveSickLeaveCertificates(PopulateFiltersRequestDTO populateFiltersRequestDTO);
 }

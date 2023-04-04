@@ -20,6 +20,7 @@
 package se.inera.intyg.intygstjanst.web.service.dto;
 
 import java.util.List;
+import java.util.Objects;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 
 public class PopulateFiltersResponseDTO {
@@ -38,5 +39,29 @@ public class PopulateFiltersResponseDTO {
 
     public void setDoctorsRequestDTO(List<Lakare> doctorsRequestDTO) {
         this.doctorsRequestDTO = doctorsRequestDTO;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final PopulateFiltersResponseDTO that = (PopulateFiltersResponseDTO) o;
+        return Objects.equals(doctorsRequestDTO, that.doctorsRequestDTO);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(doctorsRequestDTO);
+    }
+
+    @Override
+    public String toString() {
+        return "PopulateFiltersResponseDTO{"
+            + "doctorsRequestDTO=" + doctorsRequestDTO
+            + '}';
     }
 }

@@ -52,6 +52,6 @@ public interface SjukfallCertificateDao {
 
     int eraseCertificates(List<String> careProviderIds, String careProviderId);
 
-    List<String> findDoctorsWithActiveSickLeavesForCareUnits(String careGiverHsaId, List<String> subUnitIdsForCareUnit,
+    List<SjukfallCertificate> findDoctorsWithActiveSickLeavesForCareUnits(String careGiverHsaId, List<String> subUnitIdsForCareUnit,
         int maxDaysSinceSickLeaveCompleted);
 }
