@@ -22,8 +22,6 @@ package se.inera.intyg.intygstjanst.web.integrationtest.rehab;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import io.restassured.RestAssured;
-import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.internal.mapping.Jackson2Mapper;
 import io.restassured.mapper.ObjectMapper;
@@ -32,9 +30,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.util.integration.json.CustomObjectMapper;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
@@ -68,19 +66,17 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     private static final String EMPLOYEE_NAME = "Ajla Doktor";
     private static final String ANOTHER_EMPLOYEE_NAME = "Arnold Johanssson";
     private static final String ANOTHER_EMPLOYEE_HSA_ID = "TSTNMT2321000156-1079";
-    private static final String BASE_URI = "http://localhost:8180";
     private static final String API_ENDPOINT = "inera-certificate/internalapi/sickleave/active";
     private static final String REQUEST_LISJP_SIGN_DATE = "2015-12-07T15:48:05";
     private static final int STATUS_CODE = 200;
 
-    @BeforeEach
-    void beforeEach() {
-        RestAssured.requestSpecification = new RequestSpecBuilder().setContentType("application/xml;charset=utf-8").build();
+    @Before
+    public void beforeEach() {
         deleteDataForCareProviders();
     }
 
-    @AfterEach
-    void afterEach() {
+    @After
+    public void afterEach() {
         deleteDataForCareProviders();
     }
 
@@ -91,7 +87,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     }
 
     @Test
-    void shouldReturnListOfActiveSickLeavesForUnit() {
+    public void shouldReturnListOfActiveSickLeavesForUnit() {
         registerCertificateWithParameters(CERTIFICATE_ID_1, PATIENT_ID_1, 0, 5, EMPLOYEE_HSA_ID,
             CARE_PROVIDER_ID, UNIT_ID, EMPLOYEE_NAME, null, null);
         registerCertificateWithParameters(CERTIFICATE_ID_2, PATIENT_ID_2, 0, 5, EMPLOYEE_HSA_ID,
@@ -107,7 +103,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     }
 
     @Test
-    void shouldReturnListOfRecentlyCompletedSickLeavesForUnit() {
+    public void shouldReturnListOfRecentlyCompletedSickLeavesForUnit() {
         registerCertificateWithParameters(CERTIFICATE_ID_1, PATIENT_ID_1, -5, -3,
             EMPLOYEE_HSA_ID, CARE_PROVIDER_ID, UNIT_ID, EMPLOYEE_NAME, null, null);
         registerCertificateWithParameters(CERTIFICATE_ID_2, PATIENT_ID_2, -5, -3,
@@ -123,7 +119,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     }
 
     @Test
-    void shouldNotIncludeRevokedCertificatesForUnit() {
+    public void shouldNotIncludeRevokedCertificatesForUnit() {
         registerCertificateWithParameters(CERTIFICATE_ID_1, PATIENT_ID_1, 0, 5, EMPLOYEE_HSA_ID,
             CARE_PROVIDER_ID, UNIT_ID, EMPLOYEE_NAME, null, null);
         registerCertificateWithParameters(CERTIFICATE_ID_2, PATIENT_ID_2, 0, 5, EMPLOYEE_HSA_ID,
@@ -140,7 +136,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     }
 
     @Test
-    void shouldReturnListOfSickLeavesForUnitFilteredOnDoctorId() {
+    public void shouldReturnListOfSickLeavesForUnitFilteredOnDoctorId() {
         registerCertificateWithParameters(CERTIFICATE_ID_1, PATIENT_ID_1, 0, 5,
             ANOTHER_EMPLOYEE_HSA_ID, CARE_PROVIDER_ID, UNIT_ID, EMPLOYEE_NAME, null, null);
         registerCertificateWithParameters(CERTIFICATE_ID_2, PATIENT_ID_2, 0, 5,
@@ -155,7 +151,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     }
 
     @Test
-    void shouldReturnListOfSickLeavesForUnitFilteredOnUnitId() {
+    public void shouldReturnListOfSickLeavesForUnitFilteredOnUnitId() {
         registerCertificateWithParameters(CERTIFICATE_ID_1, PATIENT_ID_1, 0, 5, EMPLOYEE_HSA_ID,
             CARE_PROVIDER_ID, ANOTHER_UNIT_ID, EMPLOYEE_NAME, null, null);
         registerCertificateWithParameters(CERTIFICATE_ID_2, PATIENT_ID_2, 0, 5, EMPLOYEE_HSA_ID,
@@ -170,7 +166,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     }
 
     @Test
-    void shouldReturnListOfSickLeavesForUnitWithinGap() {
+    public void shouldReturnListOfSickLeavesForUnitWithinGap() {
         registerCertificateWithParameters(CERTIFICATE_ID_1, PATIENT_ID_1, 0, 5,
             EMPLOYEE_HSA_ID, CARE_PROVIDER_ID, UNIT_ID, EMPLOYEE_NAME, null, null);
         registerCertificateWithParameters(CERTIFICATE_ID_2, PATIENT_ID_1, 10, 20,
@@ -187,7 +183,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     }
 
     @Test
-    void shouldUpdateDoctorName() {
+    public void shouldUpdateDoctorName() {
         registerCertificateWithParameters(CERTIFICATE_ID_1, PATIENT_ID_1, 0, 5,
             EMPLOYEE_HSA_ID, CARE_PROVIDER_ID, UNIT_ID, ANOTHER_EMPLOYEE_NAME, null, null);
 
@@ -201,7 +197,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     }
 
     @Test
-    void shouldReturnListOfComplementedSickLeavesForUnit() {
+    public void shouldReturnListOfComplementedSickLeavesForUnit() {
         registerCertificateWithParameters(CERTIFICATE_ID_1, PATIENT_ID_1, 0, 5, EMPLOYEE_HSA_ID,
             CARE_PROVIDER_ID, UNIT_ID, EMPLOYEE_NAME, null, null);
         registerCertificateWithParameters(CERTIFICATE_ID_2, PATIENT_ID_1, 0, 5, EMPLOYEE_HSA_ID,
@@ -216,7 +212,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     }
 
     @Test
-    void shouldReturnListOfReplacedSickLeavesForUnit() {
+    public void shouldReturnListOfReplacedSickLeavesForUnit() {
         registerCertificateWithParameters(CERTIFICATE_ID_1, PATIENT_ID_1, 0, 5, EMPLOYEE_HSA_ID,
             CARE_PROVIDER_ID, UNIT_ID, EMPLOYEE_NAME, null, null);
         registerCertificateWithParameters(CERTIFICATE_ID_2, PATIENT_ID_1, 0, 5, EMPLOYEE_HSA_ID,
@@ -300,7 +296,6 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
 
     private List<SjukfallEnhet> getResponse(SickLeaveRequestDTO sickLeaveRequestDTO) {
         return given()
-            .baseUri(BASE_URI)
             .contentType(ContentType.JSON)
             .body(sickLeaveRequestDTO)
             .expect()
