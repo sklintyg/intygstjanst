@@ -52,7 +52,7 @@ class DoctorsForCareUnitServiceImplTest {
     @Test
     void shouldReturnEmptyList() {
         final var sickLeaveCertificates = List.of(new SjukfallCertificate(null));
-        final var result = doctorsForCareUnitService.getActiveDoctorsForCareUnit(sickLeaveCertificates);
+        final var result = doctorsForCareUnitService.getDoctorsForCareUnit(sickLeaveCertificates);
         assertEquals(0, result.size());
     }
 
@@ -65,7 +65,7 @@ class DoctorsForCareUnitServiceImplTest {
 
         final var expectedResult = List.of(Lakare.create(ANOTHER_DOCTOR_ID, ANOTHER_DOCTOR_NAME), Lakare.create(DOCTOR_ID, DOCTOR_NAME));
 
-        final var result = doctorsForCareUnitService.getActiveDoctorsForCareUnit(sickLeaveCertificates);
+        final var result = doctorsForCareUnitService.getDoctorsForCareUnit(sickLeaveCertificates);
 
         assertEquals(expectedResult, result);
     }
@@ -81,7 +81,7 @@ class DoctorsForCareUnitServiceImplTest {
             Lakare.create(DOCTOR_ID, DOCTOR_NAME + " (" + DOCTOR_ID + ")"),
             Lakare.create(ANOTHER_DOCTOR_ID, DOCTOR_NAME + " (" + ANOTHER_DOCTOR_ID + ")"));
 
-        final var result = doctorsForCareUnitService.getActiveDoctorsForCareUnit(sickLeaveCertificates);
+        final var result = doctorsForCareUnitService.getDoctorsForCareUnit(sickLeaveCertificates);
 
         assertEquals(expectedResult, result);
     }

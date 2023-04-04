@@ -39,10 +39,10 @@ public class DoctorsForCareUnitServiceImpl implements DoctorsForCareUnitService 
     }
 
     @Override
-    public List<Lakare> getActiveDoctorsForCareUnit(List<SjukfallCertificate> sickLeaveCertificates) {
-        final var activeDoctors = extractDoctorsFromCertificateAndSortByName(sickLeaveCertificates);
-        decorateWithHsaId(activeDoctors);
-        return activeDoctors;
+    public List<Lakare> getDoctorsForCareUnit(List<SjukfallCertificate> sickLeaveCertificates) {
+        final var doctorsWithActiveSickLeave = extractDoctorsFromCertificateAndSortByName(sickLeaveCertificates);
+        decorateWithHsaId(doctorsWithActiveSickLeave);
+        return doctorsWithActiveSickLeave;
     }
 
     private List<Lakare> extractDoctorsFromCertificateAndSortByName(List<SjukfallCertificate> doctorIds) {

@@ -25,5 +25,5 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 
 public interface DoctorsForCareUnitService {
 
-    List<Lakare> getActiveDoctorsForCareUnit(List<SjukfallCertificate> sickLeaveCertificates);
+    List<Lakare> getDoctorsForCareUnit(List<SjukfallCertificate> sickLeaveCertificates);
 }

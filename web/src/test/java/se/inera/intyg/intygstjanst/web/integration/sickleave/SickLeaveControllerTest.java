@@ -89,7 +89,7 @@ class SickLeaveControllerTest {
         final var expectedResponse = Response.ok(PopulateFiltersResponseDTO.create(List.of(doctor))).build();
         when(populateFilterService.getActiveSickLeaveCertificates(populateFiltersRequestDTO)).thenReturn(
             List.of(sjukfallCertificate));
-        when(doctorsForCareUnitService.getActiveDoctorsForCareUnit(List.of(sjukfallCertificate))).thenReturn(List.of(doctor));
+        when(doctorsForCareUnitService.getDoctorsForCareUnit(List.of(sjukfallCertificate))).thenReturn(List.of(doctor));
         final var result = sickLeaveController.populateFilters(populateFiltersRequestDTO);
         assertEquals(expectedResponse.getEntity(), result.getEntity());
     }
