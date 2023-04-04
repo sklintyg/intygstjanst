@@ -21,16 +21,28 @@ package se.inera.intyg.intygstjanst.web.service.dto;
 
 import java.util.List;
 import java.util.Objects;
+import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 
 public class PopulateFiltersResponseDTO {
 
     private List<Lakare> activeDoctors;
+    private List<DiagnosKod> diagnosisCodes;
 
-    public static PopulateFiltersResponseDTO create(List<Lakare> doctorsRequestDTO) {
+
+    public static PopulateFiltersResponseDTO create(List<Lakare> doctorsRequestDTO, List<DiagnosKod> diagnosisCodes) {
         final var populateFiltersResponseDTO = new PopulateFiltersResponseDTO();
         populateFiltersResponseDTO.activeDoctors = doctorsRequestDTO;
+        populateFiltersResponseDTO.diagnosisCodes = diagnosisCodes;
         return populateFiltersResponseDTO;
+    }
+
+    public void setDiagnosisCodes(List<DiagnosKod> diagnosisCodes) {
+        this.diagnosisCodes = diagnosisCodes;
+    }
+
+    public List<DiagnosKod> getDiagnosisCodes() {
+        return diagnosisCodes;
     }
 
     public List<Lakare> getActiveDoctors() {

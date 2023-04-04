@@ -30,9 +30,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.web.service.DiagnosisForCareUnitService;
 import se.inera.intyg.intygstjanst.web.service.DoctorsForCareUnitService;
 import se.inera.intyg.intygstjanst.web.service.PopulateFilterService;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
@@ -50,11 +52,14 @@ class SickLeaveControllerTest {
     private DoctorsForCareUnitService doctorsForCareUnitService;
     @Mock
     private PopulateFilterService populateFilterService;
+    @Mock
+    private DiagnosisForCareUnitService diagnosisForCareUnitService;
     private SickLeaveController sickLeaveController;
 
     @BeforeEach
     void setUp() {
-        sickLeaveController = new SickLeaveController(sickLeavesForCareUnitService, doctorsForCareUnitService, populateFilterService);
+        sickLeaveController = new SickLeaveController(sickLeavesForCareUnitService, doctorsForCareUnitService, populateFilterService,
+            diagnosisForCareUnitService);
     }
 
     @Test
@@ -86,10 +91,12 @@ class SickLeaveControllerTest {
         final var populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
         final var doctor = Lakare.create("id", "name");
         final var sjukfallCertificate = new SjukfallCertificate("id");
-        final var expectedResponse = Response.ok(PopulateFiltersResponseDTO.create(List.of(doctor))).build();
+        final var diagnosisCode = DiagnosKod.create("id");
+        final var expectedResponse = Response.ok(PopulateFiltersResponseDTO.create(List.of(doctor), List.of(diagnosisCode))).build();
         when(populateFilterService.getActiveSickLeaveCertificates(populateFiltersRequestDTO)).thenReturn(
             List.of(sjukfallCertificate));
         when(doctorsForCareUnitService.getDoctorsForCareUnit(List.of(sjukfallCertificate))).thenReturn(List.of(doctor));
+        when(diagnosisForCareUnitService.getDiagnosisForCareUnit(List.of(sjukfallCertificate))).thenReturn(List.of(diagnosisCode));
         final var result = sickLeaveController.populateFilters(populateFiltersRequestDTO);
         assertEquals(expectedResponse.getEntity(), result.getEntity());
     }

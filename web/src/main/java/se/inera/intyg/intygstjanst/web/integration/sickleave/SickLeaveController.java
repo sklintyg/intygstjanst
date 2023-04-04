@@ -27,6 +27,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.web.service.DiagnosisForCareUnitService;
 import se.inera.intyg.intygstjanst.web.service.DoctorsForCareUnitService;
 import se.inera.intyg.intygstjanst.web.service.PopulateFilterService;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
@@ -43,11 +44,15 @@ public class SickLeaveController {
     private final DoctorsForCareUnitService doctorsForCareUnitService;
     private final PopulateFilterService populateFilterService;
 
+    private final DiagnosisForCareUnitService diagnosisForCareUnitService;
+
     public SickLeaveController(SickLeavesForCareUnitService sickLeavesForCareUnitService,
-        DoctorsForCareUnitService doctorsForCareUnitService, PopulateFilterService populateFilterService) {
+        DoctorsForCareUnitService doctorsForCareUnitService, PopulateFilterService populateFilterService,
+        DiagnosisForCareUnitService diagnosisForCareUnitService) {
         this.sickLeavesForCareUnitService = sickLeavesForCareUnitService;
         this.doctorsForCareUnitService = doctorsForCareUnitService;
         this.populateFilterService = populateFilterService;
+        this.diagnosisForCareUnitService = diagnosisForCareUnitService;
     }
 
     @PrometheusTimeMethod
@@ -68,6 +73,7 @@ public class SickLeaveController {
     public Response populateFilters(@RequestBody PopulateFiltersRequestDTO populateFiltersRequestDTO) {
         final var sickLeaveCertificate = populateFilterService.getActiveSickLeaveCertificates(populateFiltersRequestDTO);
         final var doctorsForCareUnit = doctorsForCareUnitService.getDoctorsForCareUnit(sickLeaveCertificate);
-        return Response.ok(PopulateFiltersResponseDTO.create(doctorsForCareUnit)).build();
+        final var diagnosisForCareUnit = diagnosisForCareUnitService.getDiagnosisForCareUnit(sickLeaveCertificate);
+        return Response.ok(PopulateFiltersResponseDTO.create(doctorsForCareUnit, diagnosisForCareUnit)).build();
     }
 }
