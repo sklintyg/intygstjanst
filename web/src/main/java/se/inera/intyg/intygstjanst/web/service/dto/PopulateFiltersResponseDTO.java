@@ -25,20 +25,20 @@ import se.inera.intyg.infra.sjukfall.dto.Lakare;
 
 public class PopulateFiltersResponseDTO {
 
-    private List<Lakare> doctorsRequestDTO;
+    private List<Lakare> activeDoctors;
 
     public static PopulateFiltersResponseDTO create(List<Lakare> doctorsRequestDTO) {
         final var populateFiltersResponseDTO = new PopulateFiltersResponseDTO();
-        populateFiltersResponseDTO.doctorsRequestDTO = doctorsRequestDTO;
+        populateFiltersResponseDTO.activeDoctors = doctorsRequestDTO;
         return populateFiltersResponseDTO;
     }
 
-    public List<Lakare> getDoctorsRequestDTO() {
-        return doctorsRequestDTO;
+    public List<Lakare> getActiveDoctors() {
+        return activeDoctors;
     }
 
-    public void setDoctorsRequestDTO(List<Lakare> doctorsRequestDTO) {
-        this.doctorsRequestDTO = doctorsRequestDTO;
+    public void setActiveDoctors(List<Lakare> activeDoctors) {
+        this.activeDoctors = activeDoctors;
     }
 
     @Override
@@ -50,18 +50,18 @@ public class PopulateFiltersResponseDTO {
             return false;
         }
         final PopulateFiltersResponseDTO that = (PopulateFiltersResponseDTO) o;
-        return Objects.equals(doctorsRequestDTO, that.doctorsRequestDTO);
+        return Objects.equals(activeDoctors, that.activeDoctors);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(doctorsRequestDTO);
+        return Objects.hash(activeDoctors);
     }
 
     @Override
     public String toString() {
         return "PopulateFiltersResponseDTO{"
-            + "doctorsRequestDTO=" + doctorsRequestDTO
+            + "doctorsRequestDTO=" + activeDoctors
             + '}';
     }
 }
