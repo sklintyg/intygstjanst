@@ -122,7 +122,7 @@ class SickLeavesForCareUnitServiceImplTest {
         sickLeaveRequestDTO.setMaxCertificateGap(5);
         sickLeaveRequestDTO.setMaxDaysSinceSickLeaveCompleted(5);
         sickLeaveRequestDTO.setUnitId(unitId);
-        sickLeaveRequestDTO.setDoctorId(doctorId);
+        sickLeaveRequestDTO.setDoctorIds(doctorId != null ? List.of(doctorId) : null);
         sickLeaveRequestDTO.setCareUnitId(careUnitId);
         return sickLeaveRequestDTO;
     }

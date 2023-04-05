@@ -58,7 +58,7 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
         final var intygData = intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted());
         final var activeSickLeavesForUnit = sjukfallEngine.beraknaSjukfallForEnhet(intygData, intygParametrar);
-        final var filteredActiveSickleavesForUnit = filterSickLeaves(sickLeaveRequestDTO.getDoctorId(), sickLeaveRequestDTO.getUnitId(),
+        final var filteredActiveSickleavesForUnit = filterSickLeaves(sickLeaveRequestDTO.getDoctorIds(), sickLeaveRequestDTO.getUnitId(),
             activeSickLeavesForUnit);
         sickLeaveInformationService.updateAndDecorateDoctorName(filteredActiveSickleavesForUnit);
         return filteredActiveSickleavesForUnit;
@@ -68,12 +68,13 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
         return careUnitId == null || careUnitId.length() == 0;
     }
 
-    private static List<SjukfallEnhet> filterSickLeaves(String doctorId, String unitId, List<SjukfallEnhet> activeSickLeavesForUnit) {
+    private static List<SjukfallEnhet> filterSickLeaves(List<String> doctorIds, String unitId,
+        List<SjukfallEnhet> activeSickLeavesForUnit) {
         List<SjukfallEnhet> filteredActiveSickleavesForUnit = new ArrayList<>(activeSickLeavesForUnit);
-        if (doctorId != null) {
+        if (doctorIds != null && !doctorIds.isEmpty()) {
             LOG.debug("Filtering response - a doctor shall only see patients 'sjukfall' he/she has issued certificates.");
             filteredActiveSickleavesForUnit = activeSickLeavesForUnit.stream()
-                .filter(sickLeave -> sickLeave.getLakare().getId().equals(doctorId)).collect(Collectors.toList());
+                .filter(sickLeave -> doctorIds.contains(sickLeave.getLakare().getId())).collect(Collectors.toList());
         }
         if (unitId != null) {
             LOG.debug("Filtering response - query for care unit, only including 'sjukfall' with active intyg on specified care unit");

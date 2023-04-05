@@ -313,7 +313,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
         final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
         sickLeaveRequestDTO.setUnitId(unitId);
         sickLeaveRequestDTO.setCareUnitId(careUnitId);
-        sickLeaveRequestDTO.setDoctorId(doctorId);
+        sickLeaveRequestDTO.setDoctorIds(doctorId != null ? List.of(doctorId) : null);
         sickLeaveRequestDTO.setMaxCertificateGap(maxCertificateGap);
         sickLeaveRequestDTO.setMaxDaysSinceSickLeaveCompleted(maxDaysSinceSickLeaveCompleted);
         return sickLeaveRequestDTO;
