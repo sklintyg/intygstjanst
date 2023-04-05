@@ -58,7 +58,7 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
         final var intygData = intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted());
         final var activeSickLeavesForUnit = sjukfallEngine.beraknaSjukfallForEnhet(intygData, intygParametrar);
-        final var filteredActiveSickleavesForUnit = filterSickLeaves(sickLeaveRequestDTO.getDoctorIds(), sickLeaveRequestDTO.getUnitId(),
+        final var filteredActiveSickleavesForUnit = filterSickLeaves(sickLeaveRequestDTO,
             activeSickLeavesForUnit);
         sickLeaveInformationService.updateAndDecorateDoctorName(filteredActiveSickleavesForUnit);
         return filteredActiveSickleavesForUnit;
@@ -68,18 +68,31 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
         return careUnitId == null || careUnitId.length() == 0;
     }
 
-    private static List<SjukfallEnhet> filterSickLeaves(List<String> doctorIds, String unitId,
+    private static List<SjukfallEnhet> filterSickLeaves(SickLeaveRequestDTO sickLeaveRequestDTO,
         List<SjukfallEnhet> activeSickLeavesForUnit) {
         List<SjukfallEnhet> filteredActiveSickleavesForUnit = new ArrayList<>(activeSickLeavesForUnit);
-        if (doctorIds != null && !doctorIds.isEmpty()) {
+        if (sickLeaveRequestDTO.getDoctorIds() != null && !sickLeaveRequestDTO.getDoctorIds().isEmpty()) {
             LOG.debug("Filtering response - a doctor shall only see patients 'sjukfall' he/she has issued certificates.");
-            filteredActiveSickleavesForUnit = activeSickLeavesForUnit.stream()
-                .filter(sickLeave -> doctorIds.contains(sickLeave.getLakare().getId())).collect(Collectors.toList());
+            filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
+                .filter(sickLeave -> sickLeaveRequestDTO.getDoctorIds().contains(sickLeave.getLakare().getId()))
+                .collect(Collectors.toList());
         }
-        if (unitId != null) {
+        if (sickLeaveRequestDTO.getUnitId() != null) {
             LOG.debug("Filtering response - query for care unit, only including 'sjukfall' with active intyg on specified care unit");
-            filteredActiveSickleavesForUnit = activeSickLeavesForUnit.stream()
-                .filter(sickLeave -> sickLeave.getVardenhet().getId().equals(unitId)).collect(Collectors.toList());
+            filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
+                .filter(sickLeave -> sickLeave.getVardenhet().getId().equals(sickLeaveRequestDTO.getUnitId())).collect(Collectors.toList());
+        }
+        if (sickLeaveRequestDTO.getFromSickLeaveLength() != null && sickLeaveRequestDTO.getToSickLeaveLength() != null) {
+            LOG.debug("Filtering response - only including 'sjukfall' within range");
+            filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
+                .filter(sickLeave -> sickLeave.getDagar() >= sickLeaveRequestDTO.getFromSickLeaveLength()
+                    && sickLeave.getDagar() <= sickLeaveRequestDTO.getToSickLeaveLength())
+                .collect(Collectors.toList());
+        }
+        if (sickLeaveRequestDTO.getDiagnosisCode() != null) {
+            filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
+                .filter(sickLeave -> sickLeave.getDiagnosKod().equals(sickLeaveRequestDTO.getDiagnosisCode()))
+                .collect(Collectors.toList());
         }
         return filteredActiveSickleavesForUnit;
     }
