@@ -49,6 +49,10 @@ class SickLeaveControllerTest {
     private PopulateFilterService populateFilterService;
     private SickLeaveController sickLeaveController;
 
+    private static final String DOCTOR_ID = "doctorID";
+    private static final String DOCTOR_NAME = "doctorName";
+    private static final String DIAGNOSIS_ID = "diagnosisId";
+
     @BeforeEach
     void setUp() {
         sickLeaveController = new SickLeaveController(sickLeavesForCareUnitService, populateFilterService);
@@ -81,8 +85,8 @@ class SickLeaveControllerTest {
     @Test
     void shouldReturnPopulateFiltersResonseDTO() {
         final var populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
-        final var doctor = Lakare.create("id", "name");
-        final var diagnosisCode = DiagnosKod.create("id");
+        final var doctor = Lakare.create(DOCTOR_ID, DOCTOR_NAME);
+        final var diagnosisCode = DiagnosKod.create(DIAGNOSIS_ID);
         final var expectedResponse = Response.ok(PopulateFiltersResponseDTO.create(List.of(doctor), List.of(diagnosisCode))).build();
 
         when(populateFilterService.populateFilters(populateFiltersRequestDTO)).thenReturn(
