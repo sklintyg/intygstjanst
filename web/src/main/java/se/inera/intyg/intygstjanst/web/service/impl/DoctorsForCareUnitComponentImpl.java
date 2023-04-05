@@ -40,12 +40,12 @@ public class DoctorsForCareUnitComponentImpl implements DoctorsForCareUnitCompon
 
     @Override
     public List<Lakare> getDoctorsForCareUnit(List<SjukfallCertificate> sickLeaveCertificates) {
-        final var doctorsWithActiveSickLeave = extractDoctorsFromCertificateAndSortByName(sickLeaveCertificates);
+        final var doctorsWithActiveSickLeave = extractDoctorsFromCertificateAndSortedByName(sickLeaveCertificates);
         decorateWithHsaId(doctorsWithActiveSickLeave);
         return doctorsWithActiveSickLeave;
     }
 
-    private List<Lakare> extractDoctorsFromCertificateAndSortByName(List<SjukfallCertificate> doctorIds) {
+    private List<Lakare> extractDoctorsFromCertificateAndSortedByName(List<SjukfallCertificate> doctorIds) {
         return doctorIds.stream()
             .map(SjukfallCertificate::getSigningDoctorId)
             .filter(Objects::nonNull)
