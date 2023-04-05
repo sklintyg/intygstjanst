@@ -27,12 +27,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
-import se.inera.intyg.intygstjanst.web.service.DiagnosisForCareUnitService;
-import se.inera.intyg.intygstjanst.web.service.DoctorsForCareUnitService;
 import se.inera.intyg.intygstjanst.web.service.PopulateFilterService;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
 import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersResponseDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 
@@ -41,18 +38,12 @@ public class SickLeaveController {
 
     private static final String UTF_8_CHARSET = ";charset=utf-8";
     private final SickLeavesForCareUnitService sickLeavesForCareUnitService;
-    private final DoctorsForCareUnitService doctorsForCareUnitService;
     private final PopulateFilterService populateFilterService;
 
-    private final DiagnosisForCareUnitService diagnosisForCareUnitService;
 
-    public SickLeaveController(SickLeavesForCareUnitService sickLeavesForCareUnitService,
-        DoctorsForCareUnitService doctorsForCareUnitService, PopulateFilterService populateFilterService,
-        DiagnosisForCareUnitService diagnosisForCareUnitService) {
+    public SickLeaveController(SickLeavesForCareUnitService sickLeavesForCareUnitService, PopulateFilterService populateFilterService) {
         this.sickLeavesForCareUnitService = sickLeavesForCareUnitService;
-        this.doctorsForCareUnitService = doctorsForCareUnitService;
         this.populateFilterService = populateFilterService;
-        this.diagnosisForCareUnitService = diagnosisForCareUnitService;
     }
 
     @PrometheusTimeMethod
@@ -71,9 +62,7 @@ public class SickLeaveController {
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response populateFilters(@RequestBody PopulateFiltersRequestDTO populateFiltersRequestDTO) {
-        final var sickLeaveCertificate = populateFilterService.getActiveSickLeaveCertificates(populateFiltersRequestDTO);
-        final var doctorsForCareUnit = doctorsForCareUnitService.getDoctorsForCareUnit(sickLeaveCertificate);
-        final var diagnosisForCareUnit = diagnosisForCareUnitService.getDiagnosisForCareUnit(sickLeaveCertificate);
-        return Response.ok(PopulateFiltersResponseDTO.create(doctorsForCareUnit, diagnosisForCareUnit)).build();
+        final var populateFiltersResponseDTO = populateFilterService.populateFilters(populateFiltersRequestDTO);
+        return Response.ok(populateFiltersResponseDTO).build();
     }
 }

@@ -30,15 +30,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.web.service.DoctorsForCareUnitService;
+import se.inera.intyg.intygstjanst.web.service.DoctorsForCareUnitComponent;
 import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 
 @ExtendWith(MockitoExtension.class)
-class DoctorsForCareUnitServiceImplTest {
+class DoctorsForCareUnitComponentImplTest {
 
     @Mock
     private SickLeaveInformationService sickLeaveInformationService;
-    private DoctorsForCareUnitService doctorsForCareUnitService;
+    private DoctorsForCareUnitComponent doctorsForCareUnitComponent;
     private static final String DOCTOR_ID = "doctorId";
     private static final String DOCTOR_NAME = "Bosse";
     private static final String ANOTHER_DOCTOR_NAME = "Ajla";
@@ -46,13 +46,13 @@ class DoctorsForCareUnitServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        doctorsForCareUnitService = new DoctorsForCareUnitServiceImpl(sickLeaveInformationService);
+        doctorsForCareUnitComponent = new DoctorsForCareUnitComponentImpl(sickLeaveInformationService);
     }
 
     @Test
     void shouldReturnEmptyList() {
         final var sickLeaveCertificates = List.of(new SjukfallCertificate(null));
-        final var result = doctorsForCareUnitService.getDoctorsForCareUnit(sickLeaveCertificates);
+        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates);
         assertEquals(0, result.size());
     }
 
@@ -65,7 +65,7 @@ class DoctorsForCareUnitServiceImplTest {
 
         final var expectedResult = List.of(Lakare.create(ANOTHER_DOCTOR_ID, ANOTHER_DOCTOR_NAME), Lakare.create(DOCTOR_ID, DOCTOR_NAME));
 
-        final var result = doctorsForCareUnitService.getDoctorsForCareUnit(sickLeaveCertificates);
+        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates);
 
         assertEquals(expectedResult, result);
     }
@@ -81,7 +81,7 @@ class DoctorsForCareUnitServiceImplTest {
             Lakare.create(DOCTOR_ID, DOCTOR_NAME + " (" + DOCTOR_ID + ")"),
             Lakare.create(ANOTHER_DOCTOR_ID, DOCTOR_NAME + " (" + ANOTHER_DOCTOR_ID + ")"));
 
-        final var result = doctorsForCareUnitService.getDoctorsForCareUnit(sickLeaveCertificates);
+        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates);
 
         assertEquals(expectedResult, result);
     }

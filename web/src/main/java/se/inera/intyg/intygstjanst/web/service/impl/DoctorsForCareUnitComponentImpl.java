@@ -23,18 +23,18 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.web.service.DoctorsForCareUnitService;
+import se.inera.intyg.intygstjanst.web.service.DoctorsForCareUnitComponent;
 import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 
-@Service
-public class DoctorsForCareUnitServiceImpl implements DoctorsForCareUnitService {
+@Component
+public class DoctorsForCareUnitComponentImpl implements DoctorsForCareUnitComponent {
 
     private final SickLeaveInformationService sickLeaveInformationService;
 
-    public DoctorsForCareUnitServiceImpl(SickLeaveInformationService sickLeaveInformationService) {
+    public DoctorsForCareUnitComponentImpl(SickLeaveInformationService sickLeaveInformationService) {
         this.sickLeaveInformationService = sickLeaveInformationService;
     }
 

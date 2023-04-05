@@ -23,7 +23,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,6 +57,15 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         + "  OR (scwc.toDate < :today AND scwc.toDate >= :recentlyClosed)) " // recently closed
         + "AND sc.deleted = FALSE";
 
+    private static final String ACTIVE_SICK_LEAVE_QUERY = "SELECT * "
+        + "FROM SjukfallCertificate sc "
+        + "JOIN sc.sjukfallCertificateWorkCapacity scwc "
+        + "WHERE sc.careGiverId = :careGiverHsaId "
+        + "AND sc.careUnitId IN (:careUnitHsaId) "
+        + "AND ((scwc.fromDate <= :today AND scwc.toDate >= :today) " // active today or...
+        + "  OR (scwc.toDate < :today AND scwc.toDate >= :recentlyClosed)) " // recently closed
+        + "AND sc.deleted = FALSE";
+
     // An intyg is excluded from being part of a Sjukfall if there is a relation KOMPLT or ERSATT to it,
     // unless the intyg replacing or complementing it (e.g. the "from") has been revoked.
     private static final String EXCLUDE_REPLACED_INTYG_QUERY = "SELECT TO_INTYG_ID FROM RELATION r "
@@ -73,8 +81,18 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
 
     @Override
     public List<SjukfallCertificate> findDoctorsWithActiveSickLeavesForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
-        int getMaxDaysSinceSickLeaveCompleted) {
-        return Collections.emptyList();
+        int maxDaysSinceSickLeaveCompleted) {
+
+        String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
+        String recentlyClosed = LocalDate.now().minusDays(maxDaysSinceSickLeaveCompleted).format(DateTimeFormatter.ISO_DATE);
+
+        return entityManager
+            .createQuery(ACTIVE_SICK_LEAVE_QUERY + "", SjukfallCertificate.class)
+            .setParameter("careGiverHsaId", careGiverHsaId)
+            .setParameter("careUnitHsaId", careUnitHsaIds)
+            .setParameter("today", today)
+            .setParameter("recentlyClosed", recentlyClosed)
+            .getResultList();
     }
 
     @Override

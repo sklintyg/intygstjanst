@@ -21,42 +21,64 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.service.DoctorsForCareUnitComponent;
 import se.inera.intyg.intygstjanst.web.service.HsaServiceProvider;
 import se.inera.intyg.intygstjanst.web.service.PopulateFilterService;
 import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersResponseDTO;
 
 @Service
 public class PopulateFilterServiceImpl implements PopulateFilterService {
 
     private static final Logger LOG = LoggerFactory.getLogger(PopulateFilterServiceImpl.class);
     private final SjukfallCertificateDao sjukfallCertificateDao;
+    private final DoctorsForCareUnitComponent doctorsForCareUnitComponent;
     private final HsaServiceProvider hsaServiceProvider;
 
-    public PopulateFilterServiceImpl(SjukfallCertificateDao sjukfallCertificateDao, HsaServiceProvider hsaServiceProvider) {
+    public PopulateFilterServiceImpl(SjukfallCertificateDao sjukfallCertificateDao, DoctorsForCareUnitComponent doctorsForCareUnitComponent,
+        HsaServiceProvider hsaServiceProvider) {
         this.sjukfallCertificateDao = sjukfallCertificateDao;
+        this.doctorsForCareUnitComponent = doctorsForCareUnitComponent;
         this.hsaServiceProvider = hsaServiceProvider;
     }
 
     @Override
-    public List<SjukfallCertificate> getActiveSickLeaveCertificates(PopulateFiltersRequestDTO populateFiltersRequestDTO) {
+    public PopulateFiltersResponseDTO populateFilters(PopulateFiltersRequestDTO populateFiltersRequestDTO) {
         final var careUnitId = populateFiltersRequestDTO.getCareUnitId();
         final var maxDaysSinceSickLeaveCompleted = populateFiltersRequestDTO.getMaxDaysSinceSickLeaveCompleted();
 
         if (careUnitId == null || careUnitId.isEmpty()) {
-            LOG.debug("No care unit id was provided, returning empty list.");
-            return Collections.emptyList();
+            LOG.debug("No care unit id was provided, returning empty response.");
+            return PopulateFiltersResponseDTO.create(Collections.emptyList(), Collections.emptyList());
         }
         final var careGiverHsaId = hsaServiceProvider.getCareGiverHsaId(careUnitId);
         final var unitAndRelatedSubUnits = hsaServiceProvider.getUnitAndRelatedSubUnits(careUnitId);
 
         LOG.debug("Getting doctors with active sick leaves for care unit:  {}", careUnitId);
 
-        return sjukfallCertificateDao.findDoctorsWithActiveSickLeavesForCareUnits(careGiverHsaId,
+        final var sickLeaveCertificates = sjukfallCertificateDao.findDoctorsWithActiveSickLeavesForCareUnits(careGiverHsaId,
             unitAndRelatedSubUnits, maxDaysSinceSickLeaveCompleted);
+
+        final var doctorsForCareUnit = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates);
+        final var diagnosisForCareUnit = getDiagnosisForCareUnit(sickLeaveCertificates);
+
+        return PopulateFiltersResponseDTO.create(doctorsForCareUnit, diagnosisForCareUnit);
+    }
+
+    public List<DiagnosKod> getDiagnosisForCareUnit(List<SjukfallCertificate> sickLeaveCertificates) {
+        return sickLeaveCertificates.stream()
+            .map(SjukfallCertificate::getDiagnoseCode)
+            .filter(Objects::nonNull)
+            .distinct()
+            .map(DiagnosKod::create)
+            .collect(Collectors.toList());
     }
 }

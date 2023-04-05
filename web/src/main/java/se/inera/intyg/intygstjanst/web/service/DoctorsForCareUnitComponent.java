@@ -20,10 +20,10 @@
 package se.inera.intyg.intygstjanst.web.service;
 
 import java.util.List;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
+import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 
-public interface DiagnosisForCareUnitService {
+public interface DoctorsForCareUnitComponent {
 
-    List<DiagnosKod> getDiagnosisForCareUnit(List<SjukfallCertificate> sickLeaveCertificates);
+    List<Lakare> getDoctorsForCareUnit(List<SjukfallCertificate> sickLeaveCertificates);
 }
