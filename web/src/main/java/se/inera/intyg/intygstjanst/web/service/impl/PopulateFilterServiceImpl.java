@@ -62,8 +62,8 @@ public class PopulateFilterServiceImpl implements PopulateFilterService {
         final var careGiverHsaId = hsaServiceProvider.getCareGiverHsaId(careUnitId);
         final var unitAndRelatedSubUnits = hsaServiceProvider.getUnitAndRelatedSubUnits(careUnitId);
 
-        LOG.debug("Getting doctors with active sick leaves for care unit:  {}", careUnitId);
-
+        LOG.debug("Getting active sick leaves for care unit:  {}", careUnitId);
+        
         final var sickLeaveCertificates = sjukfallCertificateDao.findDoctorsWithActiveSickLeavesForCareUnits(careGiverHsaId,
             unitAndRelatedSubUnits, maxDaysSinceSickLeaveCompleted);
 
