@@ -77,7 +77,7 @@ class SickLeavesForCareUnitServiceImplTest {
     void shouldReturnSjukfallEnhetList() {
         final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, null, CARE_UNIT_ID, null, null, null);
         final var expectedSickLeave = List.of(createSjukFallEnhet(DOCTOR_ID, UNIT_ID, DIAGNOSIS_CODE, 0));
-        
+
         when(intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())).thenReturn(intygData);
         when(sjukfallEngine.beraknaSjukfallForEnhet(eq(intygData), any())).thenReturn(expectedSickLeave);
@@ -90,7 +90,7 @@ class SickLeavesForCareUnitServiceImplTest {
     }
 
     @Test
-    void shouldReturnSjukfallEnhetListFilteredOnDoctorId() {
+    void shouldFilterOnDoctorId() {
         final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, DOCTOR_ID, CARE_UNIT_ID, null, null, null);
         final var expectedSickLeave = createSjukFallEnhet(DOCTOR_ID, UNIT_ID, DIAGNOSIS_CODE, 0);
         final var sickLeaves = List.of(expectedSickLeave, createSjukFallEnhet(ANOTHER_DOCTOR_ID, UNIT_ID, DIAGNOSIS_CODE, 0));
@@ -108,7 +108,7 @@ class SickLeavesForCareUnitServiceImplTest {
     }
 
     @Test
-    void shouldReturnSjukfallEnhetListFilteredOnUnit() {
+    void shouldFilterOnUnit() {
         final var sickLeaveRequestDTO = getSickLeaveRequestDTO(UNIT_ID, null, CARE_UNIT_ID, null, null, null);
         final var expectedSickLeave = createSjukFallEnhet(DOCTOR_ID, UNIT_ID, DIAGNOSIS_CODE, 0);
         final var sickLeaves = List.of(expectedSickLeave, createSjukFallEnhet(DOCTOR_ID, ANOTHER_UNIT_ID, DIAGNOSIS_CODE, null));
@@ -126,7 +126,7 @@ class SickLeavesForCareUnitServiceImplTest {
     }
 
     @Test
-    void shouldReturnSjukfallEnhetListFilteredOnToAndFromRange() {
+    void shouldFilterOnDagar() {
         final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, null, CARE_UNIT_ID, 6, 13, null);
         final var expectedSickLeave = createSjukFallEnhet(DOCTOR_ID, UNIT_ID, DIAGNOSIS_CODE, 12);
         final var sickLeaves = List.of(expectedSickLeave, createSjukFallEnhet(DOCTOR_ID, ANOTHER_UNIT_ID, DIAGNOSIS_CODE, 5));
@@ -144,7 +144,7 @@ class SickLeavesForCareUnitServiceImplTest {
     }
 
     @Test
-    void shouldReturnSjukfallEnhetListFilteredOnDiagnosisCode() {
+    void shouldFilterOnDiagnosisCode() {
         final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, null, CARE_UNIT_ID, 6, 13, DiagnosKod.create(DIAGNOSIS_CODE));
         final var expectedSickLeave = createSjukFallEnhet(DOCTOR_ID, UNIT_ID, DIAGNOSIS_CODE, 12);
         final var sickLeaves = List.of(expectedSickLeave, createSjukFallEnhet(DOCTOR_ID, ANOTHER_UNIT_ID, ANOTHER_DIAGNOSIS_CODE, 5));
