@@ -57,7 +57,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         + "  OR (scwc.toDate < :today AND scwc.toDate >= :recentlyClosed)) " // recently closed
         + "AND sc.deleted = FALSE";
 
-    private static final String ACTIVE_SICK_LEAVE_QUERY = "SELECT * "
+    private static final String ACTIVE_SICK_LEAVE_QUERY = "SELECT sc "
         + "FROM SjukfallCertificate sc "
         + "JOIN sc.sjukfallCertificateWorkCapacity scwc "
         + "WHERE sc.careGiverId = :careGiverHsaId "

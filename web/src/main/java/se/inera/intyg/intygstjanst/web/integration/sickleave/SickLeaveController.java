@@ -58,7 +58,7 @@ public class SickLeaveController {
 
     @PrometheusTimeMethod
     @POST
-    @Path("/populate/filters")
+    @Path("/filters")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response populateFilters(@RequestBody PopulateFiltersRequestDTO populateFiltersRequestDTO) {
