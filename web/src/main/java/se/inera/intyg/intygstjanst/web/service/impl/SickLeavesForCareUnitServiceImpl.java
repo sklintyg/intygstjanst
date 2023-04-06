@@ -92,10 +92,10 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
                     && sickLeave.getDagar() <= sickLeaveRequestDTO.getToSickLeaveLength())
                 .collect(Collectors.toList());
         }
-        if (sickLeaveRequestDTO.getDiagnosisCode() != null) {
-            LOG.debug("Filtering response - only including 'sjukfall' with diagnosis code: {}", sickLeaveRequestDTO.getDiagnosisCode());
+        if (sickLeaveRequestDTO.getDiagnosisCodes() != null && !sickLeaveRequestDTO.getDiagnosisCodes().isEmpty()) {
+            LOG.debug("Filtering response - only including 'sjukfall' with diagnosis code: {}", sickLeaveRequestDTO.getDiagnosisCodes());
             filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
-                .filter(sickLeave -> sickLeave.getDiagnosKod().equals(sickLeaveRequestDTO.getDiagnosisCode()))
+                .filter(sickLeave -> sickLeaveRequestDTO.getDiagnosisCodes().contains(sickLeave.getDiagnosKod()))
                 .collect(Collectors.toList());
         }
         return filteredActiveSickleavesForUnit;

@@ -178,7 +178,7 @@ class SickLeavesForCareUnitServiceImplTest {
         sickLeaveRequestDTO.setCareUnitId(careUnitId);
         sickLeaveRequestDTO.setFromSickLeaveLength(fromSickLeaveLength);
         sickLeaveRequestDTO.setToSickLeaveLength(toSickLeaveLength);
-        sickLeaveRequestDTO.setDiagnosisCode(diagnosisCode);
+        sickLeaveRequestDTO.setDiagnosisCodes(diagnosisCode != null ? List.of(diagnosisCode) : null);
         return sickLeaveRequestDTO;
     }
 

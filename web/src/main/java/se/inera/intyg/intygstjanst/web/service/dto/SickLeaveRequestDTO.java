@@ -33,6 +33,6 @@ public class SickLeaveRequestDTO {
     private int maxDaysSinceSickLeaveCompleted;
     private Integer toSickLeaveLength;
     private Integer fromSickLeaveLength;
-    private DiagnosKod diagnosisCode;
+    private List<DiagnosKod> diagnosisCodes;
 
 }
