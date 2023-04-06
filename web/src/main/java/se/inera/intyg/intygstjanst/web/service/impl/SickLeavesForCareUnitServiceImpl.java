@@ -74,30 +74,54 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
         if (sickLeaveRequestDTO.getDoctorIds() != null && !sickLeaveRequestDTO.getDoctorIds().isEmpty()) {
             LOG.debug("Filtering response - a doctor shall only see patients 'sjukfall' he/she has issued certificates. DoctorId: {}",
                 sickLeaveRequestDTO.getDoctorIds());
-            filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
-                .filter(sickLeave -> sickLeaveRequestDTO.getDoctorIds().contains(sickLeave.getLakare().getId()))
-                .collect(Collectors.toList());
+            filteredActiveSickleavesForUnit = filterOnDoctorId(sickLeaveRequestDTO, filteredActiveSickleavesForUnit);
         }
         if (sickLeaveRequestDTO.getUnitId() != null) {
-            LOG.debug("Filtering response - query for care unit, only including 'sjukfall' with active intyg on care unit: {}",
+            LOG.debug("Filtering response - query for unit, only including 'sjukfall' with active intyg on unit: {}",
                 sickLeaveRequestDTO.getUnitId());
-            filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
-                .filter(sickLeave -> sickLeave.getVardenhet().getId().equals(sickLeaveRequestDTO.getUnitId())).collect(Collectors.toList());
+            filteredActiveSickleavesForUnit = filterOnUnitId(sickLeaveRequestDTO, filteredActiveSickleavesForUnit);
         }
         if (sickLeaveRequestDTO.getFromSickLeaveLength() != null && sickLeaveRequestDTO.getToSickLeaveLength() != null) {
             LOG.debug("Filtering response - only including 'sjukfall' with 'dagar' greater than: {} and smaller then: {}",
                 sickLeaveRequestDTO.getFromSickLeaveLength(), sickLeaveRequestDTO.getToSickLeaveLength());
-            filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
-                .filter(sickLeave -> sickLeave.getDagar() >= sickLeaveRequestDTO.getFromSickLeaveLength()
-                    && sickLeave.getDagar() <= sickLeaveRequestDTO.getToSickLeaveLength())
-                .collect(Collectors.toList());
+            filteredActiveSickleavesForUnit = filterOnSickLeaveLength(sickLeaveRequestDTO, filteredActiveSickleavesForUnit);
         }
         if (sickLeaveRequestDTO.getDiagnosisCodes() != null && !sickLeaveRequestDTO.getDiagnosisCodes().isEmpty()) {
             LOG.debug("Filtering response - only including 'sjukfall' with diagnosis code: {}", sickLeaveRequestDTO.getDiagnosisCodes());
-            filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
-                .filter(sickLeave -> sickLeaveRequestDTO.getDiagnosisCodes().contains(sickLeave.getDiagnosKod()))
-                .collect(Collectors.toList());
+            filteredActiveSickleavesForUnit = filterOnDiagnosisCodes(sickLeaveRequestDTO, filteredActiveSickleavesForUnit);
         }
+        return filteredActiveSickleavesForUnit;
+    }
+
+    private static List<SjukfallEnhet> filterOnDoctorId(SickLeaveRequestDTO sickLeaveRequestDTO,
+        List<SjukfallEnhet> filteredActiveSickleavesForUnit) {
+        filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
+            .filter(sickLeave -> sickLeaveRequestDTO.getDoctorIds().contains(sickLeave.getLakare().getId()))
+            .collect(Collectors.toList());
+        return filteredActiveSickleavesForUnit;
+    }
+
+    private static List<SjukfallEnhet> filterOnDiagnosisCodes(SickLeaveRequestDTO sickLeaveRequestDTO,
+        List<SjukfallEnhet> filteredActiveSickleavesForUnit) {
+        filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
+            .filter(sickLeave -> sickLeaveRequestDTO.getDiagnosisCodes().contains(sickLeave.getDiagnosKod()))
+            .collect(Collectors.toList());
+        return filteredActiveSickleavesForUnit;
+    }
+
+    private static List<SjukfallEnhet> filterOnSickLeaveLength(SickLeaveRequestDTO sickLeaveRequestDTO,
+        List<SjukfallEnhet> filteredActiveSickleavesForUnit) {
+        filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
+            .filter(sickLeave -> sickLeave.getDagar() >= sickLeaveRequestDTO.getFromSickLeaveLength()
+                && sickLeave.getDagar() <= sickLeaveRequestDTO.getToSickLeaveLength())
+            .collect(Collectors.toList());
+        return filteredActiveSickleavesForUnit;
+    }
+
+    private static List<SjukfallEnhet> filterOnUnitId(SickLeaveRequestDTO sickLeaveRequestDTO,
+        List<SjukfallEnhet> filteredActiveSickleavesForUnit) {
+        filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
+            .filter(sickLeave -> sickLeave.getVardenhet().getId().equals(sickLeaveRequestDTO.getUnitId())).collect(Collectors.toList());
         return filteredActiveSickleavesForUnit;
     }
 
