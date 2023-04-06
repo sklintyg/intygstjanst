@@ -86,6 +86,20 @@ class DoctorsForCareUnitComponentImplTest {
         assertEquals(expectedResult, result);
     }
 
+    @Test
+    void shouldRemoveDuplicatedDoctors() {
+        final var sickLeaveCertificates = List.of(getSjukfallCertificate(DOCTOR_ID), getSjukfallCertificate(DOCTOR_ID));
+
+        when(sickLeaveInformationService.getEmployee(DOCTOR_ID)).thenReturn(Lakare.create(DOCTOR_ID, DOCTOR_NAME));
+        when(sickLeaveInformationService.getEmployee(DOCTOR_ID)).thenReturn(Lakare.create(DOCTOR_ID, DOCTOR_NAME));
+
+        final var expectedResult = List.of(Lakare.create(DOCTOR_ID, DOCTOR_NAME));
+
+        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates);
+
+        assertEquals(expectedResult, result);
+    }
+
     private SjukfallCertificate getSjukfallCertificate(String id) {
         final var sjukfallCertificate = new SjukfallCertificate(id);
         sjukfallCertificate.setSigningDoctorId(id);

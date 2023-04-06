@@ -86,7 +86,7 @@ class PopulateFilterServiceImplTest {
 
         when(hsaServiceProvider.getCareGiverHsaId(CARE_UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
         when(hsaServiceProvider.getUnitAndRelatedSubUnits(CARE_UNIT_ID)).thenReturn(unitAndRelatedSubUnits);
-        when(sjukfallCertificateDao.findDoctorsWithActiveSickLeavesForCareUnits(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits,
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits,
             MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED)).thenReturn(sickLeaveCertificates);
         when(doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates)).thenReturn(expectedResult);
 
@@ -106,7 +106,7 @@ class PopulateFilterServiceImplTest {
 
         when(hsaServiceProvider.getCareGiverHsaId(CARE_UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
         when(hsaServiceProvider.getUnitAndRelatedSubUnits(CARE_UNIT_ID)).thenReturn(unitAndRelatedSubUnits);
-        when(sjukfallCertificateDao.findDoctorsWithActiveSickLeavesForCareUnits(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits,
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits,
             MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED)).thenReturn(sickLeaveCertificate);
 
         final var result = populateFilterService.populateFilters(populateFiltersRequestDTO);
@@ -125,7 +125,7 @@ class PopulateFilterServiceImplTest {
 
         when(hsaServiceProvider.getCareGiverHsaId(CARE_UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
         when(hsaServiceProvider.getUnitAndRelatedSubUnits(CARE_UNIT_ID)).thenReturn(unitAndRelatedSubUnits);
-        when(sjukfallCertificateDao.findDoctorsWithActiveSickLeavesForCareUnits(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits,
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits,
             MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED)).thenReturn(sickLeaveCertificate);
 
         final var result = populateFilterService.populateFilters(populateFiltersRequestDTO);

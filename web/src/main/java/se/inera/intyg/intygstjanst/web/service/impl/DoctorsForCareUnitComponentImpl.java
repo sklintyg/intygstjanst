@@ -50,6 +50,7 @@ public class DoctorsForCareUnitComponentImpl implements DoctorsForCareUnitCompon
             .map(SjukfallCertificate::getSigningDoctorId)
             .filter(Objects::nonNull)
             .map(sickLeaveInformationService::getEmployee)
+            .distinct()
             .sorted(Comparator.comparing(Lakare::getNamn))
             .collect(Collectors.toList());
     }
