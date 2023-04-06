@@ -22,6 +22,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,7 +53,7 @@ class DoctorsForCareUnitComponentImplTest {
     @Test
     void shouldReturnEmptyList() {
         final var sickLeaveCertificates = List.of(new SjukfallCertificate(null));
-        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates);
+        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates, null);
         assertEquals(0, result.size());
     }
 
@@ -65,7 +66,7 @@ class DoctorsForCareUnitComponentImplTest {
 
         final var expectedResult = List.of(Lakare.create(ANOTHER_DOCTOR_ID, ANOTHER_DOCTOR_NAME), Lakare.create(DOCTOR_ID, DOCTOR_NAME));
 
-        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates);
+        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates, null);
 
         assertEquals(expectedResult, result);
     }
@@ -81,7 +82,7 @@ class DoctorsForCareUnitComponentImplTest {
             Lakare.create(DOCTOR_ID, DOCTOR_NAME + " (" + DOCTOR_ID + ")"),
             Lakare.create(ANOTHER_DOCTOR_ID, DOCTOR_NAME + " (" + ANOTHER_DOCTOR_ID + ")"));
 
-        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates);
+        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates, null);
 
         assertEquals(expectedResult, result);
     }
@@ -95,7 +96,18 @@ class DoctorsForCareUnitComponentImplTest {
 
         final var expectedResult = List.of(Lakare.create(DOCTOR_ID, DOCTOR_NAME));
 
-        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates);
+        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates, null);
+
+        assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void shouldReturnEmptyListIfDoctorIdIsProvided() {
+        final var sickLeaveCertificates = List.of(getSjukfallCertificate(DOCTOR_ID), getSjukfallCertificate(DOCTOR_ID));
+
+        final var expectedResult = Collections.emptyList();
+
+        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates, DOCTOR_ID);
 
         assertEquals(expectedResult, result);
     }

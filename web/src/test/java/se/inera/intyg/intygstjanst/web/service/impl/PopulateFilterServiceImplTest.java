@@ -41,7 +41,7 @@ import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
 class PopulateFilterServiceImplTest {
 
     private static final String CARE_UNIT_ID = "careUnitId";
-    private static final String CERTIFICATE_ID = "certificateId";
+    private static final String UNIT_ID = "unitId";
     private static final String ANOTHER_CARE_UNIT_ID = "anotherCareUnitId";
     private static final String CARE_GIVER_HSA_ID = "careGiverHsaId";
     private static final int MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED = 5;
@@ -88,7 +88,7 @@ class PopulateFilterServiceImplTest {
         when(hsaServiceProvider.getUnitAndRelatedSubUnits(CARE_UNIT_ID)).thenReturn(unitAndRelatedSubUnits);
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits,
             MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED)).thenReturn(sickLeaveCertificates);
-        when(doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates)).thenReturn(expectedResult);
+        when(doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates, null)).thenReturn(expectedResult);
 
         final var result = populateFilterService.populateFilters(populateFiltersRequestDTO);
 

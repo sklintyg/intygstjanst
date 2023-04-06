@@ -45,6 +45,7 @@ public class IntegrationTestUtil {
     private static final String SEND_BASE = "Envelope.Body.SendCertificateToRecipientResponse.";
     private static final String DEFAULT_FILE_PATH = "integrationtests/register/request_default.stg";
     private static final String REGISTER_TEMPLATE_WITH_DATES = "listActiveSickLeaves";
+    private static final String DIAGNOSIS_CODE = "S47";
 
     public enum IntegrationTestCertificateType {
         LUSE,
@@ -128,6 +129,8 @@ public class IntegrationTestUtil {
         }
         if (sickLeaveITConfigProvider.getDiagnosisCode() != null) {
             requestTemplate.add("diagnosisCode", sickLeaveITConfigProvider.getDiagnosisCode());
+        } else {
+            requestTemplate.add("diagnosisCode", DIAGNOSIS_CODE);
         }
         applyToFromDatesToRequestTemplate(requestTemplate, sickLeaveITConfigProvider.getFromDays(), sickLeaveITConfigProvider.getToDays());
     }

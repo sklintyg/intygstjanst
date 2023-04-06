@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -64,12 +65,25 @@ public class PopulateFilterServiceImpl implements PopulateFilterService {
 
         LOG.debug("Getting active sick leaves for care unit:  {}", careUnitId);
 
-        final var sickLeaveCertificates = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(careGiverHsaId,
-            unitAndRelatedSubUnits, maxDaysSinceSickLeaveCompleted);
-        final var doctorsForCareUnit = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates);
+        final var sickLeaveCertificates = filterOnUnitIdIfProvided(
+            sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(careGiverHsaId,
+                unitAndRelatedSubUnits, maxDaysSinceSickLeaveCompleted), populateFiltersRequestDTO.getUnitId());
+
+        final var doctorsForCareUnit = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates,
+            populateFiltersRequestDTO.getDoctorId());
         final var diagnosisForCareUnit = getDiagnosisForCareUnit(sickLeaveCertificates);
 
         return PopulateFiltersResponseDTO.create(doctorsForCareUnit, diagnosisForCareUnit);
+    }
+
+    private List<SjukfallCertificate> filterOnUnitIdIfProvided(List<SjukfallCertificate> sickLeaveCertificates, String unitId) {
+        List<SjukfallCertificate> filteredSickLeaves = new ArrayList<>(sickLeaveCertificates);
+        if (unitId != null) {
+            filteredSickLeaves = filteredSickLeaves.stream()
+                .filter(sickLeave -> sickLeave.getCareUnitId().equals(unitId))
+                .collect(Collectors.toList());
+        }
+        return filteredSickLeaves;
     }
 
     public List<DiagnosKod> getDiagnosisForCareUnit(List<SjukfallCertificate> sickLeaveCertificates) {

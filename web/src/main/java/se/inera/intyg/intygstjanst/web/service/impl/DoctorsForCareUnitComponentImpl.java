@@ -19,10 +19,13 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
@@ -32,6 +35,7 @@ import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 @Component
 public class DoctorsForCareUnitComponentImpl implements DoctorsForCareUnitComponent {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DoctorsForCareUnitComponentImpl.class);
     private final SickLeaveInformationService sickLeaveInformationService;
 
     public DoctorsForCareUnitComponentImpl(SickLeaveInformationService sickLeaveInformationService) {
@@ -39,7 +43,11 @@ public class DoctorsForCareUnitComponentImpl implements DoctorsForCareUnitCompon
     }
 
     @Override
-    public List<Lakare> getDoctorsForCareUnit(List<SjukfallCertificate> sickLeaveCertificates) {
+    public List<Lakare> getDoctorsForCareUnit(List<SjukfallCertificate> sickLeaveCertificates, String doctorId) {
+        if (doctorId != null) {
+            LOG.debug("Returning empty list of doctors since doctorId: {} was provided", doctorId);
+            return Collections.emptyList();
+        }
         final var doctorsWithActiveSickLeave = extractDoctorsFromCertificateAndSortedByName(sickLeaveCertificates);
         decorateWithHsaId(doctorsWithActiveSickLeave);
         return doctorsWithActiveSickLeave;
