@@ -394,7 +394,7 @@ requestParameterized(intygId, personId, fromDate, toDate) ::= <<
 </soapenv:Envelope>
 >>
 
-requestParameterizedActiveSickLeave(intygId, personId, fromDate, toDate, doctorId, careProviderId, unitId, doctorName, relation) ::= <<
+requestParameterizedActiveSickLeave(intygId, personId, fromDate, toDate, doctorId, careProviderId, unitId, doctorName, relation, diagnosisCode) ::= <<
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:ns2="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3" xmlns:ns3="urn:riv:clinicalprocess:healthcond:certificate:types:3">
     <soapenv:Header>
         <urn:LogicalAddress>1</urn:LogicalAddress>
@@ -503,7 +503,7 @@ requestParameterizedActiveSickLeave(intygId, personId, fromDate, toDate, doctorI
       <delsvar id="6.1">Klämskada skuldra</delsvar>
       <delsvar id="6.2">
         <ns3:cv>
-          <ns3:code>S47</ns3:code>
+          <ns3:code>$diagnosisCode$</ns3:code>
           <ns3:codeSystem>1.2.752.116.1.1.1.1.3</ns3:codeSystem>
         </ns3:cv>
       </delsvar>

@@ -126,6 +126,9 @@ public class IntegrationTestUtil {
         if (sickLeaveITConfigProvider.getDoctorName() != null) {
             requestTemplate.add("doctorName", sickLeaveITConfigProvider.getDoctorName());
         }
+        if (sickLeaveITConfigProvider.getDiagnosisCode() != null) {
+            requestTemplate.add("diagnosisCode", sickLeaveITConfigProvider.getDiagnosisCode());
+        }
         applyToFromDatesToRequestTemplate(requestTemplate, sickLeaveITConfigProvider.getFromDays(), sickLeaveITConfigProvider.getToDays());
     }
 
