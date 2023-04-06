@@ -77,8 +77,33 @@ public class IntegrationTestUtil {
         final var templateGroup = new STGroupFile(filePath);
         final var relation = sickLeaveITConfigProvider.getRelationsId() != null
             ? getRelation(sickLeaveITConfigProvider.getRelationsId(), templateGroup, sickLeaveITConfigProvider.getRelationKod()) : "";
-        ST requestTemplate = templateGroup.getInstanceOf("requestParameterizedLocal");
+        ST requestTemplate = templateGroup.getInstanceOf("requestParameterizedActiveSickLeave");
         addFieldsForSickLeaveConfig(requestTemplate, sickLeaveITConfigProvider, relation);
+        executeRegisterCertificate(requestTemplate);
+    }
+
+    public static void registerCertificateWithParametersDoctorAndDiagnosis(String careUnitId, String careProviderId, String intygsId,
+        String patientId, String doctorId,
+        String doctorName, String diagnosisCode,
+        int fromDaysRelativeToNow, int toDaysRelativeToNow, String relationsId, RelationKod relationKod) {
+        String filePath = getFilePath(IntegrationTestCertificateType.LISJP);
+        final var templateGroup = new STGroupFile(filePath);
+        final var relation = relationsId != null
+            ? getRelation(relationsId, templateGroup, relationKod) : "";
+
+        ST requestTemplate = templateGroup.getInstanceOf("requestParameterizedDoctorAndDiagnosis");
+        requestTemplate.add("intygId", intygsId);
+        requestTemplate.add("personId", patientId);
+        requestTemplate.add("doctorId", doctorId);
+        requestTemplate.add("doctorName", doctorName);
+        requestTemplate.add("diagnosisCode", diagnosisCode);
+        requestTemplate.add("careUnitId", careUnitId);
+        requestTemplate.add("careProviderId", careProviderId);
+        if (!relation.isEmpty()) {
+            requestTemplate.add("relation", relation);
+        }
+
+        applyToFromDatesToRequestTemplate(requestTemplate, fromDaysRelativeToNow, toDaysRelativeToNow);
         executeRegisterCertificate(requestTemplate);
     }
 
