@@ -21,28 +21,28 @@ package se.inera.intyg.intygstjanst.web.service.dto;
 
 import java.util.List;
 import java.util.Objects;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
+import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 
 public class PopulateFiltersResponseDTO {
 
     private List<Lakare> activeDoctors;
-    private List<DiagnosKod> diagnosisCodes;
+    private List<DiagnosKapitel> diagnosisChapters;
 
 
-    public static PopulateFiltersResponseDTO create(List<Lakare> doctorsRequestDTO, List<DiagnosKod> diagnosisCodes) {
+    public static PopulateFiltersResponseDTO create(List<Lakare> doctorsRequestDTO, List<DiagnosKapitel> diagnosisCodes) {
         final var populateFiltersResponseDTO = new PopulateFiltersResponseDTO();
         populateFiltersResponseDTO.activeDoctors = doctorsRequestDTO;
-        populateFiltersResponseDTO.diagnosisCodes = diagnosisCodes;
+        populateFiltersResponseDTO.diagnosisChapters = diagnosisCodes;
         return populateFiltersResponseDTO;
     }
 
-    public void setDiagnosisCodes(List<DiagnosKod> diagnosisCodes) {
-        this.diagnosisCodes = diagnosisCodes;
+    public void setDiagnosisChapters(List<DiagnosKapitel> diagnosisChapters) {
+        this.diagnosisChapters = diagnosisChapters;
     }
 
-    public List<DiagnosKod> getDiagnosisCodes() {
-        return diagnosisCodes;
+    public List<DiagnosKapitel> getDiagnosisChapters() {
+        return diagnosisChapters;
     }
 
     public List<Lakare> getActiveDoctors() {
@@ -62,18 +62,20 @@ public class PopulateFiltersResponseDTO {
             return false;
         }
         final PopulateFiltersResponseDTO that = (PopulateFiltersResponseDTO) o;
-        return Objects.equals(activeDoctors, that.activeDoctors);
+        return Objects.equals(activeDoctors, that.activeDoctors) && Objects.equals(diagnosisChapters,
+            that.diagnosisChapters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(activeDoctors);
+        return Objects.hash(activeDoctors, diagnosisChapters);
     }
 
     @Override
     public String toString() {
         return "PopulateFiltersResponseDTO{"
-            + "doctorsRequestDTO=" + activeDoctors
+            + "activeDoctors=" + activeDoctors
+            + ", diagnosisChapters=" + diagnosisChapters
             + '}';
     }
 }

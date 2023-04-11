@@ -22,14 +22,13 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.DoctorsForCareUnitComponent;
 import se.inera.intyg.intygstjanst.web.service.HsaServiceProvider;
 import se.inera.intyg.intygstjanst.web.service.PopulateFilterService;
@@ -43,12 +42,14 @@ public class PopulateFilterServiceImpl implements PopulateFilterService {
     private final SjukfallCertificateDao sjukfallCertificateDao;
     private final DoctorsForCareUnitComponent doctorsForCareUnitComponent;
     private final HsaServiceProvider hsaServiceProvider;
+    private final DiagnosisChapterService diagnosisChapterService;
 
     public PopulateFilterServiceImpl(SjukfallCertificateDao sjukfallCertificateDao, DoctorsForCareUnitComponent doctorsForCareUnitComponent,
-        HsaServiceProvider hsaServiceProvider) {
+        HsaServiceProvider hsaServiceProvider, DiagnosisChapterService diagnosisChapterService) {
         this.sjukfallCertificateDao = sjukfallCertificateDao;
         this.doctorsForCareUnitComponent = doctorsForCareUnitComponent;
         this.hsaServiceProvider = hsaServiceProvider;
+        this.diagnosisChapterService = diagnosisChapterService;
     }
 
     @Override
@@ -71,9 +72,9 @@ public class PopulateFilterServiceImpl implements PopulateFilterService {
 
         final var doctorsForCareUnit = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates,
             populateFiltersRequestDTO.getDoctorId());
-        final var diagnosisForCareUnit = getDiagnosisForCareUnit(sickLeaveCertificates);
+        final var diagnosisChaptersForCareUnit = diagnosisChapterService.getDiagnosisChaptersForCareUnit(sickLeaveCertificates);
 
-        return PopulateFiltersResponseDTO.create(doctorsForCareUnit, diagnosisForCareUnit);
+        return PopulateFiltersResponseDTO.create(doctorsForCareUnit, diagnosisChaptersForCareUnit);
     }
 
     private List<SjukfallCertificate> filterOnUnitIdIfProvided(List<SjukfallCertificate> sickLeaveCertificates, String unitId) {
@@ -86,12 +87,4 @@ public class PopulateFilterServiceImpl implements PopulateFilterService {
         return filteredSickLeaves;
     }
 
-    public List<DiagnosKod> getDiagnosisForCareUnit(List<SjukfallCertificate> sickLeaveCertificates) {
-        return sickLeaveCertificates.stream()
-            .map(SjukfallCertificate::getDiagnoseCode)
-            .filter(Objects::nonNull)
-            .distinct()
-            .map(DiagnosKod::create)
-            .collect(Collectors.toList());
-    }
 }

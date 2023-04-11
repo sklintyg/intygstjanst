@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.util.integration.json.CustomObjectMapper;
+import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
 import se.inera.intyg.infra.sjukfall.dto.Formaga;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
@@ -75,6 +76,8 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     private static final int STATUS_CODE = 200;
     private static final String DIAGNOSIS_CODE = "S47";
     private static final String ANOTHER_DIAGNOSIS_CODE = "B56";
+    private static final String DIAGNOSIS_CHAPTER = "S00-T98Skador, förgiftningar och vissa andra följder av yttre orsaker";
+    private static final String ANOTHER_DIAGNOSIS_CHAPTER = "A00-B99Vissa infektionssjukdomar och parasitsjukdomar";
 
     @Before
     public void beforeEach() {
@@ -332,7 +335,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
             ANOTHER_DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, null, null);
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
-        final var expectedResult = List.of(DiagnosKod.create(DIAGNOSIS_CODE), DiagnosKod.create(ANOTHER_DIAGNOSIS_CODE));
+        final var expectedResult = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER), new DiagnosKapitel(ANOTHER_DIAGNOSIS_CHAPTER));
 
         final var response = getResponsePopulateFiltersDiagnosis(populateFiltersRequest);
 
@@ -347,7 +350,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
             DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, null, null);
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
-        final var expectedResult = List.of(DiagnosKod.create(DIAGNOSIS_CODE));
+        final var expectedResult = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER));
 
         final var response = getResponsePopulateFiltersDiagnosis(populateFiltersRequest);
 
@@ -356,13 +359,14 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
 
     @Test
     public void shouldReturnListOfDiagnosisForRecentlyCompletedSickLeaves() {
-        registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, EMPLOYEE_HSA_ID, EMPLOYEE_NAME, DIAGNOSIS_CODE,
+        registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, EMPLOYEE_HSA_ID, EMPLOYEE_NAME,
+            ANOTHER_DIAGNOSIS_CODE,
             -10, -5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null);
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME,
             DIAGNOSIS_CODE, -10, -8, CERTIFICATE_ID_2, PATIENT_ID_2, null, null);
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
-        final var expectedResult = List.of(DiagnosKod.create(DIAGNOSIS_CODE));
+        final var expectedResult = List.of(new DiagnosKapitel(ANOTHER_DIAGNOSIS_CHAPTER));
 
         final var response = getResponsePopulateFiltersDiagnosis(populateFiltersRequest);
 
@@ -378,7 +382,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
             DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, CERTIFICATE_ID_1, RelationKod.ERSATT);
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
-        final var expectedResult = List.of(DiagnosKod.create(DIAGNOSIS_CODE));
+        final var expectedResult = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER));
 
         final var response = getResponsePopulateFiltersDiagnosis(populateFiltersRequest);
 
@@ -394,7 +398,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
             DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, CERTIFICATE_ID_1, RelationKod.KOMPLT);
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
-        final var expectedResult = List.of(DiagnosKod.create(DIAGNOSIS_CODE));
+        final var expectedResult = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER));
 
         final var response = getResponsePopulateFiltersDiagnosis(populateFiltersRequest);
 
@@ -512,7 +516,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
             .as(PopulateFiltersResponseDTO.class, getObjectMapperForDeserialization()).getActiveDoctors();
     }
 
-    private List<DiagnosKod> getResponsePopulateFiltersDiagnosis(PopulateFiltersRequestDTO populateFiltersRequestDTO) {
+    private List<DiagnosKapitel> getResponsePopulateFiltersDiagnosis(PopulateFiltersRequestDTO populateFiltersRequestDTO) {
         return given()
             .contentType(ContentType.JSON)
             .body(populateFiltersRequestDTO)
@@ -523,7 +527,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
             .then()
             .extract()
             .response()
-            .as(PopulateFiltersResponseDTO.class, getObjectMapperForDeserialization()).getDiagnosisCodes();
+            .as(PopulateFiltersResponseDTO.class, getObjectMapperForDeserialization()).getDiagnosisChapters();
     }
 
     private SickLeaveRequestDTO getSickLeaveRequest(String unitId, String careUnitId, String doctorId, int maxCertificateGap,

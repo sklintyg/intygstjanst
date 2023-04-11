@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
+import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.PopulateFilterService;
@@ -51,7 +51,7 @@ class SickLeaveControllerTest {
 
     private static final String DOCTOR_ID = "doctorID";
     private static final String DOCTOR_NAME = "doctorName";
-    private static final String DIAGNOSIS_ID = "diagnosisId";
+    private static final String DIAGNOSIS_CHAPTER = "C00-D48Tumörer";
 
     @BeforeEach
     void setUp() {
@@ -86,11 +86,11 @@ class SickLeaveControllerTest {
     void shouldReturnPopulateFiltersResonseDTO() {
         final var populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
         final var doctor = Lakare.create(DOCTOR_ID, DOCTOR_NAME);
-        final var diagnosisCode = DiagnosKod.create(DIAGNOSIS_ID);
-        final var expectedResponse = Response.ok(PopulateFiltersResponseDTO.create(List.of(doctor), List.of(diagnosisCode))).build();
+        final var diagnosisChapter = new DiagnosKapitel(DIAGNOSIS_CHAPTER);
+        final var expectedResponse = Response.ok(PopulateFiltersResponseDTO.create(List.of(doctor), List.of(diagnosisChapter))).build();
 
         when(populateFilterService.populateFilters(populateFiltersRequestDTO)).thenReturn(
-            PopulateFiltersResponseDTO.create(List.of(doctor), List.of(diagnosisCode)));
+            PopulateFiltersResponseDTO.create(List.of(doctor), List.of(diagnosisChapter)));
 
         final var result = sickLeaveController.populateFilters(populateFiltersRequestDTO);
 
