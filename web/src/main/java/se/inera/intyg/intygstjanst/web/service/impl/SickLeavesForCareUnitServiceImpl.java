@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
+import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.IntygDataService;
 import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
@@ -41,12 +42,15 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
     private final SjukfallEngineService sjukfallEngine;
     private final IntygDataService intygDataService;
     private final SickLeaveInformationService sickLeaveInformationService;
+    private final DiagnosisChapterService diagnosisChapterService;
 
     public SickLeavesForCareUnitServiceImpl(SjukfallEngineService sjukfallEngine,
-        IntygDataService intygDataService, SickLeaveInformationService sickLeaveInformationService) {
+        IntygDataService intygDataService, SickLeaveInformationService sickLeaveInformationService,
+        DiagnosisChapterService diagnosisChapterService) {
         this.sjukfallEngine = sjukfallEngine;
         this.intygDataService = intygDataService;
         this.sickLeaveInformationService = sickLeaveInformationService;
+        this.diagnosisChapterService = diagnosisChapterService;
     }
 
     @Override
@@ -68,7 +72,7 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
         return careUnitId == null || careUnitId.length() == 0;
     }
 
-    private static List<SjukfallEnhet> filterSickLeaves(SickLeaveRequestDTO sickLeaveRequestDTO,
+    private List<SjukfallEnhet> filterSickLeaves(SickLeaveRequestDTO sickLeaveRequestDTO,
         List<SjukfallEnhet> activeSickLeavesForUnit) {
         List<SjukfallEnhet> filteredActiveSickleavesForUnit = new ArrayList<>(activeSickLeavesForUnit);
         if (sickLeaveRequestDTO.getDoctorIds() != null && !sickLeaveRequestDTO.getDoctorIds().isEmpty()) {
@@ -86,46 +90,43 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
                 sickLeaveRequestDTO.getFromSickLeaveLength(), sickLeaveRequestDTO.getToSickLeaveLength());
             filteredActiveSickleavesForUnit = filterOnSickLeaveLength(sickLeaveRequestDTO, filteredActiveSickleavesForUnit);
         }
-        if (sickLeaveRequestDTO.getDiagnosisCodes() != null && !sickLeaveRequestDTO.getDiagnosisCodes().isEmpty()) {
-            LOG.debug("Filtering response - only including 'sjukfall' with diagnosis code: {}", sickLeaveRequestDTO.getDiagnosisCodes());
-            filteredActiveSickleavesForUnit = filterOnDiagnosisCodes(sickLeaveRequestDTO, filteredActiveSickleavesForUnit);
+        if (sickLeaveRequestDTO.getDiagnosisChapters() != null && !sickLeaveRequestDTO.getDiagnosisChapters().isEmpty()) {
+            LOG.debug("Filtering response - only including 'sjukfall' with diagnosis code: {}", sickLeaveRequestDTO.getDiagnosisChapters());
+            filteredActiveSickleavesForUnit = filterOnDiagnosisChapter(sickLeaveRequestDTO, filteredActiveSickleavesForUnit);
         }
         return filteredActiveSickleavesForUnit;
     }
 
-    private static List<SjukfallEnhet> filterOnDoctorId(SickLeaveRequestDTO sickLeaveRequestDTO,
+    private List<SjukfallEnhet> filterOnDoctorId(SickLeaveRequestDTO sickLeaveRequestDTO,
         List<SjukfallEnhet> filteredActiveSickleavesForUnit) {
-        filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
+        return filteredActiveSickleavesForUnit.stream()
             .filter(sickLeave -> sickLeaveRequestDTO.getDoctorIds().contains(sickLeave.getLakare().getId()))
             .collect(Collectors.toList());
-        return filteredActiveSickleavesForUnit;
     }
 
-    private static List<SjukfallEnhet> filterOnDiagnosisCodes(SickLeaveRequestDTO sickLeaveRequestDTO,
+    private List<SjukfallEnhet> filterOnDiagnosisChapter(SickLeaveRequestDTO sickLeaveRequestDTO,
         List<SjukfallEnhet> filteredActiveSickleavesForUnit) {
-        filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
-            .filter(sickLeave -> sickLeaveRequestDTO.getDiagnosisCodes().contains(sickLeave.getDiagnosKod()))
+        return filteredActiveSickleavesForUnit.stream()
+            .filter(sickLeave -> !sickLeaveRequestDTO.getDiagnosisChapters()
+                .contains(diagnosisChapterService.getDiagnosisChaptersFromSickLeave(sickLeave)))
             .collect(Collectors.toList());
-        return filteredActiveSickleavesForUnit;
     }
 
-    private static List<SjukfallEnhet> filterOnSickLeaveLength(SickLeaveRequestDTO sickLeaveRequestDTO,
+    private List<SjukfallEnhet> filterOnSickLeaveLength(SickLeaveRequestDTO sickLeaveRequestDTO,
         List<SjukfallEnhet> filteredActiveSickleavesForUnit) {
-        filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
+        return filteredActiveSickleavesForUnit.stream()
             .filter(sickLeave -> sickLeave.getDagar() >= sickLeaveRequestDTO.getFromSickLeaveLength()
                 && sickLeave.getDagar() <= sickLeaveRequestDTO.getToSickLeaveLength())
             .collect(Collectors.toList());
-        return filteredActiveSickleavesForUnit;
     }
 
-    private static List<SjukfallEnhet> filterOnUnitId(SickLeaveRequestDTO sickLeaveRequestDTO,
+    private List<SjukfallEnhet> filterOnUnitId(SickLeaveRequestDTO sickLeaveRequestDTO,
         List<SjukfallEnhet> filteredActiveSickleavesForUnit) {
-        filteredActiveSickleavesForUnit = filteredActiveSickleavesForUnit.stream()
+        return filteredActiveSickleavesForUnit.stream()
             .filter(sickLeave -> sickLeave.getVardenhet().getId().equals(sickLeaveRequestDTO.getUnitId())).collect(Collectors.toList());
-        return filteredActiveSickleavesForUnit;
     }
 
-    private static IntygParametrar getIntygParametrar(SickLeaveRequestDTO sickLeaveRequestDTO) {
+    private IntygParametrar getIntygParametrar(SickLeaveRequestDTO sickLeaveRequestDTO) {
         return new IntygParametrar(sickLeaveRequestDTO.getMaxCertificateGap(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted(),
             LocalDate.now());

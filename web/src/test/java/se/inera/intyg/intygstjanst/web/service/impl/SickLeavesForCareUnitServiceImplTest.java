@@ -35,12 +35,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.dto.Vardenhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
+import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.IntygDataService;
 import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
@@ -54,6 +56,8 @@ class SickLeavesForCareUnitServiceImplTest {
     private IntygDataService intygDataService;
     @Mock
     private SickLeaveInformationService sickLeaveInformationService;
+    @Mock
+    private DiagnosisChapterService diagnosisChapterService;
     private SickLeavesForCareUnitServiceImpl sickLeavesForCareUnitService;
 
     private static final String DOCTOR_ID = "doctorId";
@@ -61,15 +65,17 @@ class SickLeavesForCareUnitServiceImplTest {
     private static final String CARE_UNIT_ID = "careUnitId";
     private static final String ANOTHER_UNIT_ID = "anotherUnitId";
     private static final String UNIT_ID = "unitId";
-    private static final String DIAGNOSIS_CODE = "diagnosisCode";
-    private static final String ANOTHER_DIAGNOSIS_CODE = "anotherDiagnosisCode";
+    private static final String DIAGNOSIS_CODE = "A01";
+    private static final String DIAGNOSIS_CHAPTER = "C00-D48Tumörer";
+    private static final String ANOTHER_DIAGNOSIS_CHAPTER = "H00-H59Sjukdomar i ögat och närliggande organ";
+    private static final String ANOTHER_DIAGNOSIS_CODE = "C10";
     private List<IntygData> intygData;
 
 
     @BeforeEach
     void setUp() {
         sickLeavesForCareUnitService = new SickLeavesForCareUnitServiceImpl(sjukfallEngine, intygDataService,
-            sickLeaveInformationService);
+            sickLeaveInformationService, diagnosisChapterService);
         intygData = List.of(new IntygData(), new IntygData());
     }
 
@@ -144,14 +150,19 @@ class SickLeavesForCareUnitServiceImplTest {
     }
 
     @Test
-    void shouldFilterOnDiagnosisCode() {
-        final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, null, CARE_UNIT_ID, 6, 13, DiagnosKod.create(DIAGNOSIS_CODE));
+    void shouldFilterOnDiagnosisChapter() {
+        final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, null, CARE_UNIT_ID, null, null, new DiagnosKapitel(DIAGNOSIS_CHAPTER));
         final var expectedSickLeave = createSjukFallEnhet(DOCTOR_ID, UNIT_ID, DIAGNOSIS_CODE, 12);
-        final var sickLeaves = List.of(expectedSickLeave, createSjukFallEnhet(DOCTOR_ID, ANOTHER_UNIT_ID, ANOTHER_DIAGNOSIS_CODE, 5));
+        final var sickLeaveThatShouldBeFiltered = createSjukFallEnhet(DOCTOR_ID, ANOTHER_UNIT_ID, ANOTHER_DIAGNOSIS_CODE, 5);
+        final var sickLeaves = List.of(expectedSickLeave, sickLeaveThatShouldBeFiltered);
 
         when(intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())).thenReturn(intygData);
         when(sjukfallEngine.beraknaSjukfallForEnhet(eq(intygData), any())).thenReturn(sickLeaves);
+        when(diagnosisChapterService.getDiagnosisChaptersFromSickLeave(sickLeaveThatShouldBeFiltered)).thenReturn(
+            new DiagnosKapitel(DIAGNOSIS_CHAPTER));
+        when(diagnosisChapterService.getDiagnosisChaptersFromSickLeave(expectedSickLeave)).thenReturn(
+            new DiagnosKapitel(ANOTHER_DIAGNOSIS_CHAPTER));
 
         final var result = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
 
@@ -169,7 +180,7 @@ class SickLeavesForCareUnitServiceImplTest {
     }
 
     private static SickLeaveRequestDTO getSickLeaveRequestDTO(String unitId, String doctorId, String careUnitId,
-        Integer fromSickLeaveLength, Integer toSickLeaveLength, DiagnosKod diagnosisCode) {
+        Integer fromSickLeaveLength, Integer toSickLeaveLength, DiagnosKapitel diagnosisChapter) {
         final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
         sickLeaveRequestDTO.setMaxCertificateGap(5);
         sickLeaveRequestDTO.setMaxDaysSinceSickLeaveCompleted(5);
@@ -178,7 +189,7 @@ class SickLeavesForCareUnitServiceImplTest {
         sickLeaveRequestDTO.setCareUnitId(careUnitId);
         sickLeaveRequestDTO.setFromSickLeaveLength(fromSickLeaveLength);
         sickLeaveRequestDTO.setToSickLeaveLength(toSickLeaveLength);
-        sickLeaveRequestDTO.setDiagnosisCodes(diagnosisCode != null ? List.of(diagnosisCode) : null);
+        sickLeaveRequestDTO.setDiagnosisChapters(diagnosisChapter != null ? List.of(diagnosisChapter) : null);
         return sickLeaveRequestDTO;
     }
 

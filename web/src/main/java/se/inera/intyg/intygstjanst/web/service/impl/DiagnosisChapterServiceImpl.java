@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKategori;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
+import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterProvider;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
@@ -59,13 +60,19 @@ public class DiagnosisChapterServiceImpl implements DiagnosisChapterService {
     }
 
     @Override
-    public List<DiagnosKapitel> getDiagnosisChaptersForCareUnit(List<SjukfallCertificate> sickLeaveCertificates) {
+    public List<DiagnosKapitel> getDiagnosisChaptersFromSickLeaveCertificate(List<SjukfallCertificate> sickLeaveCertificates) {
         final var diagnosisForCareUnit = getDiagnosisForCareUnit(sickLeaveCertificates);
         return diagnosisForCareUnit.stream()
             .map((diagnosisCode) -> DiagnosKategori.extractFromString(diagnosisCode.getCleanedCode()))
             .map(this::getDiagnosisChapterForCategory)
             .distinct()
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public DiagnosKapitel getDiagnosisChaptersFromSickLeave(SjukfallEnhet sickLeave) {
+        final var diagnosisCategory = DiagnosKategori.extractFromString(sickLeave.getDiagnosKod().getCleanedCode());
+        return getDiagnosisChapterForCategory(diagnosisCategory);
     }
 
     private List<DiagnosKod> getDiagnosisForCareUnit(List<SjukfallCertificate> sickLeaveCertificates) {

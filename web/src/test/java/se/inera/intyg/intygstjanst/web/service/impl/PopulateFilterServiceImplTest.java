@@ -112,7 +112,7 @@ class PopulateFilterServiceImplTest {
         when(hsaServiceProvider.getUnitAndRelatedSubUnits(CARE_UNIT_ID)).thenReturn(unitAndRelatedSubUnits);
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits,
             MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED)).thenReturn(sickLeaveCertificate);
-        when(diagnosisChapterService.getDiagnosisChaptersForCareUnit(sickLeaveCertificate)).thenReturn(
+        when(diagnosisChapterService.getDiagnosisChaptersFromSickLeaveCertificate(sickLeaveCertificate)).thenReturn(
             List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER_1), new DiagnosKapitel(DIAGNOSIS_CHAPTER_2)));
 
         final var result = populateFilterService.populateFilters(populateFiltersRequestDTO);

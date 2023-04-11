@@ -197,7 +197,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
             CARE_PROVIDER_ID, UNIT_ID, EMPLOYEE_NAME, null, null, DIAGNOSIS_CODE);
 
         final var sickLeaveRequestDTO = getSickLeaveRequest(null, CARE_UNIT_ID, null, 0, 0, null, null,
-            List.of(DiagnosKod.create(DIAGNOSIS_CODE)));
+            List.of(new DiagnosKapitel(ANOTHER_DIAGNOSIS_CHAPTER)));
         final var expectedResponse = List.of(
             getExpectSjukfallEnhet(List.of(0), List.of(5), List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_2, false, 0));
         final var response = getResponseActiveSickLeaves(sickLeaveRequestDTO);
@@ -531,7 +531,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     }
 
     private SickLeaveRequestDTO getSickLeaveRequest(String unitId, String careUnitId, String doctorId, int maxCertificateGap,
-        int maxDaysSinceSickLeaveCompleted, Integer fromSickLeaveLength, Integer toSickLeaveLength, List<DiagnosKod> diagnosisCodes) {
+        int maxDaysSinceSickLeaveCompleted, Integer fromSickLeaveLength, Integer toSickLeaveLength, List<DiagnosKapitel> diagnosisChapter) {
         final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
         sickLeaveRequestDTO.setUnitId(unitId);
         sickLeaveRequestDTO.setCareUnitId(careUnitId);
@@ -540,7 +540,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
         sickLeaveRequestDTO.setMaxDaysSinceSickLeaveCompleted(maxDaysSinceSickLeaveCompleted);
         sickLeaveRequestDTO.setToSickLeaveLength(toSickLeaveLength);
         sickLeaveRequestDTO.setFromSickLeaveLength(fromSickLeaveLength);
-        sickLeaveRequestDTO.setDiagnosisCodes(diagnosisCodes);
+        sickLeaveRequestDTO.setDiagnosisChapters(diagnosisChapter);
         return sickLeaveRequestDTO;
     }
 

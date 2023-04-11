@@ -72,7 +72,8 @@ public class PopulateFilterServiceImpl implements PopulateFilterService {
 
         final var doctorsForCareUnit = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates,
             populateFiltersRequestDTO.getDoctorId());
-        final var diagnosisChaptersForCareUnit = diagnosisChapterService.getDiagnosisChaptersForCareUnit(sickLeaveCertificates);
+        final var diagnosisChaptersForCareUnit = diagnosisChapterService.getDiagnosisChaptersFromSickLeaveCertificate(
+            sickLeaveCertificates);
 
         return PopulateFiltersResponseDTO.create(doctorsForCareUnit, diagnosisChaptersForCareUnit);
     }

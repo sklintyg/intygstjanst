@@ -21,9 +21,12 @@ package se.inera.intyg.intygstjanst.web.service;
 
 import java.util.List;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
+import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 
 public interface DiagnosisChapterService {
 
-    List<DiagnosKapitel> getDiagnosisChaptersForCareUnit(List<SjukfallCertificate> sickLeaveCertificates);
+    List<DiagnosKapitel> getDiagnosisChaptersFromSickLeaveCertificate(List<SjukfallCertificate> sickLeaveCertificates);
+
+    DiagnosKapitel getDiagnosisChaptersFromSickLeave(SjukfallEnhet sickLeave);
 }

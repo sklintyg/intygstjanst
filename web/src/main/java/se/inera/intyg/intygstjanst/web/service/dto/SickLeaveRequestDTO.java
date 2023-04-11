@@ -21,7 +21,7 @@ package se.inera.intyg.intygstjanst.web.service.dto;
 
 import java.util.List;
 import lombok.Data;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
+import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 
 @Data
 public class SickLeaveRequestDTO {
@@ -33,6 +33,6 @@ public class SickLeaveRequestDTO {
     private int maxDaysSinceSickLeaveCompleted;
     private Integer toSickLeaveLength;
     private Integer fromSickLeaveLength;
-    private List<DiagnosKod> diagnosisCodes;
+    private List<DiagnosKapitel> diagnosisChapters;
 
 }
