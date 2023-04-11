@@ -2,6 +2,7 @@ ARG from_image
 FROM $from_image
 
 ARG from_image
+ARG context_path
 ARG project_name
 ARG artifact
 ARG artifact_name
@@ -10,6 +11,7 @@ ARG vcs_url
 ARG vcs_ref
 
 LABEL se.inera.from_image=${from_image}       \
+      se.inera.context_path=${context_path}   \
       se.inera.project=${project_name}        \
       se.inera.artifact=${artifact}           \
       se.inera.artifact_name=${artifact_name} \
@@ -20,4 +22,4 @@ LABEL se.inera.from_image=${from_image}       \
 ENV APP_NAME=$artifact
 ENV SCRIPT_DEBUG=true
 
-ADD /web/build/libs/*.war $JWS_HOME/webapps/ROOT.war
+ADD /web/build/libs/*.war $JWS_HOME/webapps/$context_path.war
