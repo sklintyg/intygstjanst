@@ -19,6 +19,9 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.INTYG_DATA_SERVICE;
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.SICK_LEAVE_INFORMATION;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,7 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
+import se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.IntygDataService;
 import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
@@ -59,12 +63,20 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
             throw new IllegalArgumentException("Parameter care unit id must be non-empty string");
         }
         final var intygParametrar = getIntygParametrar(sickLeaveRequestDTO);
+
+        final var sickLeaveLogFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var intygData = intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted());
+        LOG.debug(sickLeaveLogFactory.message(INTYG_DATA_SERVICE, intygData.size()));
+
         final var activeSickLeavesForUnit = sjukfallEngine.beraknaSjukfallForEnhet(intygData, intygParametrar);
         final var filteredActiveSickleavesForUnit = filterSickLeaves(sickLeaveRequestDTO,
             activeSickLeavesForUnit);
+
+        sickLeaveLogFactory.setStartTimer(System.currentTimeMillis());
         sickLeaveInformationService.updateAndDecorateDoctorName(filteredActiveSickleavesForUnit);
+        LOG.debug(sickLeaveLogFactory.message(SICK_LEAVE_INFORMATION, filteredActiveSickleavesForUnit.size()));
+
         return filteredActiveSickleavesForUnit;
     }
 

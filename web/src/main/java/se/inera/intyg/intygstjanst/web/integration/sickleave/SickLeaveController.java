@@ -19,12 +19,16 @@
 
 package se.inera.intyg.intygstjanst.web.integration.sickleave;
 
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.SICK_LEAVE_ACTIVE;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.service.PopulateFilterService;
@@ -36,6 +40,7 @@ import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 @Path("/sickleave")
 public class SickLeaveController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SickLeaveController.class);
     private static final String UTF_8_CHARSET = ";charset=utf-8";
     private final SickLeavesForCareUnitService sickLeavesForCareUnitService;
     private final PopulateFilterService populateFilterService;
@@ -52,7 +57,9 @@ public class SickLeaveController {
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getActiveSickLeavesForCareUnit(@RequestBody SickLeaveRequestDTO sickLeaveRequestDTO) {
+        final var sickLeaveLogFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var activeSickLeavesForCareUnit = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
+        LOG.debug(sickLeaveLogFactory.message(SICK_LEAVE_ACTIVE, activeSickLeavesForCareUnit.size()));
         return Response.ok(SickLeaveResponseDTO.create(activeSickLeavesForCareUnit)).build();
     }
 
