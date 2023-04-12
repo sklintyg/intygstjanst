@@ -20,62 +20,21 @@
 package se.inera.intyg.intygstjanst.web.service.dto;
 
 import java.util.List;
-import java.util.Objects;
+import lombok.Data;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 
+@Data
 public class PopulateFiltersResponseDTO {
 
     private List<Lakare> activeDoctors;
     private List<DiagnosKapitel> diagnosisChapters;
 
-
-    public static PopulateFiltersResponseDTO create(List<Lakare> doctorsRequestDTO, List<DiagnosKapitel> diagnosisCodes) {
-        final var populateFiltersResponseDTO = new PopulateFiltersResponseDTO();
-        populateFiltersResponseDTO.activeDoctors = doctorsRequestDTO;
-        populateFiltersResponseDTO.diagnosisChapters = diagnosisCodes;
-        return populateFiltersResponseDTO;
-    }
-
-    public void setDiagnosisChapters(List<DiagnosKapitel> diagnosisChapters) {
+    public PopulateFiltersResponseDTO(List<Lakare> activeDoctors, List<DiagnosKapitel> diagnosisChapters) {
+        this.activeDoctors = activeDoctors;
         this.diagnosisChapters = diagnosisChapters;
     }
 
-    public List<DiagnosKapitel> getDiagnosisChapters() {
-        return diagnosisChapters;
-    }
-
-    public List<Lakare> getActiveDoctors() {
-        return activeDoctors;
-    }
-
-    public void setActiveDoctors(List<Lakare> activeDoctors) {
-        this.activeDoctors = activeDoctors;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final PopulateFiltersResponseDTO that = (PopulateFiltersResponseDTO) o;
-        return Objects.equals(activeDoctors, that.activeDoctors) && Objects.equals(diagnosisChapters,
-            that.diagnosisChapters);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(activeDoctors, diagnosisChapters);
-    }
-
-    @Override
-    public String toString() {
-        return "PopulateFiltersResponseDTO{"
-            + "activeDoctors=" + activeDoctors
-            + ", diagnosisChapters=" + diagnosisChapters
-            + '}';
+    public PopulateFiltersResponseDTO() {
     }
 }

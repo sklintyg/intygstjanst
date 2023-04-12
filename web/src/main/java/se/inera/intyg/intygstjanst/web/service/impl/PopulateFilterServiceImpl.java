@@ -59,7 +59,7 @@ public class PopulateFilterServiceImpl implements PopulateFilterService {
 
         if (careUnitId == null || careUnitId.isEmpty()) {
             LOG.debug("No care unit id was provided, returning empty response.");
-            return PopulateFiltersResponseDTO.create(Collections.emptyList(), Collections.emptyList());
+            return new PopulateFiltersResponseDTO(Collections.emptyList(), Collections.emptyList());
         }
         final var careGiverHsaId = hsaServiceProvider.getCareGiverHsaId(careUnitId);
         final var unitAndRelatedSubUnits = hsaServiceProvider.getUnitAndRelatedSubUnits(careUnitId);
@@ -75,7 +75,7 @@ public class PopulateFilterServiceImpl implements PopulateFilterService {
         final var diagnosisChaptersForCareUnit = diagnosisChapterService.getDiagnosisChaptersFromSickLeaveCertificate(
             sickLeaveCertificates);
 
-        return PopulateFiltersResponseDTO.create(doctorsForCareUnit, diagnosisChaptersForCareUnit);
+        return new PopulateFiltersResponseDTO(doctorsForCareUnit, diagnosisChaptersForCareUnit);
     }
 
     private List<SjukfallCertificate> filterOnUnitIdIfProvided(List<SjukfallCertificate> sickLeaveCertificates, String unitId) {

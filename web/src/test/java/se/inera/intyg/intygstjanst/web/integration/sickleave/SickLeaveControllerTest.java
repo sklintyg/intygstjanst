@@ -76,7 +76,7 @@ class SickLeaveControllerTest {
     void shouldReturnSickLeaveRequestResponseDTO() {
         final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
         final var sjukfallEnhet = new SjukfallEnhet();
-        final var expectedResponse = Response.ok(SickLeaveResponseDTO.create(List.of(sjukfallEnhet))).build();
+        final var expectedResponse = Response.ok(new SickLeaveResponseDTO(List.of(sjukfallEnhet))).build();
         when(sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO)).thenReturn(List.of(sjukfallEnhet));
         final var result = sickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
         assertEquals(expectedResponse.getEntity(), result.getEntity());
@@ -87,10 +87,10 @@ class SickLeaveControllerTest {
         final var populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
         final var doctor = Lakare.create(DOCTOR_ID, DOCTOR_NAME);
         final var diagnosisChapter = new DiagnosKapitel(DIAGNOSIS_CHAPTER);
-        final var expectedResponse = Response.ok(PopulateFiltersResponseDTO.create(List.of(doctor), List.of(diagnosisChapter))).build();
+        final var expectedResponse = Response.ok(new PopulateFiltersResponseDTO(List.of(doctor), List.of(diagnosisChapter))).build();
 
         when(populateFilterService.populateFilters(populateFiltersRequestDTO)).thenReturn(
-            PopulateFiltersResponseDTO.create(List.of(doctor), List.of(diagnosisChapter)));
+            new PopulateFiltersResponseDTO(List.of(doctor), List.of(diagnosisChapter)));
 
         final var result = sickLeaveController.populateFilters(populateFiltersRequestDTO);
 

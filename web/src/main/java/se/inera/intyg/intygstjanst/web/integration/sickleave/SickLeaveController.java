@@ -60,7 +60,7 @@ public class SickLeaveController {
         final var sickLeaveLogFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var activeSickLeavesForCareUnit = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
         LOG.debug(sickLeaveLogFactory.message(SICK_LEAVE_ACTIVE, activeSickLeavesForCareUnit.size()));
-        return Response.ok(SickLeaveResponseDTO.create(activeSickLeavesForCareUnit)).build();
+        return Response.ok(new SickLeaveResponseDTO(activeSickLeavesForCareUnit)).build();
     }
 
     @PrometheusTimeMethod
