@@ -103,7 +103,8 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
             filteredActiveSickleavesForUnit = filterOnSickLeaveLength(sickLeaveRequestDTO, filteredActiveSickleavesForUnit);
         }
         if (sickLeaveRequestDTO.getDiagnosisChapters() != null && !sickLeaveRequestDTO.getDiagnosisChapters().isEmpty()) {
-            LOG.debug("Filtering response - only including 'sjukfall' with diagnosis code: {}", sickLeaveRequestDTO.getDiagnosisChapters());
+            LOG.debug("Filtering response - only including 'sjukfall' with diagnosis code related to chapers: {}",
+                sickLeaveRequestDTO.getDiagnosisChapters());
             filteredActiveSickleavesForUnit = filterOnDiagnosisChapter(sickLeaveRequestDTO, filteredActiveSickleavesForUnit);
         }
         return filteredActiveSickleavesForUnit;
