@@ -190,14 +190,14 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     }
 
     @Test
-    public void shouldReturnListOfSickLeavesForUnitFilteredOnDiagnosis() {
+    public void shouldReturnListOfSickLeavesForUnitFilteredOnDiagnosisChapter() {
         registerCertificateWithParameters(CERTIFICATE_ID_1, PATIENT_ID_1, 0, 5, EMPLOYEE_HSA_ID,
             CARE_PROVIDER_ID, UNIT_ID, EMPLOYEE_NAME, null, null, ANOTHER_DIAGNOSIS_CODE);
         registerCertificateWithParameters(CERTIFICATE_ID_2, PATIENT_ID_2, 0, 5, EMPLOYEE_HSA_ID,
             CARE_PROVIDER_ID, UNIT_ID, EMPLOYEE_NAME, null, null, DIAGNOSIS_CODE);
 
         final var sickLeaveRequestDTO = getSickLeaveRequest(null, CARE_UNIT_ID, null, 0, 0, null, null,
-            List.of(new DiagnosKapitel(ANOTHER_DIAGNOSIS_CHAPTER)));
+            List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER)));
         final var expectedResponse = List.of(
             getExpectSjukfallEnhet(List.of(0), List.of(5), List.of(CERTIFICATE_ID_2), CERTIFICATE_ID_2, PATIENT_ID_2, false, 0));
         final var response = getResponseActiveSickLeaves(sickLeaveRequestDTO);

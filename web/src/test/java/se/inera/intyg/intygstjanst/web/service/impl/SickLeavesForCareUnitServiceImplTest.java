@@ -67,7 +67,7 @@ class SickLeavesForCareUnitServiceImplTest {
     private static final String UNIT_ID = "unitId";
     private static final String DIAGNOSIS_CODE = "A01";
     private static final String DIAGNOSIS_CHAPTER = "C00-D48Tumörer";
-    private static final String ANOTHER_DIAGNOSIS_CHAPTER = "H00-H59Sjukdomar i ögat och närliggande organ";
+    private static final String ANOTHER_DIAGNOSIS_CHAPTER = "A00-B99Vissa infektionssjukdomar och parasitsjukdomar";
     private static final String ANOTHER_DIAGNOSIS_CODE = "C10";
     private List<IntygData> intygData;
 
@@ -152,17 +152,17 @@ class SickLeavesForCareUnitServiceImplTest {
     @Test
     void shouldFilterOnDiagnosisChapter() {
         final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, null, CARE_UNIT_ID, null, null, new DiagnosKapitel(DIAGNOSIS_CHAPTER));
-        final var expectedSickLeave = createSjukFallEnhet(DOCTOR_ID, UNIT_ID, DIAGNOSIS_CODE, 12);
-        final var sickLeaveThatShouldBeFiltered = createSjukFallEnhet(DOCTOR_ID, ANOTHER_UNIT_ID, ANOTHER_DIAGNOSIS_CODE, 5);
+        final var sickLeaveThatShouldBeFiltered = createSjukFallEnhet(DOCTOR_ID, UNIT_ID, DIAGNOSIS_CODE, 12);
+        final var expectedSickLeave = createSjukFallEnhet(DOCTOR_ID, ANOTHER_UNIT_ID, ANOTHER_DIAGNOSIS_CODE, 5);
         final var sickLeaves = List.of(expectedSickLeave, sickLeaveThatShouldBeFiltered);
 
         when(intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())).thenReturn(intygData);
         when(sjukfallEngine.beraknaSjukfallForEnhet(eq(intygData), any())).thenReturn(sickLeaves);
         when(diagnosisChapterService.getDiagnosisChaptersFromSickLeave(sickLeaveThatShouldBeFiltered)).thenReturn(
-            new DiagnosKapitel(DIAGNOSIS_CHAPTER));
-        when(diagnosisChapterService.getDiagnosisChaptersFromSickLeave(expectedSickLeave)).thenReturn(
             new DiagnosKapitel(ANOTHER_DIAGNOSIS_CHAPTER));
+        when(diagnosisChapterService.getDiagnosisChaptersFromSickLeave(expectedSickLeave)).thenReturn(
+            new DiagnosKapitel(DIAGNOSIS_CHAPTER));
 
         final var result = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
 

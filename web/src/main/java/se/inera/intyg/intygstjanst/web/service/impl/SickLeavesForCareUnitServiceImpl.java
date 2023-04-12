@@ -107,7 +107,7 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
     private List<SjukfallEnhet> filterOnDiagnosisChapter(SickLeaveRequestDTO sickLeaveRequestDTO,
         List<SjukfallEnhet> filteredActiveSickleavesForUnit) {
         return filteredActiveSickleavesForUnit.stream()
-            .filter(sickLeave -> !sickLeaveRequestDTO.getDiagnosisChapters()
+            .filter(sickLeave -> sickLeaveRequestDTO.getDiagnosisChapters()
                 .contains(diagnosisChapterService.getDiagnosisChaptersFromSickLeave(sickLeave)))
             .collect(Collectors.toList());
     }
