@@ -57,9 +57,9 @@ public class SickLeaveController {
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getActiveSickLeavesForCareUnit(@RequestBody SickLeaveRequestDTO sickLeaveRequestDTO) {
-        final var sickLeaveLogFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
+        final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var activeSickLeavesForCareUnit = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        LOG.debug(sickLeaveLogFactory.message(SICK_LEAVE_ACTIVE, activeSickLeavesForCareUnit.size()));
+        LOG.info(sickLeaveLogMessageFactory.message(SICK_LEAVE_ACTIVE, activeSickLeavesForCareUnit.size()));
         return Response.ok(new SickLeaveResponseDTO(activeSickLeavesForCareUnit)).build();
     }
 

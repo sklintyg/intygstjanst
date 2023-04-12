@@ -64,18 +64,18 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
         }
         final var intygParametrar = getIntygParametrar(sickLeaveRequestDTO);
 
-        final var sickLeaveLogFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
+        final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var intygData = intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted());
-        LOG.debug(sickLeaveLogFactory.message(INTYG_DATA_SERVICE, intygData.size()));
+        LOG.info(sickLeaveLogMessageFactory.message(INTYG_DATA_SERVICE, intygData.size()));
 
         final var activeSickLeavesForUnit = sjukfallEngine.beraknaSjukfallForEnhet(intygData, intygParametrar);
         final var filteredActiveSickleavesForUnit = filterSickLeaves(sickLeaveRequestDTO,
             activeSickLeavesForUnit);
 
-        sickLeaveLogFactory.setStartTimer(System.currentTimeMillis());
+        sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
         sickLeaveInformationService.updateAndDecorateDoctorName(filteredActiveSickleavesForUnit);
-        LOG.debug(sickLeaveLogFactory.message(SICK_LEAVE_INFORMATION, filteredActiveSickleavesForUnit.size()));
+        LOG.info(sickLeaveLogMessageFactory.message(SICK_LEAVE_INFORMATION, filteredActiveSickleavesForUnit.size()));
 
         return filteredActiveSickleavesForUnit;
     }
