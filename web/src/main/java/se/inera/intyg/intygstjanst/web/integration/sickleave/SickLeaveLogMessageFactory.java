@@ -33,7 +33,7 @@ public class SickLeaveLogMessageFactory {
     }
 
     public String message(String constant, int amount) {
-        return String.format("SICK LEAVE LOG - duration for %s: %d seconds. Amount: %d.", constant, timeElapsed(startTimer), amount);
+        return String.format("SICK LEAVE LOG - Duration for %s: %d seconds. Amount: %d.", constant, timeElapsed(startTimer), amount);
     }
 
     private long timeElapsed(long startTime) {
