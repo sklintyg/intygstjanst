@@ -17,13 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.service;
+package se.inera.intyg.intygstjanst.web.integration.hsa;
 
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-public interface HsaServiceProvider {
+@Data
+@AllArgsConstructor
+public class HsaResponse {
 
-    String getCareGiverHsaId(String careUnitId);
-
-    List<String> getUnitAndRelatedSubUnits(String careUnitId);
+    private String careProviderId;
+    private List<String> unitAndSubUnits;
 }

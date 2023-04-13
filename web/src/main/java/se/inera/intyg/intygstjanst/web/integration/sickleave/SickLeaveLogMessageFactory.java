@@ -23,9 +23,10 @@ import java.util.concurrent.TimeUnit;
 
 public class SickLeaveLogMessageFactory {
 
-    public static final String SICK_LEAVE_ACTIVE = "SICK_LEAVE_ACTIVE";
-    public static final String INTYG_DATA_SERVICE = "INTYG_DATA_SERVICE";
-    public static final String SICK_LEAVE_INFORMATION = "SICK_LEAVE_INFORMATION";
+    public static final String GET_SICK_LEAVE_ACTIVE = "GET_SICK_LEAVE_ACTIVE";
+    public static final String GET_SICK_LEAVE_FILTER = "GET_SICK_LEAVE_FILTER";
+    public static final String GET_SICK_LEAVE_CERTIFICATES = "GET_SICK_LEAVE_CERTIFICATES";
+    public static final String GET_DOCTORS_FOR_SICK_LEAVES = "GET_DOCTORS_FOR_SICK_LEAVES";
     private long startTimer;
 
     public SickLeaveLogMessageFactory(long startTime) {
@@ -34,6 +35,10 @@ public class SickLeaveLogMessageFactory {
 
     public String message(String constant, int amount) {
         return String.format("SICK LEAVE LOG - Duration for %s: %d seconds. Amount: %d.", constant, timeElapsed(startTimer), amount);
+    }
+
+    public String message(String constant) {
+        return String.format("SICK LEAVE LOG - Duration for %s: %d seconds.", constant, timeElapsed(startTimer));
     }
 
     private long timeElapsed(long startTime) {

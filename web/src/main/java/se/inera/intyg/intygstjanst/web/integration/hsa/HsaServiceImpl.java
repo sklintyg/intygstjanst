@@ -46,4 +46,12 @@ public class HsaServiceImpl implements HsaService {
     public String getHsaIdForVardgivare(String careUnitHsaId) {
         return hsaOrganizationsService.getVardgivareOfVardenhet(careUnitHsaId);
     }
+
+    @Override
+    public HsaResponse getHsaIdsForCareProviderAndSubUnits(String careUnitId) {
+        final var careProviderId = hsaOrganizationsService.getVardgivareOfVardenhet(careUnitId);
+        final var unitAndSubUnits = hsaOrganizationsService.getHsaIdForAktivaUnderenheter(careUnitId);
+        unitAndSubUnits.add(careUnitId);
+        return new HsaResponse(careProviderId, unitAndSubUnits);
+    }
 }

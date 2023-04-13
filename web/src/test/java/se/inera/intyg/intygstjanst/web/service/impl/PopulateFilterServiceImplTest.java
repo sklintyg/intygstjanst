@@ -32,9 +32,10 @@ import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.integration.hsa.HsaResponse;
+import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
-import se.inera.intyg.intygstjanst.web.service.DoctorsForCareUnitComponent;
-import se.inera.intyg.intygstjanst.web.service.HsaServiceProvider;
+import se.inera.intyg.intygstjanst.web.service.GetDoctorsFromSickLeaves;
 import se.inera.intyg.intygstjanst.web.service.PopulateFilterService;
 import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
 
@@ -57,9 +58,9 @@ class PopulateFilterServiceImplTest {
     @Mock
     private SjukfallCertificateDao sjukfallCertificateDao;
     @Mock
-    private HsaServiceProvider hsaServiceProvider;
+    private HsaService hsaService;
     @Mock
-    private DoctorsForCareUnitComponent doctorsForCareUnitComponent;
+    private GetDoctorsFromSickLeaves getDoctorsFromSickLeaves;
     @Mock
     private DiagnosisChapterService diagnosisChapterService;
 
@@ -67,7 +68,7 @@ class PopulateFilterServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        populateFilterService = new PopulateFilterServiceImpl(sjukfallCertificateDao, doctorsForCareUnitComponent, hsaServiceProvider,
+        populateFilterService = new PopulateFilterServiceImpl(sjukfallCertificateDao, getDoctorsFromSickLeaves, hsaService,
             diagnosisChapterService);
     }
 
@@ -85,14 +86,14 @@ class PopulateFilterServiceImplTest {
         populateFiltersRequestDTO.setCareUnitId(CARE_UNIT_ID);
         populateFiltersRequestDTO.setMaxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED);
 
+        final var hsaResponse = new HsaResponse(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits);
         final var sickLeaveCertificates = List.of(getSickLeaveCertificate(), getSickLeaveCertificate());
         final var expectedResult = List.of(Lakare.create(DOCTOR_ID, DOCTOR_NAME));
 
-        when(hsaServiceProvider.getCareGiverHsaId(CARE_UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
-        when(hsaServiceProvider.getUnitAndRelatedSubUnits(CARE_UNIT_ID)).thenReturn(unitAndRelatedSubUnits);
+        when(hsaService.getHsaIdsForCareProviderAndSubUnits(CARE_UNIT_ID)).thenReturn(hsaResponse);
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits,
             MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED)).thenReturn(sickLeaveCertificates);
-        when(doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates, null)).thenReturn(expectedResult);
+        when(getDoctorsFromSickLeaves.getDoctors(sickLeaveCertificates, null)).thenReturn(expectedResult);
 
         final var result = populateFilterService.populateFilters(populateFiltersRequestDTO);
 
@@ -105,11 +106,11 @@ class PopulateFilterServiceImplTest {
         populateFiltersRequestDTO.setCareUnitId(CARE_UNIT_ID);
         populateFiltersRequestDTO.setMaxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED);
 
+        final var hsaResponse = new HsaResponse(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits);
         final var expectedResult = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER_1), new DiagnosKapitel(DIAGNOSIS_CHAPTER_2));
         final var sickLeaveCertificate = List.of(getSickLeaveCertificate(), getSickLeaveCertificate());
 
-        when(hsaServiceProvider.getCareGiverHsaId(CARE_UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
-        when(hsaServiceProvider.getUnitAndRelatedSubUnits(CARE_UNIT_ID)).thenReturn(unitAndRelatedSubUnits);
+        when(hsaService.getHsaIdsForCareProviderAndSubUnits(CARE_UNIT_ID)).thenReturn(hsaResponse);
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits,
             MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED)).thenReturn(sickLeaveCertificate);
         when(diagnosisChapterService.getDiagnosisChaptersFromSickLeaveCertificate(sickLeaveCertificate)).thenReturn(

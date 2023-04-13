@@ -31,15 +31,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.web.service.DoctorsForCareUnitComponent;
+import se.inera.intyg.intygstjanst.web.service.GetDoctorsFromSickLeaves;
 import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 
 @ExtendWith(MockitoExtension.class)
-class DoctorsForCareUnitComponentImplTest {
+class GetDoctorsFromSickLeavesImplTest {
 
     @Mock
     private SickLeaveInformationService sickLeaveInformationService;
-    private DoctorsForCareUnitComponent doctorsForCareUnitComponent;
+    private GetDoctorsFromSickLeaves getDoctorsFromSickLeaves;
     private static final String DOCTOR_ID = "doctorId";
     private static final String DOCTOR_NAME = "Bosse";
     private static final String ANOTHER_DOCTOR_NAME = "Ajla";
@@ -47,13 +47,13 @@ class DoctorsForCareUnitComponentImplTest {
 
     @BeforeEach
     void setUp() {
-        doctorsForCareUnitComponent = new DoctorsForCareUnitComponentImpl(sickLeaveInformationService);
+        getDoctorsFromSickLeaves = new GetDoctorsFromSickLeavesImpl(sickLeaveInformationService);
     }
 
     @Test
     void shouldReturnEmptyList() {
         final var sickLeaveCertificates = List.of(new SjukfallCertificate(null));
-        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates, null);
+        final var result = getDoctorsFromSickLeaves.getDoctors(sickLeaveCertificates, null);
         assertEquals(0, result.size());
     }
 
@@ -66,7 +66,7 @@ class DoctorsForCareUnitComponentImplTest {
 
         final var expectedResult = List.of(Lakare.create(ANOTHER_DOCTOR_ID, ANOTHER_DOCTOR_NAME), Lakare.create(DOCTOR_ID, DOCTOR_NAME));
 
-        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates, null);
+        final var result = getDoctorsFromSickLeaves.getDoctors(sickLeaveCertificates, null);
 
         assertEquals(expectedResult, result);
     }
@@ -82,7 +82,7 @@ class DoctorsForCareUnitComponentImplTest {
             Lakare.create(DOCTOR_ID, DOCTOR_NAME + " (" + DOCTOR_ID + ")"),
             Lakare.create(ANOTHER_DOCTOR_ID, DOCTOR_NAME + " (" + ANOTHER_DOCTOR_ID + ")"));
 
-        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates, null);
+        final var result = getDoctorsFromSickLeaves.getDoctors(sickLeaveCertificates, null);
 
         assertEquals(expectedResult, result);
     }
@@ -96,7 +96,7 @@ class DoctorsForCareUnitComponentImplTest {
 
         final var expectedResult = List.of(Lakare.create(DOCTOR_ID, DOCTOR_NAME));
 
-        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates, null);
+        final var result = getDoctorsFromSickLeaves.getDoctors(sickLeaveCertificates, null);
 
         assertEquals(expectedResult, result);
     }
@@ -107,7 +107,7 @@ class DoctorsForCareUnitComponentImplTest {
 
         final var expectedResult = Collections.emptyList();
 
-        final var result = doctorsForCareUnitComponent.getDoctorsForCareUnit(sickLeaveCertificates, DOCTOR_ID);
+        final var result = getDoctorsFromSickLeaves.getDoctors(sickLeaveCertificates, DOCTOR_ID);
 
         assertEquals(expectedResult, result);
     }

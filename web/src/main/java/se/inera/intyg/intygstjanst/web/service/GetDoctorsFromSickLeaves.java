@@ -23,7 +23,7 @@ import java.util.List;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 
-public interface DoctorsForCareUnitComponent {
+public interface GetDoctorsFromSickLeaves {
 
-    List<Lakare> getDoctorsForCareUnit(List<SjukfallCertificate> sickLeaveCertificates, String doctorId);
+    List<Lakare> getDoctors(List<SjukfallCertificate> sickLeaveCertificates, String doctorId);
 }

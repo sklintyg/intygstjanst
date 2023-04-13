@@ -30,7 +30,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.integration.hsatk.model.PersonInformation;
-import se.inera.intyg.infra.integration.hsatk.services.legacy.HsaEmployeeServiceImpl;
+import se.inera.intyg.infra.integration.hsatk.services.HsatkEmployeeServiceImpl;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
@@ -41,7 +41,7 @@ class SickLeaveInformationServiceImplTest {
     private SickLeaveInformationService sickLeaveInformationService;
 
     @Mock
-    private HsaEmployeeServiceImpl hsaEmployeeService;
+    private HsatkEmployeeServiceImpl hsaEmployeeService;
 
     private static final String DOCTOR_ID = "doctorId";
     private static final String ANOTHER_DOCTOR_ID = "anotherDoctorId";

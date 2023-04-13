@@ -19,8 +19,8 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.INTYG_DATA_SERVICE;
-import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.SICK_LEAVE_INFORMATION;
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_DOCTORS_FOR_SICK_LEAVES;
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_SICK_LEAVE_CERTIFICATES;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
         final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var intygData = intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted());
-        LOG.info(sickLeaveLogMessageFactory.message(INTYG_DATA_SERVICE, intygData.size()));
+        LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_CERTIFICATES, intygData.size()));
 
         final var activeSickLeavesForUnit = sjukfallEngine.beraknaSjukfallForEnhet(intygData, intygParametrar);
         final var filteredActiveSickleavesForUnit = filterSickLeaves(sickLeaveRequestDTO,
@@ -75,7 +75,7 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
 
         sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
         sickLeaveInformationService.updateAndDecorateDoctorName(filteredActiveSickleavesForUnit);
-        LOG.info(sickLeaveLogMessageFactory.message(SICK_LEAVE_INFORMATION, filteredActiveSickleavesForUnit.size()));
+        LOG.info(sickLeaveLogMessageFactory.message(GET_DOCTORS_FOR_SICK_LEAVES, filteredActiveSickleavesForUnit.size()));
 
         return filteredActiveSickleavesForUnit;
     }

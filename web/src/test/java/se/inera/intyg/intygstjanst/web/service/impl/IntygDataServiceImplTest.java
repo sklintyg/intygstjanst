@@ -41,9 +41,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
+import se.inera.intyg.intygstjanst.web.integration.hsa.HsaResponse;
+import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallCertificateIntygsDataConverter;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
-import se.inera.intyg.intygstjanst.web.service.HsaServiceProvider;
 
 @ExtendWith(MockitoExtension.class)
 class IntygDataServiceImplTest {
@@ -52,7 +53,7 @@ class IntygDataServiceImplTest {
     private static final String UNIT_ID = "unitId";
     private final ArrayList<String> hsaIdList = new ArrayList<>();
     @Mock
-    private HsaServiceProvider hsaServiceProvider;
+    private HsaService hsaService;
     @Mock
     private SjukfallCertificateDao sjukfallCertificateDao;
     @Mock
@@ -70,14 +71,14 @@ class IntygDataServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        listActiveSickLeaveCertificateService = new IntygDataServiceImpl(hsaServiceProvider, sjukfallCertificateDao,
+        listActiveSickLeaveCertificateService = new IntygDataServiceImpl(hsaService, sjukfallCertificateDao,
             intygDataConverter);
     }
 
     @Test
     void shouldReturnListOfIntygData() {
-        when(hsaServiceProvider.getCareGiverHsaId(UNIT_ID)).thenReturn(UNIT_ID);
-        when(hsaServiceProvider.getUnitAndRelatedSubUnits(anyString())).thenReturn(hsaIdList);
+        final var hsaResponse = new HsaResponse(UNIT_ID, hsaIdList);
+        when(hsaService.getHsaIdsForCareProviderAndSubUnits(UNIT_ID)).thenReturn(hsaResponse);
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyList(),
             anyInt())).thenReturn(List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(false)));
 
@@ -91,8 +92,8 @@ class IntygDataServiceImplTest {
         final var intygsData = new ArrayList<>(
             new SjukfallCertificateIntygsDataConverter().buildIntygsData(sjukfallCertificates));
         final var expectedIntygData = intygsData.stream().map(intygDataConverter::map).collect(Collectors.toList());
-        when(hsaServiceProvider.getCareGiverHsaId(UNIT_ID)).thenReturn(UNIT_ID);
-        when(hsaServiceProvider.getUnitAndRelatedSubUnits(anyString())).thenReturn(hsaIdList);
+        final var hsaResponse = new HsaResponse(UNIT_ID, hsaIdList);
+        when(hsaService.getHsaIdsForCareProviderAndSubUnits(UNIT_ID)).thenReturn(hsaResponse);
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyList(),
             anyInt())).thenReturn(List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(false)));
 
@@ -102,8 +103,8 @@ class IntygDataServiceImplTest {
 
     @Test
     void shouldNotReturnIntygDataIfTestCertificate() {
-        when(hsaServiceProvider.getCareGiverHsaId(UNIT_ID)).thenReturn(UNIT_ID);
-        when(hsaServiceProvider.getUnitAndRelatedSubUnits(anyString())).thenReturn(hsaIdList);
+        final var hsaResponse = new HsaResponse(UNIT_ID, hsaIdList);
+        when(hsaService.getHsaIdsForCareProviderAndSubUnits(UNIT_ID)).thenReturn(hsaResponse);
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyList(),
             anyInt())).thenReturn(List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(true)));
 

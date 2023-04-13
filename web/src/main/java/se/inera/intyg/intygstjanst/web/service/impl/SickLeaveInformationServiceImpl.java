@@ -22,10 +22,11 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.xml.ws.WebServiceException;
-import org.springframework.cache.annotation.Cacheable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.integration.hsatk.model.PersonInformation;
-import se.inera.intyg.infra.integration.hsatk.services.legacy.HsaEmployeeServiceImpl;
+import se.inera.intyg.infra.integration.hsatk.services.HsatkEmployeeServiceImpl;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
@@ -33,10 +34,10 @@ import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 @Service
 public class SickLeaveInformationServiceImpl implements SickLeaveInformationService {
 
-    private final HsaEmployeeServiceImpl hsaEmployeeService;
-    private static final String EMPLOYEE_NAME_CACHE_NAME = "employeeNameCache";
+    private final HsatkEmployeeServiceImpl hsaEmployeeService;
+    private static final Logger LOG = LoggerFactory.getLogger(SickLeaveInformationServiceImpl.class);
 
-    public SickLeaveInformationServiceImpl(HsaEmployeeServiceImpl hsaEmployeeService) {
+    public SickLeaveInformationServiceImpl(HsatkEmployeeServiceImpl hsaEmployeeService) {
         this.hsaEmployeeService = hsaEmployeeService;
     }
 
@@ -67,7 +68,6 @@ public class SickLeaveInformationServiceImpl implements SickLeaveInformationServ
         }
     }
 
-    @Cacheable(value = EMPLOYEE_NAME_CACHE_NAME, key = "#doctorId")
     public String getHsaEmployee(String doctorId) {
         try {
             final var employee = hsaEmployeeService.getEmployee(doctorId, null, null);
@@ -76,6 +76,7 @@ public class SickLeaveInformationServiceImpl implements SickLeaveInformationServ
             }
             return getName(employee);
         } catch (WebServiceException e) {
+            LOG.error(e.getMessage());
             throw new WebServiceException();
         }
     }

@@ -29,41 +29,41 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.web.service.DoctorsForCareUnitComponent;
+import se.inera.intyg.intygstjanst.web.service.GetDoctorsFromSickLeaves;
 import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 
 @Component
-public class DoctorsForCareUnitComponentImpl implements DoctorsForCareUnitComponent {
+public class GetDoctorsFromSickLeavesImpl implements GetDoctorsFromSickLeaves {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DoctorsForCareUnitComponentImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GetDoctorsFromSickLeavesImpl.class);
     private final SickLeaveInformationService sickLeaveInformationService;
 
-    public DoctorsForCareUnitComponentImpl(SickLeaveInformationService sickLeaveInformationService) {
+    public GetDoctorsFromSickLeavesImpl(SickLeaveInformationService sickLeaveInformationService) {
         this.sickLeaveInformationService = sickLeaveInformationService;
     }
 
     @Override
-    public List<Lakare> getDoctorsForCareUnit(List<SjukfallCertificate> sickLeaveCertificates, String doctorId) {
+    public List<Lakare> getDoctors(List<SjukfallCertificate> sickLeaveCertificates, String doctorId) {
         if (doctorId != null) {
             LOG.debug("Returning empty list of doctors since doctorId: {} was provided", doctorId);
             return Collections.emptyList();
         }
-        final var doctorsWithActiveSickLeave = extractDoctorsFromCertificateAndSortedByName(sickLeaveCertificates);
-        decorateWithHsaId(doctorsWithActiveSickLeave);
-        return doctorsWithActiveSickLeave;
+        final var doctors = extractDoctorsFromCertificateAndSortedByName(sickLeaveCertificates);
+        decorateDuplicateNamesWithHsaId(doctors);
+        return doctors;
     }
 
-    private List<Lakare> extractDoctorsFromCertificateAndSortedByName(List<SjukfallCertificate> doctorIds) {
-        return doctorIds.stream()
+    private List<Lakare> extractDoctorsFromCertificateAndSortedByName(List<SjukfallCertificate> sickLeaveCertificate) {
+        return sickLeaveCertificate.stream()
             .map(SjukfallCertificate::getSigningDoctorId)
             .filter(Objects::nonNull)
-            .map(sickLeaveInformationService::getEmployee)
             .distinct()
+            .map(sickLeaveInformationService::getEmployee)
             .sorted(Comparator.comparing(Lakare::getNamn))
             .collect(Collectors.toList());
     }
 
-    private void decorateWithHsaId(List<Lakare> doctorList) {
+    private void decorateDuplicateNamesWithHsaId(List<Lakare> doctorList) {
         doctorList.stream()
             .collect(Collectors.groupingBy(Lakare::getNamn))
             .forEach((name, doctorNames) -> {

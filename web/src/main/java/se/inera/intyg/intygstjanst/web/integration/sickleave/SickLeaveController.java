@@ -19,7 +19,8 @@
 
 package se.inera.intyg.intygstjanst.web.integration.sickleave;
 
-import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.SICK_LEAVE_ACTIVE;
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_SICK_LEAVE_ACTIVE;
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_SICK_LEAVE_FILTER;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -59,7 +60,7 @@ public class SickLeaveController {
     public Response getActiveSickLeavesForCareUnit(@RequestBody SickLeaveRequestDTO sickLeaveRequestDTO) {
         final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var activeSickLeavesForCareUnit = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        LOG.info(sickLeaveLogMessageFactory.message(SICK_LEAVE_ACTIVE, activeSickLeavesForCareUnit.size()));
+        LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_ACTIVE, activeSickLeavesForCareUnit.size()));
         return Response.ok(new SickLeaveResponseDTO(activeSickLeavesForCareUnit)).build();
     }
 
@@ -69,7 +70,9 @@ public class SickLeaveController {
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response populateFilters(@RequestBody PopulateFiltersRequestDTO populateFiltersRequestDTO) {
+        final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var populateFiltersResponseDTO = populateFilterService.populateFilters(populateFiltersRequestDTO);
+        LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_FILTER));
         return Response.ok(populateFiltersResponseDTO).build();
     }
 }
