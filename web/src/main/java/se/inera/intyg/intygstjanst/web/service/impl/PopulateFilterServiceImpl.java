@@ -66,7 +66,7 @@ public class PopulateFilterServiceImpl implements PopulateFilterService {
 
         LOG.debug("Getting active sick leaves for care unit:  {}", careUnitId);
 
-        final var sickLeaveCertificates = filterOnUnitIdIfProvided(
+        final var sickLeaveCertificates = filterOnUnitIdIfProvidedAndTestCertificate(
             sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(careGiverHsaId,
                 unitAndRelatedSubUnits, maxDaysSinceSickLeaveCompleted), populateFiltersRequestDTO.getUnitId());
 
@@ -78,14 +78,14 @@ public class PopulateFilterServiceImpl implements PopulateFilterService {
         return new PopulateFiltersResponseDTO(doctorsForCareUnit, diagnosisChaptersForCareUnit);
     }
 
-    private List<SjukfallCertificate> filterOnUnitIdIfProvided(List<SjukfallCertificate> sickLeaveCertificates, String unitId) {
+    private List<SjukfallCertificate> filterOnUnitIdIfProvidedAndTestCertificate(List<SjukfallCertificate> sickLeaveCertificates, String unitId) {
         List<SjukfallCertificate> filteredSickLeaves = new ArrayList<>(sickLeaveCertificates);
         if (unitId != null) {
             filteredSickLeaves = filteredSickLeaves.stream()
                 .filter(sickLeave -> sickLeave.getCareUnitId().equals(unitId))
                 .collect(Collectors.toList());
         }
-        return filteredSickLeaves;
+        return filteredSickLeaves.stream().filter(sickLeave -> !sickLeave.isTestCertificate()).collect(Collectors.toList());
     }
 
 }
