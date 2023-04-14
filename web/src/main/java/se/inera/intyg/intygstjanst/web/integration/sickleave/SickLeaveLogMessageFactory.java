@@ -38,7 +38,7 @@ public class SickLeaveLogMessageFactory {
     }
 
     public String message(String constant) {
-        return String.format("SICK LEAVE LOG - Duration for %s: %d seconds.", constant, timeElapsed(startTimer));
+        return String.format("SICK LEAVE LOG - Duration for %s: %d seconds. Amount: N/A", constant, timeElapsed(startTimer));
     }
 
     private long timeElapsed(long startTime) {
