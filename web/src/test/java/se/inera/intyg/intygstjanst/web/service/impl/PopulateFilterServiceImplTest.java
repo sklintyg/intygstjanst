@@ -20,6 +20,9 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -32,7 +35,6 @@ import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
-import se.inera.intyg.intygstjanst.web.integration.hsa.HsaResponse;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.GetDoctorsFromSickLeaves;
@@ -54,6 +56,7 @@ class PopulateFilterServiceImplTest {
     private static final String DOCTOR_ID = "doctorId";
     private static final String DOCTOR_NAME = "Ajla";
     private static final String ID = "id";
+    private static final boolean ONLY_ACTIVE_SICK_LEAVES = true;
 
     @Mock
     private SjukfallCertificateDao sjukfallCertificateDao;
@@ -73,11 +76,10 @@ class PopulateFilterServiceImplTest {
     }
 
     @Test
-    void shouldReturnEmptyList() {
+    void shouldThrowIllegalArgumentException() {
         final var populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
-        final var result = populateFilterService.populateFilters(populateFiltersRequestDTO);
-        assertEquals(0, result.getActiveDoctors().size());
-        assertEquals(0, result.getDiagnosisChapters().size());
+        assertThrows(IllegalArgumentException.class,
+            () -> populateFilterService.populateFilters(populateFiltersRequestDTO));
     }
 
     @Test
@@ -86,13 +88,12 @@ class PopulateFilterServiceImplTest {
         populateFiltersRequestDTO.setCareUnitId(CARE_UNIT_ID);
         populateFiltersRequestDTO.setMaxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED);
 
-        final var hsaResponse = new HsaResponse(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits);
         final var sickLeaveCertificates = List.of(getSickLeaveCertificate(), getSickLeaveCertificate());
         final var expectedResult = List.of(Lakare.create(DOCTOR_ID, DOCTOR_NAME));
-
-        when(hsaService.getHsaIdsForCareProviderAndSubUnits(CARE_UNIT_ID)).thenReturn(hsaResponse);
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits,
-            MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED)).thenReturn(sickLeaveCertificates);
+        when(hsaService.getHsaIdsForCareUnitAndSubUnits(CARE_UNIT_ID)).thenReturn(unitAndRelatedSubUnits);
+        when(hsaService.getHsaIdForVardgivare(CARE_UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(eq(CARE_GIVER_HSA_ID), eq(unitAndRelatedSubUnits),
+            eq(MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED), anyBoolean())).thenReturn(sickLeaveCertificates);
         when(getDoctorsFromSickLeaves.getDoctors(sickLeaveCertificates, null)).thenReturn(expectedResult);
 
         final var result = populateFilterService.populateFilters(populateFiltersRequestDTO);
@@ -106,14 +107,14 @@ class PopulateFilterServiceImplTest {
         populateFiltersRequestDTO.setCareUnitId(CARE_UNIT_ID);
         populateFiltersRequestDTO.setMaxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED);
 
-        final var hsaResponse = new HsaResponse(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits);
         final var expectedResult = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER_1), new DiagnosKapitel(DIAGNOSIS_CHAPTER_2));
-        final var sickLeaveCertificate = List.of(getSickLeaveCertificate(), getSickLeaveCertificate());
+        final var sickLeaveCertificates = List.of(getSickLeaveCertificate(), getSickLeaveCertificate());
 
-        when(hsaService.getHsaIdsForCareProviderAndSubUnits(CARE_UNIT_ID)).thenReturn(hsaResponse);
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(CARE_GIVER_HSA_ID, unitAndRelatedSubUnits,
-            MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED)).thenReturn(sickLeaveCertificate);
-        when(diagnosisChapterService.getDiagnosisChaptersFromSickLeaveCertificate(sickLeaveCertificate)).thenReturn(
+        when(hsaService.getHsaIdsForCareUnitAndSubUnits(CARE_UNIT_ID)).thenReturn(unitAndRelatedSubUnits);
+        when(hsaService.getHsaIdForVardgivare(CARE_UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(eq(CARE_GIVER_HSA_ID), eq(unitAndRelatedSubUnits),
+            eq(MAX_DAYS_SINCE_SICK_LEAVE_COMPLEDTED), anyBoolean())).thenReturn(sickLeaveCertificates);
+        when(diagnosisChapterService.getDiagnosisChaptersFromSickLeaveCertificate(sickLeaveCertificates)).thenReturn(
             List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER_1), new DiagnosKapitel(DIAGNOSIS_CHAPTER_2)));
 
         final var result = populateFilterService.populateFilters(populateFiltersRequestDTO);

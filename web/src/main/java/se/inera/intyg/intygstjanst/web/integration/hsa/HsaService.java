@@ -29,6 +29,8 @@ public interface HsaService {
 
     String getHsaIdForVardgivare(String careUnitHsaId);
 
-    HsaResponse getHsaIdsForCareProviderAndSubUnits(String careUnitId);
+    List<String> getHsaIdsForCareUnitAndSubUnits(String careUnitId);
+
+    String getHsaEmployeeName(String doctorId);
 
 }

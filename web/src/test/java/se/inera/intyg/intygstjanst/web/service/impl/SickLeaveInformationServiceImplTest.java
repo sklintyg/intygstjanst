@@ -29,10 +29,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.infra.integration.hsatk.model.PersonInformation;
-import se.inera.intyg.infra.integration.hsatk.services.HsatkEmployeeServiceImpl;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,24 +40,24 @@ class SickLeaveInformationServiceImplTest {
     private SickLeaveInformationService sickLeaveInformationService;
 
     @Mock
-    private HsatkEmployeeServiceImpl hsaEmployeeService;
+    private HsaService hsaService;
 
     private static final String DOCTOR_ID = "doctorId";
     private static final String ANOTHER_DOCTOR_ID = "anotherDoctorId";
-    private static final String DOCTOR_NAME = "doctorName";
+    private static final String DOCTOR_NAME = "Arnold Johansson";
+    private static final String ANOTHER_DOCTOR_NAME = "Ajla Doktor";
 
     @BeforeEach
     void setUp() {
-        sickLeaveInformationService = new SickLeaveInformationServiceImpl(hsaEmployeeService);
+        sickLeaveInformationService = new SickLeaveInformationServiceImpl(hsaService);
     }
 
     @Test
     void shouldUpdateEmployeeName() {
-        final var sickLeaves = List.of(createSjukFallEnhet(DOCTOR_ID, DOCTOR_NAME));
-        final var expectedName = getExpectedName(null);
-        final var personInformation = getPersonInformation();
+        final var sickLeaves = List.of(createSjukFallEnhet(DOCTOR_ID));
+        final var expectedName = getExpectedName(null, DOCTOR_NAME);
 
-        when(hsaEmployeeService.getEmployee(DOCTOR_ID, null, null)).thenReturn(List.of(personInformation));
+        when(hsaService.getHsaEmployeeName(DOCTOR_ID)).thenReturn(expectedName);
 
         sickLeaveInformationService.updateAndDecorateDoctorName(sickLeaves);
 
@@ -66,10 +65,10 @@ class SickLeaveInformationServiceImplTest {
     }
 
     @Test
-    void shouldUpdateEmployeeNameWithHsaId() {
-        final var sickLeaves = List.of(createSjukFallEnhet(DOCTOR_ID, DOCTOR_NAME));
+    void shouldUpdateEmployeeNameWithHsaIdIfNull() {
+        final var sickLeaves = List.of(createSjukFallEnhet(DOCTOR_ID));
 
-        when(hsaEmployeeService.getEmployee(DOCTOR_ID, null, null)).thenReturn(null);
+        when(hsaService.getHsaEmployeeName(DOCTOR_ID)).thenReturn(null);
 
         sickLeaveInformationService.updateAndDecorateDoctorName(sickLeaves);
 
@@ -78,13 +77,12 @@ class SickLeaveInformationServiceImplTest {
 
     @Test
     void shouldUpdateDuplicatedDoctorNamesWithHsaId() {
-        final var sickLeaves = List.of(createSjukFallEnhet(DOCTOR_ID, DOCTOR_NAME), createSjukFallEnhet(ANOTHER_DOCTOR_ID, DOCTOR_NAME));
-        final var expectedName = getExpectedName(DOCTOR_ID);
-        final var secondExpectedName = getExpectedName(ANOTHER_DOCTOR_ID);
-        final var personInformation = getPersonInformation();
+        final var sickLeaves = List.of(createSjukFallEnhet(DOCTOR_ID), createSjukFallEnhet(ANOTHER_DOCTOR_ID));
+        final var expectedName = getExpectedName(DOCTOR_ID, DOCTOR_NAME);
+        final var secondExpectedName = getExpectedName(ANOTHER_DOCTOR_ID, DOCTOR_NAME);
 
-        when(hsaEmployeeService.getEmployee(DOCTOR_ID, null, null)).thenReturn(List.of(personInformation));
-        when(hsaEmployeeService.getEmployee(ANOTHER_DOCTOR_ID, null, null)).thenReturn(List.of(personInformation));
+        when(hsaService.getHsaEmployeeName(DOCTOR_ID)).thenReturn(DOCTOR_NAME);
+        when(hsaService.getHsaEmployeeName(ANOTHER_DOCTOR_ID)).thenReturn(DOCTOR_NAME);
 
         sickLeaveInformationService.updateAndDecorateDoctorName(sickLeaves);
 
@@ -94,12 +92,12 @@ class SickLeaveInformationServiceImplTest {
 
     @Test
     void shouldNotUpdateDuplicatedDoctorNamesWithHsaId() {
-        final var sickLeaves = List.of(createSjukFallEnhet(DOCTOR_ID, DOCTOR_NAME), createSjukFallEnhet(DOCTOR_ID, DOCTOR_NAME));
-        final var expectedName = getExpectedName(null);
-        final var secondExpectedName = getExpectedName(null);
-        final var personInformation = getPersonInformation();
+        final var sickLeaves = List.of(createSjukFallEnhet(DOCTOR_ID), createSjukFallEnhet(ANOTHER_DOCTOR_ID));
+        final var expectedName = getExpectedName(null, DOCTOR_NAME);
+        final var secondExpectedName = getExpectedName(null, ANOTHER_DOCTOR_NAME);
 
-        when(hsaEmployeeService.getEmployee(DOCTOR_ID, null, null)).thenReturn(List.of(personInformation));
+        when(hsaService.getHsaEmployeeName(DOCTOR_ID)).thenReturn(DOCTOR_NAME);
+        when(hsaService.getHsaEmployeeName(ANOTHER_DOCTOR_ID)).thenReturn(ANOTHER_DOCTOR_NAME);
 
         sickLeaveInformationService.updateAndDecorateDoctorName(sickLeaves);
 
@@ -107,23 +105,16 @@ class SickLeaveInformationServiceImplTest {
         assertEquals(secondExpectedName, sickLeaves.get(1).getLakare().getNamn());
     }
 
-    private static PersonInformation getPersonInformation() {
-        final var personInformation = new PersonInformation();
-        personInformation.setGivenName("test");
-        personInformation.setMiddleAndSurName("testsson");
-        return personInformation;
-    }
-
-    private String getExpectedName(String doctorId) {
+    private String getExpectedName(String doctorId, String doctorName) {
         if (doctorId != null) {
-            return "test testsson (" + doctorId + ")";
+            return doctorName + " (" + doctorId + ")";
         }
-        return "test testsson";
+        return doctorName;
     }
 
-    private static SjukfallEnhet createSjukFallEnhet(String doctorId, String doctorName) {
+    private static SjukfallEnhet createSjukFallEnhet(String doctorId) {
         SjukfallEnhet sickLeaveUnit = new SjukfallEnhet();
-        Lakare lakare = Lakare.create(doctorId, doctorName);
+        Lakare lakare = Lakare.create(doctorId, DOCTOR_NAME);
         sickLeaveUnit.setLakare(lakare);
         return sickLeaveUnit;
     }

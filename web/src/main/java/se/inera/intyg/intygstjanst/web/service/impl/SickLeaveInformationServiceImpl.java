@@ -21,24 +21,19 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.xml.ws.WebServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.infra.integration.hsatk.model.PersonInformation;
-import se.inera.intyg.infra.integration.hsatk.services.HsatkEmployeeServiceImpl;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 
 @Service
 public class SickLeaveInformationServiceImpl implements SickLeaveInformationService {
 
-    private final HsatkEmployeeServiceImpl hsaEmployeeService;
-    private static final Logger LOG = LoggerFactory.getLogger(SickLeaveInformationServiceImpl.class);
+    private final HsaService hsaService;
 
-    public SickLeaveInformationServiceImpl(HsatkEmployeeServiceImpl hsaEmployeeService) {
-        this.hsaEmployeeService = hsaEmployeeService;
+    public SickLeaveInformationServiceImpl(HsaService hsaService) {
+        this.hsaService = hsaService;
     }
 
     @Override
@@ -49,14 +44,14 @@ public class SickLeaveInformationServiceImpl implements SickLeaveInformationServ
 
     @Override
     public Lakare getEmployee(String doctorId) {
-        return Lakare.create(doctorId, getHsaEmployee(doctorId));
+        return Lakare.create(doctorId, hsaService.getHsaEmployeeName(doctorId));
     }
 
     private void updateEmployeeName(SjukfallEnhet sickLeave) {
         if (sickLeave.getLakare() == null) {
             return;
         }
-        final var employeeName = getHsaEmployee(sickLeave.getLakare().getId());
+        final var employeeName = hsaService.getHsaEmployeeName(sickLeave.getLakare().getId());
         setEmployeeNameIfFound(sickLeave, employeeName);
     }
 
@@ -66,23 +61,6 @@ public class SickLeaveInformationServiceImpl implements SickLeaveInformationServ
         } else {
             sickLeave.getLakare().setNamn(sickLeave.getLakare().getId());
         }
-    }
-
-    public String getHsaEmployee(String doctorId) {
-        try {
-            final var employee = hsaEmployeeService.getEmployee(doctorId, null, null);
-            if (employee == null || employee.isEmpty()) {
-                return doctorId;
-            }
-            return getName(employee);
-        } catch (WebServiceException e) {
-            LOG.error(e.getMessage());
-            throw new WebServiceException();
-        }
-    }
-
-    private String getName(List<PersonInformation> employeeInfo) {
-        return employeeInfo.get(0).getGivenName() + " " + employeeInfo.get(0).getMiddleAndSurName();
     }
 
     public void decorateWithHsaId(List<SjukfallEnhet> sickLeaves) {

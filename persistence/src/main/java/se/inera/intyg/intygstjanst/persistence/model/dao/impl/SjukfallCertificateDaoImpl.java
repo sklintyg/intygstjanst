@@ -86,7 +86,27 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
             .setParameter("recentlyClosed", recentlyClosed)
             .getResultList();
 
-        return querySjukfallCertificatesForUnitsAndPersonnummer(careGiverHsaId, careUnitHsaIds, personNummerList);
+        return querySjukfallCertificatesForUnitsAndPersonnummer(careGiverHsaId, careUnitHsaIds, personNummerList, recentlyClosed, false);
+    }
+
+    @Override
+    public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
+        int maxDagarSedanAvslut, boolean onlyActiveSickLeaves) {
+
+        String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
+        String recentlyClosed = LocalDate.now().minusDays(maxDagarSedanAvslut).format(DateTimeFormatter.ISO_DATE);
+
+        // First, get personnummer for all patients having a currently ongoing intyg.
+        List<String> personNummerList = entityManager
+            .createQuery(BASE_QUERY + "", String.class)
+            .setParameter("careGiverHsaId", careGiverHsaId)
+            .setParameter("careUnitHsaId", careUnitHsaIds)
+            .setParameter("today", today)
+            .setParameter("recentlyClosed", recentlyClosed)
+            .getResultList();
+
+        return querySjukfallCertificatesForUnitsAndPersonnummer(careGiverHsaId, careUnitHsaIds, personNummerList, recentlyClosed,
+            onlyActiveSickLeaves);
     }
 
     @Override
@@ -107,7 +127,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
             .setParameter("civicRegistrationNumber", personnummer)
             .getResultList();
 
-        return querySjukfallCertificatesForUnitsAndPersonnummer(careGiverHsaId, careUnitHsaIds, personNummerList);
+        return querySjukfallCertificatesForUnitsAndPersonnummer(careGiverHsaId, careUnitHsaIds, personNummerList, recentlyClosed, false);
     }
 
     @Override
@@ -225,7 +245,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     }
 
     private List<SjukfallCertificate> querySjukfallCertificatesForUnitsAndPersonnummer(
-        String careGiverHsaId, List<String> careUnitHsaIds, List<String> pnrList) {
+        String careGiverHsaId, List<String> careUnitHsaIds, List<String> pnrList, String recentlyClosed, boolean onlyActiveSickLeaves) {
 
         // Perform the DISTINCT and SORT programatically.
         List<String> personNummerList = pnrList.stream().distinct().sorted().collect(Collectors.toList());
@@ -255,6 +275,10 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         if (isNotEmpty(replacedOrComplementedIntygsIdList)) {
             jpql += "AND sc.id NOT IN (:replacedOrComplementedIntygsIdList)";
         }
+        if (onlyActiveSickLeaves) {
+            jpql += "AND ((scwc.fromDate <= :today AND scwc.toDate >= :today)";
+            jpql += " OR (scwc.toDate < :today AND scwc.toDate >= :recentlyClosed)) ";
+        }
 
         TypedQuery<SjukfallCertificate> query = entityManager.createQuery(jpql, SjukfallCertificate.class)
             .setParameter("careGiverHsaId", careGiverHsaId)
@@ -263,6 +287,11 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
 
         if (isNotEmpty(replacedOrComplementedIntygsIdList)) {
             query = query.setParameter("replacedOrComplementedIntygsIdList", replacedOrComplementedIntygsIdList);
+        }
+        if (onlyActiveSickLeaves) {
+            String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
+            query = query.setParameter("today", today);
+            query = query.setParameter("recentlyClosed", recentlyClosed);
         }
 
         // Finally, fetch all SjukfallCertificates for these persons on the designated units, removing any sjukfall from

@@ -42,6 +42,7 @@ public class PopulateFilterServiceImpl implements PopulateFilterService {
     private final GetDoctorsFromSickLeaves getDoctorsFromSickLeaves;
     private final HsaService hsaService;
     private final DiagnosisChapterService diagnosisChapterService;
+    private static final boolean ONLY_ACTIVE_SICK_LEAVES = true;
 
     public PopulateFilterServiceImpl(SjukfallCertificateDao sjukfallCertificateDao, GetDoctorsFromSickLeaves getDoctorsFromSickLeaves,
         HsaService hsaService, DiagnosisChapterService diagnosisChapterService) {
@@ -59,12 +60,14 @@ public class PopulateFilterServiceImpl implements PopulateFilterService {
         if (careUnitId == null || careUnitId.isEmpty()) {
             throw new IllegalArgumentException("Parameter care unit id must be non-empty string.");
         }
-        final var careProviderAndSubUnits = hsaService.getHsaIdsForCareProviderAndSubUnits(careUnitId);
+        final var careProviderId = hsaService.getHsaIdForVardgivare(careUnitId);
+        final var careUnitAndSubUnits = hsaService.getHsaIdsForCareUnitAndSubUnits(careUnitId);
         LOG.debug("Getting active sick leaves for care unit:  {}", careUnitId);
 
         final var sickLeaveCertificates = filterOnUnitIdIfProvidedAndTestCertificate(
-            sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(careProviderAndSubUnits.getCareProviderId(),
-                careProviderAndSubUnits.getUnitAndSubUnits(), maxDaysSinceSickLeaveCompleted), populateFiltersRequestDTO.getUnitId());
+            sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(careProviderId, careUnitAndSubUnits,
+                maxDaysSinceSickLeaveCompleted, ONLY_ACTIVE_SICK_LEAVES),
+            populateFiltersRequestDTO.getUnitId());
 
         final var doctorsForCareUnit = getDoctorsFromSickLeaves.getDoctors(sickLeaveCertificates,
             populateFiltersRequestDTO.getDoctorId());

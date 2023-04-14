@@ -19,8 +19,14 @@
 package se.inera.intyg.intygstjanst.web.integration.hsa;
 
 import java.util.List;
+import javax.xml.ws.WebServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.infra.integration.hsatk.model.PersonInformation;
+import se.inera.intyg.infra.integration.hsatk.services.HsatkEmployeeServiceImpl;
 import se.inera.intyg.infra.integration.hsatk.services.legacy.HsaOrganizationsService;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 
@@ -35,6 +41,14 @@ public class HsaServiceImpl implements HsaService {
     @Autowired
     private HsaOrganizationsService hsaOrganizationsService;
 
+    @Autowired
+    private HsatkEmployeeServiceImpl hsaEmployeeService;
+
+    private static final String EMPLOYEE_NAME_CACHE = "employeeNameCache";
+
+
+    private static final Logger LOG = LoggerFactory.getLogger(HsaServiceImpl.class);
+
     @Override
     @PrometheusTimeMethod
     public List<String> getHsaIdForUnderenheter(String careUnitHsaId) {
@@ -48,10 +62,28 @@ public class HsaServiceImpl implements HsaService {
     }
 
     @Override
-    public HsaResponse getHsaIdsForCareProviderAndSubUnits(String careUnitId) {
-        final var careProviderId = hsaOrganizationsService.getVardgivareOfVardenhet(careUnitId);
+    public List<String> getHsaIdsForCareUnitAndSubUnits(String careUnitId) {
         final var unitAndSubUnits = hsaOrganizationsService.getHsaIdForAktivaUnderenheter(careUnitId);
         unitAndSubUnits.add(careUnitId);
-        return new HsaResponse(careProviderId, unitAndSubUnits);
+        return unitAndSubUnits;
+    }
+
+    @Override
+    @Cacheable(value = EMPLOYEE_NAME_CACHE, key = "#doctorId")
+    public String getHsaEmployeeName(String doctorId) {
+        try {
+            final var employee = hsaEmployeeService.getEmployee(doctorId, null, null);
+            if (employee == null || employee.isEmpty()) {
+                return doctorId;
+            }
+            return getName(employee);
+        } catch (WebServiceException e) {
+            LOG.error(e.getMessage());
+            throw new WebServiceException();
+        }
+    }
+
+    private String getName(List<PersonInformation> employeeInfo) {
+        return employeeInfo.get(0).getGivenName() + " " + employeeInfo.get(0).getMiddleAndSurName();
     }
 }
