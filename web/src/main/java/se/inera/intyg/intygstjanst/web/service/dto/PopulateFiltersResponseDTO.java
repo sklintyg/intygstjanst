@@ -23,12 +23,14 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
+import se.inera.intyg.infra.sjukfall.dto.Lakare;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SickLeaveResponseDTO {
+public class PopulateFiltersResponseDTO {
 
-    private List<SjukfallEnhet> content;
+    private List<Lakare> activeDoctors;
+    private List<DiagnosKapitel> diagnosisChapters;
 }

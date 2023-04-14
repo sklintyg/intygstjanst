@@ -21,9 +21,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
@@ -50,6 +48,7 @@ class IntygDataServiceImplTest {
 
     private static final int MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 5;
     private static final String UNIT_ID = "unitId";
+    private static final String CARE_GIVER_HSA_ID = "careGiverHsaId";
     private final ArrayList<String> hsaIdList = new ArrayList<>();
     @Mock
     private HsaService hsaService;
@@ -76,10 +75,11 @@ class IntygDataServiceImplTest {
 
     @Test
     void shouldReturnListOfIntygData() {
-        when(hsaService.getHsaIdForVardgivare(UNIT_ID)).thenReturn(UNIT_ID);
-        when(hsaService.getHsaIdForUnderenheter(anyString())).thenReturn(hsaIdList);
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyList(),
-            anyInt())).thenReturn(List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(false)));
+        when(hsaService.getHsaIdsForCareUnitAndSubUnits(UNIT_ID)).thenReturn(hsaIdList);
+        when(hsaService.getHsaIdForVardgivare(UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(eq(CARE_GIVER_HSA_ID), eq(hsaIdList),
+            eq(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED))).thenReturn(
+            List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(false)));
 
         final var result = listActiveSickLeaveCertificateService.getIntygData(UNIT_ID, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
         assertEquals(2, result.size());
@@ -91,10 +91,12 @@ class IntygDataServiceImplTest {
         final var intygsData = new ArrayList<>(
             new SjukfallCertificateIntygsDataConverter().buildIntygsData(sjukfallCertificates));
         final var expectedIntygData = intygsData.stream().map(intygDataConverter::map).collect(Collectors.toList());
-        when(hsaService.getHsaIdForVardgivare(UNIT_ID)).thenReturn(UNIT_ID);
-        when(hsaService.getHsaIdForUnderenheter(anyString())).thenReturn(hsaIdList);
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyList(),
-            anyInt())).thenReturn(List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(false)));
+
+        when(hsaService.getHsaIdsForCareUnitAndSubUnits(UNIT_ID)).thenReturn(hsaIdList);
+        when(hsaService.getHsaIdForVardgivare(UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(eq(CARE_GIVER_HSA_ID), eq(hsaIdList),
+            eq(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED))).thenReturn(
+            List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(false)));
 
         final var result = listActiveSickLeaveCertificateService.getIntygData(UNIT_ID, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
         assertIterableEquals(expectedIntygData, result);
@@ -102,10 +104,11 @@ class IntygDataServiceImplTest {
 
     @Test
     void shouldNotReturnIntygDataIfTestCertificate() {
-        when(hsaService.getHsaIdForVardgivare(UNIT_ID)).thenReturn(UNIT_ID);
-        when(hsaService.getHsaIdForUnderenheter(anyString())).thenReturn(hsaIdList);
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyList(),
-            anyInt())).thenReturn(List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(true)));
+        when(hsaService.getHsaIdsForCareUnitAndSubUnits(UNIT_ID)).thenReturn(hsaIdList);
+        when(hsaService.getHsaIdForVardgivare(UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
+        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(eq(CARE_GIVER_HSA_ID), eq(hsaIdList),
+            eq(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED))).thenReturn(
+            List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(true)));
 
         final var result = listActiveSickLeaveCertificateService.getIntygData(UNIT_ID, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
         assertEquals(1, result.size());

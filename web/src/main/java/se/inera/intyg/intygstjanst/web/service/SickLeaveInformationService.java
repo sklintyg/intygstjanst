@@ -17,18 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.service.dto;
+package se.inera.intyg.intygstjanst.web.service;
 
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class SickLeaveResponseDTO {
+public interface SickLeaveInformationService {
 
-    private List<SjukfallEnhet> content;
+    void updateAndDecorateDoctorName(List<SjukfallEnhet> sickLeaves);
+
+    Lakare getEmployee(String doctorId);
 }

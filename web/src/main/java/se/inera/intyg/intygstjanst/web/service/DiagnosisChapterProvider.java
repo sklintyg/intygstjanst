@@ -19,10 +19,11 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
+import java.io.IOException;
 import java.util.List;
-import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 
-public interface DecorateSickLeaveInformationService {
+public interface DiagnosisChapterProvider {
 
-    void decorate(List<SjukfallEnhet> sickLeaves);
+    List<DiagnosKapitel> getDiagnosisChapters() throws IOException;
 }

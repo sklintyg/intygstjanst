@@ -35,13 +35,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
+import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.dto.Vardenhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
-import se.inera.intyg.intygstjanst.web.service.DecorateSickLeaveInformationService;
+import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.IntygDataService;
+import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,7 +55,9 @@ class SickLeavesForCareUnitServiceImplTest {
     @Mock
     private IntygDataService intygDataService;
     @Mock
-    private DecorateSickLeaveInformationService decorateSickLeaveInformationService;
+    private SickLeaveInformationService sickLeaveInformationService;
+    @Mock
+    private DiagnosisChapterService diagnosisChapterService;
     private SickLeavesForCareUnitServiceImpl sickLeavesForCareUnitService;
 
     private static final String DOCTOR_ID = "doctorId";
@@ -60,80 +65,143 @@ class SickLeavesForCareUnitServiceImplTest {
     private static final String CARE_UNIT_ID = "careUnitId";
     private static final String ANOTHER_UNIT_ID = "anotherUnitId";
     private static final String UNIT_ID = "unitId";
+    private static final String DIAGNOSIS_CODE = "A01";
+    private static final String DIAGNOSIS_CHAPTER = "C00-D48Tumörer";
+    private static final String ANOTHER_DIAGNOSIS_CHAPTER = "A00-B99Vissa infektionssjukdomar och parasitsjukdomar";
+    private static final String ANOTHER_DIAGNOSIS_CODE = "C10";
     private List<IntygData> intygData;
 
 
     @BeforeEach
     void setUp() {
         sickLeavesForCareUnitService = new SickLeavesForCareUnitServiceImpl(sjukfallEngine, intygDataService,
-            decorateSickLeaveInformationService);
+            sickLeaveInformationService, diagnosisChapterService);
         intygData = List.of(new IntygData(), new IntygData());
     }
 
     @Test
     void shouldReturnSjukfallEnhetList() {
-        final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, null, CARE_UNIT_ID);
-        final var expectedSickLeave = List.of(createSjukFallEnhet(null, null));
+        final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, null, CARE_UNIT_ID, null, null, null);
+        final var expectedSickLeave = List.of(createSjukFallEnhet(DOCTOR_ID, UNIT_ID, DIAGNOSIS_CODE, 0));
+
         when(intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())).thenReturn(intygData);
         when(sjukfallEngine.beraknaSjukfallForEnhet(eq(intygData), any())).thenReturn(expectedSickLeave);
+
         final var result = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        verify(decorateSickLeaveInformationService).decorate(expectedSickLeave);
+
+        verify(sickLeaveInformationService).updateAndDecorateDoctorName(expectedSickLeave);
+
         assertIterableEquals(expectedSickLeave, result);
     }
 
     @Test
-    void shouldReturnSjukfallEnhetListFilteredOnDoctorId() {
-        final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, DOCTOR_ID, CARE_UNIT_ID);
-        final var expectedSickLeave = createSjukFallEnhet(DOCTOR_ID, null);
-        final var sickLeaves = List.of(expectedSickLeave, createSjukFallEnhet(ANOTHER_DOCTOR_ID, UNIT_ID));
+    void shouldFilterOnDoctorId() {
+        final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, DOCTOR_ID, CARE_UNIT_ID, null, null, null);
+        final var expectedSickLeave = createSjukFallEnhet(DOCTOR_ID, UNIT_ID, DIAGNOSIS_CODE, 0);
+        final var sickLeaves = List.of(expectedSickLeave, createSjukFallEnhet(ANOTHER_DOCTOR_ID, UNIT_ID, DIAGNOSIS_CODE, 0));
+
         when(intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())).thenReturn(intygData);
         when(sjukfallEngine.beraknaSjukfallForEnhet(eq(intygData), any())).thenReturn(sickLeaves);
+
         final var result = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        verify(decorateSickLeaveInformationService).decorate(anyList());
+
+        verify(sickLeaveInformationService).updateAndDecorateDoctorName(anyList());
+
         assertEquals(1, result.size());
         assertEquals(expectedSickLeave, result.get(0));
     }
 
     @Test
-    void shouldReturnSjukfallEnhetListFiltereddOnCareUnit() {
-        final var sickLeaveRequestDTO = getSickLeaveRequestDTO(UNIT_ID, null, CARE_UNIT_ID);
-        final var expectedSickLeave = createSjukFallEnhet(null, UNIT_ID);
-        final var sickLeaves = List.of(expectedSickLeave, createSjukFallEnhet(DOCTOR_ID, ANOTHER_UNIT_ID));
+    void shouldFilterOnUnit() {
+        final var sickLeaveRequestDTO = getSickLeaveRequestDTO(UNIT_ID, null, CARE_UNIT_ID, null, null, null);
+        final var expectedSickLeave = createSjukFallEnhet(DOCTOR_ID, UNIT_ID, DIAGNOSIS_CODE, 0);
+        final var sickLeaves = List.of(expectedSickLeave, createSjukFallEnhet(DOCTOR_ID, ANOTHER_UNIT_ID, DIAGNOSIS_CODE, null));
+
         when(intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())).thenReturn(intygData);
         when(sjukfallEngine.beraknaSjukfallForEnhet(eq(intygData), any())).thenReturn(sickLeaves);
+
         final var result = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        verify(decorateSickLeaveInformationService).decorate(anyList());
+
+        verify(sickLeaveInformationService).updateAndDecorateDoctorName(anyList());
+
+        assertEquals(1, result.size());
+        assertEquals(expectedSickLeave, result.get(0));
+    }
+
+    @Test
+    void shouldFilterOnDagar() {
+        final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, null, CARE_UNIT_ID, 6, 13, null);
+        final var expectedSickLeave = createSjukFallEnhet(DOCTOR_ID, UNIT_ID, DIAGNOSIS_CODE, 12);
+        final var sickLeaves = List.of(expectedSickLeave, createSjukFallEnhet(DOCTOR_ID, ANOTHER_UNIT_ID, DIAGNOSIS_CODE, 5));
+
+        when(intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
+            sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())).thenReturn(intygData);
+        when(sjukfallEngine.beraknaSjukfallForEnhet(eq(intygData), any())).thenReturn(sickLeaves);
+
+        final var result = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
+
+        verify(sickLeaveInformationService).updateAndDecorateDoctorName(anyList());
+
+        assertEquals(1, result.size());
+        assertEquals(expectedSickLeave, result.get(0));
+    }
+
+    @Test
+    void shouldFilterOnDiagnosisChapter() {
+        final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, null, CARE_UNIT_ID, null, null, new DiagnosKapitel(DIAGNOSIS_CHAPTER));
+        final var sickLeaveThatShouldBeFiltered = createSjukFallEnhet(DOCTOR_ID, UNIT_ID, DIAGNOSIS_CODE, 12);
+        final var expectedSickLeave = createSjukFallEnhet(DOCTOR_ID, ANOTHER_UNIT_ID, ANOTHER_DIAGNOSIS_CODE, 5);
+        final var sickLeaves = List.of(expectedSickLeave, sickLeaveThatShouldBeFiltered);
+
+        when(intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
+            sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())).thenReturn(intygData);
+        when(sjukfallEngine.beraknaSjukfallForEnhet(eq(intygData), any())).thenReturn(sickLeaves);
+        when(diagnosisChapterService.getDiagnosisChaptersFromSickLeave(sickLeaveThatShouldBeFiltered)).thenReturn(
+            new DiagnosKapitel(ANOTHER_DIAGNOSIS_CHAPTER));
+        when(diagnosisChapterService.getDiagnosisChaptersFromSickLeave(expectedSickLeave)).thenReturn(
+            new DiagnosKapitel(DIAGNOSIS_CHAPTER));
+
+        final var result = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
+
+        verify(sickLeaveInformationService).updateAndDecorateDoctorName(anyList());
+
         assertEquals(1, result.size());
         assertEquals(expectedSickLeave, result.get(0));
     }
 
     @Test
     void shouldThrowIllegalArgumentExceptionIfNoCareUnit() {
-        final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, null, null);
+        final var sickLeaveRequestDTO = getSickLeaveRequestDTO(null, null, null, null, null, null);
         assertThrows(IllegalArgumentException.class,
             () -> sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO));
     }
 
-    private static SickLeaveRequestDTO getSickLeaveRequestDTO(String unitId, String doctorId, String careUnitId) {
+    private static SickLeaveRequestDTO getSickLeaveRequestDTO(String unitId, String doctorId, String careUnitId,
+        Integer fromSickLeaveLength, Integer toSickLeaveLength, DiagnosKapitel diagnosisChapter) {
         final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
         sickLeaveRequestDTO.setMaxCertificateGap(5);
         sickLeaveRequestDTO.setMaxDaysSinceSickLeaveCompleted(5);
         sickLeaveRequestDTO.setUnitId(unitId);
-        sickLeaveRequestDTO.setDoctorId(doctorId);
+        sickLeaveRequestDTO.setDoctorIds(doctorId != null ? List.of(doctorId) : null);
         sickLeaveRequestDTO.setCareUnitId(careUnitId);
+        sickLeaveRequestDTO.setFromSickLeaveLength(fromSickLeaveLength);
+        sickLeaveRequestDTO.setToSickLeaveLength(toSickLeaveLength);
+        sickLeaveRequestDTO.setDiagnosisChapters(diagnosisChapter != null ? List.of(diagnosisChapter) : null);
         return sickLeaveRequestDTO;
     }
 
-    private static SjukfallEnhet createSjukFallEnhet(String doctorId, String unitId) {
+    private static SjukfallEnhet createSjukFallEnhet(String doctorId, String unitId, String diaggnosisCode, Integer dagar) {
         SjukfallEnhet sickLeaveUnit = new SjukfallEnhet();
         Lakare lakare = Lakare.create(doctorId, null);
         sickLeaveUnit.setLakare(lakare);
         sickLeaveUnit.setVardenhet(
             Vardenhet.create(unitId, null)
         );
+        sickLeaveUnit.setDagar(dagar != null ? dagar : 0);
+        sickLeaveUnit.setDiagnosKod(DiagnosKod.create(diaggnosisCode));
 
         return sickLeaveUnit;
     }

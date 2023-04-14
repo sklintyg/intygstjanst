@@ -30,37 +30,70 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
+import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.web.service.PopulateFilterService;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
+import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersResponseDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 
 @ExtendWith(MockitoExtension.class)
-class ListActiveSickLeaveControllerTest {
+class SickLeaveControllerTest {
 
     @Mock
     private SickLeavesForCareUnitService sickLeavesForCareUnitService;
-    private ListActiveSickLeaveController listActiveSickLeaveController;
+    @Mock
+    private PopulateFilterService populateFilterService;
+    private SickLeaveController sickLeaveController;
+
+    private static final String DOCTOR_ID = "doctorID";
+    private static final String DOCTOR_NAME = "doctorName";
+    private static final String DIAGNOSIS_CHAPTER = "C00-D48Tumörer";
 
     @BeforeEach
     void setUp() {
-        listActiveSickLeaveController = new ListActiveSickLeaveController(sickLeavesForCareUnitService);
+        sickLeaveController = new SickLeaveController(sickLeavesForCareUnitService, populateFilterService);
     }
 
     @Test
     void shouldCallGetActiveSickLeavesService() {
         final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
-        listActiveSickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
+        sickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
         verify(sickLeavesForCareUnitService).getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
+    }
+
+    @Test
+    void shouldCallPopulateFilterSerivceService() {
+        final var populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
+        sickLeaveController.populateFilters(populateFiltersRequestDTO);
+        verify(populateFilterService).populateFilters(populateFiltersRequestDTO);
     }
 
     @Test
     void shouldReturnSickLeaveRequestResponseDTO() {
         final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
         final var sjukfallEnhet = new SjukfallEnhet();
-        final var expectedResponse = Response.ok(SickLeaveResponseDTO.create(List.of(sjukfallEnhet))).build();
+        final var expectedResponse = Response.ok(new SickLeaveResponseDTO(List.of(sjukfallEnhet))).build();
         when(sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO)).thenReturn(List.of(sjukfallEnhet));
-        final var result = listActiveSickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
+        final var result = sickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
+        assertEquals(expectedResponse.getEntity(), result.getEntity());
+    }
+
+    @Test
+    void shouldReturnPopulateFiltersResonseDTO() {
+        final var populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
+        final var doctor = Lakare.create(DOCTOR_ID, DOCTOR_NAME);
+        final var diagnosisChapter = new DiagnosKapitel(DIAGNOSIS_CHAPTER);
+        final var expectedResponse = Response.ok(new PopulateFiltersResponseDTO(List.of(doctor), List.of(diagnosisChapter))).build();
+
+        when(populateFilterService.populateFilters(populateFiltersRequestDTO)).thenReturn(
+            new PopulateFiltersResponseDTO(List.of(doctor), List.of(diagnosisChapter)));
+
+        final var result = sickLeaveController.populateFilters(populateFiltersRequestDTO);
+
         assertEquals(expectedResponse.getEntity(), result.getEntity());
     }
 }

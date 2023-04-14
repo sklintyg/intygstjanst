@@ -19,16 +19,13 @@
 
 package se.inera.intyg.intygstjanst.web.service.dto;
 
-import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class SickLeaveResponseDTO {
+public class PopulateFiltersRequestDTO {
 
-    private List<SjukfallEnhet> content;
+    private String careUnitId;
+    private String unitId;
+    private String doctorId;
+    private int maxDaysSinceSickLeaveCompleted;
 }

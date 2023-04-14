@@ -21,34 +21,37 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.xml.ws.WebServiceException;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.infra.integration.hsatk.model.PersonInformation;
-import se.inera.intyg.infra.integration.hsatk.services.legacy.HsaEmployeeServiceImpl;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
-import se.inera.intyg.intygstjanst.web.service.DecorateSickLeaveInformationService;
+import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
+import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 
 @Service
-public class DecorateSickLeaveInformationServiceImpl implements DecorateSickLeaveInformationService {
+public class SickLeaveInformationServiceImpl implements SickLeaveInformationService {
 
-    private final HsaEmployeeServiceImpl hsaEmployeeService;
+    private final HsaService hsaService;
 
-    public DecorateSickLeaveInformationServiceImpl(HsaEmployeeServiceImpl hsaEmployeeService) {
-        this.hsaEmployeeService = hsaEmployeeService;
+    public SickLeaveInformationServiceImpl(HsaService hsaService) {
+        this.hsaService = hsaService;
     }
 
     @Override
-    public void decorate(List<SjukfallEnhet> sickLeaves) {
+    public void updateAndDecorateDoctorName(List<SjukfallEnhet> sickLeaves) {
         sickLeaves.forEach(this::updateEmployeeName);
         decorateWithHsaId(sickLeaves);
+    }
+
+    @Override
+    public Lakare getEmployee(String doctorId) {
+        return Lakare.create(doctorId, hsaService.getHsaEmployeeName(doctorId));
     }
 
     private void updateEmployeeName(SjukfallEnhet sickLeave) {
         if (sickLeave.getLakare() == null) {
             return;
         }
-        final var employeeName = getHsaEmployee(sickLeave.getLakare().getId());
+        final var employeeName = hsaService.getHsaEmployeeName(sickLeave.getLakare().getId());
         setEmployeeNameIfFound(sickLeave, employeeName);
     }
 
@@ -58,22 +61,6 @@ public class DecorateSickLeaveInformationServiceImpl implements DecorateSickLeav
         } else {
             sickLeave.getLakare().setNamn(sickLeave.getLakare().getId());
         }
-    }
-
-    private String getHsaEmployee(String doctorId) {
-        try {
-            final var employee = hsaEmployeeService.getEmployee(doctorId, null, null);
-            if (employee == null || employee.isEmpty()) {
-                return doctorId;
-            }
-            return getName(employee);
-        } catch (WebServiceException e) {
-            throw new WebServiceException();
-        }
-    }
-
-    private String getName(List<PersonInformation> employeeInfo) {
-        return employeeInfo.get(0).getGivenName() + " " + employeeInfo.get(0).getMiddleAndSurName();
     }
 
     public void decorateWithHsaId(List<SjukfallEnhet> sickLeaves) {

@@ -30,6 +30,12 @@ public interface SjukfallCertificateDao {
         List<String> careUnitHsaIds,
         int maxDagarSedanAvslut);
 
+    List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(
+        String careGiverHsaId,
+        List<String> careUnitHsaIds,
+        int maxDagarSedanAvslut,
+        boolean onlyActiveSickLeaves);
+
     List<SjukfallCertificate> findActiveSjukfallCertificateForPersonOnCareUnits(
         String careGiverHsaId,
         List<String> careUnitHsaIds,
@@ -45,7 +51,8 @@ public interface SjukfallCertificateDao {
 
     /**
      * Erase any data related to test certificates passed as ids.
-     * @param ids   Certificate ids.
+     *
+     * @param ids Certificate ids.
      */
     void eraseTestCertificates(List<String> ids);
 

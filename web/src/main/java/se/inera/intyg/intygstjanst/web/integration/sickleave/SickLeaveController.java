@@ -19,28 +19,37 @@
 
 package se.inera.intyg.intygstjanst.web.integration.sickleave;
 
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_SICK_LEAVE_ACTIVE;
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_SICK_LEAVE_FILTER;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.springframework.stereotype.Controller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.web.service.PopulateFilterService;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
+import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 
 @Path("/sickleave")
-@Controller
-public class ListActiveSickLeaveController {
+public class SickLeaveController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SickLeaveController.class);
     private static final String UTF_8_CHARSET = ";charset=utf-8";
     private final SickLeavesForCareUnitService sickLeavesForCareUnitService;
+    private final PopulateFilterService populateFilterService;
 
-    public ListActiveSickLeaveController(SickLeavesForCareUnitService sickLeavesForCareUnitService) {
+
+    public SickLeaveController(SickLeavesForCareUnitService sickLeavesForCareUnitService, PopulateFilterService populateFilterService) {
         this.sickLeavesForCareUnitService = sickLeavesForCareUnitService;
+        this.populateFilterService = populateFilterService;
     }
 
     @PrometheusTimeMethod
@@ -48,9 +57,22 @@ public class ListActiveSickLeaveController {
     @Path("/active")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getActiveSickLeavesForCareUnit(
-        @RequestBody SickLeaveRequestDTO sickLeaveRequestDTO) {
+    public Response getActiveSickLeavesForCareUnit(@RequestBody SickLeaveRequestDTO sickLeaveRequestDTO) {
+        final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var activeSickLeavesForCareUnit = sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        return Response.ok(SickLeaveResponseDTO.create(activeSickLeavesForCareUnit)).build();
+        LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_ACTIVE, activeSickLeavesForCareUnit.size()));
+        return Response.ok(new SickLeaveResponseDTO(activeSickLeavesForCareUnit)).build();
+    }
+
+    @PrometheusTimeMethod
+    @POST
+    @Path("/filters")
+    @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response populateFilters(@RequestBody PopulateFiltersRequestDTO populateFiltersRequestDTO) {
+        final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
+        final var populateFiltersResponseDTO = populateFilterService.populateFilters(populateFiltersRequestDTO);
+        LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_FILTER));
+        return Response.ok(populateFiltersResponseDTO).build();
     }
 }

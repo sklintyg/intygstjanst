@@ -19,34 +19,42 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_DOCTORS_FOR_SICK_LEAVES;
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_SICK_LEAVE_CERTIFICATES;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
+import se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory;
+import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.IntygDataService;
+import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
-import se.inera.intyg.intygstjanst.web.service.DecorateSickLeaveInformationService;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 
-@Component
+@Service
 public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SickLeavesForCareUnitServiceImpl.class);
     private final SjukfallEngineService sjukfallEngine;
     private final IntygDataService intygDataService;
-    private final DecorateSickLeaveInformationService decorateSickLeaveInformationService;
+    private final SickLeaveInformationService sickLeaveInformationService;
+    private final DiagnosisChapterService diagnosisChapterService;
 
     public SickLeavesForCareUnitServiceImpl(SjukfallEngineService sjukfallEngine,
-        IntygDataService intygDataService, DecorateSickLeaveInformationService decorateSickLeaveInformationService) {
+        IntygDataService intygDataService, SickLeaveInformationService sickLeaveInformationService,
+        DiagnosisChapterService diagnosisChapterService) {
         this.sjukfallEngine = sjukfallEngine;
         this.intygDataService = intygDataService;
-        this.decorateSickLeaveInformationService = decorateSickLeaveInformationService;
+        this.sickLeaveInformationService = sickLeaveInformationService;
+        this.diagnosisChapterService = diagnosisChapterService;
     }
 
     @Override
@@ -55,12 +63,20 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
             throw new IllegalArgumentException("Parameter care unit id must be non-empty string");
         }
         final var intygParametrar = getIntygParametrar(sickLeaveRequestDTO);
+
+        final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var intygData = intygDataService.getIntygData(sickLeaveRequestDTO.getCareUnitId(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted());
+        LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_CERTIFICATES, intygData.size()));
+
         final var activeSickLeavesForUnit = sjukfallEngine.beraknaSjukfallForEnhet(intygData, intygParametrar);
-        final var filteredActiveSickleavesForUnit = filterSickLeaves(sickLeaveRequestDTO.getDoctorId(), sickLeaveRequestDTO.getUnitId(),
+        final var filteredActiveSickleavesForUnit = filterSickLeaves(sickLeaveRequestDTO,
             activeSickLeavesForUnit);
-        decorateSickLeaveInformationService.decorate(filteredActiveSickleavesForUnit);
+
+        sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
+        sickLeaveInformationService.updateAndDecorateDoctorName(filteredActiveSickleavesForUnit);
+        LOG.info(sickLeaveLogMessageFactory.message(GET_DOCTORS_FOR_SICK_LEAVES, filteredActiveSickleavesForUnit.size()));
+
         return filteredActiveSickleavesForUnit;
     }
 
@@ -68,22 +84,62 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
         return careUnitId == null || careUnitId.length() == 0;
     }
 
-    private static List<SjukfallEnhet> filterSickLeaves(String doctorId, String unitId, List<SjukfallEnhet> activeSickLeavesForUnit) {
+    private List<SjukfallEnhet> filterSickLeaves(SickLeaveRequestDTO sickLeaveRequestDTO,
+        List<SjukfallEnhet> activeSickLeavesForUnit) {
         List<SjukfallEnhet> filteredActiveSickleavesForUnit = new ArrayList<>(activeSickLeavesForUnit);
-        if (doctorId != null) {
-            LOG.debug("Filtering response - a doctor shall only see patients 'sjukfall' he/she has issued certificates.");
-            filteredActiveSickleavesForUnit = activeSickLeavesForUnit.stream()
-                .filter(sickLeave -> sickLeave.getLakare().getId().equals(doctorId)).collect(Collectors.toList());
+        if (sickLeaveRequestDTO.getDoctorIds() != null && !sickLeaveRequestDTO.getDoctorIds().isEmpty()) {
+            LOG.debug("Filtering response - a doctor shall only see patients 'sjukfall' he/she has issued certificates. DoctorId: {}",
+                sickLeaveRequestDTO.getDoctorIds());
+            filteredActiveSickleavesForUnit = filterOnDoctorId(sickLeaveRequestDTO, filteredActiveSickleavesForUnit);
         }
-        if (unitId != null) {
-            LOG.debug("Filtering response - query for care unit, only including 'sjukfall' with active intyg on specified care unit");
-            filteredActiveSickleavesForUnit = activeSickLeavesForUnit.stream()
-                .filter(sickLeave -> sickLeave.getVardenhet().getId().equals(unitId)).collect(Collectors.toList());
+        if (sickLeaveRequestDTO.getUnitId() != null) {
+            LOG.debug("Filtering response - query for unit, only including 'sjukfall' with active intyg on unit: {}",
+                sickLeaveRequestDTO.getUnitId());
+            filteredActiveSickleavesForUnit = filterOnUnitId(sickLeaveRequestDTO, filteredActiveSickleavesForUnit);
+        }
+        if (sickLeaveRequestDTO.getFromSickLeaveLength() != null && sickLeaveRequestDTO.getToSickLeaveLength() != null) {
+            LOG.debug("Filtering response - only including 'sjukfall' with 'dagar' greater than: {} and smaller then: {}",
+                sickLeaveRequestDTO.getFromSickLeaveLength(), sickLeaveRequestDTO.getToSickLeaveLength());
+            filteredActiveSickleavesForUnit = filterOnSickLeaveLength(sickLeaveRequestDTO, filteredActiveSickleavesForUnit);
+        }
+        if (sickLeaveRequestDTO.getDiagnosisChapters() != null && !sickLeaveRequestDTO.getDiagnosisChapters().isEmpty()) {
+            LOG.debug("Filtering response - only including 'sjukfall' with diagnosis code related to chapers: {}",
+                sickLeaveRequestDTO.getDiagnosisChapters());
+            filteredActiveSickleavesForUnit = filterOnDiagnosisChapter(sickLeaveRequestDTO, filteredActiveSickleavesForUnit);
         }
         return filteredActiveSickleavesForUnit;
     }
 
-    private static IntygParametrar getIntygParametrar(SickLeaveRequestDTO sickLeaveRequestDTO) {
+    private List<SjukfallEnhet> filterOnDoctorId(SickLeaveRequestDTO sickLeaveRequestDTO,
+        List<SjukfallEnhet> filteredActiveSickleavesForUnit) {
+        return filteredActiveSickleavesForUnit.stream()
+            .filter(sickLeave -> sickLeaveRequestDTO.getDoctorIds().contains(sickLeave.getLakare().getId()))
+            .collect(Collectors.toList());
+    }
+
+    private List<SjukfallEnhet> filterOnDiagnosisChapter(SickLeaveRequestDTO sickLeaveRequestDTO,
+        List<SjukfallEnhet> filteredActiveSickleavesForUnit) {
+        return filteredActiveSickleavesForUnit.stream()
+            .filter(sickLeave -> sickLeaveRequestDTO.getDiagnosisChapters()
+                .contains(diagnosisChapterService.getDiagnosisChaptersFromSickLeave(sickLeave)))
+            .collect(Collectors.toList());
+    }
+
+    private List<SjukfallEnhet> filterOnSickLeaveLength(SickLeaveRequestDTO sickLeaveRequestDTO,
+        List<SjukfallEnhet> filteredActiveSickleavesForUnit) {
+        return filteredActiveSickleavesForUnit.stream()
+            .filter(sickLeave -> sickLeave.getDagar() >= sickLeaveRequestDTO.getFromSickLeaveLength()
+                && sickLeave.getDagar() <= sickLeaveRequestDTO.getToSickLeaveLength())
+            .collect(Collectors.toList());
+    }
+
+    private List<SjukfallEnhet> filterOnUnitId(SickLeaveRequestDTO sickLeaveRequestDTO,
+        List<SjukfallEnhet> filteredActiveSickleavesForUnit) {
+        return filteredActiveSickleavesForUnit.stream()
+            .filter(sickLeave -> sickLeave.getVardenhet().getId().equals(sickLeaveRequestDTO.getUnitId())).collect(Collectors.toList());
+    }
+
+    private IntygParametrar getIntygParametrar(SickLeaveRequestDTO sickLeaveRequestDTO) {
         return new IntygParametrar(sickLeaveRequestDTO.getMaxCertificateGap(),
             sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted(),
             LocalDate.now());
