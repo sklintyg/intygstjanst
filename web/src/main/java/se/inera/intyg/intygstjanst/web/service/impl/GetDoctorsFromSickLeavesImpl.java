@@ -30,17 +30,19 @@ import org.springframework.stereotype.Component;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.service.GetDoctorsFromSickLeaves;
-import se.inera.intyg.intygstjanst.web.service.SickLeaveInformationService;
 
 @Component
 public class GetDoctorsFromSickLeavesImpl implements GetDoctorsFromSickLeaves {
 
     private static final Logger LOG = LoggerFactory.getLogger(GetDoctorsFromSickLeavesImpl.class);
+
+    /* Keep commented out until a decision for TAK:ning for IT has been decided
     private final SickLeaveInformationService sickLeaveInformationService;
 
     public GetDoctorsFromSickLeavesImpl(SickLeaveInformationService sickLeaveInformationService) {
         this.sickLeaveInformationService = sickLeaveInformationService;
     }
+    */
 
     @Override
     public List<Lakare> getDoctors(List<SjukfallCertificate> sickLeaveCertificates, String doctorId) {
@@ -58,7 +60,10 @@ public class GetDoctorsFromSickLeavesImpl implements GetDoctorsFromSickLeaves {
             .map(SjukfallCertificate::getSigningDoctorId)
             .filter(Objects::nonNull)
             .distinct()
+            /* Keep commented out until a decision for TAK:ning for IT has been decided
             .map(sickLeaveInformationService::getEmployee)
+            */
+            .map(doctorId -> Lakare.create(doctorId, doctorId))
             .sorted(Comparator.comparing(Lakare::getNamn))
             .collect(Collectors.toList());
     }

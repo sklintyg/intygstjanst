@@ -19,7 +19,6 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_DOCTORS_FOR_SICK_LEAVES;
 import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_SICK_LEAVE_CERTIFICATES;
 
 import java.time.LocalDate;
@@ -73,9 +72,11 @@ public class SickLeavesForCareUnitServiceImpl implements SickLeavesForCareUnitSe
         final var filteredActiveSickleavesForUnit = filterSickLeaves(sickLeaveRequestDTO,
             activeSickLeavesForUnit);
 
+        /* Keep commented out until a decision for TAK:ning for IT has been decided
         sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
         sickLeaveInformationService.updateAndDecorateDoctorName(filteredActiveSickleavesForUnit);
         LOG.info(sickLeaveLogMessageFactory.message(GET_DOCTORS_FOR_SICK_LEAVES, filteredActiveSickleavesForUnit.size()));
+        */
 
         return filteredActiveSickleavesForUnit;
     }
