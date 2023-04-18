@@ -26,9 +26,9 @@ import lombok.NoArgsConstructor;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class TestabilityConfigProvider {
 
     private String careProviderId;

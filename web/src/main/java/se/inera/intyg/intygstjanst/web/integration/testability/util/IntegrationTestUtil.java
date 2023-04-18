@@ -34,8 +34,6 @@ import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.Regi
 @Component
 public class IntegrationTestUtil {
 
-    private static final String DIAGNOSIS_CODE = "S47";
-
     private static final String BASE_URL = "testability/register/";
     private final TestabilityRegisterCertificate testabilityRegisterCertificate;
 
@@ -65,11 +63,7 @@ public class IntegrationTestUtil {
         requestTemplate.add("careProviderId", testabilityConfigProvider.getCareProviderId());
         requestTemplate.add("unitId", testabilityConfigProvider.getCareUnitId());
         requestTemplate.add("doctorName", testabilityConfigProvider.getDoctorName());
-        if (testabilityConfigProvider.getDiagnosisCode() != null) {
-            requestTemplate.add("diagnosisCode", testabilityConfigProvider.getDiagnosisCode());
-        } else {
-            requestTemplate.add("diagnosisCode", DIAGNOSIS_CODE);
-        }
+        requestTemplate.add("diagnosisCode", testabilityConfigProvider.getDiagnosisCode());
         requestTemplate.add("workCapacity", testabilityConfigProvider.getWorkCapacity());
         requestTemplate.add("occupation", testabilityConfigProvider.getOccupation());
         applyToFromDatesToRequestTemplate(requestTemplate, testabilityConfigProvider.getFromDays(), testabilityConfigProvider.getToDays());
