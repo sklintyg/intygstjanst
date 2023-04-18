@@ -18,15 +18,16 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.testability;
 
+import static se.inera.intyg.intygstjanst.web.service.impl.TestabilityServiceImpl.ALFA_MEDICINCENTRUM;
+import static se.inera.intyg.intygstjanst.web.service.impl.TestabilityServiceImpl.ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
-import se.inera.intyg.intygstjanst.web.integration.testability.dto.TestabilityCreateRequest;
 import se.inera.intyg.intygstjanst.web.service.TestabilityService;
 
 /**
@@ -37,6 +38,9 @@ public class TestabilityController {
 
     private final TestabilityService testabilityService;
 
+    private static final String VERIFICATION_MESSAGE = String.format("Test data sucsessfully created for units: %s & %s",
+        ALFA_MEDICINCENTRUM, ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN);
+
     public TestabilityController(TestabilityService testabilityService) {
         this.testabilityService = testabilityService;
     }
@@ -45,9 +49,9 @@ public class TestabilityController {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/create")
-    public Response createCertificatesForUnit(@RequestBody TestabilityCreateRequest createRequest) {
-        testabilityService.create(createRequest);
-        return Response.ok().build();
+    @Path("/createDefault")
+    public Response createDefaultTestData() {
+        testabilityService.createDefaultTestData();
+        return Response.ok(VERIFICATION_MESSAGE).build();
     }
 }

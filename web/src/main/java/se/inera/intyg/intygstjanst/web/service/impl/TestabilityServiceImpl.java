@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.testability.dto.TestabilityConfigProvider;
-import se.inera.intyg.intygstjanst.web.integration.testability.dto.TestabilityCreateRequest;
 import se.inera.intyg.intygstjanst.web.integration.testability.util.IntegrationTestUtil;
 import se.inera.intyg.intygstjanst.web.service.TestabilityService;
 
@@ -40,13 +39,6 @@ public class TestabilityServiceImpl implements TestabilityService {
     public static final String ATLAS_ABRAHAMSSON_ID = "194111299055";
     public static final String ANONYMA_ATTILA_ID = "194012019149";
     public static final String ALEXA_VALFRIDSSON = "194110299221";
-    private static final int ZERO = 0;
-    private static final int TWO = 2;
-    private static final int FIVE = 5;
-    private static final int SEVEN = 7;
-    private static final int FOURTEEN = 14;
-    private static final int TWENTY_ONE = 21;
-    private static final int TWENTY_EIGHT = 28;
     private static final String DEFAULT_RELATIONS_ID = null;
     private static final RelationKod DEFAULT_RELATIONS_KOD = null;
     private static final String DIAGNOSIS_CODE_A010 = "A010";
@@ -54,12 +46,16 @@ public class TestabilityServiceImpl implements TestabilityService {
     private static final String DIAGNOSIS_CODE_K23 = "K23";
     private static final String DIAGNOSIS_CODE_Z010 = "Z010";
     private static final String DIAGNOSIS_CODE_P23 = "P23";
+    private static final String DOKTOR_AJLA = "TSTNMT2321000156-DRAA";
+    private static final String DOKTOR_ALF = "TSTNMT2321000156-DRAF";
+    public static final String ALFA_MEDICINCENTRUM = "TSTNMT2321000156-ALMC";
+    public static final String ALFA_REGIONEN = "TSTNMT2321000156-ALFA";
+    public static final String ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN = "TSTNMT2321000156-ALIM";
+    private static final String DEGREE_25 = "EN_FJARDEDEL";
+    private static final String DEGREE_75 = "TRE_FJARDEDEL";
+    private static final String DEGREE_100 = "HELT_NEDSATT";
+    private static final String DEGREE_50 = "HALFTEN";
     private final IntegrationTestUtil integrationTestUtil;
-
-    private String doctorId;
-    private String careUnitId;
-    private String doctorName;
-    private String careProviderId;
 
     private static final String NUVARANDE_ARBETE = "NUVARANDE_ARBETE";
     private static final String ARBETSSOKANDE = "ARBETSSOKANDE";
@@ -72,11 +68,7 @@ public class TestabilityServiceImpl implements TestabilityService {
     }
 
     @Override
-    public void create(TestabilityCreateRequest createRequest) {
-        doctorId = createRequest.getDoctorId();
-        careUnitId = createRequest.getCareUnitId();
-        doctorName = hsaService.getHsaEmployeeName(doctorId);
-        careProviderId = hsaService.getHsaIdForVardgivare(careUnitId);
+    public void createDefaultTestData() {
         testabilityConfigProviderList().forEach(integrationTestUtil::registerCertificateTestabilityCreate);
     }
 
@@ -93,61 +85,64 @@ public class TestabilityServiceImpl implements TestabilityService {
 
     private List<TestabilityConfigProvider> getAthenaAndersson() {
         return List.of(
-            getConfig(ATHENA_ANDERSSON_ID, -TWENTY_EIGHT, -TWENTY_ONE, DIAGNOSIS_CODE_A010, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
-                getRandomId(), NUVARANDE_ARBETE),
-            getConfig(ATHENA_ANDERSSON_ID, -TWENTY_ONE, -FOURTEEN, DIAGNOSIS_CODE_F430, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
-                getRandomId(), NUVARANDE_ARBETE),
-            getConfig(ATHENA_ANDERSSON_ID, -FOURTEEN, -SEVEN, DIAGNOSIS_CODE_P23, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
-                getRandomId(), NUVARANDE_ARBETE),
-            getConfig(ATHENA_ANDERSSON_ID, -SEVEN, -FIVE, DIAGNOSIS_CODE_A010, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD, getRandomId(),
-                NUVARANDE_ARBETE),
-            getConfig(ATHENA_ANDERSSON_ID, ZERO, SEVEN, DIAGNOSIS_CODE_K23, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD, getRandomId(),
-                NUVARANDE_ARBETE),
-            getConfig(ATHENA_ANDERSSON_ID, SEVEN, TWENTY_EIGHT, DIAGNOSIS_CODE_A010, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
-                getRandomId(), NUVARANDE_ARBETE)
+            getConfig(ATHENA_ANDERSSON_ID, -10, 20, DIAGNOSIS_CODE_A010, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
+                getRandomId(), NUVARANDE_ARBETE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, DEGREE_50),
+            getConfig(ATHENA_ANDERSSON_ID, -42, -12, DIAGNOSIS_CODE_A010, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
+                getRandomId(), NUVARANDE_ARBETE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, DEGREE_75),
+            getConfig(ATHENA_ANDERSSON_ID, -75, -45, DIAGNOSIS_CODE_A010, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
+                getRandomId(), NUVARANDE_ARBETE, DOKTOR_ALF, ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN, DEGREE_100),
+            getConfig(ATHENA_ANDERSSON_ID, -130, -100, DIAGNOSIS_CODE_Z010, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
+                getRandomId(), NUVARANDE_ARBETE, DOKTOR_ALF, ALFA_MEDICINCENTRUM, DEGREE_100),
+            getConfig(ATHENA_ANDERSSON_ID, -160, -130, DIAGNOSIS_CODE_Z010, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
+                getRandomId(), NUVARANDE_ARBETE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, DEGREE_100),
+            getConfig(ATHENA_ANDERSSON_ID, -195, -165, DIAGNOSIS_CODE_Z010, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
+                getRandomId(), NUVARANDE_ARBETE, DOKTOR_ALF, ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN, DEGREE_75),
+            getConfig(ATHENA_ANDERSSON_ID, -230, -200, DIAGNOSIS_CODE_Z010, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
+                getRandomId(), NUVARANDE_ARBETE, DOKTOR_ALF, ALFA_MEDICINCENTRUM, DEGREE_75)
         );
     }
 
     private List<TestabilityConfigProvider> getAlveAlfridsson() {
         return List.of(
-            getConfig(ALVE_ALFRIDSSON_ID, ZERO, FOURTEEN, DIAGNOSIS_CODE_F430, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD, getRandomId(),
-                NUVARANDE_ARBETE)
+            getConfig(ALVE_ALFRIDSSON_ID, -20, 10, DIAGNOSIS_CODE_K23, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD, getRandomId(),
+                FORADLRARLEDIGHET_VARD_AV_BARN, DOKTOR_ALF, ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN, DEGREE_50)
         );
     }
 
     private List<TestabilityConfigProvider> getBostadslosaAndersson() {
         return List.of(
-            getConfig(BOSTADSLOSE_ANDERSSON_ID, ZERO, FOURTEEN, DIAGNOSIS_CODE_K23, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
-                getRandomId(), NUVARANDE_ARBETE)
+            getConfig(BOSTADSLOSE_ANDERSSON_ID, -44, 1, DIAGNOSIS_CODE_P23, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
+                getRandomId(), STUDIER, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, DEGREE_25)
         );
     }
 
     private List<TestabilityConfigProvider> getAnonymaAttila() {
         return List.of(
-            getConfig(ANONYMA_ATTILA_ID, ZERO, FOURTEEN, DIAGNOSIS_CODE_Z010, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD, getRandomId(),
-                NUVARANDE_ARBETE)
+            getConfig(ANONYMA_ATTILA_ID, -30, -5, DIAGNOSIS_CODE_F430, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD, getRandomId(),
+                ARBETSSOKANDE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, DEGREE_25)
         );
     }
 
     private List<TestabilityConfigProvider> getDeceasedAtlas() {
         return List.of(
-            getConfig(ATLAS_ABRAHAMSSON_ID, ZERO, FOURTEEN, DIAGNOSIS_CODE_Z010, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD, getRandomId(),
-                NUVARANDE_ARBETE)
+            getConfig(ATLAS_ABRAHAMSSON_ID, 0, 5, DIAGNOSIS_CODE_F430, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD, getRandomId(),
+                ARBETSSOKANDE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, DEGREE_25)
         );
     }
 
     private List<TestabilityConfigProvider> getValidationPatientAlexa() {
         return List.of(
-            getConfig(ALEXA_VALFRIDSSON, ZERO, FOURTEEN, DIAGNOSIS_CODE_P23, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD, getRandomId(),
-                NUVARANDE_ARBETE)
+            getConfig(ALEXA_VALFRIDSSON, 0, 5, DIAGNOSIS_CODE_F430, DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD, getRandomId(),
+                ARBETSSOKANDE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, DEGREE_25)
         );
     }
 
     private TestabilityConfigProvider getConfig(String patientId, int fromDays, int toDays, String diagnosisCode, String relationId,
-        RelationKod relationKod, String certificateId, String occupation) {
+        RelationKod relationKod, String certificateId, String occupation, String doctorId, String careUnitId, String workCapacity) {
+        final var doctorName = hsaService.getHsaEmployeeName(doctorId);
         return TestabilityConfigProvider.builder()
             .careUnitId(careUnitId)
-            .careProviderId(careProviderId)
+            .careProviderId(ALFA_REGIONEN)
             .doctorId(doctorId)
             .doctorName(doctorName)
             .certificateId(certificateId)
@@ -158,6 +153,7 @@ public class TestabilityServiceImpl implements TestabilityService {
             .relationsId(relationId)
             .relationKod(relationKod)
             .occupation(occupation)
+            .workCapacity(workCapacity)
             .build();
     }
 

@@ -43,4 +43,5 @@ public class TestabilityConfigProvider {
     private RelationKod relationKod;
     private String diagnosisCode;
     private String occupation;
+    private String workCapacity;
 }

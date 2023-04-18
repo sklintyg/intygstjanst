@@ -19,10 +19,6 @@
 package se.inera.intyg.intygstjanst.web.integration.testability.util;
 
 
-import static se.inera.intyg.intygstjanst.web.service.impl.TestabilityServiceImpl.ANONYMA_ATTILA_ID;
-import static se.inera.intyg.intygstjanst.web.service.impl.TestabilityServiceImpl.ATHENA_ANDERSSON_ID;
-import static se.inera.intyg.intygstjanst.web.service.impl.TestabilityServiceImpl.BOSTADSLOSE_ANDERSSON_ID;
-
 import java.io.StringReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -74,22 +70,9 @@ public class IntegrationTestUtil {
         } else {
             requestTemplate.add("diagnosisCode", DIAGNOSIS_CODE);
         }
-        requestTemplate.add("workCapacity", getWorkCapacity(testabilityConfigProvider.getPatientId()));
+        requestTemplate.add("workCapacity", testabilityConfigProvider.getWorkCapacity());
         requestTemplate.add("occupation", testabilityConfigProvider.getOccupation());
         applyToFromDatesToRequestTemplate(requestTemplate, testabilityConfigProvider.getFromDays(), testabilityConfigProvider.getToDays());
-    }
-
-    private static String getWorkCapacity(String patientId) {
-        switch (patientId) {
-            case ATHENA_ANDERSSON_ID:
-                return "HELT_NEDSATT";
-            case ANONYMA_ATTILA_ID:
-                return "TRE_FJARDEDEL";
-            case BOSTADSLOSE_ANDERSSON_ID:
-                return "EN_FJARDEDEL";
-            default:
-                return "HALFTEN";
-        }
     }
 
     private static String getRelation(String relationId, STGroupFile templateGroup, RelationKod relationKod) {

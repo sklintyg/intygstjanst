@@ -19,9 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.intyg.intygstjanst.web.integration.testability.dto.TestabilityCreateRequest;
-
 public interface TestabilityService {
 
-    void create(TestabilityCreateRequest createRequest);
+    void createDefaultTestData();
 }
