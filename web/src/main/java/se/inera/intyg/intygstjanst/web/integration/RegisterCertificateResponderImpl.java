@@ -20,8 +20,6 @@ package se.inera.intyg.intygstjanst.web.integration;
 
 import java.io.StringWriter;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
@@ -34,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.w3._2000._09.xmldsig_.SignatureType;
 import org.w3._2002._06.xmldsig_filter2.XPathType;
 import se.inera.intyg.common.services.texts.IntygTextsService;
-import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -44,12 +41,12 @@ import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.AdditionalMetaData;
-import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.infra.integration.pu.model.PersonSvar;
 import se.inera.intyg.infra.integration.pu.model.PersonSvar.Status;
 import se.inera.intyg.infra.integration.pu.services.PUService;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.infra.monitoring.logging.LogMarkers;
+import se.inera.intyg.intygstjanst.web.integration.util.CertificateHolderConverter;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.ObjectFactory;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponderInterface;
@@ -59,8 +56,6 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.DatePeriodType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PQType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PartialDateType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
-import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
-import se.riv.clinicalprocess.healthcond.certificate.v3.Relation;
 
 @SchemaValidation
 public class RegisterCertificateResponderImpl implements RegisterCertificateResponderInterface {
@@ -69,6 +64,8 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
 
     private ObjectFactory objectFactory;
     private JAXBContext jaxbContext;
+    @Autowired
+    private CertificateHolderConverter certificateHolderConverter;
 
     @Autowired
     private ModuleContainerApi moduleContainer;
@@ -146,7 +143,8 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         final String xml, final String additionalInfo, AdditionalMetaData additionalMetaData)
         throws CertificateAlreadyExistsException, InvalidCertificateException {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
-        CertificateHolder certificateHolder = toCertificateHolder(registerCertificate.getIntyg(), intygsTyp, xml, additionalInfo,
+        CertificateHolder certificateHolder = certificateHolderConverter.convert(registerCertificate.getIntyg(), intygsTyp, xml,
+            additionalInfo,
             additionalMetaData);
         moduleContainer.certificateReceived(certificateHolder);
         response.setResult(ResultTypeUtil.okResult());
@@ -233,47 +231,5 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
 
     private String getIntygsTyp(RegisterCertificateType certificateType) {
         return moduleRegistry.getModuleIdFromExternalId(certificateType.getIntyg().getTyp().getCode());
-    }
-
-    private CertificateHolder toCertificateHolder(Intyg intyg, String type, String originalCertificate, String additionalInfo,
-        AdditionalMetaData additionalMetaData) {
-
-        CertificateHolder certificateHolder = new CertificateHolder();
-        certificateHolder.setId(intyg.getIntygsId().getExtension());
-        certificateHolder.setCareUnitId(intyg.getSkapadAv().getEnhet().getEnhetsId().getExtension());
-        certificateHolder.setCareUnitName(intyg.getSkapadAv().getEnhet().getEnhetsnamn());
-        certificateHolder.setCareGiverId(intyg.getSkapadAv().getEnhet().getVardgivare().getVardgivareId().getExtension());
-        certificateHolder.setSigningDoctorId(intyg.getSkapadAv().getPersonalId().getExtension());
-        certificateHolder.setSigningDoctorName(intyg.getSkapadAv().getFullstandigtNamn());
-        certificateHolder.setCivicRegistrationNumber(createPnr(intyg));
-        certificateHolder.setSignedDate(intyg.getSigneringstidpunkt());
-        certificateHolder.setType(type);
-        certificateHolder.setTypeVersion(intyg.getVersion());
-        certificateHolder.setOriginalCertificate(originalCertificate);
-        certificateHolder.setAdditionalInfo(additionalInfo);
-        certificateHolder.setCertificateRelation(convertRelation(intyg.getIntygsId().getExtension(), intyg.getRelation()));
-        certificateHolder.setAdditionalMetaData(additionalMetaData);
-        return certificateHolder;
-    }
-
-    private CertificateRelation convertRelation(String intygsId, List<Relation> relations) {
-        if (relations != null && relations.size() > 0) {
-            return new CertificateRelation(intygsId, relations.get(0).getIntygsId().getExtension(),
-                RelationKod.fromValue(relations.get(0).getTyp().getCode()), LocalDateTime.now());
-        }
-        return null;
-    }
-
-    private Personnummer createPnr(Intyg intyg) {
-        String personId = null;
-        try {
-            personId = intyg.getPatient().getPersonId().getExtension();
-        } catch (NullPointerException npe) {
-            throw new RuntimeException("Could not get patient's personnummer from intyg");
-        }
-
-        return Personnummer.createPersonnummer(personId)
-            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
-
     }
 }
