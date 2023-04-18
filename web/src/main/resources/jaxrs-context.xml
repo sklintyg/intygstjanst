@@ -69,6 +69,7 @@
         <ref bean="sjukfallCertBean" />
         <ref bean="fkBean" />
         <ref bean="statisticsServiceBean" />
+        <bean class="se.inera.intyg.intygstjanst.web.integration.testability.TestabilityController" />
       </jaxrs:serviceBeans>
       <jaxrs:providers>
         <ref bean="jacksonJsonProvider" />
