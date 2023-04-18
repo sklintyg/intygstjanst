@@ -116,4 +116,5 @@ dependencies {
     testRuntime "javax.servlet:javax.servlet-api"
 
     gretty "se.inera.intyg.refdata:refdata:${refDataVersion}"
+    compile "org.antlr:ST4:${stAntlr4Version}"
 }
