@@ -42,6 +42,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.services.texts.IntygTextsService;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
@@ -55,6 +56,7 @@ import se.inera.intyg.common.support.modules.support.api.dto.ValidationStatus;
 import se.inera.intyg.infra.integration.pu.model.Person;
 import se.inera.intyg.infra.integration.pu.model.PersonSvar;
 import se.inera.intyg.infra.integration.pu.services.PUService;
+import se.inera.intyg.intygstjanst.web.integration.util.CertificateHolderConverter;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
@@ -91,6 +93,9 @@ public class RegisterCertificateResponderImplTest {
 
     @Mock
     private PUService puService;
+
+    @Spy
+    private CertificateHolderConverter certificateHolderConverter = new CertificateHolderConverter();
 
     @InjectMocks
     private RegisterCertificateResponderImpl responder = new RegisterCertificateResponderImpl();
@@ -180,7 +185,8 @@ public class RegisterCertificateResponderImplTest {
     @Test
     public void registerCertificateInvalidPersonnummer() throws Exception {
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
-            createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "felaktigt personnummer", LocalDateTime.now()));
+            createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "felaktigt personnummer",
+                LocalDateTime.now()));
         assertNotNull(res);
         assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
         assertEquals(ErrorIdType.VALIDATION_ERROR, res.getResult().getErrorId());
