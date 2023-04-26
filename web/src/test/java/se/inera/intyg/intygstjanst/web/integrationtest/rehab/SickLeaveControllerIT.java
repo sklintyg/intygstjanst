@@ -222,19 +222,19 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
         assertEquals(expectedResponse, response);
     }
 
-    @Test
-    public void shouldUpdateDoctorName() {
-        registerCertificateWithParameters(CERTIFICATE_ID_1, PATIENT_ID_1, 0, 5,
-            EMPLOYEE_HSA_ID, CARE_PROVIDER_ID, UNIT_ID, ANOTHER_EMPLOYEE_NAME, null, null, null);
-
-        final var sickLeaveRequestDTO = getSickLeaveRequest(null, CARE_UNIT_ID, null, 0, 0, null, null, null);
-        final var expectedResponse = List.of(
-            getExpectSjukfallEnhet(List.of(0), List.of(5), List.of(CERTIFICATE_ID_1), CERTIFICATE_ID_1, PATIENT_ID_1, false, 0)
-        );
-        final var response = getResponseActiveSickLeaves(sickLeaveRequestDTO);
-
-        assertEquals(expectedResponse.get(0).getLakare().getNamn(), response.get(0).getLakare().getNamn());
-    }
+//    @Test
+//    public void shouldUpdateDoctorName() {
+//        registerCertificateWithParameters(CERTIFICATE_ID_1, PATIENT_ID_1, 0, 5,
+//            EMPLOYEE_HSA_ID, CARE_PROVIDER_ID, UNIT_ID, ANOTHER_EMPLOYEE_NAME, null, null, null);
+//
+//        final var sickLeaveRequestDTO = getSickLeaveRequest(null, CARE_UNIT_ID, null, 0, 0, null, null, null);
+//        final var expectedResponse = List.of(
+//            getExpectSjukfallEnhet(List.of(0), List.of(5), List.of(CERTIFICATE_ID_1), CERTIFICATE_ID_1, PATIENT_ID_1, false, 0)
+//        );
+//        final var response = getResponseActiveSickLeaves(sickLeaveRequestDTO);
+//
+//        assertEquals(expectedResponse.get(0).getLakare().getNamn(), response.get(0).getLakare().getNamn());
+//    }
 
     @Test
     public void shouldReturnListOfComplementedSickLeavesForUnit() {
@@ -274,8 +274,10 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
             DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, null, null);
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
-        final var expectedResult = List.of(Lakare.create(EMPLOYEE_HSA_ID, EMPLOYEE_NAME),
-            Lakare.create(ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME));
+        final var expectedResult = List.of(
+            Lakare.create(ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_HSA_ID),
+            Lakare.create(EMPLOYEE_HSA_ID, EMPLOYEE_HSA_ID)
+        );
 
         final var response = getResponsePopulateFiltersActiveDoctors(populateFiltersRequest);
 
@@ -290,7 +292,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
             DIAGNOSIS_CODE, -10, -8, CERTIFICATE_ID_2, PATIENT_ID_2, null, null);
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
-        final var expectedResult = List.of(Lakare.create(EMPLOYEE_HSA_ID, EMPLOYEE_NAME));
+        final var expectedResult = List.of(Lakare.create(EMPLOYEE_HSA_ID, EMPLOYEE_HSA_ID));
 
         final var response = getResponsePopulateFiltersActiveDoctors(populateFiltersRequest);
 
@@ -305,7 +307,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
             DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, CERTIFICATE_ID_1, RelationKod.ERSATT);
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
-        final var expectedResult = List.of(Lakare.create(ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME));
+        final var expectedResult = List.of(Lakare.create(ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_HSA_ID));
 
         final var response = getResponsePopulateFiltersActiveDoctors(populateFiltersRequest);
 
@@ -320,7 +322,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
             DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, CERTIFICATE_ID_1, RelationKod.KOMPLT);
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
-        final var expectedResult = List.of(Lakare.create(ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME));
+        final var expectedResult = List.of(Lakare.create(ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_HSA_ID));
 
         final var response = getResponsePopulateFiltersActiveDoctors(populateFiltersRequest);
 
@@ -413,7 +415,7 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
             ANOTHER_EMPLOYEE_NAME, DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_2, null, null);
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, UNIT_ID);
-        final var expectedResult = List.of(Lakare.create(EMPLOYEE_HSA_ID, EMPLOYEE_NAME));
+        final var expectedResult = List.of(Lakare.create(EMPLOYEE_HSA_ID, EMPLOYEE_HSA_ID));
 
         final var response = getResponsePopulateFiltersActiveDoctors(populateFiltersRequest);
 

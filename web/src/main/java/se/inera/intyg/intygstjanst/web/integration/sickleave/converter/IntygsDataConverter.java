@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.integration.sickleave.converter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -27,10 +28,18 @@ import org.springframework.stereotype.Component;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
 import se.inera.intyg.infra.sjukfall.dto.Formaga;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallCertificateIntygsDataConverter;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsData;
 
 @Component
 public class IntygsDataConverter {
+
+    public List<IntygData> convert(List<SjukfallCertificate> sjukfallCertificateList) {
+        return new ArrayList<>(
+            new SjukfallCertificateIntygsDataConverter().buildIntygsData(sjukfallCertificateList)).stream()
+            .map((this::map)).collect(Collectors.toList());
+    }
 
     public IntygData map(IntygsData from) {
         IntygData to = new IntygData();
