@@ -139,10 +139,9 @@ class GetSickLeaveFilterServiceImplTest {
     void shallReturnSickLeaveFilter() {
         final var expectedSickLeaveFilter = GetSickLeaveFilterServiceResponse.builder()
             .activeDoctors(
-                List.of
-                    (
-                        Lakare.create(DOCTOR_ID, DOCTOR_ID)
-                    )
+                List.of(
+                    Lakare.create(DOCTOR_ID, DOCTOR_ID)
+                )
             )
             .diagnosisChapters(DIAGNOSIS_CHAPTERS)
             .build();
