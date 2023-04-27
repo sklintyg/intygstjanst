@@ -84,9 +84,8 @@ public class IntegrationTestUtil {
     }
 
     public static void registerCertificateWithParametersDoctorAndDiagnosis(String careUnitId, String careProviderId, String intygsId,
-        String patientId, String doctorId,
-        String doctorName, String diagnosisCode,
-        int fromDaysRelativeToNow, int toDaysRelativeToNow, String relationsId, RelationKod relationKod) {
+        String patientId, String doctorId, String doctorName, String diagnosisCode, int fromDaysRelativeToNow, int toDaysRelativeToNow,
+        String relationsId, RelationKod relationKod, String signedAndSentDateTime) {
         String filePath = getFilePath(IntegrationTestCertificateType.LISJP);
         final var templateGroup = new STGroupFile(filePath);
         final var relation = relationsId != null
@@ -103,6 +102,7 @@ public class IntegrationTestUtil {
         if (!relation.isEmpty()) {
             requestTemplate.add("relation", relation);
         }
+        requestTemplate.add("signedAndSentDateTime", signedAndSentDateTime);
 
         applyToFromDatesToRequestTemplate(requestTemplate, fromDaysRelativeToNow, toDaysRelativeToNow);
         executeRegisterCertificate(requestTemplate);
