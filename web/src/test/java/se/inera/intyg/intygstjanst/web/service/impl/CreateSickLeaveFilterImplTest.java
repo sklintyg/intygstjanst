@@ -61,11 +61,10 @@ class CreateSickLeaveFilterImplTest {
         void shallIncludeListOfDoctors() {
             final var expectedFilter = GetSickLeaveFilterServiceResponse.builder()
                 .activeDoctors(
-                    List.of
-                        (
-                            Lakare.create(DOCTOR_ID_ONE, DOCTOR_ID_ONE),
-                            Lakare.create(DOCTOR_ID_TWO, DOCTOR_ID_TWO)
-                        )
+                    List.of(
+                        Lakare.create(DOCTOR_ID_ONE, DOCTOR_ID_ONE),
+                        Lakare.create(DOCTOR_ID_TWO, DOCTOR_ID_TWO)
+                    )
                 )
                 .diagnosisChapters(
                     Collections.emptyList()
@@ -87,11 +86,10 @@ class CreateSickLeaveFilterImplTest {
         void shallOnlyIncludeUniqueDoctors() {
             final var expectedFilter = GetSickLeaveFilterServiceResponse.builder()
                 .activeDoctors(
-                    List.of
-                        (
-                            Lakare.create(DOCTOR_ID_ONE, DOCTOR_ID_ONE),
-                            Lakare.create(DOCTOR_ID_TWO, DOCTOR_ID_TWO)
-                        )
+                    List.of(
+                        Lakare.create(DOCTOR_ID_ONE, DOCTOR_ID_ONE),
+                        Lakare.create(DOCTOR_ID_TWO, DOCTOR_ID_TWO)
+                    )
                 )
                 .diagnosisChapters(
                     Collections.emptyList()
@@ -183,11 +181,10 @@ class CreateSickLeaveFilterImplTest {
     void shallReturnFilterWithBothDoctorsAndDiagnosisChapters() {
         final var expectedFilter = GetSickLeaveFilterServiceResponse.builder()
             .activeDoctors(
-                List.of
-                    (
-                        Lakare.create(DOCTOR_ID_ONE, DOCTOR_ID_ONE),
-                        Lakare.create(DOCTOR_ID_TWO, DOCTOR_ID_TWO)
-                    )
+                List.of(
+                    Lakare.create(DOCTOR_ID_ONE, DOCTOR_ID_ONE),
+                    Lakare.create(DOCTOR_ID_TWO, DOCTOR_ID_TWO)
+                )
             )
             .diagnosisChapters(
                 List.of(
