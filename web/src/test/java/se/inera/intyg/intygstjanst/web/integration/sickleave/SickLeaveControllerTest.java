@@ -23,10 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
-import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,8 +36,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.web.service.GetSickLeaveFilterService;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeavesService;
-import se.inera.intyg.intygstjanst.web.service.PopulateFilterService;
+import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceRequest;
+import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest;
 import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersResponseDTO;
@@ -50,9 +50,9 @@ import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 class SickLeaveControllerTest {
 
     @Mock
-    private PopulateFilterService populateFilterService;
-    @Mock
     private GetSickLeavesService getSickLeavesService;
+    @Mock
+    private GetSickLeaveFilterService getSickLeaveFilterService;
     @InjectMocks
     private SickLeaveController sickLeaveController;
 
@@ -67,7 +67,10 @@ class SickLeaveControllerTest {
     private static final List<DiagnosKapitel> DIAGNOSIS_CHAPTER = List.of(
         new DiagnosKapitel("A00-B99Vissa infektionssjukdomar och parasitsjukdomar")
     );
-    private static final String DOCTOR_NAME = "doctorName";
+    private static final List<Lakare> DOCTORS = List.of(
+        Lakare.create(DOCTOR_ID, DOCTOR_ID)
+    );
+    ;
 
     @Nested
     class GetActiveSickLeavesForCareUnitTest {
@@ -121,25 +124,52 @@ class SickLeaveControllerTest {
         }
     }
 
-    @Test
-    void shouldCallPopulateFilterSerivceService() {
-        final var populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
-        sickLeaveController.populateFilters(populateFiltersRequestDTO);
-        verify(populateFilterService).populateFilters(populateFiltersRequestDTO);
-    }
+    @Nested
+    class PopulateFiltersTest {
 
-    @Test
-    void shouldReturnPopulateFiltersResonseDTO() {
-        final var populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
-        final var doctor = Lakare.create(DOCTOR_ID, DOCTOR_NAME);
-        final var diagnosisChapter = DIAGNOSIS_CHAPTER;
-        final var expectedResponse = Response.ok(new PopulateFiltersResponseDTO(List.of(doctor), diagnosisChapter)).build();
+        private PopulateFiltersRequestDTO populateFiltersRequestDTO;
 
-        when(populateFilterService.populateFilters(populateFiltersRequestDTO)).thenReturn(
-            new PopulateFiltersResponseDTO(List.of(doctor), diagnosisChapter));
+        @BeforeEach
+        void setUp() {
+            populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
+            populateFiltersRequestDTO.setCareUnitId(CARE_UNIT_ID);
+            populateFiltersRequestDTO.setUnitId(UNIT_ID);
+            populateFiltersRequestDTO.setDoctorId(DOCTOR_ID);
+            populateFiltersRequestDTO.setMaxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
 
-        final var result = sickLeaveController.populateFilters(populateFiltersRequestDTO);
+            doReturn(
+                GetSickLeaveFilterServiceResponse.builder()
+                    .activeDoctors(DOCTORS)
+                    .diagnosisChapters(DIAGNOSIS_CHAPTER)
+                    .build())
+                .when(getSickLeaveFilterService)
+                .get(any(GetSickLeaveFilterServiceRequest.class));
+        }
 
-        assertEquals(expectedResponse.getEntity(), result.getEntity());
+        @Test
+        void shouldIncludeRequest() {
+            final var expectedRequest = GetSickLeaveFilterServiceRequest.builder()
+                .careUnitId(populateFiltersRequestDTO.getCareUnitId())
+                .unitId(populateFiltersRequestDTO.getUnitId())
+                .maxDaysSinceSickLeaveCompleted(populateFiltersRequestDTO.getMaxDaysSinceSickLeaveCompleted())
+                .doctorId(populateFiltersRequestDTO.getDoctorId())
+                .build();
+
+            final var getSickLeaveFilterServiceRequestArgumentCaptor = ArgumentCaptor.forClass(GetSickLeaveFilterServiceRequest.class);
+            sickLeaveController.populateFilters(populateFiltersRequestDTO);
+            verify(getSickLeaveFilterService).get(getSickLeaveFilterServiceRequestArgumentCaptor.capture());
+            assertEquals(expectedRequest, getSickLeaveFilterServiceRequestArgumentCaptor.getValue());
+        }
+
+        @Test
+        void shouldReturnResponse() {
+            final var expectedResponse = new PopulateFiltersResponseDTO(
+                DOCTORS,
+                DIAGNOSIS_CHAPTER
+            );
+
+            final var result = sickLeaveController.populateFilters(populateFiltersRequestDTO);
+            assertEquals(expectedResponse, result.getEntity());
+        }
     }
 }

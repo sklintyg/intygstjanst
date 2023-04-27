@@ -32,10 +32,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.web.service.GetSickLeaveFilterService;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeavesService;
-import se.inera.intyg.intygstjanst.web.service.PopulateFilterService;
+import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceRequest;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest;
 import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersResponseDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 
@@ -44,12 +46,12 @@ public class SickLeaveController {
 
     private static final Logger LOG = LoggerFactory.getLogger(SickLeaveController.class);
     private static final String UTF_8_CHARSET = ";charset=utf-8";
-    private final PopulateFilterService populateFilterService;
     private final GetSickLeavesService getSickLeavesService;
+    private final GetSickLeaveFilterService getSickLeaveFilterService;
 
-    public SickLeaveController(GetSickLeavesService getSickLeavesService, PopulateFilterService populateFilterService) {
+    public SickLeaveController(GetSickLeavesService getSickLeavesService, GetSickLeaveFilterService getSickLeaveFilterService) {
         this.getSickLeavesService = getSickLeavesService;
-        this.populateFilterService = populateFilterService;
+        this.getSickLeaveFilterService = getSickLeaveFilterService;
     }
 
     @PrometheusTimeMethod
@@ -72,6 +74,7 @@ public class SickLeaveController {
                 .build()
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_ACTIVE, sjukfallEnhetList.size()));
+
         return Response.ok(new SickLeaveResponseDTO(sjukfallEnhetList)).build();
     }
 
@@ -82,8 +85,21 @@ public class SickLeaveController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response populateFilters(@RequestBody PopulateFiltersRequestDTO populateFiltersRequestDTO) {
         final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
-        final var populateFiltersResponseDTO = populateFilterService.populateFilters(populateFiltersRequestDTO);
+        final var getSickLeaveFilterServiceResponse = getSickLeaveFilterService.get(
+            GetSickLeaveFilterServiceRequest.builder()
+                .careUnitId(populateFiltersRequestDTO.getCareUnitId())
+                .unitId(populateFiltersRequestDTO.getUnitId())
+                .doctorId(populateFiltersRequestDTO.getDoctorId())
+                .maxDaysSinceSickLeaveCompleted(populateFiltersRequestDTO.getMaxDaysSinceSickLeaveCompleted())
+                .build()
+        );
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_FILTER));
-        return Response.ok(populateFiltersResponseDTO).build();
+
+        return Response.ok(
+            new PopulateFiltersResponseDTO(
+                getSickLeaveFilterServiceResponse.getActiveDoctors(),
+                getSickLeaveFilterServiceResponse.getDiagnosisChapters()
+            )
+        ).build();
     }
 }

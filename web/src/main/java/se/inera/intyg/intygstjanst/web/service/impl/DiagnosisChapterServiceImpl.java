@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKategori;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
+import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterProvider;
@@ -75,6 +76,12 @@ public class DiagnosisChapterServiceImpl implements DiagnosisChapterService {
         return getDiagnosisChapterForCategory(diagnosisCategory);
     }
 
+    @Override
+    public DiagnosKapitel getDiagnosisChaptersFromIntygData(IntygData intygData) {
+        final var diagnosisCategory = DiagnosKategori.extractFromString(intygData.getDiagnosKod().getCleanedCode());
+        return getDiagnosisChapterForCategory(diagnosisCategory);
+    }
+
     private List<DiagnosKod> getDiagnosisForCareUnit(List<SjukfallCertificate> sickLeaveCertificates) {
         return sickLeaveCertificates.stream()
             .map(SjukfallCertificate::getDiagnoseCode)
@@ -84,7 +91,19 @@ public class DiagnosisChapterServiceImpl implements DiagnosisChapterService {
             .collect(Collectors.toList());
     }
 
-    private DiagnosKapitel getDiagnosisChapterForCategory(Optional<DiagnosKategori> diagnosKategori) {
+    @Override
+    public DiagnosKapitel getDiagnosisChapter(DiagnosKod diagnosisCode) {
+        if (diagnosisCode == null) {
+            return OGILTIGA_DIAGNOSKODER_KAPITEL;
+        }
+
+        return getDiagnosisChapterForCategory(
+            DiagnosKategori.extractFromString(diagnosisCode.getCleanedCode())
+        );
+    }
+
+    @Override
+    public DiagnosKapitel getDiagnosisChapterForCategory(Optional<DiagnosKategori> diagnosKategori) {
         return this.diagnosisChapterList.stream()
             .filter(diagnosisChapters -> diagnosisChapters.includes(diagnosKategori))
             .findFirst()
