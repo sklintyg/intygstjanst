@@ -634,4 +634,17 @@
 			<column name="CARE_GIVER_ID"/>
 		</createIndex>
 	</changeSet>
+
+	<changeSet id="53" author="mww">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="SJUKFALL_CERT" indexName="IDX_SJUKFALL_CERT_CARE_UNIT_ID_CARE_GIVER_ID_SIGNING_DOCTOR_ID"/>
+			</not>
+		</preConditions>
+		<createIndex indexName="IDX_SJUKFALL_CERT_CARE_GIVER_ID_CARE_UNIT_ID_SIGNING_DOCTOR_ID" tableName="SJUKFALL_CERT" unique="false">
+			<column name="CARE_GIVER_ID"/>
+			<column name="CARE_UNIT_ID"/>
+			<column name="SIGNING_DOCTOR_ID"/>
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>
