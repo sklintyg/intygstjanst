@@ -311,8 +311,8 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
             + "WHERE sc.civicRegistrationNumber IN (:personNummerList) "
             + "AND sc.careUnitId IN (:careUnitHsaIds) "
             + "AND sc.careGiverId = :careGiverHsaId "
-            + "AND sc.deleted = FALSE ";
-        // TODO: Add testCertificate = false
+            + "AND sc.deleted = FALSE "
+            + "AND sc.testCertificate = FALSE ";
 
         // Only add the "is replaced"-stuff if there's entries to possibly exclude.
         if (isNotEmpty(replacedOrComplementedIntygsIdList)) {
