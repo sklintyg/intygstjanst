@@ -20,21 +20,27 @@
 package se.inera.intyg.intygstjanst.web.integration.sickleave;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
-import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
-import se.inera.intyg.intygstjanst.web.service.PopulateFilterService;
-import se.inera.intyg.intygstjanst.web.service.SickLeavesForCareUnitService;
+import se.inera.intyg.intygstjanst.web.service.GetSickLeaveFilterService;
+import se.inera.intyg.intygstjanst.web.service.GetSickLeavesService;
+import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceRequest;
+import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
+import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest;
 import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersResponseDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
@@ -44,56 +50,126 @@ import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 class SickLeaveControllerTest {
 
     @Mock
-    private SickLeavesForCareUnitService sickLeavesForCareUnitService;
+    private GetSickLeavesService getSickLeavesService;
     @Mock
-    private PopulateFilterService populateFilterService;
+    private GetSickLeaveFilterService getSickLeaveFilterService;
+    @InjectMocks
     private SickLeaveController sickLeaveController;
 
-    private static final String DOCTOR_ID = "doctorID";
-    private static final String DOCTOR_NAME = "doctorName";
-    private static final String DIAGNOSIS_CHAPTER = "C00-D48Tumörer";
+    private static final String CARE_UNIT_ID = "CareUnitId";
+    private static final String UNIT_ID = "UnitId1";
+    private static final String DOCTOR_ID = "DoctorId1";
+    private static final List<String> DOCTOR_IDS = List.of("DoctorId1", "DoctorId2");
+    private static final Integer MAX_CERTIFICATE_GAP = 5;
+    private static final Integer MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 3;
+    private static final Integer FROM_SICK_LEAVE_LENGTH = 1;
+    private static final Integer TO_SICK_LEAVE_LENGTH = 365;
+    private static final List<DiagnosKapitel> DIAGNOSIS_CHAPTER = List.of(
+        new DiagnosKapitel("A00-B99Vissa infektionssjukdomar och parasitsjukdomar")
+    );
+    private static final List<Lakare> DOCTORS = List.of(
+        Lakare.create(DOCTOR_ID, DOCTOR_ID)
+    );
+    ;
 
-    @BeforeEach
-    void setUp() {
-        sickLeaveController = new SickLeaveController(sickLeavesForCareUnitService, populateFilterService);
+    @Nested
+    class GetActiveSickLeavesForCareUnitTest {
+
+        private SickLeaveRequestDTO sickLeaveRequestDTO;
+
+        @BeforeEach
+        void setUp() {
+            sickLeaveRequestDTO = new SickLeaveRequestDTO();
+            sickLeaveRequestDTO.setCareUnitId(CARE_UNIT_ID);
+            sickLeaveRequestDTO.setUnitId(UNIT_ID);
+            sickLeaveRequestDTO.setDoctorIds(DOCTOR_IDS);
+            sickLeaveRequestDTO.setMaxCertificateGap(MAX_CERTIFICATE_GAP);
+            sickLeaveRequestDTO.setMaxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+            sickLeaveRequestDTO.setFromSickLeaveLength(FROM_SICK_LEAVE_LENGTH);
+            sickLeaveRequestDTO.setToSickLeaveLength(TO_SICK_LEAVE_LENGTH);
+            sickLeaveRequestDTO.setDiagnosisChapters(DIAGNOSIS_CHAPTER);
+        }
+
+        @Test
+        void shouldIncludeRequest() {
+            final var expectedRequest = GetSickLeaveServiceRequest.builder()
+                .careUnitId(sickLeaveRequestDTO.getCareUnitId())
+                .unitId(sickLeaveRequestDTO.getUnitId())
+                .maxDaysSinceSickLeaveCompleted(sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())
+                .doctorIds(sickLeaveRequestDTO.getDoctorIds())
+                .maxCertificateGap(sickLeaveRequestDTO.getMaxCertificateGap())
+                .fromSickLeaveLength(sickLeaveRequestDTO.getFromSickLeaveLength())
+                .toSickLeaveLength(sickLeaveRequestDTO.getToSickLeaveLength())
+                .diagnosisChapters(sickLeaveRequestDTO.getDiagnosisChapters())
+                .build();
+
+            final var getSickLeaveServiceRequestArgumentCaptor = ArgumentCaptor.forClass(GetSickLeaveServiceRequest.class);
+            sickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
+            verify(getSickLeavesService).get(getSickLeaveServiceRequestArgumentCaptor.capture());
+            assertEquals(expectedRequest, getSickLeaveServiceRequestArgumentCaptor.getValue());
+        }
+
+        @Test
+        void shouldReturnResponse() {
+            final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
+            final var sjukfallEnhet = new SjukfallEnhet();
+            final var expectedResponse = new SickLeaveResponseDTO(List.of(sjukfallEnhet));
+
+            doReturn(List.of(sjukfallEnhet))
+                .when(getSickLeavesService)
+                .get(any(GetSickLeaveServiceRequest.class));
+
+            final var result = sickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
+            assertEquals(expectedResponse, result.getEntity());
+        }
     }
 
-    @Test
-    void shouldCallGetActiveSickLeavesService() {
-        final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
-        sickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        verify(sickLeavesForCareUnitService).getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-    }
+    @Nested
+    class PopulateFiltersTest {
 
-    @Test
-    void shouldCallPopulateFilterSerivceService() {
-        final var populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
-        sickLeaveController.populateFilters(populateFiltersRequestDTO);
-        verify(populateFilterService).populateFilters(populateFiltersRequestDTO);
-    }
+        private PopulateFiltersRequestDTO populateFiltersRequestDTO;
 
-    @Test
-    void shouldReturnSickLeaveRequestResponseDTO() {
-        final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
-        final var sjukfallEnhet = new SjukfallEnhet();
-        final var expectedResponse = Response.ok(new SickLeaveResponseDTO(List.of(sjukfallEnhet))).build();
-        when(sickLeavesForCareUnitService.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO)).thenReturn(List.of(sjukfallEnhet));
-        final var result = sickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-        assertEquals(expectedResponse.getEntity(), result.getEntity());
-    }
+        @BeforeEach
+        void setUp() {
+            populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
+            populateFiltersRequestDTO.setCareUnitId(CARE_UNIT_ID);
+            populateFiltersRequestDTO.setUnitId(UNIT_ID);
+            populateFiltersRequestDTO.setDoctorId(DOCTOR_ID);
+            populateFiltersRequestDTO.setMaxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
 
-    @Test
-    void shouldReturnPopulateFiltersResonseDTO() {
-        final var populateFiltersRequestDTO = new PopulateFiltersRequestDTO();
-        final var doctor = Lakare.create(DOCTOR_ID, DOCTOR_NAME);
-        final var diagnosisChapter = new DiagnosKapitel(DIAGNOSIS_CHAPTER);
-        final var expectedResponse = Response.ok(new PopulateFiltersResponseDTO(List.of(doctor), List.of(diagnosisChapter))).build();
+            doReturn(
+                GetSickLeaveFilterServiceResponse.builder()
+                    .activeDoctors(DOCTORS)
+                    .diagnosisChapters(DIAGNOSIS_CHAPTER)
+                    .build())
+                .when(getSickLeaveFilterService)
+                .get(any(GetSickLeaveFilterServiceRequest.class));
+        }
 
-        when(populateFilterService.populateFilters(populateFiltersRequestDTO)).thenReturn(
-            new PopulateFiltersResponseDTO(List.of(doctor), List.of(diagnosisChapter)));
+        @Test
+        void shouldIncludeRequest() {
+            final var expectedRequest = GetSickLeaveFilterServiceRequest.builder()
+                .careUnitId(populateFiltersRequestDTO.getCareUnitId())
+                .unitId(populateFiltersRequestDTO.getUnitId())
+                .maxDaysSinceSickLeaveCompleted(populateFiltersRequestDTO.getMaxDaysSinceSickLeaveCompleted())
+                .doctorId(populateFiltersRequestDTO.getDoctorId())
+                .build();
 
-        final var result = sickLeaveController.populateFilters(populateFiltersRequestDTO);
+            final var getSickLeaveFilterServiceRequestArgumentCaptor = ArgumentCaptor.forClass(GetSickLeaveFilterServiceRequest.class);
+            sickLeaveController.populateFilters(populateFiltersRequestDTO);
+            verify(getSickLeaveFilterService).get(getSickLeaveFilterServiceRequestArgumentCaptor.capture());
+            assertEquals(expectedRequest, getSickLeaveFilterServiceRequestArgumentCaptor.getValue());
+        }
 
-        assertEquals(expectedResponse.getEntity(), result.getEntity());
+        @Test
+        void shouldReturnResponse() {
+            final var expectedResponse = new PopulateFiltersResponseDTO(
+                DOCTORS,
+                DIAGNOSIS_CHAPTER
+            );
+
+            final var result = sickLeaveController.populateFilters(populateFiltersRequestDTO);
+            assertEquals(expectedResponse, result.getEntity());
+        }
     }
 }

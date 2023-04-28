@@ -18,12 +18,18 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
  * Created by eriklupander on 2016-02-02.
  */
 public interface SjukfallCertificateDao {
+
+    List<SjukfallCertificate> findActiveSjukfallCertificate(String careGiverId, List<String> unitIds, List<String> doctorIds,
+        LocalDate activeDate, LocalDate recentlyClosed);
+
+    List<SjukfallCertificate> findAllSjukfallCertificate(String careGiverId, List<String> unitIds, List<String> patientIds);
 
     List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(
         String careGiverHsaId,

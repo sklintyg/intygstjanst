@@ -21,9 +21,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,20 +31,20 @@ import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKategori;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterProvider;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 
 @Service
 public class DiagnosisChapterServiceImpl implements DiagnosisChapterService {
 
+    @Autowired
+    private DiagnosisChapterProvider diagnosisChapterProvider;
+    
     public static final DiagnosKapitel OGILTIGA_DIAGNOSKODER_KAPITEL = new DiagnosKapitel(
         new DiagnosKategori(' ', 0),
         new DiagnosKategori(' ', 0),
         "Utan giltig diagnoskod");
     private static final Logger LOG = LoggerFactory.getLogger(DiagnosisChapterServiceImpl.class);
-    @Autowired
-    private DiagnosisChapterProvider diagnosisChapterProvider;
     private List<DiagnosKapitel> diagnosisChapterList;
 
     @PostConstruct
@@ -60,28 +58,20 @@ public class DiagnosisChapterServiceImpl implements DiagnosisChapterService {
     }
 
     @Override
-    public List<DiagnosKapitel> getDiagnosisChaptersFromSickLeaveCertificate(List<SjukfallCertificate> sickLeaveCertificates) {
-        final var diagnosisForCareUnit = getDiagnosisForCareUnit(sickLeaveCertificates);
-        return diagnosisForCareUnit.stream()
-            .map((diagnosisCode) -> DiagnosKategori.extractFromString(diagnosisCode.getCleanedCode()))
-            .map(this::getDiagnosisChapterForCategory)
-            .distinct()
-            .collect(Collectors.toList());
-    }
-
-    @Override
     public DiagnosKapitel getDiagnosisChaptersFromSickLeave(SjukfallEnhet sickLeave) {
         final var diagnosisCategory = DiagnosKategori.extractFromString(sickLeave.getDiagnosKod().getCleanedCode());
         return getDiagnosisChapterForCategory(diagnosisCategory);
     }
 
-    private List<DiagnosKod> getDiagnosisForCareUnit(List<SjukfallCertificate> sickLeaveCertificates) {
-        return sickLeaveCertificates.stream()
-            .map(SjukfallCertificate::getDiagnoseCode)
-            .filter(Objects::nonNull)
-            .distinct()
-            .map(DiagnosKod::create)
-            .collect(Collectors.toList());
+    @Override
+    public DiagnosKapitel getDiagnosisChapter(DiagnosKod diagnosisCode) {
+        if (diagnosisCode == null) {
+            return OGILTIGA_DIAGNOSKODER_KAPITEL;
+        }
+
+        return getDiagnosisChapterForCategory(
+            DiagnosKategori.extractFromString(diagnosisCode.getCleanedCode())
+        );
     }
 
     private DiagnosKapitel getDiagnosisChapterForCategory(Optional<DiagnosKategori> diagnosKategori) {

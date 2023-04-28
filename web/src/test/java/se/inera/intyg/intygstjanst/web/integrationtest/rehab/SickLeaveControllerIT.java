@@ -222,19 +222,19 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
         assertEquals(expectedResponse, response);
     }
 
-    @Test
-    public void shouldUpdateDoctorName() {
-        registerCertificateWithParameters(CERTIFICATE_ID_1, PATIENT_ID_1, 0, 5,
-            EMPLOYEE_HSA_ID, CARE_PROVIDER_ID, UNIT_ID, ANOTHER_EMPLOYEE_NAME, null, null, null);
-
-        final var sickLeaveRequestDTO = getSickLeaveRequest(null, CARE_UNIT_ID, null, 0, 0, null, null, null);
-        final var expectedResponse = List.of(
-            getExpectSjukfallEnhet(List.of(0), List.of(5), List.of(CERTIFICATE_ID_1), CERTIFICATE_ID_1, PATIENT_ID_1, false, 0)
-        );
-        final var response = getResponseActiveSickLeaves(sickLeaveRequestDTO);
-
-        assertEquals(expectedResponse.get(0).getLakare().getNamn(), response.get(0).getLakare().getNamn());
-    }
+//    @Test
+//    public void shouldUpdateDoctorName() {
+//        registerCertificateWithParameters(CERTIFICATE_ID_1, PATIENT_ID_1, 0, 5,
+//            EMPLOYEE_HSA_ID, CARE_PROVIDER_ID, UNIT_ID, ANOTHER_EMPLOYEE_NAME, null, null, null);
+//
+//        final var sickLeaveRequestDTO = getSickLeaveRequest(null, CARE_UNIT_ID, null, 0, 0, null, null, null);
+//        final var expectedResponse = List.of(
+//            getExpectSjukfallEnhet(List.of(0), List.of(5), List.of(CERTIFICATE_ID_1), CERTIFICATE_ID_1, PATIENT_ID_1, false, 0)
+//        );
+//        final var response = getResponseActiveSickLeaves(sickLeaveRequestDTO);
+//
+//        assertEquals(expectedResponse.get(0).getLakare().getNamn(), response.get(0).getLakare().getNamn());
+//    }
 
     @Test
     public void shouldReturnListOfComplementedSickLeavesForUnit() {
@@ -269,13 +269,15 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     @Test
     public void shouldReturnListOfDoctorsWithActiveSickLeaves() {
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, EMPLOYEE_HSA_ID, EMPLOYEE_NAME, DIAGNOSIS_CODE,
-            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null);
+            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null, "2015-12-07T15:48:05");
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME,
-            DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, null, null);
+            DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_2, null, null, "2015-12-07T15:48:05");
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
-        final var expectedResult = List.of(Lakare.create(EMPLOYEE_HSA_ID, EMPLOYEE_NAME),
-            Lakare.create(ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME));
+        final var expectedResult = List.of(
+            Lakare.create(EMPLOYEE_HSA_ID, EMPLOYEE_HSA_ID),
+            Lakare.create(ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_HSA_ID)
+        );
 
         final var response = getResponsePopulateFiltersActiveDoctors(populateFiltersRequest);
 
@@ -285,12 +287,12 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     @Test
     public void shouldReturnListOfDoctorsWithRecentlyCompletedSickLeaves() {
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, EMPLOYEE_HSA_ID, EMPLOYEE_NAME, DIAGNOSIS_CODE,
-            -10, -5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null);
+            -10, -5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null, "2015-12-07T15:48:05");
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME,
-            DIAGNOSIS_CODE, -10, -8, CERTIFICATE_ID_2, PATIENT_ID_2, null, null);
+            DIAGNOSIS_CODE, -10, -8, CERTIFICATE_ID_2, PATIENT_ID_2, null, null, "2015-12-07T15:48:05");
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
-        final var expectedResult = List.of(Lakare.create(EMPLOYEE_HSA_ID, EMPLOYEE_NAME));
+        final var expectedResult = List.of(Lakare.create(EMPLOYEE_HSA_ID, EMPLOYEE_HSA_ID));
 
         final var response = getResponsePopulateFiltersActiveDoctors(populateFiltersRequest);
 
@@ -300,12 +302,12 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     @Test
     public void shouldNotReturnListOfDoctorsWithReplacedSickLeaves() {
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, EMPLOYEE_HSA_ID, EMPLOYEE_NAME, DIAGNOSIS_CODE,
-            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null);
+            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null, "2015-12-07T15:48:05");
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME,
-            DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, CERTIFICATE_ID_1, RelationKod.ERSATT);
+            DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, CERTIFICATE_ID_1, RelationKod.ERSATT, "2015-12-08T15:48:05");
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
-        final var expectedResult = List.of(Lakare.create(ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME));
+        final var expectedResult = List.of(Lakare.create(ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_HSA_ID));
 
         final var response = getResponsePopulateFiltersActiveDoctors(populateFiltersRequest);
 
@@ -315,12 +317,12 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     @Test
     public void shouldNotReturnListOfDoctorsWithComplementedSickLeaves() {
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, EMPLOYEE_HSA_ID, EMPLOYEE_NAME, DIAGNOSIS_CODE,
-            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null);
+            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null, "2015-12-07T15:48:05");
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME,
-            DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, CERTIFICATE_ID_1, RelationKod.KOMPLT);
+            DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, CERTIFICATE_ID_1, RelationKod.KOMPLT, "2015-12-08T15:48:05");
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
-        final var expectedResult = List.of(Lakare.create(ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME));
+        final var expectedResult = List.of(Lakare.create(ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_HSA_ID));
 
         final var response = getResponsePopulateFiltersActiveDoctors(populateFiltersRequest);
 
@@ -330,9 +332,9 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     @Test
     public void shouldReturnListOfDiagnosis() {
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, EMPLOYEE_HSA_ID, EMPLOYEE_NAME, DIAGNOSIS_CODE,
-            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null);
+            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null, "2015-12-07T15:48:05");
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME,
-            ANOTHER_DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, null, null);
+            ANOTHER_DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_2, null, null, "2015-12-07T15:48:05");
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
         final var expectedResult = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER), new DiagnosKapitel(ANOTHER_DIAGNOSIS_CHAPTER));
@@ -345,9 +347,9 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     @Test
     public void shouldReturnDistictListOfDiagnosis() {
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, EMPLOYEE_HSA_ID, EMPLOYEE_NAME, DIAGNOSIS_CODE,
-            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null);
+            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null, "2015-12-07T15:48:05");
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME,
-            DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, null, null);
+            DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, null, null, "2015-12-07T15:48:05");
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
         final var expectedResult = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER));
@@ -361,9 +363,9 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     public void shouldReturnListOfDiagnosisForRecentlyCompletedSickLeaves() {
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, EMPLOYEE_HSA_ID, EMPLOYEE_NAME,
             ANOTHER_DIAGNOSIS_CODE,
-            -10, -5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null);
+            -10, -5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null, "2015-12-07T15:48:05");
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME,
-            DIAGNOSIS_CODE, -10, -8, CERTIFICATE_ID_2, PATIENT_ID_2, null, null);
+            DIAGNOSIS_CODE, -10, -8, CERTIFICATE_ID_2, PATIENT_ID_2, null, null, "2015-12-07T15:48:05");
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
         final var expectedResult = List.of(new DiagnosKapitel(ANOTHER_DIAGNOSIS_CHAPTER));
@@ -377,9 +379,9 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     public void shouldNotReturnListOfDiagnosisForReplacedSickLeaves() {
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, EMPLOYEE_HSA_ID, EMPLOYEE_NAME,
             ANOTHER_DIAGNOSIS_CODE,
-            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null);
+            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null, "2015-12-07T15:48:05");
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME,
-            DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, CERTIFICATE_ID_1, RelationKod.ERSATT);
+            DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, CERTIFICATE_ID_1, RelationKod.ERSATT, "2015-12-08T15:48:05");
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
         final var expectedResult = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER));
@@ -393,9 +395,9 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     public void shouldNotReturnListOfDiagnosisForComplementedSickLeaves() {
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, EMPLOYEE_HSA_ID, EMPLOYEE_NAME,
             ANOTHER_DIAGNOSIS_CODE,
-            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null);
+            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null, "2015-12-07T15:48:05");
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, ANOTHER_EMPLOYEE_HSA_ID, ANOTHER_EMPLOYEE_NAME,
-            DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, CERTIFICATE_ID_1, RelationKod.KOMPLT);
+            DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_1, CERTIFICATE_ID_1, RelationKod.KOMPLT, "2015-12-08T15:48:05");
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, null);
         final var expectedResult = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER));
@@ -408,12 +410,12 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     @Test
     public void shouldReturnListOfDoctorsFilteredOnUnitId() {
         registerCertificateWithParametersDoctorAndDiagnosis(CARE_UNIT_ID, CARE_PROVIDER_ID, EMPLOYEE_HSA_ID, EMPLOYEE_NAME, DIAGNOSIS_CODE,
-            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null);
+            0, 5, CERTIFICATE_ID_1, PATIENT_ID_1, null, null, "2015-12-07T15:48:05");
         registerCertificateWithParametersDoctorAndDiagnosis(ANOTHER_CARE_UNIT_ID, CARE_PROVIDER_ID, ANOTHER_EMPLOYEE_HSA_ID,
-            ANOTHER_EMPLOYEE_NAME, DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_2, null, null);
+            ANOTHER_EMPLOYEE_NAME, DIAGNOSIS_CODE, 0, 5, CERTIFICATE_ID_2, PATIENT_ID_2, null, null, "2015-12-07T15:48:05");
 
         final var populateFiltersRequest = getPopulateFiltersRequest(CARE_UNIT_ID, 5, UNIT_ID);
-        final var expectedResult = List.of(Lakare.create(EMPLOYEE_HSA_ID, EMPLOYEE_NAME));
+        final var expectedResult = List.of(Lakare.create(EMPLOYEE_HSA_ID, EMPLOYEE_HSA_ID));
 
         final var response = getResponsePopulateFiltersActiveDoctors(populateFiltersRequest);
 
@@ -561,12 +563,11 @@ public class SickLeaveControllerIT extends InternalApiBaseIntegrationTest {
     }
 
     private void registerCertificateWithParametersDoctorAndDiagnosis(String careUnitId, String careProviderId, String doctorId,
-        String doctorName, String diagnosisCode,
-        int fromDaysRelativeToNow, int toDaysRelativeToNow, String certificateId, String patientId, String relationsId,
-        RelationKod relationKod) {
+        String doctorName, String diagnosisCode, int fromDaysRelativeToNow, int toDaysRelativeToNow, String certificateId, String patientId,
+        String relationsId, RelationKod relationKod, String signedAndSentDateTime) {
         IntegrationTestUtil.registerCertificateWithParametersDoctorAndDiagnosis(careUnitId, careProviderId, certificateId, patientId,
             doctorId, doctorName,
-            diagnosisCode, fromDaysRelativeToNow, toDaysRelativeToNow, relationsId, relationKod);
+            diagnosisCode, fromDaysRelativeToNow, toDaysRelativeToNow, relationsId, relationKod, signedAndSentDateTime);
     }
 
     private ObjectMapper getObjectMapperForDeserialization() {

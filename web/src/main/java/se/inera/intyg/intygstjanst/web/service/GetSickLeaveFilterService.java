@@ -19,10 +19,10 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersResponseDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceRequest;
+import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
 
-public interface PopulateFilterService {
+public interface GetSickLeaveFilterService {
 
-    PopulateFiltersResponseDTO populateFilters(PopulateFiltersRequestDTO populateFiltersRequestDTO);
+    GetSickLeaveFilterServiceResponse get(GetSickLeaveFilterServiceRequest getSickLeaveFilterServiceRequest);
 }

@@ -19,13 +19,11 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
-import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import java.util.List;
+import se.inera.intyg.infra.sjukfall.dto.IntygData;
+import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
 
-public interface DiagnosisChapterService {
+public interface CreateSickLeaveFilter {
 
-    DiagnosKapitel getDiagnosisChaptersFromSickLeave(SjukfallEnhet sickLeave);
-
-    DiagnosKapitel getDiagnosisChapter(DiagnosKod diagnosisCode);
+    GetSickLeaveFilterServiceResponse create(List<IntygData> intygDataList);
 }

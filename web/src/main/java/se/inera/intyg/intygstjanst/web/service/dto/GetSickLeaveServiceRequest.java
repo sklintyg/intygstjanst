@@ -17,15 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.service;
+package se.inera.intyg.intygstjanst.web.service.dto;
 
+import java.util.List;
+import lombok.Builder;
+import lombok.Value;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
-import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 
-public interface DiagnosisChapterService {
+@Value
+@Builder
+public class GetSickLeaveServiceRequest {
 
-    DiagnosKapitel getDiagnosisChaptersFromSickLeave(SjukfallEnhet sickLeave);
+    String unitId;
+    String careUnitId;
+    List<String> doctorIds;
+    int maxCertificateGap;
+    int maxDaysSinceSickLeaveCompleted;
+    Integer toSickLeaveLength;
+    Integer fromSickLeaveLength;
+    List<DiagnosKapitel> diagnosisChapters;
 
-    DiagnosKapitel getDiagnosisChapter(DiagnosKod diagnosisCode);
 }

@@ -71,6 +71,48 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     private EntityManager entityManager;
 
     @Override
+    public List<SjukfallCertificate> findActiveSjukfallCertificate(String careGiverId, List<String> unitIds, List<String> doctorIds,
+        LocalDate activeDate, LocalDate recentlyClosed) {
+
+        final var queryStrBuilder = new StringBuilder();
+        queryStrBuilder.append("SELECT DISTINCT sc FROM SjukfallCertificate sc ");
+        queryStrBuilder.append("JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc ");
+        queryStrBuilder.append("WHERE sc.careGiverId = :careGiverHsaId ");
+        queryStrBuilder.append("AND sc.careUnitId IN (:careUnitHsaId) ");
+        if (doctorIds != null && !doctorIds.isEmpty()) {
+            queryStrBuilder.append("AND sc.signingDoctorId IN (:doctorId) ");
+        }
+        queryStrBuilder.append("AND ((scwc.fromDate <= :today AND scwc.toDate >= :today) ");
+        if (recentlyClosed != null) {
+            queryStrBuilder.append("OR (scwc.toDate < :today AND scwc.toDate >= :recentlyClosed)) ");
+        } else {
+            queryStrBuilder.append(")");
+        }
+        queryStrBuilder.append("AND sc.deleted = FALSE ");
+        queryStrBuilder.append("AND sc.testCertificate = FALSE ");
+
+        final var sjukfallCertificateTypedQuery = entityManager.createQuery(queryStrBuilder.toString(), SjukfallCertificate.class)
+            .setParameter("careGiverHsaId", careGiverId)
+            .setParameter("careUnitHsaId", unitIds)
+            .setParameter("today", activeDate.format(DateTimeFormatter.ISO_DATE));
+
+        if (doctorIds != null && !doctorIds.isEmpty()) {
+            sjukfallCertificateTypedQuery.setParameter("doctorId", doctorIds);
+        }
+
+        if (recentlyClosed != null) {
+            sjukfallCertificateTypedQuery.setParameter("recentlyClosed", recentlyClosed.format(DateTimeFormatter.ISO_DATE));
+        }
+
+        return sjukfallCertificateTypedQuery.getResultList();
+    }
+
+    @Override
+    public List<SjukfallCertificate> findAllSjukfallCertificate(String careGiverId, List<String> unitIds, List<String> patientIds) {
+        return querySjukfallCertificatesForUnitsAndPersonnummer(careGiverId, unitIds, patientIds, null, false);
+    }
+
+    @Override
     public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(
         String careGiverHsaId, List<String> careUnitHsaIds, int maxDagarSedanAvslut) {
 
@@ -269,7 +311,8 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
             + "WHERE sc.civicRegistrationNumber IN (:personNummerList) "
             + "AND sc.careUnitId IN (:careUnitHsaIds) "
             + "AND sc.careGiverId = :careGiverHsaId "
-            + "AND sc.deleted = FALSE ";
+            + "AND sc.deleted = FALSE "
+            + "AND sc.testCertificate = FALSE ";
 
         // Only add the "is replaced"-stuff if there's entries to possibly exclude.
         if (isNotEmpty(replacedOrComplementedIntygsIdList)) {
