@@ -24,5 +24,5 @@ import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResp
 
 public interface GetSickLeaveFilterService {
 
-    GetSickLeaveFilterServiceResponse get(GetSickLeaveFilterServiceRequest populateFiltersRequestDTO);
+    GetSickLeaveFilterServiceResponse get(GetSickLeaveFilterServiceRequest getSickLeaveFilterServiceRequest);
 }

@@ -49,16 +49,16 @@ public class GetSickLeaveFilterServiceImpl implements GetSickLeaveFilterService 
     }
 
     @Override
-    public GetSickLeaveFilterServiceResponse get(GetSickLeaveFilterServiceRequest request) {
-        final var careProviderId = hsaService.getHsaIdForVardgivare(request.getCareUnitId());
-        final var careUnitAndSubUnits = hsaService.getHsaIdsForCareUnitAndSubUnits(request.getCareUnitId());
+    public GetSickLeaveFilterServiceResponse get(GetSickLeaveFilterServiceRequest getSickLeaveFilterServiceRequest) {
+        final var careProviderId = hsaService.getHsaIdForVardgivare(getSickLeaveFilterServiceRequest.getCareUnitId());
+        final var careUnitAndSubUnits = hsaService.getHsaIdsForCareUnitAndSubUnits(getSickLeaveFilterServiceRequest.getCareUnitId());
 
         final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var intygDataList = getActiveSickLeaveCertificates.get(
             careProviderId,
-            getUnitIdFromRequestIfProvided(request.getUnitId(), careUnitAndSubUnits),
-            request.getDoctorId() != null ? List.of(request.getDoctorId()) : null,
-            request.getMaxDaysSinceSickLeaveCompleted()
+            getUnitIdFromRequestIfProvided(getSickLeaveFilterServiceRequest.getUnitId(), careUnitAndSubUnits),
+            getSickLeaveFilterServiceRequest.getDoctorId() != null ? List.of(getSickLeaveFilterServiceRequest.getDoctorId()) : null,
+            getSickLeaveFilterServiceRequest.getMaxDaysSinceSickLeaveCompleted()
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_ACTIVE_SICK_LEAVE_CERTIFICATES, intygDataList.size()));
 
