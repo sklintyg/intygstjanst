@@ -17,24 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.service.dto;
+package se.inera.intyg.intygstjanst.web.service;
 
-import java.util.List;
-import lombok.Data;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
+public interface CalculatePatientAgeService {
 
-@Data
-public class SickLeaveRequestDTO {
-
-    private String unitId;
-    private String careUnitId;
-    private List<String> doctorIds;
-    private int maxCertificateGap;
-    private int maxDaysSinceSickLeaveCompleted;
-    private Integer toSickLeaveLength;
-    private Integer fromSickLeaveLength;
-    private List<DiagnosKapitel> diagnosisChapters;
-    private int fromPatientAge;
-    private int toPatientAge;
-
+    Integer get(String patientId);
 }
