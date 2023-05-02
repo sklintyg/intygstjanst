@@ -34,7 +34,7 @@ public class SickLeaveRequestDTO {
     private Integer toSickLeaveLength;
     private Integer fromSickLeaveLength;
     private List<DiagnosKapitel> diagnosisChapters;
-    private int fromPatientAge;
-    private int toPatientAge;
+    private Integer fromPatientAge;
+    private Integer toPatientAge;
 
 }
