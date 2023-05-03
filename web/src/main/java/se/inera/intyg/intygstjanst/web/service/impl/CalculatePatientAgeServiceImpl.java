@@ -20,69 +20,34 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.time.LocalDate;
-import java.time.MonthDay;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 @Service
 public class CalculatePatientAgeServiceImpl implements CalculatePatientAgeService {
 
-    private static final int DATE_PART_OF_PERSON_ID = 8;
-    private static final int DAY_PART_OF_DATE_PART = 6;
-    private static final int MONTH_PART_OF_DATE_PART = 4;
     private static final int SAMORDNINGSNUMMER_DAY_CONSTANT = 60;
-    private static final String STANDARD_FORMAT = "^(19|20)[0-9]{6}[-+]?[0-9]{4}$";
-
-    private static final DateTimeFormatter MONTHDAY_FORMATTER = DateTimeFormatter.ofPattern("MMdd");
 
     @Override
     public Integer get(String patientId) {
-        if (patientIdIsTwelveDigits(patientId)) {
-            return getPatientAge(getNormalizedPnr(patientId));
-        }
-        final var normalizedPatientId = getCenturyFromYearAndSeparator(patientId) + getNormalizedPnr(patientId);
-        return getPatientAge(normalizedPatientId);
+        final var normalizedPnr = Personnummer.createPersonnummer(patientId).orElseThrow().getPersonnummer();
+        return getPatientAge(normalizedPnr);
     }
 
-    private static boolean patientIdIsTwelveDigits(String patientId) {
-        return patientId.matches(STANDARD_FORMAT);
-    }
-
-    private static String getNormalizedPnr(String patientId) {
-        return patientId.replace("-", "").replace("+", "");
-    }
-
-    private int getPatientAge(String patientId) {
-        var dateString = patientId.substring(0, DATE_PART_OF_PERSON_ID);
-        final var day = Integer.parseInt(dateString.substring(DAY_PART_OF_DATE_PART));
-        final var month = Integer.parseInt(dateString.substring(MONTH_PART_OF_DATE_PART, DAY_PART_OF_DATE_PART));
-
-        if (patientIdIsSamordningsnummer(day)) {
-            dateString = dateString.substring(0, MONTH_PART_OF_DATE_PART)
-                + MONTHDAY_FORMATTER.format(MonthDay.of(month, day - SAMORDNINGSNUMMER_DAY_CONSTANT));
-        }
-        final var birthDate = LocalDate.from(DateTimeFormatter.BASIC_ISO_DATE.parse(dateString));
+    private int getPatientAge(String normalizedPnr) {
+        final var date = normalizedPnr.substring(0, 8);
+        final var birthDate = LocalDate.from(DateTimeFormatter.BASIC_ISO_DATE.parse(subtractDaysIfSamordningsNummer(date)));
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
-    private static boolean patientIdIsSamordningsnummer(int day) {
-        return day > SAMORDNINGSNUMMER_DAY_CONSTANT;
-    }
-
-    private String getCenturyFromYearAndSeparator(String personnummer) {
-        final var now = Calendar.getInstance();
-        final var currentYear = now.getWeekYear();
-        final var personnummerContainsCentury = personnummer.matches("[0-9]{8}[-+]?[0-9]{4}");
-        final var yearStartIndex = personnummerContainsCentury ? 2 : 0;
-        final var yearFromPersonnummer = Integer.parseInt(personnummer.substring(yearStartIndex, yearStartIndex + 2));
-        final var dividerToRemoveNonCenturyYear = 100;
-        final var century = (currentYear - yearFromPersonnummer) / dividerToRemoveNonCenturyYear;
-        if (personnummer.contains("+")) {
-            return String.valueOf(century - 1);
+    private String subtractDaysIfSamordningsNummer(String date) {
+        var day = Integer.parseInt(date.substring(6));
+        if (day > SAMORDNINGSNUMMER_DAY_CONSTANT) {
+            return date.replaceFirst("(?<=\\d{6})\\d{2}", String.valueOf(day - SAMORDNINGSNUMMER_DAY_CONSTANT));
         }
-        return String.valueOf(century);
+        return date;
     }
 }
