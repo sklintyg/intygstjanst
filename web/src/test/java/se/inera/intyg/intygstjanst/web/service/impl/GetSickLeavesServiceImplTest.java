@@ -74,6 +74,8 @@ class GetSickLeavesServiceImplTest {
     private static final Integer MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 3;
     private static final Integer FROM_SICK_LEAVE_LENGTH = 1;
     private static final Integer TO_SICK_LEAVE_LENGTH = 365;
+    private static final Integer FROM_PATIENT_AGE = 0;
+    private static final Integer TO_PATIENT_AGE = 150;
     private static final String DIAGNOSIS_CHAPTER = "A00-B99Vissa infektionssjukdomar och parasitsjukdomar";
     private static final List<DiagnosKapitel> DIAGNOSIS_CHAPTERS = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER));
     private static final List<SjukfallEnhet> SICK_LEAVES = List.of(new SjukfallEnhet(), new SjukfallEnhet(), new SjukfallEnhet());
@@ -90,7 +92,9 @@ class GetSickLeavesServiceImplTest {
             .toSickLeaveLength(TO_SICK_LEAVE_LENGTH)
             .maxCertificateGap(MAX_CERTIFICATE_GAP)
             .maxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)
-            .diagnosisChapters(DIAGNOSIS_CHAPTERS);
+            .diagnosisChapters(DIAGNOSIS_CHAPTERS)
+            .fromPatientAge(FROM_PATIENT_AGE)
+            .toPatientAge(TO_PATIENT_AGE);
 
         doReturn(CARE_PROVIDER_ID)
             .when(hsaService)
@@ -228,7 +232,7 @@ class GetSickLeavesServiceImplTest {
         void shallIncludeSickLeaves() {
             final var sickLeaveListCaptor = ArgumentCaptor.forClass(List.class);
             getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
-            verify(filterSickLeaves).filter(sickLeaveListCaptor.capture(), anyInt(), anyInt(), anyList(), null, null);
+            verify(filterSickLeaves).filter(sickLeaveListCaptor.capture(), anyInt(), anyInt(), anyList(), anyInt(), anyInt());
             assertEquals(SICK_LEAVES, sickLeaveListCaptor.getValue());
         }
 
@@ -236,7 +240,7 @@ class GetSickLeavesServiceImplTest {
         void shallIncludeFromSickLeaveLength() {
             final var fromSickLeaveLengthCaptor = ArgumentCaptor.forClass(Integer.class);
             getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
-            verify(filterSickLeaves).filter(anyList(), fromSickLeaveLengthCaptor.capture(), anyInt(), anyList(), null, null);
+            verify(filterSickLeaves).filter(anyList(), fromSickLeaveLengthCaptor.capture(), anyInt(), anyList(), anyInt(), anyInt());
             assertEquals(FROM_SICK_LEAVE_LENGTH, fromSickLeaveLengthCaptor.getValue());
         }
 
@@ -244,7 +248,7 @@ class GetSickLeavesServiceImplTest {
         void shallIncludeToSickLeaveLength() {
             final var toSickLeaveLengthCaptor = ArgumentCaptor.forClass(Integer.class);
             getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
-            verify(filterSickLeaves).filter(anyList(), anyInt(), toSickLeaveLengthCaptor.capture(), anyList(), null, null);
+            verify(filterSickLeaves).filter(anyList(), anyInt(), toSickLeaveLengthCaptor.capture(), anyList(), anyInt(), anyInt());
             assertEquals(TO_SICK_LEAVE_LENGTH, toSickLeaveLengthCaptor.getValue());
         }
 
@@ -252,8 +256,24 @@ class GetSickLeavesServiceImplTest {
         void shallIncludeDiagnosisChapter() {
             final var diagnosisChapterCaptor = ArgumentCaptor.forClass(List.class);
             getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
-            verify(filterSickLeaves).filter(anyList(), anyInt(), anyInt(), diagnosisChapterCaptor.capture(), null, null);
+            verify(filterSickLeaves).filter(anyList(), anyInt(), anyInt(), diagnosisChapterCaptor.capture(), anyInt(), anyInt());
             assertEquals(DIAGNOSIS_CHAPTERS, diagnosisChapterCaptor.getValue());
+        }
+
+        @Test
+        void shallIncludeFromPatientAge() {
+            final var patientAge = ArgumentCaptor.forClass(Integer.class);
+            getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
+            verify(filterSickLeaves).filter(anyList(), anyInt(), anyInt(), anyList(), patientAge.capture(), anyInt());
+            assertEquals(FROM_PATIENT_AGE, patientAge.getValue());
+        }
+
+        @Test
+        void shallIncludeToPatientAge() {
+            final var patientAge = ArgumentCaptor.forClass(Integer.class);
+            getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
+            verify(filterSickLeaves).filter(anyList(), anyInt(), anyInt(), anyList(), anyInt(), patientAge.capture());
+            assertEquals(TO_PATIENT_AGE, patientAge.getValue());
         }
     }
 
@@ -275,7 +295,7 @@ class GetSickLeavesServiceImplTest {
 
         doReturn(FILTERED_SICK_LEAVES)
             .when(filterSickLeaves)
-            .filter(SICK_LEAVES, FROM_SICK_LEAVE_LENGTH, TO_SICK_LEAVE_LENGTH, DIAGNOSIS_CHAPTERS, null, null);
+            .filter(SICK_LEAVES, FROM_SICK_LEAVE_LENGTH, TO_SICK_LEAVE_LENGTH, DIAGNOSIS_CHAPTERS, FROM_PATIENT_AGE, TO_PATIENT_AGE);
 
         final var actualSickLeaveList = getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
 
