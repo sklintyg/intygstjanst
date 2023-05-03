@@ -36,5 +36,7 @@ public class GetSickLeaveServiceRequest {
     Integer toSickLeaveLength;
     Integer fromSickLeaveLength;
     List<DiagnosKapitel> diagnosisChapters;
+    Integer fromPatientAge;
+    Integer toPatientAge;
 
 }

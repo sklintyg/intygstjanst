@@ -228,7 +228,7 @@ class GetSickLeavesServiceImplTest {
         void shallIncludeSickLeaves() {
             final var sickLeaveListCaptor = ArgumentCaptor.forClass(List.class);
             getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
-            verify(filterSickLeaves).filter(sickLeaveListCaptor.capture(), anyInt(), anyInt(), anyList());
+            verify(filterSickLeaves).filter(sickLeaveListCaptor.capture(), anyInt(), anyInt(), anyList(), null, null);
             assertEquals(SICK_LEAVES, sickLeaveListCaptor.getValue());
         }
 
@@ -236,7 +236,7 @@ class GetSickLeavesServiceImplTest {
         void shallIncludeFromSickLeaveLength() {
             final var fromSickLeaveLengthCaptor = ArgumentCaptor.forClass(Integer.class);
             getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
-            verify(filterSickLeaves).filter(anyList(), fromSickLeaveLengthCaptor.capture(), anyInt(), anyList());
+            verify(filterSickLeaves).filter(anyList(), fromSickLeaveLengthCaptor.capture(), anyInt(), anyList(), null, null);
             assertEquals(FROM_SICK_LEAVE_LENGTH, fromSickLeaveLengthCaptor.getValue());
         }
 
@@ -244,7 +244,7 @@ class GetSickLeavesServiceImplTest {
         void shallIncludeToSickLeaveLength() {
             final var toSickLeaveLengthCaptor = ArgumentCaptor.forClass(Integer.class);
             getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
-            verify(filterSickLeaves).filter(anyList(), anyInt(), toSickLeaveLengthCaptor.capture(), anyList());
+            verify(filterSickLeaves).filter(anyList(), anyInt(), toSickLeaveLengthCaptor.capture(), anyList(), null, null);
             assertEquals(TO_SICK_LEAVE_LENGTH, toSickLeaveLengthCaptor.getValue());
         }
 
@@ -252,7 +252,7 @@ class GetSickLeavesServiceImplTest {
         void shallIncludeDiagnosisChapter() {
             final var diagnosisChapterCaptor = ArgumentCaptor.forClass(List.class);
             getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
-            verify(filterSickLeaves).filter(anyList(), anyInt(), anyInt(), diagnosisChapterCaptor.capture());
+            verify(filterSickLeaves).filter(anyList(), anyInt(), anyInt(), diagnosisChapterCaptor.capture(), null, null);
             assertEquals(DIAGNOSIS_CHAPTERS, diagnosisChapterCaptor.getValue());
         }
     }
@@ -275,7 +275,7 @@ class GetSickLeavesServiceImplTest {
 
         doReturn(FILTERED_SICK_LEAVES)
             .when(filterSickLeaves)
-            .filter(SICK_LEAVES, FROM_SICK_LEAVE_LENGTH, TO_SICK_LEAVE_LENGTH, DIAGNOSIS_CHAPTERS);
+            .filter(SICK_LEAVES, FROM_SICK_LEAVE_LENGTH, TO_SICK_LEAVE_LENGTH, DIAGNOSIS_CHAPTERS, null, null);
 
         final var actualSickLeaveList = getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
 

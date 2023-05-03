@@ -71,6 +71,8 @@ public class SickLeaveController {
                 .fromSickLeaveLength(sickLeaveRequestDTO.getFromSickLeaveLength())
                 .toSickLeaveLength(sickLeaveRequestDTO.getToSickLeaveLength())
                 .diagnosisChapters(sickLeaveRequestDTO.getDiagnosisChapters())
+                .fromPatientAge(sickLeaveRequestDTO.getFromPatientAge())
+                .toPatientAge(sickLeaveRequestDTO.getToPatientAge())
                 .build()
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_ACTIVE, sjukfallEnhetList.size()));

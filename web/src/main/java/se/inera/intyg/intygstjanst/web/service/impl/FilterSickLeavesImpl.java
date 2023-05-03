@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.FilterSickLeaves;
 
@@ -31,17 +32,20 @@ import se.inera.intyg.intygstjanst.web.service.FilterSickLeaves;
 public class FilterSickLeavesImpl implements FilterSickLeaves {
 
     private final DiagnosisChapterService diagnosisChapterService;
+    private final CalculatePatientAgeService calculatePatientAgeService;
 
-    public FilterSickLeavesImpl(DiagnosisChapterService diagnosisChapterService) {
+    public FilterSickLeavesImpl(DiagnosisChapterService diagnosisChapterService, CalculatePatientAgeService calculatePatientAgeService) {
         this.diagnosisChapterService = diagnosisChapterService;
+        this.calculatePatientAgeService = calculatePatientAgeService;
     }
 
     @Override
     public List<SjukfallEnhet> filter(List<SjukfallEnhet> sickLeaveList, Integer fromSickLeaveLength, Integer toSickLeaveLength,
-        List<DiagnosKapitel> diagnosisChapters) {
+        List<DiagnosKapitel> diagnosisChapters, Integer fromPatientAge, Integer toPatientAge) {
         return sickLeaveList.stream()
             .filter(sickLeave -> filterOnSickLeaveLength(sickLeave, fromSickLeaveLength, toSickLeaveLength))
             .filter(sickLeave -> filterOnDiagnosisChapters(sickLeave, diagnosisChapters))
+            .filter(sickLeave -> filterOnPatientAge(sickLeave, fromPatientAge, toPatientAge))
             .collect(Collectors.toList());
     }
 
@@ -57,5 +61,13 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
             return true;
         }
         return diagnosisChapters.contains(diagnosisChapterService.getDiagnosisChaptersFromSickLeave(sickLeave));
+    }
+
+    private boolean filterOnPatientAge(SjukfallEnhet sickLeave, Integer patientAgeFrom, Integer patientAgeTo) {
+        if (patientAgeFrom == null || patientAgeTo == null) {
+            return true;
+        }
+        final var patientAge = calculatePatientAgeService.get(sickLeave.getPatient().getId());
+        return patientAgeFrom <= patientAge && patientAgeTo >= patientAge;
     }
 }

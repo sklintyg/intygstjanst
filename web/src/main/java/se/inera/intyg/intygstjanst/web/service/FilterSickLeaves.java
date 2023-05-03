@@ -26,5 +26,5 @@ import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 public interface FilterSickLeaves {
 
     List<SjukfallEnhet> filter(List<SjukfallEnhet> sickLeaveList, Integer fromSickLeaveLength, Integer toSickLeaveLength,
-        List<DiagnosKapitel> diagnosisChapters);
+        List<DiagnosKapitel> diagnosisChapters, Integer fromPatientAge, Integer toPatientAge);
 }

@@ -70,7 +70,9 @@ class SickLeaveControllerTest {
     private static final List<Lakare> DOCTORS = List.of(
         Lakare.create(DOCTOR_ID, DOCTOR_ID)
     );
-    ;
+
+    private static final Integer PATIENT_AGE_FROM = 1;
+    private static final Integer PATIENT_AGE_TO = 150;
 
     @Nested
     class GetActiveSickLeavesForCareUnitTest {
@@ -88,6 +90,8 @@ class SickLeaveControllerTest {
             sickLeaveRequestDTO.setFromSickLeaveLength(FROM_SICK_LEAVE_LENGTH);
             sickLeaveRequestDTO.setToSickLeaveLength(TO_SICK_LEAVE_LENGTH);
             sickLeaveRequestDTO.setDiagnosisChapters(DIAGNOSIS_CHAPTER);
+            sickLeaveRequestDTO.setFromPatientAge(PATIENT_AGE_FROM);
+            sickLeaveRequestDTO.setToPatientAge(PATIENT_AGE_TO);
         }
 
         @Test
@@ -101,6 +105,8 @@ class SickLeaveControllerTest {
                 .fromSickLeaveLength(sickLeaveRequestDTO.getFromSickLeaveLength())
                 .toSickLeaveLength(sickLeaveRequestDTO.getToSickLeaveLength())
                 .diagnosisChapters(sickLeaveRequestDTO.getDiagnosisChapters())
+                .fromPatientAge(sickLeaveRequestDTO.getFromPatientAge())
+                .toPatientAge(sickLeaveRequestDTO.getToPatientAge())
                 .build();
 
             final var getSickLeaveServiceRequestArgumentCaptor = ArgumentCaptor.forClass(GetSickLeaveServiceRequest.class);
