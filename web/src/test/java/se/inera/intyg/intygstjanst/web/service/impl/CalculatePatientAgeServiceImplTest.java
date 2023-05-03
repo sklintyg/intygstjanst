@@ -70,6 +70,14 @@ class CalculatePatientAgeServiceImplTest {
     }
 
     @Test
+    void shouldCalculateAgeForSamordningsnummerWithSingleDigits() {
+        final var patientId = "19121201-1212";
+        final var expectedAge = getExpectedAge(patientId);
+        final var samordningsnummer = "19121261-1212";
+        assertEquals(expectedAge.getYears(), calculatePatientAgeService.get(samordningsnummer));
+    }
+
+    @Test
     void shouldCalculateAgeFor10DigitPatientId() {
         final var patientId = "19991212-1212";
         final var expectedAge = getExpectedAge(patientId);

@@ -46,8 +46,13 @@ public class CalculatePatientAgeServiceImpl implements CalculatePatientAgeServic
     private String subtractDaysIfSamordningsNummer(String date) {
         var day = Integer.parseInt(date.substring(6));
         if (day > SAMORDNINGSNUMMER_DAY_CONSTANT) {
-            return date.replaceFirst("(?<=\\d{6})\\d{2}", String.valueOf(day - SAMORDNINGSNUMMER_DAY_CONSTANT));
+            return date.replaceFirst("(?<=\\d{6})\\d{2}", parseDays(day));
         }
         return date;
+    }
+
+    private String parseDays(int day) {
+        int days = day - SAMORDNINGSNUMMER_DAY_CONSTANT;
+        return (days < 10) ? "0" + days : String.valueOf(days);
     }
 }
