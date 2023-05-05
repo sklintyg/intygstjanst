@@ -55,7 +55,9 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
             return true;
         }
         return sickLeaveLengthIntervals.stream()
-            .anyMatch(interval -> interval.getFrom() <= sickLeave.getDagar() && interval.getTo() >= sickLeave.getDagar());
+            .anyMatch(interval ->
+                (interval.getFrom() == null || interval.getFrom() <= sickLeave.getDagar())
+                    && (interval.getTo() == null || interval.getTo() >= sickLeave.getDagar()));
     }
 
     private boolean filterOnDiagnosisChapters(SjukfallEnhet sickLeave, List<DiagnosKapitel> diagnosisChapters) {
