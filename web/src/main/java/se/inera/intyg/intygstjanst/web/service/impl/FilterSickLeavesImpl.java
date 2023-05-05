@@ -27,6 +27,7 @@ import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.FilterSickLeaves;
+import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
 
 @Service
 public class FilterSickLeavesImpl implements FilterSickLeaves {
@@ -40,20 +41,21 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
     }
 
     @Override
-    public List<SjukfallEnhet> filter(List<SjukfallEnhet> sickLeaveList, Integer fromSickLeaveLength, Integer toSickLeaveLength,
+    public List<SjukfallEnhet> filter(List<SjukfallEnhet> sickLeaveList, List<SickLeaveLengthInterval> sickLeaveLengthIntervals,
         List<DiagnosKapitel> diagnosisChapters, Integer fromPatientAge, Integer toPatientAge) {
         return sickLeaveList.stream()
-            .filter(sickLeave -> filterOnSickLeaveLength(sickLeave, fromSickLeaveLength, toSickLeaveLength))
+            .filter(sickLeave -> filterOnSickLeaveLengthIntervals(sickLeave, sickLeaveLengthIntervals))
             .filter(sickLeave -> filterOnDiagnosisChapters(sickLeave, diagnosisChapters))
             .filter(sickLeave -> filterOnPatientAge(sickLeave, fromPatientAge, toPatientAge))
             .collect(Collectors.toList());
     }
 
-    private boolean filterOnSickLeaveLength(SjukfallEnhet sickLeave, Integer fromSickLeaveLength, Integer toSickLeaveLength) {
-        if (fromSickLeaveLength == null || toSickLeaveLength == null) {
+    private boolean filterOnSickLeaveLengthIntervals(SjukfallEnhet sickLeave, List<SickLeaveLengthInterval> sickLeaveLengthIntervals) {
+        if (sickLeaveLengthIntervals == null || sickLeaveLengthIntervals.isEmpty()) {
             return true;
         }
-        return sickLeave.getDagar() >= fromSickLeaveLength && sickLeave.getDagar() <= toSickLeaveLength;
+        return sickLeaveLengthIntervals.stream()
+            .anyMatch(interval -> interval.getFrom() <= sickLeave.getDagar() && interval.getTo() >= sickLeave.getDagar());
     }
 
     private boolean filterOnDiagnosisChapters(SjukfallEnhet sickLeave, List<DiagnosKapitel> diagnosisChapters) {

@@ -38,6 +38,7 @@ import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.dto.Vardenhet;
 import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
+import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
 
 @ExtendWith(MockitoExtension.class)
 class FilterSickLeavesImplTest {
@@ -64,48 +65,39 @@ class FilterSickLeavesImplTest {
 
         @Test
         void shouldFilterOnSickLeaveLengthIfSpecified() {
-            final var expectedSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 12, PATIENT_ID);
+            final var expectedSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 36, PATIENT_ID);
             final var expectedSickLeaveList = List.of(expectedSickLeave);
-            final var anotherSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID);
+            final var anotherSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 42, PATIENT_ID);
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
-            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, 10, 15, Collections.emptyList(), null, null);
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves,
+                List.of(new SickLeaveLengthInterval(6, 12), new SickLeaveLengthInterval(12, 40), new SickLeaveLengthInterval(50, 100)),
+                Collections.emptyList(), null, null);
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
 
         @Test
-        void shouldNotFilterOnSickLeaveLengthIfFromAndToIsNull() {
+        void shouldNotFilterOnSickLeaveLengthIfNull() {
             final var expectedSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 12, PATIENT_ID);
             final var anotherSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID);
             final var expectedSickLeaveList = List.of(expectedSickLeave, anotherSickLeave);
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
-            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, null, Collections.emptyList(), null, null);
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(), null, null);
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
 
         @Test
-        void shouldNotFilterOnSickLeaveLengthIfFromIsNull() {
+        void shouldNotFilterOnSickLeaveLengthIfEmpty() {
             final var expectedSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 12, PATIENT_ID);
             final var anotherSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID);
             final var expectedSickLeaveList = List.of(expectedSickLeave, anotherSickLeave);
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
-            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, 5, Collections.emptyList(), null, null);
-
-            assertEquals(expectedSickLeaveList, actualSickLeaveList);
-        }
-
-        @Test
-        void shouldNotFilterOnSickLeaveLengthIfToIsNull() {
-            final var expectedSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 12, PATIENT_ID);
-            final var anotherSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID);
-            final var expectedSickLeaveList = List.of(expectedSickLeave, anotherSickLeave);
-            final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
-
-            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, 1, null, Collections.emptyList(), null, null);
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, Collections.emptyList(), Collections.emptyList(), null,
+                null);
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
@@ -130,7 +122,8 @@ class FilterSickLeavesImplTest {
                 .when(diagnosisChapterService)
                 .getDiagnosisChaptersFromSickLeave(anotherSickLeave);
 
-            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, 1, 365, List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER)),
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null,
+                List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER)),
                 null, null);
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
@@ -143,7 +136,7 @@ class FilterSickLeavesImplTest {
             final var expectedSickLeaveList = List.of(expectedSickLeave, anotherSickLeave);
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
-            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, 1, 365, null, null, null);
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, null, null, null);
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
@@ -155,7 +148,7 @@ class FilterSickLeavesImplTest {
             final var expectedSickLeaveList = List.of(expectedSickLeave, anotherSickLeave);
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
-            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, 1, 365, null, null, null);
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, null, null, null);
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
@@ -180,46 +173,35 @@ class FilterSickLeavesImplTest {
                 .when(calculatePatientAgeService)
                 .get(anotherSickLeave.getPatient().getId());
 
-            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, 1, 365, Collections.emptyList(),
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
                 30, 60);
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
 
         @Test
-        void shouldNotFilterOnDiagnosisChapterIfNull() {
+        void shouldNotFilterOnPatientAgeIfFromIsNull() {
             final var expectedSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 12, PATIENT_ID);
             final var anotherSickLeave = createSjukFallEnhet(ANOTHER_DIAGNOSIS_CODE, 5, ANOTHER_PATIENT_ID);
             final var expectedSickLeaveList = List.of(expectedSickLeave, anotherSickLeave);
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
-            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, 1, 365, null, null, null);
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, null, null, 50);
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
-    }
 
-    @Test
-    void shouldFilterOnDiagnosisChapterIfSpecified() {
-        final var expectedSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID);
-        final var expectedSickLeaveList = List.of(expectedSickLeave);
+        @Test
+        void shouldNotFilterOnPatientAgeIfToIsNull() {
+            final var expectedSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 12, PATIENT_ID);
+            final var anotherSickLeave = createSjukFallEnhet(ANOTHER_DIAGNOSIS_CODE, 5, ANOTHER_PATIENT_ID);
+            final var expectedSickLeaveList = List.of(expectedSickLeave, anotherSickLeave);
+            final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
-        final var anotherSickLeave = createSjukFallEnhet(ANOTHER_DIAGNOSIS_CODE, 5, PATIENT_ID);
-        final var andAnotherSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 12, PATIENT_ID);
-        final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave, andAnotherSickLeave);
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, null, 50, null);
 
-        doReturn(new DiagnosKapitel(DIAGNOSIS_CHAPTER))
-            .when(diagnosisChapterService)
-            .getDiagnosisChaptersFromSickLeave(expectedSickLeave);
-
-        doReturn(new DiagnosKapitel(ANOTHER_DIAGNOSIS_CHAPTER))
-            .when(diagnosisChapterService)
-            .getDiagnosisChaptersFromSickLeave(anotherSickLeave);
-
-        final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, 1, 8, List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER)), null,
-            null);
-
-        assertEquals(expectedSickLeaveList, actualSickLeaveList);
+            assertEquals(expectedSickLeaveList, actualSickLeaveList);
+        }
     }
 
     private static SjukfallEnhet createSjukFallEnhet(String diagnosisCode, Integer dagar, String patientId) {

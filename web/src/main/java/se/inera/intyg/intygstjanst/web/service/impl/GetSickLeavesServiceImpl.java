@@ -89,8 +89,7 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
 
         return filterSickLeaves.filter(
             sjukfallEnhetList,
-            getSickLeaveServiceRequest.getFromSickLeaveLength(),
-            getSickLeaveServiceRequest.getToSickLeaveLength(),
+            getSickLeaveServiceRequest.getSickLeaveLengthIntervals(),
             getSickLeaveServiceRequest.getDiagnosisChapters(),
             getSickLeaveServiceRequest.getFromPatientAge(),
             getSickLeaveServiceRequest.getToPatientAge());
