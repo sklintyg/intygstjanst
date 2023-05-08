@@ -33,8 +33,7 @@ public class GetSickLeaveServiceRequest {
     List<String> doctorIds;
     int maxCertificateGap;
     int maxDaysSinceSickLeaveCompleted;
-    Integer toSickLeaveLength;
-    Integer fromSickLeaveLength;
+    List<SickLeaveLengthInterval> sickLeaveLengthIntervals;
     List<DiagnosKapitel> diagnosisChapters;
     Integer fromPatientAge;
     Integer toPatientAge;

@@ -43,6 +43,7 @@ import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResp
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest;
 import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersResponseDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 
@@ -62,8 +63,9 @@ class SickLeaveControllerTest {
     private static final List<String> DOCTOR_IDS = List.of("DoctorId1", "DoctorId2");
     private static final Integer MAX_CERTIFICATE_GAP = 5;
     private static final Integer MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 3;
-    private static final Integer FROM_SICK_LEAVE_LENGTH = 1;
-    private static final Integer TO_SICK_LEAVE_LENGTH = 365;
+    private static final List<SickLeaveLengthInterval> SICK_LEAVE_LENGTH_INTERVALS = List.of(
+        new SickLeaveLengthInterval(1, 150)
+    );
     private static final List<DiagnosKapitel> DIAGNOSIS_CHAPTER = List.of(
         new DiagnosKapitel("A00-B99Vissa infektionssjukdomar och parasitsjukdomar")
     );
@@ -87,8 +89,7 @@ class SickLeaveControllerTest {
             sickLeaveRequestDTO.setDoctorIds(DOCTOR_IDS);
             sickLeaveRequestDTO.setMaxCertificateGap(MAX_CERTIFICATE_GAP);
             sickLeaveRequestDTO.setMaxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
-            sickLeaveRequestDTO.setFromSickLeaveLength(FROM_SICK_LEAVE_LENGTH);
-            sickLeaveRequestDTO.setToSickLeaveLength(TO_SICK_LEAVE_LENGTH);
+            sickLeaveRequestDTO.setSickLeaveLengthIntervals(SICK_LEAVE_LENGTH_INTERVALS);
             sickLeaveRequestDTO.setDiagnosisChapters(DIAGNOSIS_CHAPTER);
             sickLeaveRequestDTO.setFromPatientAge(PATIENT_AGE_FROM);
             sickLeaveRequestDTO.setToPatientAge(PATIENT_AGE_TO);
@@ -102,8 +103,7 @@ class SickLeaveControllerTest {
                 .maxDaysSinceSickLeaveCompleted(sickLeaveRequestDTO.getMaxDaysSinceSickLeaveCompleted())
                 .doctorIds(sickLeaveRequestDTO.getDoctorIds())
                 .maxCertificateGap(sickLeaveRequestDTO.getMaxCertificateGap())
-                .fromSickLeaveLength(sickLeaveRequestDTO.getFromSickLeaveLength())
-                .toSickLeaveLength(sickLeaveRequestDTO.getToSickLeaveLength())
+                .sickLeaveLengthIntervals(sickLeaveRequestDTO.getSickLeaveLengthIntervals())
                 .diagnosisChapters(sickLeaveRequestDTO.getDiagnosisChapters())
                 .fromPatientAge(sickLeaveRequestDTO.getFromPatientAge())
                 .toPatientAge(sickLeaveRequestDTO.getToPatientAge())
