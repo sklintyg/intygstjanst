@@ -288,9 +288,34 @@ class GetSickLeavesServiceImplTest {
             .when(filterSickLeaves)
             .filter(SICK_LEAVES, SICK_LEAVE_LENGTH_INTERVALS, DIAGNOSIS_CHAPTERS, FROM_PATIENT_AGE, TO_PATIENT_AGE);
 
-        final var actualSickLeaveList = getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
+        final var response = getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
 
-        assertEquals(FILTERED_SICK_LEAVES, actualSickLeaveList);
+        assertEquals(FILTERED_SICK_LEAVES, response.getContent());
+    }
+
+    @Test
+    void shallReturnTotalOfUnflteredSickLeavesIfActiveSickLeavesFound() {
+        final var intygDataOne = new IntygData();
+        intygDataOne.setPatientId("PatientId1");
+        final var intygDataTwo = new IntygData();
+        intygDataTwo.setPatientId("PatientId2");
+        final var intygDataList = List.of(intygDataOne, intygDataTwo);
+
+        doReturn(intygDataList)
+                .when(getActiveSickLeaveCertificates)
+                .get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+
+        doReturn(SICK_LEAVES)
+                .when(getSickLeaveCertificates)
+                .get(CARE_PROVIDER_ID, UNIT_IDS, PATIENT_IDS, MAX_CERTIFICATE_GAP, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+
+        doReturn(FILTERED_SICK_LEAVES)
+                .when(filterSickLeaves)
+                .filter(SICK_LEAVES, SICK_LEAVE_LENGTH_INTERVALS, DIAGNOSIS_CHAPTERS, FROM_PATIENT_AGE, TO_PATIENT_AGE);
+
+        final var response = getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
+
+        assertEquals(SICK_LEAVES.size(), response.getTotal());
     }
 
     @Test
@@ -301,8 +326,21 @@ class GetSickLeavesServiceImplTest {
             .when(getActiveSickLeaveCertificates)
             .get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
 
-        final var actualSickLeaveList = getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
+        final var response = getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
 
-        assertEquals(Collections.emptyList(), actualSickLeaveList);
+        assertEquals(Collections.emptyList(), response.getContent());
+    }
+
+    @Test
+    void shallReturnTotalAsZeroIfNoSickLeavesAreFound() {
+        final var intygDataList = Collections.EMPTY_LIST;
+
+        doReturn(intygDataList)
+                .when(getActiveSickLeaveCertificates)
+                .get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+
+        final var response = getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
+
+        assertEquals(0, response.getTotal());
     }
 }

@@ -21,8 +21,7 @@ package se.inera.intyg.intygstjanst.web.integration.sickleave;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,6 +74,8 @@ class SickLeaveControllerTest {
 
     private static final Integer PATIENT_AGE_FROM = 1;
     private static final Integer PATIENT_AGE_TO = 150;
+    private static final SjukfallEnhet sjukfallEnhet = new SjukfallEnhet();
+
 
     @Nested
     class GetActiveSickLeavesForCareUnitTest {
@@ -93,6 +94,10 @@ class SickLeaveControllerTest {
             sickLeaveRequestDTO.setDiagnosisChapters(DIAGNOSIS_CHAPTER);
             sickLeaveRequestDTO.setFromPatientAge(PATIENT_AGE_FROM);
             sickLeaveRequestDTO.setToPatientAge(PATIENT_AGE_TO);
+
+            doReturn(SickLeaveResponseDTO.builder().content(List.of(sjukfallEnhet)).total(1).build())
+                    .when(getSickLeavesService)
+                    .get(any(GetSickLeaveServiceRequest.class));
         }
 
         @Test
@@ -118,12 +123,11 @@ class SickLeaveControllerTest {
         @Test
         void shouldReturnResponse() {
             final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
-            final var sjukfallEnhet = new SjukfallEnhet();
-            final var expectedResponse = new SickLeaveResponseDTO(List.of(sjukfallEnhet));
-
-            doReturn(List.of(sjukfallEnhet))
-                .when(getSickLeavesService)
-                .get(any(GetSickLeaveServiceRequest.class));
+            final var expectedResponse = SickLeaveResponseDTO
+                    .builder()
+                    .content(List.of(sjukfallEnhet))
+                    .total(1)
+                    .build();
 
             final var result = sickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
             assertEquals(expectedResponse, result.getEntity());

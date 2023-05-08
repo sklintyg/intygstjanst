@@ -29,13 +29,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
-import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory;
 import se.inera.intyg.intygstjanst.web.service.FilterSickLeaves;
 import se.inera.intyg.intygstjanst.web.service.GetActiveSickLeaveCertificates;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeaveCertificates;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeavesService;
+import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest;
 
 @Service
@@ -56,7 +56,7 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
     }
 
     @Override
-    public List<SjukfallEnhet> get(GetSickLeaveServiceRequest getSickLeaveServiceRequest) {
+    public SickLeaveResponseDTO get(GetSickLeaveServiceRequest getSickLeaveServiceRequest) {
         final var careProviderId = hsaService.getHsaIdForVardgivare(getSickLeaveServiceRequest.getCareUnitId());
         final var careUnitAndSubUnits = hsaService.getHsaIdsForCareUnitAndSubUnits(getSickLeaveServiceRequest.getCareUnitId());
 
@@ -70,7 +70,11 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
         LOG.info(sickLeaveLogMessageFactory.message(GET_ACTIVE_SICK_LEAVE_CERTIFICATES, intygData.size()));
 
         if (intygData.isEmpty()) {
-            return Collections.emptyList();
+            return SickLeaveResponseDTO
+                    .builder()
+                    .content(Collections.emptyList())
+                    .total(0)
+                    .build();
         }
 
         final var patientIds = intygData.stream()
@@ -87,12 +91,21 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES, intygData.size()));
 
-        return filterSickLeaves.filter(
-            sjukfallEnhetList,
-            getSickLeaveServiceRequest.getSickLeaveLengthIntervals(),
-            getSickLeaveServiceRequest.getDiagnosisChapters(),
-            getSickLeaveServiceRequest.getFromPatientAge(),
-            getSickLeaveServiceRequest.getToPatientAge());
+        final var filteredSickLeaves = filterSickLeaves.filter(
+                sjukfallEnhetList,
+                getSickLeaveServiceRequest.getSickLeaveLengthIntervals(),
+                getSickLeaveServiceRequest.getDiagnosisChapters(),
+                getSickLeaveServiceRequest.getFromPatientAge(),
+                getSickLeaveServiceRequest.getToPatientAge());
+
+        return SickLeaveResponseDTO
+                .builder()
+                .content(filteredSickLeaves)
+                .total(sjukfallEnhetList.size())
+
+                .build();
+
+
     }
 
     private static List<String> getUnitIdFromRequestIfProvided(GetSickLeaveServiceRequest getSickLeaveServiceRequest,

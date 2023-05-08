@@ -39,7 +39,6 @@ import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest;
 import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersResponseDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 
 @Path("/sickleave")
 public class SickLeaveController {
@@ -61,7 +60,7 @@ public class SickLeaveController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getActiveSickLeavesForCareUnit(@RequestBody SickLeaveRequestDTO sickLeaveRequestDTO) {
         final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
-        final var sjukfallEnhetList = getSickLeavesService.get(
+        final var sickLeaveResponseDTO = getSickLeavesService.get(
             GetSickLeaveServiceRequest.builder()
                 .careUnitId(sickLeaveRequestDTO.getCareUnitId())
                 .unitId(sickLeaveRequestDTO.getUnitId())
@@ -74,9 +73,9 @@ public class SickLeaveController {
                 .toPatientAge(sickLeaveRequestDTO.getToPatientAge())
                 .build()
         );
-        LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_ACTIVE, sjukfallEnhetList.size()));
+        LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_ACTIVE, sickLeaveResponseDTO.getContent().size()));
 
-        return Response.ok(new SickLeaveResponseDTO(sjukfallEnhetList)).build();
+        return Response.ok(sickLeaveResponseDTO).build();
     }
 
     @PrometheusTimeMethod
