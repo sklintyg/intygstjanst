@@ -44,8 +44,11 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
     private final FilterSickLeaves filterSickLeaves;
     private final PuFilterService puFilterService;
 
-    public GetSickLeavesServiceImpl(HsaService hsaService, GetActiveSickLeaveCertificates getActiveSickLeaveCertificates,
-                                    GetSickLeaveCertificates getSickLeaveCertificates, FilterSickLeaves filterSickLeaves, PuFilterService puFilterService) {
+    public GetSickLeavesServiceImpl(HsaService hsaService,
+                                    GetActiveSickLeaveCertificates getActiveSickLeaveCertificates,
+                                    GetSickLeaveCertificates getSickLeaveCertificates,
+                                    FilterSickLeaves filterSickLeaves,
+                                    PuFilterService puFilterService) {
         this.hsaService = hsaService;
         this.getActiveSickLeaveCertificates = getActiveSickLeaveCertificates;
         this.getSickLeaveCertificates = getSickLeaveCertificates;

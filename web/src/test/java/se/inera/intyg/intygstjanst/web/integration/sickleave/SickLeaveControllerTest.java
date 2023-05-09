@@ -75,6 +75,7 @@ class SickLeaveControllerTest {
 
     private static final Integer PATIENT_AGE_FROM = 1;
     private static final Integer PATIENT_AGE_TO = 150;
+    private static final int NUMBER_OF_SICK_LEAVES = 10;
 
     @Nested
     class GetActiveSickLeavesForCareUnitTest {
@@ -93,6 +94,7 @@ class SickLeaveControllerTest {
             sickLeaveRequestDTO.setDiagnosisChapters(DIAGNOSIS_CHAPTER);
             sickLeaveRequestDTO.setFromPatientAge(PATIENT_AGE_FROM);
             sickLeaveRequestDTO.setToPatientAge(PATIENT_AGE_TO);
+            sickLeaveRequestDTO.setFilterOnProtectedPerson(true);
         }
 
         @Test
@@ -107,6 +109,7 @@ class SickLeaveControllerTest {
                 .diagnosisChapters(sickLeaveRequestDTO.getDiagnosisChapters())
                 .fromPatientAge(sickLeaveRequestDTO.getFromPatientAge())
                 .toPatientAge(sickLeaveRequestDTO.getToPatientAge())
+                .filterOnProtectedPerson(true)
                 .build();
 
             final var getSickLeaveServiceRequestArgumentCaptor = ArgumentCaptor.forClass(GetSickLeaveServiceRequest.class);
@@ -147,6 +150,7 @@ class SickLeaveControllerTest {
                 GetSickLeaveFilterServiceResponse.builder()
                     .activeDoctors(DOCTORS)
                     .diagnosisChapters(DIAGNOSIS_CHAPTER)
+                    .nbrOfSickLeaves(NUMBER_OF_SICK_LEAVES)
                     .build())
                 .when(getSickLeaveFilterService)
                 .get(any(GetSickLeaveFilterServiceRequest.class));
@@ -171,7 +175,8 @@ class SickLeaveControllerTest {
         void shouldReturnResponse() {
             final var expectedResponse = new PopulateFiltersResponseDTO(
                 DOCTORS,
-                DIAGNOSIS_CHAPTER
+                DIAGNOSIS_CHAPTER,
+                NUMBER_OF_SICK_LEAVES
             );
 
             final var result = sickLeaveController.populateFilters(populateFiltersRequestDTO);
