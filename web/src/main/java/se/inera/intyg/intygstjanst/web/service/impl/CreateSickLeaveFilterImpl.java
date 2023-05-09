@@ -63,6 +63,7 @@ public class CreateSickLeaveFilterImpl implements CreateSickLeaveFilter {
         return GetSickLeaveFilterServiceResponse.builder()
             .activeDoctors(doctorsForCareUnit)
             .diagnosisChapters(diagnosisChaptersForCareUnit)
+            .nbrOfSickLeaves(intygDataList.size())
             .build();
     }
 }

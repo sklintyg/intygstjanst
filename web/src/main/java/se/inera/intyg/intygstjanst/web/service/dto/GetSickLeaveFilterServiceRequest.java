@@ -30,5 +30,6 @@ public class GetSickLeaveFilterServiceRequest {
     String careUnitId;
     String doctorId;
     int maxDaysSinceSickLeaveCompleted;
+    boolean filterProtectedPerson;
 
 }

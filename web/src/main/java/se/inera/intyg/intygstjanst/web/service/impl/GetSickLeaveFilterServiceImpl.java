@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory;
 import se.inera.intyg.intygstjanst.web.service.CreateSickLeaveFilter;
+import se.inera.intyg.intygstjanst.web.service.PuFilterService;
 import se.inera.intyg.intygstjanst.web.service.GetActiveSickLeaveCertificates;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeaveFilterService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceRequest;
@@ -40,12 +41,14 @@ public class GetSickLeaveFilterServiceImpl implements GetSickLeaveFilterService 
     private final HsaService hsaService;
     private final GetActiveSickLeaveCertificates getActiveSickLeaveCertificates;
     private final CreateSickLeaveFilter createSickLeaveFilter;
+    private final PuFilterService puFilterService;
 
     public GetSickLeaveFilterServiceImpl(HsaService hsaService, GetActiveSickLeaveCertificates getActiveSickLeaveCertificates,
-        CreateSickLeaveFilter createSickLeaveFilter) {
+                                         CreateSickLeaveFilter createSickLeaveFilter, PuFilterService puFilterService) {
         this.getActiveSickLeaveCertificates = getActiveSickLeaveCertificates;
         this.hsaService = hsaService;
         this.createSickLeaveFilter = createSickLeaveFilter;
+        this.puFilterService = puFilterService;
     }
 
     @Override
@@ -60,6 +63,7 @@ public class GetSickLeaveFilterServiceImpl implements GetSickLeaveFilterService 
             getSickLeaveFilterServiceRequest.getDoctorId() != null ? List.of(getSickLeaveFilterServiceRequest.getDoctorId()) : null,
             getSickLeaveFilterServiceRequest.getMaxDaysSinceSickLeaveCompleted()
         );
+        puFilterService.enrichWithPatientNameAndFilter(intygDataList, getSickLeaveFilterServiceRequest.isFilterProtectedPerson());
         LOG.info(sickLeaveLogMessageFactory.message(GET_ACTIVE_SICK_LEAVE_CERTIFICATES, intygDataList.size()));
 
         return createSickLeaveFilter.create(intygDataList);
