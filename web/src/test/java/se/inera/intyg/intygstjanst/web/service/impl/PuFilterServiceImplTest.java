@@ -157,8 +157,8 @@ public class PuFilterServiceImplTest {
     }
 
     private void mockPersonSvar(boolean avliden, boolean sekretess) {
-        when(puService.getPersons(anyList())).
-                thenReturn(buildPersonMap(buildPersonSvar(TOLVANSSON_PNR, sekretess, avliden)));
+        when(puService.getPersons(anyList()))
+                .thenReturn(buildPersonMap(buildPersonSvar(TOLVANSSON_PNR, sekretess, avliden)));
     }
 
     private void mockPersonSvarError() {

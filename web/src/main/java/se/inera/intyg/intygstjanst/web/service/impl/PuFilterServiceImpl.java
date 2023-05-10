@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 @Service
 public class PuFilterServiceImpl implements PuFilterService {
 
-    private final String SEKRETESS_SKYDDAD_NAME_PLACEHOLDER = "Skyddad personuppgift";
-    private final String SEKRETESS_SKYDDAD_NAME_UNKNOWN = "Namn okänt";
+    private static final String SEKRETESS_SKYDDAD_NAME_PLACEHOLDER = "Skyddad personuppgift";
+    private static final String SEKRETESS_SKYDDAD_NAME_UNKNOWN = "Namn okänt";
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
