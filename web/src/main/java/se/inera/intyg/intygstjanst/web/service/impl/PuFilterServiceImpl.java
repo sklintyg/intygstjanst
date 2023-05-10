@@ -83,7 +83,7 @@ public class PuFilterServiceImpl implements PuFilterService {
         return personSvarMap;
     }
 
-    List<Personnummer> getPersonnummerListFromIntygDataList(List<IntygData> list) {
+    private List<Personnummer> getPersonnummerListFromIntygDataList(List<IntygData> list) {
         return getPersonnummerListOfOptionalsFromList(list).stream()
                 .filter(Optional::isPresent)
                 .map(Optional::get)

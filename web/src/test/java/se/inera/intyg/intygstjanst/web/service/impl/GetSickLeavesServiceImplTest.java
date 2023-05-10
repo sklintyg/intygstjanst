@@ -77,6 +77,7 @@ class GetSickLeavesServiceImplTest {
     private static final Integer MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 3;
     private static final Integer FROM_PATIENT_AGE = 0;
     private static final Integer TO_PATIENT_AGE = 150;
+    private static final boolean FILTER_PROTECTED_PERSON = true;
     private static final String DIAGNOSIS_CHAPTER = "A00-B99Vissa infektionssjukdomar och parasitsjukdomar";
     private static final List<DiagnosKapitel> DIAGNOSIS_CHAPTERS = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER));
     private static final List<SjukfallEnhet> SICK_LEAVES = List.of(new SjukfallEnhet(), new SjukfallEnhet(), new SjukfallEnhet());
@@ -95,7 +96,7 @@ class GetSickLeavesServiceImplTest {
             .maxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)
             .diagnosisChapters(DIAGNOSIS_CHAPTERS)
             .fromPatientAge(FROM_PATIENT_AGE)
-            .filterOnProtectedPerson(true)
+            .filterOnProtectedPerson(FILTER_PROTECTED_PERSON)
             .toPatientAge(TO_PATIENT_AGE);
 
         doReturn(CARE_PROVIDER_ID)
@@ -154,13 +155,15 @@ class GetSickLeavesServiceImplTest {
     @Nested
     class GetSickLeavesTest {
 
+        List<IntygData> intygDataList;
+
         @BeforeEach
         void setUp() {
             final var intygDataOne = new IntygData();
             intygDataOne.setPatientId("PatientId1");
             final var intygDataTwo = new IntygData();
             intygDataTwo.setPatientId("PatientId2");
-            final var intygDataList = List.of(intygDataOne, intygDataTwo);
+            intygDataList = List.of(intygDataOne, intygDataTwo);
 
             doReturn(intygDataList)
                 .when(getActiveSickLeaveCertificates)
@@ -171,6 +174,22 @@ class GetSickLeavesServiceImplTest {
         void shallCallPuFilterService() {
             getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
             verify(puFilterService).enrichWithPatientNameAndFilter(anyList(), anyBoolean());
+        }
+
+        @Test
+        void shallCallPuFilterServiceWithListOfIntygData() {
+            final var captor = ArgumentCaptor.forClass(List.class);
+            getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
+            verify(puFilterService).enrichWithPatientNameAndFilter(captor.capture(), anyBoolean());
+            assertEquals(intygDataList, captor.getValue());
+        }
+
+        @Test
+        void shallCallPuFilterServiceWithFilterOnProtectedPerson() {
+            final var captor = ArgumentCaptor.forClass(boolean.class);
+            getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
+            verify(puFilterService).enrichWithPatientNameAndFilter(anyList(), captor.capture());
+            assertEquals(FILTER_PROTECTED_PERSON, captor.getValue());
         }
 
         @Test

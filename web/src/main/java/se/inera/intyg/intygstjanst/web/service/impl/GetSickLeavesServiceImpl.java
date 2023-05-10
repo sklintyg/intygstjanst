@@ -76,7 +76,7 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
 
         sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
         puFilterService.enrichWithPatientNameAndFilter(intygData, getSickLeaveServiceRequest.isFilterOnProtectedPerson());
-        LOG.info(sickLeaveLogMessageFactory.message(FILTER_PROTECTED_PERSONS, intygData.size()));
+        LOG.info(sickLeaveLogMessageFactory.message(GET_AND_FILTER_PROTECTED_PATIENTS, intygData.size()));
 
         final var patientIds = intygData.stream()
             .map(IntygData::getPatientId)
