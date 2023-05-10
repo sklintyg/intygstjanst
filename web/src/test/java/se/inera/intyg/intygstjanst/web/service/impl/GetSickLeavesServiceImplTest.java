@@ -20,9 +20,7 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -43,6 +41,7 @@ import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.service.FilterSickLeaves;
 import se.inera.intyg.intygstjanst.web.service.GetActiveSickLeaveCertificates;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeaveCertificates;
+import se.inera.intyg.intygstjanst.web.service.PuFilterService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest.GetSickLeaveServiceRequestBuilder;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
@@ -61,6 +60,9 @@ class GetSickLeavesServiceImplTest {
 
     @Mock
     private FilterSickLeaves filterSickLeaves;
+
+    @Mock
+    private PuFilterService puFilterService;
 
     @InjectMocks
     private GetSickLeavesServiceImpl getSickLeavesService;
@@ -93,6 +95,7 @@ class GetSickLeavesServiceImplTest {
             .maxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)
             .diagnosisChapters(DIAGNOSIS_CHAPTERS)
             .fromPatientAge(FROM_PATIENT_AGE)
+            .filterOnProtectedPerson(true)
             .toPatientAge(TO_PATIENT_AGE);
 
         doReturn(CARE_PROVIDER_ID)
@@ -162,6 +165,12 @@ class GetSickLeavesServiceImplTest {
             doReturn(intygDataList)
                 .when(getActiveSickLeaveCertificates)
                 .get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+        }
+
+        @Test
+        void shallCallPuFilterService() {
+            getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
+            verify(puFilterService).enrichWithPatientNameAndFilter(anyList(), anyBoolean());
         }
 
         @Test

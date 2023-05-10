@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.FILTER_PROTECTED_PERSONS;
 import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_ACTIVE_SICK_LEAVE_CERTIFICATES;
 
 import java.util.List;
@@ -63,8 +64,11 @@ public class GetSickLeaveFilterServiceImpl implements GetSickLeaveFilterService 
             getSickLeaveFilterServiceRequest.getDoctorId() != null ? List.of(getSickLeaveFilterServiceRequest.getDoctorId()) : null,
             getSickLeaveFilterServiceRequest.getMaxDaysSinceSickLeaveCompleted()
         );
-        puFilterService.enrichWithPatientNameAndFilter(intygDataList, getSickLeaveFilterServiceRequest.isFilterProtectedPerson());
         LOG.info(sickLeaveLogMessageFactory.message(GET_ACTIVE_SICK_LEAVE_CERTIFICATES, intygDataList.size()));
+
+        sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
+        puFilterService.enrichWithPatientNameAndFilter(intygDataList, getSickLeaveFilterServiceRequest.isFilterProtectedPerson());
+        LOG.info(sickLeaveLogMessageFactory.message(FILTER_PROTECTED_PERSONS, intygDataList.size()));
 
         return createSickLeaveFilter.create(intygDataList);
     }

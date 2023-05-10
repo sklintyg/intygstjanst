@@ -41,6 +41,7 @@ import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.service.CreateSickLeaveFilter;
 import se.inera.intyg.intygstjanst.web.service.GetActiveSickLeaveCertificates;
+import se.inera.intyg.intygstjanst.web.service.PuFilterService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceRequest;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
 
@@ -53,6 +54,8 @@ class GetSickLeaveFilterServiceImplTest {
     private GetActiveSickLeaveCertificates getActiveSickLeaveCertificates;
     @Mock
     private CreateSickLeaveFilter createSickLeaveFilter;
+    @Mock
+    private PuFilterService puFilterService;
     @InjectMocks
     private GetSickLeaveFilterServiceImpl getSickLeaveFilterService;
 
@@ -72,6 +75,7 @@ class GetSickLeaveFilterServiceImplTest {
         getSickLeaveFilterServiceRequestBuilder = GetSickLeaveFilterServiceRequest.builder()
             .careUnitId(CARE_UNIT_ID)
             .doctorId(DOCTOR_ID)
+            .filterProtectedPerson(true)
             .maxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
 
         doReturn(CARE_PROVIDER_ID)
