@@ -353,7 +353,7 @@ public class CertificateResource {
             return certificateHolder.getOriginalCertificate();
         } else {
             return Resources.toString(new ClassPathResource("content/intyg-" + certificateHolder.getType() + "-content.xml").getURL(),
-                 Charsets.UTF_8)
+                Charsets.UTF_8)
                 .replace("CERTIFICATE_ID", certificateHolder.getId())
                 .replace("PATIENT_CRN", certificateHolder.getCivicRegistrationNumber().getPersonnummer())
                 .replace("CAREUNIT_ID", certificateHolder.getCareUnitId())
