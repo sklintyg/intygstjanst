@@ -75,7 +75,7 @@ public class PuFilterServiceImpl implements PuFilterService {
             return new HashMap<>();
         }
 
-        final var personSvarMap = puService.getPersons(this.getPersonnummerListFromSjukfall(sjukfallList));
+        final var personSvarMap = puService.getPersons(this.getPersonnummerListFromIntygDataList(sjukfallList));
 
         if (personSvarMap.isEmpty()) {
             throw new IllegalStateException("Could not contact PU service, not showing any sjukfall.");
@@ -83,17 +83,16 @@ public class PuFilterServiceImpl implements PuFilterService {
         return personSvarMap;
     }
 
-    List<Personnummer> getPersonnummerListFromSjukfall(List<IntygData> sjukfallList) {
-        LOG.debug("Building a list of Personnummer by extracting patient IDs from a 'sjukfall' list.");
-        return getPersonnummerListOfOptionalsFromSjukfall(sjukfallList).stream()
+    List<Personnummer> getPersonnummerListFromIntygDataList(List<IntygData> list) {
+        return getPersonnummerListOfOptionalsFromList(list).stream()
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .distinct()
                 .collect(Collectors.toList());
     }
 
-    private List<Optional<Personnummer>> getPersonnummerListOfOptionalsFromSjukfall(List<IntygData> sjukfallList) {
-        return sjukfallList.stream()
+    private List<Optional<Personnummer>> getPersonnummerListOfOptionalsFromList(List<IntygData> list) {
+        return list.stream()
                 .map(se -> getPersonnummerOfOptional(se.getPatientId()))
                 .collect(Collectors.toList());
     }
