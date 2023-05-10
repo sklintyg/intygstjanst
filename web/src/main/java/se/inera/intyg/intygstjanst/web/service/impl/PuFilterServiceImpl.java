@@ -3,6 +3,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import com.google.common.base.Joiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.integration.pu.model.PersonSvar;
 import se.inera.intyg.infra.integration.pu.services.PUService;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
@@ -13,6 +14,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Service
 public class PuFilterServiceImpl implements PuFilterService {
 
     private final String SEKRETESS_SKYDDAD_NAME_PLACEHOLDER = "Skyddad personuppgift";
@@ -41,7 +43,6 @@ public class PuFilterServiceImpl implements PuFilterService {
                 continue;
             }
 
-            // Parse response from PU service
             final var personSvar = personSvarMap.get(pnr.get());
             final var patientNotFound = personSvar.getStatus() == PersonSvar.Status.NOT_FOUND;
             if (personSvar.getStatus() == PersonSvar.Status.FOUND || patientNotFound) {
@@ -76,8 +77,6 @@ public class PuFilterServiceImpl implements PuFilterService {
 
         final var personSvarMap = puService.getPersons(this.getPersonnummerListFromSjukfall(sjukfallList));
 
-        // Empty map indicates an error when calling the PU service,
-        // clear the list of sjukfall.
         if (personSvarMap.isEmpty()) {
             throw new IllegalStateException("Could not contact PU service, not showing any sjukfall.");
         }
