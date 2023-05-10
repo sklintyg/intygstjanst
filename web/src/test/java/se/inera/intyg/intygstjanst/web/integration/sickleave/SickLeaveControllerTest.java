@@ -94,7 +94,7 @@ class SickLeaveControllerTest {
             sickLeaveRequestDTO.setDiagnosisChapters(DIAGNOSIS_CHAPTER);
             sickLeaveRequestDTO.setFromPatientAge(PATIENT_AGE_FROM);
             sickLeaveRequestDTO.setToPatientAge(PATIENT_AGE_TO);
-            sickLeaveRequestDTO.setFilterOnProtectedPerson(true);
+            sickLeaveRequestDTO.setProtectedPersonFilterId(DOCTOR_ID);
         }
 
         @Test
@@ -109,7 +109,7 @@ class SickLeaveControllerTest {
                 .diagnosisChapters(sickLeaveRequestDTO.getDiagnosisChapters())
                 .fromPatientAge(sickLeaveRequestDTO.getFromPatientAge())
                 .toPatientAge(sickLeaveRequestDTO.getToPatientAge())
-                .filterOnProtectedPerson(true)
+                .protectedPersonFilterId(DOCTOR_ID)
                 .build();
 
             final var getSickLeaveServiceRequestArgumentCaptor = ArgumentCaptor.forClass(GetSickLeaveServiceRequest.class);

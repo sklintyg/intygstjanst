@@ -35,6 +35,6 @@ public class SickLeaveRequestDTO {
     private List<DiagnosKapitel> diagnosisChapters;
     private Integer fromPatientAge;
     private Integer toPatientAge;
-    private boolean filterOnProtectedPerson;
+    private String protectedPersonFilterId;
 
 }

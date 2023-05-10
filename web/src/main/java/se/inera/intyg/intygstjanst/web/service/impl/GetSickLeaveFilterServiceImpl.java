@@ -67,7 +67,7 @@ public class GetSickLeaveFilterServiceImpl implements GetSickLeaveFilterService 
         LOG.info(sickLeaveLogMessageFactory.message(GET_ACTIVE_SICK_LEAVE_CERTIFICATES, intygDataList.size()));
 
         sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
-        puFilterService.enrichWithPatientNameAndFilter(intygDataList, getSickLeaveFilterServiceRequest.isFilterProtectedPerson());
+        puFilterService.enrichWithPatientNameAndFilter(intygDataList, getSickLeaveFilterServiceRequest.getProtectedPersonFilterId());
         LOG.info(sickLeaveLogMessageFactory.message(GET_AND_FILTER_PROTECTED_PATIENTS, intygDataList.size()));
 
         return createSickLeaveFilter.create(intygDataList);

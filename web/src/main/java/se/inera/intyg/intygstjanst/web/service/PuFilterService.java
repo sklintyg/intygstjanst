@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface PuFilterService {
 
-    void enrichWithPatientNameAndFilter(List<IntygData> sickLeaves, boolean filterProtectedPerson);
+    void enrichWithPatientNameAndFilter(List<IntygData> sickLeaves, String protectedPersonFilterId);
+
 }

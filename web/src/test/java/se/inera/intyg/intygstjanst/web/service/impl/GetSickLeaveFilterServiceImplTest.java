@@ -69,7 +69,7 @@ class GetSickLeaveFilterServiceImplTest {
     private static final Integer MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 3;
     private static final String DIAGNOSIS_CHAPTER = "A00-B99Vissa infektionssjukdomar och parasitsjukdomar";
     private static final List<DiagnosKapitel> DIAGNOSIS_CHAPTERS = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER));
-    private static final boolean FILTER_PROTECTED_PERSON = true;
+    private static final String FILTER_PROTECTED_PERSON = "ID";
     private GetSickLeaveFilterServiceRequest.GetSickLeaveFilterServiceRequestBuilder getSickLeaveFilterServiceRequestBuilder;
 
     @BeforeEach
@@ -77,7 +77,7 @@ class GetSickLeaveFilterServiceImplTest {
         getSickLeaveFilterServiceRequestBuilder = GetSickLeaveFilterServiceRequest.builder()
             .careUnitId(CARE_UNIT_ID)
             .doctorId(DOCTOR_ID)
-            .filterProtectedPerson(FILTER_PROTECTED_PERSON)
+            .protectedPersonFilterId(FILTER_PROTECTED_PERSON)
             .maxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
 
         doReturn(CARE_PROVIDER_ID)
@@ -167,7 +167,7 @@ class GetSickLeaveFilterServiceImplTest {
 
         getSickLeaveFilterService.get(getSickLeaveFilterServiceRequestBuilder.build());
 
-        verify(puFilterService).enrichWithPatientNameAndFilter(anyList(), anyBoolean());
+        verify(puFilterService).enrichWithPatientNameAndFilter(anyList(), anyString());
     }
 
     @Test
@@ -178,13 +178,13 @@ class GetSickLeaveFilterServiceImplTest {
 
         getSickLeaveFilterService.get(getSickLeaveFilterServiceRequestBuilder.build());
 
-        verify(puFilterService).enrichWithPatientNameAndFilter(captor.capture(), anyBoolean());
+        verify(puFilterService).enrichWithPatientNameAndFilter(captor.capture(), anyString());
         assertEquals(list, captor.getValue());
     }
 
     @Test
     void shallCallPuFilterServiceWithFilterOnProtectedPerson() {
-        final var captor = ArgumentCaptor.forClass(boolean.class);
+        final var captor = ArgumentCaptor.forClass(String.class);
         final var list = Collections.singletonList(new IntygData());
         when(getActiveSickLeaveCertificates.get(anyString(), anyList(), anyList(), anyInt())).thenReturn(list);
 

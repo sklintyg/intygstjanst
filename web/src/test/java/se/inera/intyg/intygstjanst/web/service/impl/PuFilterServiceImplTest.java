@@ -58,7 +58,7 @@ public class PuFilterServiceImplTest {
         mockPersonSvar(false, true);
         List<IntygData> list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, false);
+        puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
 
         assertEquals(1, list.size());
     }
@@ -68,7 +68,7 @@ public class PuFilterServiceImplTest {
         mockPersonSvar(false, true);
         final var list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, true);
+        puFilterService.enrichWithPatientNameAndFilter(list, null);
         assertEquals(0, list.size());
     }
 
@@ -77,7 +77,7 @@ public class PuFilterServiceImplTest {
         mockPersonSvar(true, false);
         List<IntygData> list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, false);
+        puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
 
         assertEquals(0, list.size());
     }
@@ -87,7 +87,7 @@ public class PuFilterServiceImplTest {
         mockPersonSvar(true, false);
         final var list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, true);
+        puFilterService.enrichWithPatientNameAndFilter(list, null);
         assertEquals(0, list.size());
     }
 
@@ -96,7 +96,7 @@ public class PuFilterServiceImplTest {
         mockPersonSvarError();
         assertThrows(
                 IllegalStateException.class,
-                () -> puFilterService.enrichWithPatientNameAndFilter(buildIntygDataList(TOLVANSSON_PNR), false)
+                () -> puFilterService.enrichWithPatientNameAndFilter(buildIntygDataList(TOLVANSSON_PNR), LAKARE1_HSA_ID)
         );
     }
 
@@ -105,7 +105,7 @@ public class PuFilterServiceImplTest {
         mockPersonSvar(false, false);
         final var list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, false);
+        puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
         assertEquals("Fornamn Efternamn", list.get(0).getPatientNamn());
     }
 
@@ -114,7 +114,7 @@ public class PuFilterServiceImplTest {
         mockPersonSvar(false, true);
         final var list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, false);
+        puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
 
         assertEquals("Skyddad personuppgift", list.get(0).getPatientNamn());
     }
@@ -124,7 +124,7 @@ public class PuFilterServiceImplTest {
         mockPersonSvarNotFound();
         final var list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, false);
+        puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
         assertEquals("Namn okänt", list.get(0).getPatientNamn());
     }
 
@@ -133,7 +133,7 @@ public class PuFilterServiceImplTest {
         mockPersonSvarNotFound();
         final var list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, true);
+        puFilterService.enrichWithPatientNameAndFilter(list, null);
 
         assertEquals(0, list.size());
     }
@@ -143,7 +143,7 @@ public class PuFilterServiceImplTest {
         mockPersonSvarNotFound();
         final var list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, false);
+        puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
 
         assertEquals(1, list.size());
     }
@@ -152,7 +152,7 @@ public class PuFilterServiceImplTest {
     public void testEnrichPatientsWhenPersonnummerHasInvalidDigit() {
         assertThrows(
                 IllegalStateException.class,
-                () -> puFilterService.enrichWithPatientNameAndFilter(buildIntygDataList(TOLVANSSON_PNR_INVALID), false)
+                () -> puFilterService.enrichWithPatientNameAndFilter(buildIntygDataList(TOLVANSSON_PNR_INVALID), LAKARE1_HSA_ID)
         );
     }
 

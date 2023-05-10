@@ -29,7 +29,7 @@ public class PuFilterServiceImpl implements PuFilterService {
     }
 
     @Override
-    public void enrichWithPatientNameAndFilter(List<IntygData> sickLeaves, boolean filterProtectedPerson) {
+    public void enrichWithPatientNameAndFilter(List<IntygData> sickLeaves, String protectedPersonFilterId) {
        final var personSvarMap = fetchPersons(sickLeaves);
 
         final var i = sickLeaves.iterator();
@@ -51,7 +51,7 @@ public class PuFilterServiceImpl implements PuFilterService {
                     final var updatedName = patientNotFound ? SEKRETESS_SKYDDAD_NAME_UNKNOWN : SEKRETESS_SKYDDAD_NAME_PLACEHOLDER;
                     item.setPatientNamn(updatedName);
 
-                    if (filterProtectedPerson) {
+                    if (protectedPersonFilterId == null || !protectedPersonFilterId.equals(item.getLakareId())) {
                         i.remove();
                     }
 

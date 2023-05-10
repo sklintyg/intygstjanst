@@ -37,5 +37,5 @@ public class GetSickLeaveServiceRequest {
     List<DiagnosKapitel> diagnosisChapters;
     Integer fromPatientAge;
     Integer toPatientAge;
-    boolean filterOnProtectedPerson;
+    String protectedPersonFilterId;
 }
