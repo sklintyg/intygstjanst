@@ -19,7 +19,11 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
+import se.inera.intyg.intygstjanst.web.integration.testability.dto.CreateSickLeaveRequestDTO;
+
 public interface TestabilityService {
 
     void createDefaultTestData();
+
+    void create(CreateSickLeaveRequestDTO testabilityConfigProvider);
 }

@@ -22,12 +22,16 @@ package se.inera.intyg.intygstjanst.web.integration.testability.util;
 import java.io.StringReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.xml.bind.JAXB;
 import org.springframework.stereotype.Component;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.web.integration.testability.TestabilityRegisterCertificate;
+import se.inera.intyg.intygstjanst.web.integration.testability.TestabilityRevokeCertificate;
+import se.inera.intyg.intygstjanst.web.integration.testability.TestabilitySendCertificate;
 import se.inera.intyg.intygstjanst.web.integration.testability.dto.TestabilityConfigProvider;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
 
@@ -36,24 +40,56 @@ public class IntegrationTestUtil {
 
     private static final String BASE_URL = "testability/register/";
     private final TestabilityRegisterCertificate testabilityRegisterCertificate;
+    private final TestabilityRevokeCertificate testabilityRevokeCertificate;
+    private final TestabilitySendCertificate testabilitySendCertificate;
 
     public IntegrationTestUtil(
-        TestabilityRegisterCertificate testabilityRegisterCertificate) {
+        TestabilityRegisterCertificate testabilityRegisterCertificate, TestabilityRevokeCertificate testabilityRevokeCertificate,
+        TestabilitySendCertificate testabilitySendCertificate) {
         this.testabilityRegisterCertificate = testabilityRegisterCertificate;
+        this.testabilityRevokeCertificate = testabilityRevokeCertificate;
+        this.testabilitySendCertificate = testabilitySendCertificate;
     }
 
     public void registerCertificateTestabilityCreate(TestabilityConfigProvider testabilityConfigProvider) {
-        String filePath = getFilePath();
+        final var filePath = getFilePath();
         final var templateGroup = new STGroupFile(filePath);
         final var relation = testabilityConfigProvider.getRelationsId() != null
             ? getRelation(testabilityConfigProvider.getRelationsId(), templateGroup, testabilityConfigProvider.getRelationKod()) : "";
+        final var workCapacities = getWorkCapacities(testabilityConfigProvider, templateGroup);
+        final var diagnosisCodes = getDiagnosis(testabilityConfigProvider.getDiagnosisCode(), templateGroup);
         ST requestTemplate = templateGroup.getInstanceOf("requestParameterizedTestabilityCreate");
-        addFieldsFromTestabilityConfigProvider(requestTemplate, testabilityConfigProvider, relation);
+        addFieldsFromTestabilityConfigProvider(requestTemplate, testabilityConfigProvider, relation, workCapacities, diagnosisCodes);
         executeRegisterCertificate(requestTemplate);
+        updateCertificateStatus(testabilityConfigProvider);
+    }
+
+    private static List<String> getWorkCapacities(TestabilityConfigProvider testabilityConfigProvider, STGroupFile templateGroup) {
+        return testabilityConfigProvider.getWorkCapacity().stream()
+            .map(capacity ->
+                getWorkCapacity(
+                    capacity,
+                    templateGroup,
+                    testabilityConfigProvider.getFromDays(),
+                    testabilityConfigProvider.getToDays(),
+                    testabilityConfigProvider.getWorkCapacity().indexOf(capacity))
+            )
+            .collect(Collectors.toList());
+    }
+
+    private void updateCertificateStatus(TestabilityConfigProvider testabilityConfigProvider) {
+        if (testabilityConfigProvider.isRevoked()) {
+            testabilityRevokeCertificate.revokeCertificate(testabilityConfigProvider.getPatientId(),
+                testabilityConfigProvider.getCertificateId());
+        }
+        if (testabilityConfigProvider.isSend()) {
+            testabilitySendCertificate.sendCertificate(testabilityConfigProvider.getPatientId(),
+                testabilityConfigProvider.getCertificateId());
+        }
     }
 
     private static void addFieldsFromTestabilityConfigProvider(ST requestTemplate, TestabilityConfigProvider testabilityConfigProvider,
-        String relation) {
+        String relation, List<String> workCapacities, String diagnosisCode) {
         requestTemplate.add("intygId", testabilityConfigProvider.getCertificateId());
         requestTemplate.add("personId", testabilityConfigProvider.getPatientId());
         if (!relation.isEmpty()) {
@@ -63,9 +99,10 @@ public class IntegrationTestUtil {
         requestTemplate.add("careProviderId", testabilityConfigProvider.getCareProviderId());
         requestTemplate.add("unitId", testabilityConfigProvider.getCareUnitId());
         requestTemplate.add("doctorName", testabilityConfigProvider.getDoctorName());
-        requestTemplate.add("diagnosisCode", testabilityConfigProvider.getDiagnosisCode());
-        requestTemplate.add("workCapacity", testabilityConfigProvider.getWorkCapacity());
+        requestTemplate.add("diagnosisCodes", diagnosisCode);
+        requestTemplate.add("workCapacity", workCapacities);
         requestTemplate.add("occupation", testabilityConfigProvider.getOccupation());
+        requestTemplate.add("send", testabilityConfigProvider.isSend());
         applyToFromDatesToRequestTemplate(requestTemplate, testabilityConfigProvider.getFromDays(), testabilityConfigProvider.getToDays());
     }
 
@@ -74,6 +111,23 @@ public class IntegrationTestUtil {
         requestTemplate.add("relationCode", relationKod);
         requestTemplate.add("relationName", relationKod.getKlartext());
         requestTemplate.add("relationId", relationId);
+        return requestTemplate.render();
+    }
+
+    private static String getWorkCapacity(String workCapacity, STGroupFile templateGroup, int fromDays, int toDays, int instance) {
+        final var requestTemplate = templateGroup.getInstanceOf("requestGetWorkCapacity");
+        requestTemplate.add("workCapacity", workCapacity);
+        requestTemplate.add("instance", instance);
+        applyToFromDatesToRequestTemplate(requestTemplate, fromDays, toDays);
+        return requestTemplate.render();
+    }
+
+    private static String getDiagnosis(List<String> diagnosisCodes, STGroupFile templateGroup) {
+        final var requestTemplate = templateGroup.getInstanceOf("requestGetDiagnosisCode");
+        final var templates = List.of("mainDiagnosisCode", "secondDiagnosisCode", "thirdDiagnosisCode");
+        for (int i = 0; i < diagnosisCodes.size(); i++) {
+            requestTemplate.add(templates.get(i), diagnosisCodes.get(i));
+        }
         return requestTemplate.render();
     }
 

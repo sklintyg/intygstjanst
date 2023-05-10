@@ -1,6 +1,6 @@
 delimiters "$", "$"
 
-requestParameterizedTestabilityCreate(intygId, personId, fromDate, toDate, doctorId, careProviderId, unitId, doctorName, relation, diagnosisCode, workCapacity, occupation) ::= <<
+requestParameterizedTestabilityCreate(intygId, personId, fromDate, toDate, doctorId, careProviderId, unitId, doctorName, relation, diagnosisCodes, workCapacity, occupation, send) ::= <<
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <ns2:RegisterCertificate xmlns="urn:riv:clinicalprocess:healthcond:certificate:3"
     xmlns:ns2="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3"
@@ -104,27 +104,7 @@ requestParameterizedTestabilityCreate(intygId, personId, fromDate, toDate, docto
       <delsvar id="29.1">Smed</delsvar>
     </svar>
     <svar id="6">
-      <delsvar id="6.1">Klämskada skuldra</delsvar>
-      <delsvar id="6.2">
-        <ns3:cv>
-          <ns3:code>$diagnosisCode$</ns3:code>
-          <ns3:codeSystem>1.2.752.116.1.1.1.1.3</ns3:codeSystem>
-        </ns3:cv>
-      </delsvar>
-      <delsvar id="6.3">Spinal muskelatrofi och besläktade syndrom</delsvar>
-       <delsvar id="6.4">
-         <ns3:cv>
-           <ns3:code>G12</ns3:code>
-           <ns3:codeSystem>1.2.752.116.1.1.1.1.3</ns3:codeSystem>
-         </ns3:cv>
-       </delsvar>
-       <delsvar id="6.5">Malign tumör i gallblåsan</delsvar>
-           <delsvar id="6.6">
-             <ns3:cv>
-               <ns3:code>C23</ns3:code>
-               <ns3:codeSystem>1.2.752.116.1.1.1.1.3</ns3:codeSystem>
-             </ns3:cv>
-           </delsvar>
+      $diagnosisCodes$
     </svar>
     <svar id="35">
       <delsvar id="35.1">Haltar när han dansar</delsvar>
@@ -132,22 +112,7 @@ requestParameterizedTestabilityCreate(intygId, personId, fromDate, toDate, docto
     <svar id="17">
       <delsvar id="17.1">Kommer inte in i bilen</delsvar>
     </svar>
-    <svar id="32">
-      <instans>1</instans>
-      <delsvar id="32.1">
-        <ns3:cv>
-          <ns3:code>$workCapacity$</ns3:code>
-          <ns3:codeSystem>KV_FKMU_0003</ns3:codeSystem>
-        </ns3:cv>
-      </delsvar>
-      <delsvar id="32.2">
-        <ns3:datePeriod>
-          <ns3:start>$fromDate$</ns3:start>
-          <ns3:end>$toDate$</ns3:end>
-        </ns3:datePeriod>
-      </delsvar>
-    </svar>
-
+    $workCapacity: {capacity | $capacity$}$
     <svar id="37">
       <delsvar id="37.1">Överskrider inte FMB</delsvar>
     </svar>
@@ -203,4 +168,50 @@ requestParameterizedRelation(relationCode, relationName, relationId) ::= <<
     <ns3:extension>$relationId$</ns3:extension>
   </intygs-id>
 </relation>
+>>
+
+requestGetWorkCapacity(workCapacity, fromDate, toDate, instance) ::= <<
+<svar id="32">
+   <instans>$instance$</instans>
+   <delsvar id="32.1">
+     <ns3:cv>
+       <ns3:code>$workCapacity$</ns3:code>
+       <ns3:codeSystem>KV_FKMU_0003</ns3:codeSystem>
+     </ns3:cv>
+   </delsvar>
+   <delsvar id="32.2">
+       <ns3:datePeriod>
+         <ns3:start>$fromDate$</ns3:start>
+         <ns3:end>$toDate$</ns3:end>
+        </ns3:datePeriod>
+   </delsvar>
+</svar>
+>>
+
+requestGetDiagnosisCode(mainDiagnosisCode, secondDiagnosisCode, thirdDiagnosisCode) ::= <<
+<delsvar id="6.1">Klämskada skuldra</delsvar>
+      <delsvar id="6.2">
+        <ns3:cv>
+          <ns3:code>$mainDiagnosisCode$</ns3:code>
+          <ns3:codeSystem>1.2.752.116.1.1.1.1.3</ns3:codeSystem>
+        </ns3:cv>
+      </delsvar>
+      $if(secondDiagnosisCode)$
+      <delsvar id="6.3">Spinal muskelatrofi och besläktade syndrom</delsvar>
+       <delsvar id="6.4">
+         <ns3:cv>
+           <ns3:code>$secondDiagnosisCode$</ns3:code>
+           <ns3:codeSystem>1.2.752.116.1.1.1.1.3</ns3:codeSystem>
+         </ns3:cv>
+       </delsvar>
+       $endif$
+       $if(thirdDiagnosisCode)$
+       <delsvar id="6.5">Malign tumör i gallblåsan</delsvar>
+           <delsvar id="6.6">
+             <ns3:cv>
+               <ns3:code>$thirdDiagnosisCode$</ns3:code>
+               <ns3:codeSystem>1.2.752.116.1.1.1.1.3</ns3:codeSystem>
+             </ns3:cv>
+        </delsvar>
+        $endif$
 >>

@@ -120,7 +120,7 @@ public class CertificateResource {
             try {
                 LOGGER.info("Deleting certificates for unit {}", id);
                 @SuppressWarnings("unchecked")
-                List<String> certificates = entityManager.createQuery("SELECT c.id FROM Certificate c WHERE c.careUnitId=:careUnitHsaId")
+                List<String> certificates = entityManager.createQuery("SELECT c.id FROM Certificate c WHERE c.careUnitId = :careUnitHsaId")
                     .setParameter("careUnitHsaId", id).getResultList();
                 for (String certificate : certificates) {
                     deleteCertificate(certificate);
@@ -353,7 +353,7 @@ public class CertificateResource {
             return certificateHolder.getOriginalCertificate();
         } else {
             return Resources.toString(new ClassPathResource("content/intyg-" + certificateHolder.getType() + "-content.xml").getURL(),
-                Charsets.UTF_8)
+                    Charsets.UTF_8)
                 .replace("CERTIFICATE_ID", certificateHolder.getId())
                 .replace("PATIENT_CRN", certificateHolder.getCivicRegistrationNumber().getPersonnummer())
                 .replace("CAREUNIT_ID", certificateHolder.getCareUnitId())
