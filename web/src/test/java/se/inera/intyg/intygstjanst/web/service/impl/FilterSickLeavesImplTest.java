@@ -60,8 +60,8 @@ class FilterSickLeavesImplTest {
     private static final String ANOTHER_DIAGNOSIS_CHAPTER = "C00-D48Tumörer";
     private static final String PATIENT_ID = "19121212-1212";
     private static final String ANOTHER_PATIENT_ID = "20121212-1212";
-    static final LocalDate FROM_END_DATE = LocalDate.now();
-    static final LocalDate TO_END_DATE = FROM_END_DATE.plusDays(10);
+    private static final LocalDate FROM_END_DATE = LocalDate.now();
+    private static final LocalDate TO_END_DATE = FROM_END_DATE.plusDays(10);
 
     @Nested
     class FilterOnSickLeaveLength {

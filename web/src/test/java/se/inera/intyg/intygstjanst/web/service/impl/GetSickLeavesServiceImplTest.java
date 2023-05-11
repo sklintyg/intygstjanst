@@ -79,8 +79,8 @@ class GetSickLeavesServiceImplTest {
     private static final Integer FROM_PATIENT_AGE = 0;
     private static final Integer TO_PATIENT_AGE = 150;
     private static final String FILTER_PROTECTED_PERSON = "ID";
-    static final LocalDate FROM_END_DATE = LocalDate.now();
-    static final LocalDate TO_END_DATE = FROM_END_DATE.plusDays(10);
+    private static final LocalDate FROM_END_DATE = LocalDate.now();
+    private static final LocalDate TO_END_DATE = FROM_END_DATE.plusDays(10);
     private static final String DIAGNOSIS_CHAPTER = "A00-B99Vissa infektionssjukdomar och parasitsjukdomar";
     private static final List<DiagnosKapitel> DIAGNOSIS_CHAPTERS = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER));
     private static final List<SjukfallEnhet> SICK_LEAVES = List.of(new SjukfallEnhet(), new SjukfallEnhet(), new SjukfallEnhet());
