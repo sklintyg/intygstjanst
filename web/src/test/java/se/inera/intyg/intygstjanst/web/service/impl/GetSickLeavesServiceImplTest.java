@@ -264,7 +264,10 @@ class GetSickLeavesServiceImplTest {
         void shallIncludeSickLeaves() {
             final var sickLeaveListCaptor = ArgumentCaptor.forClass(List.class);
             getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
-            verify(filterSickLeaves).filter(sickLeaveListCaptor.capture(), anyList(), anyList(), anyInt(), anyInt(), any(LocalDate.class), any(LocalDate.class));
+            verify(filterSickLeaves).filter(
+                    sickLeaveListCaptor.capture(), anyList(), anyList(), anyInt(), anyInt(),
+                    any(LocalDate.class), any(LocalDate.class)
+            );
             assertEquals(SICK_LEAVES, sickLeaveListCaptor.getValue());
         }
 
@@ -272,7 +275,9 @@ class GetSickLeavesServiceImplTest {
         void shallIncludeSickLeaveLengthIntervals() {
             final var sickLeaveLengthIntervalsCaptor = ArgumentCaptor.forClass(List.class);
             getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
-            verify(filterSickLeaves).filter(anyList(), sickLeaveLengthIntervalsCaptor.capture(), anyList(), anyInt(), anyInt(), any(LocalDate.class), any(LocalDate.class));
+            verify(filterSickLeaves).filter(anyList(), sickLeaveLengthIntervalsCaptor.capture(),
+                    anyList(), anyInt(), anyInt(), any(LocalDate.class), any(LocalDate.class)
+            );
             assertEquals(SICK_LEAVE_LENGTH_INTERVALS, sickLeaveLengthIntervalsCaptor.getValue());
         }
 
@@ -280,7 +285,9 @@ class GetSickLeavesServiceImplTest {
         void shallIncludeDiagnosisChapter() {
             final var diagnosisChapterCaptor = ArgumentCaptor.forClass(List.class);
             getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
-            verify(filterSickLeaves).filter(anyList(), anyList(), diagnosisChapterCaptor.capture(), anyInt(), anyInt(), any(LocalDate.class), any(LocalDate.class));
+            verify(filterSickLeaves).filter(anyList(), anyList(), diagnosisChapterCaptor.capture(),
+                    anyInt(), anyInt(), any(LocalDate.class), any(LocalDate.class)
+            );
             assertEquals(DIAGNOSIS_CHAPTERS, diagnosisChapterCaptor.getValue());
         }
 
@@ -288,7 +295,9 @@ class GetSickLeavesServiceImplTest {
         void shallIncludeFromPatientAge() {
             final var patientAge = ArgumentCaptor.forClass(Integer.class);
             getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
-            verify(filterSickLeaves).filter(anyList(), anyList(), anyList(), patientAge.capture(), anyInt(), any(LocalDate.class), any(LocalDate.class));
+            verify(filterSickLeaves).filter(anyList(), anyList(), anyList(), patientAge.capture(),
+                    anyInt(), any(LocalDate.class), any(LocalDate.class)
+            );
             assertEquals(FROM_PATIENT_AGE, patientAge.getValue());
         }
 
@@ -296,7 +305,9 @@ class GetSickLeavesServiceImplTest {
         void shallIncludeToPatientAge() {
             final var patientAge = ArgumentCaptor.forClass(Integer.class);
             getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
-            verify(filterSickLeaves).filter(anyList(), anyList(), anyList(), anyInt(), patientAge.capture(), any(LocalDate.class), any(LocalDate.class));
+            verify(filterSickLeaves).filter(anyList(), anyList(), anyList(), anyInt(),
+                    patientAge.capture(), any(LocalDate.class), any(LocalDate.class)
+            );
             assertEquals(TO_PATIENT_AGE, patientAge.getValue());
         }
 
@@ -312,7 +323,9 @@ class GetSickLeavesServiceImplTest {
         void shallIncludeToSickLeaveEndDate() {
             final var captor = ArgumentCaptor.forClass(LocalDate.class);
             getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
-            verify(filterSickLeaves).filter(anyList(), anyList(), anyList(), anyInt(), anyInt(), any(LocalDate.class), captor.capture());
+            verify(filterSickLeaves).filter(anyList(), anyList(), anyList(),
+                    anyInt(), anyInt(), any(LocalDate.class), captor.capture()
+            );
             assertEquals(TO_END_DATE, captor.getValue());
         }
     }
