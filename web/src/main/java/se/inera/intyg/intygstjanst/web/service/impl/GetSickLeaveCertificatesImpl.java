@@ -21,16 +21,25 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeaveCertificates;
+import se.inera.intyg.intygstjanst.web.service.PuFilterService;
+
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_AND_FILTER_PROTECTED_PATIENTS;
 
 @Service
 public class GetSickLeaveCertificatesImpl implements GetSickLeaveCertificates {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GetSickLeaveCertificates.class);
 
     private final SjukfallCertificateDao sjukfallCertificateDao;
 
@@ -38,16 +47,20 @@ public class GetSickLeaveCertificatesImpl implements GetSickLeaveCertificates {
 
     private final SjukfallEngineService sjukfallEngineService;
 
+    private final PuFilterService puFilterService;
+
+
     public GetSickLeaveCertificatesImpl(SjukfallCertificateDao sjukfallCertificateDao, IntygsDataConverter intygDataConverter,
-        SjukfallEngineService sjukfallEngineService) {
+                                        SjukfallEngineService sjukfallEngineService, PuFilterService puFilterService) {
         this.sjukfallCertificateDao = sjukfallCertificateDao;
         this.intygDataConverter = intygDataConverter;
         this.sjukfallEngineService = sjukfallEngineService;
+        this.puFilterService = puFilterService;
     }
 
     @Override
     public List<SjukfallEnhet> get(String careProviderId, List<String> unitIds, List<String> patientIds, int maxCertificateGap,
-        int maxDaysSinceSickLeaveCompleted) {
+        int maxDaysSinceSickLeaveCompleted, String protectedPersonFilterId) {
         assertCareProviderId(careProviderId);
         assertUnitIds(unitIds);
         assertPatientIds(patientIds);
@@ -59,6 +72,10 @@ public class GetSickLeaveCertificatesImpl implements GetSickLeaveCertificates {
         );
 
         final var intygDataList = intygDataConverter.convert(sjukfallCertificate);
+
+        final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
+        puFilterService.enrichWithPatientNameAndFilter(intygDataList, protectedPersonFilterId);
+        LOG.info(sickLeaveLogMessageFactory.message(GET_AND_FILTER_PROTECTED_PATIENTS, intygDataList.size()));
 
         return sjukfallEngineService.beraknaSjukfallForEnhet(
             intygDataList,

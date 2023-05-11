@@ -25,5 +25,5 @@ import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 public interface GetSickLeaveCertificates {
 
     List<SjukfallEnhet> get(String careProviderId, List<String> careUnitAndSubUnits, List<String> patientIds, int maxCertificateGap,
-        int maxDaysSinceSickLeaveCompleted);
+        int maxDaysSinceSickLeaveCompleted, String protectedPersonFilterId);
 }
