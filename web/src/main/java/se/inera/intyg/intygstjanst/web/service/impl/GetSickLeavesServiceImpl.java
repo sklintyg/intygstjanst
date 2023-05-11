@@ -19,9 +19,6 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_ACTIVE_SICK_LEAVE_CERTIFICATES;
-import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_SICK_LEAVES;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,11 +29,10 @@ import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory;
-import se.inera.intyg.intygstjanst.web.service.FilterSickLeaves;
-import se.inera.intyg.intygstjanst.web.service.GetActiveSickLeaveCertificates;
-import se.inera.intyg.intygstjanst.web.service.GetSickLeaveCertificates;
-import se.inera.intyg.intygstjanst.web.service.GetSickLeavesService;
+import se.inera.intyg.intygstjanst.web.service.*;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest;
+
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.*;
 
 @Service
 public class GetSickLeavesServiceImpl implements GetSickLeavesService {
@@ -46,13 +42,18 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
     private final GetActiveSickLeaveCertificates getActiveSickLeaveCertificates;
     private final GetSickLeaveCertificates getSickLeaveCertificates;
     private final FilterSickLeaves filterSickLeaves;
+    private final PuFilterService puFilterService;
 
-    public GetSickLeavesServiceImpl(HsaService hsaService, GetActiveSickLeaveCertificates getActiveSickLeaveCertificates,
-        GetSickLeaveCertificates getSickLeaveCertificates, FilterSickLeaves filterSickLeaves) {
+    public GetSickLeavesServiceImpl(HsaService hsaService,
+                                    GetActiveSickLeaveCertificates getActiveSickLeaveCertificates,
+                                    GetSickLeaveCertificates getSickLeaveCertificates,
+                                    FilterSickLeaves filterSickLeaves,
+                                    PuFilterService puFilterService) {
         this.hsaService = hsaService;
         this.getActiveSickLeaveCertificates = getActiveSickLeaveCertificates;
         this.getSickLeaveCertificates = getSickLeaveCertificates;
         this.filterSickLeaves = filterSickLeaves;
+        this.puFilterService = puFilterService;
     }
 
     @Override
@@ -72,6 +73,10 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
         if (intygData.isEmpty()) {
             return Collections.emptyList();
         }
+
+        sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
+        puFilterService.enrichWithPatientNameAndFilter(intygData, getSickLeaveServiceRequest.getProtectedPersonFilterId());
+        LOG.info(sickLeaveLogMessageFactory.message(GET_AND_FILTER_PROTECTED_PATIENTS, intygData.size()));
 
         final var patientIds = intygData.stream()
             .map(IntygData::getPatientId)

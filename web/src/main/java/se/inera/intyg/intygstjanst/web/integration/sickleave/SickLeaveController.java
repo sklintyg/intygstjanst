@@ -72,6 +72,7 @@ public class SickLeaveController {
                 .diagnosisChapters(sickLeaveRequestDTO.getDiagnosisChapters())
                 .fromPatientAge(sickLeaveRequestDTO.getFromPatientAge())
                 .toPatientAge(sickLeaveRequestDTO.getToPatientAge())
+                .protectedPersonFilterId(sickLeaveRequestDTO.getProtectedPersonFilterId())
                 .build()
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_ACTIVE, sjukfallEnhetList.size()));
@@ -92,6 +93,7 @@ public class SickLeaveController {
                 .unitId(populateFiltersRequestDTO.getUnitId())
                 .doctorId(populateFiltersRequestDTO.getDoctorId())
                 .maxDaysSinceSickLeaveCompleted(populateFiltersRequestDTO.getMaxDaysSinceSickLeaveCompleted())
+                .protectedPersonFilterId(populateFiltersRequestDTO.getProtectedPersonFilterId())
                 .build()
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_FILTER));
@@ -99,7 +101,8 @@ public class SickLeaveController {
         return Response.ok(
             new PopulateFiltersResponseDTO(
                 getSickLeaveFilterServiceResponse.getActiveDoctors(),
-                getSickLeaveFilterServiceResponse.getDiagnosisChapters()
+                getSickLeaveFilterServiceResponse.getDiagnosisChapters(),
+                getSickLeaveFilterServiceResponse.getNbrOfSickLeaves()
             )
         ).build();
     }

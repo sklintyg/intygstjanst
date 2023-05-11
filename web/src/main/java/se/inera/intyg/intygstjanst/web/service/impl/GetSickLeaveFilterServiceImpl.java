@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_AND_FILTER_PROTECTED_PATIENTS;
 import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_ACTIVE_SICK_LEAVE_CERTIFICATES;
 
 import java.util.List;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory;
 import se.inera.intyg.intygstjanst.web.service.CreateSickLeaveFilter;
+import se.inera.intyg.intygstjanst.web.service.PuFilterService;
 import se.inera.intyg.intygstjanst.web.service.GetActiveSickLeaveCertificates;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeaveFilterService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceRequest;
@@ -40,12 +42,14 @@ public class GetSickLeaveFilterServiceImpl implements GetSickLeaveFilterService 
     private final HsaService hsaService;
     private final GetActiveSickLeaveCertificates getActiveSickLeaveCertificates;
     private final CreateSickLeaveFilter createSickLeaveFilter;
+    private final PuFilterService puFilterService;
 
     public GetSickLeaveFilterServiceImpl(HsaService hsaService, GetActiveSickLeaveCertificates getActiveSickLeaveCertificates,
-        CreateSickLeaveFilter createSickLeaveFilter) {
+                                         CreateSickLeaveFilter createSickLeaveFilter, PuFilterService puFilterService) {
         this.getActiveSickLeaveCertificates = getActiveSickLeaveCertificates;
         this.hsaService = hsaService;
         this.createSickLeaveFilter = createSickLeaveFilter;
+        this.puFilterService = puFilterService;
     }
 
     @Override
@@ -61,6 +65,10 @@ public class GetSickLeaveFilterServiceImpl implements GetSickLeaveFilterService 
             getSickLeaveFilterServiceRequest.getMaxDaysSinceSickLeaveCompleted()
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_ACTIVE_SICK_LEAVE_CERTIFICATES, intygDataList.size()));
+
+        sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
+        puFilterService.enrichWithPatientNameAndFilter(intygDataList, getSickLeaveFilterServiceRequest.getProtectedPersonFilterId());
+        LOG.info(sickLeaveLogMessageFactory.message(GET_AND_FILTER_PROTECTED_PATIENTS, intygDataList.size()));
 
         return createSickLeaveFilter.create(intygDataList);
     }

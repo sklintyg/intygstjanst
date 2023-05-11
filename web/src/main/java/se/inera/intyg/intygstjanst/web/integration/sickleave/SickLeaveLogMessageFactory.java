@@ -27,6 +27,7 @@ public class SickLeaveLogMessageFactory {
     public static final String GET_SICK_LEAVE_FILTER = "GET_SICK_LEAVE_FILTER";
     public static final String GET_ACTIVE_SICK_LEAVE_CERTIFICATES = "GET_ACTIVE_SICK_LEAVE_CERTIFICATES";
     public static final String GET_SICK_LEAVES = "GET_SICK_LEAVES";
+    public static final String GET_AND_FILTER_PROTECTED_PATIENTS = "GET_AND_FILTER_PROTECTED_PATIENTS";
     private long startTimer;
 
     public SickLeaveLogMessageFactory(long startTime) {

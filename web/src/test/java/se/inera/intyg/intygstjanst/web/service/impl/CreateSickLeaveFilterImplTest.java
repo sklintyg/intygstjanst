@@ -69,6 +69,7 @@ class CreateSickLeaveFilterImplTest {
                 .diagnosisChapters(
                     Collections.emptyList()
                 )
+                .nbrOfSickLeaves(2)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -94,6 +95,7 @@ class CreateSickLeaveFilterImplTest {
                 .diagnosisChapters(
                     Collections.emptyList()
                 )
+                .nbrOfSickLeaves(3)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -136,6 +138,7 @@ class CreateSickLeaveFilterImplTest {
                         DIAGNOSIS_CHAPTER_2
                     )
                 )
+                .nbrOfSickLeaves(2)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -161,6 +164,7 @@ class CreateSickLeaveFilterImplTest {
                         DIAGNOSIS_CHAPTER_2
                     )
                 )
+                .nbrOfSickLeaves(3)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -192,6 +196,7 @@ class CreateSickLeaveFilterImplTest {
                     DIAGNOSIS_CHAPTER_2
                 )
             )
+            .nbrOfSickLeaves(2)
             .build();
 
         doReturn(DIAGNOSIS_CHAPTER_1)

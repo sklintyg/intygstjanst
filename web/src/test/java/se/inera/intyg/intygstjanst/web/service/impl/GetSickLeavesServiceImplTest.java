@@ -20,9 +20,7 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -43,6 +41,7 @@ import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.service.FilterSickLeaves;
 import se.inera.intyg.intygstjanst.web.service.GetActiveSickLeaveCertificates;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeaveCertificates;
+import se.inera.intyg.intygstjanst.web.service.PuFilterService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest.GetSickLeaveServiceRequestBuilder;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
@@ -62,6 +61,9 @@ class GetSickLeavesServiceImplTest {
     @Mock
     private FilterSickLeaves filterSickLeaves;
 
+    @Mock
+    private PuFilterService puFilterService;
+
     @InjectMocks
     private GetSickLeavesServiceImpl getSickLeavesService;
 
@@ -75,6 +77,7 @@ class GetSickLeavesServiceImplTest {
     private static final Integer MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 3;
     private static final Integer FROM_PATIENT_AGE = 0;
     private static final Integer TO_PATIENT_AGE = 150;
+    private static final String FILTER_PROTECTED_PERSON = "ID";
     private static final String DIAGNOSIS_CHAPTER = "A00-B99Vissa infektionssjukdomar och parasitsjukdomar";
     private static final List<DiagnosKapitel> DIAGNOSIS_CHAPTERS = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER));
     private static final List<SjukfallEnhet> SICK_LEAVES = List.of(new SjukfallEnhet(), new SjukfallEnhet(), new SjukfallEnhet());
@@ -93,6 +96,7 @@ class GetSickLeavesServiceImplTest {
             .maxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)
             .diagnosisChapters(DIAGNOSIS_CHAPTERS)
             .fromPatientAge(FROM_PATIENT_AGE)
+            .protectedPersonFilterId(FILTER_PROTECTED_PERSON)
             .toPatientAge(TO_PATIENT_AGE);
 
         doReturn(CARE_PROVIDER_ID)
@@ -151,17 +155,41 @@ class GetSickLeavesServiceImplTest {
     @Nested
     class GetSickLeavesTest {
 
+        List<IntygData> intygDataList;
+
         @BeforeEach
         void setUp() {
             final var intygDataOne = new IntygData();
             intygDataOne.setPatientId("PatientId1");
             final var intygDataTwo = new IntygData();
             intygDataTwo.setPatientId("PatientId2");
-            final var intygDataList = List.of(intygDataOne, intygDataTwo);
+            intygDataList = List.of(intygDataOne, intygDataTwo);
 
             doReturn(intygDataList)
                 .when(getActiveSickLeaveCertificates)
                 .get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+        }
+
+        @Test
+        void shallCallPuFilterService() {
+            getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
+            verify(puFilterService).enrichWithPatientNameAndFilter(anyList(), anyString());
+        }
+
+        @Test
+        void shallCallPuFilterServiceWithListOfIntygData() {
+            final var captor = ArgumentCaptor.forClass(List.class);
+            getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
+            verify(puFilterService).enrichWithPatientNameAndFilter(captor.capture(), anyString());
+            assertEquals(intygDataList, captor.getValue());
+        }
+
+        @Test
+        void shallCallPuFilterServiceWithFilterOnProtectedPerson() {
+            final var captor = ArgumentCaptor.forClass(String.class);
+            getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
+            verify(puFilterService).enrichWithPatientNameAndFilter(anyList(), captor.capture());
+            assertEquals(FILTER_PROTECTED_PERSON, captor.getValue());
         }
 
         @Test

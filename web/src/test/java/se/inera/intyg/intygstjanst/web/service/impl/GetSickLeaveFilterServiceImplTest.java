@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -37,10 +37,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
+import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.service.CreateSickLeaveFilter;
 import se.inera.intyg.intygstjanst.web.service.GetActiveSickLeaveCertificates;
+import se.inera.intyg.intygstjanst.web.service.PuFilterService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceRequest;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
 
@@ -53,6 +55,8 @@ class GetSickLeaveFilterServiceImplTest {
     private GetActiveSickLeaveCertificates getActiveSickLeaveCertificates;
     @Mock
     private CreateSickLeaveFilter createSickLeaveFilter;
+    @Mock
+    private PuFilterService puFilterService;
     @InjectMocks
     private GetSickLeaveFilterServiceImpl getSickLeaveFilterService;
 
@@ -65,6 +69,7 @@ class GetSickLeaveFilterServiceImplTest {
     private static final Integer MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 3;
     private static final String DIAGNOSIS_CHAPTER = "A00-B99Vissa infektionssjukdomar och parasitsjukdomar";
     private static final List<DiagnosKapitel> DIAGNOSIS_CHAPTERS = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER));
+    private static final String FILTER_PROTECTED_PERSON = "ID";
     private GetSickLeaveFilterServiceRequest.GetSickLeaveFilterServiceRequestBuilder getSickLeaveFilterServiceRequestBuilder;
 
     @BeforeEach
@@ -72,6 +77,7 @@ class GetSickLeaveFilterServiceImplTest {
         getSickLeaveFilterServiceRequestBuilder = GetSickLeaveFilterServiceRequest.builder()
             .careUnitId(CARE_UNIT_ID)
             .doctorId(DOCTOR_ID)
+            .protectedPersonFilterId(FILTER_PROTECTED_PERSON)
             .maxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
 
         doReturn(CARE_PROVIDER_ID)
@@ -152,5 +158,39 @@ class GetSickLeaveFilterServiceImplTest {
 
         final var actualSickLeaveFilter = getSickLeaveFilterService.get(getSickLeaveFilterServiceRequestBuilder.build());
         assertEquals(expectedSickLeaveFilter, actualSickLeaveFilter);
+    }
+
+    @Test
+    void shallCallFilterPuService() {
+        final var list = Collections.singletonList(new IntygData());
+        when(getActiveSickLeaveCertificates.get(anyString(), anyList(), anyList(), anyInt())).thenReturn(list);
+
+        getSickLeaveFilterService.get(getSickLeaveFilterServiceRequestBuilder.build());
+
+        verify(puFilterService).enrichWithPatientNameAndFilter(anyList(), anyString());
+    }
+
+    @Test
+    void shallCallPuFilterServiceWithListOfIntygData() {
+        final var captor = ArgumentCaptor.forClass(List.class);
+        final var list = Collections.singletonList(new IntygData());
+        when(getActiveSickLeaveCertificates.get(anyString(), anyList(), anyList(), anyInt())).thenReturn(list);
+
+        getSickLeaveFilterService.get(getSickLeaveFilterServiceRequestBuilder.build());
+
+        verify(puFilterService).enrichWithPatientNameAndFilter(captor.capture(), anyString());
+        assertEquals(list, captor.getValue());
+    }
+
+    @Test
+    void shallCallPuFilterServiceWithFilterOnProtectedPerson() {
+        final var captor = ArgumentCaptor.forClass(String.class);
+        final var list = Collections.singletonList(new IntygData());
+        when(getActiveSickLeaveCertificates.get(anyString(), anyList(), anyList(), anyInt())).thenReturn(list);
+
+        getSickLeaveFilterService.get(getSickLeaveFilterServiceRequestBuilder.build());
+
+        verify(puFilterService).enrichWithPatientNameAndFilter(anyList(), captor.capture());
+        assertEquals(FILTER_PROTECTED_PERSON, captor.getValue());
     }
 }
