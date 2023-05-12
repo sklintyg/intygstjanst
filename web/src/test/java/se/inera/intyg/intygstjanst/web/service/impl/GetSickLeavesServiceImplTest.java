@@ -73,7 +73,6 @@ class GetSickLeavesServiceImplTest {
     private static final Integer MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 3;
     private static final Integer FROM_PATIENT_AGE = 0;
     private static final Integer TO_PATIENT_AGE = 150;
-    private static final String FILTER_PROTECTED_PERSON = "ID";
     private static final String DIAGNOSIS_CHAPTER = "A00-B99Vissa infektionssjukdomar och parasitsjukdomar";
     private static final String PROTECTED_PERSON_FILTER_ID = "filterId";
     private static final List<DiagnosKapitel> DIAGNOSIS_CHAPTERS = List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER));
@@ -93,7 +92,7 @@ class GetSickLeavesServiceImplTest {
             .maxDaysSinceSickLeaveCompleted(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)
             .diagnosisChapters(DIAGNOSIS_CHAPTERS)
             .fromPatientAge(FROM_PATIENT_AGE)
-            .protectedPersonFilterId(FILTER_PROTECTED_PERSON)
+            .protectedPersonFilterId(PROTECTED_PERSON_FILTER_ID)
             .toPatientAge(TO_PATIENT_AGE);
 
         doReturn(CARE_PROVIDER_ID)
