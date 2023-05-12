@@ -34,7 +34,7 @@ import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDat
 import se.inera.intyg.intygstjanst.web.service.GetSickLeaveCertificates;
 import se.inera.intyg.intygstjanst.web.service.PuFilterService;
 
-import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_AND_FILTER_PROTECTED_PATIENTS;
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.*;
 
 @Service
 public class GetSickLeaveCertificatesImpl implements GetSickLeaveCertificates {
@@ -65,15 +65,17 @@ public class GetSickLeaveCertificatesImpl implements GetSickLeaveCertificates {
         assertUnitIds(unitIds);
         assertPatientIds(patientIds);
 
+        final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var sjukfallCertificate = sjukfallCertificateDao.findAllSjukfallCertificate(
             careProviderId,
             unitIds,
             patientIds
         );
+        LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES_FROM_DB), sjukfallCertificate.size());
 
         final var intygDataList = intygDataConverter.convert(sjukfallCertificate);
 
-        final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
+        sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
         puFilterService.enrichWithPatientNameAndFilter(intygDataList, protectedPersonFilterId);
         LOG.info(sickLeaveLogMessageFactory.message(GET_AND_FILTER_PROTECTED_PATIENTS, intygDataList.size()));
 
