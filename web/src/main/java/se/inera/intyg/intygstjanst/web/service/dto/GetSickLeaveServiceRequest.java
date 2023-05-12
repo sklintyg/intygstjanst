@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 import lombok.Builder;
 import lombok.Value;
@@ -38,4 +39,6 @@ public class GetSickLeaveServiceRequest {
     Integer fromPatientAge;
     Integer toPatientAge;
     String protectedPersonFilterId;
+    LocalDate fromSickLeaveEndDate;
+    LocalDate toSickLeaveEndDate;
 }

@@ -73,6 +73,8 @@ public class SickLeaveController {
                 .fromPatientAge(sickLeaveRequestDTO.getFromPatientAge())
                 .toPatientAge(sickLeaveRequestDTO.getToPatientAge())
                 .protectedPersonFilterId(sickLeaveRequestDTO.getProtectedPersonFilterId())
+                .fromSickLeaveEndDate(sickLeaveRequestDTO.getFromSickLeaveEndDate())
+                .toSickLeaveEndDate(sickLeaveRequestDTO.getToSickLeaveEndDate())
                 .build()
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_ACTIVE, sjukfallEnhetList.size()));

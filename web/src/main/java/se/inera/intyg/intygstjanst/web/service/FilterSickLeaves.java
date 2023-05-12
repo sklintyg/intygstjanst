@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
@@ -27,5 +28,7 @@ import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
 public interface FilterSickLeaves {
 
     List<SjukfallEnhet> filter(List<SjukfallEnhet> sickLeaveList, List<SickLeaveLengthInterval> sickLeaveLengthIntervals,
-        List<DiagnosKapitel> diagnosisChapters, Integer fromPatientAge, Integer toPatientAge);
+        List<DiagnosKapitel> diagnosisChapters, Integer fromPatientAge, Integer toPatientAge,
+        LocalDate fromSickLeaveEndDate, LocalDate toSickLeaveEndDate
+    );
 }

@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -42,11 +43,13 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
 
     @Override
     public List<SjukfallEnhet> filter(List<SjukfallEnhet> sickLeaveList, List<SickLeaveLengthInterval> sickLeaveLengthIntervals,
-        List<DiagnosKapitel> diagnosisChapters, Integer fromPatientAge, Integer toPatientAge) {
+        List<DiagnosKapitel> diagnosisChapters, Integer fromPatientAge, Integer toPatientAge, LocalDate fromSickLeaveEndDate,
+        LocalDate toSickLeaveEndDate) {
         return sickLeaveList.stream()
             .filter(sickLeave -> filterOnSickLeaveLengthIntervals(sickLeave, sickLeaveLengthIntervals))
             .filter(sickLeave -> filterOnDiagnosisChapters(sickLeave, diagnosisChapters))
             .filter(sickLeave -> filterOnPatientAge(sickLeave, fromPatientAge, toPatientAge))
+            .filter(sickLeave -> filterOnSickLeaveEndDate(sickLeave, fromSickLeaveEndDate, toSickLeaveEndDate))
             .collect(Collectors.toList());
     }
 
@@ -73,5 +76,9 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
         }
         final var patientAge = calculatePatientAgeService.get(sickLeave.getPatient().getId());
         return patientAgeFrom <= patientAge && patientAgeTo >= patientAge;
+    }
+
+    private boolean filterOnSickLeaveEndDate(SjukfallEnhet sickLeave, LocalDate from, LocalDate to) {
+        return (from == null || from.isBefore(sickLeave.getSlut())) && (to == null || to.isAfter(sickLeave.getSlut()));
     }
 }
