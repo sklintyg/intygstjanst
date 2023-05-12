@@ -91,7 +91,10 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
             getSickLeaveServiceRequest.getSickLeaveLengthIntervals(),
             getSickLeaveServiceRequest.getDiagnosisChapters(),
             getSickLeaveServiceRequest.getFromPatientAge(),
-            getSickLeaveServiceRequest.getToPatientAge());
+            getSickLeaveServiceRequest.getToPatientAge(),
+            getSickLeaveServiceRequest.getFromSickLeaveEndDate(),
+            getSickLeaveServiceRequest.getToSickLeaveEndDate()
+        );
     }
 
     private static List<String> getUnitIdFromRequestIfProvided(GetSickLeaveServiceRequest getSickLeaveServiceRequest,

@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 import lombok.Data;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
@@ -36,5 +37,7 @@ public class SickLeaveRequestDTO {
     private Integer fromPatientAge;
     private Integer toPatientAge;
     private String protectedPersonFilterId;
+    private LocalDate fromSickLeaveEndDate;
+    private LocalDate toSickLeaveEndDate;
 
 }
