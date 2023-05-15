@@ -21,7 +21,9 @@ package se.inera.intyg.intygstjanst.web.integration.testability.util;
 
 import java.io.StringReader;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.xml.bind.JAXB;
@@ -102,8 +104,12 @@ public class IntegrationTestUtil {
         requestTemplate.add("diagnosisCodes", diagnosisCode);
         requestTemplate.add("workCapacity", workCapacities);
         requestTemplate.add("occupation", testabilityConfigProvider.getOccupation());
-        requestTemplate.add("send", testabilityConfigProvider.isSend());
+        requestTemplate.add("signedAndSentDateTime", dateTimeAsStr(testabilityConfigProvider.getSignTimestamp()));
         applyToFromDatesToRequestTemplate(requestTemplate, testabilityConfigProvider.getFromDays(), testabilityConfigProvider.getToDays());
+    }
+
+    private static String dateTimeAsStr(LocalDateTime localDateTime) {
+        return localDateTime.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     private static String getRelation(String relationId, STGroupFile templateGroup, RelationKod relationKod) {

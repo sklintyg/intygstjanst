@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.integration.testability.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,4 +48,5 @@ public class TestabilityConfigProvider {
     private List<String> workCapacity;
     private boolean send;
     private boolean revoked;
+    private LocalDateTime signTimestamp;
 }
