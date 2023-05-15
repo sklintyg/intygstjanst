@@ -88,26 +88,26 @@ public class TestabilityServiceImpl implements TestabilityService {
     }
 
     @Override
-    public void create(CreateSickLeaveRequestDTO createSickLeaveRequestDTO) {
-        integrationTestUtil.registerCertificateTestabilityCreate(
-            getConfig(
-                createSickLeaveRequestDTO.getPatientId(),
-                createSickLeaveRequestDTO.getFromDays(),
-                createSickLeaveRequestDTO.getToDays(),
-                createSickLeaveRequestDTO.getDiagnosisCode(),
-                createSickLeaveRequestDTO.getRelationsId(),
-                createSickLeaveRequestDTO.getRelationKod(),
-                getRandomId(),
-                createSickLeaveRequestDTO.getOccupation(),
-                createSickLeaveRequestDTO.getDoctorId(),
-                createSickLeaveRequestDTO.getCareUnitId(),
-                createSickLeaveRequestDTO.getWorkCapacity(),
-                createSickLeaveRequestDTO.getCareProviderId(),
-                createSickLeaveRequestDTO.isSend(),
-                createSickLeaveRequestDTO.isRevoked(),
-                createSickLeaveRequestDTO.getSignTimestamp())
-
+    public String create(CreateSickLeaveRequestDTO createSickLeaveRequestDTO) {
+        final var testabilityConfigProvider = getConfig(
+            createSickLeaveRequestDTO.getPatientId(),
+            createSickLeaveRequestDTO.getFromDays(),
+            createSickLeaveRequestDTO.getToDays(),
+            createSickLeaveRequestDTO.getDiagnosisCode(),
+            createSickLeaveRequestDTO.getRelationsId(),
+            createSickLeaveRequestDTO.getRelationKod(),
+            getRandomId(),
+            createSickLeaveRequestDTO.getOccupation(),
+            createSickLeaveRequestDTO.getDoctorId(),
+            createSickLeaveRequestDTO.getCareUnitId(),
+            createSickLeaveRequestDTO.getWorkCapacity(),
+            createSickLeaveRequestDTO.getCareProviderId(),
+            createSickLeaveRequestDTO.isSend(),
+            createSickLeaveRequestDTO.isRevoked(),
+            createSickLeaveRequestDTO.getSignTimestamp()
         );
+        integrationTestUtil.registerCertificateTestabilityCreate(testabilityConfigProvider);
+        return testabilityConfigProvider.getCertificateId();
     }
 
     private List<TestabilityConfigProvider> testabilityConfigProviderList() {

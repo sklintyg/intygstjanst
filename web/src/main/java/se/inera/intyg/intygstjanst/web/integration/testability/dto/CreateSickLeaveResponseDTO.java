@@ -17,13 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.service;
+package se.inera.intyg.intygstjanst.web.integration.testability.dto;
 
-import se.inera.intyg.intygstjanst.web.integration.testability.dto.CreateSickLeaveRequestDTO;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public interface TestabilityService {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class CreateSickLeaveResponseDTO {
 
-    void createDefaultTestData();
+    private String certificateId;
+    private String message;
 
-    String create(CreateSickLeaveRequestDTO testabilityConfigProvider);
 }

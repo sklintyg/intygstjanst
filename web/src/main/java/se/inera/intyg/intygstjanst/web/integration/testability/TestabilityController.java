@@ -29,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.integration.testability.dto.CreateSickLeaveRequestDTO;
+import se.inera.intyg.intygstjanst.web.integration.testability.dto.CreateSickLeaveResponseDTO;
 import se.inera.intyg.intygstjanst.web.service.TestabilityService;
 
 @Path("/testability")
@@ -58,10 +59,12 @@ public class TestabilityController {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/createSickLeave")
     public Response createSickLeave(CreateSickLeaveRequestDTO createSickLeaveRequestDTO) {
-        testabilityService.create(createSickLeaveRequestDTO);
-        return Response.ok(String.format("Successfully created sickleave for patient: %s on unit: %s for doctor: %s",
+        final var certificateId = testabilityService.create(createSickLeaveRequestDTO);
+        final var createSickLeaveResponseDTO = new CreateSickLeaveResponseDTO(certificateId,
+            String.format("Successfully created sick leave for patient: %s. On unit: %s. For doctor: %s.",
                 createSickLeaveRequestDTO.getPatientId(),
-                createSickLeaveRequestDTO.getCareUnitId()),
-            createSickLeaveRequestDTO.getDoctorId()).build();
+                createSickLeaveRequestDTO.getCareUnitId(),
+                createSickLeaveRequestDTO.getDoctorId()));
+        return Response.ok(createSickLeaveResponseDTO).build();
     }
 }
