@@ -29,6 +29,4 @@ import lombok.NoArgsConstructor;
 public class CreateSickLeaveResponseDTO {
 
     private String certificateId;
-    private String message;
-
 }

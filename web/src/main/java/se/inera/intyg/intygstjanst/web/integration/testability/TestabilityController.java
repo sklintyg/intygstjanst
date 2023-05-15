@@ -60,11 +60,10 @@ public class TestabilityController {
     @Path("/createSickLeave")
     public Response createSickLeave(CreateSickLeaveRequestDTO createSickLeaveRequestDTO) {
         final var certificateId = testabilityService.create(createSickLeaveRequestDTO);
-        final var createSickLeaveResponseDTO = new CreateSickLeaveResponseDTO(certificateId,
-            String.format("Successfully created sick leave for patient: %s. On unit: %s. For doctor: %s.",
-                createSickLeaveRequestDTO.getPatientId(),
-                createSickLeaveRequestDTO.getCareUnitId(),
-                createSickLeaveRequestDTO.getDoctorId()));
-        return Response.ok(createSickLeaveResponseDTO).build();
+        return Response.ok(
+            new CreateSickLeaveResponseDTO(
+                certificateId
+            )
+        ).build();
     }
 }
