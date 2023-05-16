@@ -79,9 +79,6 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         queryStrBuilder.append("JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc ");
         queryStrBuilder.append("WHERE sc.careGiverId = :careGiverHsaId ");
         queryStrBuilder.append("AND sc.careUnitId IN (:careUnitHsaId) ");
-        if (doctorIds != null && !doctorIds.isEmpty()) {
-            queryStrBuilder.append("AND sc.signingDoctorId IN (:doctorId) ");
-        }
         queryStrBuilder.append("AND ((scwc.fromDate <= :today AND scwc.toDate >= :today) ");
         if (recentlyClosed != null) {
             queryStrBuilder.append("OR (scwc.toDate < :today AND scwc.toDate >= :recentlyClosed)) ");
@@ -95,10 +92,6 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
             .setParameter("careGiverHsaId", careGiverId)
             .setParameter("careUnitHsaId", unitIds)
             .setParameter("today", activeDate.format(DateTimeFormatter.ISO_DATE));
-
-        if (doctorIds != null && !doctorIds.isEmpty()) {
-            sjukfallCertificateTypedQuery.setParameter("doctorId", doctorIds);
-        }
 
         if (recentlyClosed != null) {
             sjukfallCertificateTypedQuery.setParameter("recentlyClosed", recentlyClosed.format(DateTimeFormatter.ISO_DATE));
