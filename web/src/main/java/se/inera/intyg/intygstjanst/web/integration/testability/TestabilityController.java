@@ -18,15 +18,19 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.testability;
 
-import static se.inera.intyg.intygstjanst.web.service.impl.TestabilityServiceImpl.ALFA_MEDICINCENTRUM;
-import static se.inera.intyg.intygstjanst.web.service.impl.TestabilityServiceImpl.ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALFA_MEDICINCENTRUM;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.web.integration.testability.dto.CreateSickLeaveRequestDTO;
+import se.inera.intyg.intygstjanst.web.integration.testability.dto.CreateSickLeaveResponseDTO;
 import se.inera.intyg.intygstjanst.web.service.TestabilityService;
 
 @Path("/testability")
@@ -34,7 +38,7 @@ public class TestabilityController {
 
     private final TestabilityService testabilityService;
 
-    private static final String VERIFICATION_MESSAGE = String.format("Test data sucsessfully created for units: %s & %s",
+    private static final String VERIFICATION_MESSAGE = String.format("Test data successfully created for units: %s & %s",
         ALFA_MEDICINCENTRUM, ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN);
 
     public TestabilityController(TestabilityService testabilityService) {
@@ -48,5 +52,28 @@ public class TestabilityController {
     public Response createDefaultTestData() {
         testabilityService.createDefaultTestData();
         return Response.ok(VERIFICATION_MESSAGE).build();
+    }
+
+    @PrometheusTimeMethod
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/createSickLeave")
+    public Response createSickLeave(CreateSickLeaveRequestDTO createSickLeaveRequestDTO) {
+        final var certificateId = testabilityService.create(createSickLeaveRequestDTO);
+        return Response.ok(
+            new CreateSickLeaveResponseDTO(
+                certificateId
+            )
+        ).build();
+    }
+
+    @PrometheusTimeMethod
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/testDataOptions")
+    public Response getAvailableTestDataOptions() {
+        final var availableTestDataOptions = testabilityService.getTestDataOptions();
+        return Response.ok(availableTestDataOptions).build();
     }
 }

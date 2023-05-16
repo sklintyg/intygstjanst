@@ -19,34 +19,14 @@
 
 package se.inera.intyg.intygstjanst.web.integration.testability.dto;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import se.inera.intyg.common.support.common.enumerations.RelationKod;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TestabilityConfigProvider {
+public class CreateSickLeaveResponseDTO {
 
-    private String careProviderId;
     private String certificateId;
-    private String patientId;
-    private int fromDays;
-    private int toDays;
-    private String careUnitId;
-    private String doctorId;
-    private String doctorName;
-    private String relationsId;
-    private RelationKod relationKod;
-    private List<String> diagnosisCode;
-    private String occupation;
-    private List<String> workCapacity;
-    private boolean send;
-    private boolean revoked;
-    private LocalDateTime signTimestamp;
 }
