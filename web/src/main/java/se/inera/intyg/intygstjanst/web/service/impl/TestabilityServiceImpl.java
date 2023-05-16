@@ -106,7 +106,7 @@ public class TestabilityServiceImpl implements TestabilityService {
             createSickLeaveRequestDTO.getCareProviderId(),
             createSickLeaveRequestDTO.isSend(),
             createSickLeaveRequestDTO.isRevoked(),
-            createSickLeaveRequestDTO.getSignTimestamp()
+            createSickLeaveRequestDTO.getSignTimestamp() != null ? createSickLeaveRequestDTO.getSignTimestamp() : LocalDateTime.now()
         );
         integrationTestUtil.registerCertificateTestabilityCreate(testabilityConfigProvider);
         return testabilityConfigProvider.getCertificateId();

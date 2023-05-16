@@ -138,7 +138,7 @@ public class TestDataProvider {
             new Patient(ATHENA_ANDERSSON_ID, "Athena Andersson"),
             new Patient(ALVE_ALFRIDSSON_ID, "Alve Alfridsson"),
             new Patient(BOSTADSLOSE_ANDERSSON_ID, "Bostadslöse Andersson"),
-            new Patient(ATLAS_ABRAHAMSSON_ID, "Atlast Abrahamsson"),
+            new Patient(ATLAS_ABRAHAMSSON_ID, "Atlast Abrahamsson (Avliden)"),
             new Patient(ANONYMA_ATTILA_ID, "Anonyma Attila (person med sekretessmarkerade personuppgifter)"),
             new Patient(ALEXA_VALFRIDSSON, "Alexa Valfridsson"),
             new Patient(AGNARSSON_AGNARSSON, "Agnarsson Agnarsson"),
