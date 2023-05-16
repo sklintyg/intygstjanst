@@ -360,7 +360,7 @@ class GetSickLeavesServiceImplTest {
         doReturn(FILTERED_SICK_LEAVES)
             .when(filterSickLeaves)
             .filter(SICK_LEAVES, SICK_LEAVE_LENGTH_INTERVALS, DIAGNOSIS_CHAPTERS, FROM_PATIENT_AGE,
-                    TO_PATIENT_AGE, FROM_END_DATE, TO_END_DATE, anyList());
+                    TO_PATIENT_AGE, FROM_END_DATE, TO_END_DATE, DOCTOR_IDS);
 
         final var actualSickLeaveList = getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
 
