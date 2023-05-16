@@ -266,7 +266,8 @@ class GetSickLeaveCertificatesImplTest {
             when(intygDataConverter.convert(any())).thenReturn(intygDataList);
             final var captor = ArgumentCaptor.forClass(List.class);
             getSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, PATIENT_IDS, MAX_CERTIFICATE_GAP,
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);            verify(puFilterService).enrichWithPatientNameAndFilter(captor.capture(), anyString());
+                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
+            verify(puFilterService).enrichWithPatientNameAndFilter(captor.capture(), anyString());
             assertEquals(intygDataList, captor.getValue());
         }
 
@@ -274,7 +275,8 @@ class GetSickLeaveCertificatesImplTest {
         void shallCallPuFilterServiceWithFilterOnProtectedPerson() {
             final var captor = ArgumentCaptor.forClass(String.class);
             getSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, PATIENT_IDS, MAX_CERTIFICATE_GAP,
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);            verify(puFilterService).enrichWithPatientNameAndFilter(anyList(), captor.capture());
+                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
+            verify(puFilterService).enrichWithPatientNameAndFilter(anyList(), captor.capture());
             assertEquals(PROTECTED_PERSON_FILTER_ID, captor.getValue());
         }
     }
