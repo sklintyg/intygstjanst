@@ -42,18 +42,15 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
     private final GetActiveSickLeaveCertificates getActiveSickLeaveCertificates;
     private final GetSickLeaveCertificates getSickLeaveCertificates;
     private final FilterSickLeaves filterSickLeaves;
-    private final PuFilterService puFilterService;
 
     public GetSickLeavesServiceImpl(HsaService hsaService,
                                     GetActiveSickLeaveCertificates getActiveSickLeaveCertificates,
                                     GetSickLeaveCertificates getSickLeaveCertificates,
-                                    FilterSickLeaves filterSickLeaves,
-                                    PuFilterService puFilterService) {
+                                    FilterSickLeaves filterSickLeaves) {
         this.hsaService = hsaService;
         this.getActiveSickLeaveCertificates = getActiveSickLeaveCertificates;
         this.getSickLeaveCertificates = getSickLeaveCertificates;
         this.filterSickLeaves = filterSickLeaves;
-        this.puFilterService = puFilterService;
     }
 
     @Override
@@ -74,10 +71,6 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
             return Collections.emptyList();
         }
 
-        sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
-        puFilterService.enrichWithPatientNameAndFilter(intygData, getSickLeaveServiceRequest.getProtectedPersonFilterId());
-        LOG.info(sickLeaveLogMessageFactory.message(GET_AND_FILTER_PROTECTED_PATIENTS, intygData.size()));
-
         final var patientIds = intygData.stream()
             .map(IntygData::getPatientId)
             .collect(Collectors.toList());
@@ -88,7 +81,8 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
             careUnitAndSubUnits,
             patientIds,
             getSickLeaveServiceRequest.getMaxCertificateGap(),
-            getSickLeaveServiceRequest.getMaxDaysSinceSickLeaveCompleted()
+            getSickLeaveServiceRequest.getMaxDaysSinceSickLeaveCompleted(),
+            getSickLeaveServiceRequest.getProtectedPersonFilterId()
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES, intygData.size()));
 
