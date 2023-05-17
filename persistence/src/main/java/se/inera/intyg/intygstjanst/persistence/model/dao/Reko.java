@@ -37,7 +37,7 @@ public class Reko {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
     @Column(name = "STATUS", nullable = false)
     private String status;
     @Column(name = "PATIENT_ID", nullable = false)
