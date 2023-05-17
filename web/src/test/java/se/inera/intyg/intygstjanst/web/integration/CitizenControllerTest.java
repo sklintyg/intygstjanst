@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.integrationtest;
+package se.inera.intyg.intygstjanst.web.integration;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -25,15 +25,12 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.web.integration.CitizenController;
 import se.inera.intyg.intygstjanst.web.integration.CitizenController.RequestObject;
 import se.inera.intyg.intygstjanst.web.integration.CitizenController.ResponseObject;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
