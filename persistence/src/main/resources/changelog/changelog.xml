@@ -649,13 +649,8 @@
 	</changeSet>
 
 	<changeSet id="54" author="cs">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<indexExists tableName="REKO" indexName="IDX_PATIENT_ID_CARE_UNIT_ID_SICK_LEAVE_TIMESTAMP"/>
-			</not>
-		</preConditions>
 		<createTable tableName="REKO">
-			<column name="ID" type="varchar(255)">
+			<column name="ID" type="bigint">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="STATUS" type="varchar(255)">
@@ -686,7 +681,7 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-		<createIndex indexName="IDX_PATIENT_ID_CARE_UNIT_ID_SICK_LEAVE_TIMESTAMP" tableName="REKO" unique="false">
+		<createIndex indexName="IDX_REKO_PATIENT_ID_CARE_UNIT_ID_SICK_LEAVE_TIMESTAMP" tableName="REKO" unique="false">
 			<column name="PATIENT_ID"/>
 			<column name="CARE_UNIT_ID"/>
 			<column name="SICK_LEAVE_TIMESTAMP"/>

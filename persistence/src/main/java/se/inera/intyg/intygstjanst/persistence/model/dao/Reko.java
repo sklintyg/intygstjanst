@@ -22,17 +22,22 @@ package se.inera.intyg.intygstjanst.persistence.model.dao;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.Value;
 import org.hibernate.annotations.Type;
 
 @Entity
+@Value
 @Table(name = "REKO")
 public class Reko {
 
     @Id
     @Column(name = "ID")
-    private String id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
     @Column(name = "STATUS", nullable = false)
     private String status;
     @Column(name = "PATIENT_ID", nullable = false)
@@ -54,80 +59,4 @@ public class Reko {
     @Column(name = "REGISTRATION_TIMESTAMP", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime")
     private LocalDateTime registrationTimestamp;
-
-    public String getId() {
-        return id;
-    }
-
-    public String getCareUnitId() {
-        return careUnitId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public String getPatientId() {
-        return patientId;
-    }
-
-    public String getStaffId() {
-        return staffId;
-    }
-
-    public String getStaffName() {
-        return staffName;
-    }
-
-    public String getCareProviderId() {
-        return careProviderId;
-    }
-
-    public String getUnitId() {
-        return unitId;
-    }
-
-    public LocalDateTime getSickLeaveTimestamp() {
-        return sickLeaveTimestamp;
-    }
-
-    public LocalDateTime getRegistrationTimestamp() {
-        return registrationTimestamp;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setCareUnitId(String careUnitId) {
-        this.careUnitId = careUnitId;
-    }
-
-    public void setPatientId(String patientId) {
-        this.patientId = patientId;
-    }
-
-    public void setStaffId(String staffId) {
-        this.staffId = staffId;
-    }
-
-    public void setStaffName(String staffName) {
-        this.staffName = staffName;
-    }
-
-    public void setCareProviderId(String careProviderId) {
-        this.careProviderId = careProviderId;
-    }
-
-    public void setUnitId(String unitId) {
-        this.unitId = unitId;
-    }
-
-    public void setSickLeaveTimestamp(LocalDateTime sickLeaveTimestamp) {
-        this.sickLeaveTimestamp = sickLeaveTimestamp;
-    }
-
-    public void setRegistrationTimestamp(LocalDateTime registrationTimestamp) {
-        this.registrationTimestamp = registrationTimestamp;
-    }
 }
