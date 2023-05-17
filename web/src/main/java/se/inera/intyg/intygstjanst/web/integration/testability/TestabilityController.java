@@ -18,15 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.testability;
 
-import static se.inera.intyg.intygstjanst.web.service.impl.TestabilityServiceImpl.ALFA_MEDICINCENTRUM;
-import static se.inera.intyg.intygstjanst.web.service.impl.TestabilityServiceImpl.ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALFA_MEDICINCENTRUM;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.integration.testability.dto.CreateSickLeaveRequestDTO;
 import se.inera.intyg.intygstjanst.web.integration.testability.dto.CreateSickLeaveResponseDTO;
@@ -58,12 +60,21 @@ public class TestabilityController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/createSickLeave")
-    public Response createSickLeave(CreateSickLeaveRequestDTO createSickLeaveRequestDTO) {
+    public Response createSickLeave(@RequestBody CreateSickLeaveRequestDTO createSickLeaveRequestDTO) {
         final var certificateId = testabilityService.create(createSickLeaveRequestDTO);
         return Response.ok(
             new CreateSickLeaveResponseDTO(
                 certificateId
             )
         ).build();
+    }
+
+    @PrometheusTimeMethod
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/testDataOptions")
+    public Response getAvailableTestDataOptions() {
+        final var availableTestDataOptions = testabilityService.getTestDataOptions();
+        return Response.ok(availableTestDataOptions).build();
     }
 }

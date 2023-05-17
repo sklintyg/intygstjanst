@@ -19,6 +19,44 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.AGNARSSON_AGNARSSON;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALBERTINA_ALISON;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALBERT_ALBERTSSON;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALBIN_ANDER;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALEXA_VALFRIDSSON;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALFA_MEDICINCENTRUM;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALFA_REGIONEN;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALINE_ANDERSSON;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALLAN_ALLANSON;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALMA_ALMARSSON;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALVE_ALFRIDSSON_ID;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ANONYMA_ATTILA_ID;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ARBETSSOKANDE;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ATHENA_ANDERSSON_ID;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ATLAS_ABRAHAMSSON_ID;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.BOSTADSLOSE_ANDERSSON_ID;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DEFAULT_RELATIONS_ID;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DEFAULT_RELATIONS_KOD;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DEGREE_100;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DEGREE_25;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DEGREE_50;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DEGREE_75;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DIAGNOSIS_CODE_A010;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DIAGNOSIS_CODE_F430;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DIAGNOSIS_CODE_K23;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DIAGNOSIS_CODE_M12;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DIAGNOSIS_CODE_N20;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DIAGNOSIS_CODE_P23;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DIAGNOSIS_CODE_R12;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DIAGNOSIS_CODE_Z010;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DOKTOR_AJLA;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.DOKTOR_ALF;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.FORADLRARLEDIGHET_VARD_AV_BARN;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.INVALID_CODE;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.NUVARANDE_ARBETE;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.STUDIER;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,54 +65,18 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.testability.dto.CreateSickLeaveRequestDTO;
+import se.inera.intyg.intygstjanst.web.integration.testability.dto.TestDataOptionsDTO;
 import se.inera.intyg.intygstjanst.web.integration.testability.dto.TestabilityConfigProvider;
 import se.inera.intyg.intygstjanst.web.integration.testability.util.IntegrationTestUtil;
+import se.inera.intyg.intygstjanst.web.integration.testability.util.TestDataProvider;
 import se.inera.intyg.intygstjanst.web.service.TestabilityService;
 
 @Service
 public class TestabilityServiceImpl implements TestabilityService {
 
     private final HsaService hsaService;
-    public static final String ATHENA_ANDERSSON_ID = "194011306125";
-    public static final String ALVE_ALFRIDSSON_ID = "194112128154";
-    public static final String BOSTADSLOSE_ANDERSSON_ID = "194110147495";
-    public static final String ATLAS_ABRAHAMSSON_ID = "194111299055";
-    public static final String ANONYMA_ATTILA_ID = "194012019149";
-    public static final String ALEXA_VALFRIDSSON = "194110299221";
-    public static final String AGNARSSON_AGNARSSON = "198901192396";
-    public static final String ALBERT_ALBERTSSON = "200210282398";
-    public static final String ALBERTINA_ALISON = "200210292389";
-    public static final String ALBIN_ANDER = "197901242391";
-    public static final String ALINE_ANDERSSON = "197901252382";
-    public static final String ALLAN_ALLANSON = "199606282391";
-    public static final String ALMA_ALMARSSON = "199606292382";
 
-    private static final String DEFAULT_RELATIONS_ID = null;
-    private static final RelationKod DEFAULT_RELATIONS_KOD = null;
-    private static final String DIAGNOSIS_CODE_A010 = "A010";
-    private static final String DIAGNOSIS_CODE_M12 = "M12";
-    private static final String DIAGNOSIS_CODE_F430 = "F430";
-    private static final String INVALID_CODE = "X";
-    private static final String DIAGNOSIS_CODE_N20 = "N20";
-    private static final String DIAGNOSIS_CODE_K23 = "K23";
-    private static final String DIAGNOSIS_CODE_R12 = "R12";
-    private static final String DIAGNOSIS_CODE_Z010 = "Z010";
-    private static final String DIAGNOSIS_CODE_P23 = "P23";
-    private static final String DOKTOR_AJLA = "TSTNMT2321000156-DRAA";
-    private static final String DOKTOR_ALF = "TSTNMT2321000156-DRAF";
-    public static final String ALFA_MEDICINCENTRUM = "TSTNMT2321000156-ALMC";
-    public static final String ALFA_REGIONEN = "TSTNMT2321000156-ALFA";
-    public static final String ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN = "TSTNMT2321000156-ALIM";
-    private static final String DEGREE_25 = "EN_FJARDEDEL";
-    private static final String DEGREE_75 = "TRE_FJARDEDEL";
-    private static final String DEGREE_100 = "HELT_NEDSATT";
-    private static final String DEGREE_50 = "HALFTEN";
     private final IntegrationTestUtil integrationTestUtil;
-
-    private static final String NUVARANDE_ARBETE = "NUVARANDE_ARBETE";
-    private static final String ARBETSSOKANDE = "ARBETSSOKANDE";
-    private static final String FORADLRARLEDIGHET_VARD_AV_BARN = "FORALDRALEDIG";
-    private static final String STUDIER = "STUDIER";
 
     public TestabilityServiceImpl(HsaService hsaService,
         IntegrationTestUtil integrationTestUtil) {
@@ -104,10 +106,40 @@ public class TestabilityServiceImpl implements TestabilityService {
             createSickLeaveRequestDTO.getCareProviderId(),
             createSickLeaveRequestDTO.isSend(),
             createSickLeaveRequestDTO.isRevoked(),
-            createSickLeaveRequestDTO.getSignTimestamp()
+            createSickLeaveRequestDTO.getSignTimestamp() != null ? createSickLeaveRequestDTO.getSignTimestamp() : LocalDateTime.now()
         );
         integrationTestUtil.registerCertificateTestabilityCreate(testabilityConfigProvider);
         return testabilityConfigProvider.getCertificateId();
+    }
+
+    @Override
+    public TestDataOptionsDTO getTestDataOptions() {
+        return TestDataOptionsDTO.builder()
+            .careProviderIds(
+                TestDataProvider.getCareProviders()
+            )
+            .careUnitIds(
+                TestDataProvider.getCareUnits()
+            )
+            .doctorIds(
+                TestDataProvider.getDoctorIds()
+            )
+            .patientIds(
+                TestDataProvider.getPatientIds()
+            )
+            .relationCodes(
+                TestDataProvider.getRelationCodes()
+            )
+            .diagnosisCodes(
+                TestDataProvider.getDiagnosisCodes()
+            )
+            .occupations(
+                TestDataProvider.getOccupations()
+            )
+            .workCapacity(
+                TestDataProvider.getWorkCapacities()
+            )
+            .build();
     }
 
     private List<TestabilityConfigProvider> testabilityConfigProviderList() {

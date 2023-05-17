@@ -1,0 +1,45 @@
+/*
+ * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ *
+ * This file is part of sklintyg (https://github.com/sklintyg).
+ *
+ * sklintyg is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * sklintyg is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package se.inera.intyg.intygstjanst.web.integration.testability.dto;
+
+import java.util.List;
+import lombok.Builder;
+import lombok.Data;
+import se.inera.intyg.intygstjanst.web.integration.testability.model.CareProvider;
+import se.inera.intyg.intygstjanst.web.integration.testability.model.CareUnit;
+import se.inera.intyg.intygstjanst.web.integration.testability.model.Doctor;
+import se.inera.intyg.intygstjanst.web.integration.testability.model.Occupation;
+import se.inera.intyg.intygstjanst.web.integration.testability.model.Patient;
+import se.inera.intyg.intygstjanst.web.integration.testability.model.Relation;
+import se.inera.intyg.intygstjanst.web.integration.testability.model.WorkCapacity;
+
+@Data
+@Builder
+public class TestDataOptionsDTO {
+
+    private List<CareProvider> careProviderIds;
+    private List<CareUnit> careUnitIds;
+    private List<Doctor> doctorIds;
+    private List<Patient> patientIds;
+    private List<Relation> relationCodes;
+    private List<String> diagnosisCodes;
+    private List<Occupation> occupations;
+    private List<WorkCapacity> workCapacity;
+}
