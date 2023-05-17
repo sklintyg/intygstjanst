@@ -320,6 +320,8 @@ class FilterSickLeavesImplTest {
         List<SjukfallEnhet> sickLeaves;
         Lakare doctor1;
         Lakare doctor2;
+        SjukfallEnhet expectedSickLeave;
+        SjukfallEnhet anotherSickLeave;
 
         @BeforeEach
         void setup() {
@@ -328,15 +330,15 @@ class FilterSickLeavesImplTest {
             doctor1.setId("ID1");
             doctor2.setId("ID2");
 
-            final var expectedSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID);
+            expectedSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID);
             expectedSickLeave.setLakare(doctor1);
-            final var anotherSickLeave = createSjukFallEnhet(ANOTHER_DIAGNOSIS_CODE, 12, ANOTHER_PATIENT_ID);
+            anotherSickLeave = createSjukFallEnhet(ANOTHER_DIAGNOSIS_CODE, 12, ANOTHER_PATIENT_ID);
             anotherSickLeave.setLakare(doctor2);
             sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
         }
 
         @Test
-        void shouldNotFilterOnDoctorIdsIsNull() {
+        void shouldNotFilterOnDoctorIdsIfNull() {
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
                     null, null, null, TO_END_DATE, null);
 
@@ -344,7 +346,7 @@ class FilterSickLeavesImplTest {
         }
 
         @Test
-        void shouldNotFilterOnDoctorIdsIsEmpty() {
+        void shouldNotFilterOnDoctorIdsIfEmpty() {
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
                     null, null, null, TO_END_DATE, Collections.emptyList());
 
@@ -352,15 +354,16 @@ class FilterSickLeavesImplTest {
         }
 
         @Test
-        void shouldFilterOnDoctorId() {
+        void shouldFilterDoctorIdsExcludedInFilter() {
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
                     null, null, null, TO_END_DATE, Collections.singletonList(doctor1.getId()));
 
             assertEquals(1, actualSickLeaveList.size());
+            assertEquals(expectedSickLeave, actualSickLeaveList.get(0));
         }
 
         @Test
-        void shouldNotFilterOnDoctorIds() {
+        void shouldNotFilterDoctorIdsIncludedInFilter() {
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
                     null, null, null, TO_END_DATE, List.of(doctor1.getId(), doctor2.getId()));
 
