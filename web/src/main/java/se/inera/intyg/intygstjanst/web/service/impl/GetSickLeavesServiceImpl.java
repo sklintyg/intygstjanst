@@ -70,13 +70,13 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_ACTIVE_SICK_LEAVE_CERTIFICATES, intygData.size()));
 
-        if (intygData.isEmpty()) {
-            return Collections.emptyList();
-        }
-
         sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
         puFilterService.enrichWithPatientNameAndFilter(intygData, getSickLeaveServiceRequest.getProtectedPersonFilterId());
         LOG.info(sickLeaveLogMessageFactory.message(GET_AND_FILTER_PROTECTED_PATIENTS, intygData.size()));
+
+        if (intygData.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         final var patientIds = intygData.stream()
             .map(IntygData::getPatientId)

@@ -33,8 +33,7 @@ import se.inera.intyg.schemas.contract.Personnummer;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
@@ -52,6 +51,11 @@ public class PuFilterServiceImplTest {
     private static final String VARDENHET_1 = "vg-1-ve-1";
     private static final String LAKARE1_HSA_ID = "lakare-1";
     private static final String LAKARE1_NAMN = "Läkare Läkarsson";
+
+    @Test
+    public void testShouldNotThrowErrorIfListIsEmpty() {
+        assertDoesNotThrow(() -> puFilterService.enrichWithPatientNameAndFilter(Collections.emptyList(), LAKARE1_HSA_ID));
+    }
 
     @Test
     public void testSekretessmarkeradIsNotFilteredWhenFilterOnProtectedPersonIsFalse() {
