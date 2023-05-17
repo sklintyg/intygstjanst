@@ -25,6 +25,8 @@ import static org.mockito.Mockito.doReturn;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -75,7 +77,7 @@ class FilterSickLeavesImplTest {
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves,
                 List.of(new SickLeaveLengthInterval(6, 12), new SickLeaveLengthInterval(12, 40), new SickLeaveLengthInterval(50, 100)),
-                Collections.emptyList(), null, null, null, null);
+                Collections.emptyList(), null, null, null, null, Collections.emptyList());
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
@@ -89,7 +91,7 @@ class FilterSickLeavesImplTest {
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves,
                 List.of(new SickLeaveLengthInterval(6, 12), new SickLeaveLengthInterval(null, 40), new SickLeaveLengthInterval(50, 100)),
-                Collections.emptyList(), null, null, null, null);
+                Collections.emptyList(), null, null, null, null, Collections.emptyList());
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
@@ -103,7 +105,7 @@ class FilterSickLeavesImplTest {
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves,
                 List.of(new SickLeaveLengthInterval(6, 12), new SickLeaveLengthInterval(35, null), new SickLeaveLengthInterval(50, 100)),
-                Collections.emptyList(), null, null, null, null);
+                Collections.emptyList(), null, null, null, null, Collections.emptyList());
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
@@ -117,7 +119,7 @@ class FilterSickLeavesImplTest {
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves,
                 List.of(new SickLeaveLengthInterval(6, 12), new SickLeaveLengthInterval(null, null), new SickLeaveLengthInterval(50, 100)),
-                Collections.emptyList(), null, null, null, null);
+                Collections.emptyList(), null, null, null, null, Collections.emptyList());
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
@@ -130,7 +132,7 @@ class FilterSickLeavesImplTest {
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null,
-                    Collections.emptyList(), null, null, null, null);
+                    Collections.emptyList(), null, null, null, null, Collections.emptyList());
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
@@ -143,7 +145,7 @@ class FilterSickLeavesImplTest {
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, Collections.emptyList(),
-                    Collections.emptyList(), null, null, null, null);
+                    Collections.emptyList(), null, null, null, null, Collections.emptyList());
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
@@ -170,7 +172,7 @@ class FilterSickLeavesImplTest {
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null,
                 List.of(new DiagnosKapitel(DIAGNOSIS_CHAPTER)),
-                null, null, null, null);
+                null, null, null, null, Collections.emptyList());
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
@@ -183,7 +185,7 @@ class FilterSickLeavesImplTest {
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null,
-                    null, null, null, null, null);
+                    null, null, null, null, null, Collections.emptyList());
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
@@ -196,7 +198,7 @@ class FilterSickLeavesImplTest {
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null,
-                    null, null, null, null, null);
+                    null, null, null, null, null, Collections.emptyList());
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
@@ -222,7 +224,7 @@ class FilterSickLeavesImplTest {
                 .get(anotherSickLeave.getPatient().getId());
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
-                30, 60, null, null);
+                30, 60, null, null, Collections.emptyList());
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
@@ -235,7 +237,7 @@ class FilterSickLeavesImplTest {
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, null,
-                    null, 50, null, null);
+                    null, 50, null, null, Collections.emptyList());
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
@@ -248,7 +250,7 @@ class FilterSickLeavesImplTest {
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, null,
-                    50, null, null, null);
+                    50, null, null, null, Collections.emptyList());
 
             assertEquals(expectedSickLeaveList, actualSickLeaveList);
         }
@@ -265,7 +267,7 @@ class FilterSickLeavesImplTest {
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
-                    null, null, null, TO_END_DATE);
+                    null, null, null, TO_END_DATE, Collections.emptyList());
 
             assertEquals(sickLeaves, actualSickLeaveList);
         }
@@ -279,7 +281,7 @@ class FilterSickLeavesImplTest {
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
-                    null, null, FROM_END_DATE, null);
+                    null, null, FROM_END_DATE, null, Collections.emptyList());
 
             assertEquals(sickLeaves, actualSickLeaveList);
         }
@@ -293,7 +295,7 @@ class FilterSickLeavesImplTest {
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
-                    null, null, FROM_END_DATE, null);
+                    null, null, FROM_END_DATE, null, Collections.emptyList());
 
             assertEquals(0, actualSickLeaveList.size());
         }
@@ -307,9 +309,65 @@ class FilterSickLeavesImplTest {
             final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
 
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
-                    null, null, null, TO_END_DATE);
+                    null, null, null, TO_END_DATE, Collections.emptyList());
 
             assertEquals(0, actualSickLeaveList.size());
+        }
+    }
+
+    @Nested
+    class FilterOnDoctorIds {
+        List<SjukfallEnhet> sickLeaves;
+        Lakare doctor1;
+        Lakare doctor2;
+        SjukfallEnhet expectedSickLeave;
+        SjukfallEnhet anotherSickLeave;
+
+        @BeforeEach
+        void setup() {
+            doctor1 = new Lakare();
+            doctor2 = new Lakare();
+            doctor1.setId("ID1");
+            doctor2.setId("ID2");
+
+            expectedSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID);
+            expectedSickLeave.setLakare(doctor1);
+            anotherSickLeave = createSjukFallEnhet(ANOTHER_DIAGNOSIS_CODE, 12, ANOTHER_PATIENT_ID);
+            anotherSickLeave.setLakare(doctor2);
+            sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
+        }
+
+        @Test
+        void shouldNotFilterOnDoctorIdsIfNull() {
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
+                    null, null, null, TO_END_DATE, null);
+
+            assertEquals(sickLeaves, actualSickLeaveList);
+        }
+
+        @Test
+        void shouldNotFilterOnDoctorIdsIfEmpty() {
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
+                    null, null, null, TO_END_DATE, Collections.emptyList());
+
+            assertEquals(sickLeaves, actualSickLeaveList);
+        }
+
+        @Test
+        void shouldFilterDoctorIdsExcludedInFilter() {
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
+                    null, null, null, TO_END_DATE, Collections.singletonList(doctor1.getId()));
+
+            assertEquals(1, actualSickLeaveList.size());
+            assertEquals(expectedSickLeave, actualSickLeaveList.get(0));
+        }
+
+        @Test
+        void shouldNotFilterDoctorIdsIncludedInFilter() {
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
+                    null, null, null, TO_END_DATE, List.of(doctor1.getId(), doctor2.getId()));
+
+            assertEquals(sickLeaves, actualSickLeaveList);
         }
     }
 
