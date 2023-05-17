@@ -28,5 +28,6 @@
     <class>se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate</class>
     <class>se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate</class>
     <class>se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity</class>
+    <class>se.inera.intyg.intygstjanst.persistence.model.dao.Reko</class>
   </persistence-unit>
 </persistence>

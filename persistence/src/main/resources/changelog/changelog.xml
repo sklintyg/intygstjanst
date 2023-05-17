@@ -647,4 +647,49 @@
 			<column name="SIGNING_DOCTOR_ID"/>
 		</createIndex>
 	</changeSet>
+
+	<changeSet id="54" author="cs">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="REKO" indexName="IDX_PATIENT_ID_CARE_UNIT_ID_SICK_LEAVE_TIMESTAMP"/>
+			</not>
+		</preConditions>
+		<createTable tableName="REKO">
+			<column name="ID" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="STATUS" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PATIENT_ID" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="STAFF_ID" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="STAFF_NAME" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CARE_PROVIDER_ID" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CARE_UNIT_ID" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="UNIT_ID" type="varchar(255)">
+				<constraints nullable="true" />
+			</column>
+			<column name="SICK_LEAVE_TIMESTAMP" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="REGISTRATION_TIMESTAMP" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createIndex indexName="IDX_PATIENT_ID_CARE_UNIT_ID_SICK_LEAVE_TIMESTAMP" tableName="REKO" unique="false">
+			<column name="PATIENT_ID"/>
+			<column name="CARE_UNIT_ID"/>
+			<column name="SICK_LEAVE_TIMESTAMP"/>
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>
