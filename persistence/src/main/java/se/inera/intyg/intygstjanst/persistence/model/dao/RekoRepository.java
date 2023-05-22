@@ -19,7 +19,6 @@
 
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -31,6 +30,6 @@ public interface RekoRepository extends JpaRepository<Reko, Long> {
 
     List<Reko> findByPatientIdIn(List<String> patientIds);
 
-    List<Reko> findByPatientIdAndCareUnitIdAndSickLeaveTimestampGreaterThanEqual(String patientId, String careUnitId,
-        LocalDateTime sickLeaveTimestamp);
+    List<Reko> findByPatientIdInAndCareUnitId(List<String> patientId, String careUnitId);
+
 }
