@@ -26,16 +26,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.Value;
+import lombok.Data;
 import org.hibernate.annotations.Type;
 
 @Entity
-@Value
+@Data
 @Table(name = "REKO")
 public class Reko {
 
     @Id
-    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(name = "STATUS", nullable = false)
