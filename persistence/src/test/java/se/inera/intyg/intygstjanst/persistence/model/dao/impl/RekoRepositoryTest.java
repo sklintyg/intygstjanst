@@ -60,7 +60,7 @@ public class RekoRepositoryTest extends TestSupport {
         rekoRepository.save(expectedResult.get(0));
         rekoRepository.save(expectedResult.get(1));
         rekoRepository.save(expectedResult.get(2));
-        final var actualResult = rekoRepository.findByPatientIds(
+        final var actualResult = rekoRepository.findByPatientIdIn(
             expectedResult.stream().map(Reko::getPatientId).collect(Collectors.toList()));
         assertEquals(expectedResult, actualResult);
     }
