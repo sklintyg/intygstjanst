@@ -30,6 +30,6 @@ public interface RekoRepository extends JpaRepository<Reko, Long> {
 
     List<Reko> findByPatientIdIn(List<String> patientIds);
 
-    List<Reko> findByPatientIdInAndCareUnitId(List<String> patientId, String careUnitId);
+    List<Reko> findByPatientIdInAndCareUnitId(List<String> patientIds, String careUnitId);
 
 }
