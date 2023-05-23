@@ -32,6 +32,6 @@ public class GetSickLeaveFilterServiceResponse {
     List<Lakare> activeDoctors;
     List<DiagnosKapitel> diagnosisChapters;
     int nbrOfSickLeaves;
-    List<RekoStatusType> rekoStatusTypes;
+    List<RekoStatusDTO> rekoStatusTypes;
 
 }

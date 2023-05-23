@@ -13,4 +13,18 @@ public enum RekoStatusType {
     RekoStatusType(String name) {
         this.name = name;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public static RekoStatusType fromId(String id) {
+        for (final var type : values()) {
+            if (type.toString().equals(id)) {
+                return type;
+            }
+        }
+
+        return REKO_1;
+    }
 }

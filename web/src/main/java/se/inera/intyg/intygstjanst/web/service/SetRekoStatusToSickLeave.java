@@ -1,5 +1,7 @@
 package se.inera.intyg.intygstjanst.web.service;
 
+import java.time.LocalDateTime;
+
 public interface SetRekoStatusToSickLeave {
     void set(String patientId,
              String status,
@@ -8,6 +10,5 @@ public interface SetRekoStatusToSickLeave {
              String unitId,
              String staffId,
              String staffName,
-             int maxCertificateGap,
-             int maxDaysSinceSickLeaveCompleted);
+             LocalDateTime sickLeaveTimestamp);
 }
