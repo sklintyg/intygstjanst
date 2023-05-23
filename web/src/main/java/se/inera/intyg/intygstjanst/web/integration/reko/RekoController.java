@@ -31,7 +31,9 @@ public class RekoController {
                 request.getStatus(),
                 request.getCareProviderId(),
                 request.getCareUnitId(),
-                request.getUnitId()
+                request.getUnitId(),
+                request.getMaxCertificateGap(),
+                request.getMaxDaysSinceSickLeaveCompleted()
         );
 
         return Response.ok().build();
