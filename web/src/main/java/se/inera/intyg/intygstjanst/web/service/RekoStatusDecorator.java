@@ -5,5 +5,5 @@ import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import java.util.List;
 
 public interface RekoStatusDecorator {
-    void decorate(List<SjukfallEnhet> sickLeaves);
+    void decorate(List<SjukfallEnhet> sickLeaves, String careUnitId);
 }

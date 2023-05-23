@@ -88,7 +88,7 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES, intygData.size()));
 
-        rekoStatusDecorator.decorate(sjukfallEnhetList);
+        rekoStatusDecorator.decorate(sjukfallEnhetList, getSickLeaveServiceRequest.getCareUnitId());
 
         return filterSickLeaves.filter(
             sjukfallEnhetList,
