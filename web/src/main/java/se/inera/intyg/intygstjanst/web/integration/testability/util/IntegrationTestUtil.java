@@ -80,12 +80,12 @@ public class IntegrationTestUtil {
     }
 
     private void updateCertificateStatus(TestabilityConfigProvider testabilityConfigProvider) {
-        if (testabilityConfigProvider.isRevoked()) {
-            testabilityRevokeCertificate.revokeCertificate(testabilityConfigProvider.getPatientId(),
-                testabilityConfigProvider.getCertificateId());
-        }
         if (testabilityConfigProvider.isSend()) {
             testabilitySendCertificate.sendCertificate(testabilityConfigProvider.getPatientId(),
+                testabilityConfigProvider.getCertificateId());
+        }
+        if (testabilityConfigProvider.isRevoked()) {
+            testabilityRevokeCertificate.revokeCertificate(testabilityConfigProvider.getPatientId(),
                 testabilityConfigProvider.getCertificateId());
         }
     }

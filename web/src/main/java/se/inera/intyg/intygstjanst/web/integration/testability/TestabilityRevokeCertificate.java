@@ -25,6 +25,7 @@ import se.inera.intyg.common.support.integration.module.exception.CertificateRev
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @Component
@@ -33,13 +34,19 @@ public class TestabilityRevokeCertificate {
 
     private final CertificateService certificateService;
 
-    public TestabilityRevokeCertificate(CertificateService certificateService) {
+    private final SjukfallCertificateService sjukfallCertificateService;
+
+    public TestabilityRevokeCertificate(CertificateService certificateService, SjukfallCertificateService sjukfallCertificateService) {
         this.certificateService = certificateService;
+        this.sjukfallCertificateService = sjukfallCertificateService;
     }
 
     public void revokeCertificate(String patientId, String certificateId) {
         try {
-            certificateService.revokeCertificate(Personnummer.createPersonnummer(patientId).orElse(null), certificateId);
+            final var certificate = certificateService.revokeCertificate(Personnummer.createPersonnummer(patientId).orElse(null),
+                certificateId);
+            sjukfallCertificateService.revoked(certificate);
+            certificateService.revokeCertificateForStatistics(certificate);
         } catch (TestCertificateException | CertificateRevokedException | InvalidCertificateException e) {
             throw new RuntimeException(e);
         }
