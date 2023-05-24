@@ -67,21 +67,21 @@ class RekoStatusDecoratorImplTest {
             SICK_LEAVE_WRONG_START_DATE, SICK_LEAVE_WRONG_END_DATE, SICK_LEAVE_WRONG_PATIENT_ID, SICK_LEAVE_SEVERAL_STATUSES
     );
 
-    private static Reko getRekoStatus(String patientId, String status) {
+    private static Reko getRekoStatus(String patientId, String status, LocalDateTime registrationTimestamp) {
         final var reko = new Reko();
         reko.setPatientId(patientId);
         reko.setStatus(status);
         reko.setCareUnitId(CARE_UNIT_ID);
         reko.setSickLeaveTimestamp(SICK_LEAVE_TIMESTAMP.atStartOfDay());
-        reko.setRegistrationTimestamp(LocalDateTime.now());
+        reko.setRegistrationTimestamp(registrationTimestamp);
         return reko;
     }
 
     private static final List<Reko> REKO_STATUSES = Arrays.asList(
-            getRekoStatus(PATIENT_ID_1, RekoStatusType.REKO_3.toString()),
-            getRekoStatus(PATIENT_ID_2, RekoStatusType.REKO_3.toString()),
-            getRekoStatus(PATIENT_ID_3, RekoStatusType.REKO_3.toString()),
-            getRekoStatus(PATIENT_ID_3, RekoStatusType.REKO_4.toString())
+            getRekoStatus(PATIENT_ID_1, RekoStatusType.REKO_3.toString(), LocalDateTime.now()),
+            getRekoStatus(PATIENT_ID_2, RekoStatusType.REKO_3.toString(), LocalDateTime.now()),
+            getRekoStatus(PATIENT_ID_3, RekoStatusType.REKO_3.toString(), LocalDateTime.now()),
+            getRekoStatus(PATIENT_ID_3, RekoStatusType.REKO_4.toString(), LocalDateTime.now().plusDays(1))
     );
 
     @BeforeEach
