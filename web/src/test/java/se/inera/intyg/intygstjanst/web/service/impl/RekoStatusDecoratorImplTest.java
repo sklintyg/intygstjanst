@@ -166,7 +166,7 @@ class RekoStatusDecoratorImplTest {
         }
     }
 
-    private SjukfallEnhet getSickLeaveFromPatientId( String patientId) {
+    private SjukfallEnhet getSickLeaveFromPatientId(String patientId) {
         return SICK_LEAVES.stream().filter((sickLeave) -> sickLeave.getPatient().getId().equals(patientId)).findFirst().get();
     }
 }
