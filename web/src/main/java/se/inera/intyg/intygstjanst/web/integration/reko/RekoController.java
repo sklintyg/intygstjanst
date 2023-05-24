@@ -19,8 +19,6 @@
 
 package se.inera.intyg.intygstjanst.web.integration.reko;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.service.SetRekoStatusToSickLeaveService;
@@ -31,7 +29,6 @@ import javax.ws.rs.core.Response;
 
 @Path("/reko")
 public class RekoController {
-    private static final Logger LOG = LoggerFactory.getLogger(RekoController.class);
     private static final String UTF_8_CHARSET = ";charset=utf-8";
 
     private final SetRekoStatusToSickLeaveService setRekoStatusToSickLeaveService;
