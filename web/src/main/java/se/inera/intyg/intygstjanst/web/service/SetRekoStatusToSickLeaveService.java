@@ -21,7 +21,7 @@ package se.inera.intyg.intygstjanst.web.service;
 
 import java.time.LocalDateTime;
 
-public interface SetRekoStatusToSickLeave {
+public interface SetRekoStatusToSickLeaveService {
     void set(String patientId,
              String status,
              String careProviderId,

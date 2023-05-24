@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.web.service.SetRekoStatusToSickLeave;
+import se.inera.intyg.intygstjanst.web.service.SetRekoStatusToSickLeaveService;
 
 import java.time.LocalDateTime;
 
@@ -38,7 +38,7 @@ import static org.mockito.Mockito.verify;
 public class RekoControllerTest {
 
     @Mock
-    private SetRekoStatusToSickLeave setRekoStatusToSickLeave;
+    private SetRekoStatusToSickLeaveService setRekoStatusToSickLeaveService;
 
     @InjectMocks
     private RekoController rekoController;
@@ -69,7 +69,7 @@ public class RekoControllerTest {
         final var captor = ArgumentCaptor.forClass(String.class);
 
         rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeave).set(
+        verify(setRekoStatusToSickLeaveService).set(
                 captor.capture(),
                 anyString(),
                 anyString(),
@@ -88,7 +88,7 @@ public class RekoControllerTest {
         final var captor = ArgumentCaptor.forClass(String.class);
 
         rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeave).set(
+        verify(setRekoStatusToSickLeaveService).set(
                 anyString(),
                 captor.capture(),
                 anyString(),
@@ -107,7 +107,7 @@ public class RekoControllerTest {
         final var captor = ArgumentCaptor.forClass(String.class);
 
         rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeave).set(
+        verify(setRekoStatusToSickLeaveService).set(
                 anyString(),
                 anyString(),
                 captor.capture(),
@@ -126,7 +126,7 @@ public class RekoControllerTest {
         final var captor = ArgumentCaptor.forClass(String.class);
 
         rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeave).set(
+        verify(setRekoStatusToSickLeaveService).set(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -145,7 +145,7 @@ public class RekoControllerTest {
         final var captor = ArgumentCaptor.forClass(String.class);
 
         rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeave).set(
+        verify(setRekoStatusToSickLeaveService).set(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -164,7 +164,7 @@ public class RekoControllerTest {
         final var captor = ArgumentCaptor.forClass(String.class);
 
         rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeave).set(
+        verify(setRekoStatusToSickLeaveService).set(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -183,7 +183,7 @@ public class RekoControllerTest {
         final var captor = ArgumentCaptor.forClass(String.class);
 
         rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeave).set(
+        verify(setRekoStatusToSickLeaveService).set(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -202,7 +202,7 @@ public class RekoControllerTest {
         final var captor = ArgumentCaptor.forClass(LocalDateTime.class);
 
         rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeave).set(
+        verify(setRekoStatusToSickLeaveService).set(
                 anyString(),
                 anyString(),
                 anyString(),

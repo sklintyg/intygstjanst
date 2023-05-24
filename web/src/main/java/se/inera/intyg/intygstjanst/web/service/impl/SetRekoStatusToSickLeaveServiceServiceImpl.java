@@ -22,15 +22,15 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RekoRepository;
-import se.inera.intyg.intygstjanst.web.service.SetRekoStatusToSickLeave;
+import se.inera.intyg.intygstjanst.web.service.SetRekoStatusToSickLeaveService;
 
 import java.time.LocalDateTime;
 
 @Service
-public class SetRekoStatusToSickLeaveImpl implements SetRekoStatusToSickLeave {
+public class SetRekoStatusToSickLeaveServiceServiceImpl implements SetRekoStatusToSickLeaveService {
     private final RekoRepository rekoRepository;
 
-    public SetRekoStatusToSickLeaveImpl(RekoRepository rekoRepository) {
+    public SetRekoStatusToSickLeaveServiceServiceImpl(RekoRepository rekoRepository) {
         this.rekoRepository = rekoRepository;
     }
 
