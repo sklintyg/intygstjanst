@@ -42,6 +42,7 @@ import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.service.FilterSickLeaves;
 import se.inera.intyg.intygstjanst.web.service.GetActiveSickLeaveCertificates;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeaveCertificates;
+import se.inera.intyg.intygstjanst.web.service.RekoStatusDecorator;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest.GetSickLeaveServiceRequestBuilder;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
@@ -60,6 +61,9 @@ class GetSickLeavesServiceImplTest {
 
     @Mock
     private FilterSickLeaves filterSickLeaves;
+
+    @Mock
+    private RekoStatusDecorator rekoStatusDecorator;
 
     @InjectMocks
     private GetSickLeavesServiceImpl getSickLeavesService;
@@ -373,5 +377,48 @@ class GetSickLeavesServiceImplTest {
         final var actualSickLeaveList = getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
 
         assertEquals(Collections.emptyList(), actualSickLeaveList);
+    }
+
+    @Nested
+    class TestRekoStatusDecorator {
+        @BeforeEach
+        void setUp() {
+            final var intygDataOne = new IntygData();
+            intygDataOne.setPatientId("PatientId1");
+            final var intygDataTwo = new IntygData();
+            intygDataTwo.setPatientId("PatientId2");
+            final var intygDataList = List.of(intygDataOne, intygDataTwo);
+
+            doReturn(intygDataList)
+                    .when(getActiveSickLeaveCertificates)
+                    .get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+
+            doReturn(SICK_LEAVES)
+                    .when(getSickLeaveCertificates)
+                    .get(CARE_PROVIDER_ID,
+                            UNIT_IDS,
+                            PATIENT_IDS,
+                            MAX_CERTIFICATE_GAP,
+                            MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED,
+                            PROTECTED_PERSON_FILTER_ID
+                    );
+        }
+
+
+        @Test
+        void shallDecorateWithRekoStatusAndIncludeSickLeaveList() {
+            final var captor = ArgumentCaptor.forClass(List.class);
+            getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
+            verify(rekoStatusDecorator).decorate(captor.capture(), anyString());
+            assertEquals(SICK_LEAVES, captor.getValue());
+        }
+
+        @Test
+        void shallDecorateWithRekoStatusAndIncludeCareProvider() {
+            final var captor = ArgumentCaptor.forClass(String.class);
+            getSickLeavesService.get(getSickLeaveServiceRequestBuilder.build());
+            verify(rekoStatusDecorator).decorate(anyList(), captor.capture());
+            assertEquals(CARE_UNIT_ID, captor.getValue());
+        }
     }
 }
