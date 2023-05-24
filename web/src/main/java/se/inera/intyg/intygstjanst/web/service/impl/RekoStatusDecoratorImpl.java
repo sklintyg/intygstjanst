@@ -54,8 +54,7 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
                 getRekoStatus(rekoStatuses,
                         sickLeave.getPatient().getId(),
                         sickLeave.getStart(),
-                        sickLeave.getSlut(),
-                        sickLeave.getVardenhet().getId())
+                        sickLeave.getSlut())
                 )
         );
     }
@@ -63,14 +62,12 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
     private String getRekoStatus(List<Reko> rekoStatuses,
                                  String patientId,
                                  LocalDate startDate,
-                                 LocalDate endDate,
-                                 String careUnitId) {
+                                 LocalDate endDate) {
         final var rekoStatus = rekoStatuses
                 .stream()
                 .filter((status) -> status.getPatientId().equals(patientId)
                         && status.getSickLeaveTimestamp().isAfter(startDate.atStartOfDay())
                         && status.getSickLeaveTimestamp().isBefore(endDate.plusDays(1).atStartOfDay())
-                        && status.getCareUnitId().equals(careUnitId)
                 ).max(Comparator.comparing(Reko::getRegistrationTimestamp));
 
         if (rekoStatus.isPresent()) {
