@@ -41,7 +41,7 @@ class CreateRekoStatusServiceImplTest {
     private RekoRepository rekoRepository;
 
     @InjectMocks
-    private CreateRekoStatusServiceImpl creat;
+    private CreateRekoStatusServiceImpl createRekoStatusService;
 
     private static final String PATIENT_ID = "191212121212";
     private static final String STATUS = "REKO_1";
@@ -58,7 +58,7 @@ class CreateRekoStatusServiceImplTest {
         void shouldCallWithCorrectPatientId() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            creat.create(
+            createRekoStatusService.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -77,7 +77,7 @@ class CreateRekoStatusServiceImplTest {
         void shouldCallWithCorrectStatus() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            creat.create(
+            createRekoStatusService.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -96,7 +96,7 @@ class CreateRekoStatusServiceImplTest {
         void shouldCallWithCorrectCareProviderId() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            creat.create(
+            createRekoStatusService.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -115,7 +115,7 @@ class CreateRekoStatusServiceImplTest {
         void shouldCallWithCorrectCareUnitId() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            creat.create(
+            createRekoStatusService.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -134,7 +134,7 @@ class CreateRekoStatusServiceImplTest {
         void shouldCallWithCorrectUnitId() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            creat.create(
+            createRekoStatusService.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -153,7 +153,7 @@ class CreateRekoStatusServiceImplTest {
         void shouldCallWithCorrectStaffId() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            creat.create(
+            createRekoStatusService.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -172,7 +172,7 @@ class CreateRekoStatusServiceImplTest {
         void shouldCallWithCorrectStaffName() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            creat.create(
+            createRekoStatusService.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -191,7 +191,7 @@ class CreateRekoStatusServiceImplTest {
         void shouldCallWithCorrectSickLeaveTimestamp() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            creat.create(
+            createRekoStatusService.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -210,7 +210,7 @@ class CreateRekoStatusServiceImplTest {
         void shouldCallWithCorrectRegistrationTimestamp() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            creat.create(
+            createRekoStatusService.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
