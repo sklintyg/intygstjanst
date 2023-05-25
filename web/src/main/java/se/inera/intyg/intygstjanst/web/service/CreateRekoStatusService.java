@@ -17,24 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.integration.reko;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+package se.inera.intyg.intygstjanst.web.service;
 
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class SetRekoStatusToSickLeaveRequestDTO {
-    String patientId;
-    String status;
-    String careProviderId;
-    String careUnitId;
-    String unitId;
-    String staffId;
-    String staffName;
-    LocalDateTime sickLeaveTimestamp;
+public interface CreateRekoStatusService {
+    void create(String patientId,
+                String status,
+                String careProviderId,
+                String careUnitId,
+                String unitId,
+                String staffId,
+                String staffName,
+                LocalDateTime sickLeaveTimestamp);
 }

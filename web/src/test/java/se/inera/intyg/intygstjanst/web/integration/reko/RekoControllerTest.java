@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.web.service.SetRekoStatusToSickLeaveService;
+import se.inera.intyg.intygstjanst.web.service.CreateRekoStatusService;
 
 import java.time.LocalDateTime;
 
@@ -38,7 +38,7 @@ import static org.mockito.Mockito.verify;
 public class RekoControllerTest {
 
     @Mock
-    private SetRekoStatusToSickLeaveService setRekoStatusToSickLeaveService;
+    private CreateRekoStatusService createRekoStatusService;
 
     @InjectMocks
     private RekoController rekoController;
@@ -52,7 +52,7 @@ public class RekoControllerTest {
     private static final String STAFF_NAME = "StaffName";
     private static final LocalDateTime SICK_LEAVE_TIMESTAMP = LocalDateTime.now().plusDays(1);
 
-    final SetRekoStatusToSickLeaveRequestDTO expectedRequest = new SetRekoStatusToSickLeaveRequestDTO(
+    final CreateRekoStatusRequestDTO expectedRequest = new CreateRekoStatusRequestDTO(
             PATIENT_ID,
             STATUS,
             CARE_PROVIDER_ID,
@@ -68,8 +68,8 @@ public class RekoControllerTest {
     void shouldCallSetRekoStatusServiceWithCorrectPatientId() {
         final var captor = ArgumentCaptor.forClass(String.class);
 
-        rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeaveService).set(
+        rekoController.createRekoStatus(expectedRequest);
+        verify(createRekoStatusService).create(
                 captor.capture(),
                 anyString(),
                 anyString(),
@@ -87,8 +87,8 @@ public class RekoControllerTest {
     void shouldCallSetRekoStatusServiceWithCorrectStatus() {
         final var captor = ArgumentCaptor.forClass(String.class);
 
-        rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeaveService).set(
+        rekoController.createRekoStatus(expectedRequest);
+        verify(createRekoStatusService).create(
                 anyString(),
                 captor.capture(),
                 anyString(),
@@ -106,8 +106,8 @@ public class RekoControllerTest {
     void shouldCallSetRekoStatusServiceWithCorrectCareProviderId() {
         final var captor = ArgumentCaptor.forClass(String.class);
 
-        rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeaveService).set(
+        rekoController.createRekoStatus(expectedRequest);
+        verify(createRekoStatusService).create(
                 anyString(),
                 anyString(),
                 captor.capture(),
@@ -125,8 +125,8 @@ public class RekoControllerTest {
     void shouldCallSetRekoStatusServiceWithCorrectCareUnitId() {
         final var captor = ArgumentCaptor.forClass(String.class);
 
-        rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeaveService).set(
+        rekoController.createRekoStatus(expectedRequest);
+        verify(createRekoStatusService).create(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -144,8 +144,8 @@ public class RekoControllerTest {
     void shouldCallSetRekoStatusServiceWithCorrectUnitId() {
         final var captor = ArgumentCaptor.forClass(String.class);
 
-        rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeaveService).set(
+        rekoController.createRekoStatus(expectedRequest);
+        verify(createRekoStatusService).create(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -163,8 +163,8 @@ public class RekoControllerTest {
     void shouldCallSetRekoStatusServiceWithCorrectStaffId() {
         final var captor = ArgumentCaptor.forClass(String.class);
 
-        rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeaveService).set(
+        rekoController.createRekoStatus(expectedRequest);
+        verify(createRekoStatusService).create(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -182,8 +182,8 @@ public class RekoControllerTest {
     void shouldCallSetRekoStatusServiceWithCorrectStaffName() {
         final var captor = ArgumentCaptor.forClass(String.class);
 
-        rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeaveService).set(
+        rekoController.createRekoStatus(expectedRequest);
+        verify(createRekoStatusService).create(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -201,8 +201,8 @@ public class RekoControllerTest {
     void shouldCallSetRekoStatusServiceWithCorrectSickLeaveTimestamp() {
         final var captor = ArgumentCaptor.forClass(LocalDateTime.class);
 
-        rekoController.setRekoStatusToSickLeave(expectedRequest);
-        verify(setRekoStatusToSickLeaveService).set(
+        rekoController.createRekoStatus(expectedRequest);
+        verify(createRekoStatusService).create(
                 anyString(),
                 anyString(),
                 anyString(),

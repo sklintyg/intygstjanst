@@ -36,12 +36,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class SetRekoStatusToSickLeaveServiceImplTest {
+class CreateRekoStatusServiceImplTest {
     @Mock
     private RekoRepository rekoRepository;
 
     @InjectMocks
-    private SetRekoStatusToSickLeaveServiceServiceImpl setRekoStatusToSickLeaveServiceService;
+    private CreateRekoStatusServiceImpl creat;
 
     private static final String PATIENT_ID = "191212121212";
     private static final String STATUS = "REKO_1";
@@ -58,7 +58,7 @@ class SetRekoStatusToSickLeaveServiceImplTest {
         void shouldCallWithCorrectPatientId() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            setRekoStatusToSickLeaveServiceService.set(
+            creat.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -77,7 +77,7 @@ class SetRekoStatusToSickLeaveServiceImplTest {
         void shouldCallWithCorrectStatus() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            setRekoStatusToSickLeaveServiceService.set(
+            creat.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -96,7 +96,7 @@ class SetRekoStatusToSickLeaveServiceImplTest {
         void shouldCallWithCorrectCareProviderId() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            setRekoStatusToSickLeaveServiceService.set(
+            creat.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -115,7 +115,7 @@ class SetRekoStatusToSickLeaveServiceImplTest {
         void shouldCallWithCorrectCareUnitId() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            setRekoStatusToSickLeaveServiceService.set(
+            creat.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -134,7 +134,7 @@ class SetRekoStatusToSickLeaveServiceImplTest {
         void shouldCallWithCorrectUnitId() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            setRekoStatusToSickLeaveServiceService.set(
+            creat.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -153,7 +153,7 @@ class SetRekoStatusToSickLeaveServiceImplTest {
         void shouldCallWithCorrectStaffId() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            setRekoStatusToSickLeaveServiceService.set(
+            creat.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -172,7 +172,7 @@ class SetRekoStatusToSickLeaveServiceImplTest {
         void shouldCallWithCorrectStaffName() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            setRekoStatusToSickLeaveServiceService.set(
+            creat.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -191,7 +191,7 @@ class SetRekoStatusToSickLeaveServiceImplTest {
         void shouldCallWithCorrectSickLeaveTimestamp() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            setRekoStatusToSickLeaveServiceService.set(
+            creat.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,
@@ -210,7 +210,7 @@ class SetRekoStatusToSickLeaveServiceImplTest {
         void shouldCallWithCorrectRegistrationTimestamp() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
-            setRekoStatusToSickLeaveServiceService.set(
+            creat.create(
                     PATIENT_ID,
                     STATUS,
                     CARE_PROVIDER_ID,

@@ -22,27 +22,27 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RekoRepository;
-import se.inera.intyg.intygstjanst.web.service.SetRekoStatusToSickLeaveService;
+import se.inera.intyg.intygstjanst.web.service.CreateRekoStatusService;
 
 import java.time.LocalDateTime;
 
 @Service
-public class SetRekoStatusToSickLeaveServiceServiceImpl implements SetRekoStatusToSickLeaveService {
+public class CreateRekoStatusServiceImpl implements CreateRekoStatusService {
     private final RekoRepository rekoRepository;
 
-    public SetRekoStatusToSickLeaveServiceServiceImpl(RekoRepository rekoRepository) {
+    public CreateRekoStatusServiceImpl(RekoRepository rekoRepository) {
         this.rekoRepository = rekoRepository;
     }
 
     @Override
-    public void set(String patientId,
-                    String status,
-                    String careProviderId,
-                    String careUnitId,
-                    String unitId,
-                    String staffId,
-                    String staffName,
-                    LocalDateTime sickLeaveTimestamp) {
+    public void create(String patientId,
+                       String status,
+                       String careProviderId,
+                       String careUnitId,
+                       String unitId,
+                       String staffId,
+                       String staffName,
+                       LocalDateTime sickLeaveTimestamp) {
         rekoRepository.save(
                 getReko(
                         status,

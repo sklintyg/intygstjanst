@@ -21,7 +21,7 @@ package se.inera.intyg.intygstjanst.web.integration.reko;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
-import se.inera.intyg.intygstjanst.web.service.SetRekoStatusToSickLeaveService;
+import se.inera.intyg.intygstjanst.web.service.CreateRekoStatusService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -31,19 +31,19 @@ import javax.ws.rs.core.Response;
 public class RekoController {
     private static final String UTF_8_CHARSET = ";charset=utf-8";
 
-    private final SetRekoStatusToSickLeaveService setRekoStatusToSickLeaveService;
+    private final CreateRekoStatusService createRekoStatusService;
 
-    public RekoController(SetRekoStatusToSickLeaveService setRekoStatusToSickLeaveService) {
-        this.setRekoStatusToSickLeaveService = setRekoStatusToSickLeaveService;
+    public RekoController(CreateRekoStatusService createRekoStatusService) {
+        this.createRekoStatusService = createRekoStatusService;
     }
 
     @PrometheusTimeMethod
     @POST
-    @Path("/set")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response setRekoStatusToSickLeave(@RequestBody SetRekoStatusToSickLeaveRequestDTO request) {
-        setRekoStatusToSickLeaveService.set(
+    public Response createRekoStatus(@RequestBody CreateRekoStatusRequestDTO request) {
+        createRekoStatusService.create(
                 request.patientId,
                 request.getStatus(),
                 request.getCareProviderId(),
