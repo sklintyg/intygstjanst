@@ -22,6 +22,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +38,8 @@ import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
+import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 
 @ExtendWith(MockitoExtension.class)
 class CreateSickLeaveFilterImplTest {
@@ -53,6 +56,14 @@ class CreateSickLeaveFilterImplTest {
     private static final DiagnosKapitel DIAGNOSIS_CHAPTER_2 = new DiagnosKapitel("C00-D48Tumörer");
     private static final DiagnosKod DIAGNOSIS_A01 = DiagnosKod.create("A01");
     private static final DiagnosKod DIAGNOSIS_C01 = DiagnosKod.create("C01");
+    private static final List<RekoStatusDTO> REKO_LIST = Arrays.asList(
+            new RekoStatusDTO(RekoStatusType.REKO_1.toString(), RekoStatusType.REKO_1.getName()),
+            new RekoStatusDTO(RekoStatusType.REKO_2.toString(), RekoStatusType.REKO_2.getName()),
+            new RekoStatusDTO(RekoStatusType.REKO_3.toString(), RekoStatusType.REKO_3.getName()),
+            new RekoStatusDTO(RekoStatusType.REKO_4.toString(), RekoStatusType.REKO_4.getName()),
+            new RekoStatusDTO(RekoStatusType.REKO_5.toString(), RekoStatusType.REKO_5.getName()),
+            new RekoStatusDTO(RekoStatusType.REKO_6.toString(), RekoStatusType.REKO_6.getName())
+        );
 
     @Nested
     class DoctorsTest {
@@ -70,6 +81,7 @@ class CreateSickLeaveFilterImplTest {
                     Collections.emptyList()
                 )
                 .nbrOfSickLeaves(2)
+                .rekoStatusTypes(REKO_LIST)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -96,6 +108,7 @@ class CreateSickLeaveFilterImplTest {
                     Collections.emptyList()
                 )
                 .nbrOfSickLeaves(3)
+                .rekoStatusTypes(REKO_LIST)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -139,6 +152,7 @@ class CreateSickLeaveFilterImplTest {
                     )
                 )
                 .nbrOfSickLeaves(2)
+                .rekoStatusTypes(REKO_LIST)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -165,6 +179,7 @@ class CreateSickLeaveFilterImplTest {
                     )
                 )
                 .nbrOfSickLeaves(3)
+                .rekoStatusTypes(REKO_LIST)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -178,6 +193,58 @@ class CreateSickLeaveFilterImplTest {
             final var actualFilter = createSickLeaveFilter.create(intygDataList);
 
             assertEquals(expectedFilter, actualFilter);
+        }
+    }
+
+    @Nested
+    class RekoStatus {
+
+        @Test
+        void shallSetAllStatuses() {
+            final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
+            assertEquals(6, actualFilter.getRekoStatusTypes().size());
+        }
+
+        @Test
+        void shallSetFirstStatus() {
+            final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
+            assertEquals(RekoStatusType.REKO_1.toString(), actualFilter.getRekoStatusTypes().get(0).getId());
+            assertEquals(RekoStatusType.REKO_1.getName(), actualFilter.getRekoStatusTypes().get(0).getName());
+        }
+
+        @Test
+        void shallSetSecondStatus() {
+            final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
+            assertEquals(RekoStatusType.REKO_2.toString(), actualFilter.getRekoStatusTypes().get(1).getId());
+            assertEquals(RekoStatusType.REKO_2.getName(), actualFilter.getRekoStatusTypes().get(1).getName());
+        }
+
+        @Test
+        void shallSetThirdStatus() {
+            final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
+            assertEquals(RekoStatusType.REKO_3.toString(), actualFilter.getRekoStatusTypes().get(2).getId());
+            assertEquals(RekoStatusType.REKO_3.getName(), actualFilter.getRekoStatusTypes().get(2).getName());
+        }
+
+        @Test
+        void shallSetFourthStatus() {
+            final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
+            assertEquals(RekoStatusType.REKO_4.toString(), actualFilter.getRekoStatusTypes().get(3).getId());
+            assertEquals(RekoStatusType.REKO_4.getName(), actualFilter.getRekoStatusTypes().get(3).getName());
+        }
+
+        @Test
+        void shallSetFifthStatus() {
+            final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
+            assertEquals(RekoStatusType.REKO_5.toString(), actualFilter.getRekoStatusTypes().get(4).getId());
+            assertEquals(RekoStatusType.REKO_5.getName(), actualFilter.getRekoStatusTypes().get(4).getName());
+        }
+
+        @Test
+        void shallSetSixthStatus() {
+            final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
+            assertEquals(RekoStatusType.REKO_6.toString(), actualFilter.getRekoStatusTypes().get(5).getId());
+            assertEquals(RekoStatusType.REKO_6.getName(), actualFilter.getRekoStatusTypes().get(5).getName());
         }
     }
 
@@ -196,6 +263,7 @@ class CreateSickLeaveFilterImplTest {
                     DIAGNOSIS_CHAPTER_2
                 )
             )
+            .rekoStatusTypes(REKO_LIST)
             .nbrOfSickLeaves(2)
             .build();
 
