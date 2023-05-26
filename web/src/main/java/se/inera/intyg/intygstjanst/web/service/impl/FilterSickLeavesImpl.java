@@ -28,6 +28,7 @@ import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.FilterSickLeaves;
+import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
 
 @Service
@@ -61,7 +62,8 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
         }
 
         return rekoStatuses.stream().anyMatch(
-                (rekoStatus) -> sickLeave.getRekoStatus().getStatus().getId().equals(rekoStatus)
+                (rekoStatus) -> (sickLeave.getRekoStatus() == null && rekoStatus.equals(RekoStatusType.REKO_1.toString()))
+                        || (sickLeave.getRekoStatus() != null && sickLeave.getRekoStatus().getStatus().getId().equals(rekoStatus))
         );
     }
 

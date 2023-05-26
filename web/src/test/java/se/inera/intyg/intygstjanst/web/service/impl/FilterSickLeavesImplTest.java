@@ -36,6 +36,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.sjukfall.dto.*;
 import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
+import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
 
 @ExtendWith(MockitoExtension.class)
@@ -373,18 +374,20 @@ class FilterSickLeavesImplTest {
         RekoStatusDTO rekoStatus2;
         SjukfallEnhet expectedSickLeave;
         SjukfallEnhet anotherSickLeave;
+        SjukfallEnhet sickLeaveWithNoRekoStatus;
 
         @BeforeEach
         void setup() {
             rekoStatus1 = new RekoStatusDTO();
-            rekoStatus1.setStatus(new RekoStatusTypeDTO("REKO_1", "Reko"));
+            rekoStatus1.setStatus(new RekoStatusTypeDTO(RekoStatusType.REKO_3.toString(), "Reko"));
             rekoStatus2 = new RekoStatusDTO();
-            rekoStatus2.setStatus(new RekoStatusTypeDTO("REKO_2", "Reko"));
+            rekoStatus2.setStatus(new RekoStatusTypeDTO(RekoStatusType.REKO_2.toString(), "Reko"));
             expectedSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID);
             expectedSickLeave.setRekoStatus(rekoStatus1);
             anotherSickLeave = createSjukFallEnhet(ANOTHER_DIAGNOSIS_CODE, 12, ANOTHER_PATIENT_ID);
             anotherSickLeave.setRekoStatus(rekoStatus2);
-            sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
+            sickLeaveWithNoRekoStatus = createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID);
+            sickLeaves = List.of(expectedSickLeave, anotherSickLeave, sickLeaveWithNoRekoStatus);
         }
 
         @Test
@@ -406,7 +409,8 @@ class FilterSickLeavesImplTest {
         @Test
         void shouldFilterRekoStatusExcludedInFilter() {
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
-                    null, null, null, TO_END_DATE, Collections.emptyList(), Collections.singletonList("REKO_1"));
+                    null, null, null, TO_END_DATE, Collections.emptyList(),
+                    Collections.singletonList(RekoStatusType.REKO_1.toString()));
 
             assertEquals(1, actualSickLeaveList.size());
             assertEquals(expectedSickLeave, actualSickLeaveList.get(0));
@@ -415,9 +419,21 @@ class FilterSickLeavesImplTest {
         @Test
         void shouldNotFilterRekoStatusIncludedInFilter() {
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
-                    null, null, null, TO_END_DATE, Collections.emptyList(), List.of("REKO_1", "REKO_2"));
+                    null, null, null, TO_END_DATE, Collections.emptyList(),
+                    List.of(RekoStatusType.REKO_1.toString(), RekoStatusType.REKO_2.toString(), RekoStatusType.REKO_3.toString()));
 
             assertEquals(sickLeaves, actualSickLeaveList);
+            assertEquals(expectedSickLeave, actualSickLeaveList.get(0));
+            assertEquals(anotherSickLeave, actualSickLeaveList.get(1));
+        }
+
+        @Test
+        void shouldFilterSickLeaveWithNoRekoStatusAsRekoStatus1() {
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
+                    null, null, null, TO_END_DATE, Collections.emptyList(),
+                    List.of(RekoStatusType.REKO_3.toString(), RekoStatusType.REKO_2.toString()));
+
+            assertEquals(2, actualSickLeaveList.size());
         }
     }
 

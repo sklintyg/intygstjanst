@@ -67,6 +67,8 @@ class SickLeaveControllerTest {
     );
     private static final List<RekoStatusTypeDTO> REKO_STATUSES =
             List.of(new RekoStatusTypeDTO(RekoStatusType.REKO_1.toString(), RekoStatusType.REKO_1.getName()));
+
+    private static final List<String> REKO_STATUSES_FILTER = List.of("REKO_1", "REKO_2");
     private static final Integer PATIENT_AGE_FROM = 1;
     private static final Integer PATIENT_AGE_TO = 150;
     private static final int NUMBER_OF_SICK_LEAVES = 10;
@@ -89,6 +91,7 @@ class SickLeaveControllerTest {
             sickLeaveRequestDTO.setFromPatientAge(PATIENT_AGE_FROM);
             sickLeaveRequestDTO.setToPatientAge(PATIENT_AGE_TO);
             sickLeaveRequestDTO.setProtectedPersonFilterId(DOCTOR_ID);
+            sickLeaveRequestDTO.setRekoStatuses(REKO_STATUSES_FILTER);
         }
 
         @Test
@@ -104,6 +107,7 @@ class SickLeaveControllerTest {
                 .fromPatientAge(sickLeaveRequestDTO.getFromPatientAge())
                 .toPatientAge(sickLeaveRequestDTO.getToPatientAge())
                 .protectedPersonFilterId(DOCTOR_ID)
+                .rekoStatuses(REKO_STATUSES_FILTER)
                 .build();
 
             final var getSickLeaveServiceRequestArgumentCaptor = ArgumentCaptor.forClass(GetSickLeaveServiceRequest.class);
