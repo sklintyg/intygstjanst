@@ -19,15 +19,17 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
+import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
+
 import java.time.LocalDateTime;
 
 public interface CreateRekoStatusService {
-    void create(String patientId,
-                String status,
-                String careProviderId,
-                String careUnitId,
-                String unitId,
-                String staffId,
-                String staffName,
-                LocalDateTime sickLeaveTimestamp);
+    RekoStatusDTO create(String patientId,
+                         String status,
+                         String careProviderId,
+                         String careUnitId,
+                         String unitId,
+                         String staffId,
+                         String staffName,
+                         LocalDateTime sickLeaveTimestamp);
 }

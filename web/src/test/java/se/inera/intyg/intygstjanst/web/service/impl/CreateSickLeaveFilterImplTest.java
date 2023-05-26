@@ -38,7 +38,7 @@ import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
-import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,13 +56,13 @@ class CreateSickLeaveFilterImplTest {
     private static final DiagnosKapitel DIAGNOSIS_CHAPTER_2 = new DiagnosKapitel("C00-D48Tumörer");
     private static final DiagnosKod DIAGNOSIS_A01 = DiagnosKod.create("A01");
     private static final DiagnosKod DIAGNOSIS_C01 = DiagnosKod.create("C01");
-    private static final List<RekoStatusDTO> REKO_LIST = Arrays.asList(
-            new RekoStatusDTO(RekoStatusType.REKO_1.toString(), RekoStatusType.REKO_1.getName()),
-            new RekoStatusDTO(RekoStatusType.REKO_2.toString(), RekoStatusType.REKO_2.getName()),
-            new RekoStatusDTO(RekoStatusType.REKO_3.toString(), RekoStatusType.REKO_3.getName()),
-            new RekoStatusDTO(RekoStatusType.REKO_4.toString(), RekoStatusType.REKO_4.getName()),
-            new RekoStatusDTO(RekoStatusType.REKO_5.toString(), RekoStatusType.REKO_5.getName()),
-            new RekoStatusDTO(RekoStatusType.REKO_6.toString(), RekoStatusType.REKO_6.getName())
+    private static final List<RekoStatusTypeDTO> REKO_LIST = Arrays.asList(
+            new RekoStatusTypeDTO(RekoStatusType.REKO_1.toString(), RekoStatusType.REKO_1.getName()),
+            new RekoStatusTypeDTO(RekoStatusType.REKO_2.toString(), RekoStatusType.REKO_2.getName()),
+            new RekoStatusTypeDTO(RekoStatusType.REKO_3.toString(), RekoStatusType.REKO_3.getName()),
+            new RekoStatusTypeDTO(RekoStatusType.REKO_4.toString(), RekoStatusType.REKO_4.getName()),
+            new RekoStatusTypeDTO(RekoStatusType.REKO_5.toString(), RekoStatusType.REKO_5.getName()),
+            new RekoStatusTypeDTO(RekoStatusType.REKO_6.toString(), RekoStatusType.REKO_6.getName())
         );
 
     @Nested

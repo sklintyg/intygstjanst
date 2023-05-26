@@ -29,7 +29,7 @@ import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.web.service.CreateSickLeaveFilter;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
-import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 
 @Service
@@ -65,7 +65,7 @@ public class CreateSickLeaveFilterImpl implements CreateSickLeaveFilter {
 
         final var rekoStatuses = Arrays
                 .stream(RekoStatusType.values())
-                .map((status) -> new RekoStatusDTO(status.toString(), status.getName()))
+                .map((status) -> new RekoStatusTypeDTO(status.toString(), status.getName()))
                 .collect(Collectors.toList());
 
         return GetSickLeaveFilterServiceResponse.builder()

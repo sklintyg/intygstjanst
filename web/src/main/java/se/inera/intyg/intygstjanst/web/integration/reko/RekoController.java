@@ -22,10 +22,10 @@ package se.inera.intyg.intygstjanst.web.integration.reko;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.service.CreateRekoStatusService;
+import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 @Path("/reko")
 public class RekoController {
@@ -42,8 +42,8 @@ public class RekoController {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createRekoStatus(@RequestBody CreateRekoStatusRequestDTO request) {
-        createRekoStatusService.create(
+    public RekoStatusDTO createRekoStatus(@RequestBody CreateRekoStatusRequestDTO request) {
+        return createRekoStatusService.create(
                 request.patientId,
                 request.getStatus(),
                 request.getCareProviderId(),
@@ -53,7 +53,5 @@ public class RekoController {
                 request.getStaffName(),
                 request.getSickLeaveTimestamp()
         );
-
-        return Response.ok().build();
     }
 }

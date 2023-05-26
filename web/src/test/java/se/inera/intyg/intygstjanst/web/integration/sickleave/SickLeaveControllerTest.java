@@ -65,8 +65,8 @@ class SickLeaveControllerTest {
     private static final List<Lakare> DOCTORS = List.of(
         Lakare.create(DOCTOR_ID, DOCTOR_ID)
     );
-    private static final List<RekoStatusDTO> REKO_STATUSES =
-            List.of(new RekoStatusDTO(RekoStatusType.REKO_1.toString(), RekoStatusType.REKO_1.getName()));
+    private static final List<RekoStatusTypeDTO> REKO_STATUSES =
+            List.of(new RekoStatusTypeDTO(RekoStatusType.REKO_1.toString(), RekoStatusType.REKO_1.getName()));
     private static final Integer PATIENT_AGE_FROM = 1;
     private static final Integer PATIENT_AGE_TO = 150;
     private static final int NUMBER_OF_SICK_LEAVES = 10;
@@ -145,6 +145,7 @@ class SickLeaveControllerTest {
                     .activeDoctors(DOCTORS)
                     .diagnosisChapters(DIAGNOSIS_CHAPTER)
                     .nbrOfSickLeaves(NUMBER_OF_SICK_LEAVES)
+                    .rekoStatusTypes(REKO_STATUSES)
                     .build())
                 .when(getSickLeaveFilterService)
                 .get(any(GetSickLeaveFilterServiceRequest.class));

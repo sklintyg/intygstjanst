@@ -17,28 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.integration.reko;
+package se.inera.intyg.intygstjanst.web.service.dto;
 
-import java.util.concurrent.TimeUnit;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public class RekoLogMessageFactory {
-
-    public static final String DECORATE_REKO_STATUS = "DECORATE_REKO_STATUS";
-    private long startTimer;
-
-    public RekoLogMessageFactory(long startTime) {
-        startTimer = startTime;
-    }
-
-    public String message(String constant, int amount) {
-        return String.format("REKO LOG - Duration for %s: %d seconds. Amount: %d.", constant, timeElapsed(startTimer), amount);
-    }
-
-    private long timeElapsed(long startTime) {
-        return TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTime);
-    }
-
-    public void setStartTimer(long startTimer) {
-        this.startTimer = startTimer;
-    }
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class RekoStatusTypeDTO {
+    String id;
+    String name;
 }

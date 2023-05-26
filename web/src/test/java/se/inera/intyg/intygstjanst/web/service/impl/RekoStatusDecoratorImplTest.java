@@ -27,8 +27,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.infra.sjukfall.dto.Patient;
-import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.infra.sjukfall.dto.*;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RekoRepository;
 import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
@@ -57,15 +56,8 @@ class RekoStatusDecoratorImplTest {
     private static final String PATIENT_ID_3 = "191212121211";
     private static final String WRONG_PATIENT_ID = "Wrong";
     private static final String CARE_UNIT_ID = "CareUnitId";
-    private static final SjukfallEnhet SICK_LEAVE_WRONG_START_DATE = new SjukfallEnhet();
-    private static final SjukfallEnhet SICK_LEAVE_WRONG_END_DATE = new SjukfallEnhet();
-    private static final SjukfallEnhet SICK_LEAVE_WRONG_PATIENT_ID = new SjukfallEnhet();
-    private static final SjukfallEnhet SICK_LEAVE_SEVERAL_STATUSES = new SjukfallEnhet();
+    private static List<SjukfallEnhet> SICK_LEAVES;
     private static final LocalDate SICK_LEAVE_TIMESTAMP = LocalDate.now();
-
-    private static final List<SjukfallEnhet> SICK_LEAVES = Arrays.asList(
-            SICK_LEAVE_WRONG_START_DATE, SICK_LEAVE_WRONG_END_DATE, SICK_LEAVE_WRONG_PATIENT_ID, SICK_LEAVE_SEVERAL_STATUSES
-    );
 
     private static Reko getRekoStatus(String patientId, String status, LocalDateTime registrationTimestamp) {
         final var reko = new Reko();
@@ -84,23 +76,42 @@ class RekoStatusDecoratorImplTest {
             getRekoStatus(PATIENT_ID_3, RekoStatusType.REKO_4.toString(), LocalDateTime.now().plusDays(1))
     );
 
+    private SjukfallEnhet setUpSickLeave(String patientId, LocalDate start, LocalDate end) {
+        final var sickLeave = new SjukfallEnhet();
+        sickLeave.setPatient(Patient.create(patientId, "Name"));
+        sickLeave.setStart(start);
+        sickLeave.setSlut(end);
+        sickLeave.setVardgivare(Vardgivare.create("id", "name"));
+        sickLeave.setVardenhet(Vardenhet.create("id", "name"));
+        sickLeave.setLakare(Lakare.create("id", "name"));
+        return sickLeave;
+    }
+
     @BeforeEach
     void setup() {
-        SICK_LEAVE_WRONG_START_DATE.setPatient(Patient.create(PATIENT_ID_1, "Name"));
-        SICK_LEAVE_WRONG_START_DATE.setStart(SICK_LEAVE_TIMESTAMP.plusDays(10));
-        SICK_LEAVE_WRONG_START_DATE.setSlut(SICK_LEAVE_TIMESTAMP.plusDays(20));
+        final var SICK_LEAVE_WRONG_START_DATE = setUpSickLeave(PATIENT_ID_1,
+                SICK_LEAVE_TIMESTAMP.plusDays(10),
+                SICK_LEAVE_TIMESTAMP.plusDays(20)
+        );
 
-        SICK_LEAVE_WRONG_END_DATE.setPatient(Patient.create(PATIENT_ID_2, "Name"));
-        SICK_LEAVE_WRONG_END_DATE.setStart(SICK_LEAVE_TIMESTAMP.minusDays(3));
-        SICK_LEAVE_WRONG_END_DATE.setSlut(LocalDate.now().minusDays(2));
+        final var SICK_LEAVE_WRONG_END_DATE = setUpSickLeave(PATIENT_ID_2,
+                SICK_LEAVE_TIMESTAMP.minusDays(3),
+                SICK_LEAVE_TIMESTAMP.minusDays(2)
+        );
 
-        SICK_LEAVE_WRONG_PATIENT_ID.setPatient(Patient.create(WRONG_PATIENT_ID, "Name"));
-        SICK_LEAVE_WRONG_PATIENT_ID.setStart(SICK_LEAVE_TIMESTAMP.minusDays(1));
-        SICK_LEAVE_WRONG_PATIENT_ID.setSlut(LocalDate.now().plusDays(4));
+        final var SICK_LEAVE_WRONG_PATIENT_ID = setUpSickLeave(WRONG_PATIENT_ID,
+                SICK_LEAVE_TIMESTAMP.minusDays(1),
+                SICK_LEAVE_TIMESTAMP.plusDays(4)
+        );
 
-        SICK_LEAVE_SEVERAL_STATUSES.setPatient(Patient.create(PATIENT_ID_3, "Name"));
-        SICK_LEAVE_SEVERAL_STATUSES.setStart(SICK_LEAVE_TIMESTAMP.minusDays(1));
-        SICK_LEAVE_SEVERAL_STATUSES.setSlut(LocalDate.now().plusDays(4));
+        final var SICK_LEAVE_SEVERAL_STATUSES = setUpSickLeave(PATIENT_ID_3,
+                SICK_LEAVE_TIMESTAMP.minusDays(1),
+                SICK_LEAVE_TIMESTAMP.plusDays(4)
+        );
+
+        SICK_LEAVES = Arrays.asList(
+                SICK_LEAVE_WRONG_START_DATE, SICK_LEAVE_WRONG_END_DATE, SICK_LEAVE_WRONG_PATIENT_ID, SICK_LEAVE_SEVERAL_STATUSES
+        );
     }
 
     @Nested
@@ -141,28 +152,32 @@ class RekoStatusDecoratorImplTest {
         void shouldNotSetRekoStatusForWrongPatientId() {
             rekoStatusDecorator.decorate(SICK_LEAVES, CARE_UNIT_ID);
 
-            assertEquals(RekoStatusType.REKO_1.getName(), getSickLeaveFromPatientId(WRONG_PATIENT_ID).getRekoStatus());
+            assertEquals(RekoStatusType.REKO_1.getName(), getSickLeaveFromPatientId(WRONG_PATIENT_ID).getRekoStatus().getStatus());
+            assertEquals(RekoStatusType.REKO_1.toString(), getSickLeaveFromPatientId(WRONG_PATIENT_ID).getRekoStatus().getId());
         }
 
         @Test
         void shouldNotSetRekoStatusIfSickLeaveTimeStampIsBeforeStartDate() {
             rekoStatusDecorator.decorate(SICK_LEAVES, CARE_UNIT_ID);
 
-            assertEquals(RekoStatusType.REKO_1.getName(), getSickLeaveFromPatientId(PATIENT_ID_1).getRekoStatus());
+            assertEquals(RekoStatusType.REKO_1.getName(), getSickLeaveFromPatientId(PATIENT_ID_1).getRekoStatus().getStatus());
+            assertEquals(RekoStatusType.REKO_1.toString(), getSickLeaveFromPatientId(PATIENT_ID_1).getRekoStatus().getId());
         }
 
         @Test
         void shouldNotSetRekoStatusIfSickLeaveTimeStampIsAfterEndDate() {
             rekoStatusDecorator.decorate(SICK_LEAVES, CARE_UNIT_ID);
 
-            assertEquals(RekoStatusType.REKO_1.getName(), getSickLeaveFromPatientId(PATIENT_ID_2).getRekoStatus());
+            assertEquals(RekoStatusType.REKO_1.getName(), getSickLeaveFromPatientId(PATIENT_ID_2).getRekoStatus().getStatus());
+            assertEquals(RekoStatusType.REKO_1.toString(), getSickLeaveFromPatientId(PATIENT_ID_2).getRekoStatus().getId());
         }
 
         @Test
         void shouldSetLatestRekoStatusIfTwoAreCorrect() {
             rekoStatusDecorator.decorate(SICK_LEAVES, CARE_UNIT_ID);
 
-            assertEquals(RekoStatusType.REKO_4.getName(), getSickLeaveFromPatientId(PATIENT_ID_3).getRekoStatus());
+            assertEquals(RekoStatusType.REKO_4.getName(), getSickLeaveFromPatientId(PATIENT_ID_3).getRekoStatus().getStatus());
+            assertEquals(RekoStatusType.REKO_4.toString(), getSickLeaveFromPatientId(PATIENT_ID_3).getRekoStatus().getId());
         }
     }
 

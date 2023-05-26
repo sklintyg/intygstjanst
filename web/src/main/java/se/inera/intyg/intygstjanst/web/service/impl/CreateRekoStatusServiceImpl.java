@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RekoRepository;
 import se.inera.intyg.intygstjanst.web.service.CreateRekoStatusService;
+import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 
 import java.time.LocalDateTime;
 
@@ -35,25 +37,39 @@ public class CreateRekoStatusServiceImpl implements CreateRekoStatusService {
     }
 
     @Override
-    public void create(String patientId,
-                       String status,
-                       String careProviderId,
-                       String careUnitId,
-                       String unitId,
-                       String staffId,
-                       String staffName,
-                       LocalDateTime sickLeaveTimestamp) {
-        rekoRepository.save(
-                getReko(
-                        status,
-                        patientId,
-                        careProviderId,
-                        careUnitId,
-                        unitId,
-                        staffId,
-                        staffName,
-                        sickLeaveTimestamp
-                )
+    public RekoStatusDTO create(String patientId,
+                                String status,
+                                String careProviderId,
+                                String careUnitId,
+                                String unitId,
+                                String staffId,
+                                String staffName,
+                                LocalDateTime sickLeaveTimestamp) {
+
+        final var reko = getReko(
+                status,
+                patientId,
+                careProviderId,
+                careUnitId,
+                unitId,
+                staffId,
+                staffName,
+                sickLeaveTimestamp
+        );
+
+        rekoRepository.save(reko);
+
+        return new RekoStatusDTO(
+                status,
+                RekoStatusType.fromId(status).getName(),
+                patientId,
+                careProviderId,
+                careUnitId,
+                unitId,
+                staffId,
+                staffName,
+                sickLeaveTimestamp,
+                reko.getRegistrationTimestamp()
         );
     }
 
@@ -64,8 +80,7 @@ public class CreateRekoStatusServiceImpl implements CreateRekoStatusService {
                          String unitId,
                          String staffId,
                          String staffName,
-                         LocalDateTime sickLeaveTimestamp
-    ) {
+                         LocalDateTime sickLeaveTimestamp) {
         final var reko = new Reko();
         reko.setPatientId(patientId);
         reko.setStatus(status);

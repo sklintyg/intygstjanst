@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
-import se.inera.intyg.intygstjanst.web.integration.reko.RekoLogMessageFactory;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory;
 import se.inera.intyg.intygstjanst.web.service.*;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest;
@@ -89,9 +88,9 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES, intygData.size()));
 
-        final var rekoLogMessageFactory = new RekoLogMessageFactory(System.currentTimeMillis());
+        sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
         rekoStatusDecorator.decorate(sjukfallEnhetList, getSickLeaveServiceRequest.getCareUnitId());
-        LOG.info(rekoLogMessageFactory.message(RekoLogMessageFactory.DECORATE_REKO_STATUS, sjukfallEnhetList.size()));
+        LOG.info(sickLeaveLogMessageFactory.message(SickLeaveLogMessageFactory.DECORATE_REKO_STATUS, sjukfallEnhetList.size()));
 
         return filterSickLeaves.filter(
             sjukfallEnhetList,
