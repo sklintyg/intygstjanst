@@ -21,13 +21,13 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
+import se.inera.intyg.infra.sjukfall.dto.RekoStatusTypeDTO;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RekoRepository;
 import se.inera.intyg.intygstjanst.web.service.RekoStatusDecorator;
 import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,10 +66,6 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
     private RekoStatusDTO getRekoStatus(List<Reko> rekoStatuses,
                                         String patientId,
                                         SjukfallEnhet sickLeave) {
-        final var rekoStatus = new RekoStatusDTO();
-        rekoStatus.setId(RekoStatusType.REKO_1.toString());
-        rekoStatus.setStatus(RekoStatusType.REKO_1.getName());
-
         final var rekoStatusFromDb = rekoStatuses
                 .stream()
                 .filter((status) -> status.getPatientId().equals(patientId)
@@ -78,8 +74,13 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
                 ).max(Comparator.comparing(Reko::getRegistrationTimestamp));
 
         if (rekoStatusFromDb.isPresent()) {
-            rekoStatus.setId(rekoStatusFromDb.get().getStatus());
-            rekoStatus.setStatus(RekoStatusType.fromId(rekoStatusFromDb.get().getStatus()).getName());
+            final var rekoStatus = new RekoStatusDTO();
+            rekoStatus.setStatus(
+                    new RekoStatusTypeDTO(
+                            rekoStatusFromDb.get().getStatus(),
+                            RekoStatusType.fromId(rekoStatusFromDb.get().getStatus()).getName()
+                    )
+            );
             rekoStatus.setRegistrationTimestamp(rekoStatusFromDb.get().getRegistrationTimestamp());
             rekoStatus.setPatientId(rekoStatusFromDb.get().getPatientId());
             rekoStatus.setCareProviderId(rekoStatusFromDb.get().getCareProviderId());
@@ -89,16 +90,10 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
             rekoStatus.setStaffId(rekoStatusFromDb.get().getStaffId());
             rekoStatus.setStaffName(rekoStatusFromDb.get().getStaffName());
             rekoStatus.setSickLeaveTimestamp(rekoStatusFromDb.get().getSickLeaveTimestamp());
-        } else {
-            rekoStatus.setPatientId(sickLeave.getPatient().getId());
-            rekoStatus.setCareProviderId(sickLeave.getVardgivare().getId());
-            rekoStatus.setCareUnitId(sickLeave.getVardenhet().getId());
-            rekoStatus.setStaffId(sickLeave.getLakare().getId());
-            rekoStatus.setStaffName(sickLeave.getLakare().getNamn());
-            rekoStatus.setSickLeaveTimestamp(LocalDateTime.now());
-            rekoStatus.setRegistrationTimestamp(LocalDateTime.now());
+
+            return rekoStatus;
         }
 
-        return rekoStatus;
+        return null;
     }
 }

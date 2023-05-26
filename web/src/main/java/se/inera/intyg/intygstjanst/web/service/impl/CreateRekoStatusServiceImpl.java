@@ -20,6 +20,7 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
+import se.inera.intyg.infra.sjukfall.dto.RekoStatusTypeDTO;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RekoRepository;
 import se.inera.intyg.intygstjanst.web.service.CreateRekoStatusService;
@@ -60,8 +61,7 @@ public class CreateRekoStatusServiceImpl implements CreateRekoStatusService {
         rekoRepository.save(reko);
 
         return new RekoStatusDTO(
-                status,
-                RekoStatusType.fromId(status).getName(),
+                new RekoStatusTypeDTO(status, RekoStatusType.fromId(status).getName()),
                 patientId,
                 careProviderId,
                 careUnitId,

@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CreateRekoStatusRequestDTO {
     String patientId;
-    String status;
+    String statusId;
     String careProviderId;
     String careUnitId;
     String unitId;

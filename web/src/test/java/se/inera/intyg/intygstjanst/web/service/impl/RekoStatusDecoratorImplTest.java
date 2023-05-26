@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -152,32 +153,31 @@ class RekoStatusDecoratorImplTest {
         void shouldNotSetRekoStatusForWrongPatientId() {
             rekoStatusDecorator.decorate(SICK_LEAVES, CARE_UNIT_ID);
 
-            assertEquals(RekoStatusType.REKO_1.getName(), getSickLeaveFromPatientId(WRONG_PATIENT_ID).getRekoStatus().getStatus());
-            assertEquals(RekoStatusType.REKO_1.toString(), getSickLeaveFromPatientId(WRONG_PATIENT_ID).getRekoStatus().getId());
+            assertNull(getSickLeaveFromPatientId(WRONG_PATIENT_ID).getRekoStatus());
         }
 
         @Test
         void shouldNotSetRekoStatusIfSickLeaveTimeStampIsBeforeStartDate() {
             rekoStatusDecorator.decorate(SICK_LEAVES, CARE_UNIT_ID);
 
-            assertEquals(RekoStatusType.REKO_1.getName(), getSickLeaveFromPatientId(PATIENT_ID_1).getRekoStatus().getStatus());
-            assertEquals(RekoStatusType.REKO_1.toString(), getSickLeaveFromPatientId(PATIENT_ID_1).getRekoStatus().getId());
+            assertNull(getSickLeaveFromPatientId(PATIENT_ID_1).getRekoStatus());
         }
 
         @Test
         void shouldNotSetRekoStatusIfSickLeaveTimeStampIsAfterEndDate() {
             rekoStatusDecorator.decorate(SICK_LEAVES, CARE_UNIT_ID);
 
-            assertEquals(RekoStatusType.REKO_1.getName(), getSickLeaveFromPatientId(PATIENT_ID_2).getRekoStatus().getStatus());
-            assertEquals(RekoStatusType.REKO_1.toString(), getSickLeaveFromPatientId(PATIENT_ID_2).getRekoStatus().getId());
+            assertNull(getSickLeaveFromPatientId(PATIENT_ID_2).getRekoStatus());
         }
 
         @Test
         void shouldSetLatestRekoStatusIfTwoAreCorrect() {
             rekoStatusDecorator.decorate(SICK_LEAVES, CARE_UNIT_ID);
 
-            assertEquals(RekoStatusType.REKO_4.getName(), getSickLeaveFromPatientId(PATIENT_ID_3).getRekoStatus().getStatus());
-            assertEquals(RekoStatusType.REKO_4.toString(), getSickLeaveFromPatientId(PATIENT_ID_3).getRekoStatus().getId());
+            assertEquals(RekoStatusType.REKO_4.getName(),
+                    getSickLeaveFromPatientId(PATIENT_ID_3).getRekoStatus().getStatus().getName());
+            assertEquals(RekoStatusType.REKO_4.toString(),
+                    getSickLeaveFromPatientId(PATIENT_ID_3).getRekoStatus().getStatus().getId());
         }
     }
 

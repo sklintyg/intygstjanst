@@ -45,7 +45,7 @@ public class RekoController {
     public RekoStatusDTO createRekoStatus(@RequestBody CreateRekoStatusRequestDTO request) {
         return createRekoStatusService.create(
                 request.patientId,
-                request.getStatus(),
+                request.getStatusId(),
                 request.getCareProviderId(),
                 request.getCareUnitId(),
                 request.getUnitId(),
