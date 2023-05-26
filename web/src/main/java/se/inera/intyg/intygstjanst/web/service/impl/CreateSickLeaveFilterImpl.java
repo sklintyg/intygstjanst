@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,6 +29,8 @@ import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.web.service.CreateSickLeaveFilter;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
+import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusTypeDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 
 @Service
 public class CreateSickLeaveFilterImpl implements CreateSickLeaveFilter {
@@ -60,10 +63,16 @@ public class CreateSickLeaveFilterImpl implements CreateSickLeaveFilter {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
+        final var rekoStatuses = Arrays
+                .stream(RekoStatusType.values())
+                .map((status) -> new RekoStatusTypeDTO(status.toString(), status.getName()))
+                .collect(Collectors.toList());
+
         return GetSickLeaveFilterServiceResponse.builder()
             .activeDoctors(doctorsForCareUnit)
             .diagnosisChapters(diagnosisChaptersForCareUnit)
             .nbrOfSickLeaves(intygDataList.size())
+            .rekoStatusTypes(rekoStatuses)
             .build();
     }
 }

@@ -104,7 +104,8 @@ public class SickLeaveController {
             new PopulateFiltersResponseDTO(
                 getSickLeaveFilterServiceResponse.getActiveDoctors(),
                 getSickLeaveFilterServiceResponse.getDiagnosisChapters(),
-                getSickLeaveFilterServiceResponse.getNbrOfSickLeaves()
+                getSickLeaveFilterServiceResponse.getNbrOfSickLeaves(),
+                getSickLeaveFilterServiceResponse.getRekoStatusTypes()
             )
         ).build();
     }

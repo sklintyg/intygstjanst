@@ -17,21 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.service.dto;
+package se.inera.intyg.intygstjanst.web.service;
+
+import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 
 import java.util.List;
-import lombok.Builder;
-import lombok.Value;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
-import se.inera.intyg.infra.sjukfall.dto.Lakare;
 
-@Value
-@Builder
-public class GetSickLeaveFilterServiceResponse {
-
-    List<Lakare> activeDoctors;
-    List<DiagnosKapitel> diagnosisChapters;
-    int nbrOfSickLeaves;
-    List<RekoStatusTypeDTO> rekoStatusTypes;
-
+public interface RekoStatusDecorator {
+    void decorate(List<SjukfallEnhet> sickLeaves, String careUnitId);
 }

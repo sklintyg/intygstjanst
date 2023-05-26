@@ -29,6 +29,8 @@ public class SickLeaveLogMessageFactory {
     public static final String GET_SICK_LEAVES = "GET_SICK_LEAVES";
     public static final String GET_SICK_LEAVES_FROM_DB = "GET_SICK_LEAVES_FROM_DB";
     public static final String GET_AND_FILTER_PROTECTED_PATIENTS = "GET_AND_FILTER_PROTECTED_PATIENTS";
+    public static final String DECORATE_REKO_STATUS = "DECORATE_REKO_STATUS";
+
     private long startTimer;
 
     public SickLeaveLogMessageFactory(long startTime) {

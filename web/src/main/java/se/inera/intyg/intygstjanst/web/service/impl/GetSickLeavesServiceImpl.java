@@ -42,15 +42,17 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
     private final GetActiveSickLeaveCertificates getActiveSickLeaveCertificates;
     private final GetSickLeaveCertificates getSickLeaveCertificates;
     private final FilterSickLeaves filterSickLeaves;
+    private final RekoStatusDecorator rekoStatusDecorator;
 
     public GetSickLeavesServiceImpl(HsaService hsaService,
                                     GetActiveSickLeaveCertificates getActiveSickLeaveCertificates,
                                     GetSickLeaveCertificates getSickLeaveCertificates,
-                                    FilterSickLeaves filterSickLeaves) {
+                                    FilterSickLeaves filterSickLeaves, RekoStatusDecorator rekoStatusDecorator) {
         this.hsaService = hsaService;
         this.getActiveSickLeaveCertificates = getActiveSickLeaveCertificates;
         this.getSickLeaveCertificates = getSickLeaveCertificates;
         this.filterSickLeaves = filterSickLeaves;
+        this.rekoStatusDecorator = rekoStatusDecorator;
     }
 
     @Override
@@ -85,6 +87,10 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
             getSickLeaveServiceRequest.getProtectedPersonFilterId()
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES, intygData.size()));
+
+        sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
+        rekoStatusDecorator.decorate(sjukfallEnhetList, getSickLeaveServiceRequest.getCareUnitId());
+        LOG.info(sickLeaveLogMessageFactory.message(SickLeaveLogMessageFactory.DECORATE_REKO_STATUS, sjukfallEnhetList.size()));
 
         return filterSickLeaves.filter(
             sjukfallEnhetList,

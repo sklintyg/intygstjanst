@@ -19,19 +19,14 @@
 
 package se.inera.intyg.intygstjanst.web.service.dto;
 
-import java.util.List;
-import lombok.Builder;
-import lombok.Value;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
-import se.inera.intyg.infra.sjukfall.dto.Lakare;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Value
-@Builder
-public class GetSickLeaveFilterServiceResponse {
-
-    List<Lakare> activeDoctors;
-    List<DiagnosKapitel> diagnosisChapters;
-    int nbrOfSickLeaves;
-    List<RekoStatusTypeDTO> rekoStatusTypes;
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class RekoStatusTypeDTO {
+    String id;
+    String name;
 }
