@@ -89,28 +89,28 @@ class RekoStatusDecoratorImplTest {
 
     @BeforeEach
     void setup() {
-        final var SICK_LEAVE_WRONG_START_DATE = setUpSickLeave(PATIENT_ID_1,
+        final var sickLeaveWrongStartDate = setUpSickLeave(PATIENT_ID_1,
                 SICK_LEAVE_TIMESTAMP.plusDays(10),
                 SICK_LEAVE_TIMESTAMP.plusDays(20)
         );
 
-        final var SICK_LEAVE_WRONG_END_DATE = setUpSickLeave(PATIENT_ID_2,
+        final var sickLeaveWrongEndDate = setUpSickLeave(PATIENT_ID_2,
                 SICK_LEAVE_TIMESTAMP.minusDays(3),
                 SICK_LEAVE_TIMESTAMP.minusDays(2)
         );
 
-        final var SICK_LEAVE_WRONG_PATIENT_ID = setUpSickLeave(WRONG_PATIENT_ID,
+        final var sickLeaveWrongPatientId = setUpSickLeave(WRONG_PATIENT_ID,
                 SICK_LEAVE_TIMESTAMP.minusDays(1),
                 SICK_LEAVE_TIMESTAMP.plusDays(4)
         );
 
-        final var SICK_LEAVE_SEVERAL_STATUSES = setUpSickLeave(PATIENT_ID_3,
+        final var sickLeaveSeveralStatuses = setUpSickLeave(PATIENT_ID_3,
                 SICK_LEAVE_TIMESTAMP.minusDays(1),
                 SICK_LEAVE_TIMESTAMP.plusDays(4)
         );
 
         SICK_LEAVES = Arrays.asList(
-                SICK_LEAVE_WRONG_START_DATE, SICK_LEAVE_WRONG_END_DATE, SICK_LEAVE_WRONG_PATIENT_ID, SICK_LEAVE_SEVERAL_STATUSES
+                sickLeaveWrongStartDate, sickLeaveWrongEndDate, sickLeaveWrongPatientId, sickLeaveSeveralStatuses
         );
     }
 
