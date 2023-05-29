@@ -91,7 +91,7 @@ class SickLeaveControllerTest {
             sickLeaveRequestDTO.setFromPatientAge(PATIENT_AGE_FROM);
             sickLeaveRequestDTO.setToPatientAge(PATIENT_AGE_TO);
             sickLeaveRequestDTO.setProtectedPersonFilterId(DOCTOR_ID);
-            sickLeaveRequestDTO.setRekoStatuses(REKO_STATUSES_FILTER);
+            sickLeaveRequestDTO.setRekoStatusTypeIds(REKO_STATUSES_FILTER);
         }
 
         @Test
@@ -107,7 +107,7 @@ class SickLeaveControllerTest {
                 .fromPatientAge(sickLeaveRequestDTO.getFromPatientAge())
                 .toPatientAge(sickLeaveRequestDTO.getToPatientAge())
                 .protectedPersonFilterId(DOCTOR_ID)
-                .rekoStatuses(REKO_STATUSES_FILTER)
+                .rekoStatusTypeIds(REKO_STATUSES_FILTER)
                 .build();
 
             final var getSickLeaveServiceRequestArgumentCaptor = ArgumentCaptor.forClass(GetSickLeaveServiceRequest.class);

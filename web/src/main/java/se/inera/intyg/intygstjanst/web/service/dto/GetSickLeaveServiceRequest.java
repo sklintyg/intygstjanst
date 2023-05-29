@@ -41,5 +41,5 @@ public class GetSickLeaveServiceRequest {
     String protectedPersonFilterId;
     LocalDate fromSickLeaveEndDate;
     LocalDate toSickLeaveEndDate;
-    List<String> rekoStatuses;
+    List<String> rekoStatusTypeIds;
 }

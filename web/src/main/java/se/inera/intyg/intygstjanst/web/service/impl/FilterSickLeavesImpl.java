@@ -45,14 +45,14 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
     @Override
     public List<SjukfallEnhet> filter(List<SjukfallEnhet> sickLeaveList, List<SickLeaveLengthInterval> sickLeaveLengthIntervals,
         List<DiagnosKapitel> diagnosisChapters, Integer fromPatientAge, Integer toPatientAge, LocalDate fromSickLeaveEndDate,
-        LocalDate toSickLeaveEndDate, List<String> doctorsIds, List<String> rekoStatuses) {
+        LocalDate toSickLeaveEndDate, List<String> doctorsIds, List<String> rekoStatusTypeIds) {
         return sickLeaveList.stream()
             .filter(sickLeave -> filterOnSickLeaveLengthIntervals(sickLeave, sickLeaveLengthIntervals))
             .filter(sickLeave -> filterOnDiagnosisChapters(sickLeave, diagnosisChapters))
             .filter(sickLeave -> filterOnPatientAge(sickLeave, fromPatientAge, toPatientAge))
             .filter(sickLeave -> filterOnSickLeaveEndDate(sickLeave, fromSickLeaveEndDate, toSickLeaveEndDate))
             .filter(sickLeave -> filterOnDoctorIds(sickLeave, doctorsIds))
-            .filter(sickLeave -> filterOnRekoStatuses(sickLeave, rekoStatuses))
+            .filter(sickLeave -> filterOnRekoStatuses(sickLeave, rekoStatusTypeIds))
             .collect(Collectors.toList());
     }
 

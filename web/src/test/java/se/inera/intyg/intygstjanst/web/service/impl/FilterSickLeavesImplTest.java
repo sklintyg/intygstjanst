@@ -423,8 +423,6 @@ class FilterSickLeavesImplTest {
                     List.of(RekoStatusType.REKO_1.toString(), RekoStatusType.REKO_2.toString(), RekoStatusType.REKO_3.toString()));
 
             assertEquals(sickLeaves, actualSickLeaveList);
-            assertEquals(expectedSickLeave, actualSickLeaveList.get(0));
-            assertEquals(anotherSickLeave, actualSickLeaveList.get(1));
         }
 
         @Test

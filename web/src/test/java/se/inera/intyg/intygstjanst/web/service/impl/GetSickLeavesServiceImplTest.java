@@ -104,7 +104,7 @@ class GetSickLeavesServiceImplTest {
             .fromSickLeaveEndDate(FROM_END_DATE)
             .toSickLeaveEndDate(TO_END_DATE)
             .toPatientAge(TO_PATIENT_AGE)
-            .rekoStatuses(REKO_STATUSES);
+            .rekoStatusTypeIds(REKO_STATUSES);
 
         doReturn(CARE_PROVIDER_ID)
             .when(hsaService)

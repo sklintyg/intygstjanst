@@ -39,6 +39,6 @@ public class SickLeaveRequestDTO {
     private String protectedPersonFilterId;
     private LocalDate fromSickLeaveEndDate;
     private LocalDate toSickLeaveEndDate;
-    private List<String> rekoStatuses;
+    private List<String> rekoStatusTypeIds;
 
 }
