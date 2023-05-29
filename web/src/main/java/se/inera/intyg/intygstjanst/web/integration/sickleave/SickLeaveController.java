@@ -108,7 +108,7 @@ public class SickLeaveController {
                 getSickLeaveFilterServiceResponse.getDiagnosisChapters(),
                 getSickLeaveFilterServiceResponse.getNbrOfSickLeaves(),
                 getSickLeaveFilterServiceResponse.getRekoStatusTypes(),
-                getSickLeaveFilterServiceResponse.getOccupationTypeDTOList()
+                getSickLeaveFilterServiceResponse.getOccupationTypes()
             )
         ).build();
     }

@@ -35,5 +35,5 @@ public class PopulateFiltersResponseDTO {
     private List<DiagnosKapitel> diagnosisChapters;
     private int nbrOfSickLeaves;
     private List<RekoStatusTypeDTO> rekoStatusTypes;
-    private List<OccupationTypeDTO> occupationTypeDTOList;
+    private List<OccupationTypeDTO> occupationTypes;
 }

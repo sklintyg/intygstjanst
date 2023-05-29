@@ -81,9 +81,9 @@ class SickLeaveControllerTest {
 
     private static final List<String> REKO_STATUSES_FILTER = List.of("REKO_1", "REKO_2");
     private static final List<OccupationTypeDTO> OCCUPATION_TYPE_DTO_LIST = List.of(
-        new OccupationTypeDTO(OccupationType.OCCUPATION_NUVARANDE_ARBETE.toString(), OccupationType.OCCUPATION_NUVARANDE_ARBETE.getName())
+        new OccupationTypeDTO(OccupationType.NUVARANDE_ARBETE.toString(), OccupationType.NUVARANDE_ARBETE.getName())
     );
-    private static final List<String> OCCUPATION_IDS = List.of(OccupationType.OCCUPATION_ARBETSSOKANDE.toString());
+    private static final List<String> OCCUPATION_IDS = List.of(OccupationType.ARBETSSOKANDE.toString());
     private static final Integer PATIENT_AGE_FROM = 1;
     private static final Integer PATIENT_AGE_TO = 150;
     private static final int NUMBER_OF_SICK_LEAVES = 10;
@@ -167,7 +167,7 @@ class SickLeaveControllerTest {
                     .diagnosisChapters(DIAGNOSIS_CHAPTER)
                     .nbrOfSickLeaves(NUMBER_OF_SICK_LEAVES)
                     .rekoStatusTypes(REKO_STATUSES)
-                    .occupationTypeDTOList(OCCUPATION_TYPE_DTO_LIST)
+                    .occupationTypes(OCCUPATION_TYPE_DTO_LIST)
                     .build())
                 .when(getSickLeaveFilterService)
                 .get(any(GetSickLeaveFilterServiceRequest.class));

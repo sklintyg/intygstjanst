@@ -91,7 +91,7 @@ class GetSickLeavesServiceImplTest {
     private static final List<SjukfallEnhet> SICK_LEAVES = List.of(new SjukfallEnhet(), new SjukfallEnhet(), new SjukfallEnhet());
     private static final List<SjukfallEnhet> FILTERED_SICK_LEAVES = List.of(new SjukfallEnhet(), new SjukfallEnhet());
     private static final List<SickLeaveLengthInterval> SICK_LEAVE_LENGTH_INTERVALS = List.of(new SickLeaveLengthInterval(1, 365));
-    private static final List<String> OCCUPATION_TYPE_IDS = List.of(OccupationType.OCCUPATION_ARBETSSOKANDE.toString());
+    private static final List<String> OCCUPATION_TYPE_IDS = List.of(OccupationType.ARBETSSOKANDE.toString());
 
     private GetSickLeaveServiceRequestBuilder getSickLeaveServiceRequestBuilder;
 

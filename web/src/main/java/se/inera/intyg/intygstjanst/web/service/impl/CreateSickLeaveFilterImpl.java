@@ -80,7 +80,7 @@ public class CreateSickLeaveFilterImpl implements CreateSickLeaveFilter {
             .diagnosisChapters(diagnosisChaptersForCareUnit)
             .nbrOfSickLeaves(intygDataList.size())
             .rekoStatusTypes(rekoStatuses)
-            .occupationTypeDTOList(occupationTypeDTOList)
+            .occupationTypes(occupationTypeDTOList)
             .build();
     }
 }

@@ -21,10 +21,10 @@ package se.inera.intyg.intygstjanst.web.service.dto;
 
 public enum OccupationType {
 
-    OCCUPATION_NUVARANDE_ARBETE("Nuvarande arbete"),
-    OCCUPATION_ARBETSSOKANDE("Arbetssökande"),
-    OCCUPATION_FORALDRALEDIG("Föräldraledighet"),
-    OCCUPATION_STUDIER("Studier");
+    NUVARANDE_ARBETE("Nuvarande arbete"),
+    ARBETSSOKANDE("Arbetssökande"),
+    FORALDRALEDIG("Föräldraledighet"),
+    STUDIER("Studier");
 
     private final String name;
 

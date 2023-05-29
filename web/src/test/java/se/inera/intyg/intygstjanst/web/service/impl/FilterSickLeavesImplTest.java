@@ -499,7 +499,7 @@ class FilterSickLeavesImplTest {
                 expectedSickLeave,
                 createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID, List.of(OCCUPATION_NUVARANDE_ARBETE)));
             final var filteredSickLeaves = filterSickLeaves.filter(sickLeaves, null, null, null, null, null, null, null, null,
-                List.of(OccupationType.OCCUPATION_NUVARANDE_ARBETE.toString()));
+                List.of(OccupationType.NUVARANDE_ARBETE.toString()));
             assertEquals(List.of(expectedSickLeave), filteredSickLeaves);
         }
 
@@ -511,7 +511,7 @@ class FilterSickLeavesImplTest {
                 expectedSickLeave,
                 createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID, List.of(OCCUPATION_ARBETSSOKANDE)));
             final var filteredSickLeaves = filterSickLeaves.filter(sickLeaves, null, null, null, null, null, null, null, null,
-                List.of(OccupationType.OCCUPATION_ARBETSSOKANDE.toString()));
+                List.of(OccupationType.ARBETSSOKANDE.toString()));
             assertEquals(List.of(expectedSickLeave), filteredSickLeaves);
         }
 
@@ -523,7 +523,7 @@ class FilterSickLeavesImplTest {
                 expectedSickLeave,
                 createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID, List.of(OCCUPATION_FORALDRALEDIGHET)));
             final var filteredSickLeaves = filterSickLeaves.filter(sickLeaves, null, null, null, null, null, null, null, null,
-                List.of(OccupationType.OCCUPATION_FORALDRALEDIG.toString()));
+                List.of(OccupationType.FORALDRALEDIG.toString()));
             assertEquals(List.of(expectedSickLeave), filteredSickLeaves);
         }
 
@@ -535,7 +535,7 @@ class FilterSickLeavesImplTest {
                 expectedSickLeave,
                 createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID, List.of(OCCUPATION_STUDIER)));
             final var filteredSickLeaves = filterSickLeaves.filter(sickLeaves, null, null, null, null, null, null, null, null,
-                List.of(OccupationType.OCCUPATION_STUDIER.toString()));
+                List.of(OccupationType.STUDIER.toString()));
             assertEquals(List.of(expectedSickLeave), filteredSickLeaves);
         }
 
@@ -549,9 +549,9 @@ class FilterSickLeavesImplTest {
                     List.of(OCCUPATION_STUDIER)));
             final var filteredSickLeaves = filterSickLeaves.filter(sickLeaves, null, null, null, null, null, null, null, null,
                 List.of(
-                    OccupationType.OCCUPATION_STUDIER.toString(),
-                    OccupationType.OCCUPATION_NUVARANDE_ARBETE.toString(),
-                    OccupationType.OCCUPATION_ARBETSSOKANDE.toString())
+                    OccupationType.STUDIER.toString(),
+                    OccupationType.NUVARANDE_ARBETE.toString(),
+                    OccupationType.ARBETSSOKANDE.toString())
             );
             assertEquals(List.of(expectedSickLeave), filteredSickLeaves);
         }

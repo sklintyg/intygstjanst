@@ -68,10 +68,10 @@ class CreateSickLeaveFilterImplTest {
     );
 
     private static final List<OccupationTypeDTO> OCCUPATION_TYPE_DTO_LIST = Arrays.asList(
-        new OccupationTypeDTO(OccupationType.OCCUPATION_STUDIER.toString(), OccupationType.OCCUPATION_STUDIER.getName()),
-        new OccupationTypeDTO(OccupationType.OCCUPATION_ARBETSSOKANDE.toString(), OccupationType.OCCUPATION_ARBETSSOKANDE.getName()),
-        new OccupationTypeDTO(OccupationType.OCCUPATION_NUVARANDE_ARBETE.toString(), OccupationType.OCCUPATION_NUVARANDE_ARBETE.getName()),
-        new OccupationTypeDTO(OccupationType.OCCUPATION_FORALDRALEDIG.toString(), OccupationType.OCCUPATION_FORALDRALEDIG.getName())
+        new OccupationTypeDTO(OccupationType.STUDIER.toString(), OccupationType.STUDIER.getName()),
+        new OccupationTypeDTO(OccupationType.ARBETSSOKANDE.toString(), OccupationType.ARBETSSOKANDE.getName()),
+        new OccupationTypeDTO(OccupationType.NUVARANDE_ARBETE.toString(), OccupationType.NUVARANDE_ARBETE.getName()),
+        new OccupationTypeDTO(OccupationType.FORALDRALEDIG.toString(), OccupationType.FORALDRALEDIG.getName())
     );
 
     @Nested
@@ -91,7 +91,7 @@ class CreateSickLeaveFilterImplTest {
                 )
                 .nbrOfSickLeaves(2)
                 .rekoStatusTypes(REKO_LIST)
-                .occupationTypeDTOList(OCCUPATION_TYPE_DTO_LIST)
+                .occupationTypes(OCCUPATION_TYPE_DTO_LIST)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -119,7 +119,7 @@ class CreateSickLeaveFilterImplTest {
                 )
                 .nbrOfSickLeaves(3)
                 .rekoStatusTypes(REKO_LIST)
-                .occupationTypeDTOList(OCCUPATION_TYPE_DTO_LIST)
+                .occupationTypes(OCCUPATION_TYPE_DTO_LIST)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -164,7 +164,7 @@ class CreateSickLeaveFilterImplTest {
                 )
                 .nbrOfSickLeaves(2)
                 .rekoStatusTypes(REKO_LIST)
-                .occupationTypeDTOList(OCCUPATION_TYPE_DTO_LIST)
+                .occupationTypes(OCCUPATION_TYPE_DTO_LIST)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -192,7 +192,7 @@ class CreateSickLeaveFilterImplTest {
                 )
                 .nbrOfSickLeaves(3)
                 .rekoStatusTypes(REKO_LIST)
-                .occupationTypeDTOList(OCCUPATION_TYPE_DTO_LIST)
+                .occupationTypes(OCCUPATION_TYPE_DTO_LIST)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -262,35 +262,35 @@ class CreateSickLeaveFilterImplTest {
     }
 
     @Nested
-    class OccuaptionType {
+    class OccupationTypes {
 
         @Test
         void shallContainOccupationNuvarandeArbete() {
             final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
-            assertEquals(actualFilter.getOccupationTypeDTOList().get(0).getId(), OccupationType.OCCUPATION_NUVARANDE_ARBETE.toString());
-            assertEquals(actualFilter.getOccupationTypeDTOList().get(0).getName(), OccupationType.OCCUPATION_NUVARANDE_ARBETE.getName());
+            assertEquals(actualFilter.getOccupationTypes().get(0).getId(), OccupationType.NUVARANDE_ARBETE.toString());
+            assertEquals(actualFilter.getOccupationTypes().get(0).getName(), OccupationType.NUVARANDE_ARBETE.getName());
         }
 
         @Test
         void shallContainOccupationArbetssokande() {
             final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
-            assertEquals(actualFilter.getOccupationTypeDTOList().get(1).getId(), OccupationType.OCCUPATION_ARBETSSOKANDE.toString());
-            assertEquals(actualFilter.getOccupationTypeDTOList().get(1).getName(), OccupationType.OCCUPATION_ARBETSSOKANDE.getName());
+            assertEquals(actualFilter.getOccupationTypes().get(1).getId(), OccupationType.ARBETSSOKANDE.toString());
+            assertEquals(actualFilter.getOccupationTypes().get(1).getName(), OccupationType.ARBETSSOKANDE.getName());
         }
 
 
         @Test
         void shallContainOccupationForaldraledig() {
             final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
-            assertEquals(actualFilter.getOccupationTypeDTOList().get(2).getId(), OccupationType.OCCUPATION_FORALDRALEDIG.toString());
-            assertEquals(actualFilter.getOccupationTypeDTOList().get(2).getName(), OccupationType.OCCUPATION_FORALDRALEDIG.getName());
+            assertEquals(actualFilter.getOccupationTypes().get(2).getId(), OccupationType.FORALDRALEDIG.toString());
+            assertEquals(actualFilter.getOccupationTypes().get(2).getName(), OccupationType.FORALDRALEDIG.getName());
         }
 
         @Test
         void shallContainOccupationStudier() {
             final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
-            assertEquals(actualFilter.getOccupationTypeDTOList().get(3).getId(), OccupationType.OCCUPATION_STUDIER.toString());
-            assertEquals(actualFilter.getOccupationTypeDTOList().get(3).getName(), OccupationType.OCCUPATION_STUDIER.getName());
+            assertEquals(actualFilter.getOccupationTypes().get(3).getId(), OccupationType.STUDIER.toString());
+            assertEquals(actualFilter.getOccupationTypes().get(3).getName(), OccupationType.STUDIER.getName());
         }
     }
 
@@ -310,7 +310,7 @@ class CreateSickLeaveFilterImplTest {
                 )
             )
             .rekoStatusTypes(REKO_LIST)
-            .occupationTypeDTOList(OCCUPATION_TYPE_DTO_LIST)
+            .occupationTypes(OCCUPATION_TYPE_DTO_LIST)
             .nbrOfSickLeaves(2)
             .build();
 
