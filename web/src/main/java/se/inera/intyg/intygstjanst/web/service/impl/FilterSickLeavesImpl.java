@@ -56,12 +56,12 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
             .collect(Collectors.toList());
     }
 
-    private boolean filterOnRekoStatuses(SjukfallEnhet sickLeave, List<String> rekoStatuses) {
-        if (rekoStatuses == null || rekoStatuses.size() == 0) {
+    private boolean filterOnRekoStatuses(SjukfallEnhet sickLeave, List<String> rekoStatusTypeIds) {
+        if (rekoStatusTypeIds == null || rekoStatusTypeIds.size() == 0) {
             return true;
         }
 
-        return rekoStatuses.stream().anyMatch(
+        return rekoStatusTypeIds.stream().anyMatch(
                 (rekoStatus) -> (sickLeave.getRekoStatus() == null && rekoStatus.equals(RekoStatusType.REKO_1.toString()))
                         || (sickLeave.getRekoStatus() != null && sickLeave.getRekoStatus().getStatus().getId().equals(rekoStatus))
         );

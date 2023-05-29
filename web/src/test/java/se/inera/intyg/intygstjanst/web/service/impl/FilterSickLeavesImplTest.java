@@ -58,6 +58,8 @@ class FilterSickLeavesImplTest {
     private static final String ANOTHER_DIAGNOSIS_CHAPTER = "C00-D48Tumörer";
     private static final String PATIENT_ID = "19121212-1212";
     private static final String ANOTHER_PATIENT_ID = "20121212-1212";
+    private static final String THIRD_PATIENT_ID = "20121212-1213";
+
     private static final LocalDate FROM_END_DATE = LocalDate.now();
     private static final LocalDate TO_END_DATE = FROM_END_DATE.plusDays(10);
 
@@ -386,7 +388,7 @@ class FilterSickLeavesImplTest {
             expectedSickLeave.setRekoStatus(rekoStatus1);
             anotherSickLeave = createSjukFallEnhet(ANOTHER_DIAGNOSIS_CODE, 12, ANOTHER_PATIENT_ID);
             anotherSickLeave.setRekoStatus(rekoStatus2);
-            sickLeaveWithNoRekoStatus = createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID);
+            sickLeaveWithNoRekoStatus = createSjukFallEnhet(DIAGNOSIS_CODE, 5, THIRD_PATIENT_ID);
             sickLeaves = List.of(expectedSickLeave, anotherSickLeave, sickLeaveWithNoRekoStatus);
         }
 
@@ -410,7 +412,7 @@ class FilterSickLeavesImplTest {
         void shouldFilterRekoStatusExcludedInFilter() {
             final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
                     null, null, null, TO_END_DATE, Collections.emptyList(),
-                    Collections.singletonList(RekoStatusType.REKO_1.toString()));
+                    Collections.singletonList(RekoStatusType.REKO_3.toString()));
 
             assertEquals(1, actualSickLeaveList.size());
             assertEquals(expectedSickLeave, actualSickLeaveList.get(0));
@@ -432,6 +434,18 @@ class FilterSickLeavesImplTest {
                     List.of(RekoStatusType.REKO_3.toString(), RekoStatusType.REKO_2.toString()));
 
             assertEquals(2, actualSickLeaveList.size());
+            assertEquals(expectedSickLeave, actualSickLeaveList.get(0));
+            assertEquals(anotherSickLeave, actualSickLeaveList.get(1));
+        }
+
+        @Test
+        void shouldFilterAllSickLeavesButSickLeaveWithoutRekoStatus() {
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
+                    null, null, null, TO_END_DATE, Collections.emptyList(),
+                    Collections.singletonList(RekoStatusType.REKO_1.toString()));
+
+            assertEquals(1, actualSickLeaveList.size());
+            assertEquals(sickLeaveWithNoRekoStatus, actualSickLeaveList.get(0));
         }
     }
 
