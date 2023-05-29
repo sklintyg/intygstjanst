@@ -70,7 +70,7 @@ public class GetSickLeaveFilterServiceImpl implements GetSickLeaveFilterService 
         puFilterService.enrichWithPatientNameAndFilter(intygDataList, getSickLeaveFilterServiceRequest.getProtectedPersonFilterId());
         LOG.info(sickLeaveLogMessageFactory.message(GET_AND_FILTER_PROTECTED_PATIENTS, intygDataList.size()));
 
-        return createSickLeaveFilter.create(intygDataList);
+        return createSickLeaveFilter.create(intygDataList, getSickLeaveFilterServiceRequest.getDoctorId());
     }
 
     private static List<String> getUnitIdFromRequestIfProvided(String unitId, List<String> careUnitAndSubUnits) {

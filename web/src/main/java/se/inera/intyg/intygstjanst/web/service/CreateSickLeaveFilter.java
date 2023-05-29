@@ -25,5 +25,5 @@ import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResp
 
 public interface CreateSickLeaveFilter {
 
-    GetSickLeaveFilterServiceResponse create(List<IntygData> intygDataList);
+    GetSickLeaveFilterServiceResponse create(List<IntygData> intygDataList, String doctorId);
 }

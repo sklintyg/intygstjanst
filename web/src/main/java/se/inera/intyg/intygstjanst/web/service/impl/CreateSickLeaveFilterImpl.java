@@ -42,16 +42,23 @@ public class CreateSickLeaveFilterImpl implements CreateSickLeaveFilter {
     }
 
     @Override
-    public GetSickLeaveFilterServiceResponse create(List<IntygData> intygDataList) {
+    public GetSickLeaveFilterServiceResponse create(List<IntygData> intygDataList, String doctorId) {
         if (intygDataList.isEmpty()) {
             return GetSickLeaveFilterServiceResponse.builder().build();
+        }
+
+        if (doctorId != null) {
+            intygDataList = intygDataList
+                    .stream()
+                    .filter((intygData) -> filterOnDoctorId(intygData, doctorId))
+                    .collect(Collectors.toList());
         }
 
         final var doctorsForCareUnit = intygDataList.stream()
             .map(IntygData::getLakareId)
             .distinct()
             .filter(Objects::nonNull)
-            .map(doctorId -> Lakare.create(doctorId, doctorId))
+            .map(id -> Lakare.create(id, id))
             .collect(Collectors.toList());
 
         final var diagnosisChaptersForCareUnit = intygDataList.stream()
@@ -74,5 +81,13 @@ public class CreateSickLeaveFilterImpl implements CreateSickLeaveFilter {
             .nbrOfSickLeaves(intygDataList.size())
             .rekoStatusTypes(rekoStatuses)
             .build();
+    }
+
+    private boolean filterOnDoctorId(IntygData certificateData, String doctorId) {
+        if (doctorId == null || doctorId.length() == 0) {
+            return true;
+        }
+
+        return certificateData.getLakareId().equals(doctorId);
     }
 }
