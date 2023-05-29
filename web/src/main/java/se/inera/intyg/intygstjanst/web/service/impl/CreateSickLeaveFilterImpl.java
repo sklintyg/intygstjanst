@@ -29,8 +29,10 @@ import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.web.service.CreateSickLeaveFilter;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
-import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusTypeDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.OccupationType;
+import se.inera.intyg.intygstjanst.web.service.dto.OccupationTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
+import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusTypeDTO;
 
 @Service
 public class CreateSickLeaveFilterImpl implements CreateSickLeaveFilter {
@@ -64,15 +66,21 @@ public class CreateSickLeaveFilterImpl implements CreateSickLeaveFilter {
             .collect(Collectors.toList());
 
         final var rekoStatuses = Arrays
-                .stream(RekoStatusType.values())
-                .map((status) -> new RekoStatusTypeDTO(status.toString(), status.getName()))
-                .collect(Collectors.toList());
+            .stream(RekoStatusType.values())
+            .map((status) -> new RekoStatusTypeDTO(status.toString(), status.getName()))
+            .collect(Collectors.toList());
+
+        final var occupationTypeDTOList = Arrays
+            .stream(OccupationType.values())
+            .map(status -> new OccupationTypeDTO(status.toString(), status.getName()))
+            .collect(Collectors.toList());
 
         return GetSickLeaveFilterServiceResponse.builder()
             .activeDoctors(doctorsForCareUnit)
             .diagnosisChapters(diagnosisChaptersForCareUnit)
             .nbrOfSickLeaves(intygDataList.size())
             .rekoStatusTypes(rekoStatuses)
+            .occupationTypeDTOList(occupationTypeDTOList)
             .build();
     }
 }

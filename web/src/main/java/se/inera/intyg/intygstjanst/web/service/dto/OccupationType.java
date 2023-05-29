@@ -19,21 +19,29 @@
 
 package se.inera.intyg.intygstjanst.web.service.dto;
 
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
-import se.inera.intyg.infra.sjukfall.dto.Lakare;
+public enum OccupationType {
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class PopulateFiltersResponseDTO {
+    OCCUPATION_NUVARANDE_ARBETE("Nuvarande arbete"),
+    OCCUPATION_ARBETSSOKANDE("Arbetssökande"),
+    OCCUPATION_FORALDRALEDIG("Föräldraledighet"),
+    OCCUPATION_STUDIER("Studier");
 
-    private List<Lakare> activeDoctors;
-    private List<DiagnosKapitel> diagnosisChapters;
-    private int nbrOfSickLeaves;
-    private List<RekoStatusTypeDTO> rekoStatusTypes;
-    private List<OccupationTypeDTO> occupationTypeDTOList;
+    private final String name;
+
+    OccupationType(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public static OccupationType fromId(String id) {
+        for (final var type : values()) {
+            if (type.toString().equals(id)) {
+                return type;
+            }
+        }
+        return null;
+    }
 }

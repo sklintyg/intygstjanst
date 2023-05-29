@@ -42,4 +42,5 @@ public class GetSickLeaveServiceRequest {
     LocalDate fromSickLeaveEndDate;
     LocalDate toSickLeaveEndDate;
     List<String> rekoStatusTypeIds;
+    List<String> occupationTypeIds;
 }

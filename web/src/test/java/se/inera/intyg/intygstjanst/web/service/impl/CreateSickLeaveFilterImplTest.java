@@ -38,8 +38,10 @@ import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
-import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusTypeDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.OccupationType;
+import se.inera.intyg.intygstjanst.web.service.dto.OccupationTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
+import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusTypeDTO;
 
 @ExtendWith(MockitoExtension.class)
 class CreateSickLeaveFilterImplTest {
@@ -57,13 +59,20 @@ class CreateSickLeaveFilterImplTest {
     private static final DiagnosKod DIAGNOSIS_A01 = DiagnosKod.create("A01");
     private static final DiagnosKod DIAGNOSIS_C01 = DiagnosKod.create("C01");
     private static final List<RekoStatusTypeDTO> REKO_LIST = Arrays.asList(
-            new RekoStatusTypeDTO(RekoStatusType.REKO_1.toString(), RekoStatusType.REKO_1.getName()),
-            new RekoStatusTypeDTO(RekoStatusType.REKO_2.toString(), RekoStatusType.REKO_2.getName()),
-            new RekoStatusTypeDTO(RekoStatusType.REKO_3.toString(), RekoStatusType.REKO_3.getName()),
-            new RekoStatusTypeDTO(RekoStatusType.REKO_4.toString(), RekoStatusType.REKO_4.getName()),
-            new RekoStatusTypeDTO(RekoStatusType.REKO_5.toString(), RekoStatusType.REKO_5.getName()),
-            new RekoStatusTypeDTO(RekoStatusType.REKO_6.toString(), RekoStatusType.REKO_6.getName())
-        );
+        new RekoStatusTypeDTO(RekoStatusType.REKO_1.toString(), RekoStatusType.REKO_1.getName()),
+        new RekoStatusTypeDTO(RekoStatusType.REKO_2.toString(), RekoStatusType.REKO_2.getName()),
+        new RekoStatusTypeDTO(RekoStatusType.REKO_3.toString(), RekoStatusType.REKO_3.getName()),
+        new RekoStatusTypeDTO(RekoStatusType.REKO_4.toString(), RekoStatusType.REKO_4.getName()),
+        new RekoStatusTypeDTO(RekoStatusType.REKO_5.toString(), RekoStatusType.REKO_5.getName()),
+        new RekoStatusTypeDTO(RekoStatusType.REKO_6.toString(), RekoStatusType.REKO_6.getName())
+    );
+
+    private static final List<OccupationTypeDTO> OCCUPATION_TYPE_DTO_LIST = Arrays.asList(
+        new OccupationTypeDTO(OccupationType.OCCUPATION_STUDIER.toString(), OccupationType.OCCUPATION_STUDIER.getName()),
+        new OccupationTypeDTO(OccupationType.OCCUPATION_ARBETSSOKANDE.toString(), OccupationType.OCCUPATION_ARBETSSOKANDE.getName()),
+        new OccupationTypeDTO(OccupationType.OCCUPATION_NUVARANDE_ARBETE.toString(), OccupationType.OCCUPATION_NUVARANDE_ARBETE.getName()),
+        new OccupationTypeDTO(OccupationType.OCCUPATION_FORALDRALEDIG.toString(), OccupationType.OCCUPATION_FORALDRALEDIG.getName())
+    );
 
     @Nested
     class DoctorsTest {
@@ -82,6 +91,7 @@ class CreateSickLeaveFilterImplTest {
                 )
                 .nbrOfSickLeaves(2)
                 .rekoStatusTypes(REKO_LIST)
+                .occupationTypeDTOList(OCCUPATION_TYPE_DTO_LIST)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -109,6 +119,7 @@ class CreateSickLeaveFilterImplTest {
                 )
                 .nbrOfSickLeaves(3)
                 .rekoStatusTypes(REKO_LIST)
+                .occupationTypeDTOList(OCCUPATION_TYPE_DTO_LIST)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -153,6 +164,7 @@ class CreateSickLeaveFilterImplTest {
                 )
                 .nbrOfSickLeaves(2)
                 .rekoStatusTypes(REKO_LIST)
+                .occupationTypeDTOList(OCCUPATION_TYPE_DTO_LIST)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -180,6 +192,7 @@ class CreateSickLeaveFilterImplTest {
                 )
                 .nbrOfSickLeaves(3)
                 .rekoStatusTypes(REKO_LIST)
+                .occupationTypeDTOList(OCCUPATION_TYPE_DTO_LIST)
                 .build();
 
             final var intygDataOne = new IntygData();
@@ -248,6 +261,39 @@ class CreateSickLeaveFilterImplTest {
         }
     }
 
+    @Nested
+    class OccuaptionType {
+
+        @Test
+        void shallContainOccupationNuvarandeArbete() {
+            final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
+            assertEquals(actualFilter.getOccupationTypeDTOList().get(0).getId(), OccupationType.OCCUPATION_NUVARANDE_ARBETE.toString());
+            assertEquals(actualFilter.getOccupationTypeDTOList().get(0).getName(), OccupationType.OCCUPATION_NUVARANDE_ARBETE.getName());
+        }
+
+        @Test
+        void shallContainOccupationArbetssokande() {
+            final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
+            assertEquals(actualFilter.getOccupationTypeDTOList().get(1).getId(), OccupationType.OCCUPATION_ARBETSSOKANDE.toString());
+            assertEquals(actualFilter.getOccupationTypeDTOList().get(1).getName(), OccupationType.OCCUPATION_ARBETSSOKANDE.getName());
+        }
+
+
+        @Test
+        void shallContainOccupationForaldraledig() {
+            final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
+            assertEquals(actualFilter.getOccupationTypeDTOList().get(2).getId(), OccupationType.OCCUPATION_FORALDRALEDIG.toString());
+            assertEquals(actualFilter.getOccupationTypeDTOList().get(2).getName(), OccupationType.OCCUPATION_FORALDRALEDIG.getName());
+        }
+
+        @Test
+        void shallContainOccupationStudier() {
+            final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
+            assertEquals(actualFilter.getOccupationTypeDTOList().get(3).getId(), OccupationType.OCCUPATION_STUDIER.toString());
+            assertEquals(actualFilter.getOccupationTypeDTOList().get(3).getName(), OccupationType.OCCUPATION_STUDIER.getName());
+        }
+    }
+
     @Test
     void shallReturnFilterWithBothDoctorsAndDiagnosisChapters() {
         final var expectedFilter = GetSickLeaveFilterServiceResponse.builder()
@@ -264,6 +310,7 @@ class CreateSickLeaveFilterImplTest {
                 )
             )
             .rekoStatusTypes(REKO_LIST)
+            .occupationTypeDTOList(OCCUPATION_TYPE_DTO_LIST)
             .nbrOfSickLeaves(2)
             .build();
 

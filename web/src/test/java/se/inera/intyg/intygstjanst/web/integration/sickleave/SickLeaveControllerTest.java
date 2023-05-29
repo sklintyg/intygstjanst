@@ -38,7 +38,18 @@ import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeaveFilterService;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeavesService;
-import se.inera.intyg.intygstjanst.web.service.dto.*;
+import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceRequest;
+import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
+import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest;
+import se.inera.intyg.intygstjanst.web.service.dto.OccupationType;
+import se.inera.intyg.intygstjanst.web.service.dto.OccupationTypeDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersResponseDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
+import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusTypeDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
+import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 
 @ExtendWith(MockitoExtension.class)
 class SickLeaveControllerTest {
@@ -66,9 +77,13 @@ class SickLeaveControllerTest {
         Lakare.create(DOCTOR_ID, DOCTOR_ID)
     );
     private static final List<RekoStatusTypeDTO> REKO_STATUSES =
-            List.of(new RekoStatusTypeDTO(RekoStatusType.REKO_1.toString(), RekoStatusType.REKO_1.getName()));
+        List.of(new RekoStatusTypeDTO(RekoStatusType.REKO_1.toString(), RekoStatusType.REKO_1.getName()));
 
     private static final List<String> REKO_STATUSES_FILTER = List.of("REKO_1", "REKO_2");
+    private static final List<OccupationTypeDTO> OCCUPATION_TYPE_DTO_LIST = List.of(
+        new OccupationTypeDTO(OccupationType.OCCUPATION_NUVARANDE_ARBETE.toString(), OccupationType.OCCUPATION_NUVARANDE_ARBETE.getName())
+    );
+    private static final List<String> OCCUPATION_IDS = List.of(OccupationType.OCCUPATION_ARBETSSOKANDE.toString());
     private static final Integer PATIENT_AGE_FROM = 1;
     private static final Integer PATIENT_AGE_TO = 150;
     private static final int NUMBER_OF_SICK_LEAVES = 10;
@@ -92,6 +107,7 @@ class SickLeaveControllerTest {
             sickLeaveRequestDTO.setToPatientAge(PATIENT_AGE_TO);
             sickLeaveRequestDTO.setProtectedPersonFilterId(DOCTOR_ID);
             sickLeaveRequestDTO.setRekoStatusTypeIds(REKO_STATUSES_FILTER);
+            sickLeaveRequestDTO.setOccupationTypeIds(OCCUPATION_IDS);
         }
 
         @Test
@@ -108,6 +124,7 @@ class SickLeaveControllerTest {
                 .toPatientAge(sickLeaveRequestDTO.getToPatientAge())
                 .protectedPersonFilterId(DOCTOR_ID)
                 .rekoStatusTypeIds(REKO_STATUSES_FILTER)
+                .occupationTypeIds(OCCUPATION_IDS)
                 .build();
 
             final var getSickLeaveServiceRequestArgumentCaptor = ArgumentCaptor.forClass(GetSickLeaveServiceRequest.class);
@@ -150,6 +167,7 @@ class SickLeaveControllerTest {
                     .diagnosisChapters(DIAGNOSIS_CHAPTER)
                     .nbrOfSickLeaves(NUMBER_OF_SICK_LEAVES)
                     .rekoStatusTypes(REKO_STATUSES)
+                    .occupationTypeDTOList(OCCUPATION_TYPE_DTO_LIST)
                     .build())
                 .when(getSickLeaveFilterService)
                 .get(any(GetSickLeaveFilterServiceRequest.class));
@@ -176,7 +194,8 @@ class SickLeaveControllerTest {
                 DOCTORS,
                 DIAGNOSIS_CHAPTER,
                 NUMBER_OF_SICK_LEAVES,
-                REKO_STATUSES
+                REKO_STATUSES,
+                OCCUPATION_TYPE_DTO_LIST
             );
 
             final var result = sickLeaveController.populateFilters(populateFiltersRequestDTO);
