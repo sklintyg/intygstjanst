@@ -75,6 +75,7 @@ public class SickLeaveController {
                 .protectedPersonFilterId(sickLeaveRequestDTO.getProtectedPersonFilterId())
                 .fromSickLeaveEndDate(sickLeaveRequestDTO.getFromSickLeaveEndDate())
                 .toSickLeaveEndDate(sickLeaveRequestDTO.getToSickLeaveEndDate())
+                .rekoStatusTypeIds(sickLeaveRequestDTO.getRekoStatusTypeIds())
                 .build()
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_ACTIVE, sjukfallEnhetList.size()));

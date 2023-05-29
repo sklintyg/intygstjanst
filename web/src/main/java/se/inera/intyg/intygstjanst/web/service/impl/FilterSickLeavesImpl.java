@@ -28,6 +28,7 @@ import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.FilterSickLeaves;
+import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
 
 @Service
@@ -44,14 +45,26 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
     @Override
     public List<SjukfallEnhet> filter(List<SjukfallEnhet> sickLeaveList, List<SickLeaveLengthInterval> sickLeaveLengthIntervals,
         List<DiagnosKapitel> diagnosisChapters, Integer fromPatientAge, Integer toPatientAge, LocalDate fromSickLeaveEndDate,
-        LocalDate toSickLeaveEndDate, List<String> doctorsIds) {
+        LocalDate toSickLeaveEndDate, List<String> doctorsIds, List<String> rekoStatusTypeIds) {
         return sickLeaveList.stream()
             .filter(sickLeave -> filterOnSickLeaveLengthIntervals(sickLeave, sickLeaveLengthIntervals))
             .filter(sickLeave -> filterOnDiagnosisChapters(sickLeave, diagnosisChapters))
             .filter(sickLeave -> filterOnPatientAge(sickLeave, fromPatientAge, toPatientAge))
             .filter(sickLeave -> filterOnSickLeaveEndDate(sickLeave, fromSickLeaveEndDate, toSickLeaveEndDate))
             .filter(sickLeave -> filterOnDoctorIds(sickLeave, doctorsIds))
+            .filter(sickLeave -> filterOnRekoStatuses(sickLeave, rekoStatusTypeIds))
             .collect(Collectors.toList());
+    }
+
+    private boolean filterOnRekoStatuses(SjukfallEnhet sickLeave, List<String> rekoStatusTypeIds) {
+        if (rekoStatusTypeIds == null || rekoStatusTypeIds.size() == 0) {
+            return true;
+        }
+
+        return rekoStatusTypeIds.stream().anyMatch(
+                (rekoStatus) -> (sickLeave.getRekoStatus() == null && rekoStatus.equals(RekoStatusType.REKO_1.toString()))
+                        || (sickLeave.getRekoStatus() != null && sickLeave.getRekoStatus().getStatus().getId().equals(rekoStatus))
+        );
     }
 
     private boolean filterOnDoctorIds(SjukfallEnhet sickLeave, List<String> doctorIds) {

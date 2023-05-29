@@ -100,7 +100,8 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
             getSickLeaveServiceRequest.getToPatientAge(),
             getSickLeaveServiceRequest.getFromSickLeaveEndDate(),
             getSickLeaveServiceRequest.getToSickLeaveEndDate(),
-            getSickLeaveServiceRequest.getDoctorIds()
+            getSickLeaveServiceRequest.getDoctorIds(),
+            getSickLeaveServiceRequest.getRekoStatusTypeIds()
         );
     }
 
