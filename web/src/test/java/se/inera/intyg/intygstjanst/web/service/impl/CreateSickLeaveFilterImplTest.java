@@ -68,10 +68,10 @@ class CreateSickLeaveFilterImplTest {
     );
 
     private static final List<OccupationTypeDTO> OCCUPATION_TYPE_DTO_LIST = Arrays.asList(
-        new OccupationTypeDTO(OccupationType.STUDIER.toString(), OccupationType.STUDIER.getName()),
-        new OccupationTypeDTO(OccupationType.ARBETSSOKANDE.toString(), OccupationType.ARBETSSOKANDE.getName()),
         new OccupationTypeDTO(OccupationType.NUVARANDE_ARBETE.toString(), OccupationType.NUVARANDE_ARBETE.getName()),
-        new OccupationTypeDTO(OccupationType.FORALDRALEDIG.toString(), OccupationType.FORALDRALEDIG.getName())
+        new OccupationTypeDTO(OccupationType.ARBETSSOKANDE.toString(), OccupationType.ARBETSSOKANDE.getName()),
+        new OccupationTypeDTO(OccupationType.FORALDRALEDIG.toString(), OccupationType.FORALDRALEDIG.getName()),
+        new OccupationTypeDTO(OccupationType.STUDIER.toString(), OccupationType.STUDIER.getName())
     );
 
     @Nested
