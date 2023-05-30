@@ -76,6 +76,7 @@ public class SickLeaveController {
                 .fromSickLeaveEndDate(sickLeaveRequestDTO.getFromSickLeaveEndDate())
                 .toSickLeaveEndDate(sickLeaveRequestDTO.getToSickLeaveEndDate())
                 .rekoStatusTypeIds(sickLeaveRequestDTO.getRekoStatusTypeIds())
+                .occupationTypeIds(sickLeaveRequestDTO.getOccupationTypeIds())
                 .build()
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_ACTIVE, sjukfallEnhetList.size()));
@@ -106,7 +107,8 @@ public class SickLeaveController {
                 getSickLeaveFilterServiceResponse.getActiveDoctors(),
                 getSickLeaveFilterServiceResponse.getDiagnosisChapters(),
                 getSickLeaveFilterServiceResponse.getNbrOfSickLeaves(),
-                getSickLeaveFilterServiceResponse.getRekoStatusTypes()
+                getSickLeaveFilterServiceResponse.getRekoStatusTypes(),
+                getSickLeaveFilterServiceResponse.getOccupationTypes()
             )
         ).build();
     }

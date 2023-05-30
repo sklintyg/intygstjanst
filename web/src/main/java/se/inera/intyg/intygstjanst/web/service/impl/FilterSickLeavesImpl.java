@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
@@ -28,6 +29,7 @@ import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.FilterSickLeaves;
+import se.inera.intyg.intygstjanst.web.service.dto.OccupationType;
 import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
 
@@ -45,7 +47,7 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
     @Override
     public List<SjukfallEnhet> filter(List<SjukfallEnhet> sickLeaveList, List<SickLeaveLengthInterval> sickLeaveLengthIntervals,
         List<DiagnosKapitel> diagnosisChapters, Integer fromPatientAge, Integer toPatientAge, LocalDate fromSickLeaveEndDate,
-        LocalDate toSickLeaveEndDate, List<String> doctorsIds, List<String> rekoStatusTypeIds) {
+        LocalDate toSickLeaveEndDate, List<String> doctorsIds, List<String> rekoStatusTypeIds, List<String> occupationTypeIds) {
         return sickLeaveList.stream()
             .filter(sickLeave -> filterOnSickLeaveLengthIntervals(sickLeave, sickLeaveLengthIntervals))
             .filter(sickLeave -> filterOnDiagnosisChapters(sickLeave, diagnosisChapters))
@@ -53,6 +55,7 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
             .filter(sickLeave -> filterOnSickLeaveEndDate(sickLeave, fromSickLeaveEndDate, toSickLeaveEndDate))
             .filter(sickLeave -> filterOnDoctorIds(sickLeave, doctorsIds))
             .filter(sickLeave -> filterOnRekoStatuses(sickLeave, rekoStatusTypeIds))
+            .filter(sickleave -> filterOnOccupation(sickleave, occupationTypeIds))
             .collect(Collectors.toList());
     }
 
@@ -65,6 +68,18 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
                 (rekoStatus) -> (sickLeave.getRekoStatus() == null && rekoStatus.equals(RekoStatusType.REKO_1.toString()))
                         || (sickLeave.getRekoStatus() != null && sickLeave.getRekoStatus().getStatus().getId().equals(rekoStatus))
         );
+    }
+
+    private boolean filterOnOccupation(SjukfallEnhet sickleave, List<String> occupationTypeIds) {
+        if (occupationTypeIds == null || occupationTypeIds.isEmpty()) {
+            return true;
+        }
+
+        return occupationTypeIds.stream()
+            .map(OccupationType::fromId)
+            .filter(Objects::nonNull)
+            .anyMatch(occupationType -> sickleave.getSysselsattning().stream()
+                .anyMatch(occupation -> occupation.contains(occupationType.getName())));
     }
 
     private boolean filterOnDoctorIds(SjukfallEnhet sickLeave, List<String> doctorIds) {

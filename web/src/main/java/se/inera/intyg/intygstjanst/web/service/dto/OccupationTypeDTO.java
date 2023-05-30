@@ -19,28 +19,15 @@
 
 package se.inera.intyg.intygstjanst.web.service.dto;
 
-import java.time.LocalDate;
-import java.util.List;
-import lombok.Builder;
-import lombok.Value;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Value
-@Builder
-public class GetSickLeaveServiceRequest {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class OccupationTypeDTO {
 
-    String unitId;
-    String careUnitId;
-    List<String> doctorIds;
-    int maxCertificateGap;
-    int maxDaysSinceSickLeaveCompleted;
-    List<SickLeaveLengthInterval> sickLeaveLengthIntervals;
-    List<DiagnosKapitel> diagnosisChapters;
-    Integer fromPatientAge;
-    Integer toPatientAge;
-    String protectedPersonFilterId;
-    LocalDate fromSickLeaveEndDate;
-    LocalDate toSickLeaveEndDate;
-    List<String> rekoStatusTypeIds;
-    List<String> occupationTypeIds;
+    String id;
+    String name;
 }

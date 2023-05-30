@@ -19,6 +19,9 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_ACTIVE_SICK_LEAVE_CERTIFICATES;
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_SICK_LEAVES;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,10 +32,12 @@ import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory;
-import se.inera.intyg.intygstjanst.web.service.*;
+import se.inera.intyg.intygstjanst.web.service.FilterSickLeaves;
+import se.inera.intyg.intygstjanst.web.service.GetActiveSickLeaveCertificates;
+import se.inera.intyg.intygstjanst.web.service.GetSickLeaveCertificates;
+import se.inera.intyg.intygstjanst.web.service.GetSickLeavesService;
+import se.inera.intyg.intygstjanst.web.service.RekoStatusDecorator;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest;
-
-import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.*;
 
 @Service
 public class GetSickLeavesServiceImpl implements GetSickLeavesService {
@@ -45,9 +50,9 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
     private final RekoStatusDecorator rekoStatusDecorator;
 
     public GetSickLeavesServiceImpl(HsaService hsaService,
-                                    GetActiveSickLeaveCertificates getActiveSickLeaveCertificates,
-                                    GetSickLeaveCertificates getSickLeaveCertificates,
-                                    FilterSickLeaves filterSickLeaves, RekoStatusDecorator rekoStatusDecorator) {
+        GetActiveSickLeaveCertificates getActiveSickLeaveCertificates,
+        GetSickLeaveCertificates getSickLeaveCertificates,
+        FilterSickLeaves filterSickLeaves, RekoStatusDecorator rekoStatusDecorator) {
         this.hsaService = hsaService;
         this.getActiveSickLeaveCertificates = getActiveSickLeaveCertificates;
         this.getSickLeaveCertificates = getSickLeaveCertificates;
@@ -101,7 +106,8 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
             getSickLeaveServiceRequest.getFromSickLeaveEndDate(),
             getSickLeaveServiceRequest.getToSickLeaveEndDate(),
             getSickLeaveServiceRequest.getDoctorIds(),
-            getSickLeaveServiceRequest.getRekoStatusTypeIds()
+            getSickLeaveServiceRequest.getRekoStatusTypeIds(),
+            getSickLeaveServiceRequest.getOccupationTypeIds()
         );
     }
 
