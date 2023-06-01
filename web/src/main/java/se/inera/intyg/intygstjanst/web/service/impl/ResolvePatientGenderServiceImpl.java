@@ -20,15 +20,15 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.web.service.CalculatePatientGenderService;
+import se.inera.intyg.intygstjanst.web.service.ResolvePatientGenderService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @Service
-public class CalculatePatientGenderServiceImpl implements CalculatePatientGenderService {
+public class ResolvePatientGenderServiceImpl implements ResolvePatientGenderService {
 
     private static final int GENDER_START = 10;
     private static final int GENDER_END = 11;
-    private static final String EMPTY_RESULT = "";
+    private static final String UKNOWN = "Okänd";
 
     @Override
     public String get(String patientId) {
@@ -43,7 +43,7 @@ public class CalculatePatientGenderServiceImpl implements CalculatePatientGender
 
     private static String getGenderFromString(String genderString) {
         if (genderString == null || genderString.length() != 1) {
-            return EMPTY_RESULT;
+            return UKNOWN;
         }
         return genderString.matches("^\\d*[13579]$") ? "Man" : "Kvinna";
     }

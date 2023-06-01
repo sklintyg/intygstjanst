@@ -19,7 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
-public interface CalculatePatientGenderService {
+public interface ResolvePatientGenderService {
 
     String get(String patientId);
 }

@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,8 +42,7 @@ import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.Patient;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
-import se.inera.intyg.intygstjanst.web.service.CalculatePatientGenderService;
-import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
+import se.inera.intyg.intygstjanst.web.service.ResolvePatientGenderService;
 
 @ExtendWith(MockitoExtension.class)
 class TextSearchFilterServiceImplTest {
@@ -50,9 +50,8 @@ class TextSearchFilterServiceImplTest {
     @Mock
     private CalculatePatientAgeService calculatePatientAgeService;
     @Mock
-    private CalculatePatientGenderService calculatePatientGenderService;
-    @Mock
-    private DiagnosisChapterService diagnosisChapterService;
+    private ResolvePatientGenderService resolvePatientGenderService;
+
     @InjectMocks
     private TextSearchFilterServiceImpl textSearchFilterService;
 
@@ -110,8 +109,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingPatientAge() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 doReturn(100).when(calculatePatientAgeService).get(PATIENT_ARNOLD_ID);
                 doReturn(200).when(calculatePatientAgeService).get(PATIENT_ATTILA_ID);
@@ -122,8 +123,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPartialPatientAge() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 doReturn(100).when(calculatePatientAgeService).get(PATIENT_ARNOLD_ID);
                 doReturn(10).when(calculatePatientAgeService).get(PATIENT_ATTILA_ID);
@@ -134,8 +137,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPatientAge() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 doReturn(100).when(calculatePatientAgeService).get(PATIENT_ARNOLD_ID);
                 doReturn(200).when(calculatePatientAgeService).get(PATIENT_ATTILA_ID);
@@ -150,8 +155,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingPatientName() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), "Arnold");
                 assertEquals(List.of(expectedResult), filterResult);
@@ -159,8 +166,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPartialPatientName() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit),
                     PATIENT_ARNOLD_NAME.substring(0, 5));
@@ -169,8 +178,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPatientName() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), NO_MATCHING_RESULT);
                 assertEquals(0, filterResult.size());
@@ -182,14 +193,16 @@ class TextSearchFilterServiceImplTest {
 
             @BeforeEach
             void setUp() {
-                doReturn(MALE).when(calculatePatientGenderService).get(PATIENT_ARNOLD_ID);
-                doReturn(FEMMALE).when(calculatePatientGenderService).get(PATIENT_ATTILA_ID);
+                doReturn(MALE).when(resolvePatientGenderService).get(PATIENT_ARNOLD_ID);
+                doReturn(FEMMALE).when(resolvePatientGenderService).get(PATIENT_ATTILA_ID);
             }
 
             @Test
             void shouldFilterOnGenderMale() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), MALE);
                 assertEquals(List.of(expectedResult), filterResult);
@@ -197,8 +210,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnGenderFemale() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
-                final var expectedResult = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                final var expectedResult = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), FEMMALE);
                 assertEquals(List.of(expectedResult), filterResult);
@@ -206,8 +221,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnGender() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
-                final var expectedResult = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                final var expectedResult = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), NO_MATCHING_RESULT);
                 assertEquals(0, filterResult.size());
@@ -219,13 +236,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingDiagnosis() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
-
-                doReturn(getDiagnosKapitel(DIAGNOSIS_CODE_N41)).when(diagnosisChapterService)
-                    .getDiagnosisChaptersFromSickLeave(expectedResult);
-                doReturn(getDiagnosKapitel(DIAGNOSIS_CODE_F23)).when(diagnosisChapterService)
-                    .getDiagnosisChaptersFromSickLeave(sickLeaveUnit);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), DIAGNOSIS_CODE_N41);
                 assertEquals(List.of(expectedResult), filterResult);
@@ -233,13 +247,33 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPartialDiagnosis() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
-                doReturn(getDiagnosKapitel(DIAGNOSIS_CODE_N41)).when(diagnosisChapterService)
-                    .getDiagnosisChaptersFromSickLeave(expectedResult);
-                doReturn(getDiagnosKapitel(DIAGNOSIS_CODE_F23)).when(diagnosisChapterService)
-                    .getDiagnosisChaptersFromSickLeave(sickLeaveUnit);
+                final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit),
+                    DIAGNOSIS_CODE_N41.substring(0, 2));
+                assertEquals(List.of(expectedResult), filterResult);
+            }
+
+            @Test
+            void shouldFilterOnMatchingBiDiagnosis() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    List.of(DIAGNOSIS_CODE_N41, DIAGNOSIS_CODE_N41));
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
+
+                final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), DIAGNOSIS_CODE_N41);
+                assertEquals(List.of(expectedResult), filterResult);
+            }
+
+            @Test
+            void shouldFilterOnPartialBiDiagnosis() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    List.of(DIAGNOSIS_CODE_N41, DIAGNOSIS_CODE_N41));
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit),
                     DIAGNOSIS_CODE_N41.substring(0, 2));
@@ -248,13 +282,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnDiagnosis() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
-
-                doReturn(getDiagnosKapitel(DIAGNOSIS_CODE_N41)).when(
-                    diagnosisChapterService).getDiagnosisChaptersFromSickLeave(expectedResult);
-                doReturn(getDiagnosKapitel(DIAGNOSIS_CODE_F23)).when(
-                    diagnosisChapterService).getDiagnosisChaptersFromSickLeave(sickLeaveUnit);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), NO_MATCHING_RESULT);
                 assertEquals(0, filterResult.size());
@@ -270,10 +301,12 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnStartPeriod() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 expectedResult.setStart(LocalDate.now().minusDays(5));
                 expectedResult.setSlut(LocalDate.now().plusDays(5));
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setStart(LocalDate.now().minusDays(0));
                 sickLeaveUnit.setSlut(LocalDate.now().plusDays(10));
 
@@ -285,10 +318,12 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPartialStartPeriod() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 expectedResult.setStart(LocalDate.now().minusDays(5));
                 expectedResult.setSlut(LocalDate.now().plusDays(5));
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setStart(LocalDate.now().minusYears(10));
                 sickLeaveUnit.setSlut(LocalDate.now().minusYears(9));
 
@@ -300,10 +335,12 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnEndPeriod() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 expectedResult.setStart(LocalDate.now().minusDays(5));
                 expectedResult.setSlut(LocalDate.now().plusDays(5));
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setStart(LocalDate.now().minusDays(0));
                 sickLeaveUnit.setSlut(LocalDate.now().plusDays(10));
 
@@ -315,10 +352,12 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPartialEndPeriod() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 expectedResult.setStart(LocalDate.now().minusDays(5));
                 expectedResult.setSlut(LocalDate.now().plusDays(5));
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setStart(LocalDate.now().minusYears(10));
                 sickLeaveUnit.setSlut(LocalDate.now().minusYears(9));
 
@@ -330,8 +369,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPeriod() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), NO_MATCHING_RESULT);
                 assertEquals(0, filterResult.size());
@@ -343,9 +384,11 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingLength() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 expectedResult.setDagar(5);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setDagar(2);
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), "5");
@@ -354,9 +397,11 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnLength() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 expectedResult.setDagar(5);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setDagar(2);
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), NO_MATCHING_RESULT);
@@ -369,9 +414,11 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingNumberOfCertificate() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 expectedResult.setIntygLista(List.of("", "", "", "", ""));
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setIntygLista(List.of(""));
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), "5");
@@ -380,9 +427,11 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnNumberOfCertificate() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 expectedResult.setIntygLista(List.of("", "", "", "", ""));
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setIntygLista(List.of("", ""));
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), NO_MATCHING_RESULT);
@@ -395,9 +444,11 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingDegree() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 expectedResult.setAktivGrad(25);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setAktivGrad(50);
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), "25%");
@@ -406,9 +457,11 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPartialDegree() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 expectedResult.setAktivGrad(33333);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setAktivGrad(50);
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), "333");
@@ -417,9 +470,11 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnDegree() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 expectedResult.setAktivGrad(25);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setAktivGrad(50);
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), NO_MATCHING_RESULT);
@@ -432,8 +487,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingDoctorName() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), DOKTOR_AJLA);
                 assertEquals(List.of(expectedResult), filterResult);
@@ -441,8 +498,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPartialDoctorName() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit),
                     DOKTOR_AJLA.substring(0, 3));
@@ -451,8 +510,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnDoctorName() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), NO_MATCHING_RESULT);
                 assertEquals(0, filterResult.size());
@@ -464,8 +525,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingPatientId() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), PATIENT_ARNOLD_ID);
                 assertEquals(List.of(expectedResult), filterResult);
@@ -473,8 +536,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPartialPatientId() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit),
                     PATIENT_ARNOLD_ID.substring(0, 5));
@@ -483,8 +548,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPatientId() {
-                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA);
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON);
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), NO_MATCHING_RESULT);
                 assertEquals(0, filterResult.size());
@@ -501,7 +568,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingPatientAge() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 doReturn(100).when(calculatePatientAgeService).get(PATIENT_ARNOLD_ID);
 
@@ -511,7 +579,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPartialPatientAge() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 doReturn(100).when(calculatePatientAgeService).get(PATIENT_ARNOLD_ID);
 
@@ -521,7 +590,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPatientAge() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 doReturn(100).when(calculatePatientAgeService).get(PATIENT_ARNOLD_ID);
 
@@ -535,7 +605,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingPatientName() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, "Arnold");
                 assertTrue(filterResult);
@@ -543,7 +614,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPartialPatientName() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, PATIENT_ARNOLD_NAME.substring(0, 5));
                 assertTrue(filterResult);
@@ -551,7 +623,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPatientName() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, NO_MATCHING_RESULT);
                 assertFalse(filterResult);
             }
@@ -562,9 +635,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnGenderMale() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
-                doReturn(MALE).when(calculatePatientGenderService).get(PATIENT_ARNOLD_ID);
+                doReturn(MALE).when(resolvePatientGenderService).get(PATIENT_ARNOLD_ID);
 
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, MALE);
                 assertTrue(filterResult);
@@ -572,9 +646,10 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnGenderFemale() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
-                doReturn(FEMMALE).when(calculatePatientGenderService).get(PATIENT_ATTILA_ID);
+                doReturn(FEMMALE).when(resolvePatientGenderService).get(PATIENT_ATTILA_ID);
 
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, FEMMALE);
                 assertTrue(filterResult);
@@ -582,7 +657,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnGender() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, NO_MATCHING_RESULT);
                 assertFalse(filterResult);
             }
@@ -593,10 +669,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingDiagnosis() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
-
-                doReturn(getDiagnosKapitel(DIAGNOSIS_CODE_N41)).when(diagnosisChapterService)
-                    .getDiagnosisChaptersFromSickLeave(sickLeaveUnit);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, DIAGNOSIS_CODE_N41);
                 assertTrue(filterResult);
@@ -604,21 +678,34 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPartialDiagnosis() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
-
-                doReturn(getDiagnosKapitel(DIAGNOSIS_CODE_N41)).when(diagnosisChapterService)
-                    .getDiagnosisChaptersFromSickLeave(sickLeaveUnit);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, DIAGNOSIS_CODE_N41.substring(0, 2));
                 assertTrue(filterResult);
             }
 
             @Test
-            void shouldFilterOnDiagnosis() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+            void shouldFilterOnMatchingBiDiagnosis() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    List.of(DIAGNOSIS_CODE_N41, DIAGNOSIS_CODE_N41));
 
-                doReturn(getDiagnosKapitel(DIAGNOSIS_CODE_N41)).when(
-                    diagnosisChapterService).getDiagnosisChaptersFromSickLeave(sickLeaveUnit);
+                final var filterResult = textSearchFilterService.filter(expectedResult, DIAGNOSIS_CODE_N41);
+                assertTrue(filterResult);
+            }
+
+            @Test
+            void shouldFilterOnPartialBiDiagnosis() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    List.of(DIAGNOSIS_CODE_N41, DIAGNOSIS_CODE_N41));
+                final var filterResult = textSearchFilterService.filter(expectedResult, DIAGNOSIS_CODE_N41.substring(0, 2));
+                assertTrue(filterResult);
+            }
+
+            @Test
+            void shouldFilterOnDiagnosis() {
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, NO_MATCHING_RESULT);
                 assertFalse(filterResult);
@@ -634,7 +721,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnStartPeriod() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setStart(LocalDate.now().minusDays(5));
                 sickLeaveUnit.setSlut(LocalDate.now().plusDays(5));
 
@@ -646,7 +734,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPartialStartPeriod() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setStart(LocalDate.now().minusDays(5));
                 sickLeaveUnit.setSlut(LocalDate.now().plusDays(5));
 
@@ -658,7 +747,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnEndPeriod() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setStart(LocalDate.now().minusDays(5));
                 sickLeaveUnit.setSlut(LocalDate.now().plusDays(5));
 
@@ -670,7 +760,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPartialEndPeriod() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setStart(LocalDate.now().minusDays(5));
                 sickLeaveUnit.setSlut(LocalDate.now().plusDays(5));
 
@@ -682,7 +773,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPeriod() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, NO_MATCHING_RESULT);
                 assertFalse(filterResult);
             }
@@ -693,7 +785,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingLength() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setDagar(5);
 
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, "5");
@@ -702,7 +795,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnLength() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setDagar(5);
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, NO_MATCHING_RESULT);
                 assertFalse(filterResult);
@@ -714,7 +808,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingNumberOfCertificate() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setIntygLista(List.of("", "", "", "", ""));
 
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, "5");
@@ -723,7 +818,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnNumberOfCertificate() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setIntygLista(List.of("", "", "", "", ""));
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, NO_MATCHING_RESULT);
                 assertFalse(filterResult);
@@ -735,7 +831,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingDegree() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setAktivGrad(25);
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, "25%");
                 assertTrue(filterResult);
@@ -743,7 +840,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPartialDegree() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setAktivGrad(33333);
 
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, "333");
@@ -752,7 +850,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnDegree() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
                 sickLeaveUnit.setAktivGrad(25);
 
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, NO_MATCHING_RESULT);
@@ -765,7 +864,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingDoctorName() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, DOKTOR_AJLA);
                 assertTrue(filterResult);
@@ -773,7 +873,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnPartialDoctorName() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
 
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, DOKTOR_AJLA.substring(0, 3));
                 assertTrue(filterResult);
@@ -781,7 +882,8 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnDoctorName() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, NO_MATCHING_RESULT);
                 assertFalse(filterResult);
             }
@@ -792,21 +894,24 @@ class TextSearchFilterServiceImplTest {
 
             @Test
             void shouldFilterOnMatchingPatientId() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, PATIENT_ARNOLD_ID);
                 assertTrue(filterResult);
             }
 
             @Test
             void shouldFilterOnPartialPatientId() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, PATIENT_ARNOLD_ID.substring(0, 5));
                 assertTrue(filterResult);
             }
 
             @Test
             void shouldFilterOnPatientId() {
-                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, NO_MATCHING_RESULT);
                 assertFalse(filterResult);
             }
@@ -814,8 +919,10 @@ class TextSearchFilterServiceImplTest {
     }
 
 
-    private SjukfallEnhet createSickLeave(String patientId, String patientName, String diagnosis, String doctorName) {
+    private SjukfallEnhet createSickLeave(String patientId, String patientName, String diagnosis, String doctorName,
+        List<String> biDiagnosisCodes) {
         final var sickLeaveUnit = new SjukfallEnhet();
+        final var biDiagnosi = new ArrayList<DiagnosKod>();
         sickLeaveUnit.setPatient(Patient.create(patientId, patientName));
         sickLeaveUnit.setDiagnosKod(DiagnosKod.create(diagnosis));
         sickLeaveUnit.setStart(LocalDate.now());
@@ -824,6 +931,8 @@ class TextSearchFilterServiceImplTest {
         sickLeaveUnit.setIntygLista(Collections.emptyList());
         sickLeaveUnit.setAktivGrad(1);
         sickLeaveUnit.setLakare(Lakare.create(HSA_ID, doctorName));
+        biDiagnosisCodes.forEach(biDiagnosisCode -> biDiagnosi.add(DiagnosKod.create(biDiagnosisCode)));
+        sickLeaveUnit.setBiDiagnoser(biDiagnosi);
         return sickLeaveUnit;
     }
 }

@@ -27,10 +27,10 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class CalculatePatientGenderServiceImplTest {
+class ResolvePatientGenderServiceImplTest {
 
     @InjectMocks
-    private CalculatePatientGenderServiceImpl calculatePatientGenderService;
+    private ResolvePatientGenderServiceImpl calculatePatientGenderService;
     private static final String MALE = "Man";
     private static final String MALE_PATIENT_ID = "191212121212";
     private static final String FEMALE = "Kvinna";

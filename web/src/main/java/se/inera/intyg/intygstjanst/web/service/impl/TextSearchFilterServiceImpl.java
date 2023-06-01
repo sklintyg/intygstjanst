@@ -24,22 +24,19 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
-import se.inera.intyg.intygstjanst.web.service.CalculatePatientGenderService;
-import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
+import se.inera.intyg.intygstjanst.web.service.ResolvePatientGenderService;
 import se.inera.intyg.intygstjanst.web.service.TextSearchFilterService;
 
 @Service
 public class TextSearchFilterServiceImpl implements TextSearchFilterService {
 
     private final CalculatePatientAgeService calculatePatientAgeService;
-    private final CalculatePatientGenderService calculatePatientGenderService;
-    private final DiagnosisChapterService diagnosisChapterService;
+    private final ResolvePatientGenderService resolvePatientGenderService;
 
     public TextSearchFilterServiceImpl(CalculatePatientAgeService calculatePatientAgeService,
-        CalculatePatientGenderService calculatePatientGenderService, DiagnosisChapterService diagnosisChapterService) {
+        ResolvePatientGenderService resolvePatientGenderService) {
         this.calculatePatientAgeService = calculatePatientAgeService;
-        this.calculatePatientGenderService = calculatePatientGenderService;
-        this.diagnosisChapterService = diagnosisChapterService;
+        this.resolvePatientGenderService = resolvePatientGenderService;
     }
 
     @Override
@@ -65,11 +62,15 @@ public class TextSearchFilterServiceImpl implements TextSearchFilterService {
     }
 
     private boolean textSearchMatchesAnyField(SjukfallEnhet sickLeave, String textSearch) {
-        return searchMatchesAge(sickLeave, textSearch) || searchMatchesPatientName(sickLeave, textSearch) || searchMatchesPatientGender(
-            sickLeave, textSearch) || searchMatchesDiagnosisCode(sickLeave, textSearch) || searchMatchesSickLeavePeriod(sickLeave,
-            textSearch) || searchMatchesLength(sickLeave, textSearch) || searchMatchesNumberOfCertificates(sickLeave, textSearch)
-            || searchMatchesActiveDegree(sickLeave, textSearch) || searchMatchesDoctorName(sickLeave, textSearch) || searchMatchesPatientId(
-            sickLeave, textSearch);
+        return searchMatchesAge(sickLeave, textSearch)
+            || searchMatchesPatientName(sickLeave, textSearch)
+            || searchMatchesPatientGender(sickLeave, textSearch)
+            || searchMatchesDiagnosisCode(sickLeave, textSearch)
+            || searchMatchesSickLeavePeriod(sickLeave, textSearch) || searchMatchesLength(sickLeave, textSearch)
+            || searchMatchesNumberOfCertificates(sickLeave, textSearch)
+            || searchMatchesActiveDegree(sickLeave, textSearch)
+            || searchMatchesDoctorName(sickLeave, textSearch)
+            || searchMatchesPatientId(sickLeave, textSearch);
     }
 
     private boolean searchMatchesPatientId(SjukfallEnhet sickLeave, String textSearch) {
@@ -97,15 +98,17 @@ public class TextSearchFilterServiceImpl implements TextSearchFilterService {
     }
 
     private boolean searchMatchesDiagnosisCode(SjukfallEnhet sickLeave, String textSearch) {
-        final var diagnosisChaptersFromSickLeave = diagnosisChapterService.getDiagnosisChaptersFromSickLeave(sickLeave);
-        if (diagnosisChaptersFromSickLeave == null) {
-            return false;
-        }
-        return matches(diagnosisChaptersFromSickLeave.getName(), textSearch);
+        return matches(getDiagnosis(sickLeave), textSearch);
+    }
+
+    private static String getDiagnosis(SjukfallEnhet sickLeave) {
+        final var diagnosis = new StringBuilder(sickLeave.getDiagnosKod().getName() + sickLeave.getDiagnosKod().getCleanedCode());
+        sickLeave.getBiDiagnoser().forEach(biDiagnosis -> diagnosis.append(biDiagnosis.getCleanedCode()));
+        return diagnosis.toString();
     }
 
     private boolean searchMatchesPatientGender(SjukfallEnhet sickLeave, String textSearch) {
-        final var patientGender = calculatePatientGenderService.get(sickLeave.getPatient().getId());
+        final var patientGender = resolvePatientGenderService.get(sickLeave.getPatient().getId());
         return matches(patientGender, textSearch);
     }
 
