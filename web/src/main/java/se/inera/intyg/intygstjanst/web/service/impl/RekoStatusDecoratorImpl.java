@@ -97,7 +97,7 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
         return null;
     }
 
-    private boolean beforeEndDate(SjukfallEnhet sickLeave, Reko status) {
+    private static boolean beforeEndDate(SjukfallEnhet sickLeave, Reko status) {
         return status.getSickLeaveTimestamp().isBefore(sickLeave.getSlut().plusDays(1).atStartOfDay());
     }
 
