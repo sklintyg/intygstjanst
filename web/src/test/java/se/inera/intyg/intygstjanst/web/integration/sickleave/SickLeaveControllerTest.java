@@ -87,6 +87,8 @@ class SickLeaveControllerTest {
     private static final Integer PATIENT_AGE_FROM = 1;
     private static final Integer PATIENT_AGE_TO = 150;
     private static final int NUMBER_OF_SICK_LEAVES = 10;
+    private static final String TEXT_SEARCH = "textSearch";
+
 
     @Nested
     class GetActiveSickLeavesForCareUnitTest {
@@ -108,6 +110,7 @@ class SickLeaveControllerTest {
             sickLeaveRequestDTO.setProtectedPersonFilterId(DOCTOR_ID);
             sickLeaveRequestDTO.setRekoStatusTypeIds(REKO_STATUSES_FILTER);
             sickLeaveRequestDTO.setOccupationTypeIds(OCCUPATION_IDS);
+            sickLeaveRequestDTO.setTextSearch(TEXT_SEARCH);
         }
 
         @Test
@@ -125,6 +128,7 @@ class SickLeaveControllerTest {
                 .protectedPersonFilterId(DOCTOR_ID)
                 .rekoStatusTypeIds(REKO_STATUSES_FILTER)
                 .occupationTypeIds(OCCUPATION_IDS)
+                .textSearch(TEXT_SEARCH)
                 .build();
 
             final var getSickLeaveServiceRequestArgumentCaptor = ArgumentCaptor.forClass(GetSickLeaveServiceRequest.class);

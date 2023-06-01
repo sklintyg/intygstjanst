@@ -107,8 +107,8 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
             getSickLeaveServiceRequest.getToSickLeaveEndDate(),
             getSickLeaveServiceRequest.getDoctorIds(),
             getSickLeaveServiceRequest.getRekoStatusTypeIds(),
-            getSickLeaveServiceRequest.getOccupationTypeIds()
-        );
+            getSickLeaveServiceRequest.getOccupationTypeIds(),
+            getSickLeaveServiceRequest.getTextSearch());
     }
 
     private static List<String> getUnitIdFromRequestIfProvided(GetSickLeaveServiceRequest getSickLeaveServiceRequest,

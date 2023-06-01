@@ -17,31 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.service.dto;
+package se.inera.intyg.intygstjanst.web.service;
 
-import java.time.LocalDate;
 import java.util.List;
-import lombok.Builder;
-import lombok.Value;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
+import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 
-@Value
-@Builder
-public class GetSickLeaveServiceRequest {
+public interface TextSearchFilterService {
 
-    String unitId;
-    String careUnitId;
-    List<String> doctorIds;
-    int maxCertificateGap;
-    int maxDaysSinceSickLeaveCompleted;
-    List<SickLeaveLengthInterval> sickLeaveLengthIntervals;
-    List<DiagnosKapitel> diagnosisChapters;
-    Integer fromPatientAge;
-    Integer toPatientAge;
-    String protectedPersonFilterId;
-    LocalDate fromSickLeaveEndDate;
-    LocalDate toSickLeaveEndDate;
-    List<String> rekoStatusTypeIds;
-    List<String> occupationTypeIds;
-    String textSearch;
+    List<SjukfallEnhet> filterList(List<SjukfallEnhet> sickLeaves, String textSearch);
+
+    boolean filter(SjukfallEnhet sickLeave, String textSearch);
 }
