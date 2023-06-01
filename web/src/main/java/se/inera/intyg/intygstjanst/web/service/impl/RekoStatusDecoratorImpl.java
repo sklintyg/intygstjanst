@@ -68,9 +68,9 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
                                         SjukfallEnhet sickLeave) {
         final var rekoStatusFromDb = rekoStatuses
                 .stream()
-                .filter((status) -> status.getPatientId().equals(patientId)
-                        && status.getSickLeaveTimestamp().isAfter(sickLeave.getStart().atStartOfDay())
-                        && status.getSickLeaveTimestamp().isBefore(sickLeave.getSlut().plusDays(1).atStartOfDay())
+                .filter(status -> status.getPatientId().equals(patientId))
+                .filter(status -> equalsOrAfterStartDate(sickLeave, status))
+                .filter(status -> beforeEndDate(sickLeave, status)
                 ).max(Comparator.comparing(Reko::getRegistrationTimestamp));
 
         if (rekoStatusFromDb.isPresent()) {
@@ -95,5 +95,15 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
         }
 
         return null;
+    }
+
+    private static boolean beforeEndDate(SjukfallEnhet sickLeave, Reko status) {
+        return status.getSickLeaveTimestamp().isBefore(sickLeave.getSlut().plusDays(1).atStartOfDay());
+    }
+
+    private static boolean equalsOrAfterStartDate(SjukfallEnhet sickLeave, Reko status) {
+        final var sickLeaveStartLocalDatetime = sickLeave.getStart().atStartOfDay();
+        return status.getSickLeaveTimestamp().isAfter(sickLeaveStartLocalDatetime)
+                || sickLeaveStartLocalDatetime.equals(status.getSickLeaveTimestamp());
     }
 }
