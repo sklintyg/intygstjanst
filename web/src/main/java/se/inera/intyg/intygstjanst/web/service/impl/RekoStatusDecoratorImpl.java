@@ -69,7 +69,8 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
         final var rekoStatusFromDb = rekoStatuses
                 .stream()
                 .filter((status) -> status.getPatientId().equals(patientId)
-                        && status.getSickLeaveTimestamp().isAfter(sickLeave.getStart().atStartOfDay())
+                        && (status.getSickLeaveTimestamp().isAfter(sickLeave.getStart().atStartOfDay())
+                            || sickLeave.getStart().atStartOfDay().equals(status.getSickLeaveTimestamp()))
                         && status.getSickLeaveTimestamp().isBefore(sickLeave.getSlut().plusDays(1).atStartOfDay())
                 ).max(Comparator.comparing(Reko::getRegistrationTimestamp));
 
