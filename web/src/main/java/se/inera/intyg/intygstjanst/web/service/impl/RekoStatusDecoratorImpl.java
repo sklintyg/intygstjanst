@@ -104,6 +104,6 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
     private static boolean equalsOrAfterStartDate(SjukfallEnhet sickLeave, Reko status) {
         final var sickLeaveStartLocalDatetime = sickLeave.getStart().atStartOfDay();
         return status.getSickLeaveTimestamp().isAfter(sickLeaveStartLocalDatetime)
-                ||sickLeaveStartLocalDatetime.equals(status.getSickLeaveTimestamp());
+                || sickLeaveStartLocalDatetime.equals(status.getSickLeaveTimestamp());
     }
 }
