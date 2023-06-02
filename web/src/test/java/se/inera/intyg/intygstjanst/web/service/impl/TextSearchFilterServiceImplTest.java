@@ -28,7 +28,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -191,18 +190,15 @@ class TextSearchFilterServiceImplTest {
         @Nested
         class Gender {
 
-            @BeforeEach
-            void setUp() {
-                doReturn(MALE).when(resolvePatientGenderService).get(PATIENT_ARNOLD_ID);
-                doReturn(FEMMALE).when(resolvePatientGenderService).get(PATIENT_ATTILA_ID);
-            }
-
             @Test
             void shouldFilterOnGenderMale() {
                 final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
                     Collections.emptyList());
                 final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
                     Collections.emptyList());
+
+                doReturn(MALE).when(resolvePatientGenderService).get(PATIENT_ARNOLD_ID);
+                doReturn(FEMMALE).when(resolvePatientGenderService).get(PATIENT_ATTILA_ID);
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), MALE);
                 assertEquals(List.of(expectedResult), filterResult);
@@ -215,6 +211,9 @@ class TextSearchFilterServiceImplTest {
                 final var expectedResult = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
                     Collections.emptyList());
 
+                doReturn(MALE).when(resolvePatientGenderService).get(PATIENT_ARNOLD_ID);
+                doReturn(FEMMALE).when(resolvePatientGenderService).get(PATIENT_ATTILA_ID);
+
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), FEMMALE);
                 assertEquals(List.of(expectedResult), filterResult);
             }
@@ -226,9 +225,13 @@ class TextSearchFilterServiceImplTest {
                 final var expectedResult = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
                     Collections.emptyList());
 
+                doReturn(MALE).when(resolvePatientGenderService).get(PATIENT_ARNOLD_ID);
+                doReturn(FEMMALE).when(resolvePatientGenderService).get(PATIENT_ATTILA_ID);
+
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), NO_MATCHING_RESULT);
                 assertEquals(0, filterResult.size());
             }
+
         }
 
         @Nested

@@ -29,22 +29,23 @@ public class ResolvePatientGenderServiceImpl implements ResolvePatientGenderServ
     private static final int GENDER_START = 10;
     private static final int GENDER_END = 11;
     private static final String UKNOWN = "Okänd";
+    private static final String MALE_PATIENT_ID_REGEX = "^\\d*[13579]$";
 
     @Override
     public String get(String patientId) {
-        return getGenderFromString(
-            Personnummer
+        return getGenderFromString(patientId);
+    }
+
+    private static String getGenderFromString(String patientId) {
+        try {
+            return Personnummer
                 .createPersonnummer(patientId)
                 .orElseThrow()
                 .getPersonnummer()
                 .substring(GENDER_START, GENDER_END)
-        );
-    }
-
-    private static String getGenderFromString(String genderString) {
-        if (genderString == null || genderString.length() != 1) {
+                .matches(MALE_PATIENT_ID_REGEX) ? "Man" : "Kvinna";
+        } catch (Exception exception) {
             return UKNOWN;
         }
-        return genderString.matches("^\\d*[13579]$") ? "Man" : "Kvinna";
     }
 }

@@ -22,6 +22,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
 import se.inera.intyg.intygstjanst.web.service.ResolvePatientGenderService;
@@ -66,7 +67,8 @@ public class TextSearchFilterServiceImpl implements TextSearchFilterService {
             || searchMatchesPatientName(sickLeave, textSearch)
             || searchMatchesPatientGender(sickLeave, textSearch)
             || searchMatchesDiagnosisCode(sickLeave, textSearch)
-            || searchMatchesSickLeavePeriod(sickLeave, textSearch) || searchMatchesLength(sickLeave, textSearch)
+            || searchMatchesSickLeavePeriod(sickLeave, textSearch)
+            || searchMatchesLength(sickLeave, textSearch)
             || searchMatchesNumberOfCertificates(sickLeave, textSearch)
             || searchMatchesActiveDegree(sickLeave, textSearch)
             || searchMatchesDoctorName(sickLeave, textSearch)
@@ -102,9 +104,16 @@ public class TextSearchFilterServiceImpl implements TextSearchFilterService {
     }
 
     private static String getDiagnosis(SjukfallEnhet sickLeave) {
-        final var diagnosis = new StringBuilder(sickLeave.getDiagnosKod().getName() + sickLeave.getDiagnosKod().getCleanedCode());
-        sickLeave.getBiDiagnoser().forEach(biDiagnosis -> diagnosis.append(biDiagnosis.getCleanedCode()));
+        final var diagnosis = new StringBuilder(sickLeave.getDiagnosKod().getCleanedCode() + sickLeave.getDiagnosKod().getName());
+        sickLeave.getBiDiagnoser().forEach(
+            biDiagnosis -> diagnosis
+                .append(biDiagnosis.getCleanedCode())
+                .append(isLastBiDiagnosis(sickLeave, biDiagnosis) ? "" : ","));
         return diagnosis.toString();
+    }
+
+    private static boolean isLastBiDiagnosis(SjukfallEnhet sickLeave, DiagnosKod biDiagnosis) {
+        return sickLeave.getBiDiagnoser().indexOf(biDiagnosis) == sickLeave.getBiDiagnoser().size() - 1;
     }
 
     private boolean searchMatchesPatientGender(SjukfallEnhet sickLeave, String textSearch) {

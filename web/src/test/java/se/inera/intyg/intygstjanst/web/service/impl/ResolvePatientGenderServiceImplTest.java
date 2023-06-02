@@ -34,7 +34,11 @@ class ResolvePatientGenderServiceImplTest {
     private static final String MALE = "Man";
     private static final String MALE_PATIENT_ID = "191212121212";
     private static final String FEMALE = "Kvinna";
+    private static final String UKNOWN = "Okänd";
     private static final String FEMALE_PATIENT_ID = "194404044444";
+    private static final String UKNOWN_PATIENT_ID_EMPTY = "";
+    private static final String UKNOWN_PATIENT_ID_NULL = null;
+    private static final String INVALID_PATIENT_ID = "invalidPatientId";
 
     @Test
     void shouldReturnMale() {
@@ -46,5 +50,23 @@ class ResolvePatientGenderServiceImplTest {
     void shouldReturnFemale() {
         final var result = calculatePatientGenderService.get(FEMALE_PATIENT_ID);
         assertEquals(FEMALE, result);
+    }
+
+    @Test
+    void shouldReturnUnknown() {
+        final var result = calculatePatientGenderService.get(INVALID_PATIENT_ID);
+        assertEquals(UKNOWN, result);
+    }
+
+    @Test
+    void shouldReturnUknownIfPatientIdIsEmpty() {
+        final var result = calculatePatientGenderService.get(UKNOWN_PATIENT_ID_EMPTY);
+        assertEquals(UKNOWN, result);
+    }
+
+    @Test
+    void shouldReturnUknownIfPatientIdIsNull() {
+        final var result = calculatePatientGenderService.get(UKNOWN_PATIENT_ID_NULL);
+        assertEquals(UKNOWN, result);
     }
 }
