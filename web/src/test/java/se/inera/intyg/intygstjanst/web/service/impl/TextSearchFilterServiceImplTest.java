@@ -39,8 +39,11 @@ import se.inera.intyg.infra.sjukfall.dto.DiagnosKategori;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.infra.sjukfall.dto.Patient;
+import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
+import se.inera.intyg.infra.sjukfall.dto.RekoStatusTypeDTO;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
+import se.inera.intyg.intygstjanst.web.service.DiagnosisDescriptionService;
 import se.inera.intyg.intygstjanst.web.service.ResolvePatientGenderService;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,6 +53,8 @@ class TextSearchFilterServiceImplTest {
     private CalculatePatientAgeService calculatePatientAgeService;
     @Mock
     private ResolvePatientGenderService resolvePatientGenderService;
+    @Mock
+    private DiagnosisDescriptionService diagnosisDescriptionService;
 
     @InjectMocks
     private TextSearchFilterServiceImpl textSearchFilterService;
@@ -67,6 +72,16 @@ class TextSearchFilterServiceImplTest {
     private static final String MALE = "Man";
     private static final String FEMMALE = "Kvinna";
     private static final String HSA_ID = "hsaId";
+    private static final String NUVARANDE_ARBETE = "Nuvarande arbete";
+    private static final String STUDIER = "Studier";
+    private static final String ARBETSSOKANDE = "Arbetssökande";
+    private static final String FORALDRALEDIGHET = "Föräldraledighet";
+    private static final String DIAGNOSIS_DESCRIPTION_AKUT = "Akut stressreaktion";
+    private static final String DIAGNOSIS_DESCRIPTION_PTSD = "Posttraumatisk";
+    private static final String REKO_ID = "id";
+    private static final String REKO_INGEN = "Ingen";
+    private static final String REKO_AVBOJD = "Avböjd";
+    private static final String REKO_KONTAKTAD = "Kontaktad";
 
     @Nested
     class TextSearch {
@@ -238,7 +253,7 @@ class TextSearchFilterServiceImplTest {
         class Diagnosis {
 
             @Test
-            void shouldFilterOnMatchingDiagnosis() {
+            void shouldFilterOnMatchingDiagnosisCode() {
                 final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
                     Collections.emptyList());
                 final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
@@ -249,7 +264,7 @@ class TextSearchFilterServiceImplTest {
             }
 
             @Test
-            void shouldFilterOnPartialDiagnosis() {
+            void shouldFilterOnPartialDiagnosisCode() {
                 final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
                     Collections.emptyList());
                 final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
@@ -261,7 +276,41 @@ class TextSearchFilterServiceImplTest {
             }
 
             @Test
-            void shouldFilterOnMatchingBiDiagnosis() {
+            void shouldFilterOnMatchingDiagnosisDescription() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
+
+                doReturn(DIAGNOSIS_DESCRIPTION_AKUT).when(diagnosisDescriptionService)
+                    .getDiagnosisDescriptionFromSickLeave(DIAGNOSIS_CODE_N41);
+                doReturn(DIAGNOSIS_DESCRIPTION_PTSD).when(diagnosisDescriptionService)
+                    .getDiagnosisDescriptionFromSickLeave(DIAGNOSIS_CODE_F23);
+
+                final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit),
+                    DIAGNOSIS_DESCRIPTION_AKUT);
+                assertEquals(List.of(expectedResult), filterResult);
+            }
+
+            @Test
+            void shouldFilterOnPartialDiagnosisDescription() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
+
+                doReturn(DIAGNOSIS_DESCRIPTION_AKUT).when(diagnosisDescriptionService)
+                    .getDiagnosisDescriptionFromSickLeave(DIAGNOSIS_CODE_N41);
+                doReturn(DIAGNOSIS_DESCRIPTION_PTSD).when(diagnosisDescriptionService)
+                    .getDiagnosisDescriptionFromSickLeave(DIAGNOSIS_CODE_F23);
+
+                final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit),
+                    DIAGNOSIS_DESCRIPTION_AKUT.substring(0, 2));
+                assertEquals(List.of(expectedResult), filterResult);
+            }
+
+            @Test
+            void shouldFilterOnMatchingBiDiagnosisCode() {
                 final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
                     List.of(DIAGNOSIS_CODE_N41, DIAGNOSIS_CODE_N41));
                 final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
@@ -272,7 +321,7 @@ class TextSearchFilterServiceImplTest {
             }
 
             @Test
-            void shouldFilterOnPartialBiDiagnosis() {
+            void shouldFilterOnPartialBiDiagnosisCode() {
                 final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
                     List.of(DIAGNOSIS_CODE_N41, DIAGNOSIS_CODE_N41));
                 final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
@@ -560,6 +609,119 @@ class TextSearchFilterServiceImplTest {
                 assertEquals(0, filterResult.size());
             }
         }
+
+        @Nested
+        class Occupation {
+
+            @Test
+            void shouldFilterOnMatchingOccupation() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                expectedResult.setSysselsattning(List.of(NUVARANDE_ARBETE));
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON,
+                    Collections.emptyList());
+                sickLeaveUnit.setSysselsattning(List.of(STUDIER));
+
+                final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), NUVARANDE_ARBETE);
+                assertEquals(List.of(expectedResult), filterResult);
+            }
+
+            @Test
+            void shouldFilterOnPartialOccupation() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                expectedResult.setSysselsattning(List.of(NUVARANDE_ARBETE));
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON,
+                    Collections.emptyList());
+                sickLeaveUnit.setSysselsattning(List.of(STUDIER));
+
+                final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit),
+                    NUVARANDE_ARBETE.substring(0, 3));
+                assertEquals(List.of(expectedResult), filterResult);
+            }
+
+            @Test
+            void shouldFilterOnMultipleOccupation() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                expectedResult.setSysselsattning(List.of(NUVARANDE_ARBETE));
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON,
+                    Collections.emptyList());
+                sickLeaveUnit.setSysselsattning(List.of(STUDIER, ARBETSSOKANDE, FORALDRALEDIGHET));
+
+                final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), NUVARANDE_ARBETE);
+                assertEquals(List.of(expectedResult), filterResult);
+            }
+
+            @Test
+            void shouldFilterOnOccupation() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                expectedResult.setSysselsattning(List.of(STUDIER));
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON,
+                    Collections.emptyList());
+                sickLeaveUnit.setSysselsattning(List.of(STUDIER, ARBETSSOKANDE, FORALDRALEDIGHET));
+
+                final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), NUVARANDE_ARBETE);
+                assertEquals(0, filterResult.size());
+            }
+        }
+
+        @Nested
+        class RekoStatus {
+
+            @Test
+            void shouldFilterOnMatchingRekoStatus() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                expectedResult.setRekoStatus(getRekoStatusDTO(REKO_AVBOJD));
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON,
+                    Collections.emptyList());
+                sickLeaveUnit.setRekoStatus(getRekoStatusDTO(REKO_KONTAKTAD));
+
+                final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), REKO_AVBOJD);
+                assertEquals(List.of(expectedResult), filterResult);
+            }
+
+            @Test
+            void shouldFilterOnPartialRekoStatus() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                expectedResult.setRekoStatus(getRekoStatusDTO(REKO_AVBOJD));
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON,
+                    Collections.emptyList());
+                sickLeaveUnit.setRekoStatus(getRekoStatusDTO(REKO_KONTAKTAD));
+
+                final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit),
+                    REKO_AVBOJD.substring(0, 3));
+                assertEquals(List.of(expectedResult), filterResult);
+            }
+
+            @Test
+            void shouldFilterOnEmptyRekoStatus() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON,
+                    Collections.emptyList());
+                sickLeaveUnit.setRekoStatus(getRekoStatusDTO(REKO_KONTAKTAD));
+
+                final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), REKO_INGEN);
+                assertEquals(List.of(expectedResult), filterResult);
+            }
+
+            @Test
+            void shouldFilterOnRekoStatus() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                expectedResult.setRekoStatus(getRekoStatusDTO(REKO_AVBOJD));
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, ANNIKA_LARSSON,
+                    Collections.emptyList());
+                sickLeaveUnit.setRekoStatus(getRekoStatusDTO(REKO_KONTAKTAD));
+
+                final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), REKO_INGEN);
+                assertEquals(0, filterResult.size());
+            }
+        }
     }
 
     @Nested
@@ -671,7 +833,7 @@ class TextSearchFilterServiceImplTest {
         class Diagnosis {
 
             @Test
-            void shouldFilterOnMatchingDiagnosis() {
+            void shouldFilterOnMatchingDiagnosisCode() {
                 final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
                     Collections.emptyList());
 
@@ -680,7 +842,7 @@ class TextSearchFilterServiceImplTest {
             }
 
             @Test
-            void shouldFilterOnPartialDiagnosis() {
+            void shouldFilterOnPartialDiagnosisCode() {
                 final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
                     Collections.emptyList());
 
@@ -689,7 +851,32 @@ class TextSearchFilterServiceImplTest {
             }
 
             @Test
-            void shouldFilterOnMatchingBiDiagnosis() {
+            void shouldFilterOnMatchingDiagnosisDescription() {
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+
+                doReturn(DIAGNOSIS_DESCRIPTION_AKUT).when(diagnosisDescriptionService)
+                    .getDiagnosisDescriptionFromSickLeave(DIAGNOSIS_CODE_N41);
+
+                final var filterResult = textSearchFilterService.filter(sickLeaveUnit, DIAGNOSIS_DESCRIPTION_AKUT);
+                assertTrue(filterResult);
+            }
+
+
+            @Test
+            void shouldFilterOnPartialDiagnosisDescription() {
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+
+                doReturn(DIAGNOSIS_DESCRIPTION_AKUT).when(diagnosisDescriptionService)
+                    .getDiagnosisDescriptionFromSickLeave(DIAGNOSIS_CODE_N41);
+
+                final var filterResult = textSearchFilterService.filter(sickLeaveUnit, DIAGNOSIS_DESCRIPTION_AKUT.substring(0, 2));
+                assertTrue(filterResult);
+            }
+
+            @Test
+            void shouldFilterOnMatchingBiDiagnosisCode() {
                 final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
                     List.of(DIAGNOSIS_CODE_N41, DIAGNOSIS_CODE_N41));
 
@@ -698,7 +885,7 @@ class TextSearchFilterServiceImplTest {
             }
 
             @Test
-            void shouldFilterOnPartialBiDiagnosis() {
+            void shouldFilterOnPartialBiDiagnosisCode() {
                 final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
                     List.of(DIAGNOSIS_CODE_N41, DIAGNOSIS_CODE_N41));
                 final var filterResult = textSearchFilterService.filter(expectedResult, DIAGNOSIS_CODE_N41.substring(0, 2));
@@ -919,6 +1106,92 @@ class TextSearchFilterServiceImplTest {
                 assertFalse(filterResult);
             }
         }
+
+        @Nested
+        class Occupation {
+
+            @Test
+            void shouldFilterOnMatchingOccupation() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                expectedResult.setSysselsattning(List.of(NUVARANDE_ARBETE));
+
+                final var filterResult = textSearchFilterService.filter(expectedResult, NUVARANDE_ARBETE);
+                assertTrue(filterResult);
+            }
+
+            @Test
+            void shouldFilterOnPartialOccupation() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                expectedResult.setSysselsattning(List.of(NUVARANDE_ARBETE));
+
+                final var filterResult = textSearchFilterService.filter(expectedResult, NUVARANDE_ARBETE.substring(0, 3));
+                assertTrue(filterResult);
+            }
+
+            @Test
+            void shouldFilterOnMultipleOccupation() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                expectedResult.setSysselsattning(List.of(NUVARANDE_ARBETE, STUDIER, ARBETSSOKANDE));
+
+                final var filterResult = textSearchFilterService.filter(expectedResult, STUDIER);
+                assertTrue(filterResult);
+            }
+
+            @Test
+            void shouldFilterOnOccupation() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                expectedResult.setSysselsattning(List.of(NUVARANDE_ARBETE, STUDIER, ARBETSSOKANDE));
+
+                final var filterResult = textSearchFilterService.filter(expectedResult, FORALDRALEDIGHET);
+                assertFalse(filterResult);
+            }
+        }
+
+        @Nested
+        class RekoStatus {
+
+            @Test
+            void shouldFilterOnMatchingRekoStatus() {
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                sickLeaveUnit.setRekoStatus(getRekoStatusDTO(REKO_AVBOJD));
+
+                final var filterResult = textSearchFilterService.filter(sickLeaveUnit, REKO_AVBOJD);
+                assertTrue(filterResult);
+            }
+
+            @Test
+            void shouldFilterOnPartialRekoStatus() {
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                sickLeaveUnit.setRekoStatus(getRekoStatusDTO(REKO_AVBOJD));
+
+                final var filterResult = textSearchFilterService.filter(sickLeaveUnit, REKO_AVBOJD.substring(0, 3));
+                assertTrue(filterResult);
+            }
+
+            @Test
+            void shouldFilterOnEmptyRekoStatus() {
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+
+                final var filterResult = textSearchFilterService.filter(sickLeaveUnit, REKO_INGEN);
+                assertTrue(filterResult);
+            }
+
+            @Test
+            void shouldFilterOnRekoStatus() {
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, DOKTOR_AJLA,
+                    Collections.emptyList());
+                sickLeaveUnit.setRekoStatus(getRekoStatusDTO(REKO_AVBOJD));
+                final var filterResult = textSearchFilterService.filter(sickLeaveUnit, REKO_INGEN);
+                assertFalse(filterResult);
+            }
+        }
     }
 
 
@@ -936,6 +1209,13 @@ class TextSearchFilterServiceImplTest {
         sickLeaveUnit.setLakare(Lakare.create(HSA_ID, doctorName));
         biDiagnosisCodes.forEach(biDiagnosisCode -> biDiagnosi.add(DiagnosKod.create(biDiagnosisCode)));
         sickLeaveUnit.setBiDiagnoser(biDiagnosi);
+        sickLeaveUnit.setSysselsattning(Collections.emptyList());
         return sickLeaveUnit;
+    }
+
+    private static RekoStatusDTO getRekoStatusDTO(String status) {
+        final var rekoStatusDTO = new RekoStatusDTO();
+        rekoStatusDTO.setStatus(new RekoStatusTypeDTO(REKO_ID, status));
+        return rekoStatusDTO;
     }
 }

@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
+import se.inera.intyg.intygstjanst.web.service.DiagnosisDescriptionService;
 import se.inera.intyg.intygstjanst.web.service.ResolvePatientGenderService;
 import se.inera.intyg.intygstjanst.web.service.TextSearchFilterService;
 
@@ -33,11 +34,18 @@ public class TextSearchFilterServiceImpl implements TextSearchFilterService {
 
     private final CalculatePatientAgeService calculatePatientAgeService;
     private final ResolvePatientGenderService resolvePatientGenderService;
+    private final DiagnosisDescriptionService diagnosisDescriptionService;
+    private static final String COMMA_WHITESPACE = ", ";
+    private static final String NO_ONE = "Ingen";
+    private static final String PROCENT = "%";
+    private static final String BLANK = "";
+    private static final String YEAR = " år";
 
     public TextSearchFilterServiceImpl(CalculatePatientAgeService calculatePatientAgeService,
-        ResolvePatientGenderService resolvePatientGenderService) {
+        ResolvePatientGenderService resolvePatientGenderService, DiagnosisDescriptionService diagnosisDescriptionService) {
         this.calculatePatientAgeService = calculatePatientAgeService;
         this.resolvePatientGenderService = resolvePatientGenderService;
+        this.diagnosisDescriptionService = diagnosisDescriptionService;
     }
 
     @Override
@@ -72,7 +80,17 @@ public class TextSearchFilterServiceImpl implements TextSearchFilterService {
             || searchMatchesNumberOfCertificates(sickLeave, textSearch)
             || searchMatchesActiveDegree(sickLeave, textSearch)
             || searchMatchesDoctorName(sickLeave, textSearch)
-            || searchMatchesPatientId(sickLeave, textSearch);
+            || searchMatchesPatientId(sickLeave, textSearch)
+            || searchMatchesOccupation(sickLeave, textSearch)
+            || searchMatchesRekoStatus(sickLeave, textSearch);
+    }
+
+    private boolean searchMatchesRekoStatus(SjukfallEnhet sickLeave, String textSearch) {
+        return matches(sickLeave.getRekoStatus() != null ? sickLeave.getRekoStatus().getStatus().getName() : NO_ONE, textSearch);
+    }
+
+    private boolean searchMatchesOccupation(SjukfallEnhet sickLeave, String textSearch) {
+        return sickLeave.getSysselsattning().stream().anyMatch(occupation -> matches(occupation, textSearch));
     }
 
     private boolean searchMatchesPatientId(SjukfallEnhet sickLeave, String textSearch) {
@@ -84,7 +102,7 @@ public class TextSearchFilterServiceImpl implements TextSearchFilterService {
     }
 
     private boolean searchMatchesActiveDegree(SjukfallEnhet sickLeave, String textSearch) {
-        return matches(sickLeave.getAktivGrad() + "%", textSearch);
+        return matches(sickLeave.getAktivGrad() + PROCENT, textSearch);
     }
 
     private boolean searchMatchesNumberOfCertificates(SjukfallEnhet sickLeave, String textSearch) {
@@ -103,12 +121,19 @@ public class TextSearchFilterServiceImpl implements TextSearchFilterService {
         return matches(getDiagnosis(sickLeave), textSearch);
     }
 
-    private static String getDiagnosis(SjukfallEnhet sickLeave) {
-        final var diagnosis = new StringBuilder(sickLeave.getDiagnosKod().getCleanedCode() + sickLeave.getDiagnosKod().getName());
-        sickLeave.getBiDiagnoser().forEach(
-            biDiagnosis -> diagnosis
-                .append(biDiagnosis.getCleanedCode())
-                .append(isLastBiDiagnosis(sickLeave, biDiagnosis) ? "" : ","));
+    private String getDiagnosis(SjukfallEnhet sickLeave) {
+        final var diagnosis = new StringBuilder()
+            .append(sickLeave.getDiagnosKod().getCleanedCode())
+            .append(" ")
+            .append(diagnosisDescriptionService.getDiagnosisDescriptionFromSickLeave(sickLeave.getDiagnosKod().getCleanedCode()))
+            .append(sickLeave.getBiDiagnoser().size() > 0 ? COMMA_WHITESPACE : BLANK);
+
+        sickLeave.getBiDiagnoser()
+            .forEach(biDiagnosis ->
+                diagnosis
+                    .append(biDiagnosis.getCleanedCode())
+                    .append(isLastBiDiagnosis(sickLeave, biDiagnosis) ? BLANK : COMMA_WHITESPACE));
+
         return diagnosis.toString();
     }
 
@@ -123,7 +148,7 @@ public class TextSearchFilterServiceImpl implements TextSearchFilterService {
 
     private boolean searchMatchesAge(SjukfallEnhet sickLeave, String textSearch) {
         final var patientAge = calculatePatientAgeService.get(sickLeave.getPatient().getId());
-        return matches(patientAge.toString(), textSearch);
+        return matches(patientAge + YEAR, textSearch);
     }
 
     private boolean searchMatchesPatientName(SjukfallEnhet sickLeave, String textSearch) {
