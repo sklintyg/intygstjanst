@@ -24,5 +24,5 @@ import java.util.Map;
 
 public interface DiagnosisDescriptionProvider {
 
-    Map<String, String> getDiagnosisDescriptionMap() throws IOException;
+    Map<String, String> getDiagnosisDescription() throws IOException;
 }

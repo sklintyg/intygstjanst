@@ -53,7 +53,7 @@ public class DiagnosisDescriptionProviderImpl implements DiagnosisDescriptionPro
     }
 
     @Override
-    public Map<String, String> getDiagnosisDescriptionMap() throws IOException {
+    public Map<String, String> getDiagnosisDescription() throws IOException {
         final var diagnosisDescriptionMap = new HashMap<String, String>();
         diagnosisDescriptionMap.putAll(loadDiagnosFile(diagnoseCodeIcd10SeFile1, StandardCharsets.UTF_8));
         diagnosisDescriptionMap.putAll(loadDiagnosFile(diagnoseCodeIcd10SeFile2, StandardCharsets.UTF_8));

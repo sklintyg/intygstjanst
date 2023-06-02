@@ -40,7 +40,7 @@ public class DiagnosisDescriptionServiceImpl implements DiagnosisDescriptionServ
     @PostConstruct
     private void init() {
         try {
-            diagnosisDescriptionsMap = diagnosisDescriptionProvider.getDiagnosisDescriptionMap();
+            diagnosisDescriptionsMap = diagnosisDescriptionProvider.getDiagnosisDescription();
         } catch (IOException e) {
             throw new RuntimeException("Failed to load diagnosis chapters!", e);
         }

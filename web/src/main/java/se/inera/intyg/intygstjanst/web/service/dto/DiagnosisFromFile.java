@@ -20,9 +20,6 @@ package se.inera.intyg.intygstjanst.web.service.dto;
 
 import com.google.common.base.CharMatcher;
 
-/**
- * Created by martin on 10/02/16.
- */
 public class DiagnosisFromFile {
 
     private static final String BOM = "\uFEFF";
