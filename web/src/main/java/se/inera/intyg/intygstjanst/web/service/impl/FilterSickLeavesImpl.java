@@ -29,6 +29,7 @@ import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.web.service.FilterSickLeaves;
+import se.inera.intyg.intygstjanst.web.service.TextSearchFilterService;
 import se.inera.intyg.intygstjanst.web.service.dto.OccupationType;
 import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
@@ -38,16 +39,20 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
 
     private final DiagnosisChapterService diagnosisChapterService;
     private final CalculatePatientAgeService calculatePatientAgeService;
+    private final TextSearchFilterService textSearchFilterService;
 
-    public FilterSickLeavesImpl(DiagnosisChapterService diagnosisChapterService, CalculatePatientAgeService calculatePatientAgeService) {
+    public FilterSickLeavesImpl(DiagnosisChapterService diagnosisChapterService, CalculatePatientAgeService calculatePatientAgeService,
+        TextSearchFilterService textSearchFilterService) {
         this.diagnosisChapterService = diagnosisChapterService;
         this.calculatePatientAgeService = calculatePatientAgeService;
+        this.textSearchFilterService = textSearchFilterService;
     }
 
     @Override
     public List<SjukfallEnhet> filter(List<SjukfallEnhet> sickLeaveList, List<SickLeaveLengthInterval> sickLeaveLengthIntervals,
         List<DiagnosKapitel> diagnosisChapters, Integer fromPatientAge, Integer toPatientAge, LocalDate fromSickLeaveEndDate,
-        LocalDate toSickLeaveEndDate, List<String> doctorsIds, List<String> rekoStatusTypeIds, List<String> occupationTypeIds) {
+        LocalDate toSickLeaveEndDate, List<String> doctorsIds, List<String> rekoStatusTypeIds, List<String> occupationTypeIds,
+        String textSearch) {
         return sickLeaveList.stream()
             .filter(sickLeave -> filterOnSickLeaveLengthIntervals(sickLeave, sickLeaveLengthIntervals))
             .filter(sickLeave -> filterOnDiagnosisChapters(sickLeave, diagnosisChapters))
@@ -55,7 +60,8 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
             .filter(sickLeave -> filterOnSickLeaveEndDate(sickLeave, fromSickLeaveEndDate, toSickLeaveEndDate))
             .filter(sickLeave -> filterOnDoctorIds(sickLeave, doctorsIds))
             .filter(sickLeave -> filterOnRekoStatuses(sickLeave, rekoStatusTypeIds))
-            .filter(sickleave -> filterOnOccupation(sickleave, occupationTypeIds))
+            .filter(sickLeave -> filterOnOccupation(sickLeave, occupationTypeIds))
+            .filter(sickLeave -> textSearchFilterService.filter(sickLeave, textSearch))
             .collect(Collectors.toList());
     }
 
@@ -65,8 +71,8 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
         }
 
         return rekoStatusTypeIds.stream().anyMatch(
-                (rekoStatus) -> (sickLeave.getRekoStatus() == null && rekoStatus.equals(RekoStatusType.REKO_1.toString()))
-                        || (sickLeave.getRekoStatus() != null && sickLeave.getRekoStatus().getStatus().getId().equals(rekoStatus))
+            (rekoStatus) -> (sickLeave.getRekoStatus() == null && rekoStatus.equals(RekoStatusType.REKO_1.toString()))
+                || (sickLeave.getRekoStatus() != null && sickLeave.getRekoStatus().getStatus().getId().equals(rekoStatus))
         );
     }
 

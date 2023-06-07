@@ -30,5 +30,5 @@ public interface FilterSickLeaves {
     List<SjukfallEnhet> filter(List<SjukfallEnhet> sickLeaveList, List<SickLeaveLengthInterval> sickLeaveLengthIntervals,
         List<DiagnosKapitel> diagnosisChapters, Integer fromPatientAge, Integer toPatientAge,
         LocalDate fromSickLeaveEndDate, LocalDate toSickLeaveEndDate, List<String> doctorIds, List<String> rekoStatusTypeIds,
-        List<String> occupationTypeIds);
+        List<String> occupationTypeIds, String textSearch);
 }

@@ -17,31 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.service.dto;
+package se.inera.intyg.intygstjanst.web.service;
 
-import java.time.LocalDate;
-import java.util.List;
-import lombok.Builder;
-import lombok.Value;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
+public interface DiagnosisDescriptionService {
 
-@Value
-@Builder
-public class GetSickLeaveServiceRequest {
-
-    String unitId;
-    String careUnitId;
-    List<String> doctorIds;
-    int maxCertificateGap;
-    int maxDaysSinceSickLeaveCompleted;
-    List<SickLeaveLengthInterval> sickLeaveLengthIntervals;
-    List<DiagnosKapitel> diagnosisChapters;
-    Integer fromPatientAge;
-    Integer toPatientAge;
-    String protectedPersonFilterId;
-    LocalDate fromSickLeaveEndDate;
-    LocalDate toSickLeaveEndDate;
-    List<String> rekoStatusTypeIds;
-    List<String> occupationTypeIds;
-    String textSearch;
+    String getDiagnosisDescriptionFromSickLeave(String diagnosisCode);
 }
