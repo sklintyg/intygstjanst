@@ -448,6 +448,19 @@ class TextSearchFilterServiceImplTest {
             }
 
             @Test
+            void shouldFilterOnMatchingLengthWithDays() {
+                final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                expectedResult.setDagar(5);
+                final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                sickLeaveUnit.setDagar(2);
+
+                final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), "5 dagar");
+                assertEquals(List.of(expectedResult), filterResult);
+            }
+
+            @Test
             void shouldFilterOnLength() {
                 final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
                     Collections.emptyList());
@@ -980,6 +993,16 @@ class TextSearchFilterServiceImplTest {
                 sickLeaveUnit.setDagar(5);
 
                 final var filterResult = textSearchFilterService.filter(sickLeaveUnit, "5");
+                assertTrue(filterResult);
+            }
+
+            @Test
+            void shouldFilterOnMatchingLengthWithDays() {
+                final var sickLeaveUnit = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
+                    Collections.emptyList());
+                sickLeaveUnit.setDagar(5);
+
+                final var filterResult = textSearchFilterService.filter(sickLeaveUnit, "5 dagar");
                 assertTrue(filterResult);
             }
 
