@@ -40,6 +40,7 @@ public class TextSearchFilterServiceImpl implements TextSearchFilterService {
     private static final String PROCENT = "%";
     private static final String BLANK = "";
     private static final String YEAR = " år";
+    private static final String DAYS = " dagar";
 
     public TextSearchFilterServiceImpl(CalculatePatientAgeService calculatePatientAgeService,
         ResolvePatientGenderService resolvePatientGenderService, DiagnosisDescriptionService diagnosisDescriptionService) {
@@ -110,7 +111,7 @@ public class TextSearchFilterServiceImpl implements TextSearchFilterService {
     }
 
     private boolean searchMatchesLength(SjukfallEnhet sickLeave, String textSearch) {
-        return matches(String.valueOf(sickLeave.getDagar()), textSearch);
+        return matches(sickLeave.getDagar() + DAYS, textSearch);
     }
 
     private boolean searchMatchesSickLeavePeriod(SjukfallEnhet sickLeave, String textSearch) {
