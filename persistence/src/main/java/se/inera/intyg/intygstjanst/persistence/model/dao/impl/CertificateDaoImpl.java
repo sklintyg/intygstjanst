@@ -233,7 +233,7 @@ public class CertificateDaoImpl implements CertificateDao {
         }
 
         if (listContainsValues(types)) {
-            listOfPredicates.add(criteriaBuilder.lower(root.<String>get("type")).in(toLowerCase(types)));
+            listOfPredicates.add(root.<String>get("type").in(toLowerCase(types)));
         }
 
         if (isNotNull(fromDate)) {
