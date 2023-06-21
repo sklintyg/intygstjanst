@@ -122,6 +122,14 @@ public class FilterSickLeavesImpl implements FilterSickLeaves {
     }
 
     private boolean filterOnSickLeaveEndDate(SjukfallEnhet sickLeave, LocalDate from, LocalDate to) {
-        return (from == null || from.isBefore(sickLeave.getSlut())) && (to == null || to.isAfter(sickLeave.getSlut()));
+        return (from == null || isBeforeOrEquals(from, sickLeave.getSlut())) && (to == null || isAfterOrEquals(to, sickLeave.getSlut()));
+    }
+
+    private boolean isBeforeOrEquals(LocalDate from, LocalDate date) {
+        return from.isBefore(date) || from.isEqual(date);
+    }
+
+    private boolean isAfterOrEquals(LocalDate from, LocalDate date) {
+        return from.isAfter(date) || from.isEqual(date);
     }
 }

@@ -336,6 +336,34 @@ class FilterSickLeavesImplTest {
 
             assertEquals(expectedSickLeave, actualSickLeaveList.get(0));
         }
+
+        @Test
+        void shouldFilterOnFromDateIfEquals() {
+            final var expectedSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID, Collections.emptyList());
+            expectedSickLeave.setSlut(FROM_END_DATE);
+            final var anotherSickLeave = createSjukFallEnhet(ANOTHER_DIAGNOSIS_CODE, 12, ANOTHER_PATIENT_ID, Collections.emptyList());
+            anotherSickLeave.setSlut(FROM_END_DATE.minusDays(1));
+            final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
+
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
+                null, null, FROM_END_DATE, TO_END_DATE, Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
+
+            assertEquals(expectedSickLeave, actualSickLeaveList.get(0));
+        }
+
+        @Test
+        void shouldFilterOnToDateIfEquals() {
+            final var expectedSickLeave = createSjukFallEnhet(DIAGNOSIS_CODE, 5, PATIENT_ID, Collections.emptyList());
+            expectedSickLeave.setSlut(FROM_END_DATE.plusDays(10));
+            final var anotherSickLeave = createSjukFallEnhet(ANOTHER_DIAGNOSIS_CODE, 12, ANOTHER_PATIENT_ID, Collections.emptyList());
+            anotherSickLeave.setSlut(FROM_END_DATE.plusDays(11));
+            final var sickLeaves = List.of(expectedSickLeave, anotherSickLeave);
+
+            final var actualSickLeaveList = filterSickLeaves.filter(sickLeaves, null, Collections.emptyList(),
+                null, null, FROM_END_DATE, TO_END_DATE, Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
+
+            assertEquals(expectedSickLeave, actualSickLeaveList.get(0));
+        }
     }
 
     @Nested
