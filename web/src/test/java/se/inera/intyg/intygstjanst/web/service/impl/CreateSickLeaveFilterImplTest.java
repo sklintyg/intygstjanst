@@ -25,6 +25,7 @@ import static org.mockito.Mockito.doReturn;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -336,8 +337,18 @@ class CreateSickLeaveFilterImplTest {
     }
 
     @Test
-    void shallReturnEmptyFilterIfNoIntygData() {
-        final var expectedFilter = GetSickLeaveFilterServiceResponse.builder().build();
+    void shallReturnPartialFilterIfNoIntygData() {
+        final var expectedFilter =
+            GetSickLeaveFilterServiceResponse.builder()
+                .rekoStatusTypes(Arrays
+                    .stream(RekoStatusType.values())
+                    .map((status) -> new RekoStatusTypeDTO(status.toString(), status.getName()))
+                    .collect(Collectors.toList()))
+                .occupationTypes(Arrays
+                    .stream(OccupationType.values())
+                    .map(status -> new OccupationTypeDTO(status.toString(), status.getName()))
+                    .collect(Collectors.toList()))
+                .build();
 
         final var actualFilter = createSickLeaveFilter.create(Collections.emptyList());
 

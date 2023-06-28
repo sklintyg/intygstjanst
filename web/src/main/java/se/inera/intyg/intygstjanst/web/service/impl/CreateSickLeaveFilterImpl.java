@@ -46,7 +46,10 @@ public class CreateSickLeaveFilterImpl implements CreateSickLeaveFilter {
     @Override
     public GetSickLeaveFilterServiceResponse create(List<IntygData> intygDataList) {
         if (intygDataList.isEmpty()) {
-            return GetSickLeaveFilterServiceResponse.builder().build();
+            return GetSickLeaveFilterServiceResponse.builder()
+                .rekoStatusTypes(getRekoStatuses())
+                .occupationTypes(getOccupationTypeDTOList())
+                .build();
         }
 
         final var doctorsForCareUnit = intygDataList.stream()
@@ -65,15 +68,9 @@ public class CreateSickLeaveFilterImpl implements CreateSickLeaveFilter {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
-        final var rekoStatuses = Arrays
-            .stream(RekoStatusType.values())
-            .map((status) -> new RekoStatusTypeDTO(status.toString(), status.getName()))
-            .collect(Collectors.toList());
+        final var rekoStatuses = getRekoStatuses();
 
-        final var occupationTypeDTOList = Arrays
-            .stream(OccupationType.values())
-            .map(status -> new OccupationTypeDTO(status.toString(), status.getName()))
-            .collect(Collectors.toList());
+        final var occupationTypeDTOList = getOccupationTypeDTOList();
 
         return GetSickLeaveFilterServiceResponse.builder()
             .activeDoctors(doctorsForCareUnit)
@@ -82,5 +79,19 @@ public class CreateSickLeaveFilterImpl implements CreateSickLeaveFilter {
             .rekoStatusTypes(rekoStatuses)
             .occupationTypes(occupationTypeDTOList)
             .build();
+    }
+
+    private static List<OccupationTypeDTO> getOccupationTypeDTOList() {
+        return Arrays
+            .stream(OccupationType.values())
+            .map(status -> new OccupationTypeDTO(status.toString(), status.getName()))
+            .collect(Collectors.toList());
+    }
+
+    private static List<RekoStatusTypeDTO> getRekoStatuses() {
+        return Arrays
+            .stream(RekoStatusType.values())
+            .map((status) -> new RekoStatusTypeDTO(status.toString(), status.getName()))
+            .collect(Collectors.toList());
     }
 }
