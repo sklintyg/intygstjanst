@@ -19,9 +19,11 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_AND_FILTER_PROTECTED_PATIENTS;
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_SICK_LEAVES_FROM_DB;
+
 import java.time.LocalDate;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -33,8 +35,6 @@ import se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessage
 import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeaveCertificates;
 import se.inera.intyg.intygstjanst.web.service.PuFilterService;
-
-import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.*;
 
 @Service
 public class GetSickLeaveCertificatesImpl implements GetSickLeaveCertificates {
@@ -51,7 +51,7 @@ public class GetSickLeaveCertificatesImpl implements GetSickLeaveCertificates {
 
 
     public GetSickLeaveCertificatesImpl(SjukfallCertificateDao sjukfallCertificateDao, IntygsDataConverter intygDataConverter,
-                                        SjukfallEngineService sjukfallEngineService, PuFilterService puFilterService) {
+        SjukfallEngineService sjukfallEngineService, PuFilterService puFilterService) {
         this.sjukfallCertificateDao = sjukfallCertificateDao;
         this.intygDataConverter = intygDataConverter;
         this.sjukfallEngineService = sjukfallEngineService;
@@ -71,7 +71,7 @@ public class GetSickLeaveCertificatesImpl implements GetSickLeaveCertificates {
             unitIds,
             patientIds
         );
-        LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES_FROM_DB), sjukfallCertificate.size());
+        LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES_FROM_DB, sjukfallCertificate.size()));
 
         final var intygDataList = intygDataConverter.convert(sjukfallCertificate);
 
