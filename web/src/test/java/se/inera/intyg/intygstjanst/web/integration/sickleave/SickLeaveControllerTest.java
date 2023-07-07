@@ -67,6 +67,7 @@ class SickLeaveControllerTest {
     private static final List<String> DOCTOR_IDS = List.of("DoctorId1", "DoctorId2");
     private static final Integer MAX_CERTIFICATE_GAP = 5;
     private static final Integer MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 3;
+    private static final boolean HAS_ONGOING_SICK_LEAVES = true;
     private static final List<SickLeaveLengthInterval> SICK_LEAVE_LENGTH_INTERVALS = List.of(
         new SickLeaveLengthInterval(1, 150)
     );
@@ -172,6 +173,7 @@ class SickLeaveControllerTest {
                     .nbrOfSickLeaves(NUMBER_OF_SICK_LEAVES)
                     .rekoStatusTypes(REKO_STATUSES)
                     .occupationTypes(OCCUPATION_TYPE_DTO_LIST)
+                    .hasOngoingSickLeaves(HAS_ONGOING_SICK_LEAVES)
                     .build())
                 .when(getSickLeaveFilterService)
                 .get(any(GetSickLeaveFilterServiceRequest.class));
@@ -198,6 +200,7 @@ class SickLeaveControllerTest {
                 DOCTORS,
                 DIAGNOSIS_CHAPTER,
                 NUMBER_OF_SICK_LEAVES,
+                HAS_ONGOING_SICK_LEAVES,
                 REKO_STATUSES,
                 OCCUPATION_TYPE_DTO_LIST
             );

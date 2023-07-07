@@ -19,11 +19,14 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.infra.sjukfall.dto.Formaga;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.web.service.CreateSickLeaveFilter;
@@ -68,9 +71,15 @@ public class CreateSickLeaveFilterImpl implements CreateSickLeaveFilter {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
-        final var rekoStatuses = getRekoStatuses();
+        final var containsOngoingSickLeaves = intygDataList.stream()
+            .map(IntygData::getFormagor)
+            .filter(Objects::nonNull)
+            .map(CreateSickLeaveFilterImpl::getEndDate)
+            .anyMatch(endDate -> endDate.isAfter(LocalDate.now()) || endDate.isEqual(LocalDate.now()));
 
         final var occupationTypeDTOList = getOccupationTypeDTOList();
+
+        final var rekoStatuses = getRekoStatuses();
 
         return GetSickLeaveFilterServiceResponse.builder()
             .activeDoctors(doctorsForCareUnit)
@@ -78,6 +87,7 @@ public class CreateSickLeaveFilterImpl implements CreateSickLeaveFilter {
             .nbrOfSickLeaves(intygDataList.size())
             .rekoStatusTypes(rekoStatuses)
             .occupationTypes(occupationTypeDTOList)
+            .hasOngoingSickLeaves(containsOngoingSickLeaves)
             .build();
     }
 
@@ -93,5 +103,9 @@ public class CreateSickLeaveFilterImpl implements CreateSickLeaveFilter {
             .stream(RekoStatusType.values())
             .map((status) -> new RekoStatusTypeDTO(status.toString(), status.getName()))
             .collect(Collectors.toList());
+    }
+
+    private static LocalDate getEndDate(List<Formaga> abilities) {
+        return abilities.stream().max(Comparator.comparing(Formaga::getSlutdatum)).get().getSlutdatum();
     }
 }
