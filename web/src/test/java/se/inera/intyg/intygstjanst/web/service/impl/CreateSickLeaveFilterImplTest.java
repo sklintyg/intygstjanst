@@ -20,8 +20,11 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +38,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
+import se.inera.intyg.infra.sjukfall.dto.Formaga;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
@@ -292,6 +296,88 @@ class CreateSickLeaveFilterImplTest {
             final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
             assertEquals(actualFilter.getOccupationTypes().get(3).getId(), OccupationType.STUDIER.toString());
             assertEquals(actualFilter.getOccupationTypes().get(3).getName(), OccupationType.STUDIER.getName());
+        }
+    }
+
+    @Nested
+    class OngoingSickLeaves {
+
+        @Nested
+        class HasOngoingSickLeaves {
+
+            @Test
+            void shallReturnTrueIfEndDateIsAfterToday() {
+                final var intygData = new IntygData();
+                intygData.setFormagor(List.of(getFormaga(10, -5, 25)));
+                final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(intygData));
+                assertTrue(actualFilter.isHasOngoingSickLeaves());
+            }
+
+            @Test
+            void shallReturnTrueIfEndDateIsEqualToToday() {
+                final var intygData = new IntygData();
+                intygData.setFormagor(List.of(getFormaga(10, 0, 25)));
+                final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(intygData));
+                assertTrue(actualFilter.isHasOngoingSickLeaves());
+            }
+
+            @Test
+            void shallReturnTrueIfContainingOneEndDateAfterToday() {
+                final var intygData = new IntygData();
+                intygData.setFormagor(List.of(
+                    getFormaga(10, 7, 25),
+                    getFormaga(7, 5, 50),
+                    getFormaga(5, 2, 75),
+                    getFormaga(2, -2, 100))
+                );
+                final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(intygData));
+                assertTrue(actualFilter.isHasOngoingSickLeaves());
+            }
+        }
+
+        @Nested
+        class HasNoOngoingSickLeaves {
+
+            @Test
+            void shallReturnFalseIfFormagaIsNull() {
+                final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
+                assertFalse(actualFilter.isHasOngoingSickLeaves());
+            }
+
+            @Test
+            void shallReturnFalseIfEmptyList() {
+                final var actualFilter = createSickLeaveFilter.create(Collections.emptyList());
+                assertFalse(actualFilter.isHasOngoingSickLeaves());
+            }
+
+            @Test
+            void shallReturnFalseIfNoEndDateIsAfterToday() {
+                final var intygData = new IntygData();
+                intygData.setFormagor(List.of(getFormaga(10, 5, 25)));
+                final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(intygData));
+                assertFalse(actualFilter.isHasOngoingSickLeaves());
+            }
+
+            @Test
+            void shallReturnFalseIfContainingNoEndDateAfterToday() {
+                final var intygData = new IntygData();
+                intygData.setFormagor(List.of(
+                    getFormaga(10, 7, 25),
+                    getFormaga(7, 5, 50),
+                    getFormaga(5, 2, 75),
+                    getFormaga(2, 1, 100))
+                );
+                final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(intygData));
+                assertFalse(actualFilter.isHasOngoingSickLeaves());
+            }
+        }
+
+        private Formaga getFormaga(int daysToSubtractStartDate, int daysToSubtractEndDate, int disability) {
+            return new Formaga(
+                LocalDate.now().minusDays(daysToSubtractStartDate),
+                LocalDate.now().minusDays(daysToSubtractEndDate),
+                disability
+            );
         }
     }
 
