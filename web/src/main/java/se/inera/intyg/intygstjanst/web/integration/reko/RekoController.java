@@ -65,7 +65,7 @@ public class RekoController {
     @Consumes(MediaType.APPLICATION_JSON)
     public RekoStatusDTO getRekoStatus(@RequestBody GetRekoStatusRequestDTO request) {
         return getRekoStatusService.get(
-                request.patientId,
+                request.getPatientId(),
                 request.getEndDate(),
                 request.getStartDate()
         );
