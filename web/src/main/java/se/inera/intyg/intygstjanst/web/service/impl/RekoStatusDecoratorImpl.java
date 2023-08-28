@@ -20,15 +20,11 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
-import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
-import se.inera.intyg.infra.sjukfall.dto.RekoStatusTypeDTO;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RekoRepository;
+import se.inera.intyg.intygstjanst.web.service.GetRekoStatusService;
 import se.inera.intyg.intygstjanst.web.service.RekoStatusDecorator;
-import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,9 +32,11 @@ import java.util.stream.Collectors;
 public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
 
     final RekoRepository rekoRepository;
+    final GetRekoStatusService getRekoStatusService;
 
-    public RekoStatusDecoratorImpl(RekoRepository rekoRepository) {
+    public RekoStatusDecoratorImpl(RekoRepository rekoRepository, GetRekoStatusService getRekoStatusService) {
         this.rekoRepository = rekoRepository;
+        this.getRekoStatusService = getRekoStatusService;
     }
 
     @Override
@@ -56,54 +54,11 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
         );
 
         sickLeaves.forEach((sickLeave) -> sickLeave.setRekoStatus(
-                getRekoStatus(rekoStatuses,
+                getRekoStatusService.get(rekoStatuses,
                         sickLeave.getPatient().getId(),
-                        sickLeave)
+                        sickLeave.getSlut(),
+                        sickLeave.getStart())
                 )
         );
-    }
-
-    private RekoStatusDTO getRekoStatus(List<Reko> rekoStatuses,
-                                        String patientId,
-                                        SjukfallEnhet sickLeave) {
-        final var rekoStatusFromDb = rekoStatuses
-                .stream()
-                .filter(status -> status.getPatientId().equals(patientId))
-                .filter(status -> equalsOrAfterStartDate(sickLeave, status))
-                .filter(status -> beforeEndDate(sickLeave, status)
-                ).max(Comparator.comparing(Reko::getRegistrationTimestamp));
-
-        if (rekoStatusFromDb.isPresent()) {
-            final var rekoStatus = new RekoStatusDTO();
-            rekoStatus.setStatus(
-                    new RekoStatusTypeDTO(
-                            rekoStatusFromDb.get().getStatus(),
-                            RekoStatusType.fromId(rekoStatusFromDb.get().getStatus()).getName()
-                    )
-            );
-            rekoStatus.setRegistrationTimestamp(rekoStatusFromDb.get().getRegistrationTimestamp());
-            rekoStatus.setPatientId(rekoStatusFromDb.get().getPatientId());
-            rekoStatus.setCareProviderId(rekoStatusFromDb.get().getCareProviderId());
-            rekoStatus.setCareUnitId(rekoStatusFromDb.get().getCareUnitId());
-            rekoStatus.setUnitId(rekoStatusFromDb.get().getUnitId());
-            rekoStatus.setPatientId(rekoStatusFromDb.get().getPatientId());
-            rekoStatus.setStaffId(rekoStatusFromDb.get().getStaffId());
-            rekoStatus.setStaffName(rekoStatusFromDb.get().getStaffName());
-            rekoStatus.setSickLeaveTimestamp(rekoStatusFromDb.get().getSickLeaveTimestamp());
-
-            return rekoStatus;
-        }
-
-        return null;
-    }
-
-    private static boolean beforeEndDate(SjukfallEnhet sickLeave, Reko status) {
-        return status.getSickLeaveTimestamp().isBefore(sickLeave.getSlut().plusDays(1).atStartOfDay());
-    }
-
-    private static boolean equalsOrAfterStartDate(SjukfallEnhet sickLeave, Reko status) {
-        final var sickLeaveStartLocalDatetime = sickLeave.getStart().atStartOfDay();
-        return status.getSickLeaveTimestamp().isAfter(sickLeaveStartLocalDatetime)
-                || sickLeaveStartLocalDatetime.equals(status.getSickLeaveTimestamp());
     }
 }
