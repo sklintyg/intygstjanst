@@ -28,17 +28,12 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
                                            List<CitizenCertificateStatusTypeDTO> statuses,
                                            List<String> years) {
 
-        final var certificates = citizenCertificatesRepository.getCertificatesForPatient(
+        return citizenCertificatesRepository.getCertificatesForPatient(
                 patientId,
                 certificateTypes,
                 units,
                 statuses.stream().map(Enum::toString).collect(Collectors.toList()),
                 years
         );
-
-        return certificates
-                .stream()
-                .map(citizenCertificateConverter::get)
-                .collect(Collectors.toList());
     }
 }

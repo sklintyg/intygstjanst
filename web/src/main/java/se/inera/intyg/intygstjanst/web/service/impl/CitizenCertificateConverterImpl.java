@@ -2,7 +2,6 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CitizenCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateConverter;
@@ -27,8 +26,8 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
     }
 
     @Override
-    public CitizenCertificateDTO get(CitizenCertificate citizenCertificate, List<Relation> relations) throws ModuleNotFoundException {
-        final var moduleApi = intygModuleRegistry.getModuleApi(citizenCertificate.getType(), citizenCertificate.getTypeVersion());
+    public CitizenCertificateDTO get(CitizenCertificate citizenCertificate, List<Relation> relations) {
+        //final var moduleApi = intygModuleRegistry.getModuleApi(citizenCertificate.getType(), citizenCertificate.getTypeVersion());
 
         return CitizenCertificateDTO
                 .builder()
