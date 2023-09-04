@@ -21,7 +21,7 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
     }
 
     @Override
-    public List<CitizenCertificateDTO> get(CitizenCertificate citizenCertificate) {
+    public CitizenCertificateDTO get(CitizenCertificate citizenCertificate) {
         return null;
     }
 }
