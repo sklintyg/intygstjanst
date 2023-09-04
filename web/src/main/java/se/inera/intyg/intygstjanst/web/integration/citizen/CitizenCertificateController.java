@@ -30,7 +30,7 @@ public class CitizenCertificateController {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getActiveSickLeavesForCareUnit(@RequestBody ListCitizenCertificatesRequestDTO listCitizenCertificatesRequestDTO) {
+    public Response getCitizenCertificates(@RequestBody ListCitizenCertificatesRequestDTO listCitizenCertificatesRequestDTO) {
 
         LOG.debug("Getting list of citizen certificates");
         listCitizenCertificatesService.get(

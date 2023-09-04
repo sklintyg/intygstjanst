@@ -1,7 +1,7 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CitizenCertificatesDao;
+import se.inera.intyg.intygstjanst.web.service.CitizenCertificatesRepository;
 import se.inera.intyg.intygstjanst.web.integration.citizen.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateConverter;
 import se.inera.intyg.intygstjanst.web.service.ListCitizenCertificatesService;
@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 @Service
 public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificatesService {
     private final CitizenCertificateConverter citizenCertificateConverter;
-    private final CitizenCertificatesDao citizenCertificatesDao;
+    private final CitizenCertificatesRepository citizenCertificatesRepository;
 
     public ListCitizenCertificatesServiceImpl(CitizenCertificateConverter citizenCertificateConverter,
-                                                CitizenCertificatesDao citizenCertificatesDao) {
+                                                CitizenCertificatesRepository citizenCertificatesRepository) {
         this.citizenCertificateConverter = citizenCertificateConverter;
-        this.citizenCertificatesDao = citizenCertificatesDao;
+        this.citizenCertificatesRepository = citizenCertificatesRepository;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
                                            List<CitizenCertificateStatusTypeDTO> statuses,
                                            List<String> years) {
 
-        final var certificates = citizenCertificatesDao.getCertificatesForPatient(
+        final var certificates = citizenCertificatesRepository.getCertificatesForPatient(
                 patientId,
                 certificateTypes,
                 units,
