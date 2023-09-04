@@ -7,8 +7,6 @@ import se.inera.intyg.intygstjanst.web.service.CitizenCertificateRecipientConver
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateRelationConverter;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 
-import java.util.List;
-
 @Service
 public class CitizenCertificateConverterImpl implements CitizenCertificateConverter {
     private final CitizenCertificateRecipientConverter citizenCertificateRecipientConverter;

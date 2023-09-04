@@ -1,0 +1,35 @@
+package se.inera.intyg.intygstjanst.web.service.impl;
+
+import org.springframework.stereotype.Service;
+import se.inera.intyg.common.support.common.enumerations.RelationKod;
+import se.inera.intyg.intygstjanst.web.service.CitizenCertificateRelationConverter;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationType;
+
+@Service
+public class CitizenCertificateRelationConverterImpl implements CitizenCertificateRelationConverter {
+
+    @Override
+    public CitizenCertificateRelationDTO get(String certificateId,
+                                             String toCertificateId,
+                                             String fromCertificateId,
+                                             String timeStamp,
+                                             String code) {
+        return CitizenCertificateRelationDTO
+                .builder()
+                .certificateId(certificateId)
+                .timestamp(timeStamp)
+                .type(getType(code, toCertificateId, fromCertificateId))
+                .build();
+    }
+
+    private CitizenCertificateRelationType getType(String code, String certificateId, String fromCertificateId) {
+        if (code.equals(RelationKod.ERSATT.toString())) {
+            return certificateId.equals(fromCertificateId)
+                    ? CitizenCertificateRelationType.RENEWED
+                    : CitizenCertificateRelationType.RENEWS;
+        }
+
+        return null;
+    }
+}
