@@ -2,10 +2,12 @@ package se.inera.intyg.intygstjanst.web.service;
 
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationDTO;
 
+import java.time.LocalDateTime;
+
 public interface CitizenCertificateRelationConverter {
     CitizenCertificateRelationDTO get(String certificateId,
                                       String toCertificateId,
                                       String fromCertificateId,
-                                      String timeStamp,
+                                      LocalDateTime timeStamp,
                                       String code);
 }
