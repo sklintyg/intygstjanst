@@ -36,11 +36,9 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
                 years
         );
 
-        certificates
+        return certificates
                 .stream()
-                .map((certificate) -> citizenCertificateConverter.get(certificate))
+                .map(citizenCertificateConverter::get)
                 .collect(Collectors.toList());
-
-        return null;
     }
 }
