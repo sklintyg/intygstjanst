@@ -2,6 +2,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CitizenCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateConverter;
@@ -42,6 +43,21 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
                 .build();
     }
 
+    @Override
+    public CitizenCertificateDTO get(Certificate certificate, List<Relation> relations) {
+        return CitizenCertificateDTO
+            .builder()
+            .id(certificate.getId())
+            .type(getType("", certificate.getType()))
+            .summary(getSummary(certificate.getAdditionalInfo()))
+            .issuer(getIssuer(certificate.getSigningDoctorName()))
+            .unit(getUnit(certificate.getCareUnitId(), certificate.getCareUnitName()))
+            .recipient(citizenCertificateRecipientConverter.get(certificate.getStates()))
+            .issued(certificate.getSignedDate().toString())
+            .relations(getRelations(certificate.getId(), relations))
+            .build();
+    }
+
     private CitizenCertificateIssuerDTO getIssuer(String name) {
         return CitizenCertificateIssuerDTO
                 .builder()
@@ -80,5 +96,13 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
                 .map((relation) -> getRelation(certificateId, relation))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    private CitizenCertificateUnitDTO getUnit(String name, String id) {
+        return CitizenCertificateUnitDTO
+            .builder()
+            .id(id)
+            .name(name)
+            .build();
     }
 }
