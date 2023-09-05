@@ -57,7 +57,7 @@ class CitizenCertificateControllerTest {
         @Nested
         class Request {
             @Test
-            void shouldSendPatientId() {
+            void shouldSetPatientId() {
                 citizenCertificateController.getCitizenCertificates(request);
 
                 final var captor = ArgumentCaptor.forClass(String.class);
@@ -65,6 +65,50 @@ class CitizenCertificateControllerTest {
                 verify(listCitizenCertificatesService).get(captor.capture(), anyList(), anyList(), anyList(), anyList());
 
                 assertEquals(request.getPatientId(), captor.getValue());
+            }
+
+            @Test
+            void shouldSetCertificateTypes() {
+                citizenCertificateController.getCitizenCertificates(request);
+
+                final var captor = ArgumentCaptor.forClass(List.class);
+
+                verify(listCitizenCertificatesService).get(anyString(), captor.capture(), anyList(), anyList(), anyList());
+
+                assertEquals(request.getCertificateTypes(), captor.getValue());
+            }
+
+            @Test
+            void shouldSetStatuses() {
+                citizenCertificateController.getCitizenCertificates(request);
+
+                final var captor = ArgumentCaptor.forClass(List.class);
+
+                verify(listCitizenCertificatesService).get(anyString(), anyList(), captor.capture(), anyList(), anyList());
+
+                assertEquals(request.getStatuses(), captor.getValue());
+            }
+
+            @Test
+            void shouldSetUnits() {
+                citizenCertificateController.getCitizenCertificates(request);
+
+                final var captor = ArgumentCaptor.forClass(List.class);
+
+                verify(listCitizenCertificatesService).get(anyString(), anyList(), anyList(), captor.capture(), anyList());
+
+                assertEquals(request.getUnits(), captor.getValue());
+            }
+
+            @Test
+            void shouldSetYears() {
+                citizenCertificateController.getCitizenCertificates(request);
+
+                final var captor = ArgumentCaptor.forClass(List.class);
+
+                verify(listCitizenCertificatesService).get(anyString(), anyList(), anyList(), anyList(), captor.capture());
+
+                assertEquals(request.getYears(), captor.getValue());
             }
         }
 
