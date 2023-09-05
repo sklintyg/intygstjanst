@@ -17,19 +17,19 @@ public class CitizenCertificateRelationConverterImpl implements CitizenCertifica
                                              String fromCertificateId,
                                              LocalDateTime timeStamp,
                                              String code) {
-        return CitizenCertificateRelationDTO
-                .builder()
-                .certificateId(certificateId)
-                .timestamp(timeStamp.toString())
-                .type(getType(code, certificateId, toCertificateId, fromCertificateId))
-                .build();
-    }
-
-    private CitizenCertificateRelationType getType(String code, String certificateId, String toCertificateId, String fromCertificateId) {
         if (!certificateId.equals(toCertificateId) && !certificateId.equals(fromCertificateId)) {
             return null;
         }
 
+        return CitizenCertificateRelationDTO
+                .builder()
+                .certificateId(certificateId)
+                .timestamp(timeStamp.toString())
+                .type(getType(code, certificateId, toCertificateId))
+                .build();
+    }
+
+    private CitizenCertificateRelationType getType(String code, String certificateId, String toCertificateId) {
         if (code.equals(RelationKod.ERSATT.toString())) {
             return certificateId.equals(toCertificateId)
                     ? CitizenCertificateRelationType.RENEWED
