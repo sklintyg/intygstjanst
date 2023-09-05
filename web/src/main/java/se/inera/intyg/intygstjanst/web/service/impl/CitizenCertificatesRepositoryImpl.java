@@ -2,6 +2,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
+import se.inera.intyg.intygstjanst.web.integration.citizen.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateConverter;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificatesRepository;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
@@ -26,14 +27,14 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
     public List<CitizenCertificateDTO> getCertificatesForPatient(String patientId,
                                                                  List<String> certificateTypes,
                                                                  List<String> units,
-                                                                 List<String> statuses,
+                                                                 List<CitizenCertificateStatusTypeDTO> statuses,
                                                                  List<String> years) {
 
         final var certificates = citizenCertificatesDao.findByPatientId(
                 patientId,
-                certificateTypes,
+                certificateTypes, // should be filtered depending on status filter
                 units,
-                statuses,
+                statuses.stream().map(Enum::toString).collect(Collectors.toList()), // change this to values for determining logic sent/not sent
                 years
         );
 
@@ -46,7 +47,7 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
 
         return certificates
                 .stream()
-                .map((certificate) -> citizenCertificateConverter.get(certificate, relations))
+                .map((certificate) -> citizenCertificateConverter.get(certificate, filterRelations(certificate.getId(), relations)))
                 .collect(Collectors.toList());
     }
 

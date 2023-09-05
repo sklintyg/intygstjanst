@@ -8,7 +8,6 @@ import se.inera.intyg.intygstjanst.web.service.ListCitizenCertificatesService;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificatesService {
@@ -27,12 +26,11 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
                                            List<String> units,
                                            List<CitizenCertificateStatusTypeDTO> statuses,
                                            List<String> years) {
-
         return citizenCertificatesRepository.getCertificatesForPatient(
                 patientId,
                 certificateTypes,
                 units,
-                statuses.stream().map(Enum::toString).collect(Collectors.toList()),
+                statuses,
                 years
         );
     }

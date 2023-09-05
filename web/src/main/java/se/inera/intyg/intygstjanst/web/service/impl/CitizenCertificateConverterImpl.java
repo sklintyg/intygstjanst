@@ -10,6 +10,7 @@ import se.inera.intyg.intygstjanst.web.service.CitizenCertificateRelationConvert
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,6 +78,7 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
         return relations
                 .stream()
                 .map((relation) -> getRelation(certificateId, relation))
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 }
