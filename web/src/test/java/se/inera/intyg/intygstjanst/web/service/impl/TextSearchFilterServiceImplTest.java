@@ -438,12 +438,12 @@ class TextSearchFilterServiceImplTest {
             void shouldFilterOnMatchingLength() {
                 final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
                     Collections.emptyList());
-                expectedResult.setDagar(5);
+                expectedResult.setDagar(555);
                 final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
                     Collections.emptyList());
                 sickLeaveUnit.setDagar(2);
 
-                final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), "5");
+                final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), "555");
                 assertEquals(List.of(expectedResult), filterResult);
             }
 
@@ -482,9 +482,12 @@ class TextSearchFilterServiceImplTest {
                 final var expectedResult = createSickLeave(PATIENT_ARNOLD_ID, PATIENT_ARNOLD_NAME, DIAGNOSIS_CODE_N41, VARDADMIN_ALVA,
                     Collections.emptyList());
                 expectedResult.setIntygLista(List.of("", "", "", "", ""));
+
                 final var sickLeaveUnit = createSickLeave(PATIENT_ATTILA_ID, PATIENT_ATTILA_NAME, DIAGNOSIS_CODE_F23, VARDADMIN_ALVA,
                     Collections.emptyList());
                 sickLeaveUnit.setIntygLista(List.of(""));
+
+                correctDateForSickLeave(sickLeaveUnit);
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), "5");
                 assertEquals(List.of(expectedResult), filterResult);
@@ -1240,5 +1243,12 @@ class TextSearchFilterServiceImplTest {
         final var rekoStatusDTO = new RekoStatusDTO();
         rekoStatusDTO.setStatus(new RekoStatusTypeDTO(REKO_ID, status));
         return rekoStatusDTO;
+    }
+
+    private static void correctDateForSickLeave(SjukfallEnhet sickLeaveUnit) {
+        if (sickLeaveUnit.getStart().toString().contains("5")) {
+            sickLeaveUnit.setStart(LocalDate.now().plusDays(1));
+            sickLeaveUnit.setSlut(LocalDate.now().plusDays(1));
+        }
     }
 }
