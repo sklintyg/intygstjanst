@@ -77,7 +77,7 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
     private CitizenCertificateSummaryDTO getSummary(String name) {
         return CitizenCertificateSummaryDTO
                 .builder()
-                .name(name)
+                .value(name)
                 .label("") //from moudleapi using type and version
                 .build();
     }

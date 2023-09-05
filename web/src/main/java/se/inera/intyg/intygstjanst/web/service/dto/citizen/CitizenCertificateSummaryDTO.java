@@ -7,5 +7,5 @@ import lombok.Data;
 @Builder
 public class CitizenCertificateSummaryDTO {
     String label;
-    String name;
+    String value;
 }
