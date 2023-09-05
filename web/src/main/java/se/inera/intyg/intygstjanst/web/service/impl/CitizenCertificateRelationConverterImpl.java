@@ -31,7 +31,7 @@ public class CitizenCertificateRelationConverterImpl implements CitizenCertifica
         }
 
         if (code.equals(RelationKod.ERSATT.toString())) {
-            return certificateId.equals(fromCertificateId)
+            return certificateId.equals(toCertificateId)
                     ? CitizenCertificateRelationType.RENEWED
                     : CitizenCertificateRelationType.RENEWS;
         }

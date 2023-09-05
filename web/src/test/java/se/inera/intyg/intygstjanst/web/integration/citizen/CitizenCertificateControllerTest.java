@@ -19,14 +19,17 @@
 
 package se.inera.intyg.intygstjanst.web.integration.citizen;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.web.service.ListCitizenCertificatesService;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 
 import java.util.List;
 
@@ -84,7 +87,7 @@ class CitizenCertificateControllerTest {
 
                 final var captor = ArgumentCaptor.forClass(List.class);
 
-                verify(listCitizenCertificatesService).get(anyString(), anyList(), captor.capture(), anyList(), anyList());
+                verify(listCitizenCertificatesService).get(anyString(), anyList(), anyList(), captor.capture(), anyList());
 
                 assertEquals(request.getStatuses(), captor.getValue());
             }
@@ -95,7 +98,7 @@ class CitizenCertificateControllerTest {
 
                 final var captor = ArgumentCaptor.forClass(List.class);
 
-                verify(listCitizenCertificatesService).get(anyString(), anyList(), anyList(), captor.capture(), anyList());
+                verify(listCitizenCertificatesService).get(anyString(), anyList(), captor.capture(), anyList(), anyList());
 
                 assertEquals(request.getUnits(), captor.getValue());
             }
@@ -115,6 +118,23 @@ class CitizenCertificateControllerTest {
         @Nested
         class Response {
 
+            CitizenCertificateDTO expectedCertificate = CitizenCertificateDTO.builder().build();
+            List<CitizenCertificateDTO> expectedContent = List.of(expectedCertificate);
+            @BeforeEach
+            void setup() {
+                Mockito
+                        .when(listCitizenCertificatesService.get(anyString(), anyList(), anyList(), anyList(), anyList()))
+                        .thenReturn(expectedContent);
+            }
+
+            @Test
+            void shouldReturnContent() {
+                final var response = citizenCertificateController.getCitizenCertificates(request);
+
+                assertEquals(expectedContent, response.getContent());
+                assertEquals(expectedContent.size(), response.getContent().size());
+                assertEquals(expectedContent.get(0), response.getContent().get(0));
+            }
         }
     }
 }

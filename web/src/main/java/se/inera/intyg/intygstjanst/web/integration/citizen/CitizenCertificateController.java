@@ -11,8 +11,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 
 @Path("/citizen")
 public class CitizenCertificateController {
@@ -30,10 +28,10 @@ public class CitizenCertificateController {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getCitizenCertificates(@RequestBody ListCitizenCertificatesRequestDTO listCitizenCertificatesRequestDTO) {
+    public ListCitizenCertificatesResponseDTO getCitizenCertificates(@RequestBody ListCitizenCertificatesRequestDTO listCitizenCertificatesRequestDTO) {
 
         LOG.debug("Getting list of citizen certificates");
-        listCitizenCertificatesService.get(
+        final var response = listCitizenCertificatesService.get(
                 listCitizenCertificatesRequestDTO.getPatientId(),
                 listCitizenCertificatesRequestDTO.getCertificateTypes(),
                 listCitizenCertificatesRequestDTO.getUnits(),
@@ -41,6 +39,9 @@ public class CitizenCertificateController {
                 listCitizenCertificatesRequestDTO.getYears()
         );
 
-        return Response.ok().build();
+        return ListCitizenCertificatesResponseDTO
+                .builder()
+                .content(response)
+                .build();
     }
 }

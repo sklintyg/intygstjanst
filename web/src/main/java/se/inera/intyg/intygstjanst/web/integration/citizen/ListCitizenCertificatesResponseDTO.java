@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 
 import java.util.List;
 
@@ -11,10 +12,6 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ListCitizenCertificatesRequestDTO {
-    private String patientId;
-    private List<CitizenCertificateStatusTypeDTO> statuses;
-    private List<String> units;
-    private List<String> certificateTypes;
-    private List<String> years;
+public class ListCitizenCertificatesResponseDTO {
+    private List<CitizenCertificateDTO> content;
 }

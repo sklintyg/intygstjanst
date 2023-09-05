@@ -2,6 +2,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CitizenCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
@@ -29,33 +30,47 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
 
     @Override
     public CitizenCertificateDTO get(CitizenCertificate citizenCertificate, List<Relation> relations) {
-        //final var moduleApi = intygModuleRegistry.getModuleApi(citizenCertificate.getType(), citizenCertificate.getTypeVersion());
+        try { // TODO: How should we handle error?
+            final var moduleApi = intygModuleRegistry.getModuleApi(citizenCertificate.getType(), citizenCertificate.getTypeVersion());
+            final var moduleEntryPoint = intygModuleRegistry.getModuleEntryPoint(citizenCertificate.getType());
 
-        return CitizenCertificateDTO
-                .builder()
-                .id(citizenCertificate.getId())
-                .type(getType("", citizenCertificate.getType(), citizenCertificate.getTypeVersion()))
-                .issuer(getIssuer(citizenCertificate.getDoctorName()))
-                .issued(citizenCertificate.getSignedDate())
-                .summary(getSummary(citizenCertificate.getAdditionalInfo()))
-                .recipient(citizenCertificateRecipientConverter.get("", "", ""))
-                .relations(getRelations(citizenCertificate.getId(), relations))
-                .build();
+            return CitizenCertificateDTO
+                    .builder()
+                    .id(citizenCertificate.getId())
+                    .type(getType(moduleEntryPoint.getModuleName(), citizenCertificate.getType(), citizenCertificate.getTypeVersion()))
+                    .issuer(getIssuer(citizenCertificate.getDoctorName()))
+                    .issued(citizenCertificate.getSignedDate())
+                    .summary(getSummary(citizenCertificate.getAdditionalInfo()))
+                    .recipient(citizenCertificateRecipientConverter.get("", "", ""))
+                    .relations(getRelations(citizenCertificate.getId(), relations))
+                    .build();
+
+        } catch (ModuleNotFoundException e) {
+            return null;
+        }
     }
 
     @Override
     public CitizenCertificateDTO get(Certificate certificate, List<Relation> relations) {
-        return CitizenCertificateDTO
-            .builder()
-            .id(certificate.getId())
-            .type(getType("", certificate.getType(), certificate.getTypeVersion()))
-            .summary(getSummary(certificate.getAdditionalInfo()))
-            .issuer(getIssuer(certificate.getSigningDoctorName()))
-            .unit(getUnit(certificate.getCareUnitId(), certificate.getCareUnitName()))
-            .recipient(citizenCertificateRecipientConverter.get(certificate.getStates()))
-            .issued(certificate.getSignedDate().toString())
-            .relations(getRelations(certificate.getId(), relations))
-            .build();
+        try { // TODO: How should we handle error?
+            final var moduleApi = intygModuleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+            final var moduleEntryPoint = intygModuleRegistry.getModuleEntryPoint(certificate.getType());
+
+            return CitizenCertificateDTO
+                    .builder()
+                    .id(certificate.getId())
+                    .type(getType(moduleEntryPoint.getModuleName(), certificate.getType(), certificate.getTypeVersion()))
+                    .summary(getSummary(certificate.getAdditionalInfo()))
+                    .issuer(getIssuer(certificate.getSigningDoctorName()))
+                    .unit(getUnit(certificate.getCareUnitId(), certificate.getCareUnitName()))
+                    .recipient(citizenCertificateRecipientConverter.get(certificate.getStates()))
+                    .issued(certificate.getSignedDate().toString())
+                    .relations(getRelations(certificate.getId(), relations))
+                    .build();
+
+        } catch(ModuleNotFoundException e) {
+            return null;
+        }
     }
 
     private CitizenCertificateIssuerDTO getIssuer(String name) {
@@ -69,7 +84,7 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
         return CitizenCertificateTypeDTO
                 .builder()
                 .id(id)
-                .name(name) // where can we find the typename? Not moduleapi?
+                .name(name)
                 .version(version)
                 .build();
     }
@@ -78,14 +93,14 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
         return CitizenCertificateSummaryDTO
                 .builder()
                 .value(name)
-                .label("") //from moudleapi using type and version
+                .label("") //TODO: From module api
                 .build();
     }
 
     private CitizenCertificateRelationDTO getRelation(String certificateId, Relation relation) {
         return citizenCertificateRelationConverter.get(
                 certificateId,
-                relation.getFromIntygsId(),
+                relation.getToIntygsId(),
                 relation.getFromIntygsId(),
                 relation.getCreated(),
                 relation.getRelationKod());
@@ -99,7 +114,7 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
                 .collect(Collectors.toList());
     }
 
-    private CitizenCertificateUnitDTO getUnit(String name, String id) {
+    private CitizenCertificateUnitDTO getUnit(String id, String name) {
         return CitizenCertificateUnitDTO
             .builder()
             .id(id)

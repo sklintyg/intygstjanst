@@ -1,5 +1,6 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import org.springframework.stereotype.Repository;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.integration.citizen.CitizenCertificateStatusTypeDTO;
@@ -8,10 +9,13 @@ import se.inera.intyg.intygstjanst.web.service.CitizenCertificatesRepository;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 import se.inera.intyg.schemas.contract.Personnummer;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Repository
 public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRepository {
     private final RelationDao relationDao;
     private final CitizenCertificatesDao citizenCertificatesDao;
@@ -37,15 +41,21 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
 
         final var certificates = getCertificates(patientId, certificateTypes, units);
 
+        if (certificates.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         final var certificateIds = certificates
                 .stream()
                 .map((certificate) -> certificate.getId())
                 .collect(Collectors.toList());
 
+
         final var relations = relationDao.getRelations(certificateIds, List.of(RelationKod.ERSATT.toString()));
 
         return certificates
                 .stream()
+                .filter((certificate) -> !certificate.getCertificateMetaData().isRevoked())
                 .map((certificate) -> citizenCertificateConverter.get(certificate, filterRelations(certificate.getId(), relations)))
                 .collect(Collectors.toList());
     }
@@ -70,9 +80,9 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
         return certificateDao.findCertificates(
                 Personnummer.createPersonnummer(patientId).get(),
                 units.toArray(new String[0]),
+                LocalDateTime.now().minusYears(100),
                 null,
-                null,
-                null,
+                "signedDate",
                 false,
                 new HashSet<String>(certificateTypes), // should be filtered depending on status filter
                 null
