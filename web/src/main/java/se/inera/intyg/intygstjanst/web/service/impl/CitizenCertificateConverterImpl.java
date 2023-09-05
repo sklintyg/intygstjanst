@@ -34,7 +34,7 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
         return CitizenCertificateDTO
                 .builder()
                 .id(citizenCertificate.getId())
-                .type(getType("", citizenCertificate.getType()))
+                .type(getType("", citizenCertificate.getType(), citizenCertificate.getTypeVersion()))
                 .issuer(getIssuer(citizenCertificate.getDoctorName()))
                 .issued(citizenCertificate.getSignedDate())
                 .summary(getSummary(citizenCertificate.getAdditionalInfo()))
@@ -48,7 +48,7 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
         return CitizenCertificateDTO
             .builder()
             .id(certificate.getId())
-            .type(getType("", certificate.getType()))
+            .type(getType("", certificate.getType(), certificate.getTypeVersion()))
             .summary(getSummary(certificate.getAdditionalInfo()))
             .issuer(getIssuer(certificate.getSigningDoctorName()))
             .unit(getUnit(certificate.getCareUnitId(), certificate.getCareUnitName()))
@@ -65,11 +65,12 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
                 .build();
     }
 
-    private CitizenCertificateTypeDTO getType(String name, String id) {
+    private CitizenCertificateTypeDTO getType(String name, String id, String version) {
         return CitizenCertificateTypeDTO
                 .builder()
                 .id(id)
                 .name(name) // where can we find the typename? Not moduleapi?
+                .version(version)
                 .build();
     }
 
