@@ -1,10 +1,11 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
-import se.inera.intyg.common.support.common.enumerations.RelationKod;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateRecipientConverter;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRecipientDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationType;
+
+import java.util.Collection;
 
 @Service
 public class CitizenCertificateRecipientConverterImpl implements CitizenCertificateRecipientConverter {
@@ -19,13 +20,13 @@ public class CitizenCertificateRecipientConverterImpl implements CitizenCertific
                 .build();
     }
 
-    private CitizenCertificateRelationType getType(String code, String certificateId, String fromCertificateId) {
-        if (code.equals(RelationKod.ERSATT.toString())) {
-            return certificateId.equals(fromCertificateId)
-                    ? CitizenCertificateRelationType.RENEWED
-                    : CitizenCertificateRelationType.RENEWS;
-        }
-
-        return null;
+    @Override
+    public CitizenCertificateRecipientDTO get(Collection<CertificateStateHistoryEntry> states) {
+        return CitizenCertificateRecipientDTO
+                .builder()
+                .id("")
+                .name("")
+                .sent("")
+                .build();
     }
 }
