@@ -31,4 +31,14 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
 
         return true;
     }
+
+    @Override
+    public boolean filterOnUnits(CitizenCertificateDTO certificate, List<String> unitIds) {
+        return unitIds.contains(certificate.getUnit().getId());
+    }
+
+    @Override
+    public boolean filterOnCertificateTypes(CitizenCertificateDTO certificate, List<String> certificateTypes) {
+        return certificateTypes.contains(certificate.getType().getId());
+    }
 }

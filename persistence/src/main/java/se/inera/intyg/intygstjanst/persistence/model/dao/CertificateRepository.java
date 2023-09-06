@@ -45,5 +45,5 @@ public interface CertificateRepository extends JpaRepository<Certificate, String
     Long getCertificateCountForCareProvider(@Param("careProviderId") String careProviderId);
 
     @Query("select c from Certificate c where c.civicRegistrationNumber = :patientId and not c.testCertificate")
-    List<Certificate> findCertificatesForPatient(String patientId);
+    List<Certificate> findCertificatesForPatient(@Param("patientId") String patientId);
 }

@@ -3,7 +3,6 @@ package se.inera.intyg.intygstjanst.web.service.repo;
 import org.springframework.stereotype.Repository;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
-import se.inera.intyg.intygstjanst.web.integration.citizen.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateConverter;
 
@@ -28,11 +27,7 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
 
     @Transactional
     @Override
-    public List<CitizenCertificate> getCertificatesForPatient(String patientId,
-                                                              List<String> certificateTypes,
-                                                              List<String> units,
-                                                              List<CitizenCertificateStatusTypeDTO> statuses,
-                                                              List<String> years) {
+    public List<CitizenCertificate> getCertificatesForPatient(String patientId) {
 
         final var certificates = certificateRepository.findCertificatesForPatient(patientId);
 

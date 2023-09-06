@@ -15,7 +15,6 @@ import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -45,57 +44,9 @@ class ListCitizenCertificatesServiceImplTest {
             final var captor = ArgumentCaptor.forClass(String.class);
 
             verify(citizenCertificatesRepository)
-                    .getCertificatesForPatient(captor.capture(), anyList(), anyList(), anyList(), anyList());
+                    .getCertificatesForPatient(captor.capture());
 
             assertEquals(PATIENT_ID, captor.getValue());
-        }
-
-        @Test
-        void shouldSetCertificateTypes() {
-            listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
-
-            final var captor = ArgumentCaptor.forClass(List.class);
-
-            verify(citizenCertificatesRepository)
-                    .getCertificatesForPatient(anyString(), captor.capture(), anyList(), anyList(), anyList());
-
-            assertEquals(CERTIFICATE_TYPES, captor.getValue());
-        }
-
-        @Test
-        void shouldSetUnits() {
-            listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
-
-            final var captor = ArgumentCaptor.forClass(List.class);
-
-            verify(citizenCertificatesRepository)
-                    .getCertificatesForPatient(anyString(), anyList(), captor.capture(), anyList(), anyList());
-
-            assertEquals(UNITS, captor.getValue());
-        }
-
-        @Test
-        void shouldSetStatuses() {
-            listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
-
-            final var captor = ArgumentCaptor.forClass(List.class);
-
-            verify(citizenCertificatesRepository)
-                    .getCertificatesForPatient(anyString(), anyList(), anyList(), captor.capture(), anyList());
-
-            assertEquals(STATUSES, captor.getValue());
-        }
-
-        @Test
-        void shouldSetYears() {
-            listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
-
-            final var captor = ArgumentCaptor.forClass(List.class);
-
-            verify(citizenCertificatesRepository)
-                    .getCertificatesForPatient(anyString(), anyList(), anyList(), anyList(), captor.capture());
-
-            assertEquals(YEARS, captor.getValue());
         }
     }
 
@@ -103,7 +54,7 @@ class ListCitizenCertificatesServiceImplTest {
     class Response {
         @BeforeEach
         void setup() {
-            when(citizenCertificatesRepository.getCertificatesForPatient(anyString(), anyList(), anyList(), anyList(), anyList()))
+            when(citizenCertificatesRepository.getCertificatesForPatient(anyString()))
                     .thenReturn(response);
         }
 

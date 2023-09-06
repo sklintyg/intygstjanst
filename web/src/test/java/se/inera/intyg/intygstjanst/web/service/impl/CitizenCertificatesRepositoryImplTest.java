@@ -50,8 +50,6 @@ class CitizenCertificatesRepositoryImplTest {
     private final static List<Certificate> CERTIFICATES = List.of(CERTIFICATE_1, CERTIFICATE_2);
     private final static List<Certificate> REVOKED_CERTIFICATES = List.of(REVOKED_CERTIFICATE);
     private final static String PATIENT_ID = "191212121212";
-    private final static List<String> CERTIFICATE_TYPES = List.of("lisjp", "ag7804");
-    private final static List<String> UNIT_IDS = List.of("unit1", "unit2");
 
     @Nested
     class NoCertificates {
@@ -63,26 +61,14 @@ class CitizenCertificatesRepositoryImplTest {
 
         @Test
         void shouldReturnEmptyListIfNoCertificates() {
-            final var response = citizenCertificatesRepository.getCertificatesForPatient(
-                    PATIENT_ID,
-                    CERTIFICATE_TYPES,
-                    UNIT_IDS,
-                    Collections.emptyList(),
-                    Collections.emptyList()
-            );
+            final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
 
             assertEquals(0, response.size());
         }
 
         @Test
         void shouldNotCallCRelationDao() {
-            citizenCertificatesRepository.getCertificatesForPatient(
-                    PATIENT_ID,
-                    CERTIFICATE_TYPES,
-                    UNIT_IDS,
-                    Collections.emptyList(),
-                    Collections.emptyList()
-            );
+            final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
 
             verify(relationDao, never()).getRelations(anyList(), anyList());
         }
@@ -92,26 +78,14 @@ class CitizenCertificatesRepositoryImplTest {
     class InvalidPatientId {
         @Test
         void shouldReturnEmptyList() {
-            final var response = citizenCertificatesRepository.getCertificatesForPatient(
-                    "",
-                    CERTIFICATE_TYPES,
-                    UNIT_IDS,
-                    Collections.emptyList(),
-                    Collections.emptyList()
-            );
+            final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
 
             assertEquals(0, response.size());
         }
 
         @Test
         void shouldNotCallCertificateDao() {
-            citizenCertificatesRepository.getCertificatesForPatient(
-                    "",
-                    CERTIFICATE_TYPES,
-                    UNIT_IDS,
-                    Collections.emptyList(),
-                    Collections.emptyList()
-            );
+            final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
 
             verify(certificateDao, never())
                     .findCertificates(any(), any(), any(), any(), any(), anyBoolean(), any(), any());
@@ -132,13 +106,7 @@ class CitizenCertificatesRepositoryImplTest {
 
         @Test
         void shouldFilterOutRevokedCertificates() {
-            final var response = citizenCertificatesRepository.getCertificatesForPatient(
-                    PATIENT_ID,
-                    CERTIFICATE_TYPES,
-                    UNIT_IDS,
-                    Collections.emptyList(),
-                    Collections.emptyList()
-            );
+            final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
 
             assertEquals(0, response.size());
         }
@@ -166,13 +134,7 @@ class CitizenCertificatesRepositoryImplTest {
 
             @Test
             void shouldReturnConvertedCertificate() {
-                final var response = citizenCertificatesRepository.getCertificatesForPatient(
-                        PATIENT_ID,
-                        CERTIFICATE_TYPES,
-                        UNIT_IDS,
-                        Collections.emptyList(),
-                        Collections.emptyList()
-                );
+                final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
 
                 assertEquals(CONVERTED_CERTIFICATE, response.get(0));
                 assertEquals(CONVERTED_CERTIFICATE, response.get(1));
@@ -183,13 +145,7 @@ class CitizenCertificatesRepositoryImplTest {
         class RelationDao {
             @Test
             void shouldMakeCallWithCertificateIds() {
-                citizenCertificatesRepository.getCertificatesForPatient(
-                        PATIENT_ID,
-                        CERTIFICATE_TYPES,
-                        UNIT_IDS,
-                        Collections.emptyList(),
-                        Collections.emptyList()
-                );
+                final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
 
                 final var captor = ArgumentCaptor.forClass(List.class);
 
@@ -202,13 +158,7 @@ class CitizenCertificatesRepositoryImplTest {
 
             @Test
             void shouldMakeCallWithRelationKodErsatt() {
-                citizenCertificatesRepository.getCertificatesForPatient(
-                        PATIENT_ID,
-                        CERTIFICATE_TYPES,
-                        UNIT_IDS,
-                        Collections.emptyList(),
-                        Collections.emptyList()
-                );
+                final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
 
                 final var captor = ArgumentCaptor.forClass(List.class);
 
