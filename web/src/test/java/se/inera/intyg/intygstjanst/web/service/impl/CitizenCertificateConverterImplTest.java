@@ -11,7 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateRecipientConverter;
-import se.inera.intyg.intygstjanst.web.service.CitizenCertificateRelationConverter;
+import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateRelationConverter;
+import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateConverterImpl;
 
 import java.time.LocalDateTime;
 import java.util.Collections;

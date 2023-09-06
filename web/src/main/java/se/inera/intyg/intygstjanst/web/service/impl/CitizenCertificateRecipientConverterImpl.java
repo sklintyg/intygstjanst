@@ -1,53 +1,43 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
-import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateRecipientConverter;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRecipientDTO;
+import se.inera.intyg.intygstjanst.web.service.repo.RecipientRepo;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @Service
 public class CitizenCertificateRecipientConverterImpl implements CitizenCertificateRecipientConverter {
 
+    private final RecipientRepo recipientRepo;
+
+    public CitizenCertificateRecipientConverterImpl(RecipientRepo recipientRepo) {
+        this.recipientRepo = recipientRepo;
+    }
+
     @Override
-    public CitizenCertificateRecipientDTO get(String id, String name, String sent) {
+    public CitizenCertificateRecipientDTO get(String certificateType, LocalDateTime sent) {
+        final var recipients = recipientRepo
+                .listRecipients()
+                .stream()
+                .filter(
+                        (recipient) -> recipient.getCertificateTypes().contains(certificateType)
+                        && recipient.getRecipientType() == CertificateRecipientType.HUVUDMOTTAGARE
+                )
+                .collect(Collectors.toList());
+
+        if (recipients.isEmpty()) {
+            return null;
+        }
+
         return CitizenCertificateRecipientDTO
                 .builder()
-                .id(id)
-                .name(name)
-                .sent(sent)
+                .id(recipients.get(0).getId())
+                .name(recipients.get(0).getName())
+                .sent(sent == null ? null : sent.toString())
                 .build();
-    }
-
-    @Override
-    public CitizenCertificateRecipientDTO get(Collection<CertificateStateHistoryEntry> states) {
-
-        final var sentState = getSentState(states);
-
-        return sentState.map(certificateStateHistoryEntry -> CitizenCertificateRecipientDTO
-                .builder()
-                .id(certificateStateHistoryEntry.getTarget())
-                .name(getRecipientName(certificateStateHistoryEntry.getTarget()))
-                .sent(certificateStateHistoryEntry.getTimestamp().toString()) //TODO: How should we format it to ISO?
-                .build()).orElse(null);
-    }
-
-    private String getRecipientName(String id) {
-        if (id.equals("TRANSP")) {
-            return "Transportstyrelsen";
-        }
-
-        if (id.equals("FKASSA")) {
-            return "Försäkringskassan"; //TODO: Can the names be gotten from some other place?
-        }
-
-        return null;
-    }
-
-    private Optional<CertificateStateHistoryEntry> getSentState(Collection<CertificateStateHistoryEntry> states) {
-        return states.stream().filter((state) -> state.getState() == CertificateState.SENT).findFirst();
     }
 }

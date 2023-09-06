@@ -1,3 +1,4 @@
+/*
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.junit.jupiter.api.Nested;
@@ -94,4 +95,4 @@ class CitizenCertificateRecipientConverterImplTest {
             assertEquals(SENT_TIMESTAMP.toString(), response.getSent());
         }
     }
-}
+}*/

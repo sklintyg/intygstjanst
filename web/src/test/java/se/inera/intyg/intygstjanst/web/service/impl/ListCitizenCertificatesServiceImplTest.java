@@ -9,7 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.web.integration.citizen.CitizenCertificateStatusTypeDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
+import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepositoryImpl;
+import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ListCitizenCertificatesServiceImplTest {
 
-    private final static List<CitizenCertificateDTO> response = List.of(CitizenCertificateDTO.builder().build());
+    private final static List<CitizenCertificate> response = List.of(CitizenCertificate.builder().build());
     private final static String PATIENT_ID = "191212121212";
     private final static List<String> UNITS = List.of("Unit 1", "Unit 2");
     private final static List<String> CERTIFICATE_TYPES = List.of("lisjp", "ag7804");

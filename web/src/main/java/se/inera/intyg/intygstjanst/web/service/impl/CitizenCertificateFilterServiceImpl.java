@@ -9,7 +9,7 @@ import java.util.List;
 public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFilterService {
     @Override
     public boolean filterOnYears(CitizenCertificateDTO certificate, List<String> includedYears) {
-        final var signedYear = (certificate.getIssued());
+        final var signedYear = certificate.getIssued().substring(0, 3);
 
         return includedYears
                 .stream()
@@ -18,8 +18,8 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
 
     @Override
     public boolean filterOnSentStatus(CitizenCertificateDTO certificate, List<CitizenCertificateStatusTypeDTO> statuses) {
-        final var includeSent = false;
-        final var includeNotSent = false;
+        final var includeSent = statuses.stream().anyMatch((status) -> status == CitizenCertificateStatusTypeDTO.SENT);
+        final var includeNotSent = statuses.stream().anyMatch((status) -> status == CitizenCertificateStatusTypeDTO.NOT_SENT);
 
         if (includeSent) {
             return certificate.getRecipient() != null && certificate.getRecipient().getSent() != null;

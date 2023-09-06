@@ -14,8 +14,9 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
-import se.inera.intyg.intygstjanst.web.service.CitizenCertificateConverter;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
+import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
+import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateConverter;
+import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepositoryImpl;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +46,7 @@ class CitizenCertificatesRepositoryImplTest {
     private final static Certificate REVOKED_CERTIFICATE = new Certificate(REVOKED_CERTIFICATE_ID);
     private final static Certificate CERTIFICATE_1 = new Certificate(CERTIFICATE_ID_1);
     private final static Certificate CERTIFICATE_2 = new Certificate(CERTIFICATE_ID_2);
-    private final static CitizenCertificateDTO CONVERTED_CERTIFICATE = CitizenCertificateDTO.builder().build();
+    private final static CitizenCertificate CONVERTED_CERTIFICATE = CitizenCertificate.builder().build();
     private final static List<Certificate> CERTIFICATES = List.of(CERTIFICATE_1, CERTIFICATE_2);
     private final static List<Certificate> REVOKED_CERTIFICATES = List.of(REVOKED_CERTIFICATE);
     private final static String PATIENT_ID = "191212121212";
