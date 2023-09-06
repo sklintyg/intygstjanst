@@ -1,4 +1,4 @@
-package se.inera.intyg.intygstjanst.web.service;
+package se.inera.intyg.intygstjanst.web.service.repo.model;
 
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationDTO;
 
