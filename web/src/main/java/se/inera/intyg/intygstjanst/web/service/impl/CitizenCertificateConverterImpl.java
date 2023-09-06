@@ -52,25 +52,20 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
 
     @Override
     public CitizenCertificateDTO get(Certificate certificate, List<Relation> relations) {
-        try { // TODO: How should we handle error?
-            final var moduleApi = intygModuleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
-            final var moduleEntryPoint = intygModuleRegistry.getModuleEntryPoint(certificate.getType());
+        //final var moduleApi = intygModuleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+        //final var moduleEntryPoint = intygModuleRegistry.getModuleEntryPoint(certificate.getType());
 
-            return CitizenCertificateDTO
-                    .builder()
-                    .id(certificate.getId())
-                    .type(getType(moduleEntryPoint.getModuleName(), certificate.getType(), certificate.getTypeVersion()))
-                    .summary(getSummary(certificate.getAdditionalInfo()))
-                    .issuer(getIssuer(certificate.getSigningDoctorName()))
-                    .unit(getUnit(certificate.getCareUnitId(), certificate.getCareUnitName()))
-                    .recipient(citizenCertificateRecipientConverter.get(certificate.getStates()))
-                    .issued(certificate.getSignedDate().toString())
-                    .relations(getRelations(certificate.getId(), relations))
-                    .build();
-
-        } catch(ModuleNotFoundException e) {
-            return null;
-        }
+        return CitizenCertificateDTO
+                .builder()
+                .id(certificate.getId())
+                .type(getType("", certificate.getType(), certificate.getTypeVersion()))
+                .summary(getSummary(certificate.getAdditionalInfo()))
+                .issuer(getIssuer(certificate.getSigningDoctorName()))
+                .unit(getUnit(certificate.getCareUnitId(), certificate.getCareUnitName()))
+                .recipient(citizenCertificateRecipientConverter.get(certificate.getStates()))
+                .issued(certificate.getSignedDate().toString())
+                .relations(getRelations(certificate.getId(), relations))
+                .build();
     }
 
     private CitizenCertificateIssuerDTO getIssuer(String name) {

@@ -5,6 +5,7 @@ import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.integration.citizen.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateConverter;
+import se.inera.intyg.intygstjanst.web.service.CitizenCertificateFilterService;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificatesRepository;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -20,13 +21,15 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
     private final RelationDao relationDao;
     private final CitizenCertificateConverter citizenCertificateConverter;
     private final CertificateDao certificateDao;
+    private final CitizenCertificateFilterService citizenCertificateFilterService;
 
     public CitizenCertificatesRepositoryImpl(RelationDao relationDao,
                                              CitizenCertificateConverter citizenCertificateConverter,
-                                             CertificateDao certificateDao) {
+                                             CertificateDao certificateDao, CitizenCertificateFilterService citizenCertificateFilterService) {
         this.relationDao = relationDao;
         this.citizenCertificateConverter = citizenCertificateConverter;
         this.certificateDao = certificateDao;
+        this.citizenCertificateFilterService = citizenCertificateFilterService;
     }
 
     @Override
@@ -51,6 +54,8 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
                         && !certificate.getCertificateMetaData().isRevoked()
                 )
                 .map((certificate) -> citizenCertificateConverter.get(certificate, filterRelations(certificate.getId(), relations)))
+                .filter((certificate) -> citizenCertificateFilterService.filterOnYears(certificate, years))
+                .filter((certificate) -> citizenCertificateFilterService.filterOnSentStatus(certificate, statuses))
                 .collect(Collectors.toList());
     }
 
