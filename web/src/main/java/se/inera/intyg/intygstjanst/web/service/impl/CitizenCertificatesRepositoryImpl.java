@@ -18,16 +18,13 @@ import java.util.stream.Collectors;
 @Repository
 public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRepository {
     private final RelationDao relationDao;
-    private final CitizenCertificatesDao citizenCertificatesDao;
     private final CitizenCertificateConverter citizenCertificateConverter;
     private final CertificateDao certificateDao;
 
     public CitizenCertificatesRepositoryImpl(RelationDao relationDao,
-                                             CitizenCertificatesDao citizenCertificatesDao,
                                              CitizenCertificateConverter citizenCertificateConverter,
                                              CertificateDao certificateDao) {
         this.relationDao = relationDao;
-        this.citizenCertificatesDao = citizenCertificatesDao;
         this.citizenCertificateConverter = citizenCertificateConverter;
         this.certificateDao = certificateDao;
     }
@@ -45,55 +42,56 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
             return Collections.emptyList();
         }
 
-        final var certificateIds = certificates
-                .stream()
-                .map((certificate) -> certificate.getId())
-                .collect(Collectors.toList());
 
-
-        final var relations = relationDao.getRelations(certificateIds, List.of(RelationKod.ERSATT.toString()));
+        final var relations = relationDao.getRelations(getCertificateIds(certificates), List.of(RelationKod.ERSATT.toString()));
 
         return certificates
                 .stream()
-                .filter((certificate) -> !certificate.getCertificateMetaData().isRevoked())
+                .filter((certificate) -> certificate.getCertificateMetaData() != null
+                        && !certificate.getCertificateMetaData().isRevoked()
+                )
                 .map((certificate) -> citizenCertificateConverter.get(certificate, filterRelations(certificate.getId(), relations)))
                 .collect(Collectors.toList());
     }
 
-    private List<CitizenCertificate> getCitizenCertificates(String patientId,
-                                                               List<String> certificateTypes,
-                                                               List<String> units,
-                                                               List<CitizenCertificateStatusTypeDTO> statuses,
-                                                               List<String> years) {
-        return citizenCertificatesDao.findByPatientId(
-                patientId,
-                certificateTypes, // should be filtered depending on status filter
-                units,
-                statuses.stream().map(Enum::toString).collect(Collectors.toList()), // change this to values for determining logic sent/not sent
-                years
-        );
+    private List<String> getCertificateIds(List<Certificate> certificates) {
+        return certificates
+                .stream()
+                .map(Certificate::getId)
+                .collect(Collectors.toList());
     }
 
     private List<Certificate> getCertificates(String patientId,
                                                 List<String> certificateTypes,
                                                 List<String> units) {
+        final var convertedPatientId = convertPatientId(patientId);
+
+        if (convertedPatientId == null) {
+            return Collections.emptyList();
+        }
+
         return certificateDao.findCertificates(
-                Personnummer.createPersonnummer(patientId).get(),
+                convertedPatientId,
                 units.toArray(new String[0]),
                 LocalDateTime.now().minusYears(100),
                 null,
                 "signedDate",
                 false,
-                new HashSet<String>(certificateTypes), // should be filtered depending on status filter
+                new HashSet<>(certificateTypes), // should be filtered depending on status filter
                 null
         );
+    }
+
+    private Personnummer convertPatientId(String patientId) {
+        return Personnummer.createPersonnummer(patientId).orElse(null);
     }
 
     private List<Relation> filterRelations(String certificateId, List<Relation> relations) {
         return relations
                 .stream()
                 .filter(
-                        (relation) -> relation.getToIntygsId().equals(certificateId) || relation.getFromIntygsId().equals(certificateId)
+                        (relation) -> relation.getToIntygsId().equals(certificateId)
+                                || relation.getFromIntygsId().equals(certificateId)
                 )
                 .collect(Collectors.toList());
     }
