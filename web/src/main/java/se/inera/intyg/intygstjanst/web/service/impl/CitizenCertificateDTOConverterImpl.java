@@ -1,7 +1,9 @@
-package se.inera.intyg.intygstjanst.web.service;
+package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.intygstjanst.web.service.CitizenCertificateDTOConverter;
+import se.inera.intyg.intygstjanst.web.service.CitizenCertificateRecipientConverter;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.*;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 

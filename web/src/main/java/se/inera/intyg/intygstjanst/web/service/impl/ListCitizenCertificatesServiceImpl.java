@@ -1,10 +1,10 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
-import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateDTOConverter;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateFilterService;
+import se.inera.intyg.intygstjanst.web.service.CitizenCertificateTextService;
 import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepository;
 import se.inera.intyg.intygstjanst.web.integration.citizen.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.ListCitizenCertificatesService;
@@ -18,16 +18,16 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
     private final CitizenCertificatesRepository citizenCertificatesRepository;
     private final CitizenCertificateDTOConverter citizenCertificateDTOConverter;
     private final CitizenCertificateFilterService citizenCertificateFilterService;
-    private final IntygModuleRegistry intygModuleRegistry;
+    private final CitizenCertificateTextService citizenCertificateTextService;
 
     public ListCitizenCertificatesServiceImpl(CitizenCertificatesRepository citizenCertificatesRepository,
                                               CitizenCertificateDTOConverter citizenCertificateDTOConverter,
                                               CitizenCertificateFilterService citizenCertificateFilterService,
-                                              IntygModuleRegistry intygModuleRegistry) {
+                                              CitizenCertificateTextService citizenCertificateTextService) {
         this.citizenCertificatesRepository = citizenCertificatesRepository;
         this.citizenCertificateDTOConverter = citizenCertificateDTOConverter;
         this.citizenCertificateFilterService = citizenCertificateFilterService;
-        this.intygModuleRegistry = intygModuleRegistry;
+        this.citizenCertificateTextService = citizenCertificateTextService;
     }
 
     @Override
@@ -43,7 +43,11 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
                 .stream()
                 .map((certificate) -> {
                     try {
-                        return citizenCertificateDTOConverter.get(certificate, "", "");
+                        return citizenCertificateDTOConverter.get(
+                                certificate,
+                                citizenCertificateTextService.getTypeName(certificate.getType()),
+                                citizenCertificateTextService.getAdditionalInfoLabel(certificate.getType())
+                        );
                     } catch (ModuleNotFoundException e) {
                         throw new RuntimeException(e);
                     }
