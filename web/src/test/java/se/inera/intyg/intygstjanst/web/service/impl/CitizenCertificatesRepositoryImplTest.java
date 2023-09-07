@@ -37,16 +37,16 @@ class CitizenCertificatesRepositoryImplTest {
     @InjectMocks
     CitizenCertificatesRepositoryImpl citizenCertificatesRepository;
 
-    private final static String CERTIFICATE_ID_1 = "id1";
-    private final static String CERTIFICATE_ID_2 = "id2";
-    private final static String REVOKED_CERTIFICATE_ID = "revokedCertificateId";
-    private final static Certificate REVOKED_CERTIFICATE = new Certificate(REVOKED_CERTIFICATE_ID);
-    private final static Certificate CERTIFICATE_1 = new Certificate(CERTIFICATE_ID_1);
-    private final static Certificate CERTIFICATE_2 = new Certificate(CERTIFICATE_ID_2);
-    private final static CitizenCertificate CONVERTED_CERTIFICATE = CitizenCertificate.builder().build();
-    private final static List<Certificate> CERTIFICATES = List.of(CERTIFICATE_1, CERTIFICATE_2);
-    private final static List<Certificate> REVOKED_CERTIFICATES = List.of(REVOKED_CERTIFICATE);
-    private final static String PATIENT_ID = "191212121212";
+    private static final String CERTIFICATE_ID_1 = "id1";
+    private static final String CERTIFICATE_ID_2 = "id2";
+    private static final String REVOKED_CERTIFICATE_ID = "revokedCertificateId";
+    private static final Certificate REVOKED_CERTIFICATE = new Certificate(REVOKED_CERTIFICATE_ID);
+    private static final Certificate CERTIFICATE_1 = new Certificate(CERTIFICATE_ID_1);
+    private static final Certificate CERTIFICATE_2 = new Certificate(CERTIFICATE_ID_2);
+    private static final CitizenCertificate CONVERTED_CERTIFICATE = CitizenCertificate.builder().build();
+    private static final List<Certificate> CERTIFICATES = List.of(CERTIFICATE_1, CERTIFICATE_2);
+    private static final List<Certificate> REVOKED_CERTIFICATES = List.of(REVOKED_CERTIFICATE);
+    private static final String PATIENT_ID = "191212121212";
 
     @Nested
     class NoCertificates {

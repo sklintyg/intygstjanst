@@ -27,22 +27,22 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ListCitizenCertificatesServiceImplTest {
 
-    private final static String PATIENT_ID = "191212121212";
-    private final static List<String> UNITS = List.of("Unit 1", "Unit 2");
-    private final static List<String> CERTIFICATE_TYPES = List.of("lisjp", "ag7804");
-    private final static List<String> YEARS = List.of("2020", "2021");
-    private final static String TYPE_NAME = "Type name";
-    private final static String ADDITIONAL_INFO_LABEL = "Additional info label";
-    private final static String TYPE_ID = "Type id";
-    private final static String TYPE_VERSION = "Type version";
-    private final static List<CitizenCertificate> REPO_RESPONSE = List.of(CitizenCertificate
+    private static final String PATIENT_ID = "191212121212";
+    private static final List<String> UNITS = List.of("Unit 1", "Unit 2");
+    private static final List<String> CERTIFICATE_TYPES = List.of("lisjp", "ag7804");
+    private static final List<String> YEARS = List.of("2020", "2021");
+    private static final String TYPE_NAME = "Type name";
+    private static final String ADDITIONAL_INFO_LABEL = "Additional info label";
+    private static final String TYPE_ID = "Type id";
+    private static final String TYPE_VERSION = "Type version";
+    private static final List<CitizenCertificate> REPO_RESPONSE = List.of(CitizenCertificate
             .builder()
             .type(TYPE_ID)
             .typeVersion(TYPE_VERSION)
             .build()
     );
-    private final static CitizenCertificateDTO CITIZEN_CERTIFICATE_DTO = CitizenCertificateDTO.builder().build();
-    private final static List<CitizenCertificateStatusTypeDTO> STATUSES = List.of(CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT);
+    private static final CitizenCertificateDTO CITIZEN_CERTIFICATE_DTO = CitizenCertificateDTO.builder().build();
+    private static final List<CitizenCertificateStatusTypeDTO> STATUSES = List.of(CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT);
 
     @Mock
     CitizenCertificatesRepositoryImpl citizenCertificatesRepository;

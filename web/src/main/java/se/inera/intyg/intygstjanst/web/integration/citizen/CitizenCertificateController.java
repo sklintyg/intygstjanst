@@ -28,7 +28,8 @@ public class CitizenCertificateController {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
-    public ListCitizenCertificatesResponseDTO getCitizenCertificates(@RequestBody ListCitizenCertificatesRequestDTO listCitizenCertificatesRequestDTO) {
+    public ListCitizenCertificatesResponseDTO getCitizenCertificates(
+            @RequestBody ListCitizenCertificatesRequestDTO listCitizenCertificatesRequestDTO) {
 
         LOG.debug("Getting list of citizen certificates");
         final var response = listCitizenCertificatesService.get(

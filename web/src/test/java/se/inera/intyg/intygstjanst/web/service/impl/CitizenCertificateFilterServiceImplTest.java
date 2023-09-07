@@ -66,21 +66,27 @@ class CitizenCertificateFilterServiceImplTest {
     class FilterUnitId {
         @Test
         void shouldReturnTrueIfIncludedInList() {
-            final var response = citizenCertificateFilterService.filterOnUnits(CITIZEN_CERTIFICATE, List.of("UNIT_ID", "NON_UNIT_ID"));
+            final var response = citizenCertificateFilterService.filterOnUnits(
+                    CITIZEN_CERTIFICATE, List.of("UNIT_ID", "NON_UNIT_ID")
+            );
 
             assertTrue(response);
         }
 
         @Test
         void shouldReturnFalseIfIncludedInList() {
-            final var response = citizenCertificateFilterService.filterOnUnits(CITIZEN_CERTIFICATE, List.of("NON_UNIT_ID"));
+            final var response = citizenCertificateFilterService.filterOnUnits(
+                    CITIZEN_CERTIFICATE, List.of("NON_UNIT_ID")
+            );
 
             assertFalse(response);
         }
 
         @Test
         void shouldReturnTrueIfEmptyList() {
-            final var response = citizenCertificateFilterService.filterOnUnits(CITIZEN_CERTIFICATE, Collections.emptyList());
+            final var response = citizenCertificateFilterService.filterOnUnits(
+                    CITIZEN_CERTIFICATE, Collections.emptyList()
+            );
 
             assertTrue(response);
         }
@@ -98,21 +104,27 @@ class CitizenCertificateFilterServiceImplTest {
 
             @Test
             void shouldReturnTrueIfListIsEmpty() {
-                final var response = citizenCertificateFilterService.filterOnCertificateTypes(certificate, Collections.emptyList());
+                final var response = citizenCertificateFilterService.filterOnCertificateTypes(
+                        certificate, Collections.emptyList()
+                );
 
                 assertTrue(response);
             }
 
             @Test
             void shouldReturnFalseIfFilteringOnSent() {
-                final var response = citizenCertificateFilterService.filterOnSentStatus(certificate, List.of(CitizenCertificateStatusTypeDTO.SENT));
+                final var response = citizenCertificateFilterService.filterOnSentStatus(
+                        certificate, List.of(CitizenCertificateStatusTypeDTO.SENT)
+                );
 
                 assertFalse(response);
             }
 
             @Test
             void shouldReturnFalseIfFilteringOnNotSent() {
-                final var response = citizenCertificateFilterService.filterOnSentStatus(certificate, List.of(CitizenCertificateStatusTypeDTO.NOT_SENT));
+                final var response = citizenCertificateFilterService.filterOnSentStatus(
+                        certificate, List.of(CitizenCertificateStatusTypeDTO.NOT_SENT)
+                );
 
                 assertFalse(response);
             }
@@ -134,21 +146,27 @@ class CitizenCertificateFilterServiceImplTest {
 
             @Test
             void shouldReturnTrueIfListIsEmpty() {
-                final var response = citizenCertificateFilterService.filterOnCertificateTypes(certificate, Collections.emptyList());
+                final var response = citizenCertificateFilterService.filterOnCertificateTypes(
+                        certificate, Collections.emptyList()
+                );
 
                 assertTrue(response);
             }
 
             @Test
             void shouldReturnTrueIfFilteringOnSent() {
-                final var response = citizenCertificateFilterService.filterOnSentStatus(certificate, List.of(CitizenCertificateStatusTypeDTO.SENT));
+                final var response = citizenCertificateFilterService.filterOnSentStatus(
+                        certificate, List.of(CitizenCertificateStatusTypeDTO.SENT)
+                );
 
                 assertTrue(response);
             }
 
             @Test
             void shouldReturnFalseIfFilteringOnNotSent() {
-                final var response = citizenCertificateFilterService.filterOnSentStatus(certificate, List.of(CitizenCertificateStatusTypeDTO.NOT_SENT));
+                final var response = citizenCertificateFilterService.filterOnSentStatus(
+                        certificate, List.of(CitizenCertificateStatusTypeDTO.NOT_SENT)
+                );
 
                 assertFalse(response);
             }
@@ -170,21 +188,27 @@ class CitizenCertificateFilterServiceImplTest {
 
             @Test
             void shouldReturnTrueIfListIsEmpty() {
-                final var response = citizenCertificateFilterService.filterOnCertificateTypes(certificate, Collections.emptyList());
+                final var response = citizenCertificateFilterService.filterOnCertificateTypes(
+                        certificate, Collections.emptyList()
+                );
 
                 assertTrue(response);
             }
 
             @Test
             void shouldReturnFalseIfFilteringOnSent() {
-                final var response = citizenCertificateFilterService.filterOnSentStatus(certificate, List.of(CitizenCertificateStatusTypeDTO.SENT));
+                final var response = citizenCertificateFilterService.filterOnSentStatus(
+                        certificate, List.of(CitizenCertificateStatusTypeDTO.SENT)
+                );
 
                 assertFalse(response);
             }
 
             @Test
             void shouldReturnTrueIfFilteringOnNotSent() {
-                final var response = citizenCertificateFilterService.filterOnSentStatus(certificate, List.of(CitizenCertificateStatusTypeDTO.NOT_SENT));
+                final var response = citizenCertificateFilterService.filterOnSentStatus(
+                        certificate, List.of(CitizenCertificateStatusTypeDTO.NOT_SENT)
+                );
 
                 assertTrue(response);
             }
