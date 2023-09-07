@@ -14,4 +14,6 @@ public interface CitizenCertificateFilterService {
 
     boolean filterOnCertificateTypes(CitizenCertificateDTO certificate, List<String> certificateTypes);
 
+    boolean filter(CitizenCertificateDTO certificate, List<String> includedYears, List<String> unitIds, List<String> certificateTypes, List<CitizenCertificateStatusTypeDTO> statuses);
+
 }

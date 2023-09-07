@@ -9,6 +9,7 @@ import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepositor
 import se.inera.intyg.intygstjanst.web.integration.citizen.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.ListCitizenCertificatesService;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
+import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,21 +42,20 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
 
         return certificates
                 .stream()
-                .map((certificate) -> {
-                    try {
-                        return citizenCertificateDTOConverter.get(
-                                certificate,
-                                citizenCertificateTextService.getTypeName(certificate.getType()),
-                                citizenCertificateTextService.getAdditionalInfoLabel(certificate.getType())
-                        );
-                    } catch (ModuleNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .filter((certificate) -> citizenCertificateFilterService.filterOnYears(certificate, years))
-                .filter((certificate) -> citizenCertificateFilterService.filterOnSentStatus(certificate, statuses))
-                .filter((certificate) -> citizenCertificateFilterService.filterOnUnits(certificate, units))
-                .filter((certificate) -> citizenCertificateFilterService.filterOnCertificateTypes(certificate, certificateTypes))
+                .map(this::getCitizenCertificateDTO)
+                .filter((certificate) -> citizenCertificateFilterService.filter(certificate, years, units, certificateTypes, statuses))
                 .collect(Collectors.toList());
+    }
+
+    private CitizenCertificateDTO getCitizenCertificateDTO(CitizenCertificate certificate) {
+        try {
+            return citizenCertificateDTOConverter.get(
+                    certificate,
+                    citizenCertificateTextService.getTypeName(certificate.getType()),
+                    citizenCertificateTextService.getAdditionalInfoLabel(certificate.getType(), certificate.getTypeVersion())
+            );
+        } catch (ModuleNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

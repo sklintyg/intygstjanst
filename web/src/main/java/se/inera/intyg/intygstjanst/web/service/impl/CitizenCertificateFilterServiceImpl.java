@@ -15,7 +15,7 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
             return true;
         }
 
-        final var signedYear = certificate.getIssued().substring(0, 3);
+        final var signedYear = certificate.getIssued().substring(0, 4);
 
         return includedYears
                 .stream()
@@ -58,5 +58,17 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
         }
 
         return certificateTypes.contains(certificate.getType().getId());
+    }
+
+    @Override
+    public boolean filter(CitizenCertificateDTO certificate,
+                          List<String> includedYears,
+                          List<String> unitIds,
+                          List<String> certificateTypes,
+                          List<CitizenCertificateStatusTypeDTO> statuses) {
+        return filterOnYears(certificate, includedYears)
+                && filterOnUnits(certificate, unitIds)
+                && filterOnCertificateTypes(certificate, certificateTypes)
+                && filterOnSentStatus(certificate, statuses);
     }
 }

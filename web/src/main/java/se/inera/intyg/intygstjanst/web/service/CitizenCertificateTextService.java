@@ -5,5 +5,5 @@ import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 public interface CitizenCertificateTextService {
     String getTypeName(String typeId) throws ModuleNotFoundException;
 
-    String getAdditionalInfoLabel(String additionalInfo);
+    String getAdditionalInfoLabel(String typeId, String typeVersion) throws ModuleNotFoundException;
 }

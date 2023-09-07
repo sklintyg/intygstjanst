@@ -10,10 +10,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
-import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateConverter;
 import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepositoryImpl;
@@ -32,7 +29,7 @@ class CitizenCertificatesRepositoryImplTest {
     RelationDao relationDao;
 
     @Mock
-    CertificateDao certificateDao;
+    CertificateRepository certificateRepository;
 
     @Mock
     CitizenCertificateConverter citizenCertificateConverter;
@@ -55,7 +52,7 @@ class CitizenCertificatesRepositoryImplTest {
     class NoCertificates {
         @BeforeEach
         void setup() {
-            Mockito.when(certificateDao.findCertificates(any(), any(), any(), any(), any(), anyBoolean(), any(), any()))
+            Mockito.when(certificateRepository.findCertificatesForPatient(anyString()))
                     .thenReturn(Collections.emptyList());
         }
 
@@ -75,28 +72,10 @@ class CitizenCertificatesRepositoryImplTest {
     }
 
     @Nested
-    class InvalidPatientId {
-        @Test
-        void shouldReturnEmptyList() {
-            final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
-
-            assertEquals(0, response.size());
-        }
-
-        @Test
-        void shouldNotCallCertificateDao() {
-            final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
-
-            verify(certificateDao, never())
-                    .findCertificates(any(), any(), any(), any(), any(), anyBoolean(), any(), any());
-        }
-    }
-
-    @Nested
     class RevokedCertificate {
         @BeforeEach
         void setup() {
-            Mockito.when(certificateDao.findCertificates(any(), any(), any(), any(), any(), anyBoolean(), any(), any()))
+            Mockito.when(certificateRepository.findCertificatesForPatient(anyString()))
                     .thenReturn(REVOKED_CERTIFICATES);
 
             final var metaData = new CertificateMetaData();
@@ -120,8 +99,7 @@ class CitizenCertificatesRepositoryImplTest {
             CERTIFICATE_1.setCertificateMetaData(new CertificateMetaData());
             CERTIFICATE_2.setCertificateMetaData(new CertificateMetaData());
 
-            Mockito.when(certificateDao.findCertificates(any(), any(), any(), any(), any(), anyBoolean(), any(), any()))
-                    .thenReturn(CERTIFICATES);
+            Mockito.when(certificateRepository.findCertificatesForPatient(anyString())).thenReturn(CERTIFICATES);
         }
 
         @Nested
