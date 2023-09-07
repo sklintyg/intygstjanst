@@ -9,13 +9,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.intygstjanst.web.integration.citizen.CitizenCertificateStatusTypeDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateDTOConverter;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateFilterService;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateTextService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepositoryImpl;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 import java.util.List;
 
@@ -47,15 +49,14 @@ class ListCitizenCertificatesServiceImplTest {
 
     @Mock
     CitizenCertificatesRepositoryImpl citizenCertificatesRepository;
-
     @Mock
     CitizenCertificateTextService citizenCertificateTextService;
-
     @Mock
     CitizenCertificateDTOConverter citizenCertificateDTOConverter;
-
     @Mock
     CitizenCertificateFilterService citizenCertificateFilterService;
+    @Mock
+    MonitoringLogService monitoringLogService;
 
     @InjectMocks
     ListCitizenCertificatesServiceImpl listCitizenCertificatesService;
@@ -86,6 +87,17 @@ class ListCitizenCertificatesServiceImplTest {
 
             when(citizenCertificatesRepository.getCertificatesForPatient(any()))
                     .thenReturn(REPO_RESPONSE);
+        }
+
+        @Test
+        void shouldLogWithPatientId() {
+            listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
+
+            final var captor = ArgumentCaptor.forClass(Personnummer.class);
+
+            verify(monitoringLogService).logCertificateListedByCitizen(captor.capture());
+
+            assertEquals(Personnummer.createPersonnummer(PATIENT_ID).get(), captor.getValue());
         }
 
         @Nested

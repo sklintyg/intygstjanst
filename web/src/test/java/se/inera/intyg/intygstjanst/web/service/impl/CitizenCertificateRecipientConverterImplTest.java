@@ -1,98 +1,122 @@
-/*
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
+import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.inera.intyg.intygstjanst.web.service.repo.RecipientRepo;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenCertificateRecipientConverterImplTest {
-
-    private static final String ID_FK = "FKASSA";
-    private static final String ID_TRANSP = "TRANSP";
-    private static final String NAME_FK = "Försäkringskassan";
-    private static final String NAME_TRANSP = "Transportstyrelsen";
     private static final LocalDateTime SENT_TIMESTAMP = LocalDateTime.now();
-    private static final LocalDateTime RECEIEVED_TIMESTAMP = LocalDateTime.now().plusDays(1);
+    private static final String CERTIFICATE_TYPE = "type";
+    private static final String RECIPIENT_ID = "id";
+    private static final String RECIPIENT_NAME = "name";
+
+    @Mock
+    RecipientRepo recipientRepo;
 
     @InjectMocks
     CitizenCertificateRecipientConverterImpl citizenCertificateRecipientConverter;
 
+    List<Recipient> recipients;
+
+    @BeforeEach
+    void setup() {
+        recipients = List.of(
+                new Recipient(
+                        "address",
+                        "other name",
+                        "other id",
+                        CertificateRecipientType.MOTTAGARE.toString(),
+                        List.of(CERTIFICATE_TYPE),
+                        true,
+                        true
+                ),
+                new Recipient(
+                        "address",
+                        RECIPIENT_NAME,
+                        RECIPIENT_ID,
+                        CertificateRecipientType.HUVUDMOTTAGARE.toString(),
+                        List.of(CERTIFICATE_TYPE),
+                        true,
+                        true
+                )
+        );
+
+        Mockito.when(recipientRepo.listRecipients()).thenReturn(recipients);
+    }
+
+    @Nested
+    class NotSent {
+
+        @Test
+        void shouldReturnRecipientIdOfHuvudmottagare() {
+            final var response = citizenCertificateRecipientConverter.get(CERTIFICATE_TYPE, null);
+
+            assertEquals(RECIPIENT_ID, response.getId());
+        }
+
+        @Test
+        void shouldReturnRecipientNameOfHuvudmottagare() {
+            final var response = citizenCertificateRecipientConverter.get(CERTIFICATE_TYPE, null);
+
+            assertEquals(RECIPIENT_NAME, response.getName());
+        }
+
+        @Test
+        void shouldReturnNullAsSent() {
+            final var response = citizenCertificateRecipientConverter.get(CERTIFICATE_TYPE, null);
+
+            assertNull(response.getSent());
+        }
+    }
+
+    @Nested
+    class Sent {
+        @BeforeEach
+        void setup() {
+            Mockito.when(recipientRepo.listRecipients()).thenReturn(recipients);
+        }
+
+        @Test
+        void shouldReturnRecipientIdOfHuvudmottagare() {
+            final var response = citizenCertificateRecipientConverter.get(CERTIFICATE_TYPE, SENT_TIMESTAMP);
+
+            assertEquals(RECIPIENT_ID, response.getId());
+        }
+
+        @Test
+        void shouldReturnRecipientNameOfHuvudmottagare() {
+            final var response = citizenCertificateRecipientConverter.get(CERTIFICATE_TYPE, SENT_TIMESTAMP);
+
+            assertEquals(RECIPIENT_NAME, response.getName());
+        }
+
+        @Test
+        void shouldReturnTimestampAsSent() {
+            final var response = citizenCertificateRecipientConverter.get(CERTIFICATE_TYPE, SENT_TIMESTAMP);
+
+            assertEquals(SENT_TIMESTAMP.toString(), response.getSent());
+        }
+    }
+
+
     @Test
-    void shouldReturnNullIfStatesIsEmpty() {
-        final var response = citizenCertificateRecipientConverter.get(Collections.emptyList());
+    void shouldReturnNullIfWrongType() {
+        final var response = citizenCertificateRecipientConverter.get("wrongType", SENT_TIMESTAMP);
 
         assertNull(response);
     }
-
-    @Nested
-    class Fk {
-
-        Collection<CertificateStateHistoryEntry> states = List.of(
-                new CertificateStateHistoryEntry(ID_FK, CertificateState.SENT, SENT_TIMESTAMP),
-                new CertificateStateHistoryEntry(ID_FK, CertificateState.RECEIVED, RECEIEVED_TIMESTAMP)
-        );
-
-        @Test
-        void shouldSetId() {
-            final var response = citizenCertificateRecipientConverter.get(states);
-
-            assertEquals(ID_FK, response.getId());
-        }
-
-        @Test
-        void shouldSetName() {
-            final var response = citizenCertificateRecipientConverter.get(states);
-
-            assertEquals(NAME_FK, response.getName());
-        }
-
-        @Test
-        void shouldSetTimestamp() {
-            final var response = citizenCertificateRecipientConverter.get(states);
-
-            assertEquals(SENT_TIMESTAMP.toString(), response.getSent());
-        }
-    }
-
-    @Nested
-    class Transp {
-
-        Collection<CertificateStateHistoryEntry> states = List.of(
-                new CertificateStateHistoryEntry(ID_TRANSP, CertificateState.SENT, SENT_TIMESTAMP),
-                new CertificateStateHistoryEntry(ID_TRANSP, CertificateState.RECEIVED, RECEIEVED_TIMESTAMP)
-        );
-
-        @Test
-        void shouldSetId() {
-            final var response = citizenCertificateRecipientConverter.get(states);
-
-            assertEquals(ID_TRANSP, response.getId());
-        }
-
-        @Test
-        void shouldSetName() {
-            final var response = citizenCertificateRecipientConverter.get(states);
-
-            assertEquals(NAME_TRANSP, response.getName());
-        }
-
-        @Test
-        void shouldSetTimestamp() {
-            final var response = citizenCertificateRecipientConverter.get(states);
-
-            assertEquals(SENT_TIMESTAMP.toString(), response.getSent());
-        }
-    }
-}*/
+}

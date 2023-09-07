@@ -2,14 +2,12 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.intygstjanst.web.service.CitizenCertificateDTOConverter;
-import se.inera.intyg.intygstjanst.web.service.CitizenCertificateFilterService;
-import se.inera.intyg.intygstjanst.web.service.CitizenCertificateTextService;
+import se.inera.intyg.intygstjanst.web.service.*;
 import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepository;
-import se.inera.intyg.intygstjanst.web.integration.citizen.CitizenCertificateStatusTypeDTO;
-import se.inera.intyg.intygstjanst.web.service.ListCitizenCertificatesService;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,15 +18,18 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
     private final CitizenCertificateDTOConverter citizenCertificateDTOConverter;
     private final CitizenCertificateFilterService citizenCertificateFilterService;
     private final CitizenCertificateTextService citizenCertificateTextService;
+    private final MonitoringLogService monitoringLogService;
 
     public ListCitizenCertificatesServiceImpl(CitizenCertificatesRepository citizenCertificatesRepository,
                                               CitizenCertificateDTOConverter citizenCertificateDTOConverter,
                                               CitizenCertificateFilterService citizenCertificateFilterService,
-                                              CitizenCertificateTextService citizenCertificateTextService) {
+                                              CitizenCertificateTextService citizenCertificateTextService,
+                                              MonitoringLogService monitoringLogService) {
         this.citizenCertificatesRepository = citizenCertificatesRepository;
         this.citizenCertificateDTOConverter = citizenCertificateDTOConverter;
         this.citizenCertificateFilterService = citizenCertificateFilterService;
         this.citizenCertificateTextService = citizenCertificateTextService;
+        this.monitoringLogService = monitoringLogService;
     }
 
     @Override
@@ -39,6 +40,8 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
                                            List<String> years) {
 
         final var certificates = citizenCertificatesRepository.getCertificatesForPatient(patientId);
+
+        monitoringLogService.logCertificateListedByCitizen(Personnummer.createPersonnummer(patientId).orElse(null));
 
         return certificates
                 .stream()

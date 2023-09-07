@@ -1,9 +1,11 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateTextService;
 
+@Service
 public class CitizenCertificateTextServiceImpl implements CitizenCertificateTextService {
 
     private final IntygModuleRegistry intygModuleRegistry;
