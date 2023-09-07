@@ -65,21 +65,21 @@ class CitizenCertificateConverterImplTest {
     }
 
     @Test
-    void shouldConvertType(){
+    void shouldConvertType() {
         final var response = citizenCertificateConverter.get(certificate, relations);
 
         assertEquals(TYPE, response.getType());
     }
 
     @Test
-    void shouldConvertTypeVersion(){
+    void shouldConvertTypeVersion() {
         final var response = citizenCertificateConverter.get(certificate, relations);
 
         assertEquals(TYPE_VERSION, response.getTypeVersion());
     }
 
     @Test
-    void shouldConvertSentDateWhenNull(){
+    void shouldConvertSentDateWhenNull() {
         certificate.setStates(null);
         final var response = citizenCertificateConverter.get(certificate, relations);
 
@@ -87,18 +87,22 @@ class CitizenCertificateConverterImplTest {
     }
 
     @Test
-    void shouldConvertSentDateWhenSent(){
+    void shouldConvertSentDateWhenSent() {
         final var timeStamp = LocalDateTime.now();
-        when(certificate.getStates()).thenReturn(List.of(new CertificateStateHistoryEntry("Id", CertificateState.SENT, timeStamp)));
+        when(certificate.getStates()).thenReturn(List.of(
+                new CertificateStateHistoryEntry("Id", CertificateState.SENT, timeStamp))
+        );
         final var response = citizenCertificateConverter.get(certificate, relations);
 
         assertEquals(timeStamp, response.getSentDate());
     }
 
     @Test
-    void shouldConvertSentDateWhenNotSent(){
+    void shouldConvertSentDateWhenNotSent() {
         final var timeStamp = LocalDateTime.now();
-        when(certificate.getStates()).thenReturn(List.of(new CertificateStateHistoryEntry("Id", CertificateState.CANCELLED, timeStamp)));
+        when(certificate.getStates()).thenReturn(List.of(
+                new CertificateStateHistoryEntry("Id", CertificateState.CANCELLED, timeStamp))
+        );
         final var response = citizenCertificateConverter.get(certificate, relations);
 
         assertNull(response.getSentDate());
@@ -106,14 +110,14 @@ class CitizenCertificateConverterImplTest {
 
 
     @Test
-    void shouldConvertIssuer(){
+    void shouldConvertIssuer() {
         final var response = citizenCertificateConverter.get(certificate, relations);
 
         assertEquals(ISSUER, response.getIssuerName());
     }
 
     @Test
-    void shouldConvertIssuedDate(){
+    void shouldConvertIssuedDate( ){
         final var response = citizenCertificateConverter.get(certificate, relations);
 
         assertEquals(DATE, response.getIssued());
@@ -127,7 +131,7 @@ class CitizenCertificateConverterImplTest {
     }
 
     @Test
-    void shouldFilterNullValuesOfRelation(){
+    void shouldFilterNullValuesOfRelation() {
         Relation relation = new Relation("wrongId", "wrongId", "code", LocalDateTime.now());
         final var response = citizenCertificateConverter.get(certificate, List.of(relation));
         assertTrue(response.getRelations().isEmpty());
@@ -153,44 +157,52 @@ class CitizenCertificateConverterImplTest {
                 .timestamp(LocalDateTime.now().toString())
                 .build();
 
-            when(citizenCertificateRelationConverter.get(anyString(), anyString(), anyString(), any(LocalDateTime.class), anyString())).thenReturn(citizenCertificateRelationDTO);
+            when(citizenCertificateRelationConverter.get(
+                    anyString(), anyString(), anyString(), any(LocalDateTime.class), anyString())
+            ).thenReturn(citizenCertificateRelationDTO);
         }
 
         @Test
-        void shouldConvertRelation(){
+        void shouldConvertRelation() {
             final var response = citizenCertificateConverter.get(certificate, List.of(relation));
             assertEquals(citizenCertificateRelationDTO, response.getRelations().get(0));
         }
 
         @Test
-        void shouldSendIdToConverter(){
+        void shouldSendIdToConverter() {
             citizenCertificateConverter.get(certificate, List.of(relation));
             final var captor = ArgumentCaptor.forClass(String.class);
 
-            verify(citizenCertificateRelationConverter).get(captor.capture(), anyString(), anyString(), any(LocalDateTime.class), anyString());
+            verify(citizenCertificateRelationConverter).get(
+                    captor.capture(), anyString(), anyString(), any(LocalDateTime.class), anyString()
+            );
             assertEquals(certificate.getId(), captor.getValue());
         }
 
         @Test
-        void shouldSendToIntygsIdToConverter(){
+        void shouldSendToIntygsIdToConverter() {
             citizenCertificateConverter.get(certificate, List.of(relation));
             final var captor = ArgumentCaptor.forClass(String.class);
 
-            verify(citizenCertificateRelationConverter).get(anyString(), captor.capture(), anyString(), any(LocalDateTime.class), anyString());
+            verify(citizenCertificateRelationConverter).get(
+                    anyString(), captor.capture(), anyString(), any(LocalDateTime.class), anyString()
+            );
             assertEquals(relation.getToIntygsId(), captor.getValue());
         }
 
         @Test
-        void shouldSendFromIntygsIdToConverter(){
+        void shouldSendFromIntygsIdToConverter() {
             citizenCertificateConverter.get(certificate, List.of(relation));
             final var captor = ArgumentCaptor.forClass(String.class);
 
-            verify(citizenCertificateRelationConverter).get(anyString(),  anyString(), captor.capture(), any(LocalDateTime.class), anyString());
+            verify(citizenCertificateRelationConverter).get(
+                    anyString(),  anyString(), captor.capture(), any(LocalDateTime.class), anyString()
+            );
             assertEquals(relation.getFromIntygsId(), captor.getValue());
         }
 
         @Test
-        void shouldSendCreatedToConverter(){
+        void shouldSendCreatedToConverter() {
             citizenCertificateConverter.get(certificate, List.of(relation));
             final var captor = ArgumentCaptor.forClass(LocalDateTime.class);
 
@@ -203,7 +215,9 @@ class CitizenCertificateConverterImplTest {
             citizenCertificateConverter.get(certificate, List.of(relation));
             final var captor = ArgumentCaptor.forClass(String.class);
 
-            verify(citizenCertificateRelationConverter).get(anyString(),  anyString(), anyString(), any(LocalDateTime.class), captor.capture());
+            verify(citizenCertificateRelationConverter).get(
+                    anyString(),  anyString(), anyString(), any(LocalDateTime.class), captor.capture()
+            );
             assertEquals(relation.getRelationKod(), captor.getValue());
         }
     }
