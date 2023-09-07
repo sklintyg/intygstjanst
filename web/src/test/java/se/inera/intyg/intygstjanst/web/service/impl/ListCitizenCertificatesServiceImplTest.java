@@ -42,7 +42,8 @@ class ListCitizenCertificatesServiceImplTest {
             .build()
     );
     private static final CitizenCertificateDTO CITIZEN_CERTIFICATE_DTO = CitizenCertificateDTO.builder().build();
-    private static final List<CitizenCertificateStatusTypeDTO> STATUSES = List.of(CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT);
+    private static final List<CitizenCertificateStatusTypeDTO> STATUSES = List.of(
+            CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT);
 
     @Mock
     CitizenCertificatesRepositoryImpl citizenCertificatesRepository;
