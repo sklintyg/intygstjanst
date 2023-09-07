@@ -44,9 +44,8 @@ class CitizenCertificateConverterImplTest {
     private static final String ISSUER = "Doctor name";
     private static final String SUMMARY = "Summary";
     private static final LocalDateTime DATE = LocalDateTime.now();
-    private static List<Relation> relations = Collections.emptyList();
+    private static final List<Relation> relations = Collections.emptyList();
     private static Certificate certificate;
-
 
     @BeforeEach
     void setup() {
@@ -165,7 +164,7 @@ class CitizenCertificateConverterImplTest {
 
         @Test
         void shouldSendIdToConverter(){
-            final var response = citizenCertificateConverter.get(certificate, List.of(relation));
+            citizenCertificateConverter.get(certificate, List.of(relation));
             final var captor = ArgumentCaptor.forClass(String.class);
 
             verify(citizenCertificateRelationConverter).get(captor.capture(), anyString(), anyString(), any(LocalDateTime.class), anyString());
@@ -174,7 +173,7 @@ class CitizenCertificateConverterImplTest {
 
         @Test
         void shouldSendToIntygsIdToConverter(){
-            final var response = citizenCertificateConverter.get(certificate, List.of(relation));
+            citizenCertificateConverter.get(certificate, List.of(relation));
             final var captor = ArgumentCaptor.forClass(String.class);
 
             verify(citizenCertificateRelationConverter).get(anyString(), captor.capture(), anyString(), any(LocalDateTime.class), anyString());
@@ -183,7 +182,7 @@ class CitizenCertificateConverterImplTest {
 
         @Test
         void shouldSendFromIntygsIdToConverter(){
-            final var response = citizenCertificateConverter.get(certificate, List.of(relation));
+            citizenCertificateConverter.get(certificate, List.of(relation));
             final var captor = ArgumentCaptor.forClass(String.class);
 
             verify(citizenCertificateRelationConverter).get(anyString(),  anyString(), captor.capture(), any(LocalDateTime.class), anyString());
@@ -192,7 +191,7 @@ class CitizenCertificateConverterImplTest {
 
         @Test
         void shouldSendCreatedToConverter(){
-            final var response = citizenCertificateConverter.get(certificate, List.of(relation));
+            citizenCertificateConverter.get(certificate, List.of(relation));
             final var captor = ArgumentCaptor.forClass(LocalDateTime.class);
 
             verify(citizenCertificateRelationConverter).get(anyString(),  anyString(),  anyString(), captor.capture(), anyString());
@@ -201,7 +200,7 @@ class CitizenCertificateConverterImplTest {
 
         @Test
         void shouldSendRelationKodToConverter(){
-            final var response = citizenCertificateConverter.get(certificate, List.of(relation));
+            citizenCertificateConverter.get(certificate, List.of(relation));
             final var captor = ArgumentCaptor.forClass(String.class);
 
             verify(citizenCertificateRelationConverter).get(anyString(),  anyString(), anyString(), any(LocalDateTime.class), captor.capture());
