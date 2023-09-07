@@ -39,20 +39,35 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
 
         return certificates
                 .stream()
-                .map((certificate) -> citizenCertificateConverter.get(certificate, filterRelations(certificate.getId(), relations)))
+                .filter((certificate) -> !certificate.getCertificateMetaData().isRevoked())
+                .map((certificate) -> citizenCertificateConverter.get(certificate, filterRelations(certificate.getId(), relations, certificates)))
                 .collect(Collectors.toList());
     }
 
     private List<String> getCertificateIds(List<Certificate> certificates) {
         return certificates
                 .stream()
+                .filter((certificate) -> !certificate.getCertificateMetaData().isRevoked())
                 .map(Certificate::getId)
                 .collect(Collectors.toList());
     }
 
-    private List<Relation> filterRelations(String certificateId, List<Relation> relations) {
+    private List<String> getRevokedCertificateIds(List<Certificate> certificates) {
+        return certificates
+                .stream()
+                .filter((certificate) -> certificate.getCertificateMetaData().isRevoked())
+                .map(Certificate::getId)
+                .collect(Collectors.toList());
+    }
+
+    private List<Relation> filterRelations(String certificateId, List<Relation> relations, List<Certificate> certificates) {
+        final var revokedCertificateIds = getRevokedCertificateIds(certificates);
         return relations
                 .stream()
+                .filter((relation) ->
+                        !revokedCertificateIds.contains(relation.getToIntygsId())
+                        && !revokedCertificateIds.contains(relation.getFromIntygsId())
+                )
                 .filter(
                         (relation) -> relation.getToIntygsId().equals(certificateId)
                                 || relation.getFromIntygsId().equals(certificateId)
