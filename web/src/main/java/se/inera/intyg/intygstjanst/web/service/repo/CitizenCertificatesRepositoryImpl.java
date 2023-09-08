@@ -6,7 +6,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateConverter;
 
-import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +24,6 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
         this.certificateRepository = certificateRepository;
     }
 
-    @Transactional
     @Override
     public List<CitizenCertificate> getCertificatesForPatient(String patientId) {
 
@@ -40,7 +38,9 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
         return certificates
                 .stream()
                 .filter((certificate) -> !certificate.getCertificateMetaData().isRevoked())
-                .map((certificate) -> citizenCertificateConverter.get(certificate, filterRelations(certificate.getId(), relations, certificates)))
+                .map((certificate) -> citizenCertificateConverter.get(
+                        certificate, filterRelations(certificate.getId(), relations, certificates))
+                )
                 .collect(Collectors.toList());
     }
 

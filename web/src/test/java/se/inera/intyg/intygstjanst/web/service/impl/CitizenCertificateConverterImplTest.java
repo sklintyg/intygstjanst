@@ -117,7 +117,7 @@ class CitizenCertificateConverterImplTest {
     }
 
     @Test
-    void shouldConvertIssuedDate( ){
+    void shouldConvertIssuedDate(){
         final var response = citizenCertificateConverter.get(certificate, relations);
 
         assertEquals(DATE, response.getIssued());
@@ -132,7 +132,7 @@ class CitizenCertificateConverterImplTest {
 
     @Test
     void shouldFilterNullValuesOfRelation() {
-        Relation relation = new Relation("wrongId", "wrongId", "code", LocalDateTime.now());
+        final var relation = new Relation("wrongId", "wrongId", "code", LocalDateTime.now());
         final var response = citizenCertificateConverter.get(certificate, List.of(relation));
         assertTrue(response.getRelations().isEmpty());
     }
