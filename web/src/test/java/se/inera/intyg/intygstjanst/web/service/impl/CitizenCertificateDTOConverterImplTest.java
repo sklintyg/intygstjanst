@@ -30,6 +30,7 @@ class CitizenCertificateDTOConverterImplTest {
     @InjectMocks
     private CitizenCertificateDTOConverterImpl citizenCertificateDTOConverter;
 
+
     private static final String CERTIFICATE_ID = "Id";
     private static final String TYPE_NAME = "Type";
     private static final String CERTIFICATE_TYPE = "Certificate type";
