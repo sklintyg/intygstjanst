@@ -117,14 +117,14 @@ class CitizenCertificateConverterImplTest {
     }
 
     @Test
-    void shouldConvertIssuedDate(){
+    void shouldConvertIssuedDate() {
         final var response = citizenCertificateConverter.get(certificate, relations);
 
         assertEquals(DATE, response.getIssued());
     }
 
     @Test
-    void shouldConvertSummary(){
+    void shouldConvertSummary() {
         final var response = citizenCertificateConverter.get(certificate, relations);
 
         assertEquals(SUMMARY, response.getAdditionalInfo());
@@ -211,7 +211,7 @@ class CitizenCertificateConverterImplTest {
         }
 
         @Test
-        void shouldSendRelationKodToConverter(){
+        void shouldSendRelationKodToConverter() {
             citizenCertificateConverter.get(certificate, List.of(relation));
             final var captor = ArgumentCaptor.forClass(String.class);
 
