@@ -121,6 +121,15 @@ class CitizenCertificateFilterServiceImplTest {
             }
 
             @Test
+            void shouldReturnFalseIfFilteringOnBothStatuses() {
+                final var response = citizenCertificateFilterService.filterOnSentStatus(
+                        certificate, List.of(CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT)
+                );
+
+                assertFalse(response);
+            }
+
+            @Test
             void shouldReturnFalseIfFilteringOnNotSent() {
                 final var response = citizenCertificateFilterService.filterOnSentStatus(
                         certificate, List.of(CitizenCertificateStatusTypeDTO.NOT_SENT)
@@ -146,7 +155,7 @@ class CitizenCertificateFilterServiceImplTest {
 
             @Test
             void shouldReturnTrueIfListIsEmpty() {
-                final var response = citizenCertificateFilterService.filterOnCertificateTypes(
+                final var response = citizenCertificateFilterService.filterOnSentStatus(
                         certificate, Collections.emptyList()
                 );
 
@@ -169,6 +178,15 @@ class CitizenCertificateFilterServiceImplTest {
                 );
 
                 assertFalse(response);
+            }
+
+            @Test
+            void shouldReturnTrueIfFilteringOnAllStatuses() {
+                final var response = citizenCertificateFilterService.filterOnSentStatus(
+                        certificate, List.of(CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT)
+                );
+
+                assertTrue(response);
             }
         }
 
@@ -210,6 +228,14 @@ class CitizenCertificateFilterServiceImplTest {
                         certificate, List.of(CitizenCertificateStatusTypeDTO.NOT_SENT)
                 );
 
+                assertTrue(response);
+            }
+
+            @Test
+            void shouldReturnTrueIfFilteringOnAllStatuses() {
+                final var response = citizenCertificateFilterService.filterOnSentStatus(
+                        certificate, List.of(CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT)
+                );
                 assertTrue(response);
             }
         }

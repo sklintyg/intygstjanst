@@ -31,15 +31,27 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
             return true;
         }
 
+        if (includeSent && includeNotSent) {
+            return filterOnSent(certificate) || filterOnNotSent(certificate);
+        }
+
         if (includeSent) {
-            return certificate.getRecipient() != null && certificate.getRecipient().getSent() != null;
+            return filterOnSent(certificate);
         }
 
         if (includeNotSent) {
-            return certificate.getRecipient() != null && certificate.getRecipient().getSent() == null;
+            return filterOnNotSent(certificate);
         }
 
         return true;
+    }
+
+    private boolean filterOnSent(CitizenCertificateDTO certificate) {
+        return certificate.getRecipient() != null && certificate.getRecipient().getSent() != null;
+    }
+
+    private boolean filterOnNotSent(CitizenCertificateDTO certificate) {
+        return certificate.getRecipient() != null && certificate.getRecipient().getSent() == null;
     }
 
     @Override
