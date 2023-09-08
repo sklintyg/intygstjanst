@@ -66,8 +66,8 @@ public class RelationDaoImpl implements RelationDao {
     @Override
     public List<Relation> getRelations(List<String> certificateIds, List<String> relationCodes) {
         final var query = entityManager.createQuery(
-                "SELECT r FROM Relation r " +
-                        "WHERE r.toIntygsId IN :certificateIds OR r.fromIntygsId IN :certificateIds AND r.relationKod IN :relationCodes",
+                "SELECT r FROM Relation r "
+                        + "WHERE r.toIntygsId IN :certificateIds OR r.fromIntygsId IN :certificateIds AND r.relationKod IN :relationCodes",
                         Relation.class
                 )
                 .setParameter("certificateIds", certificateIds);
