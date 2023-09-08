@@ -187,4 +187,6 @@ public interface CertificateDao {
      */
     List<CertificateType> getCertificateTypes();
 
+    List<Certificate> findCertificatesForPatient(String patientId);
+
 }

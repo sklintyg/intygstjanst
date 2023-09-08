@@ -14,20 +14,20 @@ import java.util.stream.Collectors;
 public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRepository {
     private final RelationDao relationDao;
     private final CitizenCertificateConverter citizenCertificateConverter;
-    private final CertificateRepository certificateRepository;
+    private final CertificateDao certificateDao;
 
     public CitizenCertificatesRepositoryImpl(RelationDao relationDao,
                                              CitizenCertificateConverter citizenCertificateConverter,
-                                             CertificateRepository certificateRepository) {
+                                             CertificateDao certificateDao) {
         this.relationDao = relationDao;
         this.citizenCertificateConverter = citizenCertificateConverter;
-        this.certificateRepository = certificateRepository;
+        this.certificateDao = certificateDao;
     }
 
     @Override
     public List<CitizenCertificate> getCertificatesForPatient(String patientId) {
 
-        final var certificates = certificateRepository.findCertificatesForPatient(patientId);
+        final var certificates = certificateDao.findCertificatesForPatient(patientId);
 
         if (certificates.isEmpty()) {
             return Collections.emptyList();

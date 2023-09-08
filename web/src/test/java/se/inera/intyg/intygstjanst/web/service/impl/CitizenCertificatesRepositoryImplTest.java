@@ -29,7 +29,7 @@ class CitizenCertificatesRepositoryImplTest {
     RelationDao relationDao;
 
     @Mock
-    CertificateRepository certificateRepository;
+    CertificateDao certificateDao;
 
     @Mock
     CitizenCertificateConverter citizenCertificateConverter;
@@ -52,7 +52,7 @@ class CitizenCertificatesRepositoryImplTest {
     class NoCertificates {
         @BeforeEach
         void setup() {
-            Mockito.when(certificateRepository.findCertificatesForPatient(anyString()))
+            Mockito.when(certificateDao.findCertificatesForPatient(anyString()))
                     .thenReturn(Collections.emptyList());
         }
 
@@ -65,7 +65,7 @@ class CitizenCertificatesRepositoryImplTest {
 
         @Test
         void shouldNotCallCRelationDao() {
-            final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
+            citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
 
             verify(relationDao, never()).getRelations(anyList(), anyList());
         }
@@ -83,7 +83,7 @@ class CitizenCertificatesRepositoryImplTest {
             metaData.setRevoked(true);
             REVOKED_CERTIFICATE.setCertificateMetaData(metaData);
 
-            Mockito.when(certificateRepository.findCertificatesForPatient(anyString())).thenReturn(CERTIFICATES);
+            Mockito.when(certificateDao.findCertificatesForPatient(anyString())).thenReturn(CERTIFICATES);
         }
 
         @Test
@@ -92,6 +92,17 @@ class CitizenCertificatesRepositoryImplTest {
 
             assertEquals(2, response.size());
             assertFalse(response.contains(REVOKED_CERTIFICATE));
+        }
+
+        @Test
+        void shouldCallDatabaseOnceWithPatientId() {
+            citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
+
+            final var captor = ArgumentCaptor.forClass(String.class);
+
+            verify(certificateDao, times(1)).findCertificatesForPatient(captor.capture());
+
+            assertEquals(PATIENT_ID, captor.getValue());
         }
 
         @Nested
