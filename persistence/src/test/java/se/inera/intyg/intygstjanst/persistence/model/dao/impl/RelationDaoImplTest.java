@@ -48,6 +48,7 @@ public class RelationDaoImplTest extends TestSupport {
     public static final String INTYG_2 = "intyg-2";
     public static final String INTYG_3 = "intyg-3";
     public static final String INTYG_0_1 = "intyg-0-1";
+    private static final List<String> CERTIFICATE_IDS = List.of(INTYG_0_1, INTYG_0, INTYG_1, INTYG_2, INTYG_3);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -94,6 +95,16 @@ public class RelationDaoImplTest extends TestSupport {
 
         final var relations = entityManager.createQuery("SELECT r.id From Relation r", Long.class).getResultList();
         assertEquals(2, relations.size());
+    }
+
+    @Test
+    public void shouldReturnAllRelations() {
+        buildRelationTree();
+
+        relationDao.getRelations(CERTIFICATE_IDS);
+
+        final var relations = entityManager.createQuery("SELECT r.id From Relation r", Long.class).getResultList();
+        assertEquals(4, relations.size());
     }
 
     private void buildRelationTree() {

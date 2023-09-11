@@ -33,7 +33,7 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
             return Collections.emptyList();
         }
 
-        final var relations = relationDao.getRelations(getCertificateIds(certificates), List.of(RelationKod.ERSATT.toString()));
+        final var relations = relationDao.getRelations(getCertificateIds(certificates));
 
         return certificates
                 .stream()
@@ -71,6 +71,9 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
                 .filter(
                         (relation) -> relation.getToIntygsId().equals(certificateId)
                                 || relation.getFromIntygsId().equals(certificateId)
+                )
+                .filter(
+                        (relation) -> relation.getRelationKod().equals(RelationKod.ERSATT.toString())
                 )
                 .collect(Collectors.toList());
     }

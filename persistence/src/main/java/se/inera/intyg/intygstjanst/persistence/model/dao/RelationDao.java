@@ -30,7 +30,7 @@ public interface RelationDao {
 
     List<Relation> getParent(String intygsId);
 
-    List<Relation> getRelations(List<String> certificateIds, List<String> relationCodes);
+    List<Relation> getRelations(List<String> certificateIds);
 
     List<Relation> getGraph(String intygsId);
 
