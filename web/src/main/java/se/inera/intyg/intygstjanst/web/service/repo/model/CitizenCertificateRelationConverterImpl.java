@@ -22,10 +22,14 @@ public class CitizenCertificateRelationConverterImpl implements CitizenCertifica
 
         return CitizenCertificateRelationDTO
                 .builder()
-                .certificateId(certificateId)
+                .certificateId(getRelatedId(certificateId, toCertificateId, fromCertificateId))
                 .timestamp(timeStamp.toString())
                 .type(getType(code, certificateId, toCertificateId))
                 .build();
+    }
+
+    private String getRelatedId(String id, String toId, String fromId) {
+        return id.equals(toId) ? fromId : toId;
     }
 
     private CitizenCertificateRelationType getType(String code, String certificateId, String toCertificateId) {

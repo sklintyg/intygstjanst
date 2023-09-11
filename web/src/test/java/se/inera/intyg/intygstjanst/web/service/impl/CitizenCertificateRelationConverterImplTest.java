@@ -24,8 +24,15 @@ class CitizenCertificateRelationConverterImplTest {
     CitizenCertificateRelationConverterImpl citizenCertificateRelationConverter;
 
     @Test
-    void shouldSetCertificateId() {
+    void shouldSetCertificateIdAsFromIdIfIdIsTo() {
         final var response = citizenCertificateRelationConverter.get(ID, ID, OTHER_ID, TIMESTAMP, CODE);
+
+        assertEquals(OTHER_ID, response.getCertificateId());
+    }
+
+    @Test
+    void shouldSetCertificateIdAsToIdIfIdIsFrom() {
+        final var response = citizenCertificateRelationConverter.get(ID, OTHER_ID, ID, TIMESTAMP, CODE);
 
         assertEquals(ID, response.getCertificateId());
     }
