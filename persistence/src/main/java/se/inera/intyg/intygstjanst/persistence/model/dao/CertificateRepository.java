@@ -25,8 +25,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface CertificateRepository extends JpaRepository<Certificate, String> {
 
@@ -43,7 +41,4 @@ public interface CertificateRepository extends JpaRepository<Certificate, String
 
     @Query("select count(c.id) from Certificate c where c.careGiverId = :careProviderId")
     Long getCertificateCountForCareProvider(@Param("careProviderId") String careProviderId);
-
-    @Query("select c from Certificate c where c.civicRegistrationNumber = :patientId and c.testCertificate = false")
-    List<Certificate> findCertificatesForPatient(@Param("patientId") String patientId);
 }

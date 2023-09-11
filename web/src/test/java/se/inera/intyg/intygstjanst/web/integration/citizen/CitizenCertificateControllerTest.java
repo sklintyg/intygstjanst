@@ -64,55 +64,55 @@ class CitizenCertificateControllerTest {
             void shouldSetPatientId() {
                 citizenCertificateController.getCitizenCertificates(request);
 
-                final var captor = ArgumentCaptor.forClass(String.class);
+                final var captor = ArgumentCaptor.forClass(se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequestDTO.class);
 
-                verify(listCitizenCertificatesService).get(captor.capture(), anyList(), anyList(), anyList(), anyList());
+                verify(listCitizenCertificatesService).get(captor.capture());
 
-                assertEquals(request.getPatientId(), captor.getValue());
+                assertEquals(request.getPatientId(), captor.getValue().getPatientId());
             }
 
             @Test
             void shouldSetCertificateTypes() {
                 citizenCertificateController.getCitizenCertificates(request);
 
-                final var captor = ArgumentCaptor.forClass(List.class);
+                final var captor = ArgumentCaptor.forClass(se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequestDTO.class);
 
-                verify(listCitizenCertificatesService).get(anyString(), captor.capture(), anyList(), anyList(), anyList());
+                verify(listCitizenCertificatesService).get(captor.capture());
 
-                assertEquals(request.getCertificateTypes(), captor.getValue());
+                assertEquals(request.getCertificateTypes(), captor.getValue().getCertificateTypes());
             }
 
             @Test
             void shouldSetStatuses() {
                 citizenCertificateController.getCitizenCertificates(request);
 
-                final var captor = ArgumentCaptor.forClass(List.class);
+                final var captor = ArgumentCaptor.forClass(se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequestDTO.class);
 
-                verify(listCitizenCertificatesService).get(anyString(), anyList(), anyList(), captor.capture(), anyList());
+                verify(listCitizenCertificatesService).get(captor.capture());
 
-                assertEquals(request.getStatuses(), captor.getValue());
+                assertEquals(request.getStatuses(), captor.getValue().getStatuses());
             }
 
             @Test
             void shouldSetUnits() {
                 citizenCertificateController.getCitizenCertificates(request);
 
-                final var captor = ArgumentCaptor.forClass(List.class);
+                final var captor = ArgumentCaptor.forClass(se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequestDTO.class);
 
-                verify(listCitizenCertificatesService).get(anyString(), anyList(), captor.capture(), anyList(), anyList());
+                verify(listCitizenCertificatesService).get(captor.capture());
 
-                assertEquals(request.getUnits(), captor.getValue());
+                assertEquals(request.getUnits(), captor.getValue().getUnits());
             }
 
             @Test
             void shouldSetYears() {
                 citizenCertificateController.getCitizenCertificates(request);
 
-                final var captor = ArgumentCaptor.forClass(List.class);
+                final var captor = ArgumentCaptor.forClass(se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequestDTO.class);
 
-                verify(listCitizenCertificatesService).get(anyString(), anyList(), anyList(), anyList(), captor.capture());
+                verify(listCitizenCertificatesService).get(captor.capture());
 
-                assertEquals(request.getYears(), captor.getValue());
+                assertEquals(request.getYears(), captor.getValue().getYears());
             }
         }
 
@@ -124,7 +124,7 @@ class CitizenCertificateControllerTest {
             @BeforeEach
             void setup() {
                 Mockito
-                        .when(listCitizenCertificatesService.get(anyString(), anyList(), anyList(), anyList(), anyList()))
+                        .when(listCitizenCertificatesService.get(any()))
                         .thenReturn(expectedContent);
             }
 

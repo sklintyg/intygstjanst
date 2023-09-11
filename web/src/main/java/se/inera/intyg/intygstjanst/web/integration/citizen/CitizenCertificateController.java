@@ -29,15 +29,18 @@ public class CitizenCertificateController {
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
     public ListCitizenCertificatesResponseDTO getCitizenCertificates(
-            @RequestBody ListCitizenCertificatesRequestDTO listCitizenCertificatesRequestDTO) {
+            @RequestBody ListCitizenCertificatesRequestDTO request) {
 
         LOG.debug("Getting list of citizen certificates");
         final var response = listCitizenCertificatesService.get(
-                listCitizenCertificatesRequestDTO.getPatientId(),
-                listCitizenCertificatesRequestDTO.getCertificateTypes(),
-                listCitizenCertificatesRequestDTO.getUnits(),
-                listCitizenCertificatesRequestDTO.getStatuses(),
-                listCitizenCertificatesRequestDTO.getYears()
+                se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequestDTO
+                        .builder()
+                        .patientId(request.getPatientId())
+                        .certificateTypes(request.getCertificateTypes())
+                        .units(request.getUnits())
+                        .years(request.getYears())
+                        .statuses(request.getStatuses())
+                        .build()
         );
 
         return ListCitizenCertificatesResponseDTO

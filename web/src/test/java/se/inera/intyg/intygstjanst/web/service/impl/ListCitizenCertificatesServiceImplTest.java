@@ -15,6 +15,7 @@ import se.inera.intyg.intygstjanst.web.service.CitizenCertificateFilterService;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateTextService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepositoryImpl;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -37,6 +38,16 @@ class ListCitizenCertificatesServiceImplTest {
     private static final String ADDITIONAL_INFO_LABEL = "Additional info label";
     private static final String TYPE_ID = "Type id";
     private static final String TYPE_VERSION = "Type version";
+    private static final List<CitizenCertificateStatusTypeDTO> STATUSES = List.of(
+            CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT);
+    private static final ListCitizenCertificatesRequestDTO REQUEST = ListCitizenCertificatesRequestDTO
+            .builder()
+            .certificateTypes(CERTIFICATE_TYPES)
+            .patientId(PATIENT_ID)
+            .years(YEARS)
+            .units(UNITS)
+            .statuses(STATUSES)
+            .build();
     private static final List<CitizenCertificate> REPO_RESPONSE = List.of(CitizenCertificate
             .builder()
             .type(TYPE_ID)
@@ -44,8 +55,6 @@ class ListCitizenCertificatesServiceImplTest {
             .build()
     );
     private static final CitizenCertificateDTO CITIZEN_CERTIFICATE_DTO = CitizenCertificateDTO.builder().build();
-    private static final List<CitizenCertificateStatusTypeDTO> STATUSES = List.of(
-            CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT);
 
     @Mock
     CitizenCertificatesRepositoryImpl citizenCertificatesRepository;
@@ -65,7 +74,7 @@ class ListCitizenCertificatesServiceImplTest {
     class RepositoryRequest {
         @Test
         void shouldSetPatientId() {
-            listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
+            listCitizenCertificatesService.get(REQUEST);
 
             final var captor = ArgumentCaptor.forClass(String.class);
 
@@ -83,7 +92,7 @@ class ListCitizenCertificatesServiceImplTest {
             when(citizenCertificateTextService.getAdditionalInfoLabel(any(), any())).thenReturn(ADDITIONAL_INFO_LABEL);
             when(citizenCertificateTextService.getTypeName(any())).thenReturn(TYPE_NAME);
 
-            when(citizenCertificateDTOConverter.get(any(), any(), any())).thenReturn(CITIZEN_CERTIFICATE_DTO);
+            when(citizenCertificateDTOConverter.convert(any(), any(), any())).thenReturn(CITIZEN_CERTIFICATE_DTO);
 
             when(citizenCertificatesRepository.getCertificatesForPatient(any()))
                     .thenReturn(REPO_RESPONSE);
@@ -91,7 +100,7 @@ class ListCitizenCertificatesServiceImplTest {
 
         @Test
         void shouldLogWithPatientId() {
-            listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
+            listCitizenCertificatesService.get(REQUEST);
 
             final var captor = ArgumentCaptor.forClass(Personnummer.class);
 
@@ -104,7 +113,7 @@ class ListCitizenCertificatesServiceImplTest {
         class TextService {
             @Test
             void shouldSendTypeToGetTypeName() throws ModuleNotFoundException {
-                listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
+                listCitizenCertificatesService.get(REQUEST);
 
                 final var captor = ArgumentCaptor.forClass(String.class);
 
@@ -115,7 +124,7 @@ class ListCitizenCertificatesServiceImplTest {
 
             @Test
             void shouldSendTypeToGetAdditionalInfoLabel() throws ModuleNotFoundException {
-                listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
+                listCitizenCertificatesService.get(REQUEST);
 
                 final var captor = ArgumentCaptor.forClass(String.class);
 
@@ -126,7 +135,7 @@ class ListCitizenCertificatesServiceImplTest {
 
             @Test
             void shouldSendTypeVersionToGetAdditionalInfoLabel() throws ModuleNotFoundException {
-                listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
+                listCitizenCertificatesService.get(REQUEST);
 
                 final var captor = ArgumentCaptor.forClass(String.class);
 
@@ -141,33 +150,33 @@ class ListCitizenCertificatesServiceImplTest {
 
             @Test
             void shouldSendTypeNameToConverter() throws ModuleNotFoundException {
-                listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
+                listCitizenCertificatesService.get(REQUEST);
 
                 final var captor = ArgumentCaptor.forClass(String.class);
 
-                verify(citizenCertificateDTOConverter).get(any(), captor.capture(), any());
+                verify(citizenCertificateDTOConverter).convert(any(), captor.capture(), any());
 
                 assertEquals(TYPE_NAME, captor.getValue());
             }
 
             @Test
             void shouldSendAdditionalInfoLabelToConverter() throws ModuleNotFoundException {
-                listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
+                listCitizenCertificatesService.get(REQUEST);
 
                 final var captor = ArgumentCaptor.forClass(String.class);
 
-                verify(citizenCertificateDTOConverter).get(any(), any(), captor.capture());
+                verify(citizenCertificateDTOConverter).convert(any(), any(), captor.capture());
 
                 assertEquals(ADDITIONAL_INFO_LABEL, captor.getValue());
             }
 
             @Test
             void shouldSendCitizenCertificateToConverter() throws ModuleNotFoundException {
-                listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
+                listCitizenCertificatesService.get(REQUEST);
 
                 final var captor = ArgumentCaptor.forClass(CitizenCertificate.class);
 
-                verify(citizenCertificateDTOConverter).get(captor.capture(), any(), any());
+                verify(citizenCertificateDTOConverter).convert(captor.capture(), any(), any());
 
                 assertEquals(REPO_RESPONSE.get(0), captor.getValue());
             }
@@ -177,66 +186,33 @@ class ListCitizenCertificatesServiceImplTest {
         class Filter {
             @Test
             void shouldSendCertificateReturnedFromConverterToFilter() {
-                listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
+                listCitizenCertificatesService.get(REQUEST);
 
                 final var captor = ArgumentCaptor.forClass(CitizenCertificateDTO.class);
 
-                verify(citizenCertificateFilterService).filter(captor.capture(), anyList(), anyList(), anyList(), anyList());
+                verify(citizenCertificateFilterService).filter(captor.capture(), any());
 
                 assertEquals(CITIZEN_CERTIFICATE_DTO, captor.getValue());
             }
 
             @Test
-            void shouldSendYearsToFilter() {
-                listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
+            void shouldSendFilterRequestToFilter() {
+                listCitizenCertificatesService.get(REQUEST);
 
-                final var captor = ArgumentCaptor.forClass(List.class);
+                final var captor = ArgumentCaptor.forClass(ListCitizenCertificatesRequestDTO.class);
 
-                verify(citizenCertificateFilterService).filter(any(), captor.capture(), anyList(), anyList(), anyList());
+                verify(citizenCertificateFilterService).filter(any(), captor.capture());
 
-                assertEquals(YEARS, captor.getValue());
-            }
-
-            @Test
-            void shouldSendUnitIdsToFilter() {
-                listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
-
-                final var captor = ArgumentCaptor.forClass(List.class);
-
-                verify(citizenCertificateFilterService).filter(any(), anyList(), captor.capture(), anyList(), anyList());
-
-                assertEquals(UNITS, captor.getValue());
-            }
-
-            @Test
-            void shouldSendCertificateTypesToFilter() {
-                listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
-
-                final var captor = ArgumentCaptor.forClass(List.class);
-
-                verify(citizenCertificateFilterService).filter(any(), anyList(), anyList(), captor.capture(), anyList());
-
-                assertEquals(CERTIFICATE_TYPES, captor.getValue());
-            }
-
-            @Test
-            void shouldSendStatusesToFilter() {
-                listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
-
-                final var captor = ArgumentCaptor.forClass(List.class);
-
-                verify(citizenCertificateFilterService).filter(any(), anyList(), anyList(), anyList(), captor.capture());
-
-                assertEquals(STATUSES, captor.getValue());
+                assertEquals(REQUEST, captor.getValue());
             }
         }
 
 
         @Test
         void shouldReturnResponseIfNotFilteredOut() {
-            when(citizenCertificateFilterService.filter(any(), any(), any(), any(), any())).thenReturn(true);
+            when(citizenCertificateFilterService.filter(any(), any())).thenReturn(true);
 
-            final var actualResponse = listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
+            final var actualResponse = listCitizenCertificatesService.get(REQUEST);
 
             assertEquals(1, actualResponse.size());
             assertEquals(CITIZEN_CERTIFICATE_DTO, actualResponse.get(0));
@@ -244,9 +220,9 @@ class ListCitizenCertificatesServiceImplTest {
 
         @Test
         void shouldReturnEmptyListIfEverythingIsFilteredOut() {
-            when(citizenCertificateFilterService.filter(any(), any(), any(), any(), any())).thenReturn(false);
+            when(citizenCertificateFilterService.filter(any(), any())).thenReturn(false);
 
-            final var actualResponse = listCitizenCertificatesService.get(PATIENT_ID, CERTIFICATE_TYPES, UNITS, STATUSES, YEARS);
+            final var actualResponse = listCitizenCertificatesService.get(REQUEST);
 
             assertEquals(0, actualResponse.size());
         }

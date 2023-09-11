@@ -3,8 +3,8 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.intygstjanst.web.service.*;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepository;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -33,26 +33,22 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
     }
 
     @Override
-    public List<CitizenCertificateDTO> get(String patientId,
-                                           List<String> certificateTypes,
-                                           List<String> units,
-                                           List<CitizenCertificateStatusTypeDTO> statuses,
-                                           List<String> years) {
+    public List<CitizenCertificateDTO> get(ListCitizenCertificatesRequestDTO request) {
 
-        final var certificates = citizenCertificatesRepository.getCertificatesForPatient(patientId);
+        final var certificates = citizenCertificatesRepository.getCertificatesForPatient(request.getPatientId());
 
-        monitoringLogService.logCertificateListedByCitizen(Personnummer.createPersonnummer(patientId).orElse(null));
+        monitoringLogService.logCertificateListedByCitizen(Personnummer.createPersonnummer(request.getPatientId()).orElse(null));
 
         return certificates
                 .stream()
                 .map(this::getCitizenCertificateDTO)
-                .filter((certificate) -> citizenCertificateFilterService.filter(certificate, years, units, certificateTypes, statuses))
+                .filter((certificate) -> citizenCertificateFilterService.filter(certificate, request))
                 .collect(Collectors.toList());
     }
 
     private CitizenCertificateDTO getCitizenCertificateDTO(CitizenCertificate certificate) {
         try {
-            return citizenCertificateDTOConverter.get(
+            return citizenCertificateDTOConverter.convert(
                     certificate,
                     citizenCertificateTextService.getTypeName(certificate.getType()),
                     citizenCertificateTextService.getAdditionalInfoLabel(certificate.getType(), certificate.getTypeVersion())

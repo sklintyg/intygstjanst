@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 public class CitizenCertificateRelationConverterImpl implements CitizenCertificateRelationConverter {
 
     @Override
-    public CitizenCertificateRelationDTO get(String certificateId,
-                                             String toCertificateId,
-                                             String fromCertificateId,
-                                             LocalDateTime timeStamp,
-                                             String code) {
+    public CitizenCertificateRelationDTO convert(String certificateId,
+                                                 String toCertificateId,
+                                                 String fromCertificateId,
+                                                 LocalDateTime timeStamp,
+                                                 String code) {
         if (!certificateId.equals(toCertificateId) && !certificateId.equals(fromCertificateId)) {
             return null;
         }
@@ -39,6 +39,6 @@ public class CitizenCertificateRelationConverterImpl implements CitizenCertifica
                     : CitizenCertificateRelationType.RENEWS;
         }
 
-        return null;
+        return CitizenCertificateRelationType.UNKNOWN;
     }
 }

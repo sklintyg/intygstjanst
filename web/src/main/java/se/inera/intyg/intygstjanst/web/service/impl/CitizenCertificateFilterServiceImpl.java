@@ -4,13 +4,22 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateFilterService;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequestDTO;
 
 import java.util.List;
 
 @Service
 public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFilterService {
+
     @Override
-    public boolean filterOnYears(CitizenCertificateDTO certificate, List<String> includedYears) {
+    public boolean filter(CitizenCertificateDTO certificate, ListCitizenCertificatesRequestDTO request) {
+        return filterOnYears(certificate, request.getYears())
+                && filterOnUnits(certificate, request.getUnits())
+                && filterOnCertificateTypes(certificate, request.getCertificateTypes())
+                && filterOnSentStatus(certificate, request.getStatuses());
+    }
+
+    private boolean filterOnYears(CitizenCertificateDTO certificate, List<String> includedYears) {
         if (includedYears.isEmpty()) {
             return true;
         }
@@ -22,8 +31,7 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
                 .anyMatch((year) -> year.equals(signedYear));
     }
 
-    @Override
-    public boolean filterOnSentStatus(CitizenCertificateDTO certificate, List<CitizenCertificateStatusTypeDTO> statuses) {
+    private boolean filterOnSentStatus(CitizenCertificateDTO certificate, List<CitizenCertificateStatusTypeDTO> statuses) {
         final var includeSent = statuses.stream().anyMatch((status) -> status == CitizenCertificateStatusTypeDTO.SENT);
         final var includeNotSent = statuses.stream().anyMatch((status) -> status == CitizenCertificateStatusTypeDTO.NOT_SENT);
 
@@ -54,8 +62,7 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
         return certificate.getRecipient() != null && certificate.getRecipient().getSent() == null;
     }
 
-    @Override
-    public boolean filterOnUnits(CitizenCertificateDTO certificate, List<String> unitIds) {
+    private boolean filterOnUnits(CitizenCertificateDTO certificate, List<String> unitIds) {
         if (unitIds.isEmpty()) {
             return true;
         }
@@ -63,24 +70,11 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
         return unitIds.contains(certificate.getUnit().getId());
     }
 
-    @Override
-    public boolean filterOnCertificateTypes(CitizenCertificateDTO certificate, List<String> certificateTypes) {
+    private boolean filterOnCertificateTypes(CitizenCertificateDTO certificate, List<String> certificateTypes) {
         if (certificateTypes.isEmpty()) {
             return true;
         }
 
         return certificateTypes.contains(certificate.getType().getId());
-    }
-
-    @Override
-    public boolean filter(CitizenCertificateDTO certificate,
-                          List<String> includedYears,
-                          List<String> unitIds,
-                          List<String> certificateTypes,
-                          List<CitizenCertificateStatusTypeDTO> statuses) {
-        return filterOnYears(certificate, includedYears)
-                && filterOnUnits(certificate, unitIds)
-                && filterOnCertificateTypes(certificate, certificateTypes)
-                && filterOnSentStatus(certificate, statuses);
     }
 }

@@ -1,7 +1,6 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateDTOConverter;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateRecipientConverter;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.*;
@@ -16,7 +15,7 @@ public class CitizenCertificateDTOConverterImpl implements CitizenCertificateDTO
     }
 
     @Override
-    public CitizenCertificateDTO get(CitizenCertificate certificate, String typeName, String summaryLabel) throws ModuleNotFoundException {
+    public CitizenCertificateDTO convert(CitizenCertificate certificate, String typeName, String summaryLabel) {
         return CitizenCertificateDTO
                 .builder()
                 .id(certificate.getId())
@@ -24,7 +23,7 @@ public class CitizenCertificateDTOConverterImpl implements CitizenCertificateDTO
                 .summary(getSummary(certificate.getAdditionalInfo(), summaryLabel))
                 .issuer(getIssuer(certificate.getIssuerName()))
                 .unit(getUnit(certificate.getUnitId(), certificate.getUnitName()))
-                .recipient(citizenCertificateRecipientConverter.get(certificate.getType(), certificate.getSentDate()))
+                .recipient(citizenCertificateRecipientConverter.convert(certificate.getType(), certificate.getSentDate()))
                 .issued(certificate.getIssued().toString())
                 .relations(certificate.getRelations())
                 .build();

@@ -11,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateRecipientConverter;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateIssuerDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRecipientDTO;
@@ -61,15 +60,15 @@ class CitizenCertificateDTOConverterImplTest {
     }
 
     @Test
-    void shouldConvertToCorrectFormatForId() throws ModuleNotFoundException {
+    void shouldConvertToCorrectFormatForId() {
         final var citizenCertificate = getCitizenCertificate();
-        final var actualResult = citizenCertificateDTOConverter.get(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
 
         assertEquals(CERTIFICATE_ID, actualResult.getId());
     }
 
     @Test
-    void shouldConvertToCorrectFormatForType() throws ModuleNotFoundException {
+    void shouldConvertToCorrectFormatForType() {
         final var expectedType = CitizenCertificateTypeDTO.builder()
             .id(CERTIFICATE_TYPE)
             .name(TYPE_NAME)
@@ -78,12 +77,12 @@ class CitizenCertificateDTOConverterImplTest {
 
         final var citizenCertificate = getCitizenCertificate();
 
-        final var actualResult = citizenCertificateDTOConverter.get(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
         assertEquals(expectedType, actualResult.getType());
     }
 
     @Test
-    void shouldConvertToCorrectFormatForSummary() throws ModuleNotFoundException {
+    void shouldConvertToCorrectFormatForSummary() {
         final var expectedType = CitizenCertificateSummaryDTO.builder()
             .value(SUMMARY_VALUE)
             .label(SUMMARY_LABEL)
@@ -91,24 +90,24 @@ class CitizenCertificateDTOConverterImplTest {
 
         final var citizenCertificate = getCitizenCertificate();
 
-        final var actualResult = citizenCertificateDTOConverter.get(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
         assertEquals(expectedType, actualResult.getSummary());
     }
 
     @Test
-    void shouldConvertToCorrectFormatForIssuer() throws ModuleNotFoundException {
+    void shouldConvertToCorrectFormatForIssuer() {
         final var expectedType = CitizenCertificateIssuerDTO.builder()
             .name(ISSUER_NAME)
             .build();
 
         final var citizenCertificate = getCitizenCertificate();
 
-        final var actualResult = citizenCertificateDTOConverter.get(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
         assertEquals(expectedType, actualResult.getIssuer());
     }
 
     @Test
-    void shouldConvertToCorrectFormatForUnit() throws ModuleNotFoundException {
+    void shouldConvertToCorrectFormatForUnit() {
         final var expectedType = CitizenCertificateUnitDTO.builder()
             .id(UNIT_ID)
             .name(UNIT_NAME)
@@ -116,12 +115,12 @@ class CitizenCertificateDTOConverterImplTest {
 
         final var citizenCertificate = getCitizenCertificate();
 
-        final var actualResult = citizenCertificateDTOConverter.get(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
         assertEquals(expectedType, actualResult.getUnit());
     }
 
     @Test
-    void shouldConvertToCorrectFormatForRecipient() throws ModuleNotFoundException {
+    void shouldConvertToCorrectFormatForRecipient() {
         final var expectedResult = CitizenCertificateRecipientDTO.builder()
             .id(CERTIFICATE_ID)
             .name(RECIPIENT_NAME)
@@ -130,25 +129,25 @@ class CitizenCertificateDTOConverterImplTest {
 
         final var citizenCertificate = getCitizenCertificate();
 
-        when(citizenCertificateRecipientConverter.get(citizenCertificate.getType(), citizenCertificate.getSentDate())).thenReturn(
+        when(citizenCertificateRecipientConverter.convert(citizenCertificate.getType(), citizenCertificate.getSentDate())).thenReturn(
             expectedResult);
 
-        final var actualResult = citizenCertificateDTOConverter.get(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
         assertEquals(expectedResult, actualResult.getRecipient());
     }
 
     @Test
-    void shouldConvertToCorrectFormatForIssued() throws ModuleNotFoundException {
+    void shouldConvertToCorrectFormatForIssued() {
         final var citizenCertificate = getCitizenCertificate();
-        final var actualResult = citizenCertificateDTOConverter.get(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
 
         assertEquals(ISSUED_DATE.toString(), actualResult.getIssued());
     }
 
     @Test
-    void shouldConvertToCorrectFormatForRelations() throws ModuleNotFoundException {
+    void shouldConvertToCorrectFormatForRelations() {
         final var citizenCertificate = getCitizenCertificate();
-        final var actualResult = citizenCertificateDTOConverter.get(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
 
         assertEquals(RELATIONS, actualResult.getRelations());
     }

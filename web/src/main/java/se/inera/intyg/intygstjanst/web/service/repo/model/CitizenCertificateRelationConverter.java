@@ -5,9 +5,9 @@ import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRel
 import java.time.LocalDateTime;
 
 public interface CitizenCertificateRelationConverter {
-    CitizenCertificateRelationDTO get(String certificateId,
-                                      String toCertificateId,
-                                      String fromCertificateId,
-                                      LocalDateTime timeStamp,
-                                      String code);
+    CitizenCertificateRelationDTO convert(String certificateId,
+                                          String toCertificateId,
+                                          String fromCertificateId,
+                                          LocalDateTime timeStamp,
+                                          String code);
 }

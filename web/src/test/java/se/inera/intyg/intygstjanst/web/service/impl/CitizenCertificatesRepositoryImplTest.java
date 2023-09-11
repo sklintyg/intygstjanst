@@ -107,7 +107,7 @@ class CitizenCertificatesRepositoryImplTest {
         class Converter {
             @BeforeEach
             void setup() {
-                Mockito.when(citizenCertificateConverter.get(any(Certificate.class), anyList()))
+                Mockito.when(citizenCertificateConverter.convert(any(Certificate.class), anyList()))
                         .thenReturn(CONVERTED_CERTIFICATE);
             }
 
@@ -119,7 +119,7 @@ class CitizenCertificatesRepositoryImplTest {
                 final var captor = ArgumentCaptor.forClass(List.class);
 
                 citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
-                verify(citizenCertificateConverter, times(2)).get(any(Certificate.class), captor.capture());
+                verify(citizenCertificateConverter, times(2)).convert(any(Certificate.class), captor.capture());
 
                 assertEquals(1, captor.getValue().size());
                 assertEquals(relation, captor.getValue().get(0));
@@ -132,7 +132,7 @@ class CitizenCertificatesRepositoryImplTest {
                 final var captor = ArgumentCaptor.forClass(List.class);
 
                 citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
-                verify(citizenCertificateConverter, times(2)).get(any(Certificate.class), captor.capture());
+                verify(citizenCertificateConverter, times(2)).convert(any(Certificate.class), captor.capture());
 
                 assertEquals(0, captor.getValue().size());
             }
@@ -144,7 +144,7 @@ class CitizenCertificatesRepositoryImplTest {
                 final var captor = ArgumentCaptor.forClass(List.class);
 
                 citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
-                verify(citizenCertificateConverter, times(2)).get(any(Certificate.class), captor.capture());
+                verify(citizenCertificateConverter, times(2)).convert(any(Certificate.class), captor.capture());
 
                 assertEquals(1, captor.getValue().size());
             }

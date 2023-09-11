@@ -19,7 +19,7 @@ public class CitizenCertificateRecipientConverterImpl implements CitizenCertific
     }
 
     @Override
-    public CitizenCertificateRecipientDTO get(String certificateType, LocalDateTime sent) {
+    public CitizenCertificateRecipientDTO convert(String certificateType, LocalDateTime sent) {
         final var recipients = recipientRepo
                 .listRecipients()
                 .stream()

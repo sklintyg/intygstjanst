@@ -38,7 +38,7 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
         return certificates
                 .stream()
                 .filter((certificate) -> !certificate.getCertificateMetaData().isRevoked())
-                .map((certificate) -> citizenCertificateConverter.get(
+                .map((certificate) -> citizenCertificateConverter.convert(
                         certificate, filterRelations(certificate.getId(), relations, certificates))
                 )
                 .collect(Collectors.toList());

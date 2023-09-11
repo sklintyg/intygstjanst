@@ -25,42 +25,42 @@ class CitizenCertificateRelationConverterImplTest {
 
     @Test
     void shouldSetCertificateIdAsFromIdIfIdIsTo() {
-        final var response = citizenCertificateRelationConverter.get(ID, ID, OTHER_ID, TIMESTAMP, CODE);
+        final var response = citizenCertificateRelationConverter.convert(ID, ID, OTHER_ID, TIMESTAMP, CODE);
 
         assertEquals(OTHER_ID, response.getCertificateId());
     }
 
     @Test
     void shouldSetCertificateIdAsToIdIfIdIsFrom() {
-        final var response = citizenCertificateRelationConverter.get(ID, OTHER_ID, ID, TIMESTAMP, CODE);
+        final var response = citizenCertificateRelationConverter.convert(ID, OTHER_ID, ID, TIMESTAMP, CODE);
 
         assertEquals(ID, response.getCertificateId());
     }
 
     @Test
     void shouldSetTypeRenewed() {
-        final var response = citizenCertificateRelationConverter.get(ID, ID, OTHER_ID, TIMESTAMP, CODE);
+        final var response = citizenCertificateRelationConverter.convert(ID, ID, OTHER_ID, TIMESTAMP, CODE);
 
         assertEquals(CitizenCertificateRelationType.RENEWED, response.getType());
     }
 
     @Test
     void shouldSetTypeRenews() {
-        final var response = citizenCertificateRelationConverter.get(ID, OTHER_ID, ID, TIMESTAMP, CODE);
+        final var response = citizenCertificateRelationConverter.convert(ID, OTHER_ID, ID, TIMESTAMP, CODE);
 
         assertEquals(CitizenCertificateRelationType.RENEWS, response.getType());
     }
 
     @Test
     void shouldSetTimestamp() {
-        final var response = citizenCertificateRelationConverter.get(ID, ID, OTHER_ID, TIMESTAMP, CODE);
+        final var response = citizenCertificateRelationConverter.convert(ID, ID, OTHER_ID, TIMESTAMP, CODE);
 
         assertEquals(TIMESTAMP.toString(), response.getTimestamp());
     }
 
     @Test
     void shouldReturnNullIfIdDoesntMatch() {
-        final var response = citizenCertificateRelationConverter.get("NON_MATCHING_ID", ID, OTHER_ID, TIMESTAMP, CODE);
+        final var response = citizenCertificateRelationConverter.convert("NON_MATCHING_ID", ID, OTHER_ID, TIMESTAMP, CODE);
 
         assertNull(response);
     }

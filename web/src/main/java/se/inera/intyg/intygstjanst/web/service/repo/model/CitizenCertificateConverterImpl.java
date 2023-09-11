@@ -22,7 +22,7 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
     }
 
     @Override
-    public CitizenCertificate get(Certificate certificate, List<Relation> relations) {
+    public CitizenCertificate convert(Certificate certificate, List<Relation> relations) {
         final var sentState = getSentState(certificate.getStates());
 
         return CitizenCertificate
@@ -41,7 +41,7 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
     }
 
     private CitizenCertificateRelationDTO getRelation(String certificateId, Relation relation) {
-        return citizenCertificateRelationConverter.get(
+        return citizenCertificateRelationConverter.convert(
                 certificateId,
                 relation.getToIntygsId(),
                 relation.getFromIntygsId(),

@@ -1,10 +1,9 @@
-package se.inera.intyg.intygstjanst.web.integration.citizen;
+package se.inera.intyg.intygstjanst.web.service.dto.citizen;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateStatusTypeDTO;
 
 import java.util.Collections;
 import java.util.List;
