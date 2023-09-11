@@ -487,6 +487,10 @@ public class CertificateDaoImpl implements CertificateDao {
         final var query = criteriaBuilder.createQuery(Certificate.class);
         final var queryRoot = query.from(Certificate.class);
 
+        queryRoot.fetch("states", JoinType.LEFT);
+        queryRoot.fetch("certificateMetaData", JoinType.INNER);
+        queryRoot.fetch("originalCertificate", JoinType.INNER);
+
         final var predicates = new ArrayList<Predicate>();
 
         predicates.add(
