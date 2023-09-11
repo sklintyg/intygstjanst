@@ -19,6 +19,7 @@
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -30,7 +31,7 @@ public interface RelationDao {
 
     List<Relation> getParent(String intygsId);
 
-    List<Relation> getRelations(List<String> certificateIds);
+    Map<String, List<Relation>> getRelations(List<String> certificateIds, List<String> revokedCertificateIds);
 
     List<Relation> getGraph(String intygsId);
 

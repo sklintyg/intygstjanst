@@ -7,6 +7,7 @@ import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRec
 import se.inera.intyg.intygstjanst.web.service.repo.RecipientRepo;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,7 +20,7 @@ public class CitizenCertificateRecipientConverterImpl implements CitizenCertific
     }
 
     @Override
-    public CitizenCertificateRecipientDTO convert(String certificateType, LocalDateTime sent) {
+    public Optional<CitizenCertificateRecipientDTO> convert(String certificateType, LocalDateTime sent) {
         final var recipients = recipientRepo
                 .listRecipients()
                 .stream()
@@ -30,14 +31,14 @@ public class CitizenCertificateRecipientConverterImpl implements CitizenCertific
                 .collect(Collectors.toList());
 
         if (recipients.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
 
-        return CitizenCertificateRecipientDTO
+        return Optional.of(CitizenCertificateRecipientDTO
                 .builder()
                 .id(recipients.get(0).getId())
                 .name(recipients.get(0).getName())
                 .sent(sent == null ? null : sent.toString())
-                .build();
+                .build());
     }
 }

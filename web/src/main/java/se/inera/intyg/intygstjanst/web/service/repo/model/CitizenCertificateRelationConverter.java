@@ -1,13 +1,10 @@
 package se.inera.intyg.intygstjanst.web.service.repo.model;
 
+import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationDTO;
 
-import java.time.LocalDateTime;
+import java.util.Optional;
 
 public interface CitizenCertificateRelationConverter {
-    CitizenCertificateRelationDTO convert(String certificateId,
-                                          String toCertificateId,
-                                          String fromCertificateId,
-                                          LocalDateTime timeStamp,
-                                          String code);
+    Optional<CitizenCertificateRelationDTO> convert(String certificateId, Relation relation);
 }

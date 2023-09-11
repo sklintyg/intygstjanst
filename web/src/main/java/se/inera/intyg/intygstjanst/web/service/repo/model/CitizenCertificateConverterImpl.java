@@ -1,6 +1,7 @@
 package se.inera.intyg.intygstjanst.web.service.repo.model;
 
 import org.springframework.stereotype.Service;
+import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
@@ -9,7 +10,6 @@ import se.inera.intyg.intygstjanst.web.service.dto.citizen.*;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -40,20 +40,17 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
                 .build();
     }
 
-    private CitizenCertificateRelationDTO getRelation(String certificateId, Relation relation) {
-        return citizenCertificateRelationConverter.convert(
-                certificateId,
-                relation.getToIntygsId(),
-                relation.getFromIntygsId(),
-                relation.getCreated(),
-                relation.getRelationKod());
+    private Optional<CitizenCertificateRelationDTO> getRelation(String certificateId, Relation relation) {
+        return citizenCertificateRelationConverter.convert(certificateId, relation);
     }
 
     private List<CitizenCertificateRelationDTO> getRelations(String certificateId, List<Relation> relations) {
         return relations
                 .stream()
+                .filter((relation) -> relation.getRelationKod().equals(RelationKod.ERSATT.toString()))
                 .map((relation) -> getRelation(certificateId, relation))
-                .filter(Objects::nonNull)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
     }
 

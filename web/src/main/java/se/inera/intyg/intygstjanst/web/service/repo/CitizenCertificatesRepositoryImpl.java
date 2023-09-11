@@ -1,7 +1,6 @@
 package se.inera.intyg.intygstjanst.web.service.repo;
 
 import org.springframework.stereotype.Repository;
-import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateConverter;
@@ -33,13 +32,18 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
             return Collections.emptyList();
         }
 
-        final var relations = relationDao.getRelations(getCertificateIds(certificates));
+        final var relations = relationDao.getRelations(
+                getCertificateIds(certificates),
+                getRevokedCertificateIds(certificates)
+        );
 
         return certificates
                 .stream()
                 .filter((certificate) -> !certificate.getCertificateMetaData().isRevoked())
                 .map((certificate) -> citizenCertificateConverter.convert(
-                        certificate, filterRelations(certificate.getId(), relations, certificates))
+                            certificate,
+                            relations.get(certificate.getId())
+                        )
                 )
                 .collect(Collectors.toList());
     }
@@ -57,24 +61,6 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
                 .stream()
                 .filter((certificate) -> certificate.getCertificateMetaData().isRevoked())
                 .map(Certificate::getId)
-                .collect(Collectors.toList());
-    }
-
-    private List<Relation> filterRelations(String certificateId, List<Relation> relations, List<Certificate> certificates) {
-        final var revokedCertificateIds = getRevokedCertificateIds(certificates);
-        return relations
-                .stream()
-                .filter((relation) ->
-                        !revokedCertificateIds.contains(relation.getToIntygsId())
-                        && !revokedCertificateIds.contains(relation.getFromIntygsId())
-                )
-                .filter(
-                        (relation) -> relation.getToIntygsId().equals(certificateId)
-                                || relation.getFromIntygsId().equals(certificateId)
-                )
-                .filter(
-                        (relation) -> relation.getRelationKod().equals(RelationKod.ERSATT.toString())
-                )
                 .collect(Collectors.toList());
     }
 }

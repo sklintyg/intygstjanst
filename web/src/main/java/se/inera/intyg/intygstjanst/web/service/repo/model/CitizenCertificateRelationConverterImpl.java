@@ -2,30 +2,29 @@ package se.inera.intyg.intygstjanst.web.service.repo.model;
 
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationType;
 
-import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class CitizenCertificateRelationConverterImpl implements CitizenCertificateRelationConverter {
 
     @Override
-    public CitizenCertificateRelationDTO convert(String certificateId,
-                                                 String toCertificateId,
-                                                 String fromCertificateId,
-                                                 LocalDateTime timeStamp,
-                                                 String code) {
-        if (!certificateId.equals(toCertificateId) && !certificateId.equals(fromCertificateId)) {
-            return null;
+    public Optional<CitizenCertificateRelationDTO> convert(String certificateId, Relation relation) {
+        if (!certificateId.equals(relation.getToIntygsId()) && !certificateId.equals(relation.getFromIntygsId())) {
+            return Optional.empty();
         }
 
-        return CitizenCertificateRelationDTO
-                .builder()
-                .certificateId(getRelatedId(certificateId, toCertificateId, fromCertificateId))
-                .timestamp(timeStamp.toString())
-                .type(getType(code, certificateId, toCertificateId))
-                .build();
+        return Optional.of(
+                CitizenCertificateRelationDTO
+                    .builder()
+                    .certificateId(getRelatedId(certificateId, relation.getToIntygsId(), relation.getFromIntygsId()))
+                    .timestamp(relation.getCreated().toString())
+                    .type(getType(relation.getRelationKod(), certificateId, relation.getToIntygsId()))
+                    .build()
+        );
     }
 
     private String getRelatedId(String id, String toId, String fromId) {
