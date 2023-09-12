@@ -509,7 +509,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
         query.where(predicates.toArray(new Predicate[predicates.size()]));
 
-        return entityManager.createQuery(query).getResultList();
+        return filterDuplicates(entityManager.createQuery(query).getResultList());
     }
 
     private List<String> toLowerCase(List<String> list) {
