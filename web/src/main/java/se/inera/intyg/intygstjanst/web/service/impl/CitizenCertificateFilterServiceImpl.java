@@ -24,11 +24,11 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
             return true;
         }
 
-        final var signedYear = certificate.getIssued().substring(0, 4);
+        final var signedYear = certificate.getIssued().getYear();
 
         return includedYears
                 .stream()
-                .anyMatch((year) -> year.equals(signedYear));
+                .anyMatch((year) -> Integer.parseInt(year) == signedYear);
     }
 
     private boolean filterOnSentStatus(CitizenCertificateDTO certificate, List<CitizenCertificateStatusTypeDTO> statuses) {

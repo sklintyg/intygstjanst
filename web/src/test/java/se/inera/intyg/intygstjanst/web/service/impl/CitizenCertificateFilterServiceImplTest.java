@@ -18,7 +18,7 @@ class CitizenCertificateFilterServiceImplTest {
 
     private static final CitizenCertificateDTO CITIZEN_CERTIFICATE = CitizenCertificateDTO
             .builder()
-            .issued(LocalDateTime.of(2020, 1, 20, 20, 20, 20).toString())
+            .issued(LocalDateTime.of(2020, 1, 20, 20, 20, 20))
             .type(
                     CitizenCertificateTypeDTO
                             .builder()

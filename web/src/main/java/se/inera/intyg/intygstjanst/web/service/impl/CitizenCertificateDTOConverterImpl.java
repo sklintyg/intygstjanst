@@ -26,7 +26,7 @@ public class CitizenCertificateDTOConverterImpl implements CitizenCertificateDTO
                 .recipient(
                         citizenCertificateRecipientConverter.convert(certificate.getType(), certificate.getSentDate()).orElse(null)
                 )
-                .issued(certificate.getIssued().toString())
+                .issued(certificate.getIssued())
                 .relations(certificate.getRelations())
                 .build();
     }

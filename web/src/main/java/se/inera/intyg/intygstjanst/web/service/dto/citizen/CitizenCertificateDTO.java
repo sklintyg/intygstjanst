@@ -3,6 +3,7 @@ package se.inera.intyg.intygstjanst.web.service.dto.citizen;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -14,6 +15,6 @@ public class CitizenCertificateDTO {
     CitizenCertificateIssuerDTO issuer;
     CitizenCertificateUnitDTO unit;
     CitizenCertificateRecipientDTO recipient;
-    String issued;
+    LocalDateTime issued;
     List<CitizenCertificateRelationDTO> relations;
 }

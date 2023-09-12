@@ -142,7 +142,7 @@ class CitizenCertificateDTOConverterImplTest {
         final var citizenCertificate = getCitizenCertificate();
         final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
 
-        assertEquals(ISSUED_DATE.toString(), actualResult.getIssued());
+        assertEquals(ISSUED_DATE, actualResult.getIssued());
     }
 
     @Test
