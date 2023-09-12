@@ -8,7 +8,6 @@ import se.inera.intyg.intygstjanst.web.service.repo.RecipientRepo;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CitizenCertificateRecipientConverterImpl implements CitizenCertificateRecipientConverter {
@@ -21,24 +20,21 @@ public class CitizenCertificateRecipientConverterImpl implements CitizenCertific
 
     @Override
     public Optional<CitizenCertificateRecipientDTO> convert(String certificateType, LocalDateTime sent) {
-        final var recipients = recipientRepo
+        return recipientRepo
                 .listRecipients()
                 .stream()
                 .filter(
                         (recipient) -> recipient.getCertificateTypes().contains(certificateType)
-                        && recipient.getRecipientType() == CertificateRecipientType.HUVUDMOTTAGARE
+                                && recipient.getRecipientType() == CertificateRecipientType.HUVUDMOTTAGARE
                 )
-                .collect(Collectors.toList());
-
-        if (recipients.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(CitizenCertificateRecipientDTO
-                .builder()
-                .id(recipients.get(0).getId())
-                .name(recipients.get(0).getName())
-                .sent(sent)
-                .build());
+                .findFirst()
+                .map(recipient ->
+                        CitizenCertificateRecipientDTO
+                                .builder()
+                                .id(recipient.getId())
+                                .name(recipient.getName())
+                                .sent(sent)
+                                .build()
+                );
     }
 }
