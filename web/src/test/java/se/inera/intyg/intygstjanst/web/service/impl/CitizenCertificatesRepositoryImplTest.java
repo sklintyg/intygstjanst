@@ -113,7 +113,13 @@ class CitizenCertificatesRepositoryImplTest {
             @BeforeEach
             void setup() {
                 Mockito.when(relationDao.getRelations(anyList(), anyList()))
-                        .thenReturn(Map.of(CERTIFICATE_ID_1, List.of(relation), REVOKED_CERTIFICATE_ID, List.of(otherRelation), CERTIFICATE_ID_2, List.of(relation)));
+                        .thenReturn(
+                                Map.of(
+                                    CERTIFICATE_ID_1, List.of(relation),
+                                    REVOKED_CERTIFICATE_ID, List.of(otherRelation),
+                                    CERTIFICATE_ID_2, List.of(relation)
+                                )
+                        );
 
                 Mockito.when(citizenCertificateConverter.convert(any(Certificate.class), anyList()))
                         .thenReturn(CONVERTED_CERTIFICATE);

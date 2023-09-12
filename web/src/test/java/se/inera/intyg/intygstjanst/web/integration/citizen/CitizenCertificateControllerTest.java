@@ -64,7 +64,9 @@ class CitizenCertificateControllerTest {
             void shouldSetPatientId() {
                 citizenCertificateController.getCitizenCertificates(request);
 
-                final var captor = ArgumentCaptor.forClass(se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO.class);
+                final var captor = ArgumentCaptor.forClass(
+                        se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO.class
+                );
 
                 verify(listCitizenCertificatesService).get(captor.capture());
 
@@ -75,7 +77,9 @@ class CitizenCertificateControllerTest {
             void shouldSetCertificateTypes() {
                 citizenCertificateController.getCitizenCertificates(request);
 
-                final var captor = ArgumentCaptor.forClass(se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO.class);
+                final var captor = ArgumentCaptor.forClass(
+                        se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO.class
+                );
 
                 verify(listCitizenCertificatesService).get(captor.capture());
 
@@ -86,7 +90,9 @@ class CitizenCertificateControllerTest {
             void shouldSetStatuses() {
                 citizenCertificateController.getCitizenCertificates(request);
 
-                final var captor = ArgumentCaptor.forClass(se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO.class);
+                final var captor = ArgumentCaptor.forClass(
+                        se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO.class
+                );
 
                 verify(listCitizenCertificatesService).get(captor.capture());
 
@@ -97,7 +103,9 @@ class CitizenCertificateControllerTest {
             void shouldSetUnits() {
                 citizenCertificateController.getCitizenCertificates(request);
 
-                final var captor = ArgumentCaptor.forClass(se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO.class);
+                final var captor = ArgumentCaptor.forClass(
+                        se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO.class
+                );
 
                 verify(listCitizenCertificatesService).get(captor.capture());
 
@@ -108,7 +116,9 @@ class CitizenCertificateControllerTest {
             void shouldSetYears() {
                 citizenCertificateController.getCitizenCertificates(request);
 
-                final var captor = ArgumentCaptor.forClass(se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO.class);
+                final var captor = ArgumentCaptor.forClass(
+                        se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO.class
+                );
 
                 verify(listCitizenCertificatesService).get(captor.capture());
 

@@ -1,7 +1,6 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.intygstjanst.web.service.*;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepository;
@@ -46,14 +45,10 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
     }
 
     private CitizenCertificateDTO getCitizenCertificateDTO(CitizenCertificate certificate) {
-        try {
             return citizenCertificateDTOConverter.convert(
                     certificate,
                     citizenCertificateTextService.getTypeName(certificate.getType()),
                     citizenCertificateTextService.getAdditionalInfoLabel(certificate.getType(), certificate.getTypeVersion())
             );
-        } catch (ModuleNotFoundException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
