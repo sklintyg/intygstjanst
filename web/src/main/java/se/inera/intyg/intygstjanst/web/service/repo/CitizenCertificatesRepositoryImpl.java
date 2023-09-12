@@ -53,6 +53,7 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
                 .stream()
                 .filter((certificate) -> !certificate.getCertificateMetaData().isRevoked())
                 .map(Certificate::getId)
+                .distinct()
                 .collect(Collectors.toList());
     }
 
@@ -61,6 +62,7 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
                 .stream()
                 .filter((certificate) -> certificate.getCertificateMetaData().isRevoked())
                 .map(Certificate::getId)
+                .distinct()
                 .collect(Collectors.toList());
     }
 }
