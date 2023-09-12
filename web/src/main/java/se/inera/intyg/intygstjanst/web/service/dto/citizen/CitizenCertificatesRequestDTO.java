@@ -1,9 +1,7 @@
 package se.inera.intyg.intygstjanst.web.service.dto.citizen;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.Collections;
 import java.util.List;

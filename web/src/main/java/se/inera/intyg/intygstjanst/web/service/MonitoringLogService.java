@@ -34,6 +34,8 @@ public interface MonitoringLogService {
 
     void logCertificateListedByCitizen(Personnummer citizenId);
 
+    void logCertificateListedByCitizen(String citizenId);
+
     void logCertificateListedByCare(Personnummer citizenId);
 
     void logCertificateStatusChanged(String certificateId, String status);

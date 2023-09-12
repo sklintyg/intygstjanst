@@ -7,7 +7,6 @@ import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRe
 import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepository;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
-import se.inera.intyg.schemas.contract.Personnummer;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,7 +36,7 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
 
         final var certificates = citizenCertificatesRepository.getCertificatesForPatient(request.getPatientId());
 
-        monitoringLogService.logCertificateListedByCitizen(Personnummer.createPersonnummer(request.getPatientId()).orElse(null));
+        monitoringLogService.logCertificateListedByCitizen(request.getPatientId());
 
         return certificates
                 .stream()

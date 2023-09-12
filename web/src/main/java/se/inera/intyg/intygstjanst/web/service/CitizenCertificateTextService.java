@@ -1,9 +1,7 @@
 package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-
 public interface CitizenCertificateTextService {
-    String getTypeName(String typeId) throws ModuleNotFoundException;
+    String getTypeName(String typeId);
 
-    String getAdditionalInfoLabel(String typeId, String typeVersion) throws ModuleNotFoundException;
+    String getAdditionalInfoLabel(String typeId, String typeVersion);
 }

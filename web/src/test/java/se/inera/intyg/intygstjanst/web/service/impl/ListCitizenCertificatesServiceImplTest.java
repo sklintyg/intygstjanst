@@ -18,7 +18,6 @@ import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepositoryImpl;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
-import se.inera.intyg.schemas.contract.Personnummer;
 
 import java.util.List;
 
@@ -102,11 +101,11 @@ class ListCitizenCertificatesServiceImplTest {
         void shouldLogWithPatientId() {
             listCitizenCertificatesService.get(REQUEST);
 
-            final var captor = ArgumentCaptor.forClass(Personnummer.class);
+            final var captor = ArgumentCaptor.forClass(String.class);
 
             verify(monitoringLogService).logCertificateListedByCitizen(captor.capture());
 
-            assertEquals(Personnummer.createPersonnummer(PATIENT_ID).get(), captor.getValue());
+            assertEquals(PATIENT_ID, captor.getValue());
         }
 
         @Nested

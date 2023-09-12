@@ -42,7 +42,6 @@ class CitizenCertificateDTOConverterImplTest {
     private static final String UNIT_NAME = "Unit name";
     private static final LocalDateTime ISSUED_DATE = LocalDateTime.now();
     private static final String RECIPIENT_NAME = "Recipient name";
-    private static final String RECIPIENT_SENT = "Recipient sent";
     private static final LocalDateTime SENT_DATE = LocalDateTime.now();
     private static final List<CitizenCertificateRelationDTO> RELATIONS = Collections.emptyList();
 
@@ -126,7 +125,7 @@ class CitizenCertificateDTOConverterImplTest {
         final var expectedResult = CitizenCertificateRecipientDTO.builder()
             .id(CERTIFICATE_ID)
             .name(RECIPIENT_NAME)
-            .sent(RECIPIENT_SENT)
+            .sent(SENT_DATE)
             .build();
 
         final var citizenCertificate = getCitizenCertificate();

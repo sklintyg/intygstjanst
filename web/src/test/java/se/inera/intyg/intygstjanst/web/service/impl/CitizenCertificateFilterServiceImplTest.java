@@ -228,7 +228,7 @@ class CitizenCertificateFilterServiceImplTest {
                                     .builder()
                                     .name("Name")
                                     .id("Id")
-                                    .sent(LocalDateTime.now().toString())
+                                    .sent(LocalDateTime.now())
                                     .build()
                     )
                     .build();

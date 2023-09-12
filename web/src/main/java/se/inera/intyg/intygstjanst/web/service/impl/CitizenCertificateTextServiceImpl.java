@@ -15,13 +15,21 @@ public class CitizenCertificateTextServiceImpl implements CitizenCertificateText
     }
 
     @Override
-    public String getTypeName(String typeId) throws ModuleNotFoundException {
-        return intygModuleRegistry.getModuleEntryPoint(typeId).getModuleName();
+    public String getTypeName(String typeId) {
+        try {
+            return intygModuleRegistry.getModuleEntryPoint(typeId).getModuleName();
+        } catch (ModuleNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public String getAdditionalInfoLabel(String typeId, String typeVersion) throws ModuleNotFoundException {
-        final var moduleApi = intygModuleRegistry.getModuleApi(typeId, typeVersion);
+    public String getAdditionalInfoLabel(String typeId, String typeVersion) {
+        try {
+            final var moduleApi = intygModuleRegistry.getModuleApi(typeId, typeVersion);
+        } catch (ModuleNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         return "Avser";
     }
 }

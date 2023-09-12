@@ -127,6 +127,14 @@ public class MonitoringLogServiceImplTest {
     }
 
     @Test
+    public void shouldLogCertificateListedByCitizenStringFormat() {
+        final Personnummer citizenId = createPnr(CITIZEN);
+        logService.logCertificateListedByCitizen(CITIZEN);
+        verifyLog(Level.INFO,
+                "CERTIFICATE_LISTED_BY_CITIZEN Certificates for citizen '" + citizenId.getPersonnummerHash() + "' - listed by citizen");
+    }
+
+    @Test
     public void shouldLogCertificateListedByCare() {
         final Personnummer citizenId = createPnr(CITIZEN);
         logService.logCertificateListedByCare(citizenId);

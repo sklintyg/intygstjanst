@@ -38,7 +38,7 @@ public class CitizenCertificateRecipientConverterImpl implements CitizenCertific
                 .builder()
                 .id(recipients.get(0).getId())
                 .name(recipients.get(0).getName())
-                .sent(sent == null ? null : sent.toString())
+                .sent(sent)
                 .build());
     }
 }
