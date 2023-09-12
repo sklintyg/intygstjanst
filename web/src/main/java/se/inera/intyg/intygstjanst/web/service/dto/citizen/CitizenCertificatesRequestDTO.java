@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 public class CitizenCertificatesRequestDTO {
     private String patientId;
     private List<CitizenCertificateStatusTypeDTO> statuses = Collections.emptyList();

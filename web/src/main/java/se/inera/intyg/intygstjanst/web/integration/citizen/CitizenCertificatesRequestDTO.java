@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class CitizenCertificatesRequestDTO {

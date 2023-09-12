@@ -20,7 +20,7 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
     }
 
     private boolean filterOnYears(CitizenCertificateDTO certificate, List<String> includedYears) {
-        if (includedYears.isEmpty()) {
+        if (includedYears == null || includedYears.isEmpty()) {
             return true;
         }
 
@@ -32,12 +32,12 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
     }
 
     private boolean filterOnSentStatus(CitizenCertificateDTO certificate, List<CitizenCertificateStatusTypeDTO> statuses) {
-        final var includeSent = statuses.stream().anyMatch((status) -> status == CitizenCertificateStatusTypeDTO.SENT);
-        final var includeNotSent = statuses.stream().anyMatch((status) -> status == CitizenCertificateStatusTypeDTO.NOT_SENT);
-
-        if (statuses.isEmpty()) {
+        if (statuses == null || statuses.isEmpty()) {
             return true;
         }
+
+        final var includeSent = statuses.stream().anyMatch((status) -> status == CitizenCertificateStatusTypeDTO.SENT);
+        final var includeNotSent = statuses.stream().anyMatch((status) -> status == CitizenCertificateStatusTypeDTO.NOT_SENT);
 
         if (includeSent && includeNotSent) {
             return filterOnSent(certificate) || filterOnNotSent(certificate);
@@ -63,7 +63,7 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
     }
 
     private boolean filterOnUnits(CitizenCertificateDTO certificate, List<String> unitIds) {
-        if (unitIds.isEmpty()) {
+        if (unitIds == null || unitIds.isEmpty()) {
             return true;
         }
 
@@ -71,7 +71,7 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
     }
 
     private boolean filterOnCertificateTypes(CitizenCertificateDTO certificate, List<String> certificateTypes) {
-        if (certificateTypes.isEmpty()) {
+        if (certificateTypes == null || certificateTypes.isEmpty()) {
             return true;
         }
 

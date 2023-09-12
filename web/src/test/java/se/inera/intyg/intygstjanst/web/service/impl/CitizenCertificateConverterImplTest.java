@@ -26,9 +26,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenCertificateConverterImplTest {
@@ -140,40 +138,36 @@ class CitizenCertificateConverterImplTest {
 
     @Nested
     class ConversionOfRelationValues {
+        CitizenCertificateRelationDTO expectedRelation;
 
-        CitizenCertificateRelationDTO citizenCertificateRelationDTO;
-        private final String toCertificate = "toCertificate";
-        private final String fromCertificate = "fromCertificate";
-        private final String code = "code";
-        private final LocalDateTime timeStamp = LocalDateTime.now();
-
-        Relation relation = new Relation(fromCertificate, toCertificate, code, timeStamp);
+        Relation relation = new Relation("fromId", "toId", "NotErsatt", LocalDateTime.now());
+        Relation renewedRelation = new Relation("fromId", "toId", "ERSATT", LocalDateTime.now());
 
         @BeforeEach
         void setup() {
 
-            this.citizenCertificateRelationDTO = CitizenCertificateRelationDTO.builder()
-                .certificateId("id")
+            expectedRelation = CitizenCertificateRelationDTO.builder()
+                .certificateId(CERTIFICATE_ID)
                 .type(CitizenCertificateRelationType.RENEWED)
                 .timestamp(LocalDateTime.now().toString())
                 .build();
 
-            when(citizenCertificateRelationConverter.convert(anyString(), any(Relation.class))
-            ).thenReturn(Optional.of(citizenCertificateRelationDTO));
+            when(citizenCertificateRelationConverter.convert(anyString(), any(Relation.class)))
+                    .thenReturn(Optional.of(expectedRelation));
         }
 
         @Test
         void shouldConvertRelation() {
-            final var response = citizenCertificateConverter.convert(certificate, List.of(relation));
-            assertEquals(citizenCertificateRelationDTO, response.getRelations().get(0));
+            final var response = citizenCertificateConverter.convert(certificate, List.of(relation, renewedRelation));
+            assertEquals(expectedRelation, response.getRelations().get(0));
         }
 
         @Test
         void shouldSendIdToConverter() {
-            citizenCertificateConverter.convert(certificate, List.of(relation));
+            citizenCertificateConverter.convert(certificate, List.of(relation, renewedRelation));
             final var captor = ArgumentCaptor.forClass(String.class);
 
-            verify(citizenCertificateRelationConverter).convert(
+            verify(citizenCertificateRelationConverter, times(1)).convert(
                     captor.capture(), any()
             );
             assertEquals(certificate.getId(), captor.getValue());
@@ -181,13 +175,13 @@ class CitizenCertificateConverterImplTest {
 
         @Test
         void shouldSendRelationToConverter() {
-            citizenCertificateConverter.convert(certificate, List.of(relation));
+            citizenCertificateConverter.convert(certificate, List.of(relation, renewedRelation));
             final var captor = ArgumentCaptor.forClass(Relation.class);
 
-            verify(citizenCertificateRelationConverter).convert(
+            verify(citizenCertificateRelationConverter, times(1)).convert(
                     anyString(), captor.capture()
             );
-            assertEquals(relation, captor.getValue());
+            assertEquals(renewedRelation, captor.getValue());
         }
     }
 }

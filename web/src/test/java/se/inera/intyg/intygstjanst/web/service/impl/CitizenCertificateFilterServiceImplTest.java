@@ -124,7 +124,7 @@ class CitizenCertificateFilterServiceImplTest {
                     CITIZEN_CERTIFICATE,
                     CitizenCertificatesRequestDTO
                             .builder()
-                            .units(List.of("TYPE_ID", "NON_TYPE_ID"))
+                            .certificateTypes(List.of("TYPE_ID", "NON_TYPE_ID"))
                             .build()
             );
 

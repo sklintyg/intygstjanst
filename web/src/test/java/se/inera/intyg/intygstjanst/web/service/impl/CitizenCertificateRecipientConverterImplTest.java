@@ -108,7 +108,7 @@ class CitizenCertificateRecipientConverterImplTest {
         void shouldReturnTimestampAsSent() {
             final var response = citizenCertificateRecipientConverter.convert(CERTIFICATE_TYPE, SENT_TIMESTAMP);
 
-            assertEquals(SENT_TIMESTAMP.toString(), response.get().getSent());
+            assertEquals(SENT_TIMESTAMP, response.get().getSent());
         }
     }
 

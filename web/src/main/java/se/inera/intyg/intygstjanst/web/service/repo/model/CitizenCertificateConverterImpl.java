@@ -40,15 +40,11 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
                 .build();
     }
 
-    private Optional<CitizenCertificateRelationDTO> getRelation(String certificateId, Relation relation) {
-        return citizenCertificateRelationConverter.convert(certificateId, relation);
-    }
-
     private List<CitizenCertificateRelationDTO> getRelations(String certificateId, List<Relation> relations) {
         return relations
                 .stream()
                 .filter((relation) -> relation.getRelationKod().equals(RelationKod.ERSATT.toString()))
-                .map((relation) -> getRelation(certificateId, relation))
+                .map((relation) -> citizenCertificateRelationConverter.convert(certificateId, relation))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
