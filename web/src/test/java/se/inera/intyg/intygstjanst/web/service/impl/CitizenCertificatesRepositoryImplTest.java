@@ -106,18 +106,21 @@ class CitizenCertificatesRepositoryImplTest {
 
         @Nested
         class Converter {
+
+            final Relation relation = new Relation(CERTIFICATE_ID_1, CERTIFICATE_ID_2, "ERSATT", LocalDateTime.now());
+            final Relation otherRelation = new Relation("OTHER_ID", "OTHER_ID", "ERSATT", LocalDateTime.now());
+
             @BeforeEach
             void setup() {
+                Mockito.when(relationDao.getRelations(anyList(), anyList()))
+                        .thenReturn(Map.of(CERTIFICATE_ID_1, List.of(relation), REVOKED_CERTIFICATE_ID, List.of(otherRelation), CERTIFICATE_ID_2, List.of(relation)));
+
                 Mockito.when(citizenCertificateConverter.convert(any(Certificate.class), anyList()))
                         .thenReturn(CONVERTED_CERTIFICATE);
             }
 
             @Test
-            void shouldSendNonRevokedRelations() {
-                final var relation = new Relation(CERTIFICATE_ID_1, CERTIFICATE_ID_2, "ERSATT", LocalDateTime.now());
-                final var revokedRelation = new Relation(REVOKED_CERTIFICATE_ID, CERTIFICATE_ID_1, "ERSATT", LocalDateTime.now());
-                Mockito.when(relationDao.getRelations(anyList(), anyList()))
-                        .thenReturn(Map.of(CERTIFICATE_ID_1, List.of(relation), REVOKED_CERTIFICATE_ID, List.of(revokedRelation)));
+            void shouldSendRelationsForCertificate() {
                 final var captor = ArgumentCaptor.forClass(List.class);
 
                 citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
@@ -125,30 +128,6 @@ class CitizenCertificatesRepositoryImplTest {
 
                 assertEquals(1, captor.getValue().size());
                 assertEquals(relation, captor.getValue().get(0));
-            }
-
-            @Test
-            void shouldFilterRelationsThatAreNotErsatt() {
-                final var relation = new Relation(CERTIFICATE_ID_2, CERTIFICATE_ID_1, "NOT_ERSATT", LocalDateTime.now());
-                Mockito.when(relationDao.getRelations(anyList(), anyList())).thenReturn(Map.of(CERTIFICATE_ID_1, List.of(relation)));
-                final var captor = ArgumentCaptor.forClass(List.class);
-
-                citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
-                verify(citizenCertificateConverter, times(2)).convert(any(Certificate.class), captor.capture());
-
-                assertEquals(0, captor.getValue().size());
-            }
-
-            @Test
-            void shouldNotFilterErsattRelations() {
-                final var relation = new Relation(CERTIFICATE_ID_2, CERTIFICATE_ID_1, "ERSATT", LocalDateTime.now());
-                Mockito.when(relationDao.getRelations(anyList(), anyList())).thenReturn(Map.of(CERTIFICATE_ID_1, List.of(relation)));
-                final var captor = ArgumentCaptor.forClass(List.class);
-
-                citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
-                verify(citizenCertificateConverter, times(2)).convert(any(Certificate.class), captor.capture());
-
-                assertEquals(1, captor.getValue().size());
             }
 
             @Test
@@ -173,6 +152,18 @@ class CitizenCertificatesRepositoryImplTest {
                 assertEquals(2, captor.getValue().size());
                 assertEquals(CERTIFICATES.get(0).getId(), captor.getValue().get(0));
                 assertEquals(CERTIFICATES.get(1).getId(), captor.getValue().get(1));
+            }
+
+            @Test
+            void shouldMakeCallWithRevokedCertificateIds() {
+                citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
+
+                final var captor = ArgumentCaptor.forClass(List.class);
+
+                verify(relationDao).getRelations(anyList(), captor.capture());
+
+                assertEquals(1, captor.getValue().size());
+                assertEquals(REVOKED_CERTIFICATE_ID, captor.getValue().get(0));
             }
         }
     }

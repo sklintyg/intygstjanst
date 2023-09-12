@@ -78,6 +78,7 @@ public class RelationDaoImpl implements RelationDao {
 
         return certificateIds
                 .stream()
+                .filter((id) -> !revokedCertificateIds.contains(id))
                 .collect(
                         Collectors.toMap(id -> id, id -> getRelationsForCertificate(relations, id))
                 );

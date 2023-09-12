@@ -40,7 +40,7 @@ class CitizenCertificateFilterServiceImplTest {
         void shouldReturnTrueIfIncludedInList() {
             final var response = citizenCertificateFilterService.filter(
                     CITIZEN_CERTIFICATE,
-                    ListCitizenCertificatesRequestDTO
+                    CitizenCertificatesRequestDTO
                         .builder()
                         .years(List.of("2020", "2021"))
                         .build()
@@ -53,7 +53,7 @@ class CitizenCertificateFilterServiceImplTest {
         void shouldReturnFalseIfIncludedInList() {
             final var response = citizenCertificateFilterService.filter(
                     CITIZEN_CERTIFICATE,
-                    ListCitizenCertificatesRequestDTO
+                    CitizenCertificatesRequestDTO
                             .builder()
                             .years(List.of("2019", "2021"))
                             .build()
@@ -65,7 +65,7 @@ class CitizenCertificateFilterServiceImplTest {
         void shouldReturnTrueIfEmptyList() {
             final var response = citizenCertificateFilterService.filter(
                     CITIZEN_CERTIFICATE,
-                    ListCitizenCertificatesRequestDTO
+                    CitizenCertificatesRequestDTO
                             .builder()
                             .build()
             );
@@ -80,7 +80,7 @@ class CitizenCertificateFilterServiceImplTest {
 
             final var response = citizenCertificateFilterService.filter(
                     CITIZEN_CERTIFICATE,
-                    ListCitizenCertificatesRequestDTO
+                    CitizenCertificatesRequestDTO
                             .builder()
                             .units(List.of("UNIT_ID", "NON_UNIT_ID"))
                             .build()
@@ -93,7 +93,7 @@ class CitizenCertificateFilterServiceImplTest {
         void shouldReturnFalseIfIncludedInList() {
             final var response = citizenCertificateFilterService.filter(
                     CITIZEN_CERTIFICATE,
-                    ListCitizenCertificatesRequestDTO
+                    CitizenCertificatesRequestDTO
                             .builder()
                             .units(List.of("NON_UNIT_ID"))
                             .build()
@@ -106,7 +106,7 @@ class CitizenCertificateFilterServiceImplTest {
         void shouldReturnTrueIfEmptyList() {
             final var response = citizenCertificateFilterService.filter(
                     CITIZEN_CERTIFICATE,
-                    ListCitizenCertificatesRequestDTO
+                    CitizenCertificatesRequestDTO
                             .builder()
                             .build()
             );
@@ -122,7 +122,7 @@ class CitizenCertificateFilterServiceImplTest {
 
             final var response = citizenCertificateFilterService.filter(
                     CITIZEN_CERTIFICATE,
-                    ListCitizenCertificatesRequestDTO
+                    CitizenCertificatesRequestDTO
                             .builder()
                             .units(List.of("TYPE_ID", "NON_TYPE_ID"))
                             .build()
@@ -135,7 +135,7 @@ class CitizenCertificateFilterServiceImplTest {
         void shouldReturnFalseIfIncludedInList() {
             final var response = citizenCertificateFilterService.filter(
                     CITIZEN_CERTIFICATE,
-                    ListCitizenCertificatesRequestDTO
+                    CitizenCertificatesRequestDTO
                             .builder()
                             .units(List.of("NON_TYPE_ID"))
                             .build()
@@ -148,7 +148,7 @@ class CitizenCertificateFilterServiceImplTest {
         void shouldReturnTrueIfEmptyList() {
             final var response = citizenCertificateFilterService.filter(
                     CITIZEN_CERTIFICATE,
-                    ListCitizenCertificatesRequestDTO
+                    CitizenCertificatesRequestDTO
                             .builder()
                             .build()
             );
@@ -171,7 +171,7 @@ class CitizenCertificateFilterServiceImplTest {
             void shouldReturnTrueIfListIsEmpty() {
                 final var response = citizenCertificateFilterService.filter(
                         certificate,
-                        ListCitizenCertificatesRequestDTO
+                        CitizenCertificatesRequestDTO
                                 .builder()
                                 .build()
                 );
@@ -183,7 +183,7 @@ class CitizenCertificateFilterServiceImplTest {
             void shouldReturnFalseIfFilteringOnSent() {
                 final var response = citizenCertificateFilterService.filter(
                         certificate,
-                        ListCitizenCertificatesRequestDTO
+                        CitizenCertificatesRequestDTO
                                 .builder()
                                 .statuses(List.of(CitizenCertificateStatusTypeDTO.SENT))
                                 .build()
@@ -196,7 +196,7 @@ class CitizenCertificateFilterServiceImplTest {
             void shouldReturnFalseIfFilteringOnBothStatuses() {
                 final var response = citizenCertificateFilterService.filter(
                         certificate,
-                        ListCitizenCertificatesRequestDTO
+                        CitizenCertificatesRequestDTO
                                 .builder()
                                 .statuses(List.of(CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT))
                                 .build()
@@ -209,7 +209,7 @@ class CitizenCertificateFilterServiceImplTest {
             void shouldReturnFalseIfFilteringOnNotSent() {
                 final var response = citizenCertificateFilterService.filter(
                         certificate,
-                        ListCitizenCertificatesRequestDTO
+                        CitizenCertificatesRequestDTO
                                 .builder()
                                 .statuses(List.of(CitizenCertificateStatusTypeDTO.NOT_SENT))
                                 .build()
@@ -237,7 +237,7 @@ class CitizenCertificateFilterServiceImplTest {
             void shouldReturnTrueIfListIsEmpty() {
                 final var response = citizenCertificateFilterService.filter(
                         certificate,
-                        ListCitizenCertificatesRequestDTO
+                        CitizenCertificatesRequestDTO
                                 .builder()
                                 .build()
                 );
@@ -249,7 +249,7 @@ class CitizenCertificateFilterServiceImplTest {
             void shouldReturnTrueIfFilteringOnSent() {
                 final var response = citizenCertificateFilterService.filter(
                         certificate,
-                        ListCitizenCertificatesRequestDTO
+                        CitizenCertificatesRequestDTO
                                 .builder()
                                 .statuses(List.of(CitizenCertificateStatusTypeDTO.SENT))
                                 .build()
@@ -262,7 +262,7 @@ class CitizenCertificateFilterServiceImplTest {
             void shouldReturnFalseIfFilteringOnNotSent() {
                 final var response = citizenCertificateFilterService.filter(
                         certificate,
-                        ListCitizenCertificatesRequestDTO
+                        CitizenCertificatesRequestDTO
                                 .builder()
                                 .statuses(List.of(CitizenCertificateStatusTypeDTO.NOT_SENT))
                                 .build()
@@ -275,7 +275,7 @@ class CitizenCertificateFilterServiceImplTest {
             void shouldReturnTrueIfFilteringOnAllStatuses() {
                 final var response = citizenCertificateFilterService.filter(
                         certificate,
-                        ListCitizenCertificatesRequestDTO
+                        CitizenCertificatesRequestDTO
                                 .builder()
                                 .statuses(List.of(CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT))
                                 .build()
@@ -303,7 +303,7 @@ class CitizenCertificateFilterServiceImplTest {
             void shouldReturnTrueIfListIsEmpty() {
                 final var response = citizenCertificateFilterService.filter(
                         certificate,
-                        ListCitizenCertificatesRequestDTO
+                        CitizenCertificatesRequestDTO
                                 .builder()
                                 .statuses(Collections.emptyList())
                                 .build()
@@ -316,7 +316,7 @@ class CitizenCertificateFilterServiceImplTest {
             void shouldReturnFalseIfFilteringOnSent() {
                 final var response = citizenCertificateFilterService.filter(
                         certificate,
-                        ListCitizenCertificatesRequestDTO
+                        CitizenCertificatesRequestDTO
                                 .builder()
                                 .statuses(List.of(CitizenCertificateStatusTypeDTO.SENT))
                                 .build()
@@ -329,7 +329,7 @@ class CitizenCertificateFilterServiceImplTest {
             void shouldReturnTrueIfFilteringOnNotSent() {
                 final var response = citizenCertificateFilterService.filter(
                         certificate,
-                        ListCitizenCertificatesRequestDTO
+                        CitizenCertificatesRequestDTO
                                 .builder()
                                 .statuses(List.of(CitizenCertificateStatusTypeDTO.NOT_SENT))
                                 .build()
@@ -342,7 +342,7 @@ class CitizenCertificateFilterServiceImplTest {
             void shouldReturnTrueIfFilteringOnAllStatuses() {
                 final var response = citizenCertificateFilterService.filter(
                         certificate,
-                        ListCitizenCertificatesRequestDTO
+                        CitizenCertificatesRequestDTO
                                 .builder()
                                 .statuses(List.of(CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT))
                                 .build()

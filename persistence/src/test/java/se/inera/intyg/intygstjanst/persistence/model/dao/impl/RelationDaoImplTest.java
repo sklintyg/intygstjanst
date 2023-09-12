@@ -19,6 +19,7 @@
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,6 +50,7 @@ public class RelationDaoImplTest extends TestSupport {
     public static final String INTYG_3 = "intyg-3";
     public static final String INTYG_0_1 = "intyg-0-1";
     private static final List<String> CERTIFICATE_IDS = List.of(INTYG_0_1, INTYG_0, INTYG_1, INTYG_2, INTYG_3);
+    private static final List<String> REVOKED_CERTIFICATE_IDS = List.of(INTYG_0_1);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -98,13 +100,21 @@ public class RelationDaoImplTest extends TestSupport {
     }
 
     @Test
-    public void shouldReturnAllRelations() {
-        buildRelationTree();
+    public void shouldReturnActiveRelations() {
+        buildRelationTreeIncludingRevoked();
 
-        relationDao.getRelations(CERTIFICATE_IDS);
+        final var response = relationDao.getRelations(CERTIFICATE_IDS, REVOKED_CERTIFICATE_IDS);
 
-        final var relations = entityManager.createQuery("SELECT r.id From Relation r", Long.class).getResultList();
-        assertEquals(4, relations.size());
+        assertEquals(4, response.size());
+    }
+
+    @Test
+    public void shouldFilterRelationsIfRevoked() {
+        buildRelationTreeIncludingRevoked();
+
+        final var response = relationDao.getRelations(CERTIFICATE_IDS, REVOKED_CERTIFICATE_IDS);
+
+        assertFalse(response.containsKey(REVOKED_CERTIFICATE_IDS.get(0)));
     }
 
     private void buildRelationTree() {
@@ -117,6 +127,20 @@ public class RelationDaoImplTest extends TestSupport {
         relationDao.store(r1);
         relationDao.store(r2);
         relationDao.store(r01);
+    }
+
+    private void buildRelationTreeIncludingRevoked() {
+        Relation r0 = new Relation(INTYG_1, INTYG_0, RelationKod.FRLANG.value(), LocalDateTime.now().minusDays(30));
+        Relation r1 = new Relation(INTYG_2, INTYG_1, RelationKod.ERSATT.value(), LocalDateTime.now().minusDays(20));
+        Relation r2 = new Relation(INTYG_3, INTYG_2, RelationKod.FRLANG.value(), LocalDateTime.now().minusDays(10));
+        Relation r01 = new Relation(INTYG_0_1, INTYG_0, RelationKod.KOMPLT.value(), LocalDateTime.now().minusDays(25));
+        Relation r001 = new Relation(INTYG_0, INTYG_0_1, RelationKod.KOMPLT.value(), LocalDateTime.now().minusDays(25));
+
+        relationDao.store(r0);
+        relationDao.store(r1);
+        relationDao.store(r2);
+        relationDao.store(r01);
+        relationDao.store(r001);
     }
 
 }
