@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -129,8 +131,8 @@ class CitizenCertificateDTOConverterImplTest {
 
         final var citizenCertificate = getCitizenCertificate();
 
-        when(citizenCertificateRecipientConverter.convert(citizenCertificate.getType(), citizenCertificate.getSentDate())).thenReturn(
-            expectedResult);
+        when(citizenCertificateRecipientConverter.convert(citizenCertificate.getType(), citizenCertificate.getSentDate()))
+                .thenReturn(Optional.of(expectedResult));
 
         final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
         assertEquals(expectedResult, actualResult.getRecipient());

@@ -21,6 +21,7 @@ import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateConv
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -157,9 +158,8 @@ class CitizenCertificateConverterImplTest {
                 .timestamp(LocalDateTime.now().toString())
                 .build();
 
-            when(citizenCertificateRelationConverter.convert(
-                    anyString(), anyString(), anyString(), any(LocalDateTime.class), anyString())
-            ).thenReturn(citizenCertificateRelationDTO);
+            when(citizenCertificateRelationConverter.convert(anyString(), any(Relation.class))
+            ).thenReturn(Optional.of(citizenCertificateRelationDTO));
         }
 
         @Test
@@ -174,51 +174,20 @@ class CitizenCertificateConverterImplTest {
             final var captor = ArgumentCaptor.forClass(String.class);
 
             verify(citizenCertificateRelationConverter).convert(
-                    captor.capture(), anyString(), anyString(), any(LocalDateTime.class), anyString()
+                    captor.capture(), any()
             );
             assertEquals(certificate.getId(), captor.getValue());
         }
 
         @Test
-        void shouldSendToIntygsIdToConverter() {
+        void shouldSendRelationToConverter() {
             citizenCertificateConverter.convert(certificate, List.of(relation));
-            final var captor = ArgumentCaptor.forClass(String.class);
+            final var captor = ArgumentCaptor.forClass(Relation.class);
 
             verify(citizenCertificateRelationConverter).convert(
-                    anyString(), captor.capture(), anyString(), any(LocalDateTime.class), anyString()
+                    anyString(), captor.capture()
             );
-            assertEquals(relation.getToIntygsId(), captor.getValue());
-        }
-
-        @Test
-        void shouldSendFromIntygsIdToConverter() {
-            citizenCertificateConverter.convert(certificate, List.of(relation));
-            final var captor = ArgumentCaptor.forClass(String.class);
-
-            verify(citizenCertificateRelationConverter).convert(
-                    anyString(),  anyString(), captor.capture(), any(LocalDateTime.class), anyString()
-            );
-            assertEquals(relation.getFromIntygsId(), captor.getValue());
-        }
-
-        @Test
-        void shouldSendCreatedToConverter() {
-            citizenCertificateConverter.convert(certificate, List.of(relation));
-            final var captor = ArgumentCaptor.forClass(LocalDateTime.class);
-
-            verify(citizenCertificateRelationConverter).convert(anyString(),  anyString(),  anyString(), captor.capture(), anyString());
-            assertEquals(relation.getCreated(), captor.getValue());
-        }
-
-        @Test
-        void shouldSendRelationKodToConverter() {
-            citizenCertificateConverter.convert(certificate, List.of(relation));
-            final var captor = ArgumentCaptor.forClass(String.class);
-
-            verify(citizenCertificateRelationConverter).convert(
-                    anyString(),  anyString(), anyString(), any(LocalDateTime.class), captor.capture()
-            );
-            assertEquals(relation.getRelationKod(), captor.getValue());
+            assertEquals(relation, captor.getValue());
         }
     }
 }

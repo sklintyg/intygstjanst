@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateFilterService;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
 public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFilterService {
 
     @Override
-    public boolean filter(CitizenCertificateDTO certificate, ListCitizenCertificatesRequestDTO request) {
+    public boolean filter(CitizenCertificateDTO certificate, CitizenCertificatesRequestDTO request) {
         return filterOnYears(certificate, request.getYears())
                 && filterOnUnits(certificate, request.getUnits())
                 && filterOnCertificateTypes(certificate, request.getCertificateTypes())

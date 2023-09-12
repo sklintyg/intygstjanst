@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationType;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateRelationConverterImpl;
 
@@ -25,43 +26,49 @@ class CitizenCertificateRelationConverterImplTest {
 
     @Test
     void shouldSetCertificateIdAsFromIdIfIdIsTo() {
-        final var response = citizenCertificateRelationConverter.convert(ID, ID, OTHER_ID, TIMESTAMP, CODE);
+        final var relation = new Relation(OTHER_ID, ID, CODE, TIMESTAMP);
+        final var response = citizenCertificateRelationConverter.convert(ID, relation);
 
-        assertEquals(OTHER_ID, response.getCertificateId());
+        assertEquals(OTHER_ID, response.get().getCertificateId());
     }
 
     @Test
     void shouldSetCertificateIdAsToIdIfIdIsFrom() {
-        final var response = citizenCertificateRelationConverter.convert(ID, OTHER_ID, ID, TIMESTAMP, CODE);
+        final var relation = new Relation(ID, OTHER_ID, CODE, TIMESTAMP);
+        final var response = citizenCertificateRelationConverter.convert(ID, relation);
 
-        assertEquals(ID, response.getCertificateId());
+        assertEquals(OTHER_ID, response.get().getCertificateId());
     }
 
     @Test
-    void shouldSetTypeRenewed() {
-        final var response = citizenCertificateRelationConverter.convert(ID, ID, OTHER_ID, TIMESTAMP, CODE);
+    void shouldSetTypeRenewedIfIdMatchesTo() {
+        final var relation = new Relation(OTHER_ID, ID, CODE, TIMESTAMP);
+        final var response = citizenCertificateRelationConverter.convert(ID, relation);
 
-        assertEquals(CitizenCertificateRelationType.RENEWED, response.getType());
+        assertEquals(CitizenCertificateRelationType.RENEWED, response.get().getType());
     }
 
     @Test
-    void shouldSetTypeRenews() {
-        final var response = citizenCertificateRelationConverter.convert(ID, OTHER_ID, ID, TIMESTAMP, CODE);
+    void shouldSetTypeRenewsIfIdMatchesFrom() {
+        final var relation = new Relation(ID, OTHER_ID, CODE, TIMESTAMP);
+        final var response = citizenCertificateRelationConverter.convert(ID, relation);
 
-        assertEquals(CitizenCertificateRelationType.RENEWS, response.getType());
+        assertEquals(CitizenCertificateRelationType.RENEWS, response.get().getType());
     }
 
     @Test
     void shouldSetTimestamp() {
-        final var response = citizenCertificateRelationConverter.convert(ID, ID, OTHER_ID, TIMESTAMP, CODE);
+        final var relation = new Relation(ID, OTHER_ID, CODE, TIMESTAMP);
+        final var response = citizenCertificateRelationConverter.convert(ID, relation);
 
-        assertEquals(TIMESTAMP.toString(), response.getTimestamp());
+        assertEquals(TIMESTAMP.toString(), response.get().getTimestamp());
     }
 
     @Test
-    void shouldReturnNullIfIdDoesntMatch() {
-        final var response = citizenCertificateRelationConverter.convert("NON_MATCHING_ID", ID, OTHER_ID, TIMESTAMP, CODE);
+    void shouldReturnOptionalEmptyIfIdDoesntMatch() {
+        final var relation = new Relation(ID, OTHER_ID, CODE, TIMESTAMP);
+        final var response = citizenCertificateRelationConverter.convert("NON_MATCHING_ID", relation);
 
-        assertNull(response);
+        assertTrue(response.isEmpty());
     }
 }

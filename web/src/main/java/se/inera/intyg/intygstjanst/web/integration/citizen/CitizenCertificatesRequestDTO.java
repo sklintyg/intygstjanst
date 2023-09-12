@@ -1,9 +1,10 @@
-package se.inera.intyg.intygstjanst.web.service.dto.citizen;
+package se.inera.intyg.intygstjanst.web.integration.citizen;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateStatusTypeDTO;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ListCitizenCertificatesRequestDTO {
+public class CitizenCertificatesRequestDTO {
     private String patientId;
     private List<CitizenCertificateStatusTypeDTO> statuses = Collections.emptyList();
     private List<String> units = Collections.emptyList();

@@ -17,6 +17,7 @@ import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepositor
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -65,7 +66,7 @@ class CitizenCertificatesRepositoryImplTest {
         void shouldNotCallCRelationDao() {
             citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
 
-            verify(relationDao, never()).getRelations(anyList());
+            verify(relationDao, never()).getRelations(anyList(), anyList());
         }
     }
 
@@ -115,7 +116,8 @@ class CitizenCertificatesRepositoryImplTest {
             void shouldSendNonRevokedRelations() {
                 final var relation = new Relation(CERTIFICATE_ID_1, CERTIFICATE_ID_2, "ERSATT", LocalDateTime.now());
                 final var revokedRelation = new Relation(REVOKED_CERTIFICATE_ID, CERTIFICATE_ID_1, "ERSATT", LocalDateTime.now());
-                Mockito.when(relationDao.getRelations(anyList())).thenReturn(List.of(relation, revokedRelation));
+                Mockito.when(relationDao.getRelations(anyList(), anyList()))
+                        .thenReturn(Map.of(CERTIFICATE_ID_1, List.of(relation), REVOKED_CERTIFICATE_ID, List.of(revokedRelation)));
                 final var captor = ArgumentCaptor.forClass(List.class);
 
                 citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
@@ -128,7 +130,7 @@ class CitizenCertificatesRepositoryImplTest {
             @Test
             void shouldFilterRelationsThatAreNotErsatt() {
                 final var relation = new Relation(CERTIFICATE_ID_2, CERTIFICATE_ID_1, "NOT_ERSATT", LocalDateTime.now());
-                Mockito.when(relationDao.getRelations(anyList())).thenReturn(List.of(relation));
+                Mockito.when(relationDao.getRelations(anyList(), anyList())).thenReturn(Map.of(CERTIFICATE_ID_1, List.of(relation)));
                 final var captor = ArgumentCaptor.forClass(List.class);
 
                 citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
@@ -140,7 +142,7 @@ class CitizenCertificatesRepositoryImplTest {
             @Test
             void shouldNotFilterErsattRelations() {
                 final var relation = new Relation(CERTIFICATE_ID_2, CERTIFICATE_ID_1, "ERSATT", LocalDateTime.now());
-                Mockito.when(relationDao.getRelations(anyList())).thenReturn(List.of(relation));
+                Mockito.when(relationDao.getRelations(anyList(), anyList())).thenReturn(Map.of(CERTIFICATE_ID_1, List.of(relation)));
                 final var captor = ArgumentCaptor.forClass(List.class);
 
                 citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
@@ -166,7 +168,7 @@ class CitizenCertificatesRepositoryImplTest {
 
                 final var captor = ArgumentCaptor.forClass(List.class);
 
-                verify(relationDao).getRelations(captor.capture());
+                verify(relationDao).getRelations(captor.capture(), anyList());
 
                 assertEquals(2, captor.getValue().size());
                 assertEquals(CERTIFICATES.get(0).getId(), captor.getValue().get(0));

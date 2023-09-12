@@ -3,7 +3,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.intygstjanst.web.service.*;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepository;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
@@ -33,7 +33,7 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
     }
 
     @Override
-    public List<CitizenCertificateDTO> get(ListCitizenCertificatesRequestDTO request) {
+    public List<CitizenCertificateDTO> get(CitizenCertificatesRequestDTO request) {
 
         final var certificates = citizenCertificatesRepository.getCertificatesForPatient(request.getPatientId());
 

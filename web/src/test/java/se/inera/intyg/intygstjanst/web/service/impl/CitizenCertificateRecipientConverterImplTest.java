@@ -65,21 +65,21 @@ class CitizenCertificateRecipientConverterImplTest {
         void shouldReturnRecipientIdOfHuvudmottagare() {
             final var response = citizenCertificateRecipientConverter.convert(CERTIFICATE_TYPE, null);
 
-            assertEquals(RECIPIENT_ID, response.getId());
+            assertEquals(RECIPIENT_ID, response.get().getId());
         }
 
         @Test
         void shouldReturnRecipientNameOfHuvudmottagare() {
             final var response = citizenCertificateRecipientConverter.convert(CERTIFICATE_TYPE, null);
 
-            assertEquals(RECIPIENT_NAME, response.getName());
+            assertEquals(RECIPIENT_NAME, response.get().getName());
         }
 
         @Test
         void shouldReturnNullAsSent() {
             final var response = citizenCertificateRecipientConverter.convert(CERTIFICATE_TYPE, null);
 
-            assertNull(response.getSent());
+            assertNull(response.get().getSent());
         }
     }
 
@@ -94,21 +94,21 @@ class CitizenCertificateRecipientConverterImplTest {
         void shouldReturnRecipientIdOfHuvudmottagare() {
             final var response = citizenCertificateRecipientConverter.convert(CERTIFICATE_TYPE, SENT_TIMESTAMP);
 
-            assertEquals(RECIPIENT_ID, response.getId());
+            assertEquals(RECIPIENT_ID, response.get().getId());
         }
 
         @Test
         void shouldReturnRecipientNameOfHuvudmottagare() {
             final var response = citizenCertificateRecipientConverter.convert(CERTIFICATE_TYPE, SENT_TIMESTAMP);
 
-            assertEquals(RECIPIENT_NAME, response.getName());
+            assertEquals(RECIPIENT_NAME, response.get().getName());
         }
 
         @Test
         void shouldReturnTimestampAsSent() {
             final var response = citizenCertificateRecipientConverter.convert(CERTIFICATE_TYPE, SENT_TIMESTAMP);
 
-            assertEquals(SENT_TIMESTAMP.toString(), response.getSent());
+            assertEquals(SENT_TIMESTAMP.toString(), response.get().getSent());
         }
     }
 
@@ -117,6 +117,6 @@ class CitizenCertificateRecipientConverterImplTest {
     void shouldReturnNullIfWrongType() {
         final var response = citizenCertificateRecipientConverter.convert("wrongType", SENT_TIMESTAMP);
 
-        assertNull(response);
+        assertTrue(response.isEmpty());
     }
 }

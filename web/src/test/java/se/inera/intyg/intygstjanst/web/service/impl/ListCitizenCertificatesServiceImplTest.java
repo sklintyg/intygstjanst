@@ -15,7 +15,7 @@ import se.inera.intyg.intygstjanst.web.service.CitizenCertificateFilterService;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateTextService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepositoryImpl;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -40,7 +40,7 @@ class ListCitizenCertificatesServiceImplTest {
     private static final String TYPE_VERSION = "Type version";
     private static final List<CitizenCertificateStatusTypeDTO> STATUSES = List.of(
             CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT);
-    private static final ListCitizenCertificatesRequestDTO REQUEST = ListCitizenCertificatesRequestDTO
+    private static final CitizenCertificatesRequestDTO REQUEST = CitizenCertificatesRequestDTO
             .builder()
             .certificateTypes(CERTIFICATE_TYPES)
             .patientId(PATIENT_ID)
@@ -199,7 +199,7 @@ class ListCitizenCertificatesServiceImplTest {
             void shouldSendFilterRequestToFilter() {
                 listCitizenCertificatesService.get(REQUEST);
 
-                final var captor = ArgumentCaptor.forClass(ListCitizenCertificatesRequestDTO.class);
+                final var captor = ArgumentCaptor.forClass(CitizenCertificatesRequestDTO.class);
 
                 verify(citizenCertificateFilterService).filter(any(), captor.capture());
 
