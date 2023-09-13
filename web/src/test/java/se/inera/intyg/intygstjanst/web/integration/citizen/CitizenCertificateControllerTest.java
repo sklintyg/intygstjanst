@@ -19,6 +19,11 @@
 
 package se.inera.intyg.intygstjanst.web.integration.citizen;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,12 +36,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.web.service.ListCitizenCertificatesService;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateStatusTypeDTO;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequest;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenCertificateControllerTest {
@@ -50,22 +50,23 @@ class CitizenCertificateControllerTest {
     class ListCitizenCertificates {
 
         private CitizenCertificatesRequestDTO request = CitizenCertificatesRequestDTO
-                .builder()
-                .patientId("191212121212")
-                .certificateTypes(List.of("Lisjp", "Ag7804"))
-                .statuses(List.of(CitizenCertificateStatusTypeDTO.NOT_SENT, CitizenCertificateStatusTypeDTO.SENT))
-                .units(List.of("UNIT_1"))
-                .years(List.of("2020"))
-                .build();
+            .builder()
+            .patientId("191212121212")
+            .certificateTypes(List.of("Lisjp", "Ag7804"))
+            .statuses(List.of(CitizenCertificateStatusTypeDTO.NOT_SENT, CitizenCertificateStatusTypeDTO.SENT))
+            .units(List.of("UNIT_1"))
+            .years(List.of("2020"))
+            .build();
 
         @Nested
         class Request {
+
             @Test
             void shouldSetPatientId() {
                 citizenCertificateController.getCitizenCertificates(request);
 
                 final var captor = ArgumentCaptor.forClass(
-                        se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO.class
+                    ListCitizenCertificatesRequest.class
                 );
 
                 verify(listCitizenCertificatesService).get(captor.capture());
@@ -78,7 +79,7 @@ class CitizenCertificateControllerTest {
                 citizenCertificateController.getCitizenCertificates(request);
 
                 final var captor = ArgumentCaptor.forClass(
-                        se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO.class
+                    ListCitizenCertificatesRequest.class
                 );
 
                 verify(listCitizenCertificatesService).get(captor.capture());
@@ -91,7 +92,7 @@ class CitizenCertificateControllerTest {
                 citizenCertificateController.getCitizenCertificates(request);
 
                 final var captor = ArgumentCaptor.forClass(
-                        se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO.class
+                    ListCitizenCertificatesRequest.class
                 );
 
                 verify(listCitizenCertificatesService).get(captor.capture());
@@ -104,7 +105,7 @@ class CitizenCertificateControllerTest {
                 citizenCertificateController.getCitizenCertificates(request);
 
                 final var captor = ArgumentCaptor.forClass(
-                        se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO.class
+                    ListCitizenCertificatesRequest.class
                 );
 
                 verify(listCitizenCertificatesService).get(captor.capture());
@@ -117,7 +118,7 @@ class CitizenCertificateControllerTest {
                 citizenCertificateController.getCitizenCertificates(request);
 
                 final var captor = ArgumentCaptor.forClass(
-                        se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO.class
+                    ListCitizenCertificatesRequest.class
                 );
 
                 verify(listCitizenCertificatesService).get(captor.capture());
@@ -131,11 +132,12 @@ class CitizenCertificateControllerTest {
 
             CitizenCertificateDTO expectedCertificate = CitizenCertificateDTO.builder().build();
             List<CitizenCertificateDTO> expectedContent = List.of(expectedCertificate);
+
             @BeforeEach
             void setup() {
                 Mockito
-                        .when(listCitizenCertificatesService.get(any()))
-                        .thenReturn(expectedContent);
+                    .when(listCitizenCertificatesService.get(any()))
+                    .thenReturn(expectedContent);
             }
 
             @Test

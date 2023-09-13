@@ -19,23 +19,22 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import java.util.List;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateFilterService;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO;
-
-import java.util.List;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateStatusTypeDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequest;
 
 @Service
 public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFilterService {
 
     @Override
-    public boolean filter(CitizenCertificateDTO certificate, CitizenCertificatesRequestDTO request) {
+    public boolean filter(CitizenCertificateDTO certificate, ListCitizenCertificatesRequest request) {
         return filterOnYears(certificate, request.getYears())
-                && filterOnUnits(certificate, request.getUnits())
-                && filterOnCertificateTypes(certificate, request.getCertificateTypes())
-                && filterOnSentStatus(certificate, request.getStatuses());
+            && filterOnUnits(certificate, request.getUnits())
+            && filterOnCertificateTypes(certificate, request.getCertificateTypes())
+            && filterOnSentStatus(certificate, request.getStatuses());
     }
 
     private boolean filterOnYears(CitizenCertificateDTO certificate, List<String> includedYears) {
@@ -46,8 +45,8 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
         final var signedYear = certificate.getIssued().getYear();
 
         return includedYears
-                .stream()
-                .anyMatch((year) -> Integer.parseInt(year) == signedYear);
+            .stream()
+            .anyMatch((year) -> Integer.parseInt(year) == signedYear);
     }
 
     private boolean filterOnSentStatus(CitizenCertificateDTO certificate, List<CitizenCertificateStatusTypeDTO> statuses) {

@@ -20,9 +20,10 @@
 package se.inera.intyg.intygstjanst.web.service;
 
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequest;
 
 
 public interface CitizenCertificateFilterService {
-    boolean filter(CitizenCertificateDTO certificate, CitizenCertificatesRequestDTO request);
+
+    boolean filter(CitizenCertificateDTO certificate, ListCitizenCertificatesRequest request);
 }

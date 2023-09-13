@@ -19,6 +19,13 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,22 +35,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateDTOConverter;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateFilterService;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateTextService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificatesRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateStatusTypeDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequest;
 import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepositoryImpl;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ListCitizenCertificatesServiceImplTest {
@@ -57,20 +57,20 @@ class ListCitizenCertificatesServiceImplTest {
     private static final String TYPE_ID = "Type id";
     private static final String TYPE_VERSION = "Type version";
     private static final List<CitizenCertificateStatusTypeDTO> STATUSES = List.of(
-            CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT);
-    private static final CitizenCertificatesRequestDTO REQUEST = CitizenCertificatesRequestDTO
-            .builder()
-            .certificateTypes(CERTIFICATE_TYPES)
-            .patientId(PATIENT_ID)
-            .years(YEARS)
-            .units(UNITS)
-            .statuses(STATUSES)
-            .build();
+        CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT);
+    private static final ListCitizenCertificatesRequest REQUEST = ListCitizenCertificatesRequest
+        .builder()
+        .certificateTypes(CERTIFICATE_TYPES)
+        .patientId(PATIENT_ID)
+        .years(YEARS)
+        .units(UNITS)
+        .statuses(STATUSES)
+        .build();
     private static final List<CitizenCertificate> REPO_RESPONSE = List.of(CitizenCertificate
-            .builder()
-            .type(TYPE_ID)
-            .typeVersion(TYPE_VERSION)
-            .build()
+        .builder()
+        .type(TYPE_ID)
+        .typeVersion(TYPE_VERSION)
+        .build()
     );
     private static final CitizenCertificateDTO CITIZEN_CERTIFICATE_DTO = CitizenCertificateDTO.builder().build();
 
@@ -90,6 +90,7 @@ class ListCitizenCertificatesServiceImplTest {
 
     @Nested
     class RepositoryRequest {
+
         @Test
         void shouldSetPatientId() {
             listCitizenCertificatesService.get(REQUEST);
@@ -97,7 +98,7 @@ class ListCitizenCertificatesServiceImplTest {
             final var captor = ArgumentCaptor.forClass(String.class);
 
             verify(citizenCertificatesRepository)
-                    .getCertificatesForPatient(captor.capture());
+                .getCertificatesForPatient(captor.capture());
 
             assertEquals(PATIENT_ID, captor.getValue());
         }
@@ -105,6 +106,7 @@ class ListCitizenCertificatesServiceImplTest {
 
     @Nested
     class Response {
+
         @BeforeEach
         void setup() throws ModuleNotFoundException {
             when(citizenCertificateTextService.getAdditionalInfoLabel(any(), any())).thenReturn(ADDITIONAL_INFO_LABEL);
@@ -113,7 +115,7 @@ class ListCitizenCertificatesServiceImplTest {
             when(citizenCertificateDTOConverter.convert(any(), any(), any())).thenReturn(CITIZEN_CERTIFICATE_DTO);
 
             when(citizenCertificatesRepository.getCertificatesForPatient(any()))
-                    .thenReturn(REPO_RESPONSE);
+                .thenReturn(REPO_RESPONSE);
         }
 
         @Test
@@ -129,6 +131,7 @@ class ListCitizenCertificatesServiceImplTest {
 
         @Nested
         class TextService {
+
             @Test
             void shouldSendTypeToGetTypeName() throws ModuleNotFoundException {
                 listCitizenCertificatesService.get(REQUEST);
@@ -202,6 +205,7 @@ class ListCitizenCertificatesServiceImplTest {
 
         @Nested
         class Filter {
+
             @Test
             void shouldSendCertificateReturnedFromConverterToFilter() {
                 listCitizenCertificatesService.get(REQUEST);
@@ -217,7 +221,7 @@ class ListCitizenCertificatesServiceImplTest {
             void shouldSendFilterRequestToFilter() {
                 listCitizenCertificatesService.get(REQUEST);
 
-                final var captor = ArgumentCaptor.forClass(CitizenCertificatesRequestDTO.class);
+                final var captor = ArgumentCaptor.forClass(ListCitizenCertificatesRequest.class);
 
                 verify(citizenCertificateFilterService).filter(any(), captor.capture());
 
