@@ -64,12 +64,6 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     }
 
     @Override
-    public void logCertificateListedByCitizen(String citizenId) {
-        final var personnummer = Personnummer.createPersonnummer(citizenId).orElseThrow();
-        logEvent(MonitoringEvent.CERTIFICATE_LISTED_BY_CITIZEN, Personnummer.getPersonnummerHashSafe(personnummer));
-    }
-
-    @Override
     public void logCertificateListedByCare(Personnummer citizenId) {
         logEvent(MonitoringEvent.CERTIFICATE_LISTED_BY_CARE, Personnummer.getPersonnummerHashSafe(citizenId));
     }

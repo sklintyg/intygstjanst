@@ -34,8 +34,6 @@ public interface MonitoringLogService {
 
     void logCertificateListedByCitizen(Personnummer citizenId);
 
-    void logCertificateListedByCitizen(String citizenId);
-
     void logCertificateListedByCare(Personnummer citizenId);
 
     void logCertificateStatusChanged(String certificateId, String status);
@@ -56,8 +54,9 @@ public interface MonitoringLogService {
 
     /**
      * Log that the test certificate has been erased.
+     *
      * @param certificateId Id of the certificate.
-     * @param careUnit  Care unit from which the certificate was issued from
+     * @param careUnit Care unit from which the certificate was issued from
      */
     void logTestCertificateErased(String certificateId, String careUnit);
 }

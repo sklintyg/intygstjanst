@@ -22,12 +22,13 @@ package se.inera.intyg.intygstjanst.web.service.dto.citizen;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 @Data
 @Builder
 public class ListCitizenCertificatesRequest {
 
-    private String patientId;
+    private Personnummer personnummer;
     private List<CitizenCertificateStatusTypeDTO> statuses;
     private List<String> units;
     private List<String> certificateTypes;

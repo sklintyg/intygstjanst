@@ -71,7 +71,7 @@ class CitizenCertificateControllerTest {
 
                 verify(listCitizenCertificatesService).get(captor.capture());
 
-                assertEquals(request.getPatientId(), captor.getValue().getPatientId());
+                assertEquals(request.getPatientId(), captor.getValue().getPersonnummer().getOriginalPnr());
             }
 
             @Test

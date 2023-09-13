@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.service.ListCitizenCertificatesService;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequest;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 @Path("/citizen")
 public class CitizenCertificateController {
@@ -55,7 +56,7 @@ public class CitizenCertificateController {
         final var response = listCitizenCertificatesService.get(
             ListCitizenCertificatesRequest
                 .builder()
-                .patientId(request.getPatientId())
+                .personnummer(Personnummer.createPersonnummer(request.getPatientId()).orElseThrow())
                 .certificateTypes(request.getCertificateTypes())
                 .units(request.getUnits())
                 .years(request.getYears())

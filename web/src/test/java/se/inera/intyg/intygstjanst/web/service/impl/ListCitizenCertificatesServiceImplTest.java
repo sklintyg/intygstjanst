@@ -44,11 +44,14 @@ import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateSta
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequest;
 import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepositoryImpl;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 @ExtendWith(MockitoExtension.class)
 class ListCitizenCertificatesServiceImplTest {
 
     private static final String PATIENT_ID = "191212121212";
+
+    private static final Personnummer PATIENT_ID_AS_PERSONNUMMER = Personnummer.createPersonnummer(PATIENT_ID).orElseThrow();
     private static final List<String> UNITS = List.of("Unit 1", "Unit 2");
     private static final List<String> CERTIFICATE_TYPES = List.of("lisjp", "ag7804");
     private static final List<String> YEARS = List.of("2020", "2021");
@@ -61,7 +64,7 @@ class ListCitizenCertificatesServiceImplTest {
     private static final ListCitizenCertificatesRequest REQUEST = ListCitizenCertificatesRequest
         .builder()
         .certificateTypes(CERTIFICATE_TYPES)
-        .patientId(PATIENT_ID)
+        .personnummer(PATIENT_ID_AS_PERSONNUMMER)
         .years(YEARS)
         .units(UNITS)
         .statuses(STATUSES)
@@ -122,11 +125,11 @@ class ListCitizenCertificatesServiceImplTest {
         void shouldLogWithPatientId() {
             listCitizenCertificatesService.get(REQUEST);
 
-            final var captor = ArgumentCaptor.forClass(String.class);
+            final var captor = ArgumentCaptor.forClass(Personnummer.class);
 
             verify(monitoringLogService).logCertificateListedByCitizen(captor.capture());
 
-            assertEquals(PATIENT_ID, captor.getValue());
+            assertEquals(PATIENT_ID, captor.getValue().getOriginalPnr());
         }
 
         @Nested
