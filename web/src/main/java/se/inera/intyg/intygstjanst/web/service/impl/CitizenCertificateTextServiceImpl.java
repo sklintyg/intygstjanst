@@ -45,7 +45,7 @@ public class CitizenCertificateTextServiceImpl implements CitizenCertificateText
     @Override
     public String getAdditionalInfoLabel(String typeId, String typeVersion) {
         try {
-            final var moduleApi = intygModuleRegistry.getModuleApi(typeId, typeVersion);
+            intygModuleRegistry.getModuleApi(typeId, typeVersion);
         } catch (ModuleNotFoundException e) {
             throw new RuntimeException(e);
         }
