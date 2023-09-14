@@ -56,7 +56,8 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
     @Override
     public List<CitizenCertificateDTO> get(ListCitizenCertificatesRequest request) {
 
-        final var certificates = citizenCertificatesRepository.getCertificatesForPatient(request.getPersonnummer().getPersonnummerWithDash());
+        final var certificates = citizenCertificatesRepository
+                .getCertificatesForPatient(request.getPersonnummer().getPersonnummerWithDash());
 
         monitoringLogService.logCertificateListedByCitizen(request.getPersonnummer());
 
