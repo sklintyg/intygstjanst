@@ -481,6 +481,37 @@ public class CertificateDaoImpl implements CertificateDao {
         return entityManager.createQuery(query).getResultList();
     }
 
+    @Override
+    public List<Certificate> findCertificatesForPatient(String patientId) {
+        final var criteriaBuilder = entityManager.getCriteriaBuilder();
+        final var query = criteriaBuilder.createQuery(Certificate.class);
+        final var queryRoot = query.from(Certificate.class);
+
+        queryRoot.fetch("states", JoinType.LEFT);
+        queryRoot.fetch("certificateMetaData", JoinType.INNER);
+        queryRoot.fetch("originalCertificate", JoinType.INNER);
+
+        final var predicates = new ArrayList<Predicate>();
+
+        predicates.add(
+                criteriaBuilder.isFalse(
+                        queryRoot.get("testCertificate")
+                )
+        );
+
+        if (patientId != null) {
+            predicates.add(
+                    criteriaBuilder.equal(
+                            queryRoot.get("civicRegistrationNumber"), patientId
+                    )
+            );
+        }
+
+        query.where(predicates.toArray(new Predicate[predicates.size()]));
+
+        return filterDuplicates(entityManager.createQuery(query).getResultList());
+    }
+
     private List<String> toLowerCase(List<String> list) {
         List<String> result = new ArrayList<>();
         for (String item : list) {

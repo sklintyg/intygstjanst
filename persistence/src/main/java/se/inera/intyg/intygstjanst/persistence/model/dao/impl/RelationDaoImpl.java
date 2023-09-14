@@ -18,10 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -61,6 +58,40 @@ public class RelationDaoImpl implements RelationDao {
         return entityManager.createQuery("SELECT r FROM Relation r WHERE r.fromIntygsId = :intygsId", Relation.class)
             .setParameter("intygsId", intygsId)
             .getResultList();
+    }
+
+    @Override
+    public Map<String, List<Relation>> getRelations(List<String> certificateIds, List<String> revokedCertificateIds) {
+        final var query = entityManager.createQuery(
+                "SELECT r FROM Relation r "
+                        + "WHERE r.toIntygsId IN :certificateIds OR r.fromIntygsId IN :certificateIds",
+                        Relation.class
+                )
+                .setParameter("certificateIds", certificateIds);
+
+        final var relations = query.getResultList()
+                .stream()
+                .filter((relation) ->
+                        !revokedCertificateIds.contains(relation.getToIntygsId())
+                                && !revokedCertificateIds.contains(relation.getFromIntygsId()))
+                .collect(Collectors.toList());
+
+        return certificateIds
+                .stream()
+                .filter((id) -> !revokedCertificateIds.contains(id))
+                .collect(
+                        Collectors.toMap(id -> id, id -> getRelationsForCertificate(relations, id))
+                );
+    }
+
+    private List<Relation> getRelationsForCertificate(List<Relation> relations, String certificateId) {
+        return relations
+                .stream()
+                .filter(
+                        (relation) -> relation.getToIntygsId().equals(certificateId)
+                                || relation.getFromIntygsId().equals(certificateId)
+                )
+                .collect(Collectors.toList());
     }
 
     @Override
