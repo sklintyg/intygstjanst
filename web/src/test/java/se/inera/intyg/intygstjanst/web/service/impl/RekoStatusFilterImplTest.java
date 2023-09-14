@@ -24,11 +24,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.sjukfall.dto.*;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Reko;
-import se.inera.intyg.intygstjanst.persistence.model.dao.RekoRepository;
 import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 
 import java.time.LocalDate;
@@ -36,18 +34,13 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class GetRekoStatusImplTest {
-    @Mock
-    private RekoRepository rekoRepository;
-
+class RekoStatusFilterImplTest {
+                                 
     @InjectMocks
-    private GetRekoStatusServiceImpl getRekoStatusService;
+    private RekoStatusFilterImpl rekoStatusFilter;
 
     private static final String PATIENT_ID_1 = "191212121213";
     private static final String PATIENT_ID_2 = "191212121212";
@@ -133,121 +126,74 @@ class GetRekoStatusImplTest {
     }
 
     @Nested
-    class TestRekoRepository {
-    }
-
-    @Nested
-    class TestGetRekoStatusForSickLeaves {
+    class FilterRekoStatus {
 
         @Test
-        void shouldNotSetRekoStatusForWrongPatientId() {
-            final var result = getRekoStatusService.get(REKO_STATUSES,
+        void shouldNotReturnRekoStatusForWrongPatientId() {
+            final var result = rekoStatusFilter.filter(REKO_STATUSES,
                     SICK_LEAVES.get(2).getPatient().getId(),
                     SICK_LEAVES.get(2).getSlut(),
                     SICK_LEAVES.get(2).getStart()
             );
 
-            assertNull(result);
+            assertTrue(result.isEmpty());
         }
 
         @Test
-        void shouldNotSetRekoStatusIfSickLeaveTimeStampIsBeforeStartDate() {
-            final var result = getRekoStatusService.get(REKO_STATUSES,
+        void shouldNotReturnRekoStatusIfSickLeaveTimeStampIsBeforeStartDate() {
+            final var result = rekoStatusFilter.filter(REKO_STATUSES,
                     SICK_LEAVES.get(0).getPatient().getId(),
                     SICK_LEAVES.get(0).getSlut(),
                     SICK_LEAVES.get(0).getStart()
             );
 
-            assertNull(result);
+            assertTrue(result.isEmpty());
         }
 
         @Test
-        void shouldNotSetRekoStatusIfSickLeaveTimeStampIsAfterEndDate() {
-            final var result = getRekoStatusService.get(REKO_STATUSES,
+        void shouldNotReturnRekoStatusIfSickLeaveTimeStampIsAfterEndDate() {
+            final var result = rekoStatusFilter.filter(REKO_STATUSES,
                     SICK_LEAVES.get(1).getPatient().getId(),
                     SICK_LEAVES.get(1).getSlut(),
                     SICK_LEAVES.get(1).getStart()
             );
 
-            assertNull(result);
+            assertTrue(result.isEmpty());
         }
 
         @Test
-        void shouldSetLatestRekoStatusIfTwoAreCorrect() {
-            final var result = getRekoStatusService.get(REKO_STATUSES,
+        void shouldReturnLatestRekoStatusIfTwoAreCorrect() {
+            final var result = rekoStatusFilter.filter(REKO_STATUSES,
                     SICK_LEAVES.get(3).getPatient().getId(),
                     SICK_LEAVES.get(3).getSlut(),
                     SICK_LEAVES.get(3).getStart()
             );
 
-            assertEquals(RekoStatusType.REKO_4.getName(), result.getStatus().getName());
-            assertEquals(RekoStatusType.REKO_4.toString(), result.getStatus().getId());
-        }
-    }
-
-    @Nested
-    class TestGetRekoStatusForPatient {
-        @BeforeEach
-        void setup() {
-            when(rekoRepository.findByPatientId(anyString())).thenReturn(REKO_STATUSES);
+            assertEquals(RekoStatusType.REKO_4.toString(), result.get().getStatus());
         }
 
         @Test
-        void shouldNotSetRekoStatusIfSickLeaveTimeStampIsBeforeStartDate() {
-            final var result = getRekoStatusService.get(
-                    SICK_LEAVES.get(0).getPatient().getId(),
-                    SICK_LEAVES.get(0).getSlut(),
-                    SICK_LEAVES.get(0).getStart()
-            );
-
-            assertNull(result);
-        }
-
-        @Test
-        void shouldNotSetRekoStatusIfSickLeaveTimeStampIsAfterEndDate() {
-            final var result = getRekoStatusService.get(
-                    SICK_LEAVES.get(1).getPatient().getId(),
-                    SICK_LEAVES.get(1).getSlut(),
-                    SICK_LEAVES.get(1).getStart()
-            );
-
-            assertNull(result);
-        }
-
-        @Test
-        void shouldSetLatestRekoStatusIfTwoAreCorrect() {
-            final var result = getRekoStatusService.get(
-                    SICK_LEAVES.get(3).getPatient().getId(),
-                    SICK_LEAVES.get(3).getSlut(),
-                    SICK_LEAVES.get(3).getStart()
-            );
-
-            assertEquals(RekoStatusType.REKO_4.getName(), result.getStatus().getName());
-            assertEquals(RekoStatusType.REKO_4.toString(), result.getStatus().getId());
-        }
-
-        @Test
-        void shouldSetRekoStatusForSickLeaveWithStartDateEqualToSickLeaveDate() {
-            final var result = getRekoStatusService.get(
+        void shouldReturnRekoStatusWithStartDateEqualToSickLeaveDate() {
+            final var result = rekoStatusFilter.filter(
+                    REKO_STATUSES,
                     SICK_LEAVES.get(4).getPatient().getId(),
                     SICK_LEAVES.get(4).getSlut(),
                     SICK_LEAVES.get(4).getStart()
             );
 
-            assertEquals(RekoStatusType.REKO_5.getName(), result.getStatus().getName());
-            assertEquals(RekoStatusType.REKO_5.toString(), result.getStatus().getId());
+            assertEquals(RekoStatusType.REKO_5.toString(), result.get().getStatus());
         }
 
         @Test
         void shouldSetRekoStatusForSickLeaveWithEndDateEqualToSickLeaveDate() {
-            final var result = getRekoStatusService.get(
+            final var result = rekoStatusFilter.filter(
+                    REKO_STATUSES,
                     SICK_LEAVES.get(5).getPatient().getId(),
                     SICK_LEAVES.get(5).getSlut(),
                     SICK_LEAVES.get(5).getStart()
             );
 
-            assertEquals(RekoStatusType.REKO_6.getName(), result.getStatus().getName());
-            assertEquals(RekoStatusType.REKO_6.toString(), result.getStatus().getId());
+            assertEquals(RekoStatusType.REKO_6.toString(), result.get().getStatus());
         }
     }
 

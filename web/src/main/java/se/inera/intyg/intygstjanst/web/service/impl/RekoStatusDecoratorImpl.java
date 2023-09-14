@@ -20,10 +20,13 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
+import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RekoRepository;
-import se.inera.intyg.intygstjanst.web.service.GetRekoStatusService;
+import se.inera.intyg.intygstjanst.web.service.RekoStatusConverter;
 import se.inera.intyg.intygstjanst.web.service.RekoStatusDecorator;
+import se.inera.intyg.intygstjanst.web.service.RekoStatusFilter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,16 +35,20 @@ import java.util.stream.Collectors;
 public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
 
     final RekoRepository rekoRepository;
-    final GetRekoStatusService getRekoStatusService;
+    final RekoStatusFilter rekoStatusFilter;
+    final RekoStatusConverter rekoStatusConverter;
 
-    public RekoStatusDecoratorImpl(RekoRepository rekoRepository, GetRekoStatusService getRekoStatusService) {
+    public RekoStatusDecoratorImpl(RekoRepository rekoRepository,
+                                   RekoStatusFilter rekoStatusFilter,
+                                   RekoStatusConverter rekoStatusConverter) {
         this.rekoRepository = rekoRepository;
-        this.getRekoStatusService = getRekoStatusService;
+        this.rekoStatusFilter = rekoStatusFilter;
+        this.rekoStatusConverter = rekoStatusConverter;
     }
 
     @Override
     public void decorate(List<SjukfallEnhet> sickLeaves, String careUnitId) {
-        if (sickLeaves.size() == 0) {
+        if (sickLeaves.isEmpty()) {
             return;
         }
 
@@ -53,12 +60,16 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
 
         );
 
-        sickLeaves.forEach((sickLeave) -> sickLeave.setRekoStatus(
-                getRekoStatusService.get(rekoStatuses,
-                        sickLeave.getPatient().getId(),
-                        sickLeave.getSlut(),
-                        sickLeave.getStart())
-                )
-        );
+        sickLeaves.forEach((sickLeave) -> sickLeave.setRekoStatus(getRekoStatus(sickLeave, rekoStatuses)));
+    }
+
+    private RekoStatusDTO getRekoStatus(SjukfallEnhet sickLeave, List<Reko> rekoStatuses) {
+        final var filteredRekoStatus = rekoStatusFilter.filter(
+                rekoStatuses,
+                sickLeave.getPatient().getId(),
+                sickLeave.getSlut(),
+                sickLeave.getStart());
+
+        return filteredRekoStatus.map(rekoStatusConverter::convert).orElse(null);
     }
 }

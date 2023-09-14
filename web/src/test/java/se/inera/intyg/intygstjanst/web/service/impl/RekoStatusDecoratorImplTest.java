@@ -30,26 +30,28 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.sjukfall.dto.*;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RekoRepository;
-import se.inera.intyg.intygstjanst.web.service.GetRekoStatusService;
+import se.inera.intyg.intygstjanst.web.service.RekoStatusConverter;
+import se.inera.intyg.intygstjanst.web.service.RekoStatusFilter;
 import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RekoStatusDecoratorImplTest {
     @Mock
     private RekoRepository rekoRepository;
-
     @Mock
-    private GetRekoStatusService getRekoStatusService;
+    private RekoStatusFilter rekoStatusFilter;
+    @Mock
+    private RekoStatusConverter rekoStatusConverter;
 
     @InjectMocks
     private RekoStatusDecoratorImpl rekoStatusDecorator;
@@ -59,6 +61,7 @@ class RekoStatusDecoratorImplTest {
     private static final String CARE_UNIT_ID = "CareUnitId";
     private static List<SjukfallEnhet> SICK_LEAVES;
     private static final LocalDate SICK_LEAVE_TIMESTAMP = LocalDate.now();
+    private static final Reko FILTERED_REKO = new Reko();
 
     private static Reko getRekoStatus(String patientId, String status, LocalDateTime registrationTimestamp) {
         final var reko = new Reko();
@@ -72,8 +75,7 @@ class RekoStatusDecoratorImplTest {
 
     private static final List<Reko> REKO_STATUSES = Arrays.asList(
             getRekoStatus(PATIENT_ID_1, RekoStatusType.REKO_3.toString(), LocalDateTime.now()),
-            getRekoStatus(PATIENT_ID_2, RekoStatusType.REKO_3.toString(), LocalDateTime.now())
-    );
+            getRekoStatus(PATIENT_ID_2, RekoStatusType.REKO_3.toString(), LocalDateTime.now()));
 
     private SjukfallEnhet setUpSickLeave(String patientId, LocalDate start, LocalDate end) {
         final var sickLeave = new SjukfallEnhet();
@@ -103,6 +105,10 @@ class RekoStatusDecoratorImplTest {
                 firstSickLeave,
                 secondSickLeave
         );
+
+        when(rekoStatusFilter
+                .filter(anyList(), anyString(), any(LocalDate.class), any(LocalDate.class)))
+                .thenReturn(Optional.of(FILTERED_REKO));
     }
 
     @Nested
@@ -136,7 +142,25 @@ class RekoStatusDecoratorImplTest {
         @BeforeEach
         void setup() {
             when(rekoRepository.findByPatientIdInAndCareUnitId(anyList(), anyString())).thenReturn(REKO_STATUSES);
-            when(getRekoStatusService.get(anyList(), anyString(), any(LocalDate.class), any(LocalDate.class))).thenReturn(reko);
+            when(rekoStatusConverter.convert(any(Reko.class))).thenReturn(reko);
+        }
+
+        @Test
+        void shouldSendFilteredRekoStatusToConverter() {
+            rekoStatusDecorator.decorate(SICK_LEAVES, CARE_UNIT_ID);
+
+            final var captor = ArgumentCaptor.forClass(Reko.class);
+
+            verify(rekoStatusConverter, times(REKO_STATUSES.size())).convert(captor.capture());
+            assertEquals(FILTERED_REKO, captor.getValue());
+        }
+
+        @Test
+        void shouldCallFilteredRekoStatusForEachSickLeave() {
+            rekoStatusDecorator.decorate(SICK_LEAVES, CARE_UNIT_ID);
+
+            verify(rekoStatusFilter, times(SICK_LEAVES.size()))
+                    .filter(anyList(), anyString(), any(LocalDate.class), any(LocalDate.class));
         }
 
         @Test

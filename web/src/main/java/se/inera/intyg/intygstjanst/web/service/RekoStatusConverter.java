@@ -20,9 +20,8 @@
 package se.inera.intyg.intygstjanst.web.service;
 
 import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Reko;
 
-import java.time.LocalDate;
-
-public interface GetRekoStatusService {
-    RekoStatusDTO get(String patientId, LocalDate endDate, LocalDate startDate);
+public interface RekoStatusConverter {
+    RekoStatusDTO convert(Reko rekoStatus);
 }
