@@ -34,7 +34,9 @@ public class GetRekoStatusServiceImpl implements GetRekoStatusService {
     private final RekoStatusFilter rekoStatusFilter;
     private final RekoStatusConverter rekoStatusConverter;
 
-    public GetRekoStatusServiceImpl(RekoRepository rekoRepository, RekoStatusFilter rekoStatusFilter, RekoStatusConverter rekoStatusConverter) {
+    public GetRekoStatusServiceImpl(RekoRepository rekoRepository,
+                                    RekoStatusFilter rekoStatusFilter,
+                                    RekoStatusConverter rekoStatusConverter) {
         this.rekoRepository = rekoRepository;
         this.rekoStatusFilter = rekoStatusFilter;
         this.rekoStatusConverter = rekoStatusConverter;
