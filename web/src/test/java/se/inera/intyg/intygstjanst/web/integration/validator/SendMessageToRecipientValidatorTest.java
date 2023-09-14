@@ -237,7 +237,7 @@ public class SendMessageToRecipientValidatorTest {
     public void shouldContainSpecificValidationErrorIfCertificateIsNotSent() throws InvalidCertificateException {
         when(certificateService.getCertificateForCare(INTYG_ID)).thenReturn(buildCertificate(PATIENT_CRN, CertificateState.UNHANDLED));
         List<String> validationErrors = validator.validate(buildOkMessage(PATIENT_CRN));
-        final var expectedResult = "Certificate is not sent to recipient";
+        String expectedResult = "Certificate is not sent to recipient";
 
         assertTrue(validationErrors.contains(expectedResult));
     }
