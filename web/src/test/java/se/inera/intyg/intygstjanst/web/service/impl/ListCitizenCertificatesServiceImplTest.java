@@ -50,7 +50,7 @@ import se.inera.intyg.schemas.contract.Personnummer;
 class ListCitizenCertificatesServiceImplTest {
 
     private static final String PATIENT_ID = "191212121212";
-
+    private static final String PATIENT_ID_WITH_DASH = "19121212-1212";
     private static final Personnummer PATIENT_ID_AS_PERSONNUMMER = Personnummer.createPersonnummer(PATIENT_ID).orElseThrow();
     private static final List<String> UNITS = List.of("Unit 1", "Unit 2");
     private static final List<String> CERTIFICATE_TYPES = List.of("lisjp", "ag7804");
@@ -103,7 +103,7 @@ class ListCitizenCertificatesServiceImplTest {
             verify(citizenCertificatesRepository)
                 .getCertificatesForPatient(captor.capture());
 
-            assertEquals(PATIENT_ID, captor.getValue());
+            assertEquals(PATIENT_ID_WITH_DASH, captor.getValue());
         }
     }
 
@@ -136,7 +136,7 @@ class ListCitizenCertificatesServiceImplTest {
         class TextService {
 
             @Test
-            void shouldSendTypeToGetTypeName() throws ModuleNotFoundException {
+            void shouldSendTypeToGetTypeName() {
                 listCitizenCertificatesService.get(REQUEST);
 
                 final var captor = ArgumentCaptor.forClass(String.class);
@@ -147,7 +147,7 @@ class ListCitizenCertificatesServiceImplTest {
             }
 
             @Test
-            void shouldSendTypeToGetAdditionalInfoLabel() throws ModuleNotFoundException {
+            void shouldSendTypeToGetAdditionalInfoLabel() {
                 listCitizenCertificatesService.get(REQUEST);
 
                 final var captor = ArgumentCaptor.forClass(String.class);
@@ -158,7 +158,7 @@ class ListCitizenCertificatesServiceImplTest {
             }
 
             @Test
-            void shouldSendTypeVersionToGetAdditionalInfoLabel() throws ModuleNotFoundException {
+            void shouldSendTypeVersionToGetAdditionalInfoLabel() {
                 listCitizenCertificatesService.get(REQUEST);
 
                 final var captor = ArgumentCaptor.forClass(String.class);
@@ -173,7 +173,7 @@ class ListCitizenCertificatesServiceImplTest {
         class Converter {
 
             @Test
-            void shouldSendTypeNameToConverter() throws ModuleNotFoundException {
+            void shouldSendTypeNameToConverter() {
                 listCitizenCertificatesService.get(REQUEST);
 
                 final var captor = ArgumentCaptor.forClass(String.class);
@@ -184,7 +184,7 @@ class ListCitizenCertificatesServiceImplTest {
             }
 
             @Test
-            void shouldSendAdditionalInfoLabelToConverter() throws ModuleNotFoundException {
+            void shouldSendAdditionalInfoLabelToConverter() {
                 listCitizenCertificatesService.get(REQUEST);
 
                 final var captor = ArgumentCaptor.forClass(String.class);
@@ -195,7 +195,7 @@ class ListCitizenCertificatesServiceImplTest {
             }
 
             @Test
-            void shouldSendCitizenCertificateToConverter() throws ModuleNotFoundException {
+            void shouldSendCitizenCertificateToConverter() {
                 listCitizenCertificatesService.get(REQUEST);
 
                 final var captor = ArgumentCaptor.forClass(CitizenCertificate.class);
