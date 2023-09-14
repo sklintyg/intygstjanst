@@ -25,6 +25,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -110,6 +111,14 @@ public class SendMessageToRecipientValidator {
         if (!(messageCRN.isPresent() && messageCRN.get().equals(certificate.getCivicRegistrationNumber()))) {
             validationErrors.add("PatientPersonId is not consistent with certificate");
         }
+
+        if (isCertificateNotSent(certificate)) {
+            validationErrors.add("Certificate is not sent to recipient");
+        }
+    }
+
+    private static boolean isCertificateNotSent(Certificate certificate) {
+        return certificate.getStates().stream().noneMatch(state -> state.getState() == CertificateState.SENT);
     }
 
     private boolean messageIsQuestion(SendMessageToRecipientType message) {

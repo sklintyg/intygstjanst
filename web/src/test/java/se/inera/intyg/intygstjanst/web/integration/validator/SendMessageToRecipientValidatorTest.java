@@ -18,11 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,9 +32,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
@@ -221,6 +225,31 @@ public class SendMessageToRecipientValidatorTest {
         assertTrue(validationErrors.isEmpty());
     }
 
+    @Test
+    public void shouldContainValidationErrorIfCertificateIsNotSent() throws InvalidCertificateException {
+        when(certificateService.getCertificateForCare(INTYG_ID)).thenReturn(buildCertificate(PATIENT_CRN, CertificateState.UNHANDLED));
+        List<String> validationErrors = validator.validate(buildOkMessage(PATIENT_CRN));
+
+        assertEquals(1, validationErrors.size());
+    }
+
+    @Test
+    public void shouldContainSpecificValidationErrorIfCertificateIsNotSent() throws InvalidCertificateException {
+        when(certificateService.getCertificateForCare(INTYG_ID)).thenReturn(buildCertificate(PATIENT_CRN, CertificateState.UNHANDLED));
+        List<String> validationErrors = validator.validate(buildOkMessage(PATIENT_CRN));
+        String expectedResult = "Certificate is not sent to recipient";
+
+        assertTrue(validationErrors.contains(expectedResult));
+    }
+
+    @Test
+    public void shouldNotContainValidationErrorIfCertificateIsSent() throws InvalidCertificateException {
+        when(certificateService.getCertificateForCare(INTYG_ID)).thenReturn(buildCertificate(PATIENT_CRN, CertificateState.SENT));
+        List<String> validationErrors = validator.validate(buildOkMessage(PATIENT_CRN));
+
+        assertTrue(validationErrors.isEmpty());
+    }
+
     private void setupMeddelandeExist(String meddelandeId) {
         setupMeddelandeExist(meddelandeId, null);
     }
@@ -232,7 +261,7 @@ public class SendMessageToRecipientValidatorTest {
     }
 
     private void setupCertificateExist(String patientCrn) throws InvalidCertificateException {
-        when(certificateService.getCertificateForCare(INTYG_ID)).thenReturn(buildCertificate(patientCrn));
+        when(certificateService.getCertificateForCare(INTYG_ID)).thenReturn(buildCertificate(patientCrn, CertificateState.SENT));
     }
 
     private SendMessageToRecipientType buildOkMessage(String patientCrn) {
@@ -247,9 +276,11 @@ public class SendMessageToRecipientValidatorTest {
         return message;
     }
 
-    private Certificate buildCertificate(String crn) {
+    private Certificate buildCertificate(String crn, CertificateState state) {
         Certificate certificate = new Certificate();
         certificate.setCivicRegistrationNumber(Personnummer.createPersonnummer(crn).get());
+        certificate.setStates(List.of(new CertificateStateHistoryEntry("target", state, LocalDateTime.now())));
+
         return certificate;
     }
 }
