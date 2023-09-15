@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.service.CreateRekoStatusService;
 import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
+import se.inera.intyg.intygstjanst.web.service.GetRekoStatusService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -32,9 +33,11 @@ public class RekoController {
     private static final String UTF_8_CHARSET = ";charset=utf-8";
 
     private final CreateRekoStatusService createRekoStatusService;
+    private final GetRekoStatusService getRekoStatusService;
 
-    public RekoController(CreateRekoStatusService createRekoStatusService) {
+    public RekoController(CreateRekoStatusService createRekoStatusService, GetRekoStatusService getRekoStatusService) {
         this.createRekoStatusService = createRekoStatusService;
+        this.getRekoStatusService = getRekoStatusService;
     }
 
     @PrometheusTimeMethod
@@ -52,6 +55,19 @@ public class RekoController {
                 request.getStaffId(),
                 request.getStaffName(),
                 request.getSickLeaveTimestamp()
+        );
+    }
+
+    @PrometheusTimeMethod
+    @POST
+    @Path("/patient")
+    @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public RekoStatusDTO getRekoStatus(@RequestBody GetRekoStatusRequestDTO request) {
+        return getRekoStatusService.get(
+                request.getPatientId(),
+                request.getEndDate(),
+                request.getStartDate()
         );
     }
 }

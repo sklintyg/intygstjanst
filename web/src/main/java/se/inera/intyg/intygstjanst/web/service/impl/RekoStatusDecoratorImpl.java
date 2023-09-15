@@ -21,14 +21,13 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
-import se.inera.intyg.infra.sjukfall.dto.RekoStatusTypeDTO;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RekoRepository;
+import se.inera.intyg.intygstjanst.web.service.RekoStatusConverter;
 import se.inera.intyg.intygstjanst.web.service.RekoStatusDecorator;
-import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
+import se.inera.intyg.intygstjanst.web.service.RekoStatusFilter;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,14 +35,20 @@ import java.util.stream.Collectors;
 public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
 
     final RekoRepository rekoRepository;
+    final RekoStatusFilter rekoStatusFilter;
+    final RekoStatusConverter rekoStatusConverter;
 
-    public RekoStatusDecoratorImpl(RekoRepository rekoRepository) {
+    public RekoStatusDecoratorImpl(RekoRepository rekoRepository,
+                                   RekoStatusFilter rekoStatusFilter,
+                                   RekoStatusConverter rekoStatusConverter) {
         this.rekoRepository = rekoRepository;
+        this.rekoStatusFilter = rekoStatusFilter;
+        this.rekoStatusConverter = rekoStatusConverter;
     }
 
     @Override
     public void decorate(List<SjukfallEnhet> sickLeaves, String careUnitId) {
-        if (sickLeaves.size() == 0) {
+        if (sickLeaves.isEmpty()) {
             return;
         }
 
@@ -55,55 +60,16 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
 
         );
 
-        sickLeaves.forEach((sickLeave) -> sickLeave.setRekoStatus(
-                getRekoStatus(rekoStatuses,
-                        sickLeave.getPatient().getId(),
-                        sickLeave)
-                )
-        );
+        sickLeaves.forEach((sickLeave) -> sickLeave.setRekoStatus(getRekoStatus(sickLeave, rekoStatuses)));
     }
 
-    private RekoStatusDTO getRekoStatus(List<Reko> rekoStatuses,
-                                        String patientId,
-                                        SjukfallEnhet sickLeave) {
-        final var rekoStatusFromDb = rekoStatuses
-                .stream()
-                .filter(status -> status.getPatientId().equals(patientId))
-                .filter(status -> equalsOrAfterStartDate(sickLeave, status))
-                .filter(status -> beforeEndDate(sickLeave, status)
-                ).max(Comparator.comparing(Reko::getRegistrationTimestamp));
+    private RekoStatusDTO getRekoStatus(SjukfallEnhet sickLeave, List<Reko> rekoStatuses) {
+        final var filteredRekoStatus = rekoStatusFilter.filter(
+                rekoStatuses,
+                sickLeave.getPatient().getId(),
+                sickLeave.getSlut(),
+                sickLeave.getStart());
 
-        if (rekoStatusFromDb.isPresent()) {
-            final var rekoStatus = new RekoStatusDTO();
-            rekoStatus.setStatus(
-                    new RekoStatusTypeDTO(
-                            rekoStatusFromDb.get().getStatus(),
-                            RekoStatusType.fromId(rekoStatusFromDb.get().getStatus()).getName()
-                    )
-            );
-            rekoStatus.setRegistrationTimestamp(rekoStatusFromDb.get().getRegistrationTimestamp());
-            rekoStatus.setPatientId(rekoStatusFromDb.get().getPatientId());
-            rekoStatus.setCareProviderId(rekoStatusFromDb.get().getCareProviderId());
-            rekoStatus.setCareUnitId(rekoStatusFromDb.get().getCareUnitId());
-            rekoStatus.setUnitId(rekoStatusFromDb.get().getUnitId());
-            rekoStatus.setPatientId(rekoStatusFromDb.get().getPatientId());
-            rekoStatus.setStaffId(rekoStatusFromDb.get().getStaffId());
-            rekoStatus.setStaffName(rekoStatusFromDb.get().getStaffName());
-            rekoStatus.setSickLeaveTimestamp(rekoStatusFromDb.get().getSickLeaveTimestamp());
-
-            return rekoStatus;
-        }
-
-        return null;
-    }
-
-    private static boolean beforeEndDate(SjukfallEnhet sickLeave, Reko status) {
-        return status.getSickLeaveTimestamp().isBefore(sickLeave.getSlut().plusDays(1).atStartOfDay());
-    }
-
-    private static boolean equalsOrAfterStartDate(SjukfallEnhet sickLeave, Reko status) {
-        final var sickLeaveStartLocalDatetime = sickLeave.getStart().atStartOfDay();
-        return status.getSickLeaveTimestamp().isAfter(sickLeaveStartLocalDatetime)
-                || sickLeaveStartLocalDatetime.equals(status.getSickLeaveTimestamp());
+        return filteredRekoStatus.map(rekoStatusConverter::convert).orElse(null);
     }
 }
