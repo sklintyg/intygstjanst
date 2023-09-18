@@ -40,7 +40,7 @@ public class CitizenCertificateRelationConverterImpl implements CitizenCertifica
                 CitizenCertificateRelationDTO
                     .builder()
                     .certificateId(getRelatedId(certificateId, relation.getToIntygsId(), relation.getFromIntygsId()))
-                    .timestamp(relation.getCreated().toString())
+                    .timestamp(relation.getCreated())
                     .type(getType(relation.getRelationKod(), certificateId, relation.getToIntygsId()))
                     .build()
         );
@@ -53,8 +53,8 @@ public class CitizenCertificateRelationConverterImpl implements CitizenCertifica
     private CitizenCertificateRelationType getType(String code, String certificateId, String toCertificateId) {
         if (code.equals(RelationKod.ERSATT.toString())) {
             return certificateId.equals(toCertificateId)
-                    ? CitizenCertificateRelationType.RENEWED
-                    : CitizenCertificateRelationType.RENEWS;
+                    ? CitizenCertificateRelationType.REPLACED
+                    : CitizenCertificateRelationType.REPLACES;
         }
 
         return CitizenCertificateRelationType.UNKNOWN;

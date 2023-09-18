@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service.dto.citizen;
 
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Data;
 
@@ -27,5 +28,5 @@ import lombok.Data;
 public class CitizenCertificateRelationDTO {
     String certificateId;
     CitizenCertificateRelationType type;
-    String timestamp;
+    LocalDateTime timestamp;
 }
