@@ -60,19 +60,19 @@ class CitizenCertificateRelationConverterImplTest {
     }
 
     @Test
-    void shouldSetTypeRenewedIfIdMatchesTo() {
+    void shouldSetTypeReplacedIfIdMatchesTo() {
         final var relation = new Relation(OTHER_ID, ID, CODE, TIMESTAMP);
         final var response = citizenCertificateRelationConverter.convert(ID, relation);
 
-        assertEquals(CitizenCertificateRelationType.RENEWED, response.get().getType());
+        assertEquals(CitizenCertificateRelationType.REPLACED, response.get().getType());
     }
 
     @Test
-    void shouldSetTypeRenewsIfIdMatchesFrom() {
+    void shouldSetTypeReplacesIfIdMatchesFrom() {
         final var relation = new Relation(ID, OTHER_ID, CODE, TIMESTAMP);
         final var response = citizenCertificateRelationConverter.convert(ID, relation);
 
-        assertEquals(CitizenCertificateRelationType.RENEWS, response.get().getType());
+        assertEquals(CitizenCertificateRelationType.REPLACES, response.get().getType());
     }
 
     @Test
@@ -80,7 +80,7 @@ class CitizenCertificateRelationConverterImplTest {
         final var relation = new Relation(ID, OTHER_ID, CODE, TIMESTAMP);
         final var response = citizenCertificateRelationConverter.convert(ID, relation);
 
-        assertEquals(TIMESTAMP.toString(), response.get().getTimestamp());
+        assertEquals(TIMESTAMP, response.get().getTimestamp());
     }
 
     @Test

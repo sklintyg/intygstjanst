@@ -160,15 +160,15 @@ class CitizenCertificateConverterImplTest {
         CitizenCertificateRelationDTO expectedRelation;
 
         Relation relation = new Relation("fromId", "toId", "NotErsatt", LocalDateTime.now());
-        Relation renewedRelation = new Relation("fromId", "toId", "ERSATT", LocalDateTime.now());
+        Relation replacedRelation = new Relation("fromId", "toId", "ERSATT", LocalDateTime.now());
 
         @BeforeEach
         void setup() {
 
             expectedRelation = CitizenCertificateRelationDTO.builder()
                 .certificateId(CERTIFICATE_ID)
-                .type(CitizenCertificateRelationType.RENEWED)
-                .timestamp(LocalDateTime.now().toString())
+                .type(CitizenCertificateRelationType.REPLACED)
+                .timestamp(LocalDateTime.now())
                 .build();
 
             when(citizenCertificateRelationConverter.convert(anyString(), any(Relation.class)))
@@ -177,13 +177,14 @@ class CitizenCertificateConverterImplTest {
 
         @Test
         void shouldConvertRelation() {
-            final var response = citizenCertificateConverter.convert(certificate, List.of(relation, renewedRelation));
+            final var response = citizenCertificateConverter.convert(certificate, List.of(relation,
+                replacedRelation));
             assertEquals(expectedRelation, response.getRelations().get(0));
         }
 
         @Test
         void shouldSendIdToConverter() {
-            citizenCertificateConverter.convert(certificate, List.of(relation, renewedRelation));
+            citizenCertificateConverter.convert(certificate, List.of(relation, replacedRelation));
             final var captor = ArgumentCaptor.forClass(String.class);
 
             verify(citizenCertificateRelationConverter, times(1)).convert(
@@ -194,13 +195,13 @@ class CitizenCertificateConverterImplTest {
 
         @Test
         void shouldSendRelationToConverter() {
-            citizenCertificateConverter.convert(certificate, List.of(relation, renewedRelation));
+            citizenCertificateConverter.convert(certificate, List.of(relation, replacedRelation));
             final var captor = ArgumentCaptor.forClass(Relation.class);
 
             verify(citizenCertificateRelationConverter, times(1)).convert(
                     anyString(), captor.capture()
             );
-            assertEquals(renewedRelation, captor.getValue());
+            assertEquals(replacedRelation, captor.getValue());
         }
     }
 }
