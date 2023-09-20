@@ -39,6 +39,7 @@ public class TestabilityConfigProvider {
     private int fromDays;
     private int toDays;
     private String careUnitId;
+    private String careUnitName;
     private String doctorId;
     private String doctorName;
     private String relationsId;

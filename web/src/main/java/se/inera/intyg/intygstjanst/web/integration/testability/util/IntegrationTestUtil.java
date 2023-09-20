@@ -105,6 +105,7 @@ public class IntegrationTestUtil {
         requestTemplate.add("workCapacity", workCapacities);
         requestTemplate.add("occupation", testabilityConfigProvider.getOccupation());
         requestTemplate.add("signedAndSentDateTime", dateTimeAsStr(testabilityConfigProvider.getSignTimestamp()));
+        requestTemplate.add("careUnitName", testabilityConfigProvider.getCareUnitName());
         applyToFromDatesToRequestTemplate(requestTemplate, testabilityConfigProvider.getFromDays(), testabilityConfigProvider.getToDays());
     }
 

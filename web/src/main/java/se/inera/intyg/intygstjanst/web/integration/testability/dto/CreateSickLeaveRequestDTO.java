@@ -37,6 +37,7 @@ public class CreateSickLeaveRequestDTO {
     private int fromDays;
     private int toDays;
     private String careUnitId;
+    private String careUnitName;
     private String doctorId;
     private String relationsId;
     private RelationKod relationKod;

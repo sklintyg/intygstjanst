@@ -59,27 +59,51 @@ public class TestabilityConstants {
     public static final String BETA_REGIONEN = "TSTNMT2321000156-BETA";
     // CAREUNITS
     public static final String ALFA_HJARTCENTRUM = "TSTNMT2321000156-ALHC";
+    public static final String ALFA_HJARTCENTRUM_UNIT_NAME = "Alfa Hjärtcentrum";
     public static final String ALFA_HJARTCENTRUM_FYSIOLOGISKAMOTTAGNINGEN = "TSTNMT2321000156-ALFM";
+    public static final String ALFA_FYSIOLOGISKAMOTTAGNINGEN_UNIT_NAME = "Alfa Fysiologiskamottagningen";
     public static final String ALFA_MEDICINCENTRUM = "TSTNMT2321000156-ALMC";
+    public static final String ALFA_MEDICINCENTRUM_UNIT_NAME = "Alfa Medicincentrum";
     public static final String ALFA_MEDICINCENTRUM_ALLERGIMOTTAGNINGEN = "TSTNMT2321000156-ALAM";
+    public static final String ALFA_ALLERGIMOTTAGNINGEN_UNIT_NAME = "Alfa Allergimottagningen";
     public static final String ALFA_MEDICINCENTRUM_HUDMOTTAGNINGEN = "TSTNMT2321000156-ALHM";
+    public static final String ALFA_MEDICINCENTRUM_HUDMOTTAGNINGEN_UNIT_NAME = "Alfa Hudmottagnignen";
     public static final String ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN = "TSTNMT2321000156-ALIM";
+    public static final String ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN_UNIT_NAME = "Alfa Infektionsmottagningen";
     public static final String ALFA_PSYKIATRICENTRUM = "TSTNMT2321000156-ALPC";
+    public static final String ALFA_PSYKIATRICENTRUM_UNIT_NAME = "Alfa Psykiatricentrum";
     public static final String ALFA_PSYKIATRICENTRUM_ALFA_BARN_OCH_UNGDOMS_PSYOKOLOGISKA_MOTTAGNINGEN = "TSTNMT2321000156-ALBM";
+    public static final String ALFA_PSYKIATRICENTRUM_ALFA_BARN_OCH_UNGDOMS_PSYOKOLOGISKA_MOTTAGNINGEN_UNIT_NAME =
+        "Alfa Barn och Ungdoms Psykologiska-mottagning";
     public static final String ALFA_PSYKIATRICENTRUM_PSYKOLOGISKAMOTTAGNINGEN = "TSTNMT2321000156-ALPM";
+    public static final String ALFA_PSYKIATRICENTRUM_PSYKOLOGISKAMOTTAGNINGEN_UNIT_NAME = "Alfa Psykologiskamottagningen";
     public static final String ALFA_VARDCENTRAL = "TSTNMT2321000156-ALVC";
+    public static final String ALFA_VARDCENTRAL_UNIT_NAME = "Alfa vårdcentral";
     public static final String ALFA_VARDCENTRAL_LAKARMOTTAGNINGEN = "TSTNMT2321000156-ALLM";
+    public static final String ALFA_VARDCENTRAL_LAKARMOTTAGNINGEN_UNIT_NAME = "Alfa Läkarmottagningen";
     public static final String BETA_HJARTCENTRUM = "TSTNMT2321000156-BEHC";
+    public static final String BETA_HJARTCENTRUM_UNIT_NAME = "Beta Hjärtcentrum";
     public static final String BETA_HJARTCENTRUM_FYSIOLOGISKAMOTTAGNINGEN = "TSTNMT2321000156-BEFM";
+    public static final String BETA_HJARTCENTRUM_FYSIOLOGISKAMOTTAGNINGEN_UNIT_NAME = "Beta Fysiologiskamottagningen";
     public static final String BETA_MEDICINCENTRUM = "TSTNMT2321000156-BEMC";
+    public static final String BETA_MEDICINCENTRUM_UNIT_NAME = "Beta Medicincentrum";
     public static final String BETA_MEDICINCENTRUM_ALLERGIMOTTAGNINGEN = "TSTNMT2321000156-BEAM";
+    public static final String BETA_MEDICINCENTRUM_ALLERGIMOTTAGNINGEN_UNIT_NAME = "Beta Allergimottagningen";
     public static final String BETA_MEDICINCENTRUM_HUDMOTTAGNINGEN = "TSTNMT2321000156-BEHM";
+    public static final String BETA_MEDICINCENTRUM_HUDMOTTAGNINGEN_UNIT_NAME = "Beta Hudmottagnignen";
     public static final String BETA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN = "TSTNMT2321000156-BEIM";
+    public static final String BETA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN_UNIT_NAME = "Beta Infektionsmottagningen";
     public static final String BETA_PSYKIATRICENTRUM = "TSTNMT2321000156-BEPC";
+    public static final String BETA_PSYKIATRICENTRUM_UNIT_NAME = "Beta Psykiatricentrum";
     public static final String BETA_PSYKIATRICENTRUM_ALFA_BARN_OCH_UNGDOMS_PSYOKOLOGISKA_MOTTAGNINGEN = "TSTNMT2321000156-BEBM";
+    public static final String BETA_PSYKIATRICENTRUM_ALFA_BARN_OCH_UNGDOMS_PSYOKOLOGISKA_MOTTAGNINGEN_UNIT_NAME =
+        "Beta Barn och Ungdoms Psykologiska-mottagning";
     public static final String BETA_PSYKIATRICENTRUM_PSYKOLOGISKAMOTTAGNINGEN = "TSTNMT2321000156-BEPM";
+    public static final String BETA_PSYKIATRICENTRUM_PSYKOLOGISKAMOTTAGNINGEN_UNIT_NAME = "Beta Psykologiskamottagningen";
     public static final String BETA_VARDCENTRAL = "TSTNMT2321000156-BEVC";
+    public static final String BETA_VARDCENTRAL_UNIT_NAME = "Beta vårdcentral";
     public static final String BETA_VARDCENTRAL_LAKARMOTTAGNINGEN = "TSTNMT2321000156-BELM";
+    public static final String BETA_VARDCENTRAL_LAKARMOTTAGNINGEN_UNIT_NAME = "Beta Läkarmottagningen";
     // WORK CAPACITIES
     public static final String DEGREE_25 = "EN_FJARDEDEL";
     public static final String DEGREE_75 = "TRE_FJARDEDEL";
