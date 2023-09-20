@@ -40,7 +40,7 @@ import static org.mockito.Mockito.mock;
 @ExtendWith(MockitoExtension.class)
 class CitizenCertificateTextServiceImplTest {
     private static final String TYPE_NAME = "TYPE_NAME";
-    private static final String ADDITIONAL_INFO_LABEL = "Avser";
+    private static final String ADDITIONAL_INFO_LABEL = "Additional info label";
 
 
     @Mock
@@ -74,7 +74,7 @@ class CitizenCertificateTextServiceImplTest {
         @BeforeEach
         void setup() throws ModuleNotFoundException {
             Mockito.when(intygModuleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
-            //Mockito.when(moduleApi.getAdditionalInfoLabel()).thenReturn(ADDITIONAL_INFO_LABEL);
+            Mockito.when(moduleApi.getAdditionalInfoLabel()).thenReturn(ADDITIONAL_INFO_LABEL);
         }
 
         @Test
