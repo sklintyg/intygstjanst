@@ -26,6 +26,8 @@ import static se.inera.intyg.intygstjanst.web.integration.testability.Testabilit
 import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALEXA_VALFRIDSSON;
 import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALFA_MEDICINCENTRUM;
 import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN_UNIT_NAME;
+import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALFA_MEDICINCENTRUM_UNIT_NAME;
 import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALFA_REGIONEN;
 import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALINE_ANDERSSON;
 import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALLAN_ALLANSON;
@@ -106,7 +108,9 @@ public class TestabilityServiceImpl implements TestabilityService {
             createSickLeaveRequestDTO.getCareProviderId(),
             createSickLeaveRequestDTO.isSend(),
             createSickLeaveRequestDTO.isRevoked(),
-            createSickLeaveRequestDTO.getSignTimestamp() != null ? createSickLeaveRequestDTO.getSignTimestamp() : LocalDateTime.now()
+            createSickLeaveRequestDTO.getSignTimestamp() != null ? createSickLeaveRequestDTO.getSignTimestamp() : LocalDateTime.now(),
+            createSickLeaveRequestDTO.getCareUnitName() != null ? createSickLeaveRequestDTO.getCareUnitName()
+                : ALFA_MEDICINCENTRUM_UNIT_NAME
         );
         integrationTestUtil.registerCertificateTestabilityCreate(testabilityConfigProvider);
         return testabilityConfigProvider.getCertificateId();
@@ -165,68 +169,69 @@ public class TestabilityServiceImpl implements TestabilityService {
         return getConfig(ALMA_ALMARSSON, -20, 20, List.of(DIAGNOSIS_CODE_F430, DIAGNOSIS_CODE_M12, DIAGNOSIS_CODE_P23),
             DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
             getRandomId(), ARBETSSOKANDE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, List.of(DEGREE_25, DEGREE_50), ALFA_REGIONEN, false, false,
-            LocalDateTime.now());
+            LocalDateTime.now(), ALFA_MEDICINCENTRUM_UNIT_NAME);
     }
 
     private TestabilityConfigProvider getAllanAllanson() {
         return getConfig(ALLAN_ALLANSON, -50, 50, List.of(DIAGNOSIS_CODE_R12), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
             getRandomId(), ARBETSSOKANDE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, List.of(DEGREE_50), ALFA_REGIONEN, false, false,
-            LocalDateTime.now());
+            LocalDateTime.now(), ALFA_MEDICINCENTRUM_UNIT_NAME);
     }
 
     private TestabilityConfigProvider getAlineAndersson() {
         return getConfig(ALINE_ANDERSSON, -75, 75, List.of(DIAGNOSIS_CODE_M12), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
             getRandomId(), NUVARANDE_ARBETE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM,
-            List.of(DEGREE_75, DEGREE_100), ALFA_REGIONEN, false, false, LocalDateTime.now());
+            List.of(DEGREE_75, DEGREE_100), ALFA_REGIONEN, false, false, LocalDateTime.now(), ALFA_MEDICINCENTRUM_UNIT_NAME);
     }
 
     private TestabilityConfigProvider getAlbinAnder() {
         return getConfig(ALBIN_ANDER, -400, 400, List.of(DIAGNOSIS_CODE_P23), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
             getRandomId(), STUDIER, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, List.of(DEGREE_100), ALFA_REGIONEN, false, false,
-            LocalDateTime.now());
+            LocalDateTime.now(), ALFA_MEDICINCENTRUM_UNIT_NAME);
     }
 
     private TestabilityConfigProvider getAlbertinaAlison() {
         return getConfig(ALBERTINA_ALISON, -95, 95, List.of(DIAGNOSIS_CODE_Z010), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
             getRandomId(), STUDIER, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, List.of(DEGREE_25, DEGREE_100), ALFA_REGIONEN, false, false,
-            LocalDateTime.now());
+            LocalDateTime.now(), ALFA_MEDICINCENTRUM_UNIT_NAME);
     }
 
     private TestabilityConfigProvider getAlbertAlbertsson() {
         return getConfig(ALBERT_ALBERTSSON, -120, 120, List.of(INVALID_CODE), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
             getRandomId(), FORADLRARLEDIGHET_VARD_AV_BARN, DOKTOR_AJLA, ALFA_MEDICINCENTRUM,
-            List.of(DEGREE_25, DEGREE_50, DEGREE_75, DEGREE_100), ALFA_REGIONEN, false, false, LocalDateTime.now());
+            List.of(DEGREE_25, DEGREE_50, DEGREE_75, DEGREE_100), ALFA_REGIONEN, false, false, LocalDateTime.now(),
+            ALFA_MEDICINCENTRUM_UNIT_NAME);
     }
 
     private TestabilityConfigProvider getAgnarssonAgnarsson() {
         return getConfig(AGNARSSON_AGNARSSON, -200, 200, List.of(DIAGNOSIS_CODE_N20), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
             getRandomId(), NUVARANDE_ARBETE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, List.of(DEGREE_75), ALFA_REGIONEN, false, false,
-            LocalDateTime.now());
+            LocalDateTime.now(), ALFA_MEDICINCENTRUM_UNIT_NAME);
     }
 
     private List<TestabilityConfigProvider> getAthenaAndersson() {
         return List.of(
             getConfig(ATHENA_ANDERSSON_ID, -10, 20, List.of(DIAGNOSIS_CODE_A010), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
                 getRandomId(), NUVARANDE_ARBETE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, List.of(DEGREE_50), ALFA_REGIONEN, false, false,
-                LocalDateTime.now()),
+                LocalDateTime.now(), ALFA_MEDICINCENTRUM_UNIT_NAME),
             getConfig(ATHENA_ANDERSSON_ID, -42, -12, List.of(DIAGNOSIS_CODE_A010), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
                 getRandomId(), NUVARANDE_ARBETE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, List.of(DEGREE_75), ALFA_REGIONEN, false, false,
-                LocalDateTime.now()),
+                LocalDateTime.now(), ALFA_MEDICINCENTRUM_UNIT_NAME),
             getConfig(ATHENA_ANDERSSON_ID, -75, -45, List.of(DIAGNOSIS_CODE_A010), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
                 getRandomId(), NUVARANDE_ARBETE, DOKTOR_ALF, ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN, List.of(DEGREE_100),
-                ALFA_REGIONEN, false, false, LocalDateTime.now()),
+                ALFA_REGIONEN, false, false, LocalDateTime.now(), ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN_UNIT_NAME),
             getConfig(ATHENA_ANDERSSON_ID, -130, -100, List.of(DIAGNOSIS_CODE_Z010), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
                 getRandomId(), NUVARANDE_ARBETE, DOKTOR_ALF, ALFA_MEDICINCENTRUM, List.of(DEGREE_100), ALFA_REGIONEN, false, false,
-                LocalDateTime.now()),
+                LocalDateTime.now(), ALFA_MEDICINCENTRUM_UNIT_NAME),
             getConfig(ATHENA_ANDERSSON_ID, -160, -130, List.of(DIAGNOSIS_CODE_Z010), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
                 getRandomId(), NUVARANDE_ARBETE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, List.of(DEGREE_100), ALFA_REGIONEN, false, false,
-                LocalDateTime.now()),
+                LocalDateTime.now(), ALFA_MEDICINCENTRUM_UNIT_NAME),
             getConfig(ATHENA_ANDERSSON_ID, -195, -165, List.of(DIAGNOSIS_CODE_Z010), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
                 getRandomId(), NUVARANDE_ARBETE, DOKTOR_ALF, ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN, List.of(DEGREE_75), ALFA_REGIONEN,
-                false, false, LocalDateTime.now()),
+                false, false, LocalDateTime.now(), ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN_UNIT_NAME),
             getConfig(ATHENA_ANDERSSON_ID, -230, -200, List.of(DIAGNOSIS_CODE_Z010), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
                 getRandomId(), NUVARANDE_ARBETE, DOKTOR_ALF, ALFA_MEDICINCENTRUM, List.of(DEGREE_75), ALFA_REGIONEN, false, false,
-                LocalDateTime.now())
+                LocalDateTime.now(), ALFA_MEDICINCENTRUM_UNIT_NAME)
         );
     }
 
@@ -234,7 +239,7 @@ public class TestabilityServiceImpl implements TestabilityService {
         return List.of(
             getConfig(ALVE_ALFRIDSSON_ID, -20, 10, List.of(DIAGNOSIS_CODE_K23), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD, getRandomId(),
                 FORADLRARLEDIGHET_VARD_AV_BARN, DOKTOR_ALF, ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN, List.of(DEGREE_50), ALFA_REGIONEN,
-                false, false, LocalDateTime.now())
+                false, false, LocalDateTime.now(), ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN_UNIT_NAME)
         );
     }
 
@@ -242,37 +247,41 @@ public class TestabilityServiceImpl implements TestabilityService {
         return List.of(
             getConfig(BOSTADSLOSE_ANDERSSON_ID, -44, 1, List.of(DIAGNOSIS_CODE_P23), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD,
                 getRandomId(), STUDIER, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, List.of(DEGREE_25), ALFA_REGIONEN, false, false,
-                LocalDateTime.now())
+                LocalDateTime.now(), ALFA_MEDICINCENTRUM_UNIT_NAME)
         );
     }
 
     private List<TestabilityConfigProvider> getAnonymaAttila() {
         return List.of(
             getConfig(ANONYMA_ATTILA_ID, -30, -5, List.of(DIAGNOSIS_CODE_F430), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD, getRandomId(),
-                ARBETSSOKANDE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, List.of(DEGREE_25), ALFA_REGIONEN, false, false, LocalDateTime.now())
+                ARBETSSOKANDE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, List.of(DEGREE_25), ALFA_REGIONEN, false, false, LocalDateTime.now(),
+                ALFA_MEDICINCENTRUM_UNIT_NAME)
         );
     }
 
     private List<TestabilityConfigProvider> getDeceasedAtlas() {
         return List.of(
             getConfig(ATLAS_ABRAHAMSSON_ID, 0, 5, List.of(DIAGNOSIS_CODE_F430), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD, getRandomId(),
-                ARBETSSOKANDE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, List.of(DEGREE_25), ALFA_REGIONEN, false, false, LocalDateTime.now())
+                ARBETSSOKANDE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, List.of(DEGREE_25), ALFA_REGIONEN, false, false, LocalDateTime.now(),
+                ALFA_MEDICINCENTRUM_UNIT_NAME)
         );
     }
 
     private List<TestabilityConfigProvider> getValidationPatientAlexa() {
         return List.of(
             getConfig(ALEXA_VALFRIDSSON, 0, 5, List.of(DIAGNOSIS_CODE_F430), DEFAULT_RELATIONS_ID, DEFAULT_RELATIONS_KOD, getRandomId(),
-                ARBETSSOKANDE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, List.of(DEGREE_25), ALFA_REGIONEN, false, false, LocalDateTime.now())
+                ARBETSSOKANDE, DOKTOR_AJLA, ALFA_MEDICINCENTRUM, List.of(DEGREE_25), ALFA_REGIONEN, false, false, LocalDateTime.now(),
+                ALFA_MEDICINCENTRUM_UNIT_NAME)
         );
     }
 
     private TestabilityConfigProvider getConfig(String patientId, int fromDays, int toDays, List<String> diagnosisCode, String relationId,
         RelationKod relationKod, String certificateId, String occupation, String doctorId, String careUnitId, List<String> workCapacity,
-        String careProviderId, boolean send, boolean revoked, LocalDateTime signTimestamp) {
+        String careProviderId, boolean send, boolean revoked, LocalDateTime signTimestamp, String careUnitName) {
         final var doctorName = hsaService.getHsaEmployeeName(doctorId);
         return TestabilityConfigProvider.builder()
             .careUnitId(careUnitId)
+            .careUnitName(careUnitName)
             .careProviderId(careProviderId)
             .doctorId(doctorId)
             .doctorName(doctorName)

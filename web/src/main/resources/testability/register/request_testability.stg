@@ -1,6 +1,6 @@
 delimiters "$", "$"
 
-requestParameterizedTestabilityCreate(intygId, personId, fromDate, toDate, doctorId, careProviderId, unitId, doctorName, relation, diagnosisCodes, workCapacity, occupation, signedAndSentDateTime) ::= <<
+requestParameterizedTestabilityCreate(intygId, personId, fromDate, toDate, doctorId, careProviderId, unitId, doctorName, relation, diagnosisCodes, workCapacity, occupation, signedAndSentDateTime, careUnitName) ::= <<
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <ns2:RegisterCertificate xmlns="urn:riv:clinicalprocess:healthcond:certificate:3"
     xmlns:ns2="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3"
@@ -49,7 +49,7 @@ requestParameterizedTestabilityCreate(intygId, personId, fromDate, toDate, docto
           <ns3:root>1.2.752.29.4.71</ns3:root>
           <ns3:extension>45312</ns3:extension>
         </arbetsplatskod>
-        <enhetsnamn>Alfa Medicincentrum</enhetsnamn>
+        <enhetsnamn>$careUnitName$</enhetsnamn>
         <postadress></postadress>
         <postnummer></postnummer>
         <postort></postort>
