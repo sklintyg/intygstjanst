@@ -27,6 +27,7 @@ import org.springframework.stereotype.Repository;
 public interface RekoRepository extends JpaRepository<Reko, Long> {
 
     List<Reko> findByPatientId(String patientId);
+    List<Reko> findByPatientIdAndCareUnitId(String patientId, String careUnitId);
 
     List<Reko> findByPatientIdIn(List<String> patientIds);
 

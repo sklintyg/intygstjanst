@@ -51,6 +51,7 @@ class GetRekoStatusServiceImplTest {
     private static final LocalDate START_DATE = LocalDate.now();
     private static final List<Reko> REKO_STATUSES = Collections.emptyList();
     private static final Optional<Reko> FILTERED_REKO = Optional.of(new Reko());
+    private static final String CARE_UNIT_ID = "Care-unit-id";
 
     @Mock
     private RekoRepository rekoRepository;
@@ -65,12 +66,22 @@ class GetRekoStatusServiceImplTest {
     class TestRekoRepository {
         @Test
         void shouldCallRepositoryWithPatientId() {
-            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE);
+            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
 
             final var captor = ArgumentCaptor.forClass(String.class);
 
-            verify(rekoRepository).findByPatientId(captor.capture());
+            verify(rekoRepository).findByPatientIdAndCareUnitId(captor.capture(), anyString());
             assertEquals(PATIENT_ID, captor.getValue());
+        }
+
+        @Test
+        void shouldCallRepositoryWithCareUnitId() {
+            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
+
+            final var captor = ArgumentCaptor.forClass(String.class);
+
+            verify(rekoRepository).findByPatientIdAndCareUnitId(anyString(), captor.capture());
+            assertEquals(CARE_UNIT_ID, captor.getValue());
         }
     }
 
@@ -78,12 +89,13 @@ class GetRekoStatusServiceImplTest {
     class TestRekoStatusFilter {
         @BeforeEach
         void setup() {
-            when(rekoRepository.findByPatientId(anyString())).thenReturn(REKO_STATUSES);
+            when(rekoRepository.findByPatientIdAndCareUnitId(anyString(), anyString()))
+                .thenReturn(REKO_STATUSES);
         }
 
         @Test
         void shouldCallFilterWithRekoStatuses() {
-            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE);
+            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
 
             final var captor = ArgumentCaptor.forClass(List.class);
             verify(rekoStatusFilter).filter(captor.capture(), any(), any(), any());
@@ -93,7 +105,7 @@ class GetRekoStatusServiceImplTest {
 
         @Test
         void shouldCallFilterWithPatientId() {
-            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE);
+            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
 
             final var captor = ArgumentCaptor.forClass(String.class);
             verify(rekoStatusFilter).filter(any(), captor.capture(), any(), any());
@@ -103,7 +115,7 @@ class GetRekoStatusServiceImplTest {
 
         @Test
         void shouldCallFilterWithEndDate() {
-            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE);
+            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
 
             final var captor = ArgumentCaptor.forClass(LocalDate.class);
             verify(rekoStatusFilter).filter(any(), any(), captor.capture(), any());
@@ -113,7 +125,7 @@ class GetRekoStatusServiceImplTest {
 
         @Test
         void shouldCallFilterWithStartDate() {
-            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE);
+            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
 
             final var captor = ArgumentCaptor.forClass(LocalDate.class);
             verify(rekoStatusFilter).filter(any(), any(), any(), captor.capture());
@@ -127,14 +139,15 @@ class GetRekoStatusServiceImplTest {
 
         @BeforeEach
         void setup() {
-            when(rekoRepository.findByPatientId(anyString())).thenReturn(REKO_STATUSES);
+            when(rekoRepository.findByPatientIdAndCareUnitId(anyString(), anyString()))
+                .thenReturn(REKO_STATUSES);
         }
 
         @Test
         void shouldCallConverterWithRekoReturnedFromFilter() {
             when(rekoStatusFilter.filter(anyList(), anyString(), any(LocalDate.class), any(LocalDate.class)))
                     .thenReturn(FILTERED_REKO);
-            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE);
+            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
 
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
@@ -146,7 +159,7 @@ class GetRekoStatusServiceImplTest {
         void shouldNotCallConverterIfFilteredRekoIsEmpty() {
             when(rekoStatusFilter.filter(anyList(), anyString(), any(LocalDate.class), any(LocalDate.class)))
                     .thenReturn(Optional.empty());
-            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE);
+            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
 
             verify(rekoStatusConverter, times(0)).convert(any());
         }
@@ -158,7 +171,7 @@ class GetRekoStatusServiceImplTest {
         void shouldReturnNullIfRekoStatusIsNotFound() {
             when(rekoStatusFilter.filter(any(), any(), any(), any())).thenReturn(Optional.empty());
 
-            final var response = getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE);
+            final var response = getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
 
             assertNull(response);
         }
@@ -169,7 +182,7 @@ class GetRekoStatusServiceImplTest {
             when(rekoStatusFilter.filter(any(), any(), any(), any())).thenReturn(Optional.of(new Reko()));
             when(rekoStatusConverter.convert(any())).thenReturn(expectedResponse);
 
-            final var response = getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE);
+            final var response = getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
 
             assertEquals(expectedResponse, response);
         }

@@ -101,6 +101,24 @@ public class RekoRepositoryTest extends TestSupport {
         assertEquals(1, actualResult.size());
     }
 
+    @Test
+    public void shouldFindByPatientIdAndCareUnitId() {
+        final var rekoStatuses =
+            List.of(
+                getReko(PATIENT_ID_1, CARE_UNIT_ID_1, LocalDateTime.now()),
+                getReko(PATIENT_ID_1, CARE_UNIT_ID_2, LocalDateTime.now()),
+                getReko(PATIENT_ID_2, CARE_UNIT_ID_1, LocalDateTime.now()
+                )
+            );
+
+        rekoRepository.save(rekoStatuses.get(0));
+        rekoRepository.save(rekoStatuses.get(1));
+        rekoRepository.save(rekoStatuses.get(2));
+        final var response = rekoRepository.findByPatientIdAndCareUnitId(PATIENT_ID_1, CARE_UNIT_ID_1);
+        assertEquals(rekoStatuses.get(0), response.get(0));
+        assertEquals(1, response.size());
+    }
+
     private static Reko getReko(String patientId, String careUnitId, LocalDateTime sickLeaveTimestamp) {
         final var reko = new Reko();
         reko.setPatientId(patientId);

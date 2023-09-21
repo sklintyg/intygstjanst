@@ -67,7 +67,8 @@ public class RekoController {
         return getRekoStatusService.get(
                 request.getPatientId(),
                 request.getEndDate(),
-                request.getStartDate()
+                request.getStartDate(),
+                request.getCareUnitId()
         );
     }
 }

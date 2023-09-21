@@ -24,5 +24,10 @@ import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
 import java.time.LocalDate;
 
 public interface GetRekoStatusService {
-    RekoStatusDTO get(String patientId, LocalDate endDate, LocalDate startDate);
+
+  RekoStatusDTO get(
+      String patientId,
+      LocalDate endDate,
+      LocalDate startDate,
+      String careUnitId);
 }
