@@ -32,4 +32,5 @@ public class GetRekoStatusRequestDTO {
     private String patientId;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String careUnitId;
 }

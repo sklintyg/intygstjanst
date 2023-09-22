@@ -71,7 +71,8 @@ public class RekoControllerTest {
     final GetRekoStatusRequestDTO expectedGetRequest = new GetRekoStatusRequestDTO(
             PATIENT_ID,
             LocalDate.now(),
-            LocalDate.now().minusDays(2)
+            LocalDate.now().minusDays(2),
+            CARE_UNIT_ID
     );
 
 
@@ -235,7 +236,8 @@ public class RekoControllerTest {
         verify(getRekoStatusService).get(
                 captor.capture(),
                 any(LocalDate.class),
-                any(LocalDate.class)
+                any(LocalDate.class),
+                anyString()
         );
 
         assertEquals(PATIENT_ID, captor.getValue());
@@ -249,7 +251,8 @@ public class RekoControllerTest {
         verify(getRekoStatusService).get(
                 anyString(),
                 captor.capture(),
-                any(LocalDate.class)
+                any(LocalDate.class),
+                anyString()
         );
 
         assertEquals(expectedGetRequest.getEndDate(), captor.getValue());
@@ -263,10 +266,26 @@ public class RekoControllerTest {
         verify(getRekoStatusService).get(
                 anyString(),
                 any(LocalDate.class),
-                captor.capture()
+                captor.capture(),
+                anyString()
                 );
 
         assertEquals(expectedGetRequest.getStartDate(), captor.getValue());
+    }
+
+    @Test
+    void shouldCallGetRekoStatusServiceWithCorrectCareUnitId() {
+        final var captor = ArgumentCaptor.forClass(String.class);
+
+        rekoController.getRekoStatus(expectedGetRequest);
+        verify(getRekoStatusService).get(
+            anyString(),
+            any(LocalDate.class),
+            any(LocalDate.class),
+            captor.capture()
+        );
+
+        assertEquals(expectedGetRequest.getCareUnitId(), captor.getValue());
     }
 }
 

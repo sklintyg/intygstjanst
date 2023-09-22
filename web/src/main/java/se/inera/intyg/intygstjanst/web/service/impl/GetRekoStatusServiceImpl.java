@@ -43,8 +43,13 @@ public class GetRekoStatusServiceImpl implements GetRekoStatusService {
     }
 
     @Override
-    public RekoStatusDTO get(String patientId, LocalDate endDate, LocalDate startDate) {
-        final var rekoStatuses = rekoRepository.findByPatientId(patientId);
+    public RekoStatusDTO get(
+        String patientId,
+        LocalDate endDate,
+        LocalDate startDate,
+        String careUnitId) {
+
+        final var rekoStatuses = rekoRepository.findByPatientIdAndCareUnitId(patientId, careUnitId);
         final var filteredRekoStatus = rekoStatusFilter.filter(rekoStatuses, patientId, endDate, startDate);
         return filteredRekoStatus.map(rekoStatusConverter::convert).orElse(null);
     }
