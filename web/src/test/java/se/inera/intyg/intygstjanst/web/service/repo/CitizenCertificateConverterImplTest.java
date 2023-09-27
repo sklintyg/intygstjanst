@@ -160,6 +160,7 @@ class CitizenCertificateConverterImplTest {
         CitizenCertificateRelationDTO expectedRelation;
 
         Relation relation = new Relation("fromId", "toId", "NotErsatt", LocalDateTime.now());
+        Relation complementedRelation = new Relation("fromId", "toId", "KOMPLT", LocalDateTime.now());
         Relation replacedRelation = new Relation("fromId", "toId", "ERSATT", LocalDateTime.now());
 
         @BeforeEach
@@ -179,6 +180,14 @@ class CitizenCertificateConverterImplTest {
         void shouldConvertRelation() {
             final var response = citizenCertificateConverter.convert(certificate, List.of(relation,
                 replacedRelation));
+            assertEquals(expectedRelation, response.getRelations().get(0));
+        }
+
+        @Test
+        void shouldConvertComplementedRelation() {
+            final var response = citizenCertificateConverter.convert(
+                certificate, List.of(relation, complementedRelation)
+            );
             assertEquals(expectedRelation, response.getRelations().get(0));
         }
 

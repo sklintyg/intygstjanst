@@ -62,11 +62,16 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
     private List<CitizenCertificateRelationDTO> getRelations(String certificateId, List<Relation> relations) {
         return relations
                 .stream()
-                .filter((relation) -> relation.getRelationKod().equals(RelationKod.ERSATT.toString()))
+                .filter(this::isRelationIncluded)
                 .map((relation) -> citizenCertificateRelationConverter.convert(certificateId, relation))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
+    }
+
+    private boolean isRelationIncluded(Relation relation) {
+        return relation.getRelationKod().equals(RelationKod.ERSATT.toString())
+            || relation.getRelationKod().equals(RelationKod.KOMPLT.toString());
     }
 
     private Optional<CertificateStateHistoryEntry> getSentState(Collection<CertificateStateHistoryEntry> states) {

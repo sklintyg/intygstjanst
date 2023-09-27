@@ -36,7 +36,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class CitizenCertificateRelationConverterImplTest {
 
     private static final String ID = "ID";
-    private static final String CODE = RelationKod.ERSATT.toString();
+    private static final String REPLACED_CODE = RelationKod.ERSATT.toString();
+    private static final String COMPLEMENTED_CODE = RelationKod.KOMPLT.toString();
     private static final String OTHER_ID = "OTHER_ID";
     private static final LocalDateTime TIMESTAMP = LocalDateTime.now();
 
@@ -45,7 +46,7 @@ class CitizenCertificateRelationConverterImplTest {
 
     @Test
     void shouldSetCertificateIdAsFromIdIfIdIsTo() {
-        final var relation = new Relation(OTHER_ID, ID, CODE, TIMESTAMP);
+        final var relation = new Relation(OTHER_ID, ID, REPLACED_CODE, TIMESTAMP);
         final var response = citizenCertificateRelationConverter.convert(ID, relation);
 
         assertEquals(OTHER_ID, response.get().getCertificateId());
@@ -53,7 +54,7 @@ class CitizenCertificateRelationConverterImplTest {
 
     @Test
     void shouldSetCertificateIdAsToIdIfIdIsFrom() {
-        final var relation = new Relation(ID, OTHER_ID, CODE, TIMESTAMP);
+        final var relation = new Relation(ID, OTHER_ID, REPLACED_CODE, TIMESTAMP);
         final var response = citizenCertificateRelationConverter.convert(ID, relation);
 
         assertEquals(OTHER_ID, response.get().getCertificateId());
@@ -61,23 +62,47 @@ class CitizenCertificateRelationConverterImplTest {
 
     @Test
     void shouldSetTypeReplacedIfIdMatchesTo() {
-        final var relation = new Relation(OTHER_ID, ID, CODE, TIMESTAMP);
+        final var relation = new Relation(OTHER_ID, ID, REPLACED_CODE, TIMESTAMP);
         final var response = citizenCertificateRelationConverter.convert(ID, relation);
 
         assertEquals(CitizenCertificateRelationType.REPLACED, response.get().getType());
     }
 
     @Test
-    void shouldSetTypeReplacesIfIdMatchesFrom() {
-        final var relation = new Relation(ID, OTHER_ID, CODE, TIMESTAMP);
+    void shouldSetTypeReplacesIfIdMacthesFrom() {
+        final var relation = new Relation(ID, OTHER_ID, REPLACED_CODE, TIMESTAMP);
         final var response = citizenCertificateRelationConverter.convert(ID, relation);
 
         assertEquals(CitizenCertificateRelationType.REPLACES, response.get().getType());
     }
 
     @Test
+    void shouldSetTypeReplacesIfTypeIsKomplt() {
+        final var relation = new Relation(ID, OTHER_ID, COMPLEMENTED_CODE, TIMESTAMP);
+        final var response = citizenCertificateRelationConverter.convert(ID, relation);
+
+        assertEquals(CitizenCertificateRelationType.REPLACES, response.get().getType());
+    }
+
+    @Test
+    void shouldSetTypeReplacedIfTypeIsKomplt() {
+        final var relation = new Relation(OTHER_ID, ID, COMPLEMENTED_CODE, TIMESTAMP);
+        final var response = citizenCertificateRelationConverter.convert(ID, relation);
+
+        assertEquals(CitizenCertificateRelationType.REPLACED, response.get().getType());
+    }
+
+    @Test
+    void shouldReturnOptionalIfWrongRelationKod() {
+        final var relation = new Relation(ID, OTHER_ID, "wrong", TIMESTAMP);
+        final var response = citizenCertificateRelationConverter.convert(ID, relation);
+
+        assertTrue(response.isEmpty());
+    }
+
+    @Test
     void shouldSetTimestamp() {
-        final var relation = new Relation(ID, OTHER_ID, CODE, TIMESTAMP);
+        final var relation = new Relation(ID, OTHER_ID, REPLACED_CODE, TIMESTAMP);
         final var response = citizenCertificateRelationConverter.convert(ID, relation);
 
         assertEquals(TIMESTAMP, response.get().getTimestamp());
@@ -85,7 +110,7 @@ class CitizenCertificateRelationConverterImplTest {
 
     @Test
     void shouldReturnOptionalEmptyIfIdDoesntMatch() {
-        final var relation = new Relation(ID, OTHER_ID, CODE, TIMESTAMP);
+        final var relation = new Relation(ID, OTHER_ID, REPLACED_CODE, TIMESTAMP);
         final var response = citizenCertificateRelationConverter.convert("NON_MATCHING_ID", relation);
 
         assertTrue(response.isEmpty());
