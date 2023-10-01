@@ -160,8 +160,6 @@ class CitizenCertificateConverterImplTest {
         CitizenCertificateRelationDTO expectedRelation;
 
         Relation relation = new Relation("fromId", "toId", "NotErsatt", LocalDateTime.now());
-        Relation complementedRelation = new Relation("fromId", "toId", "KOMPLT", LocalDateTime.now());
-        Relation replacedRelation = new Relation("fromId", "toId", "ERSATT", LocalDateTime.now());
 
         @BeforeEach
         void setup() {
@@ -178,22 +176,13 @@ class CitizenCertificateConverterImplTest {
 
         @Test
         void shouldConvertRelation() {
-            final var response = citizenCertificateConverter.convert(certificate, List.of(relation,
-                replacedRelation));
-            assertEquals(expectedRelation, response.getRelations().get(0));
-        }
-
-        @Test
-        void shouldConvertComplementedRelation() {
-            final var response = citizenCertificateConverter.convert(
-                certificate, List.of(relation, complementedRelation)
-            );
+            final var response = citizenCertificateConverter.convert(certificate, List.of(relation));
             assertEquals(expectedRelation, response.getRelations().get(0));
         }
 
         @Test
         void shouldSendIdToConverter() {
-            citizenCertificateConverter.convert(certificate, List.of(relation, replacedRelation));
+            citizenCertificateConverter.convert(certificate, List.of(relation));
             final var captor = ArgumentCaptor.forClass(String.class);
 
             verify(citizenCertificateRelationConverter, times(1)).convert(
@@ -204,13 +193,13 @@ class CitizenCertificateConverterImplTest {
 
         @Test
         void shouldSendRelationToConverter() {
-            citizenCertificateConverter.convert(certificate, List.of(relation, replacedRelation));
+            citizenCertificateConverter.convert(certificate, List.of(relation));
             final var captor = ArgumentCaptor.forClass(Relation.class);
 
             verify(citizenCertificateRelationConverter, times(1)).convert(
                     anyString(), captor.capture()
             );
-            assertEquals(replacedRelation, captor.getValue());
+            assertEquals(relation, captor.getValue());
         }
     }
 }
