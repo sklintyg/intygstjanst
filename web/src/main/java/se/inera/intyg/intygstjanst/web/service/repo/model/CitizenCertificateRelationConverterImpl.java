@@ -36,12 +36,16 @@ public class CitizenCertificateRelationConverterImpl implements CitizenCertifica
             return Optional.empty();
         }
 
+        if (!isRelationCodeIncluded(relation.getRelationKod())) {
+            return Optional.empty();
+        }
+
         return Optional.of(
                 CitizenCertificateRelationDTO
                     .builder()
                     .certificateId(getRelatedId(certificateId, relation.getToIntygsId(), relation.getFromIntygsId()))
                     .timestamp(relation.getCreated())
-                    .type(getType(relation.getRelationKod(), certificateId, relation.getToIntygsId()))
+                    .type(getType(certificateId, relation.getToIntygsId()))
                     .build()
         );
     }
@@ -50,13 +54,14 @@ public class CitizenCertificateRelationConverterImpl implements CitizenCertifica
         return id.equals(toId) ? fromId : toId;
     }
 
-    private CitizenCertificateRelationType getType(String code, String certificateId, String toCertificateId) {
-        if (code.equals(RelationKod.ERSATT.toString())) {
-            return certificateId.equals(toCertificateId)
-                    ? CitizenCertificateRelationType.REPLACED
-                    : CitizenCertificateRelationType.REPLACES;
-        }
+    private boolean isRelationCodeIncluded(String code) {
+        return code.equals(RelationKod.ERSATT.toString())
+            || code.equals(RelationKod.KOMPLT.toString());
+    }
 
-        return CitizenCertificateRelationType.UNKNOWN;
+    private CitizenCertificateRelationType getType(String certificateId, String toCertificateId) {
+        return certificateId.equals(toCertificateId)
+            ? CitizenCertificateRelationType.REPLACED
+            : CitizenCertificateRelationType.REPLACES;
     }
 }

@@ -20,7 +20,6 @@
 package se.inera.intyg.intygstjanst.web.service.repo.model;
 
 import org.springframework.stereotype.Service;
-import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
@@ -62,14 +61,13 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
     private List<CitizenCertificateRelationDTO> getRelations(String certificateId, List<Relation> relations) {
         return relations
                 .stream()
-                .filter((relation) -> relation.getRelationKod().equals(RelationKod.ERSATT.toString()))
-                .map((relation) -> citizenCertificateRelationConverter.convert(certificateId, relation))
+                .map(relation -> citizenCertificateRelationConverter.convert(certificateId, relation))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
     }
 
     private Optional<CertificateStateHistoryEntry> getSentState(Collection<CertificateStateHistoryEntry> states) {
-        return states.stream().filter((state) -> state.getState() == CertificateState.SENT).findFirst();
+        return states.stream().filter(state -> state.getState() == CertificateState.SENT).findFirst();
     }
 }
