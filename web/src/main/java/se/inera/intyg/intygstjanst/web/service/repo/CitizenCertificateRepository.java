@@ -17,12 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.service;
+package se.inera.intyg.intygstjanst.web.service.repo;
 
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 
-public interface CitizenCertificateDTOConverter {
-    CitizenCertificateDTO convert(CitizenCertificate certificate);
-    CitizenCertificateDTO convert(CitizenCertificate certificate, String typeName, String summaryLabel);
+public interface CitizenCertificateRepository {
+
+    CitizenCertificate getCertificate(String certificateId);
 }

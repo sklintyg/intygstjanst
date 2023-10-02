@@ -19,10 +19,10 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
-import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.GetCitizenCertificateRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.GetCitizenCertificateResponseDTO;
 
-public interface CitizenCertificateDTOConverter {
-    CitizenCertificateDTO convert(CitizenCertificate certificate);
-    CitizenCertificateDTO convert(CitizenCertificate certificate, String typeName, String summaryLabel);
+public interface GetCitizenCertificateService {
+
+    GetCitizenCertificateResponseDTO get(GetCitizenCertificateRequestDTO request);
 }
