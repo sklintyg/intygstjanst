@@ -4,10 +4,8 @@ import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.integration.SendCertificateToRecipientResponderImpl;
-import se.inera.intyg.intygstjanst.web.service.GetCitizenCertificateRecipientService;
 import se.inera.intyg.intygstjanst.web.service.SendCitizenCertificateService;
 import se.inera.intyg.intygstjanst.web.service.converter.SendCertificateToRecipientTypeConverter;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.GetCitizenCertificateRecipientRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.SendCitizenCertificateRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.SendCitizenCertificateResponseDTO;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -21,31 +19,21 @@ public class SendCitizenCertificateServiceImpl implements SendCitizenCertificate
   private String logicalAddress;
 
   private final SendCertificateToRecipientResponderInterface sendCertificateToRecipientResponder;
-  private final GetCitizenCertificateRecipientService getCitizenCertificateRecipientService;
 
   public SendCitizenCertificateServiceImpl(
-      SendCertificateToRecipientResponderImpl sendCertificateToRecipientResponder,
-      GetCitizenCertificateRecipientService getCitizenCertificateRecipientService) {
+      SendCertificateToRecipientResponderImpl sendCertificateToRecipientResponder) {
     this.sendCertificateToRecipientResponder = sendCertificateToRecipientResponder;
-    this.getCitizenCertificateRecipientService = getCitizenCertificateRecipientService;
   }
 
 
   @Override
   public SendCitizenCertificateResponseDTO send(SendCitizenCertificateRequestDTO request) {
-    final var recipientResponse = getCitizenCertificateRecipientService.get(
-        GetCitizenCertificateRecipientRequestDTO
-            .builder()
-            .certificateId(request.getCertificateId())
-            .build()
-    );
-
     final var formattedPatientId = Personnummer.createPersonnummer(request.getPatientId()).orElseThrow();
     final var sendRequest = SendCertificateToRecipientTypeConverter.convert(
         request.getCertificateId(),
         formattedPatientId,
-        formattedPatientId, // Should patientId be same for both arguments?
-        recipientResponse.getRecipient().getId() // Can either be sent through request or by getting recipient
+        formattedPatientId,
+        request.getRecipient()
     );
 
 

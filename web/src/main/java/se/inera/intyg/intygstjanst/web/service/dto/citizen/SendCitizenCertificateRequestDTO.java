@@ -28,4 +28,5 @@ public class SendCitizenCertificateRequestDTO {
 
     private String certificateId;
     private String patientId;
+    private String recipient;
 }

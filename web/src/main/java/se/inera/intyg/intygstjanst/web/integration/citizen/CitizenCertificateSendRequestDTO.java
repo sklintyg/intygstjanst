@@ -31,4 +31,5 @@ import lombok.NoArgsConstructor;
 public class CitizenCertificateSendRequestDTO {
     private String certificateId;
     private String patientId;
+    private String recipient;
 }

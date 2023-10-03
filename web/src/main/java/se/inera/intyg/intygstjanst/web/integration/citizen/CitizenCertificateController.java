@@ -118,6 +118,7 @@ public class CitizenCertificateController {
                 .builder()
                 .certificateId(request.getCertificateId())
                 .patientId(request.getPatientId())
+                .recipient(request.getRecipient())
                 .build()
         );
 
