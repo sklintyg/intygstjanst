@@ -30,5 +30,4 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CitizenCertificateRecipientRequestDTO {
     private String certificateId;
-    private String certificateType;
 }
