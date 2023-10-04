@@ -28,12 +28,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
-import se.inera.intyg.intygstjanst.web.service.GetCitizenCertificateRecipientService;
 import se.inera.intyg.intygstjanst.web.service.ListCitizenCertificatesService;
-import se.inera.intyg.intygstjanst.web.service.SendCitizenCertificateService;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.GetCitizenCertificateRecipientRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.SendCertificateService;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequest;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.SendCitizenCertificateRequestDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @Path("/citizen")
@@ -43,15 +41,12 @@ public class CitizenCertificateController {
     private static final String UTF_8_CHARSET = ";charset=utf-8";
 
     private final ListCitizenCertificatesService listCitizenCertificatesService;
-    private final GetCitizenCertificateRecipientService getCitizenCertificateRecipientService;
-    private final SendCitizenCertificateService sendCitizenCertificateService;
+    private final SendCertificateService sendCertificateService;
 
     public CitizenCertificateController(ListCitizenCertificatesService listCitizenCertificatesService,
-        GetCitizenCertificateRecipientService getCitizenCertificateRecipientService,
-        SendCitizenCertificateService sendCitizenCertificateService) {
+        SendCertificateService sendCertificateService) {
         this.listCitizenCertificatesService = listCitizenCertificatesService;
-        this.getCitizenCertificateRecipientService = getCitizenCertificateRecipientService;
-        this.sendCitizenCertificateService = sendCitizenCertificateService;
+        this.sendCertificateService = sendCertificateService;
     }
 
     @PrometheusTimeMethod
@@ -82,29 +77,6 @@ public class CitizenCertificateController {
 
     @PrometheusTimeMethod
     @POST
-    @Path("/recipient")
-    @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public CitizenCertificateRecipientResponseDTO getCitizenCertificateRecipient(
-        @RequestBody CitizenCertificateRecipientRequestDTO request) {
-
-        LOG.debug("Getting recipient for citizen certificate");
-
-        final var response = getCitizenCertificateRecipientService.get(
-            GetCitizenCertificateRecipientRequestDTO
-                .builder()
-                .certificateId(request.getCertificateId())
-                .build()
-        );
-
-        return CitizenCertificateRecipientResponseDTO
-            .builder()
-            .recipient(response.getRecipient())
-            .build();
-    }
-
-    @PrometheusTimeMethod
-    @POST
     @Path("/send")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -113,18 +85,23 @@ public class CitizenCertificateController {
 
         LOG.debug("Sending citizen certificate");
 
-        final var response = sendCitizenCertificateService.send(
-            SendCitizenCertificateRequestDTO
-                .builder()
-                .certificateId(request.getCertificateId())
-                .patientId(request.getPatientId())
-                .recipient(request.getRecipient())
-                .build()
-        );
+        final var convertedPatientId = Personnummer.createPersonnummer(request.getPatientId()).orElseThrow();
+
+        try {
+            sendCertificateService.send(
+                SendCertificateRequestDTO
+                    .builder()
+                    .certificateId(request.getCertificateId())
+                    .patientId(convertedPatientId)
+                    .recipientId(request.getRecipient())
+                    .build()
+            );
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
 
         return CitizenCertificateSendResponseDTO
             .builder()
-            .sent(response.getSent())
             .build();
     }
 }

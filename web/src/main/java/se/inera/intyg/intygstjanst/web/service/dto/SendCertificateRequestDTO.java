@@ -17,16 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.service.dto.citizen;
+package se.inera.intyg.intygstjanst.web.service.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 @Data
 @Builder
-public class SendCitizenCertificateRequestDTO {
+public class SendCertificateRequestDTO {
 
     private String certificateId;
-    private String patientId;
-    private String recipient;
+    private Personnummer patientId;
+    private String hsaId;
+    private String recipientId;
 }

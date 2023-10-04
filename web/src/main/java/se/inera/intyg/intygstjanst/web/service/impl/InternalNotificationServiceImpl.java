@@ -65,6 +65,15 @@ public class InternalNotificationServiceImpl implements InternalNotificationServ
         }
     }
 
+    @Override
+    public void notifyCareIfSentByCitizen(Certificate certificate, String personId, String hsaId) {
+        if (personId != null && hsaId == null) {
+            notifyCertificateSentByCitizenToRecipient(
+                certificate.getId(), certificate.getType(), certificate.getTypeVersion(), certificate.getCareUnitId()
+            );
+        }
+    }
+
     private void notifyCertificateSentByCitizenToRecipient(String certificateId, String certificateType, String certificateTypeVersion,
         String careUnitId) {
         boolean rc = sendCertificateSentByCitizienToInternalNotificationQueue(SENT, certificateId, certificateType, certificateTypeVersion,

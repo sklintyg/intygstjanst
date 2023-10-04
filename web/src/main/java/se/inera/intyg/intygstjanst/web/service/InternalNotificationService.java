@@ -24,4 +24,6 @@ import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.
 public interface InternalNotificationService {
 
     void notifyCareIfSentByCitizen(Certificate certificate, SendCertificateToRecipientType.SkickatAv skickatAv);
+
+    void notifyCareIfSentByCitizen(Certificate certificate, String personId, String hsaId);
 }

@@ -42,6 +42,8 @@ public class InternalNotificationServiceImplTest {
     private static final String INTYG_ID = "intyg-1";
     private static final String ENHET_ID = "enhet-1";
     private static final String INTYG_TYP = "lijsp";
+    private static final String PERSON_ID = "personId";
+    private static final String HSA_ID = "hsaId";
 
     @Mock
     private JmsTemplate jmsTemplate;
@@ -61,6 +63,18 @@ public class InternalNotificationServiceImplTest {
     @Test
     public void testDoesNotNotifiyWhenVardIsSkickadAv() {
         testee.notifyCareIfSentByCitizen(buildCert(), buildSkickadAv(true));
+        verifyNoInteractions(jmsTemplate);
+    }
+
+    @Test
+    public void testSendsNotificationIfSentByCitizen() {
+        testee.notifyCareIfSentByCitizen(buildCert(), PERSON_ID, null);
+        verify(jmsTemplate, times(1)).send(any(Queue.class), any(MessageCreator.class));
+    }
+
+    @Test
+    public void testDoesNotNotifiyWhenHsaIdIsDefined() {
+        testee.notifyCareIfSentByCitizen(buildCert(), PERSON_ID, HSA_ID);
         verifyNoInteractions(jmsTemplate);
     }
 
