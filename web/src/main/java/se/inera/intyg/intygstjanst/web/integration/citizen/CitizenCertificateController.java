@@ -80,7 +80,7 @@ public class CitizenCertificateController {
     @Path("/send")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
-    public CitizenCertificateSendResponseDTO sendCitizenCertificate(
+    public void sendCitizenCertificate(
         @RequestBody CitizenCertificateSendRequestDTO request) {
 
         LOG.debug("Sending citizen certificate");
@@ -99,9 +99,5 @@ public class CitizenCertificateController {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-
-        return CitizenCertificateSendResponseDTO
-            .builder()
-            .build();
     }
 }
