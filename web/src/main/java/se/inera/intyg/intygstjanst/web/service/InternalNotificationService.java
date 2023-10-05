@@ -19,11 +19,7 @@
 package se.inera.intyg.intygstjanst.web.service;
 
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientType;
 
 public interface InternalNotificationService {
-
-    void notifyCareIfSentByCitizen(Certificate certificate, SendCertificateToRecipientType.SkickatAv skickatAv);
-
     void notifyCareIfSentByCitizen(Certificate certificate, String personId, String hsaId);
 }

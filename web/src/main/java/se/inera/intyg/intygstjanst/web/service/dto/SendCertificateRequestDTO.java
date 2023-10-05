@@ -20,15 +20,15 @@
 package se.inera.intyg.intygstjanst.web.service.dto;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Value;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-@Data
+@Value
 @Builder
 public class SendCertificateRequestDTO {
 
-    private String certificateId;
-    private Personnummer patientId;
-    private String hsaId;
-    private String recipientId;
+    String certificateId;
+    Personnummer patientId;
+    String hsaId;
+    String recipientId;
 }

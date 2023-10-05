@@ -32,9 +32,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientType;
-import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
-import se.riv.clinicalprocess.healthcond.certificate.v3.HosPersonal;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InternalNotificationServiceImplTest {
@@ -55,18 +52,6 @@ public class InternalNotificationServiceImplTest {
     private InternalNotificationServiceImpl testee;
 
     @Test
-    public void testSendsNotification() {
-        testee.notifyCareIfSentByCitizen(buildCert(), buildSkickadAv(false));
-        verify(jmsTemplate, times(1)).send(any(Queue.class), any(MessageCreator.class));
-    }
-
-    @Test
-    public void testDoesNotNotifiyWhenVardIsSkickadAv() {
-        testee.notifyCareIfSentByCitizen(buildCert(), buildSkickadAv(true));
-        verifyNoInteractions(jmsTemplate);
-    }
-
-    @Test
     public void testSendsNotificationIfSentByCitizen() {
         testee.notifyCareIfSentByCitizen(buildCert(), PERSON_ID, null);
         verify(jmsTemplate, times(1)).send(any(Queue.class), any(MessageCreator.class));
@@ -76,17 +61,6 @@ public class InternalNotificationServiceImplTest {
     public void testDoesNotNotifiyWhenHsaIdIsDefined() {
         testee.notifyCareIfSentByCitizen(buildCert(), PERSON_ID, HSA_ID);
         verifyNoInteractions(jmsTemplate);
-    }
-
-    private SendCertificateToRecipientType.SkickatAv buildSkickadAv(boolean isSentByVard) {
-        SendCertificateToRecipientType.SkickatAv skickatAv = new SendCertificateToRecipientType.SkickatAv();
-        if (isSentByVard) {
-            HosPersonal hosPersonal = new HosPersonal();
-            skickatAv.setHosPersonal(hosPersonal);
-        } else {
-            skickatAv.setPersonId(new PersonId());
-        }
-        return skickatAv;
     }
 
     private Certificate buildCert() {

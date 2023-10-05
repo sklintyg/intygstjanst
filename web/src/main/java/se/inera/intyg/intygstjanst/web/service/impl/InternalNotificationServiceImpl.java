@@ -32,7 +32,6 @@ import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.service.InternalNotificationService;
-import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientType;
 
 @Service
 public class InternalNotificationServiceImpl implements InternalNotificationService {
@@ -53,17 +52,6 @@ public class InternalNotificationServiceImpl implements InternalNotificationServ
     @Autowired
     @Qualifier(value = "internalNotificationQueue")
     private Queue internalNotificationQueue;
-
-    @Override
-    public void notifyCareIfSentByCitizen(Certificate certificate, SendCertificateToRecipientType.SkickatAv skickatAv) {
-
-        // Only notify internal if citizen sent
-        if (skickatAv != null && skickatAv.getPersonId() != null
-            && skickatAv.getHosPersonal() == null) {
-            notifyCertificateSentByCitizenToRecipient(certificate.getId(),
-                certificate.getType(), certificate.getTypeVersion(), certificate.getCareUnitId());
-        }
-    }
 
     @Override
     public void notifyCareIfSentByCitizen(Certificate certificate, String personId, String hsaId) {

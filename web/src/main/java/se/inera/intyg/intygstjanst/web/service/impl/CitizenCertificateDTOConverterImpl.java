@@ -34,11 +34,6 @@ public class CitizenCertificateDTOConverterImpl implements CitizenCertificateDTO
     }
 
     @Override
-    public CitizenCertificateDTO convert(CitizenCertificate certificate) {
-        return convert(certificate, null, null);
-    }
-
-    @Override
     public CitizenCertificateDTO convert(CitizenCertificate certificate, String typeName, String summaryLabel) {
         return CitizenCertificateDTO
                 .builder()
