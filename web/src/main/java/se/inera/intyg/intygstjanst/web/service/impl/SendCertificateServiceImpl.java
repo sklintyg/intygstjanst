@@ -26,9 +26,6 @@ public class SendCertificateServiceImpl implements SendCertificateService {
     this.internalNotificationService = internalNotificationService;
   }
 
-  // TODO: Should we add some logging here? Thinking of the "Certificate sent" "Certificate already sent" in SendCertificateToRecipientResponderImpl
-
-
   @Override
   public SendStatus send(SendCertificateRequestDTO request)
       throws InvalidCertificateException, TestCertificateException, CertificateRevokedException, RecipientUnknownException {
