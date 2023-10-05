@@ -20,13 +20,16 @@ package se.inera.intyg.intygstjanst.web.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.ERROR;
 import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.INFO;
 import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.OK;
 
+import lombok.SneakyThrows;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -38,14 +41,17 @@ import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.web.service.SendCertificateService;
+import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Part;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.HosPersonal;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendCertificateToRecipientResponderImplTest {
@@ -55,6 +61,8 @@ public class SendCertificateToRecipientResponderImplTest {
     private static final String RECIPIENT_ID = "TRANSP";
 
     private static final String LOGICAL_ADDRESS = "Intygstjänsten";
+    private SendCertificateToRecipientType request;
+
 
     @Mock
     private SendCertificateService sendCertificateService;
@@ -145,6 +153,61 @@ public class SendCertificateToRecipientResponderImplTest {
         assertEquals("Certificate 'Intygs-id-1234567890' couldn't be sent to recipient because it is a test certificate", response.getResult().getResultText());
     }
 
+    void setup() {
+        request = createRequest();
+        request.getMottagare().setCode("FKASSA");
+    }
+
+    @SneakyThrows
+    @Test
+    public void shouldSendPatientId() {
+        setup();
+        final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
+        responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
+
+        verify(sendCertificateService).send(captor.capture());
+
+        assertEquals(request.getPatientPersonId().getExtension(),
+            captor.getValue().getPatientId().getOriginalPnr());
+    }
+
+    @SneakyThrows
+    @Test
+    public void shouldSendCertificateId() {
+        setup();
+        final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
+        responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
+
+        verify(sendCertificateService).send(captor.capture());
+
+        assertEquals(request.getIntygsId().getExtension(), captor.getValue().getCertificateId());
+    }
+
+    @SneakyThrows
+    @Test
+    public void shouldSendRecipientId() {
+        setup();
+        final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
+        responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
+
+        verify(sendCertificateService).send(captor.capture());
+
+        assertEquals(request.getMottagare().getCode(), captor.getValue().getRecipientId());
+    }
+
+    @SneakyThrows
+    @Test
+    public void shouldSendHsaId() {
+        setup();
+        final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
+        responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
+
+        verify(sendCertificateService).send(captor.capture());
+
+        assertEquals(request.getSkickatAv().getHosPersonal().getPersonalId().getExtension(),
+            captor.getValue().getHsaId());
+    }
+
     private SendCertificateToRecipientType createRequest() {
 
         SendCertificateToRecipientType request = new SendCertificateToRecipientType();
@@ -156,6 +219,9 @@ public class SendCertificateToRecipientResponderImplTest {
         request.getIntygsId().setExtension(CERTIFICATE_ID);
         SendCertificateToRecipientType.SkickatAv skickatAv = new SendCertificateToRecipientType.SkickatAv();
         skickatAv.setPersonId(new PersonId());
+        skickatAv.setHosPersonal(new HosPersonal());
+        skickatAv.getHosPersonal().setPersonalId(new HsaId());
+        skickatAv.getHosPersonal().getPersonalId().setExtension("EXTENSION");
         request.setSkickatAv(skickatAv);
         return request;
     }

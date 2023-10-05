@@ -68,7 +68,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
                     .builder()
                     .certificateId(intygsId)
                     .recipientId(mottagareId)
-                    .hsaId(hosPersonal != null ? hosPersonal.getPersonalId().toString() : null)
+                    .hsaId(hosPersonal != null ? hosPersonal.getPersonalId().getExtension() : null)
                     .patientId(personnummer.orElseThrow())
                     .build()
             );
