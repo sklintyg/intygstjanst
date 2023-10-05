@@ -30,13 +30,12 @@ import se.inera.intyg.common.support.integration.module.exception.CertificateRev
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.exception.ExternalServiceCallException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.inera.intyg.intygstjanst.web.service.InternalNotificationService;
-import se.inera.intyg.intygstjanst.web.service.StatisticsService;
+import se.inera.intyg.intygstjanst.web.service.SendCertificateService;
+import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientResponseType;
@@ -47,15 +46,8 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 public class SendCertificateToRecipientResponderImpl implements SendCertificateToRecipientResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SendCertificateToRecipientResponderImpl.class);
-
     @Autowired
-    private CertificateService certificateService;
-
-    @Autowired
-    private StatisticsService statisticsService;
-
-    @Autowired
-    private InternalNotificationService internalNotificationService;
+    private SendCertificateService sendCertificateService;
 
     @Override
     @PrometheusTimeMethod
@@ -64,16 +56,22 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
 
         SendCertificateToRecipientResponseType response = new SendCertificateToRecipientResponseType();
 
-        final String mottagareId = request.getMottagare().getCode();
-        final String intygsId = request.getIntygsId().getExtension();
+        final var mottagareId = request.getMottagare().getCode();
+        final var intygsId = request.getIntygsId().getExtension();
+        final var hosPersonal = request.getSkickatAv().getHosPersonal();
 
         Optional<Personnummer> personnummer = Personnummer.createPersonnummer(request.getPatientPersonId().getExtension());
 
         try {
-
-            final Certificate certificate = certificateService.getCertificateForCare(intygsId);
-            final CertificateService.SendStatus sendStatus = certificateService.sendCertificate(personnummer.orElse(null), intygsId,
-                mottagareId);
+            final var sendStatus = sendCertificateService.send(
+                SendCertificateRequestDTO
+                    .builder()
+                    .certificateId(intygsId)
+                    .recipientId(mottagareId)
+                    .hsaId(hosPersonal != null ? hosPersonal.getPersonalId().toString() : null)
+                    .patientId(personnummer.orElseThrow())
+                    .build()
+            );
 
             if (sendStatus == CertificateService.SendStatus.ALREADY_SENT) {
                 response.setResult(ResultTypeUtil.infoResult(
@@ -81,11 +79,6 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
                 LOGGER.info("Certificate '{}' already sent to '{}'.", intygsId, mottagareId);
             } else {
                 response.setResult(ResultTypeUtil.okResult());
-                statisticsService.sent(
-                    certificate.getId(), certificate.getType(), certificate.getCareUnitId(), request.getMottagare().getCode());
-
-                internalNotificationService.notifyCareIfSentByCitizen(certificate, request.getSkickatAv());
-
                 LOGGER.info("Certificate '{}' sent to '{}'.", intygsId, mottagareId);
             }
 
