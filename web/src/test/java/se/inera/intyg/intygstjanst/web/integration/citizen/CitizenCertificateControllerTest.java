@@ -24,6 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,22 +35,27 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.web.service.ListCitizenCertificatesService;
+import se.inera.intyg.intygstjanst.web.service.SendCertificateService;
+import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequest;
+import se.inera.intyg.schemas.contract.Personnummer;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenCertificateControllerTest {
 
     @Mock
     private ListCitizenCertificatesService listCitizenCertificatesService;
+    @Mock
+    private SendCertificateService sendCertificateService;
     @InjectMocks
     private CitizenCertificateController citizenCertificateController;
 
     @Nested
     class ListCitizenCertificates {
 
-        private CitizenCertificatesRequestDTO request = CitizenCertificatesRequestDTO
+        private final CitizenCertificatesRequestDTO request = CitizenCertificatesRequestDTO
             .builder()
             .patientId("191212121212")
             .certificateTypes(List.of("Lisjp", "Ag7804"))
@@ -148,6 +154,52 @@ class CitizenCertificateControllerTest {
                 assertEquals(expectedContent.size(), response.getContent().size());
                 assertEquals(expectedContent.get(0), response.getContent().get(0));
             }
+        }
+    }
+
+    @Nested
+    class SendCertificate {
+        private final CitizenCertificateSendRequestDTO request = CitizenCertificateSendRequestDTO
+            .builder()
+            .certificateId("certificateId")
+            .patientId("191212121212")
+            .recipient("recipient")
+            .build();
+
+        @SneakyThrows
+        @Test
+        void shouldSendCertificateId() {
+            citizenCertificateController.sendCitizenCertificate(request);
+
+            final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
+
+            verify(sendCertificateService).send(captor.capture());
+            assertEquals(request.getCertificateId(), captor.getValue().getCertificateId());
+        }
+
+        @SneakyThrows
+        @Test
+        void shouldSendRecipient() {
+            citizenCertificateController.sendCitizenCertificate(request);
+
+            final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
+
+            verify(sendCertificateService).send(captor.capture());
+            assertEquals(request.getRecipient(), captor.getValue().getRecipientId());
+        }
+
+        @SneakyThrows
+        @Test
+        void shouldSendPatientId() {
+            citizenCertificateController.sendCitizenCertificate(request);
+
+            final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
+
+            verify(sendCertificateService).send(captor.capture());
+            assertEquals(
+                Personnummer.createPersonnummer(request.getPatientId()).get(),
+                captor.getValue().getPatientId()
+            );
         }
     }
 }

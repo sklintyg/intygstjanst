@@ -16,10 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
+import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
+import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
 
-public interface InternalNotificationService {
-    void notifyCareIfSentByCitizen(Certificate certificate, String personId, String hsaId);
+public interface SendCertificateService {
+    SendStatus send(SendCertificateRequestDTO request)
+        throws InvalidCertificateException, TestCertificateException, CertificateRevokedException, RecipientUnknownException;
 }

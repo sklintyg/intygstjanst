@@ -16,10 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+package se.inera.intyg.intygstjanst.web.integration.citizen;
 
-public interface InternalNotificationService {
-    void notifyCareIfSentByCitizen(Certificate certificate, String personId, String hsaId);
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class CitizenCertificateSendRequestDTO {
+    private String certificateId;
+    private String patientId;
+    private String recipient;
 }

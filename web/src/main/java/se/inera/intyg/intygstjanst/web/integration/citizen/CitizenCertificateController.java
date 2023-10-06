@@ -29,7 +29,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.service.ListCitizenCertificatesService;
+import se.inera.intyg.intygstjanst.web.service.SendCertificateService;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequest;
+import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @Path("/citizen")
@@ -39,9 +41,12 @@ public class CitizenCertificateController {
     private static final String UTF_8_CHARSET = ";charset=utf-8";
 
     private final ListCitizenCertificatesService listCitizenCertificatesService;
+    private final SendCertificateService sendCertificateService;
 
-    public CitizenCertificateController(ListCitizenCertificatesService listCitizenCertificatesService) {
+    public CitizenCertificateController(ListCitizenCertificatesService listCitizenCertificatesService,
+        SendCertificateService sendCertificateService) {
         this.listCitizenCertificatesService = listCitizenCertificatesService;
+        this.sendCertificateService = sendCertificateService;
     }
 
     @PrometheusTimeMethod
@@ -68,5 +73,31 @@ public class CitizenCertificateController {
             .builder()
             .content(response)
             .build();
+    }
+
+    @PrometheusTimeMethod
+    @POST
+    @Path("/send")
+    @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void sendCitizenCertificate(
+        @RequestBody CitizenCertificateSendRequestDTO request) {
+
+        LOG.debug("Sending citizen certificate");
+
+        final var convertedPatientId = Personnummer.createPersonnummer(request.getPatientId()).orElseThrow();
+
+        try {
+            sendCertificateService.send(
+                SendCertificateRequestDTO
+                    .builder()
+                    .certificateId(request.getCertificateId())
+                    .patientId(convertedPatientId)
+                    .recipientId(request.getRecipient())
+                    .build()
+            );
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 }
