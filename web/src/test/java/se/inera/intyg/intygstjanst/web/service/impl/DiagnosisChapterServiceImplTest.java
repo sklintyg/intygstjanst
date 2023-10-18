@@ -75,10 +75,10 @@ class DiagnosisChapterServiceImplTest {
 
     @BeforeEach
     void setUp() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(diagnosisChapterProvider.getDiagnosisChapters()).thenReturn(getChapters());
 
-        Method postConstruct = DiagnosisChapterServiceImpl.class.getDeclaredMethod("init", null);
+        Method postConstruct = DiagnosisChapterServiceImpl.class.getDeclaredMethod("init", (Class<?>[]) null);
         postConstruct.setAccessible(true);
         postConstruct.invoke(diagnosisChapterService);
     }
