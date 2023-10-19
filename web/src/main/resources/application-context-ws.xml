@@ -45,7 +45,7 @@
   <jaxws:endpoint address="/list-relations-for-certificate/v1.0"
       implementor="se.inera.intyg.intygstjanst.web.integration.ListRelationsForCertificateResponderImpl">
     <jaxws:schemaLocations>
-      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.3.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/intyg_clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
         <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
         <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
@@ -58,18 +58,18 @@
   <jaxws:endpoint address="/get-certificate-type-info/v1.0"
       implementor="se.inera.intyg.intygstjanst.web.integration.GetCertificateTypeInfoResponderImpl">
     <jaxws:schemaLocations>
-      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.3.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/intyg_clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/interactions/GetCertificateTypeInfoInteraction/GetCertificateTypeInfoResponder_1.0.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/interactions/GetCertificateTypeInfoInteraction/GetCertificateTypeInfoResponder_1.0.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/list-certificates/v1.0"
-                  implementor="se.inera.intyg.intygstjanst.web.integration.ListCertificatesResponderImpl">
+      implementor="se.inera.intyg.intygstjanst.web.integration.ListCertificatesResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg value="transform/list-certificates-transform.xslt"/>
@@ -90,17 +90,17 @@
       implementor="se.inera.intyg.intygstjanst.web.integration.RevokeCertificateResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
-          <constructor-arg value="transform/clinicalprocess-healthcond-certificate-3/revoke-certificate-transform.xslt"/>
+        <constructor-arg value="transform/clinicalprocess-healthcond-certificate-3/revoke-certificate-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
     <jaxws:schemaLocations>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/interactions/RevokeCertificateInteraction/RevokeCertificateResponder_2.1.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.3.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/interactions/RevokeCertificateInteraction/RevokeCertificateResponder_2.1.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
@@ -121,13 +121,13 @@
       </bean>
     </jaxws:outFaultInterceptors>
     <jaxws:schemaLocations>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/interactions/SendCertificateToRecipientInteraction/SendCertificateToRecipientResponder_2.1.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.3.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/interactions/SendCertificateToRecipientInteraction/SendCertificateToRecipientResponder_2.1.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
@@ -139,13 +139,13 @@
       </bean>
     </jaxws:outFaultInterceptors>
     <jaxws:schemaLocations>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/interactions/SendMessageToCareInteraction/SendMessageToCareResponder_2.0.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.3.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/interactions/SendMessageToCareInteraction/SendMessageToCareResponder_2.0.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
@@ -157,13 +157,13 @@
       </bean>
     </jaxws:outFaultInterceptors>
     <jaxws:schemaLocations>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_2.1.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.3.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_2.1.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
@@ -184,20 +184,20 @@
       </bean>
     </jaxws:outFaultInterceptors>
     <jaxws:schemaLocations>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/intyg_clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/interactions/RegisterCertificateInteraction/RegisterCertificateResponder_3.1.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.3.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/intyg_clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/interactions/RegisterCertificateInteraction/RegisterCertificateResponder_3.1.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
-   <jaxws:endpoint address="/get-certificate-se/v2.0"
+  <jaxws:endpoint address="/get-certificate-se/v2.0"
       implementor="se.inera.intyg.intygstjanst.web.integration.v2.GetCertificateResponderImpl">
-      <!-- No outFaultInterceptors should be declared here. We want a SOAPFault
-           for when the certificate does not exist. See INTYG-2126 -->
+    <!-- No outFaultInterceptors should be declared here. We want a SOAPFault
+         for when the certificate does not exist. See INTYG-2126 -->
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/list-certificates-for-citizen/v3.0"
@@ -209,26 +209,26 @@
       </bean>
     </jaxws:outFaultInterceptors>
     <jaxws:schemaLocations>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.3.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/interactions/ListCertificatesForCitizenInteraction/ListCertificatesForCitizenResponder_3.0.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/interactions/ListCertificatesForCitizenInteraction/ListCertificatesForCitizenResponder_3.0.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/list-certificates-for-citizen/v4.0"
-                  implementor="se.inera.intyg.intygstjanst.web.integration.v4.ListCertificatesForCitizenResponderImpl">
+      implementor="se.inera.intyg.intygstjanst.web.integration.v4.ListCertificatesForCitizenResponderImpl">
     <jaxws:outFaultInterceptors>
       <bean class="se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor">
         <constructor-arg
-                value="transform/clinicalprocess-healthcond-certificate-4/list-certificates-for-citizen-transform.xslt"/>
+            value="transform/clinicalprocess-healthcond-certificate-4/list-certificates-for-citizen-transform.xslt"/>
       </bean>
     </jaxws:outFaultInterceptors>
     <jaxws:schemaLocations>
-      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.3.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
@@ -239,9 +239,9 @@
   </jaxws:endpoint>
 
   <jaxws:endpoint address="/list-certificates-for-care/v3.0"
-                  implementor="se.inera.intyg.intygstjanst.web.integration.v3.ListCertificatesForCareResponderImpl">
+      implementor="se.inera.intyg.intygstjanst.web.integration.v3.ListCertificatesForCareResponderImpl">
     <jaxws:schemaLocations>
-      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.3.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
@@ -259,7 +259,7 @@
       </bean>
     </jaxws:outFaultInterceptors>
     <jaxws:schemaLocations>
-      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.3.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
@@ -271,13 +271,13 @@
 
   <!-- Vårdens/Invånarens intyg -->
   <jaxws:endpoint address="/list-approved-receivers/v1.0"
-                  implementor="se.inera.intyg.intygstjanst.web.integration.vardensintyg.ListApprovedReceiversResponderImpl">
+      implementor="se.inera.intyg.intygstjanst.web.integration.vardensintyg.ListApprovedReceiversResponderImpl">
   </jaxws:endpoint>
   <jaxws:endpoint address="/list-possible-receivers/v1.0"
-                  implementor="se.inera.intyg.intygstjanst.web.integration.vardensintyg.ListPossibleReceiversResponderImpl">
+      implementor="se.inera.intyg.intygstjanst.web.integration.vardensintyg.ListPossibleReceiversResponderImpl">
   </jaxws:endpoint>
   <jaxws:endpoint address="/register-approved-receivers/v1.0"
-                  implementor="se.inera.intyg.intygstjanst.web.integration.vardensintyg.RegisterApprovedReceiversResponderImpl">
+      implementor="se.inera.intyg.intygstjanst.web.integration.vardensintyg.RegisterApprovedReceiversResponderImpl">
   </jaxws:endpoint>
 
   <!-- ws clients -->
@@ -340,24 +340,24 @@
   <jaxws:endpoint address="/list-sickleaves-for-care/v1.0"
       implementor="se.inera.intyg.intygstjanst.web.integration.ListSickLeavesForCareResponderImpl">
     <jaxws:schemaLocations>
-      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.3.xsd</jaxws:schemaLocation>
       <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
-        <jaxws:schemaLocation>classpath:/interactions/ListSickLeavesForCareInteraction/ListSickLeavesForCareResponder_1.0.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/xmldsig-core-schema_0.1.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/core_components/xmldsig-filter2.xsd</jaxws:schemaLocation>
+      <jaxws:schemaLocation>classpath:/interactions/ListSickLeavesForCareInteraction/ListSickLeavesForCareResponder_1.0.xsd</jaxws:schemaLocation>
     </jaxws:schemaLocations>
   </jaxws:endpoint>
 
   <beans profile="!dev">
     <http:conduit
-            name="\{urn:riv:(clinicalprocess:healthcond|insuranceprocess:healthreporting):.*.http-conduit">
+        name="\{urn:riv:(clinicalprocess:healthcond|insuranceprocess:healthreporting):.*.http-conduit">
       <http:client AllowChunking="false" AutoRedirect="true" Connection="Keep-Alive"/>
       <http:tlsClientParameters disableCNCheck="true">
         <sec:keyManagers keyPassword="${ntjp.ws.key.manager.password}">
           <sec:keyStore file="${ntjp.ws.certificate.file}" password="${ntjp.ws.certificate.password}"
-                        type="${ntjp.ws.certificate.type}"/>
+              type="${ntjp.ws.certificate.type}"/>
         </sec:keyManagers>
         <sec:trustManagers>
           <sec:keyStore file="${ntjp.ws.truststore.file}" password="${ntjp.ws.truststore.password}" type="${ntjp.ws.truststore.type}"/>
