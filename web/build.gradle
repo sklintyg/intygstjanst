@@ -50,6 +50,9 @@ gretty {
 
 dependencies {
     compile project(':intygstjanst-persistence')
+
+    implementation "org.jvnet.jaxb2_commons:jaxb2-basics:${jaxb2Version}"
+
     compile "se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:${intygClinicalprocessSchemasVersion}"
     compile "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"
     compile "se.riv.itintegration.monitoring:itintegration-monitoring-schemas:${rivtaItintegrationMonitoringSchemasVersion}"
