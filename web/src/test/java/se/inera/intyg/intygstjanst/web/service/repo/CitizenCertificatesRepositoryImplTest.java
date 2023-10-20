@@ -31,7 +31,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.persistence.model.dao.*;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateConverter;
-import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepositoryImpl;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -62,8 +61,16 @@ class CitizenCertificatesRepositoryImplTest {
     private static final Certificate REVOKED_CERTIFICATE = new Certificate(REVOKED_CERTIFICATE_ID);
     private static final Certificate CERTIFICATE_1 = new Certificate(CERTIFICATE_ID_1);
     private static final Certificate CERTIFICATE_2 = new Certificate(CERTIFICATE_ID_2);
+    private static final Certificate CERTIFICATE_DB = new Certificate("db");
+    private static final Certificate CERTIFICATE_DOI = new Certificate("doi");
     private static final CitizenCertificate CONVERTED_CERTIFICATE = CitizenCertificate.builder().build();
-    private static final List<Certificate> CERTIFICATES = List.of(CERTIFICATE_1, CERTIFICATE_2, REVOKED_CERTIFICATE);
+    private static final List<Certificate> CERTIFICATES = List.of(
+        CERTIFICATE_1,
+        CERTIFICATE_2,
+        REVOKED_CERTIFICATE,
+        CERTIFICATE_DB,
+        CERTIFICATE_DOI
+    );
     private static final String PATIENT_ID = "191212121212";
 
     @Nested
@@ -96,6 +103,8 @@ class CitizenCertificatesRepositoryImplTest {
         void setup() {
             CERTIFICATE_1.setCertificateMetaData(new CertificateMetaData());
             CERTIFICATE_2.setCertificateMetaData(new CertificateMetaData());
+            CERTIFICATE_DB.setType("db");
+            CERTIFICATE_DOI.setType("doi");
 
             final var metaData = new CertificateMetaData();
             metaData.setRevoked(true);
@@ -110,6 +119,22 @@ class CitizenCertificatesRepositoryImplTest {
 
             assertEquals(2, response.size());
             assertFalse(response.contains(REVOKED_CERTIFICATE));
+        }
+
+        @Test
+        void shouldFilterDbCertificate() {
+            final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
+
+            assertEquals(2, response.size());
+            assertFalse(response.contains(CERTIFICATE_DB));
+        }
+
+        @Test
+        void shouldFilterDoiCertificate() {
+            final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
+
+            assertEquals(2, response.size());
+            assertFalse(response.contains(CERTIFICATE_DOI));
         }
 
         @Test

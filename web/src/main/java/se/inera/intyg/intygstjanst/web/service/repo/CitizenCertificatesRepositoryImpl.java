@@ -58,8 +58,9 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
 
         return certificates
                 .stream()
-                .filter((certificate) -> !certificate.getCertificateMetaData().isRevoked())
-                .map((certificate) -> citizenCertificateConverter.convert(
+                .filter(certificate -> !certificate.getCertificateMetaData().isRevoked())
+                .filter(certificate -> isCertificateTypeIncluded(certificate.getType()))
+                .map(certificate -> citizenCertificateConverter.convert(
                             certificate,
                             relations.get(certificate.getId())
                         )
@@ -67,10 +68,14 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
                 .collect(Collectors.toList());
     }
 
+    private boolean isCertificateTypeIncluded(String type) {
+        return !type.equals("db") && !type.equals("doi");
+    }
+
     private List<String> getCertificateIds(List<Certificate> certificates) {
         return certificates
                 .stream()
-                .filter((certificate) -> !certificate.getCertificateMetaData().isRevoked())
+                .filter(certificate -> !certificate.getCertificateMetaData().isRevoked())
                 .map(Certificate::getId)
                 .collect(Collectors.toList());
     }
@@ -78,7 +83,7 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
     private List<String> getRevokedCertificateIds(List<Certificate> certificates) {
         return certificates
                 .stream()
-                .filter((certificate) -> certificate.getCertificateMetaData().isRevoked())
+                .filter(certificate -> certificate.getCertificateMetaData().isRevoked())
                 .map(Certificate::getId)
                 .collect(Collectors.toList());
     }
