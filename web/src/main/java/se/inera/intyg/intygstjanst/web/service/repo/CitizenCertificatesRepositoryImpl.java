@@ -30,6 +30,9 @@ import java.util.stream.Collectors;
 
 @Repository
 public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRepository {
+
+    public static final String DB = "db";
+    public static final String DOI = "doi";
     private final RelationDao relationDao;
     private final CitizenCertificateConverter citizenCertificateConverter;
     private final CertificateDao certificateDao;
@@ -69,7 +72,7 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
     }
 
     private boolean isCertificateTypeIncluded(String type) {
-        return !type.equals("db") && !type.equals("doi");
+        return !type.equals(DB) && !type.equals(DOI);
     }
 
     private List<String> getCertificateIds(List<Certificate> certificates) {
