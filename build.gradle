@@ -1,7 +1,7 @@
 plugins {
-    id "se.inera.intyg.plugin.common" version "3.2.7" apply false
-    id "org.gretty" version "3.0.8" apply false
-    id "io.spring.dependency-management" version "1.0.13.RELEASE" apply false
+    id "se.inera.intyg.plugin.common" version "3.2.9-SNAPSHOT" apply false
+    id "org.gretty" version "3.0.9" apply false
+    id "io.spring.dependency-management" version "1.0.15.RELEASE" apply false
 }
 
 ext {
@@ -15,15 +15,15 @@ ext {
     rivtaItintegrationMonitoringSchemasVersion = "1.0.0.5.1"
     schemasContractVersion = "2.1.8.1"
 
-    cxfVersion = "3.5.5"
+    cxfVersion = "3.6.2"
     geronimoJmsVersion = "1.1.1"
     jadiraUserTypeVersion = "6.0.1.GA"
     jakartaJwsApiVersion = "3.0.0"
     javaxJwsApiVersion = "1.1"
     jaxb2Version = "0.13.1"
-    picocliVersion = "4.6.3"
+    picocliVersion = "4.7.5"
     stAntlr4Version = "4.3.4"
-    shedlockSpringVersion = "4.42.0"
+    shedlockSpringVersion = "4.46.0"
 
     springbootMavenBomVersion = "2.7.6"
 }
