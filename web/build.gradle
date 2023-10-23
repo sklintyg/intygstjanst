@@ -95,7 +95,7 @@ dependencies {
     compile "org.apache.cxf:cxf-rt-frontend-jaxws:${cxfVersion}"
     compile "org.springframework:spring-jms"
     compile "org.springframework:spring-webmvc"
-    compile "mysql:mysql-connector-java"
+    compile "com.mysql:mysql-connector-j"
     compile "net.javacrumbs.shedlock:shedlock-spring:${shedlockSpringVersion}"
     compile "net.javacrumbs.shedlock:shedlock-provider-redis-spring:${shedlockSpringVersion}"
 
