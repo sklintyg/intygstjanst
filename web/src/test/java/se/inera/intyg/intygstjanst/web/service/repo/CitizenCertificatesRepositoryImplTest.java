@@ -19,6 +19,18 @@
 
 package se.inera.intyg.intygstjanst.web.service.repo;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,21 +40,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.persistence.model.dao.*;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
+import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateConverter;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
 @ExtendWith(MockitoExtension.class)
 class CitizenCertificatesRepositoryImplTest {
+
     @Mock
     RelationDao relationDao;
 
@@ -75,10 +83,11 @@ class CitizenCertificatesRepositoryImplTest {
 
     @Nested
     class NoCertificates {
+
         @BeforeEach
         void setup() {
             Mockito.when(certificateDao.findCertificatesForPatient(anyString()))
-                    .thenReturn(Collections.emptyList());
+                .thenReturn(Collections.emptyList());
         }
 
         @Test
@@ -103,12 +112,17 @@ class CitizenCertificatesRepositoryImplTest {
         void setup() {
             CERTIFICATE_1.setCertificateMetaData(new CertificateMetaData());
             CERTIFICATE_2.setCertificateMetaData(new CertificateMetaData());
+            CERTIFICATE_DB.setCertificateMetaData(new CertificateMetaData());
+            CERTIFICATE_DOI.setCertificateMetaData(new CertificateMetaData());
+            CERTIFICATE_1.setType("type1");
+            CERTIFICATE_2.setType("type2");
             CERTIFICATE_DB.setType("db");
             CERTIFICATE_DOI.setType("doi");
 
             final var metaData = new CertificateMetaData();
             metaData.setRevoked(true);
             REVOKED_CERTIFICATE.setCertificateMetaData(metaData);
+            REVOKED_CERTIFICATE.setType("type1");
 
             Mockito.when(certificateDao.findCertificatesForPatient(anyString())).thenReturn(CERTIFICATES);
         }
@@ -118,7 +132,6 @@ class CitizenCertificatesRepositoryImplTest {
             final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
 
             assertEquals(2, response.size());
-            assertFalse(response.contains(REVOKED_CERTIFICATE));
         }
 
         @Test
@@ -126,7 +139,6 @@ class CitizenCertificatesRepositoryImplTest {
             final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
 
             assertEquals(2, response.size());
-            assertFalse(response.contains(CERTIFICATE_DB));
         }
 
         @Test
@@ -134,7 +146,6 @@ class CitizenCertificatesRepositoryImplTest {
             final var response = citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
 
             assertEquals(2, response.size());
-            assertFalse(response.contains(CERTIFICATE_DOI));
         }
 
         @Test
@@ -157,16 +168,16 @@ class CitizenCertificatesRepositoryImplTest {
             @BeforeEach
             void setup() {
                 Mockito.when(relationDao.getRelations(anyList(), anyList()))
-                        .thenReturn(
-                                Map.of(
-                                    CERTIFICATE_ID_1, List.of(relation),
-                                    REVOKED_CERTIFICATE_ID, List.of(otherRelation),
-                                    CERTIFICATE_ID_2, List.of(relation)
-                                )
-                        );
+                    .thenReturn(
+                        Map.of(
+                            CERTIFICATE_ID_1, List.of(relation),
+                            REVOKED_CERTIFICATE_ID, List.of(otherRelation),
+                            CERTIFICATE_ID_2, List.of(relation)
+                        )
+                    );
 
                 Mockito.when(citizenCertificateConverter.convert(any(Certificate.class), anyList()))
-                        .thenReturn(CONVERTED_CERTIFICATE);
+                    .thenReturn(CONVERTED_CERTIFICATE);
             }
 
             @Test
@@ -191,6 +202,7 @@ class CitizenCertificatesRepositoryImplTest {
 
         @Nested
         class RelationDao {
+
             @Test
             void shouldMakeCallWithCertificateIds() {
                 citizenCertificatesRepository.getCertificatesForPatient(PATIENT_ID);
@@ -199,9 +211,11 @@ class CitizenCertificatesRepositoryImplTest {
 
                 verify(relationDao).getRelations(captor.capture(), anyList());
 
-                assertEquals(2, captor.getValue().size());
+                assertEquals(4, captor.getValue().size());
                 assertEquals(CERTIFICATES.get(0).getId(), captor.getValue().get(0));
                 assertEquals(CERTIFICATES.get(1).getId(), captor.getValue().get(1));
+                assertEquals(CERTIFICATES.get(3).getId(), captor.getValue().get(2));
+                assertEquals(CERTIFICATES.get(4).getId(), captor.getValue().get(3));
             }
 
             @Test
