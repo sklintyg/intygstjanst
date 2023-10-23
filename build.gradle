@@ -1,5 +1,5 @@
 plugins {
-    id "se.inera.intyg.plugin.common" version "3.2.9-SNAPSHOT" apply false
+    id "se.inera.intyg.plugin.common" version "3.2.9" apply false
     id "org.gretty" version "3.0.9" apply false
     id "io.spring.dependency-management" version "1.0.15.RELEASE" apply false
 }
@@ -25,7 +25,7 @@ ext {
     stAntlr4Version = "4.3.4"
     shedlockSpringVersion = "4.46.0"
 
-    springbootMavenBomVersion = "2.7.6"
+    springbootMavenBomVersion = "2.7.17"
 }
 
 allprojects {
