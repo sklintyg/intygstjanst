@@ -19,24 +19,33 @@
 
 package se.inera.intyg.intygstjanst.web.service.repo;
 
-import org.springframework.stereotype.Repository;
-import se.inera.intyg.intygstjanst.persistence.model.dao.*;
-import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
-import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateConverter;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Repository;
+import se.inera.intyg.common.db.support.DbModuleEntryPoint;
+import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
+import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
+import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
+import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateConverter;
 
 @Repository
 public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRepository {
+
+    private static final List<String> certificateTypesToExclude = List.of(
+        DbModuleEntryPoint.MODULE_ID,
+        DoiModuleEntryPoint.MODULE_ID
+    );
+
     private final RelationDao relationDao;
     private final CitizenCertificateConverter citizenCertificateConverter;
     private final CertificateDao certificateDao;
 
     public CitizenCertificatesRepositoryImpl(RelationDao relationDao,
-                                             CitizenCertificateConverter citizenCertificateConverter,
-                                             CertificateDao certificateDao) {
+        CitizenCertificateConverter citizenCertificateConverter,
+        CertificateDao certificateDao) {
         this.relationDao = relationDao;
         this.citizenCertificateConverter = citizenCertificateConverter;
         this.certificateDao = certificateDao;
@@ -52,34 +61,39 @@ public class CitizenCertificatesRepositoryImpl implements CitizenCertificatesRep
         }
 
         final var relations = relationDao.getRelations(
-                getCertificateIds(certificates),
-                getRevokedCertificateIds(certificates)
+            getCertificateIds(certificates),
+            getRevokedCertificateIds(certificates)
         );
 
         return certificates
-                .stream()
-                .filter((certificate) -> !certificate.getCertificateMetaData().isRevoked())
-                .map((certificate) -> citizenCertificateConverter.convert(
-                            certificate,
-                            relations.get(certificate.getId())
-                        )
+            .stream()
+            .filter(certificate -> !certificate.getCertificateMetaData().isRevoked())
+            .filter(certificate -> isCertificateTypeIncluded(certificate.getType()))
+            .map(certificate -> citizenCertificateConverter.convert(
+                    certificate,
+                    relations.get(certificate.getId())
                 )
-                .collect(Collectors.toList());
+            )
+            .collect(Collectors.toList());
+    }
+
+    private boolean isCertificateTypeIncluded(String type) {
+        return !certificateTypesToExclude.contains(type);
     }
 
     private List<String> getCertificateIds(List<Certificate> certificates) {
         return certificates
-                .stream()
-                .filter((certificate) -> !certificate.getCertificateMetaData().isRevoked())
-                .map(Certificate::getId)
-                .collect(Collectors.toList());
+            .stream()
+            .filter(certificate -> !certificate.getCertificateMetaData().isRevoked())
+            .map(Certificate::getId)
+            .collect(Collectors.toList());
     }
 
     private List<String> getRevokedCertificateIds(List<Certificate> certificates) {
         return certificates
-                .stream()
-                .filter((certificate) -> certificate.getCertificateMetaData().isRevoked())
-                .map(Certificate::getId)
-                .collect(Collectors.toList());
+            .stream()
+            .filter(certificate -> certificate.getCertificateMetaData().isRevoked())
+            .map(Certificate::getId)
+            .collect(Collectors.toList());
     }
 }
