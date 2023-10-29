@@ -1,7 +1,7 @@
 plugins {
-    id "se.inera.intyg.plugin.common" version "3.2.9" apply false
-    id "org.gretty" version "3.0.9" apply false
-    id "io.spring.dependency-management" version "1.0.15.RELEASE" apply false
+    id "se.inera.intyg.plugin.common" version "3.2.10-SNAPSHOT" apply false
+    id "io.spring.dependency-management" version "1.1.3" apply false
+    id "org.gretty" version "3.1.1" apply false
 }
 
 ext {
@@ -12,11 +12,15 @@ ext {
     intygHealthcondRehabilitationSchemasVersion = "1.1.3.1"
     intygClinicalprocessSchemasVersion = "1.0.24.1"
     rivtaClinicalprocessSchemasVersion = "4.0.5.2"
+    rivtaGetPersonsPersonSchemasVersion = "3.1.1.1"
+    rivtaInsuranceprocessSchemasVersion = "3.1.0.5.1"
     rivtaItintegrationMonitoringSchemasVersion = "1.0.0.5.1"
     schemasContractVersion = "2.1.8.1"
 
+    commonsIoVersion = "2.14.0"
     cxfVersion = "3.6.2"
     geronimoJmsVersion = "1.1.1"
+    guavaVersion = "32.1.3-jre"
     jadiraUserTypeVersion = "6.0.1.GA"
     jakartaJwsApiVersion = "3.0.0"
     javaxJwsApiVersion = "1.1"
@@ -30,8 +34,73 @@ ext {
 
 allprojects {
     apply plugin: 'se.inera.intyg.plugin.common'
-    apply plugin: 'maven'
     apply plugin: "io.spring.dependency-management"
+    apply plugin: 'maven-publish'
+    apply plugin: 'java'
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:${springbootMavenBomVersion}"
+        }
+    }
+
+    dependencies {
+        implementation "javax.annotation:javax.annotation-api"
+        implementation "javax.jws:javax.jws-api:${javaxJwsApiVersion}"
+        implementation "jakarta.xml.bind:jakarta.xml.bind-api"
+        implementation "jakarta.xml.ws:jakarta.xml.ws-api"
+        implementation "jakarta.jws:jakarta.jws-api:${jakartaJwsApiVersion}"
+        implementation "com.sun.xml.messaging.saaj:saaj-impl"
+
+        compileOnly 'org.projectlombok:lombok'
+
+        testImplementation "se.inera.intyg.refdata:refdata:${refDataVersion}"
+        testImplementation "junit:junit"
+        testImplementation "org.mockito:mockito-core"
+        testImplementation "org.junit.jupiter:junit-jupiter-api"
+        testImplementation "org.junit.jupiter:junit-jupiter-params"
+        testImplementation "org.mockito:mockito-junit-jupiter"
+        testCompileOnly 'org.projectlombok:lombok'
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+        testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
+
+        annotationProcessor 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+    }
+
+    if (project.hasProperty('codeQuality')) {
+        dependencies { spotbugsSlf4j "org.slf4j:slf4j-simple" }
+    }
+
+    group = 'se.inera.intyg.intygstjanst'
+    version = System.properties['buildVersion'] ?: '0.0-SNAPSHOT'
+
+    sourceCompatibility = 11
+    targetCompatibility = 11
+
+    compileJava { options.encoding = "UTF-8" }
+    test { useJUnitPlatform() }
+
+    tasks.register('createVersionPropertyFile', VersionPropertyFileTask)
+
+    tasks.register('install') {
+        description("Publishes artifact to local maven repository.")
+        dependsOn(publishMavenWebPublicationToMavenLocal)
+    }
+
+    compileJava.dependsOn processResources
+    compileTestJava.dependsOn createVersionPropertyFile
+    checkstyleMain.dependsOn createVersionPropertyFile
+
+    if (!project.name.contains("-web") && !project.name.contains("-liquibase-runner")) {
+        publishing {
+            publications {
+                mavenWeb(MavenPublication) {
+                    from components.java
+                }
+            }
+        }
+    }
 
     repositories {
         mavenLocal()
@@ -44,70 +113,14 @@ allprojects {
         }
     }
 
-    test {
-        useJUnitPlatform()
+    clean {
+        setDelete(fileTree(project.layout.buildDirectory.get().asFile) {
+            exclude("/tmp/.cache/expanded/expanded.lock")
+        })
     }
-
-    dependencyManagement {
-        imports {
-            mavenBom "org.springframework.boot:spring-boot-dependencies:${springbootMavenBomVersion}"
-        }
-    }
-
-    dependencies {
-        implementation "javax.jws:javax.jws-api:${javaxJwsApiVersion}"
-
-        compile "javax.annotation:javax.annotation-api"
-        compile "jakarta.xml.bind:jakarta.xml.bind-api"
-        compile "jakarta.xml.ws:jakarta.xml.ws-api"
-        compile "jakarta.jws:jakarta.jws-api:${jakartaJwsApiVersion}"
-        compile "com.sun.xml.messaging.saaj:saaj-impl"
-        compileOnly 'org.projectlombok:lombok'
-
-        testCompile "se.inera.intyg.refdata:refdata:${refDataVersion}"
-        testCompile "junit:junit"
-        testCompile "org.mockito:mockito-core"
-        testCompile "org.junit.jupiter:junit-jupiter-api"
-        testCompile "org.junit.jupiter:junit-jupiter-params"
-        testCompile "org.mockito:mockito-junit-jupiter"
-        testCompileOnly 'org.projectlombok:lombok'
-        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
-        testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
-
-        annotationProcessor 'org.projectlombok:lombok'
-        testAnnotationProcessor 'org.projectlombok:lombok'
-    }
-
-    group = 'se.inera.intyg.intygstjanst'
-    version = System.properties['buildVersion'] ?: '0-SNAPSHOT'
-
-    sourceCompatibility = 11
-    targetCompatibility = 11
-
-    task createVersionPropertyFile(type: VersionPropertyFileTask)
-
-    uploadArchives.repositories.mavenDeployer {
-        repository(url: "https://nexus.drift.inera.se/repository/maven-releases/") {
-            authentication(userName: System.properties['ineraNexusUsername'], password: System.properties['ineraNexusPassword'])
-        }
-    }
-
-    compileJava {
-        options.encoding = "UTF-8"
-    }
-
-    uploadArchives.enabled = false
-
-    [install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom*.whenConfigured { pom ->
-        pom.dependencies.findAll { dep -> dep.groupId == 'se.inera.intyg.common' }.each {
-            it.version = se.inera.intyg.IntygPluginKt.findResolvedVersion(project, 'se.inera.intyg.common')
-        }
-        pom.dependencies.findAll { dep -> dep.groupId == 'se.inera.intyg.infra' }.each {
-            it.version = se.inera.intyg.IntygPluginKt.findResolvedVersion(project, 'se.inera.intyg.infra')
-        }
-    }
-
 }
+
+tasks.register('tagRelease', TagReleaseTask)
 
 gradle.taskGraph.whenReady {
     def runningRestAssuredTest = false
@@ -118,6 +131,3 @@ gradle.taskGraph.whenReady {
         project('intygstjanst-persistence') { test.enabled(false) }
     }
 }
-
-task tagRelease(type: TagReleaseTask)
-

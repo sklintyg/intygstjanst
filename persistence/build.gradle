@@ -4,18 +4,20 @@ sourceSets.main.output.resourcesDir = sourceSets.main.output.getClassesDirs().ge
 jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
 dependencies {
-    compile "se.inera.intyg.common:common-support:${commonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-annotations"
+    implementation "com.google.guava:guava:${guavaVersion}"
+    implementation "com.h2database:h2"
+    implementation "org.hibernate:hibernate-core"
+    implementation "org.hibernate:hibernate-hikaricp"
+    implementation "org.hibernate:hibernate-entitymanager"
+    implementation "org.jadira.usertype:usertype.core:${jadiraUserTypeVersion}"
+    implementation "org.liquibase:liquibase-core"
+    implementation "org.springframework.data:spring-data-jpa"
+    implementation "org.springframework:spring-tx"
+    implementation "se.inera.intyg.common:common-support:${commonVersion}"
+    implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
 
-    compile "org.hibernate:hibernate-core"
-    compile "org.hibernate:hibernate-hikaricp"
-    compile "org.hibernate:hibernate-entitymanager"
+    compileOnly "jakarta.persistence:jakarta.persistence-api"
 
-    compile "org.springframework.data:spring-data-jpa"
-
-    compile "org.jadira.usertype:usertype.core:${jadiraUserTypeVersion}"
-    compile "org.liquibase:liquibase-core"
-    compile "org.springframework:spring-tx"
-    compile "com.h2database:h2"
-
-    testCompile "org.springframework:spring-test"
+    testImplementation "org.springframework:spring-test"
 }
