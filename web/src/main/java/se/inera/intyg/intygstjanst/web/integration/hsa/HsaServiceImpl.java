@@ -72,7 +72,7 @@ public class HsaServiceImpl implements HsaService {
     @Cacheable(value = EMPLOYEE_NAME_CACHE, key = "#doctorId")
     public String getHsaEmployeeName(String doctorId) {
         try {
-            final var employee = hsaEmployeeService.getEmployee(doctorId, null, null);
+            final var employee = hsaEmployeeService.getEmployee(null, doctorId, null);
             if (employee == null || employee.isEmpty()) {
                 return doctorId;
             }
