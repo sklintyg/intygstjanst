@@ -79,4 +79,8 @@
             <property name="txManager" ref="transactionManager"/>
         </bean>
     </beans>
+
+    <beans profile="hsa-integration-intyg-proxy-service">
+        <import resource="classpath:/hsa-integration-intyg-proxy-service-config.xml"/>
+    </beans>
 </beans>
