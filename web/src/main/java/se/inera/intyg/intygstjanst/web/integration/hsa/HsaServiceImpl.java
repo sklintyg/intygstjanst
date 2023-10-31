@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.integration.hsatk.model.PersonInformation;
-import se.inera.intyg.infra.integration.hsatk.services.HsatkEmployeeServiceImpl;
+import se.inera.intyg.infra.integration.hsatk.services.HsatkEmployeeService;
 import se.inera.intyg.infra.integration.hsatk.services.legacy.HsaOrganizationsService;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 
@@ -42,7 +42,7 @@ public class HsaServiceImpl implements HsaService {
     private HsaOrganizationsService hsaOrganizationsService;
 
     @Autowired
-    private HsatkEmployeeServiceImpl hsaEmployeeService;
+    private HsatkEmployeeService hsaEmployeeService;
 
     private static final String EMPLOYEE_NAME_CACHE = "employeeNameCache";
 
@@ -72,7 +72,7 @@ public class HsaServiceImpl implements HsaService {
     @Cacheable(value = EMPLOYEE_NAME_CACHE, key = "#doctorId")
     public String getHsaEmployeeName(String doctorId) {
         try {
-            final var employee = hsaEmployeeService.getEmployee(doctorId, null, null);
+            final var employee = hsaEmployeeService.getEmployee(null, doctorId, null);
             if (employee == null || employee.isEmpty()) {
                 return doctorId;
             }

@@ -65,7 +65,7 @@ dependencies {
     implementation "se.riv.insuranceprocess.healthreporting:insuranceprocess-healthreporting-schemas:${rivtaInsuranceprocessSchemasVersion}"
     implementation "se.riv.strategicresourcemanagement.persons.person:strategicresourcemanagement-persons-person-schemas:${rivtaGetPersonsPersonSchemasVersion}"
 
-    implementation "se.inera.intyg.infra:hsa-api-integration:${infraVersion}"
+    implementation "se.inera.intyg.infra:hsa-integration-api:${infraVersion}"
     implementation "se.inera.intyg.infra:hsatk-integration:${infraVersion}"
     implementation "se.inera.intyg.infra:pu-integration:${infraVersion}"
     implementation "se.inera.intyg.infra:sjukfall-engine:${infraVersion}"
@@ -118,6 +118,7 @@ dependencies {
     compileOnly "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}"
     compileOnly "jakarta.servlet:jakarta.servlet-api"
     compileOnly "jakarta.persistence:jakarta.persistence-api"
+    runtimeOnly "se.inera.intyg.infra:hsa-integration-intyg-proxy-service:${infraVersion}"
 
     testImplementation "ch.qos.logback:logback-classic"
     testImplementation "io.rest-assured:json-schema-validator"
