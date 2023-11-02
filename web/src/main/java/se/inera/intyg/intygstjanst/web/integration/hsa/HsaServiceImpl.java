@@ -19,6 +19,8 @@
 package se.inera.intyg.intygstjanst.web.integration.hsa;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.xml.ws.WebServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,8 +66,8 @@ public class HsaServiceImpl implements HsaService {
     @Override
     public List<String> getHsaIdsForCareUnitAndSubUnits(String careUnitId) {
         final var unitAndSubUnits = hsaOrganizationsService.getHsaIdForAktivaUnderenheter(careUnitId);
-        unitAndSubUnits.add(careUnitId);
-        return unitAndSubUnits;
+        return Stream.concat(Stream.of(careUnitId), unitAndSubUnits.stream())
+            .collect(Collectors.toList());
     }
 
     @Override
