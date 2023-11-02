@@ -66,7 +66,8 @@ public class HsaServiceImpl implements HsaService {
     @Override
     public List<String> getHsaIdsForCareUnitAndSubUnits(String careUnitId) {
         final var unitAndSubUnits = hsaOrganizationsService.getHsaIdForAktivaUnderenheter(careUnitId);
-        return Stream.concat(Stream.of(careUnitId), unitAndSubUnits.stream()).collect(Collectors.toList());
+        return Stream.concat(Stream.of(careUnitId), unitAndSubUnits.stream())
+            .collect(Collectors.toList());
     }
 
     @Override
