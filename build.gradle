@@ -1,25 +1,34 @@
+import se.inera.intyg.IntygPluginKt
+
+import java.nio.file.Files
+import java.nio.file.Paths
+
 plugins {
-    id "se.inera.intyg.plugin.common" version "3.2.9" apply false
-    id "org.gretty" version "3.0.9" apply false
-    id "io.spring.dependency-management" version "1.0.15.RELEASE" apply false
+    id "se.inera.intyg.plugin.common" version "3.3.1" apply false
+    id "io.spring.dependency-management" version "1.1.3" apply false
+    id "org.gretty" version "3.1.1" apply false
+    id 'test-report-aggregation'
 }
 
 ext {
-    commonVersion = System.properties['commonVersion'] ?: '3.20.0-SNAPSHOT'
-    infraVersion = System.properties['infraVersion'] ?: '3.20.0-SNAPSHOT'
+    commonVersion = System.properties['commonVersion'] ?: '3.21.0-SNAPSHOT'
+    infraVersion = System.properties['infraVersion'] ?: '3.21.0-SNAPSHOT'
     refDataVersion = System.properties['refDataVersion'] ?: '1.0-SNAPSHOT'
 
     intygHealthcondRehabilitationSchemasVersion = "1.1.3.1"
     intygClinicalprocessSchemasVersion = "1.0.24.1"
     rivtaClinicalprocessSchemasVersion = "4.0.5.2"
+    rivtaGetPersonsPersonSchemasVersion = "3.1.1.1"
+    rivtaInsuranceprocessSchemasVersion = "3.1.0.5.1"
     rivtaItintegrationMonitoringSchemasVersion = "1.0.0.5.1"
     schemasContractVersion = "2.1.8.1"
 
+    commonsIoVersion = "2.14.0"
     cxfVersion = "3.6.2"
     geronimoJmsVersion = "1.1.1"
+    guavaVersion = "32.1.3-jre"
     jadiraUserTypeVersion = "6.0.1.GA"
-    jakartaJwsApiVersion = "3.0.0"
-    javaxJwsApiVersion = "1.1"
+    jakartaJwsApiVersion = "2.1.0" // version 3.0.0 -> warning: "class file for javax.jws.soap.SOAPBinding$ParameterStyle not found"
     jaxb2Version = "0.13.1"
     picocliVersion = "4.7.5"
     stAntlr4Version = "4.3.4"
@@ -30,23 +39,13 @@ ext {
 
 allprojects {
     apply plugin: 'se.inera.intyg.plugin.common'
-    apply plugin: 'maven'
     apply plugin: "io.spring.dependency-management"
+    apply plugin: 'java'
 
-    repositories {
-        mavenLocal()
-        maven { url "https://nexus.drift.inera.se/repository/it-public/" }
-        mavenCentral {
-            content {
-                // this repository contains everything BUT artifacts with group starting with "se.inera"
-                excludeGroupByRegex "se\\.inera.*"
-            }
-        }
-    }
-
-    test {
-        useJUnitPlatform()
-    }
+    group = 'se.inera.intyg.intygstjanst'
+    version = System.properties['buildVersion'] ?: '0-SNAPSHOT'
+    sourceCompatibility = 11
+    targetCompatibility = 11
 
     dependencyManagement {
         imports {
@@ -55,69 +54,89 @@ allprojects {
     }
 
     dependencies {
-        implementation "javax.jws:javax.jws-api:${javaxJwsApiVersion}"
+        implementation "ch.qos.logback:logback-classic"
+        implementation "jakarta.annotation:jakarta.annotation-api"
+        implementation "jakarta.jws:jakarta.jws-api:${jakartaJwsApiVersion}"
+        implementation "jakarta.xml.ws:jakarta.xml.ws-api"
 
-        compile "javax.annotation:javax.annotation-api"
-        compile "jakarta.xml.bind:jakarta.xml.bind-api"
-        compile "jakarta.xml.ws:jakarta.xml.ws-api"
-        compile "jakarta.jws:jakarta.jws-api:${jakartaJwsApiVersion}"
-        compile "com.sun.xml.messaging.saaj:saaj-impl"
+        runtimeOnly "com.sun.xml.messaging.saaj:saaj-impl"
         compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
 
-        testCompile "se.inera.intyg.refdata:refdata:${refDataVersion}"
-        testCompile "junit:junit"
-        testCompile "org.mockito:mockito-core"
-        testCompile "org.junit.jupiter:junit-jupiter-api"
-        testCompile "org.junit.jupiter:junit-jupiter-params"
-        testCompile "org.mockito:mockito-junit-jupiter"
+        testImplementation "junit:junit"
+        testImplementation "org.junit.jupiter:junit-jupiter-api"
+        testImplementation "org.junit.jupiter:junit-jupiter-params"
+        testImplementation "org.mockito:mockito-core"
+        testImplementation "org.mockito:mockito-junit-jupiter"
+        testImplementation "se.inera.intyg.refdata:refdata:${refDataVersion}"
+
         testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
         testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
-
-        annotationProcessor 'org.projectlombok:lombok'
-        testAnnotationProcessor 'org.projectlombok:lombok'
     }
 
-    group = 'se.inera.intyg.intygstjanst'
-    version = System.properties['buildVersion'] ?: '0-SNAPSHOT'
+    tasks.register('createVersionPropertyFile', VersionPropertyFileTask)
 
-    sourceCompatibility = 11
-    targetCompatibility = 11
-
-    task createVersionPropertyFile(type: VersionPropertyFileTask)
-
-    uploadArchives.repositories.mavenDeployer {
-        repository(url: "https://nexus.drift.inera.se/repository/maven-releases/") {
-            authentication(userName: System.properties['ineraNexusUsername'], password: System.properties['ineraNexusPassword'])
+    if (project.hasProperty('codeQuality')) {
+        tasks.register('spotbugsIncludesAndExcludes') {
+            dependsOn ":unzipBuildTools"
+            spotbugsMain {
+                includeFilter.set(rootProject.layout.buildDirectory.file("/build-tools/spotbugs/spotbugsIncludeFilter.xml").get().asFile)
+                excludeFilter.set(rootProject.layout.buildDirectory.file("/build-tools/spotbugs/spotbugsExcludeFilter.xml").get().asFile)
+            }
         }
+
+        spotbugsMain.dependsOn('spotbugsIncludesAndExcludes')
+        spotbugsMain.dependsOn(':unzipBuildTools')
+        spotbugsTest.enabled(false)
+        dependencies { spotbugsSlf4j "org.slf4j:slf4j-simple" }
     }
 
-    compileJava {
-        options.encoding = "UTF-8"
-    }
+    compileJava { options.encoding = "UTF-8" }
+    compileJava.dependsOn processResources
+    compileTestJava.dependsOn createVersionPropertyFile
+    checkstyleMain.dependsOn createVersionPropertyFile
+    test { useJUnitPlatform() }
 
-    uploadArchives.enabled = false
-
-    [install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom*.whenConfigured { pom ->
-        pom.dependencies.findAll { dep -> dep.groupId == 'se.inera.intyg.common' }.each {
-            it.version = se.inera.intyg.IntygPluginKt.findResolvedVersion(project, 'se.inera.intyg.common')
+    repositories {
+        mavenLocal()
+        maven { url "https://nexus.drift.inera.se/repository/it-public/" }
+        mavenCentral {
+            content {
+                excludeGroupByRegex "se\\.inera.*"
+            }
         }
-        pom.dependencies.findAll { dep -> dep.groupId == 'se.inera.intyg.infra' }.each {
-            it.version = se.inera.intyg.IntygPluginKt.findResolvedVersion(project, 'se.inera.intyg.infra')
-        }
-    }
-
-}
-
-gradle.taskGraph.whenReady {
-    def runningRestAssuredTest = false
-    project('intygstjanst-web') { runningRestAssuredTest = gradle.taskGraph.getAllTasks().contains(restAssuredTest) }
-
-    if (runningRestAssuredTest) {
-        project('intygstjanst-web') { test.enabled(false) }
-        project('intygstjanst-persistence') { test.enabled(false) }
     }
 }
 
-task tagRelease(type: TagReleaseTask)
+subprojects.collect {subproject -> subproject.name }.each { subprojectName ->
+    dependencies { testReportAggregation project(":${subprojectName}") }
+}
 
+tasks.register('tagRelease', TagReleaseTask)
+
+tasks.register('unzipBuildTools', Copy) {
+    into "${rootProject.layout.buildDirectory.get().asFile}/build-tools/"
+    from { zipTree(project.rootProject.buildscript.configurations.classpath.find { it.name.contains("se.inera.intyg.plugin.common") })
+            .matching { include "/spotbugs/**", "/git_hooks/**" }
+    }
+}
+
+tasks.register("applyGitHooks", Copy) {
+    dependsOn("unzipBuildTools")
+    def repository = IntygPluginKt.findGitRepository(project.rootProject.projectDir)
+    def commitMsg = rootProject.layout.buildDirectory.file("/build-tools/git_hooks/commit-msg").get().asFile
+    def preCommit = rootProject.layout.buildDirectory.file("/build-tools/git_hooks/pre-commit").get().asFile
+    def toDir = Paths.get(repository.directory.path, "hooks")
+
+    if (!Files.exists(toDir)) {
+        Files.createDirectory(toDir)
+    }
+
+    IntygPluginKt.copyFile(commitMsg, toDir)
+    IntygPluginKt.copyFile(preCommit, toDir)
+}
+
+applyGitHooks.dependsOn(unzipBuildTools)
