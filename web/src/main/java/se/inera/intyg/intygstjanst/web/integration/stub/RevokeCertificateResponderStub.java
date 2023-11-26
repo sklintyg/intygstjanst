@@ -18,7 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
-import javax.xml.ws.WebServiceProvider;
+import jakarta.xml.ws.WebServiceProvider;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

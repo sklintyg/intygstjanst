@@ -19,14 +19,16 @@
 
 package se.inera.intyg.intygstjanst.web.integration.reko;
 
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
-import se.inera.intyg.intygstjanst.web.service.CreateRekoStatusService;
 import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
+import se.inera.intyg.intygstjanst.web.service.CreateRekoStatusService;
 import se.inera.intyg.intygstjanst.web.service.GetRekoStatusService;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 
 @Path("/reko")
 public class RekoController {

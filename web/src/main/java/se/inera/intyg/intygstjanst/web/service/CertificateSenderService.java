@@ -31,7 +31,7 @@ public interface CertificateSenderService {
      *
      * @param certificate the certificate
      * @param recipientId The identifier of the recipient.
-     * @throws javax.xml.ws.WebServiceException if the web service call does not succeed
+     * @throws jakarta.xml.ws.WebServiceException if the web service call does not succeed
      */
     void sendCertificate(Certificate certificate, String recipientId);
 

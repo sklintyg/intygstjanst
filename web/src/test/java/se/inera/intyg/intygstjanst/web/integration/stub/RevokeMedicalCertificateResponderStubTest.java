@@ -20,8 +20,8 @@ package se.inera.intyg.intygstjanst.web.integration.stub;
 
 import static org.mockito.Mockito.verify;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;

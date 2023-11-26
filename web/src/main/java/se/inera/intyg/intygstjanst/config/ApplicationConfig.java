@@ -19,10 +19,10 @@
 package se.inera.intyg.intygstjanst.config;
 
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Arrays;
-import javax.annotation.Nonnull;
-import javax.annotation.PostConstruct;
 import org.apache.cxf.Bus;
 import org.apache.cxf.ext.logging.LoggingFeature;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -44,11 +43,9 @@ import se.inera.intyg.infra.monitoring.MonitoringConfiguration;
 @Configuration
 @EnableTransactionManagement
 @DependsOn("transactionManager")
-@PropertySources({
-    @PropertySource("classpath:application.properties"),
-    @PropertySource("classpath:version.properties"),
-    @PropertySource(ignoreResourceNotFound = true, value = "file:${dev.config.file}")
-})
+@PropertySource("classpath:application.properties")
+@PropertySource("classpath:version.properties")
+@PropertySource(ignoreResourceNotFound = true, value = "file:${dev.config.file}")
 @ImportResource({"classpath:META-INF/cxf/cxf.xml"})
 @Import(MonitoringConfiguration.class)
 public class ApplicationConfig implements TransactionManagementConfigurer {

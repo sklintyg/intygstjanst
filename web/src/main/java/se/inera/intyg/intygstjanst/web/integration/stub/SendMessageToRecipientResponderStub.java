@@ -18,9 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
+import jakarta.xml.bind.JAXBException;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

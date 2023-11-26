@@ -18,10 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.hsa;
 
+import jakarta.xml.ws.WebServiceException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.xml.ws.WebServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
