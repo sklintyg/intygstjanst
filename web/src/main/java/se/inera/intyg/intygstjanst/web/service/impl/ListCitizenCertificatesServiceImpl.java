@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -57,7 +57,7 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
     public List<CitizenCertificateDTO> get(ListCitizenCertificatesRequest request) {
 
         final var certificates = citizenCertificatesRepository
-                .getCertificatesForPatient(request.getPersonnummer().getPersonnummerWithDash());
+            .getCertificatesForPatient(request.getPersonnummer().getPersonnummerWithDash());
 
         monitoringLogService.logCertificateListedByCitizen(request.getPersonnummer());
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -58,21 +58,21 @@ public class RekoControllerTest {
     private static final LocalDateTime SICK_LEAVE_TIMESTAMP = LocalDateTime.now().plusDays(1);
 
     final CreateRekoStatusRequestDTO expectedRequest = new CreateRekoStatusRequestDTO(
-            PATIENT_ID,
-            STATUS,
-            CARE_PROVIDER_ID,
-            CARE_UNIT_ID,
-            UNIT_ID,
-            STAFF_ID,
-            STAFF_NAME,
-            SICK_LEAVE_TIMESTAMP
+        PATIENT_ID,
+        STATUS,
+        CARE_PROVIDER_ID,
+        CARE_UNIT_ID,
+        UNIT_ID,
+        STAFF_ID,
+        STAFF_NAME,
+        SICK_LEAVE_TIMESTAMP
     );
 
     final GetRekoStatusRequestDTO expectedGetRequest = new GetRekoStatusRequestDTO(
-            PATIENT_ID,
-            LocalDate.now(),
-            LocalDate.now().minusDays(2),
-            CARE_UNIT_ID
+        PATIENT_ID,
+        LocalDate.now(),
+        LocalDate.now().minusDays(2),
+        CARE_UNIT_ID
     );
 
 
@@ -82,14 +82,14 @@ public class RekoControllerTest {
 
         rekoController.createRekoStatus(expectedRequest);
         verify(createRekoStatusService).create(
-                captor.capture(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                any(LocalDateTime.class)
+            captor.capture(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            any(LocalDateTime.class)
         );
 
         assertEquals(PATIENT_ID, captor.getValue());
@@ -101,14 +101,14 @@ public class RekoControllerTest {
 
         rekoController.createRekoStatus(expectedRequest);
         verify(createRekoStatusService).create(
-                anyString(),
-                captor.capture(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                any(LocalDateTime.class)
+            anyString(),
+            captor.capture(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            any(LocalDateTime.class)
         );
 
         assertEquals(STATUS, captor.getValue());
@@ -120,14 +120,14 @@ public class RekoControllerTest {
 
         rekoController.createRekoStatus(expectedRequest);
         verify(createRekoStatusService).create(
-                anyString(),
-                anyString(),
-                captor.capture(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                any(LocalDateTime.class)
+            anyString(),
+            anyString(),
+            captor.capture(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            any(LocalDateTime.class)
         );
 
         assertEquals(CARE_PROVIDER_ID, captor.getValue());
@@ -139,14 +139,14 @@ public class RekoControllerTest {
 
         rekoController.createRekoStatus(expectedRequest);
         verify(createRekoStatusService).create(
-                anyString(),
-                anyString(),
-                anyString(),
-                captor.capture(),
-                anyString(),
-                anyString(),
-                anyString(),
-                any(LocalDateTime.class)
+            anyString(),
+            anyString(),
+            anyString(),
+            captor.capture(),
+            anyString(),
+            anyString(),
+            anyString(),
+            any(LocalDateTime.class)
         );
 
         assertEquals(CARE_UNIT_ID, captor.getValue());
@@ -158,14 +158,14 @@ public class RekoControllerTest {
 
         rekoController.createRekoStatus(expectedRequest);
         verify(createRekoStatusService).create(
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                captor.capture(),
-                anyString(),
-                anyString(),
-                any(LocalDateTime.class)
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            captor.capture(),
+            anyString(),
+            anyString(),
+            any(LocalDateTime.class)
         );
 
         assertEquals(UNIT_ID, captor.getValue());
@@ -177,14 +177,14 @@ public class RekoControllerTest {
 
         rekoController.createRekoStatus(expectedRequest);
         verify(createRekoStatusService).create(
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                captor.capture(),
-                anyString(),
-                any(LocalDateTime.class)
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            captor.capture(),
+            anyString(),
+            any(LocalDateTime.class)
         );
 
         assertEquals(STAFF_ID, captor.getValue());
@@ -196,14 +196,14 @@ public class RekoControllerTest {
 
         rekoController.createRekoStatus(expectedRequest);
         verify(createRekoStatusService).create(
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                captor.capture(),
-                any(LocalDateTime.class)
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            captor.capture(),
+            any(LocalDateTime.class)
         );
 
         assertEquals(STAFF_NAME, captor.getValue());
@@ -215,14 +215,14 @@ public class RekoControllerTest {
 
         rekoController.createRekoStatus(expectedRequest);
         verify(createRekoStatusService).create(
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                captor.capture()
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            captor.capture()
         );
 
         assertEquals(SICK_LEAVE_TIMESTAMP, captor.getValue());
@@ -234,10 +234,10 @@ public class RekoControllerTest {
 
         rekoController.getRekoStatus(expectedGetRequest);
         verify(getRekoStatusService).get(
-                captor.capture(),
-                any(LocalDate.class),
-                any(LocalDate.class),
-                anyString()
+            captor.capture(),
+            any(LocalDate.class),
+            any(LocalDate.class),
+            anyString()
         );
 
         assertEquals(PATIENT_ID, captor.getValue());
@@ -249,10 +249,10 @@ public class RekoControllerTest {
 
         rekoController.getRekoStatus(expectedGetRequest);
         verify(getRekoStatusService).get(
-                anyString(),
-                captor.capture(),
-                any(LocalDate.class),
-                anyString()
+            anyString(),
+            captor.capture(),
+            any(LocalDate.class),
+            anyString()
         );
 
         assertEquals(expectedGetRequest.getEndDate(), captor.getValue());
@@ -264,11 +264,11 @@ public class RekoControllerTest {
 
         rekoController.getRekoStatus(expectedGetRequest);
         verify(getRekoStatusService).get(
-                anyString(),
-                any(LocalDate.class),
-                captor.capture(),
-                anyString()
-                );
+            anyString(),
+            any(LocalDate.class),
+            captor.capture(),
+            anyString()
+        );
 
         assertEquals(expectedGetRequest.getStartDate(), captor.getValue());
     }

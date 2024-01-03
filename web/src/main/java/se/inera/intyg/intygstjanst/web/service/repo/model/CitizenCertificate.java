@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -29,6 +29,7 @@ import java.util.List;
 @Data
 @Builder
 public class CitizenCertificate {
+
     private String id;
     private String type;
     private String typeVersion;

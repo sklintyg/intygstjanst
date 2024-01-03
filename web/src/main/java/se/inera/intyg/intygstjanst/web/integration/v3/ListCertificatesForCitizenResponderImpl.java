@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -110,9 +110,10 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
 
     /**
      * Validate if the certificate list includes test certificates and the part asking for the certificates is a receiver of certificates.
-     * @param certificates  the certificates to validate.
-     * @param partCode  the part code.
-     * @return  true if the part isn't allowed to retrieve test certificates
+     *
+     * @param certificates the certificates to validate.
+     * @param partCode the part code.
+     * @return true if the part isn't allowed to retrieve test certificates
      */
     private boolean isInvalidPartForTestCertificates(List<Certificate> certificates, String partCode) {
         return certificates.stream().anyMatch(Certificate::isTestCertificate)

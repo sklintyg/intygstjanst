@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -30,14 +30,15 @@ import java.util.Optional;
 
 @Component
 public class RekoStatusFilterImpl implements RekoStatusFilter {
+
     @Override
     public Optional<Reko> filter(List<Reko> rekoStatuses, String patientId, LocalDate endDate, LocalDate startDate) {
         return rekoStatuses
-                .stream()
-                .filter(status -> status.getPatientId().equals(patientId))
-                .filter(status -> equalsOrAfterStartDate(startDate, status))
-                .filter(status -> beforeEndDate(endDate, status)
-                ).max(Comparator.comparing(Reko::getRegistrationTimestamp));
+            .stream()
+            .filter(status -> status.getPatientId().equals(patientId))
+            .filter(status -> equalsOrAfterStartDate(startDate, status))
+            .filter(status -> beforeEndDate(endDate, status)
+            ).max(Comparator.comparing(Reko::getRegistrationTimestamp));
     }
 
 
@@ -48,6 +49,6 @@ public class RekoStatusFilterImpl implements RekoStatusFilter {
     private static boolean equalsOrAfterStartDate(LocalDate startDate, Reko status) {
         final var sickLeaveStartLocalDatetime = startDate.atStartOfDay();
         return status.getSickLeaveTimestamp().isAfter(sickLeaveStartLocalDatetime)
-                || sickLeaveStartLocalDatetime.equals(status.getSickLeaveTimestamp());
+            || sickLeaveStartLocalDatetime.equals(status.getSickLeaveTimestamp());
     }
 }

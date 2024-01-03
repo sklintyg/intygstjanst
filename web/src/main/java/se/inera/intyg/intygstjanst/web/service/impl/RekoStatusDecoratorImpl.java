@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -39,8 +39,8 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
     final RekoStatusConverter rekoStatusConverter;
 
     public RekoStatusDecoratorImpl(RekoRepository rekoRepository,
-                                   RekoStatusFilter rekoStatusFilter,
-                                   RekoStatusConverter rekoStatusConverter) {
+        RekoStatusFilter rekoStatusFilter,
+        RekoStatusConverter rekoStatusConverter) {
         this.rekoRepository = rekoRepository;
         this.rekoStatusFilter = rekoStatusFilter;
         this.rekoStatusConverter = rekoStatusConverter;
@@ -53,10 +53,10 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
         }
 
         final var rekoStatuses = rekoRepository.findByPatientIdInAndCareUnitId(
-                sickLeaves
-                        .stream()
-                        .map((sickLeave) -> sickLeave.getPatient().getId())
-                        .collect(Collectors.toList()), careUnitId
+            sickLeaves
+                .stream()
+                .map((sickLeave) -> sickLeave.getPatient().getId())
+                .collect(Collectors.toList()), careUnitId
 
         );
 
@@ -65,10 +65,10 @@ public class RekoStatusDecoratorImpl implements RekoStatusDecorator {
 
     private RekoStatusDTO getRekoStatus(SjukfallEnhet sickLeave, List<Reko> rekoStatuses) {
         final var filteredRekoStatus = rekoStatusFilter.filter(
-                rekoStatuses,
-                sickLeave.getPatient().getId(),
-                sickLeave.getSlut(),
-                sickLeave.getStart());
+            rekoStatuses,
+            sickLeave.getPatient().getId(),
+            sickLeave.getSlut(),
+            sickLeave.getStart());
 
         return filteredRekoStatus.map(rekoStatusConverter::convert).orElse(null);
     }

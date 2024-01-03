@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 
 @Service
 public class CreateRekoStatusServiceImpl implements CreateRekoStatusService {
+
     private final RekoRepository rekoRepository;
 
     public CreateRekoStatusServiceImpl(RekoRepository rekoRepository) {
@@ -39,48 +40,48 @@ public class CreateRekoStatusServiceImpl implements CreateRekoStatusService {
 
     @Override
     public RekoStatusDTO create(String patientId,
-                                String status,
-                                String careProviderId,
-                                String careUnitId,
-                                String unitId,
-                                String staffId,
-                                String staffName,
-                                LocalDateTime sickLeaveTimestamp) {
+        String status,
+        String careProviderId,
+        String careUnitId,
+        String unitId,
+        String staffId,
+        String staffName,
+        LocalDateTime sickLeaveTimestamp) {
 
         final var reko = getReko(
-                status,
-                patientId,
-                careProviderId,
-                careUnitId,
-                unitId,
-                staffId,
-                staffName,
-                sickLeaveTimestamp
+            status,
+            patientId,
+            careProviderId,
+            careUnitId,
+            unitId,
+            staffId,
+            staffName,
+            sickLeaveTimestamp
         );
 
         rekoRepository.save(reko);
 
         return new RekoStatusDTO(
-                new RekoStatusTypeDTO(status, RekoStatusType.fromId(status).getName()),
-                patientId,
-                careProviderId,
-                careUnitId,
-                unitId,
-                staffId,
-                staffName,
-                sickLeaveTimestamp,
-                reko.getRegistrationTimestamp()
+            new RekoStatusTypeDTO(status, RekoStatusType.fromId(status).getName()),
+            patientId,
+            careProviderId,
+            careUnitId,
+            unitId,
+            staffId,
+            staffName,
+            sickLeaveTimestamp,
+            reko.getRegistrationTimestamp()
         );
     }
 
     private Reko getReko(String status,
-                         String patientId,
-                         String careProviderId,
-                         String careUnitId,
-                         String unitId,
-                         String staffId,
-                         String staffName,
-                         LocalDateTime sickLeaveTimestamp) {
+        String patientId,
+        String careProviderId,
+        String careUnitId,
+        String unitId,
+        String staffId,
+        String staffName,
+        LocalDateTime sickLeaveTimestamp) {
         final var reko = new Reko();
         reko.setPatientId(patientId);
         reko.setStatus(status);

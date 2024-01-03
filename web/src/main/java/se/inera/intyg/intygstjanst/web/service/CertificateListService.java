@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -22,13 +22,14 @@ import se.inera.intyg.infra.certificate.dto.CertificateListRequest;
 import se.inera.intyg.infra.certificate.dto.CertificateListResponse;
 
 /**
-* Service that collects certificates into a list.
+ * Service that collects certificates into a list.
  */
 
 public interface CertificateListService {
 
     /**
      * Collects certificates for a specific doctor on the logged in unit.
+     *
      * @param request Request with filter query including filters that user has chosen or default filters.
      * @return Response including all signed certificates and the total amount of certificates.
      */

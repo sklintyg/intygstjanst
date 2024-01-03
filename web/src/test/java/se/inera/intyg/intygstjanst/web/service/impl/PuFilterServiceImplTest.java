@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -95,8 +95,8 @@ public class PuFilterServiceImplTest {
     public void testExceptionIsThrownWhenPersonSvarIncludesAnError() {
         mockPersonSvarError();
         assertThrows(
-                IllegalStateException.class,
-                () -> puFilterService.enrichWithPatientNameAndFilter(buildIntygDataList(TOLVANSSON_PNR), LAKARE1_HSA_ID)
+            IllegalStateException.class,
+            () -> puFilterService.enrichWithPatientNameAndFilter(buildIntygDataList(TOLVANSSON_PNR), LAKARE1_HSA_ID)
         );
     }
 
@@ -151,14 +151,14 @@ public class PuFilterServiceImplTest {
     @Test
     public void testEnrichPatientsWhenPersonnummerHasInvalidDigit() {
         assertThrows(
-                IllegalStateException.class,
-                () -> puFilterService.enrichWithPatientNameAndFilter(buildIntygDataList(TOLVANSSON_PNR_INVALID), LAKARE1_HSA_ID)
+            IllegalStateException.class,
+            () -> puFilterService.enrichWithPatientNameAndFilter(buildIntygDataList(TOLVANSSON_PNR_INVALID), LAKARE1_HSA_ID)
         );
     }
 
     private void mockPersonSvar(boolean avliden, boolean sekretess) {
         when(puService.getPersons(anyList()))
-                .thenReturn(buildPersonMap(buildPersonSvar(TOLVANSSON_PNR, sekretess, avliden)));
+            .thenReturn(buildPersonMap(buildPersonSvar(TOLVANSSON_PNR, sekretess, avliden)));
     }
 
     private void mockPersonSvarError() {
@@ -180,13 +180,13 @@ public class PuFilterServiceImplTest {
 
     private Person buildPerson(String pnr, boolean sekretess, boolean avliden) {
         return new Person(createPnr(pnr), sekretess, avliden, "Fornamn", null, "Efternamn",
-                "Gatan 1", "11212", "Orten");
+            "Gatan 1", "11212", "Orten");
     }
 
     private List<IntygData> buildIntygDataList(String... personId) {
         return Arrays.stream(personId)
-                .map(pnr -> buildIntygData(pnr, "Patient-" + pnr))
-                .collect(Collectors.toList());
+            .map(pnr -> buildIntygData(pnr, "Patient-" + pnr))
+            .collect(Collectors.toList());
     }
 
     private IntygData buildIntygData(String id, String name) {
@@ -210,8 +210,8 @@ public class PuFilterServiceImplTest {
 
     private Personnummer createPnr(String pnr) {
         return Personnummer
-                .createPersonnummer(pnr)
-                .orElseThrow(() -> new IllegalArgumentException("Cannot create Personnummer object with pnr: " + pnr));
+            .createPersonnummer(pnr)
+            .orElseThrow(() -> new IllegalArgumentException("Cannot create Personnummer object with pnr: " + pnr));
     }
 }
 

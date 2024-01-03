@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -33,43 +33,44 @@ import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
 
 @Service
 public class SendCertificateServiceImpl implements SendCertificateService {
-  private final CertificateService certificateService;
-  private final StatisticsService statisticsService;
-  private final InternalNotificationService internalNotificationService;
 
-  public SendCertificateServiceImpl(
-      CertificateService certificateService, StatisticsService statisticsService,
-      InternalNotificationService internalNotificationService) {
-    this.certificateService = certificateService;
-    this.statisticsService = statisticsService;
-    this.internalNotificationService = internalNotificationService;
-  }
+    private final CertificateService certificateService;
+    private final StatisticsService statisticsService;
+    private final InternalNotificationService internalNotificationService;
 
-  @Override
-  public SendStatus send(SendCertificateRequestDTO request)
-      throws InvalidCertificateException, TestCertificateException, CertificateRevokedException, RecipientUnknownException {
-
-    final var certificate = certificateService.getCertificateForCare(request.getCertificateId());
-    final var sendStatus = certificateService.sendCertificate(
-        request.getPatientId(),
-        request.getCertificateId(),
-        request.getRecipientId()
-    );
-
-    if (sendStatus != CertificateService.SendStatus.ALREADY_SENT) {
-      statisticsService.sent(
-          certificate.getId(),
-          certificate.getType(),
-          certificate.getCareUnitId(),
-          request.getRecipientId()
-      );
-
-      internalNotificationService.notifyCareIfSentByCitizen(
-          certificate,
-          request.getPatientId().getOriginalPnr(),
-          request.getHsaId()
-      );
+    public SendCertificateServiceImpl(
+        CertificateService certificateService, StatisticsService statisticsService,
+        InternalNotificationService internalNotificationService) {
+        this.certificateService = certificateService;
+        this.statisticsService = statisticsService;
+        this.internalNotificationService = internalNotificationService;
     }
-    return sendStatus;
-  }
+
+    @Override
+    public SendStatus send(SendCertificateRequestDTO request)
+        throws InvalidCertificateException, TestCertificateException, CertificateRevokedException, RecipientUnknownException {
+
+        final var certificate = certificateService.getCertificateForCare(request.getCertificateId());
+        final var sendStatus = certificateService.sendCertificate(
+            request.getPatientId(),
+            request.getCertificateId(),
+            request.getRecipientId()
+        );
+
+        if (sendStatus != CertificateService.SendStatus.ALREADY_SENT) {
+            statisticsService.sent(
+                certificate.getId(),
+                certificate.getType(),
+                certificate.getCareUnitId(),
+                request.getRecipientId()
+            );
+
+            internalNotificationService.notifyCareIfSentByCitizen(
+                certificate,
+                request.getPatientId().getOriginalPnr(),
+                request.getHsaId()
+            );
+        }
+        return sendStatus;
+    }
 }

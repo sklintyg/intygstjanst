@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -49,7 +49,7 @@ public class PuFilterServiceImpl implements PuFilterService {
 
     @Override
     public void enrichWithPatientNameAndFilter(List<IntygData> sickLeaves, String protectedPersonFilterId) {
-       final var personSvarMap = fetchPersons(sickLeaves);
+        final var personSvarMap = fetchPersons(sickLeaves);
 
         final var i = sickLeaves.iterator();
         while (i.hasNext()) {
@@ -104,16 +104,16 @@ public class PuFilterServiceImpl implements PuFilterService {
 
     private List<Personnummer> getPersonnummerListFromIntygDataList(List<IntygData> list) {
         return getPersonnummerListOfOptionalsFromList(list).stream()
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .distinct()
-                .collect(Collectors.toList());
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .distinct()
+            .collect(Collectors.toList());
     }
 
     private List<Optional<Personnummer>> getPersonnummerListOfOptionalsFromList(List<IntygData> list) {
         return list.stream()
-                .map(se -> getPersonnummerOfOptional(se.getPatientId()))
-                .collect(Collectors.toList());
+            .map(se -> getPersonnummerOfOptional(se.getPatientId()))
+            .collect(Collectors.toList());
     }
 
     private Optional<Personnummer> getPersonnummerOfOptional(String pnr) {
@@ -129,7 +129,7 @@ public class PuFilterServiceImpl implements PuFilterService {
 
     private Personnummer getPersonnummer(String pnr) {
         final var personnummer = Personnummer.createPersonnummer(pnr)
-                .orElseThrow(() -> new RuntimeException("Found unparsable personnummer '" + pnr + "'"));
+            .orElseThrow(() -> new RuntimeException("Found unparsable personnummer '" + pnr + "'"));
 
         if (!personnummer.verifyControlDigit()) {
             throw new RuntimeException("Found personnummer '" + personnummer.getPersonnummerHash() + "' with invalid control digit");
@@ -140,9 +140,9 @@ public class PuFilterServiceImpl implements PuFilterService {
 
     private String joinNames(PersonSvar personSvar) {
         return Joiner.on(' ').skipNulls()
-                .join(personSvar.getPerson().getFornamn(),
-                        personSvar.getPerson().getMellannamn(),
-                        personSvar.getPerson().getEfternamn());
+            .join(personSvar.getPerson().getFornamn(),
+                personSvar.getPerson().getMellannamn(),
+                personSvar.getPerson().getEfternamn());
     }
 }
 

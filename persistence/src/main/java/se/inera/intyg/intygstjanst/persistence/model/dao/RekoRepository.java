@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -27,6 +27,7 @@ import org.springframework.stereotype.Repository;
 public interface RekoRepository extends JpaRepository<Reko, Long> {
 
     List<Reko> findByPatientId(String patientId);
+
     List<Reko> findByPatientIdAndCareUnitId(String patientId, String careUnitId);
 
     List<Reko> findByPatientIdIn(List<String> patientIds);

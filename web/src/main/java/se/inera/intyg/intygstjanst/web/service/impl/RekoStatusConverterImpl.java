@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -28,14 +28,15 @@ import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 
 @Component
 public class RekoStatusConverterImpl implements RekoStatusConverter {
+
     @Override
     public RekoStatusDTO convert(Reko rekoStatus) {
         final var convertedRekoStatus = new RekoStatusDTO();
         convertedRekoStatus.setStatus(
-                new RekoStatusTypeDTO(
-                        rekoStatus.getStatus(),
-                        RekoStatusType.fromId(rekoStatus.getStatus()).getName()
-                )
+            new RekoStatusTypeDTO(
+                rekoStatus.getStatus(),
+                RekoStatusType.fromId(rekoStatus.getStatus()).getName()
+            )
         );
         convertedRekoStatus.setRegistrationTimestamp(rekoStatus.getRegistrationTimestamp());
         convertedRekoStatus.setPatientId(rekoStatus.getPatientId());

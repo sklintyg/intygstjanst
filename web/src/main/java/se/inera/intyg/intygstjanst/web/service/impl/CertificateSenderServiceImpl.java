@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -119,17 +119,17 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
         AttributedURIType logicalAddress = getLogicalAddress(recipientId);
 
         RevokeMedicalCertificateResponseType sendResponse = revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(
-                logicalAddress,
-                request);
+            logicalAddress,
+            request);
 
         if (sendResponse.getResult().getResultCode() != OK) {
             String message = "Failed to send question to '" + recipientId + "' when revoking certificate '" + certificate.getId()
-                    + "'. Info from recipient: " + sendResponse.getResult().getInfoText();
+                + "'. Info from recipient: " + sendResponse.getResult().getInfoText();
             LOGGER.error(message);
             throw new SubsystemCallException(recipientId, message);
         } else {
             monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(),
-                    recipientId);
+                recipientId);
         }
     }
 

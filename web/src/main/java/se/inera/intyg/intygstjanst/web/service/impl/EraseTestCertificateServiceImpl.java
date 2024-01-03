@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -30,6 +30,7 @@ import se.inera.intyg.intygstjanst.web.service.EraseTestCertificateService;
 
 @Service
 public class EraseTestCertificateServiceImpl implements EraseTestCertificateService {
+
     @Autowired
     private CertificateDao certificateDao;
 
