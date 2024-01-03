@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -27,6 +27,7 @@ import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 
 @Service
 public class CitizenCertificateDTOConverterImpl implements CitizenCertificateDTOConverter {
+
     private final CitizenCertificateRecipientConverter citizenCertificateRecipientConverter;
 
     public CitizenCertificateDTOConverterImpl(CitizenCertificateRecipientConverter citizenCertificateRecipientConverter) {
@@ -36,42 +37,42 @@ public class CitizenCertificateDTOConverterImpl implements CitizenCertificateDTO
     @Override
     public CitizenCertificateDTO convert(CitizenCertificate certificate, String typeName, String summaryLabel) {
         return CitizenCertificateDTO
-                .builder()
-                .id(certificate.getId())
-                .type(getType(typeName, certificate.getType(), certificate.getTypeVersion()))
-                .summary(getSummary(certificate.getAdditionalInfo(), summaryLabel))
-                .issuer(getIssuer(certificate.getIssuerName()))
-                .unit(getUnit(certificate.getUnitId(), certificate.getUnitName()))
-                .recipient(
-                        citizenCertificateRecipientConverter.convert(certificate.getType(), certificate.getSentDate()).orElse(null)
-                )
-                .issued(certificate.getIssued())
-                .relations(certificate.getRelations())
-                .build();
+            .builder()
+            .id(certificate.getId())
+            .type(getType(typeName, certificate.getType(), certificate.getTypeVersion()))
+            .summary(getSummary(certificate.getAdditionalInfo(), summaryLabel))
+            .issuer(getIssuer(certificate.getIssuerName()))
+            .unit(getUnit(certificate.getUnitId(), certificate.getUnitName()))
+            .recipient(
+                citizenCertificateRecipientConverter.convert(certificate.getType(), certificate.getSentDate()).orElse(null)
+            )
+            .issued(certificate.getIssued())
+            .relations(certificate.getRelations())
+            .build();
     }
 
     private CitizenCertificateIssuerDTO getIssuer(String name) {
         return CitizenCertificateIssuerDTO
-                .builder()
-                .name(name)
-                .build();
+            .builder()
+            .name(name)
+            .build();
     }
 
     private CitizenCertificateTypeDTO getType(String name, String id, String version) {
         return CitizenCertificateTypeDTO
-                .builder()
-                .id(id)
-                .name(name)
-                .version(version)
-                .build();
+            .builder()
+            .id(id)
+            .name(name)
+            .version(version)
+            .build();
     }
 
     private CitizenCertificateSummaryDTO getSummary(String value, String label) {
         return CitizenCertificateSummaryDTO
-                .builder()
-                .value(value)
-                .label(label)
-                .build();
+            .builder()
+            .value(value)
+            .label(label)
+            .build();
     }
 
     private CitizenCertificateUnitDTO getUnit(String id, String name) {

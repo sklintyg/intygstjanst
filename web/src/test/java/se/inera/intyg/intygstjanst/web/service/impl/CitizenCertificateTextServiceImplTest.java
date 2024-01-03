@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -39,6 +39,7 @@ import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenCertificateTextServiceImplTest {
+
     private static final String TYPE_NAME = "TYPE_NAME";
     private static final String ADDITIONAL_INFO_LABEL = "Additional info label";
 
@@ -51,6 +52,7 @@ class CitizenCertificateTextServiceImplTest {
 
     @Nested
     class TypeName {
+
         private final ModuleEntryPoint entryPoint = mock(ModuleEntryPoint.class);
 
         @BeforeEach
@@ -69,6 +71,7 @@ class CitizenCertificateTextServiceImplTest {
 
     @Nested
     class AdditionalInfoLabel {
+
         private final ModuleApi moduleApi = mock(ModuleApi.class);
 
         @BeforeEach

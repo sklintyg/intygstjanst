@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -30,6 +30,7 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/reko")
 public class RekoController {
+
     private static final String UTF_8_CHARSET = ";charset=utf-8";
 
     private final CreateRekoStatusService createRekoStatusService;
@@ -47,14 +48,14 @@ public class RekoController {
     @Consumes(MediaType.APPLICATION_JSON)
     public RekoStatusDTO createRekoStatus(@RequestBody CreateRekoStatusRequestDTO request) {
         return createRekoStatusService.create(
-                request.patientId,
-                request.getStatusId(),
-                request.getCareProviderId(),
-                request.getCareUnitId(),
-                request.getUnitId(),
-                request.getStaffId(),
-                request.getStaffName(),
-                request.getSickLeaveTimestamp()
+            request.patientId,
+            request.getStatusId(),
+            request.getCareProviderId(),
+            request.getCareUnitId(),
+            request.getUnitId(),
+            request.getStaffId(),
+            request.getStaffName(),
+            request.getSickLeaveTimestamp()
         );
     }
 
@@ -65,10 +66,10 @@ public class RekoController {
     @Consumes(MediaType.APPLICATION_JSON)
     public RekoStatusDTO getRekoStatus(@RequestBody GetRekoStatusRequestDTO request) {
         return getRekoStatusService.get(
-                request.getPatientId(),
-                request.getEndDate(),
-                request.getStartDate(),
-                request.getCareUnitId()
+            request.getPatientId(),
+            request.getEndDate(),
+            request.getStartDate(),
+            request.getCareUnitId()
         );
     }
 }

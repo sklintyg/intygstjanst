@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -131,8 +131,9 @@ public interface CertificateService {
 
     /**
      * Check if the certificate is flagged as test certificate.
+     *
      * @param certificateId the certificate ID
-     * @return  true if the certificate is a test certificate
+     * @return true if the certificate is a test certificate
      * @throws InvalidCertificateException if the certificate cannot be found.
      */
     boolean isTestCertificate(String certificateId) throws InvalidCertificateException;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -75,6 +75,7 @@ class CitizenCertificateConverterImplTest {
         Mockito.when(certificate.getSignedDate()).thenReturn(DATE);
         Mockito.when(certificate.getAdditionalInfo()).thenReturn(SUMMARY);
     }
+
     @Test
     void shouldConvertId() {
         final var response = citizenCertificateConverter.convert(certificate, relations);
@@ -108,7 +109,7 @@ class CitizenCertificateConverterImplTest {
     void shouldConvertSentDateWhenSent() {
         final var timeStamp = LocalDateTime.now();
         when(certificate.getStates()).thenReturn(List.of(
-                new CertificateStateHistoryEntry("Id", CertificateState.SENT, timeStamp))
+            new CertificateStateHistoryEntry("Id", CertificateState.SENT, timeStamp))
         );
         final var response = citizenCertificateConverter.convert(certificate, relations);
 
@@ -119,7 +120,7 @@ class CitizenCertificateConverterImplTest {
     void shouldConvertSentDateWhenNotSent() {
         final var timeStamp = LocalDateTime.now();
         when(certificate.getStates()).thenReturn(List.of(
-                new CertificateStateHistoryEntry("Id", CertificateState.CANCELLED, timeStamp))
+            new CertificateStateHistoryEntry("Id", CertificateState.CANCELLED, timeStamp))
         );
         final var response = citizenCertificateConverter.convert(certificate, relations);
 
@@ -157,6 +158,7 @@ class CitizenCertificateConverterImplTest {
 
     @Nested
     class ConversionOfRelationValues {
+
         CitizenCertificateRelationDTO expectedRelation;
 
         Relation relation = new Relation("fromId", "toId", "NotErsatt", LocalDateTime.now());
@@ -171,7 +173,7 @@ class CitizenCertificateConverterImplTest {
                 .build();
 
             when(citizenCertificateRelationConverter.convert(anyString(), any(Relation.class)))
-                    .thenReturn(Optional.of(expectedRelation));
+                .thenReturn(Optional.of(expectedRelation));
         }
 
         @Test
@@ -186,7 +188,7 @@ class CitizenCertificateConverterImplTest {
             final var captor = ArgumentCaptor.forClass(String.class);
 
             verify(citizenCertificateRelationConverter, times(1)).convert(
-                    captor.capture(), any()
+                captor.capture(), any()
             );
             assertEquals(certificate.getId(), captor.getValue());
         }
@@ -197,7 +199,7 @@ class CitizenCertificateConverterImplTest {
             final var captor = ArgumentCaptor.forClass(Relation.class);
 
             verify(citizenCertificateRelationConverter, times(1)).convert(
-                    anyString(), captor.capture()
+                anyString(), captor.capture()
             );
             assertEquals(relation, captor.getValue());
         }

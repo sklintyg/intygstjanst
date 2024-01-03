@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -40,20 +40,20 @@ public class CitizenCertificateRecipientConverterImpl implements CitizenCertific
     @Override
     public Optional<CitizenCertificateRecipientDTO> convert(String certificateType, LocalDateTime sent) {
         return recipientRepo
-                .listRecipients()
-                .stream()
-                .filter(
-                        (recipient) -> recipient.getCertificateTypes().contains(certificateType)
-                                && recipient.getRecipientType() == CertificateRecipientType.HUVUDMOTTAGARE
-                )
-                .findFirst()
-                .map(recipient ->
-                        CitizenCertificateRecipientDTO
-                                .builder()
-                                .id(recipient.getId())
-                                .name(recipient.getName())
-                                .sent(sent)
-                                .build()
-                );
+            .listRecipients()
+            .stream()
+            .filter(
+                (recipient) -> recipient.getCertificateTypes().contains(certificateType)
+                    && recipient.getRecipientType() == CertificateRecipientType.HUVUDMOTTAGARE
+            )
+            .findFirst()
+            .map(recipient ->
+                CitizenCertificateRecipientDTO
+                    .builder()
+                    .id(recipient.getId())
+                    .name(recipient.getName())
+                    .sent(sent)
+                    .build()
+            );
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -113,7 +113,7 @@ public class IntygInfoServiceImplTest {
     }
 
     @Test
-    public void foundMinInfo()  throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
+    public void foundMinInfo() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
         String intygId = "found2";
         LocalDateTime receivedTime = LocalDateTime.now();
         Certificate certificate = getCertificate(intygId, receivedTime);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -46,13 +46,15 @@ public interface RelationDao {
 
     /**
      * Erase any data related to test certificates passed as ids.
-     * @param ids   Certificate ids.
+     *
+     * @param ids Certificate ids.
      */
     void eraseTestCertificates(List<String> ids);
 
     /**
      * Erase any relations for certificates, passed as certificate ids, from specific care provider.
-     * @param ids   Certificate ids.
+     *
+     * @param ids Certificate ids.
      */
     void eraseCertificateRelations(List<String> ids, String careProvider);
 }

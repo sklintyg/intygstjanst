@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -144,6 +144,7 @@ class CertificateExportServiceImplTest {
 
     @Nested
     class GetCertificateExportPage {
+
         @BeforeEach
         void setUp() {
             when(certificateRepository.findTotalRevokedForCareProvider(any(String.class))).thenReturn(1L);
@@ -321,12 +322,13 @@ class CertificateExportServiceImplTest {
 
     private void setupEraseMocks(boolean withException) {
         doReturn(4, 4, 2).when(arendeRepository).eraseArendenByCertificateIds(any());
-        doReturn(4,4, 2).when(sjukfallCertificateDao).eraseCertificates(any(), any(String.class));
+        doReturn(4, 4, 2).when(sjukfallCertificateDao).eraseCertificates(any(), any(String.class));
 
         if (!withException) {
             doReturn(4, 4, 2).when(certificateDao).eraseCertificates(any(), any(String.class));
         } else {
-            when(certificateDao.eraseCertificates(any(), any(String.class))).thenReturn(4, 4).thenThrow(new IllegalArgumentException("TestException"));
+            when(certificateDao.eraseCertificates(any(), any(String.class))).thenReturn(4, 4)
+                .thenThrow(new IllegalArgumentException("TestException"));
         }
     }
 

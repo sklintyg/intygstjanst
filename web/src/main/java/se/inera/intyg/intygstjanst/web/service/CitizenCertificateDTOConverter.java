@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -23,5 +23,6 @@ import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 
 public interface CitizenCertificateDTOConverter {
+
     CitizenCertificateDTO convert(CitizenCertificate certificate, String typeName, String summaryLabel);
 }

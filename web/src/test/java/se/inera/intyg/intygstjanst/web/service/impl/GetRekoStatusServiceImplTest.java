@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -64,6 +64,7 @@ class GetRekoStatusServiceImplTest {
 
     @Nested
     class TestRekoRepository {
+
         @Test
         void shouldCallRepositoryWithPatientId() {
             getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
@@ -87,6 +88,7 @@ class GetRekoStatusServiceImplTest {
 
     @Nested
     class TestRekoStatusFilter {
+
         @BeforeEach
         void setup() {
             when(rekoRepository.findByPatientIdAndCareUnitId(anyString(), anyString()))
@@ -146,7 +148,7 @@ class GetRekoStatusServiceImplTest {
         @Test
         void shouldCallConverterWithRekoReturnedFromFilter() {
             when(rekoStatusFilter.filter(anyList(), anyString(), any(LocalDate.class), any(LocalDate.class)))
-                    .thenReturn(FILTERED_REKO);
+                .thenReturn(FILTERED_REKO);
             getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
 
             final var captor = ArgumentCaptor.forClass(Reko.class);
@@ -158,7 +160,7 @@ class GetRekoStatusServiceImplTest {
         @Test
         void shouldNotCallConverterIfFilteredRekoIsEmpty() {
             when(rekoStatusFilter.filter(anyList(), anyString(), any(LocalDate.class), any(LocalDate.class)))
-                    .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
             getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
 
             verify(rekoStatusConverter, times(0)).convert(any());
@@ -167,6 +169,7 @@ class GetRekoStatusServiceImplTest {
 
     @Nested
     class TestResponse {
+
         @Test
         void shouldReturnNullIfRekoStatusIsNotFound() {
             when(rekoStatusFilter.filter(any(), any(), any(), any())).thenReturn(Optional.empty());

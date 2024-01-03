@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -24,5 +24,6 @@ import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import java.util.List;
 
 public interface RekoStatusDecorator {
+
     void decorate(List<SjukfallEnhet> sickLeaves, String careUnitId);
 }

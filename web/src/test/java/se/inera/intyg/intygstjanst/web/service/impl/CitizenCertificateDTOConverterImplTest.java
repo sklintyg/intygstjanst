@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -150,7 +150,7 @@ class CitizenCertificateDTOConverterImplTest {
         final var citizenCertificate = getCitizenCertificate();
 
         when(citizenCertificateRecipientConverter.convert(citizenCertificate.getType(), citizenCertificate.getSentDate()))
-                .thenReturn(Optional.of(expectedResult));
+            .thenReturn(Optional.of(expectedResult));
 
         final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
         assertEquals(expectedResult, actualResult.getRecipient());

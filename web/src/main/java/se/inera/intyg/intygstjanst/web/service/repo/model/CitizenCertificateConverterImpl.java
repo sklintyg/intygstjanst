@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class CitizenCertificateConverterImpl implements CitizenCertificateConverter {
+
     private final CitizenCertificateRelationConverter citizenCertificateRelationConverter;
 
     public CitizenCertificateConverterImpl(CitizenCertificateRelationConverter citizenCertificateRelationConverter) {
@@ -44,27 +45,27 @@ public class CitizenCertificateConverterImpl implements CitizenCertificateConver
         final var sentState = getSentState(certificate.getStates());
 
         return CitizenCertificate
-                .builder()
-                .id(certificate.getId())
-                .type(certificate.getType())
-                .typeVersion(certificate.getTypeVersion())
-                .additionalInfo(certificate.getAdditionalInfo())
-                .issuerName(certificate.getSigningDoctorName())
-                .unitId(certificate.getCareUnitId())
-                .unitName(certificate.getCareUnitName())
-                .issued(certificate.getSignedDate())
-                .sentDate(sentState.map(CertificateStateHistoryEntry::getTimestamp).orElse(null))
-                .relations(getRelations(certificate.getId(), relations))
-                .build();
+            .builder()
+            .id(certificate.getId())
+            .type(certificate.getType())
+            .typeVersion(certificate.getTypeVersion())
+            .additionalInfo(certificate.getAdditionalInfo())
+            .issuerName(certificate.getSigningDoctorName())
+            .unitId(certificate.getCareUnitId())
+            .unitName(certificate.getCareUnitName())
+            .issued(certificate.getSignedDate())
+            .sentDate(sentState.map(CertificateStateHistoryEntry::getTimestamp).orElse(null))
+            .relations(getRelations(certificate.getId(), relations))
+            .build();
     }
 
     private List<CitizenCertificateRelationDTO> getRelations(String certificateId, List<Relation> relations) {
         return relations
-                .stream()
-                .map(relation -> citizenCertificateRelationConverter.convert(certificateId, relation))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+            .stream()
+            .map(relation -> citizenCertificateRelationConverter.convert(certificateId, relation))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toList());
     }
 
     private Optional<CertificateStateHistoryEntry> getSentState(Collection<CertificateStateHistoryEntry> states) {

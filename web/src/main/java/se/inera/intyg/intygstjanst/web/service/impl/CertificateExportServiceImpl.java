@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -107,7 +107,7 @@ public class CertificateExportServiceImpl implements CertificateExportService {
         final var totalRevoked = certificateRepository.findTotalRevokedForCareProvider(careProviderId);
         final var certificateXmls = getCertificateXmls(certificates);
         final var certificateCount = certificatePage.getNumberOfElements();
-        return new CertificateExportPageDTO(careProviderId, page, certificateCount, totalCertificates, totalRevoked,  certificateXmls);
+        return new CertificateExportPageDTO(careProviderId, page, certificateCount, totalCertificates, totalRevoked, certificateXmls);
     }
 
     @Override
@@ -149,7 +149,7 @@ public class CertificateExportServiceImpl implements CertificateExportService {
 
         } catch (Exception e) {
             LOG.error("Error erasing certificates for care provider {}. Number of erased certificates: {}, sjukfallCertificates: {}, "
-                + "messages: {}. Certificates remaining: {}.", careProviderId, erasedCertificatesTotal, erasedSjukfallTotal,
+                    + "messages: {}. Certificates remaining: {}.", careProviderId, erasedCertificatesTotal, erasedSjukfallTotal,
                 erasedMessagesTotal, certificateIdPage.getTotalElements() - erasedCertificates, e);
             throw e;
         }

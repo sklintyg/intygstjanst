@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -25,8 +25,9 @@ public interface MessageService {
 
     /**
      * Find messages related to a particular certificate.
+     *
      * @param certificateId Id of the certificate
-     * @return  List of messages
+     * @return List of messages
      */
     List<MessageFromIT> findMessagesByCertificateId(String certificateId);
 }

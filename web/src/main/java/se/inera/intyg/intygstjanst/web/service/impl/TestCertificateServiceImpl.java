@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -67,7 +67,7 @@ public class TestCertificateServiceImpl implements TestCertificateService {
 
         final var testCertificatesWithRelationsMap = getCertificateRelations(testCertificates);
 
-        for (var testCertificate: testCertificates) {
+        for (var testCertificate : testCertificates) {
             if (skipIfAlreadyErasedDueToRelation(testCertificate.getId(), erasedTestCertificateIds)) {
                 continue;
             }
@@ -88,7 +88,7 @@ public class TestCertificateServiceImpl implements TestCertificateService {
                 failedTestCertificateIds.addAll(idsToErase);
             }
 
-            for (String idToLog: idsToLog) {
+            for (String idToLog : idsToLog) {
                 monitoringLogService.logTestCertificateErased(idToLog, unitMap.get(idToLog));
             }
         }
@@ -118,8 +118,8 @@ public class TestCertificateServiceImpl implements TestCertificateService {
     }
 
     private boolean isCertificatePartOfRelations(String id, Map<String, List<Relation>> testCertificatesWithRelations) {
-        for (var relationList: testCertificatesWithRelations.values()) {
-            for (var relation: relationList) {
+        for (var relationList : testCertificatesWithRelations.values()) {
+            for (var relation : relationList) {
                 if (id.equalsIgnoreCase(relation.getFromIntygsId()) || id.equalsIgnoreCase(relation.getToIntygsId())) {
                     return true;
                 }
@@ -132,7 +132,7 @@ public class TestCertificateServiceImpl implements TestCertificateService {
         final var idsToErase = new ArrayList<String>();
         idsToErase.add(id);
         if (testCertificatesWithRelations.containsKey(id)) {
-            for (var relation: testCertificatesWithRelations.get(id)) {
+            for (var relation : testCertificatesWithRelations.get(id)) {
                 if (relation.getFromIntygsId() != null && !idsToErase.contains(relation.getFromIntygsId())) {
                     idsToErase.add(relation.getFromIntygsId());
                 }
@@ -146,7 +146,7 @@ public class TestCertificateServiceImpl implements TestCertificateService {
 
     private Map<String, String> getUnitMapForLogging(List<String> idsToErase) {
         final var unitMap = new HashMap<String, String>();
-        for (var idToErase: idsToErase) {
+        for (var idToErase : idsToErase) {
             try {
                 final var certificate = certificateDao.getCertificate(null, idToErase);
                 unitMap.put(idToErase, certificate.getCareUnitId());

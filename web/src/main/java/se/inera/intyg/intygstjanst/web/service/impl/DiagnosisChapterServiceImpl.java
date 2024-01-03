@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -39,7 +39,7 @@ public class DiagnosisChapterServiceImpl implements DiagnosisChapterService {
 
     @Autowired
     private DiagnosisChapterProvider diagnosisChapterProvider;
-    
+
     public static final DiagnosKapitel OGILTIGA_DIAGNOSKODER_KAPITEL = new DiagnosKapitel(
         new DiagnosKategori(' ', 0),
         new DiagnosKategori(' ', 0),

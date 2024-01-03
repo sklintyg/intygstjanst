@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -27,6 +27,7 @@ import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
 
 public interface SendCertificateService {
+
     SendStatus send(SendCertificateRequestDTO request)
         throws InvalidCertificateException, TestCertificateException, CertificateRevokedException, RecipientUnknownException;
 }

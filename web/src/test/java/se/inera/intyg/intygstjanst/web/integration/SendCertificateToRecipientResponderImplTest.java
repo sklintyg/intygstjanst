@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -150,7 +150,8 @@ public class SendCertificateToRecipientResponderImplTest {
 
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdType.VALIDATION_ERROR, response.getResult().getErrorId());
-        assertEquals("Certificate 'Intygs-id-1234567890' couldn't be sent to recipient because it is a test certificate", response.getResult().getResultText());
+        assertEquals("Certificate 'Intygs-id-1234567890' couldn't be sent to recipient because it is a test certificate",
+            response.getResult().getResultText());
     }
 
     void setup() {
