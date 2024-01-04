@@ -32,7 +32,7 @@ gretty {
             "-Dxml.catalog.cacheEnabled=false"
     ]
 
-    dependencies { implementation "se.inera.intyg.refdata:refdata:${refDataVersion}" }
+    dependencies { gretty "se.inera.intyg.refdata:refdata:${refDataVersion}" }
 }
 
 test { exclude '**/*IT*' }
