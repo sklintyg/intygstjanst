@@ -20,7 +20,6 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,37 +34,30 @@ import se.inera.intyg.intygstjanst.web.service.dto.DiagnosisFromFile;
 @Component
 public class DiagnosisDescriptionProviderImpl implements DiagnosisDescriptionProvider {
 
-    @Value("${it.diagnosisCodes.icd10se.file1}")
-    private String diagnoseCodeIcd10SeFile1;
-
-    @Value("${it.diagnosisCodes.icd10se.file2}")
-    private String diagnoseCodeIcd10SeFile2;
-
-    @Value("${it.diagnosisCodes.icd10se.file3}")
-    private String diagnoseCodeIcd10SeFile3;
-
+    @Value("${it.diagnosisCodes.icd10se.file}")
+    private String diagnoseCodeIcd10SeFile;
     @Value("${it.diagnosisCodes.ksh97p_kod.file}")
     private String diagnosKodKS97PKodFile;
     private final ResourceLoader resourceLoader;
+    private final IcdCodeConverter icdCodeConverter;
 
-    public DiagnosisDescriptionProviderImpl(ResourceLoader resourceLoader) {
+    public DiagnosisDescriptionProviderImpl(IcdCodeConverter icdCodeConverter, ResourceLoader resourceLoader) {
+        this.icdCodeConverter = icdCodeConverter;
         this.resourceLoader = resourceLoader;
     }
 
     @Override
     public Map<String, String> getDiagnosisDescription() throws IOException {
         final var diagnosisDescriptionMap = new HashMap<String, String>();
-        diagnosisDescriptionMap.putAll(loadDiagnosFile(diagnoseCodeIcd10SeFile1, StandardCharsets.UTF_8));
-        diagnosisDescriptionMap.putAll(loadDiagnosFile(diagnoseCodeIcd10SeFile2, StandardCharsets.UTF_8));
-        diagnosisDescriptionMap.putAll(loadDiagnosFile(diagnoseCodeIcd10SeFile3, StandardCharsets.UTF_8));
-        diagnosisDescriptionMap.putAll(loadDiagnosFile(diagnosKodKS97PKodFile, StandardCharsets.ISO_8859_1));
+        diagnosisDescriptionMap.putAll(icdCodeConverter.convert(diagnoseCodeIcd10SeFile));
+        diagnosisDescriptionMap.putAll(loadDiagnosFile(diagnosKodKS97PKodFile));
         return diagnosisDescriptionMap;
     }
 
-    private Map<String, String> loadDiagnosFile(final String file, Charset fileEncoding) throws IOException {
+    private Map<String, String> loadDiagnosFile(final String file) throws IOException {
         final var resource = resourceLoader.getResource(file);
         final var diagnosisDescriptionMap = new HashMap<String, String>();
-        try (LineIterator it = IOUtils.lineIterator(resource.getInputStream(), fileEncoding)) {
+        try (LineIterator it = IOUtils.lineIterator(resource.getInputStream(), StandardCharsets.ISO_8859_1)) {
             while (it.hasNext()) {
                 final String line = it.nextLine();
                 final var diagnosisCode = new DiagnosisFromFile(line, diagnosisDescriptionMap.size() == 0);
