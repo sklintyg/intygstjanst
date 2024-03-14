@@ -21,10 +21,11 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.web.service.CertificateEventMessageValidator;
 
 @Service
 @Slf4j
-public class CertificateEventMessageValidator {
+public class CertificateEventMessageValidatorImpl implements CertificateEventMessageValidator {
 
     private static final String MESSAGE_SENT = "message-sent";
 

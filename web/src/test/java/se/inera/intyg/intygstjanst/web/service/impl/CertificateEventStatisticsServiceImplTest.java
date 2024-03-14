@@ -39,17 +39,17 @@ import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.service.dto.GetMessageXmlResponse;
 
 @ExtendWith(MockitoExtension.class)
-class CertificateEventStatisticsServiceTest {
+class CertificateEventStatisticsServiceImplTest {
 
     @Mock
     private StatisticsService statisticsService;
     @Mock
-    private GetCertificateXmlService getCertificateXmlService;
+    private GetCertificateXmlServiceImpl getCertificateXmlService;
     @Mock
-    private GetMessageXmlService getMessageXmlService;
+    private GetMessageXmlServiceImpl getMessageXmlService;
 
     @InjectMocks
-    private CertificateEventStatisticsService certificateEventStatisticsService;
+    private CertificateEventStatisticsServiceImpl certificateEventStatisticsServiceImpl;
 
     private static final String CERTIFICATE_ID = "certificateId";
     private static final String CERTIFICATE_TYPE = "fk7211";
@@ -73,12 +73,12 @@ class CertificateEventStatisticsServiceTest {
             .certificateType(CERTIFICATE_TYPE)
             .unitId(UNIT_ID)
             .recipient(null)
-            .certificateXmlBase64(ENCODED_XML)
+            .xml(ENCODED_XML)
             .build();
         when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
         when(statisticsService.created(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
 
-        final var result = certificateEventStatisticsService.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
+        final var result = certificateEventStatisticsServiceImpl.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
         verify(statisticsService).created(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnitId());
@@ -91,12 +91,12 @@ class CertificateEventStatisticsServiceTest {
             .certificateType(CERTIFICATE_TYPE)
             .unitId(UNIT_ID)
             .recipient(null)
-            .certificateXmlBase64(ENCODED_XML)
+            .xml(ENCODED_XML)
             .build();
         when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
         when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
 
-        final var result = certificateEventStatisticsService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
+        final var result = certificateEventStatisticsServiceImpl.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
         verify(statisticsService).revoked(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnitId());
@@ -113,7 +113,7 @@ class CertificateEventStatisticsServiceTest {
         when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
         when(statisticsService.sent(CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID, RECIPIENT)).thenReturn(true);
 
-        final var result = certificateEventStatisticsService.send(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID);
+        final var result = certificateEventStatisticsServiceImpl.send(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
         verify(statisticsService).sent(resp.getCertificateId(), resp.getCertificateType(), resp.getUnitId(), resp.getRecipient());
@@ -123,16 +123,13 @@ class CertificateEventStatisticsServiceTest {
     void shouldCallStatisticsServiceMessageSent() {
         final var resp = GetMessageXmlResponse.builder()
             .messageId(MESSAGE_ID)
-            .certificateId(CERTIFICATE_ID)
-            .certificateType(CERTIFICATE_TYPE)
-            .unitId(UNIT_ID)
             .topic(TOPIC)
-            .messageXmlBase64(ENCODED_XML)
+            .xml(ENCODED_XML)
             .build();
         when(getMessageXmlService.get(MESSAGE_ID)).thenReturn(resp);
         when(statisticsService.messageSent(DECODED_XML, MESSAGE_ID, TOPIC)).thenReturn(true);
 
-        final var result = certificateEventStatisticsService.send(EVENT_MESSAGE_SENT, CERTIFICATE_ID, MESSAGE_ID);
+        final var result = certificateEventStatisticsServiceImpl.send(EVENT_MESSAGE_SENT, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
         verify(statisticsService).messageSent(DECODED_XML, resp.getMessageId(), resp.getTopic());
@@ -145,19 +142,19 @@ class CertificateEventStatisticsServiceTest {
             .certificateType(CERTIFICATE_TYPE)
             .unitId(UNIT_ID)
             .recipient(null)
-            .certificateXmlBase64(ENCODED_XML)
+            .xml(ENCODED_XML)
             .build();
         when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
         when(statisticsService.created(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(false);
 
-        final var result = certificateEventStatisticsService.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
+        final var result = certificateEventStatisticsServiceImpl.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
 
         assertFalse(result);
     }
 
     @Test
     void shouldThrowIllegalArgumentExceptionWhenUnknownEventType() {
-        assertThrows(IllegalArgumentException.class, () -> certificateEventStatisticsService.send(EVENT_UNKNOWN, CERTIFICATE_ID,
+        assertThrows(IllegalArgumentException.class, () -> certificateEventStatisticsServiceImpl.send(EVENT_UNKNOWN, CERTIFICATE_ID,
             MESSAGE_ID));
         verifyNoInteractions(statisticsService);
         verifyNoInteractions(getCertificateXmlService);
@@ -167,13 +164,13 @@ class CertificateEventStatisticsServiceTest {
     @Test
     void shouldThrowRestClientExceptionWhenFailedCertificateXmlCall() {
         when(getCertificateXmlService.get(CERTIFICATE_ID)).thenThrow(RestClientException.class);
-        assertThrows(RestClientException.class, () -> certificateEventStatisticsService.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID));
+        assertThrows(RestClientException.class, () -> certificateEventStatisticsServiceImpl.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID));
     }
 
     @Test
     void shouldThrowRestClientExceptionWhenFailedMessageXmlCall() {
         when(getMessageXmlService.get(MESSAGE_ID)).thenThrow(RestClientException.class);
-        assertThrows(RestClientException.class, () -> certificateEventStatisticsService.send(EVENT_MESSAGE_SENT, CERTIFICATE_ID,
+        assertThrows(RestClientException.class, () -> certificateEventStatisticsServiceImpl.send(EVENT_MESSAGE_SENT, CERTIFICATE_ID,
             MESSAGE_ID));
     }
 }

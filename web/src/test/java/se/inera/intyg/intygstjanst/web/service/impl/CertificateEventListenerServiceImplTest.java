@@ -35,15 +35,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class CertificateEventListenerServiceTest {
+class CertificateEventListenerServiceImplTest {
 
     @Mock
-    private CertificateEventStatisticsService certificateEventStatisticsService;
+    private CertificateEventStatisticsServiceImpl certificateEventStatisticsService;
     @Mock
-    private CertificateEventMessageValidator certificateEventMessageValidator;
+    private CertificateEventMessageValidatorImpl certificateEventMessageValidator;
 
     @InjectMocks
-    private CertificateEventListenerService certificateEventListenerService;
+    private CertificateEventListenerServiceImpl certificateEventListenerServiceImpl;
 
     private static final String CERTIFICATE_ID = "certificateId";
     private static final String MESSAGE_ID = "messageId";
@@ -54,7 +54,7 @@ class CertificateEventListenerServiceTest {
     @Test
     void shouldExitIfInputPropertiesDoNotValidate() throws JMSException {
         final var message = new ActiveMQTextMessage();
-        certificateEventListenerService.onMessage(message);
+        certificateEventListenerServiceImpl.onMessage(message);
         verifyNoInteractions(certificateEventStatisticsService);
     }
 
@@ -67,7 +67,7 @@ class CertificateEventListenerServiceTest {
         when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
         when(certificateEventStatisticsService.send(anyString(), anyString(), nullable(String.class))).thenReturn(false);
 
-        assertThrows(JMSException.class, () -> certificateEventListenerService.onMessage(message));
+        assertThrows(JMSException.class, () -> certificateEventListenerServiceImpl.onMessage(message));
     }
 
     @Test
@@ -79,7 +79,7 @@ class CertificateEventListenerServiceTest {
         when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
         when(certificateEventStatisticsService.send(anyString(), anyString(), nullable(String.class))).thenReturn(false);
 
-        assertThrows(JMSException.class, () -> certificateEventListenerService.onMessage(message));
+        assertThrows(JMSException.class, () -> certificateEventListenerServiceImpl.onMessage(message));
     }
 
     @Test
@@ -93,7 +93,7 @@ class CertificateEventListenerServiceTest {
         when(certificateEventStatisticsService.send(anyString(), anyString(), nullable(String.class)))
             .thenThrow(IllegalArgumentException.class);
 
-        assertDoesNotThrow(() -> certificateEventListenerService.onMessage(message));
+        assertDoesNotThrow(() -> certificateEventListenerServiceImpl.onMessage(message));
     }
 
     @Test
@@ -105,6 +105,6 @@ class CertificateEventListenerServiceTest {
         when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
         when(certificateEventStatisticsService.send(anyString(), anyString(), nullable(String.class))).thenReturn(true);
 
-        assertDoesNotThrow(() -> certificateEventListenerService.onMessage(message));
+        assertDoesNotThrow(() -> certificateEventListenerServiceImpl.onMessage(message));
     }
 }

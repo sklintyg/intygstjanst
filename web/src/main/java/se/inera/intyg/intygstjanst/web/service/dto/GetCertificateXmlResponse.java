@@ -34,7 +34,7 @@ public class GetCertificateXmlResponse {
     String certificateType;
     String unitId;
     String recipient;
-    String certificateXmlBase64;
+    String xml;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class GetCertificateXmlResponseBuilder {

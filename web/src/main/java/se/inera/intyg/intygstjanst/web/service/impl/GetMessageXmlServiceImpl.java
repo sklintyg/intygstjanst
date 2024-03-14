@@ -25,12 +25,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import se.inera.intyg.intygstjanst.web.service.GetMessageXmlService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetMessageXmlResponse;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class GetMessageXmlService {
+public class GetMessageXmlServiceImpl implements GetMessageXmlService {
 
     @Value("${certificateservice.base.url")
     private String csBaseUrl;

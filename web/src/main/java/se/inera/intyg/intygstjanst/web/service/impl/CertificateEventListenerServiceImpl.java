@@ -25,14 +25,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.web.service.CertificateEventListenerService;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class CertificateEventListenerService {
+public class CertificateEventListenerServiceImpl implements CertificateEventListenerService {
 
-    private final CertificateEventStatisticsService certificateEventStatsisticsService;
-    private final CertificateEventMessageValidator certificateEventMessageValidator;
+    private final CertificateEventStatisticsServiceImpl certificateEventStatsisticsService;
+    private final CertificateEventMessageValidatorImpl certificateEventMessageValidator;
 
     private static final String EVENT_TYPE = "eventType";
     private static final String CERTIFICATE_ID = "certificateId";

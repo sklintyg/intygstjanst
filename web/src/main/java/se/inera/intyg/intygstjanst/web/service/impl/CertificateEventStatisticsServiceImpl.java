@@ -23,15 +23,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.web.service.CertificateEventStatisticsService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
 @Service
 @RequiredArgsConstructor
-public class CertificateEventStatisticsService {
+public class CertificateEventStatisticsServiceImpl implements CertificateEventStatisticsService {
 
     private final StatisticsService statisticsService;
-    private final GetCertificateXmlService getCertificateXmlService;
-    private final GetMessageXmlService getMessageXmlService;
+    private final GetCertificateXmlServiceImpl getCertificateXmlService;
+    private final GetMessageXmlServiceImpl getMessageXmlService;
 
     private static final String CERTIFICATE_SIGNED = "certificate-signed";
     private static final String CERTIFICATE_REVOKED = "certificate-revoked";
@@ -56,13 +57,13 @@ public class CertificateEventStatisticsService {
 
     private boolean created(String certificateId) {
         final var response = getCertificateXmlService.get(certificateId);
-        final var certificateXml = decodeXml(response.getCertificateXmlBase64());
+        final var certificateXml = decodeXml(response.getXml());
         return statisticsService.created(certificateXml, certificateId, response.getCertificateType(), response.getUnitId());
     }
 
     private boolean revoked(String certificateId) {
         final var response = getCertificateXmlService.get(certificateId);
-        final var certificateXml = decodeXml(response.getCertificateXmlBase64());
+        final var certificateXml = decodeXml(response.getXml());
         return statisticsService.revoked(certificateXml, certificateId, response.getCertificateType(), response.getUnitId());
     }
 
@@ -73,7 +74,7 @@ public class CertificateEventStatisticsService {
 
     private boolean messageSent(String messageId) {
         final var response = getMessageXmlService.get(messageId);
-        final var messageXml = decodeXml(response.getMessageXmlBase64());
+        final var messageXml = decodeXml(response.getXml());
         return statisticsService.messageSent(messageXml, messageId, response.getTopic());
     }
 

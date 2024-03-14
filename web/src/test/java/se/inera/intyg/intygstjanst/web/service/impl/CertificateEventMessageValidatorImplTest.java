@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class CertificateEventMessageValidatorTest {
+class CertificateEventMessageValidatorImplTest {
 
     private static final String CERTIFICATE_ID = "certificateId";
     private static final String MESSAGE_ID = "messageId";
@@ -33,11 +33,11 @@ class CertificateEventMessageValidatorTest {
     private static final String EVENT_SIGNED = "certificate-signed";
     private static final String EVENT_MESSAGE_SENT = "message-sent";
 
-    private CertificateEventMessageValidator certificateStateMassageValidator;
+    private CertificateEventMessageValidatorImpl certificateStateMassageValidator;
 
     @BeforeEach
     void setup() {
-        certificateStateMassageValidator = new CertificateEventMessageValidator();
+        certificateStateMassageValidator = new CertificateEventMessageValidatorImpl();
     }
 
     @Test
