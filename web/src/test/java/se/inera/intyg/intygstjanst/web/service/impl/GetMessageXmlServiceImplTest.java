@@ -56,7 +56,7 @@ class GetMessageXmlServiceImplTest {
             .topic(TOPIC)
             .xml(ENCODED_XML)
             .build();
-        when(restTemplate.postForObject(anyString(), eq(HttpEntity.EMPTY), eq(GetCertificateXmlResponse.class), eq(MESSAGE_ID)))
+        when(restTemplate.postForObject(anyString(), eq(HttpEntity.EMPTY), eq(GetMessageXmlResponse.class), eq(MESSAGE_ID)))
             .thenReturn(expectedResponse);
 
         final var actualResponse = getMessageXmlService.get(MESSAGE_ID);
