@@ -33,7 +33,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.service.dto.GetMessageXmlResponse;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,7 +65,7 @@ class GetMessageXmlServiceImplTest {
 
     @Test
     void shouldThrowRestClientExceptioWhenRequestFails() {
-        when(restTemplate.postForObject(anyString(), eq(HttpEntity.EMPTY), eq(GetCertificateXmlResponse.class), eq(MESSAGE_ID)))
+        when(restTemplate.postForObject(anyString(), eq(HttpEntity.EMPTY), eq(GetMessageXmlResponse.class), eq(MESSAGE_ID)))
             .thenThrow(RestClientException.class);
         assertThrows(RestClientException.class, () -> getMessageXmlService.get(MESSAGE_ID));
     }
