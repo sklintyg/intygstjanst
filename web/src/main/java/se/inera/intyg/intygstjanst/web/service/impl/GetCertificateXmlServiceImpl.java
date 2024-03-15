@@ -34,7 +34,7 @@ import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
 @RequiredArgsConstructor
 public class GetCertificateXmlServiceImpl implements GetCertificateXmlService {
 
-    @Value("${certificateservice.base.url")
+    @Value("${certificateservice.base.url}")
     private String csBaseUrl;
 
     private static final String ENDPOINT_URL = "/internalapi/certificate/{certificateId}/xml";
