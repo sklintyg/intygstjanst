@@ -41,6 +41,7 @@ public class GetMessageXmlServiceImpl implements GetMessageXmlService {
 
     private final RestTemplate restTemplate;
 
+    @Override
     public GetMessageXmlResponse get(String messageId) {
         try {
             final var url = csBaseUrl + ENDPOINT_URL;

@@ -39,6 +39,7 @@ public class CertificateEventStatisticsServiceImpl implements CertificateEventSt
     private static final String CERTIFICATE_SENT = "certificate-sent";
     private static final String MESSAGE_SENT = "message-sent";
 
+    @Override
     public boolean send(String eventType, String certificateId, String messageId) {
         switch (eventType) {
             case CERTIFICATE_SIGNED:
