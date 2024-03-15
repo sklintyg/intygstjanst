@@ -41,6 +41,7 @@ public class CertificateEventListenerServiceImpl implements CertificateEventList
     private static final String MESSAGE_SENT = "message-sent";
     private static final String ERROR_MESSAGE = "Statistics message delivery failed.";
 
+    @Override
     @JmsListener(destination = "${certificate.event.queue.name}")
     public void onMessage(Message message) throws JMSException {
         try {

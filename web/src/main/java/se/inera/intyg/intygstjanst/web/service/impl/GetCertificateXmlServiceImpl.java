@@ -41,6 +41,7 @@ public class GetCertificateXmlServiceImpl implements GetCertificateXmlService {
 
     private final RestTemplate restTemplate;
 
+    @Override
     public GetCertificateXmlResponse get(String certificateId) {
         try {
             final var url = csBaseUrl + ENDPOINT_URL;

@@ -29,6 +29,7 @@ public class CertificateEventMessageValidatorImpl implements CertificateEventMes
 
     private static final String MESSAGE_SENT = "message-sent";
 
+    @Override
     public boolean validate(String eventType, String certificateId, String messageId) {
         if (eventType == null || eventType.isBlank()) {
             log.warn("Missing required parameter 'eventType'.");
