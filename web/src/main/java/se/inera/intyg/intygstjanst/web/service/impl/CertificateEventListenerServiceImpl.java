@@ -48,6 +48,7 @@ public class CertificateEventListenerServiceImpl implements CertificateEventList
             final var certificateId = message.getStringProperty(CERTIFICATE_ID);
             final var messageId = message.getStringProperty(MESSAGE_ID);
             if (!certificateEventMessageValidator.validate(eventType, certificateId, messageId)) {
+                log.error("Failure sending statistics. Missing required parameter");
                 return;
             }
 

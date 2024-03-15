@@ -30,22 +30,19 @@ public class CertificateEventMessageValidatorImpl implements CertificateEventMes
     private static final String MESSAGE_SENT = "message-sent";
 
     public boolean validate(String eventType, String certificateId, String messageId) {
-        try {
-            if (eventType == null || eventType.isBlank()) {
-                throw new IllegalArgumentException("Message could not be sent due to missing property 'eventType'.");
-            }
-            if (certificateId == null || certificateId.isBlank()) {
-                throw new IllegalArgumentException("Message could not be sent due to missing property 'certificateId'.");
-            }
-            if (eventType.equals(MESSAGE_SENT) && (messageId == null || messageId.isBlank())) {
-                throw new IllegalArgumentException("Message could not be sent due to missing property 'messageId'.");
-            }
-            return true;
-
-        } catch (IllegalArgumentException e) {
-            log.error("Received invalid statistics message, eventId: {}, certificateId: {}, messageId: {}. "
-                + "No redeliveries will be performed.", eventType, certificateId, messageId, e);
+        if (eventType == null || eventType.isBlank()) {
+            log.warn("Missing required parameter 'eventType'.");
             return false;
         }
+        if (certificateId == null || certificateId.isBlank()) {
+            log.warn("Missing required parameter 'certificateId'.");
+            return false;
+        }
+        if (eventType.equals(MESSAGE_SENT) && (messageId == null || messageId.isBlank())) {
+            log.warn("Missing required parameter 'messageId'.");
+            return false;
+        }
+
+        return true;
     }
 }
