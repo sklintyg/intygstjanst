@@ -33,14 +33,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.client.RestClientException;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateEventListenerServiceImplTest {
 
     @Mock
-    private CertificateEventStatisticsServiceImpl certificateEventStatisticsService;
+    private CertificateEventServiceImpl certificateEventStatisticsService;
     @Mock
-    private CertificateEventMessageValidatorImpl certificateEventMessageValidator;
+    private CertificateEventValidatorImpl certificateEventMessageValidator;
 
     @InjectMocks
     private CertificateEventListenerServiceImpl certificateEventListenerServiceImpl;
@@ -48,13 +49,14 @@ class CertificateEventListenerServiceImplTest {
     private static final String CERTIFICATE_ID = "certificateId";
     private static final String MESSAGE_ID = "messageId";
     private static final String EVENT_TYPE = "eventType";
+    private static final String EVENT_SENT = "certificate-sent";
     private static final String EVENT_SIGNED = "certificate-signed";
     private static final String EVENT_MESSAGE_SENT = "message-sent";
 
     @Test
-    void shouldExitIfInputPropertiesDoNotValidate() throws JMSException {
+    void shouldExitIfInputPropertiesDoNotValidate() {
         final var message = new ActiveMQTextMessage();
-        certificateEventListenerServiceImpl.onMessage(message);
+        certificateEventListenerServiceImpl.processMessage(message);
         verifyNoInteractions(certificateEventStatisticsService);
     }
 
@@ -67,23 +69,36 @@ class CertificateEventListenerServiceImplTest {
         when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
         when(certificateEventStatisticsService.send(anyString(), anyString(), nullable(String.class))).thenReturn(false);
 
-        assertThrows(JMSException.class, () -> certificateEventListenerServiceImpl.onMessage(message));
+        assertThrows(IllegalStateException.class, () -> certificateEventListenerServiceImpl.processMessage(message));
     }
 
     @Test
-    void shouldThrowRestClientExceptionWhenFalseResponseFromService() throws JMSException {
+    void shouldThrowRestClientExceptionWhenRestClientExceptionFromService() throws JMSException {
         final var message = new ActiveMQTextMessage();
         message.setStringProperty(EVENT_TYPE, EVENT_SIGNED);
         message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
 
         when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
-        when(certificateEventStatisticsService.send(anyString(), anyString(), nullable(String.class))).thenReturn(false);
+        when(certificateEventStatisticsService.send(anyString(), anyString(), nullable(String.class))).thenThrow(RestClientException.class);
 
-        assertThrows(JMSException.class, () -> certificateEventListenerServiceImpl.onMessage(message));
+        assertThrows(RestClientException.class, () -> certificateEventListenerServiceImpl.processMessage(message));
     }
 
     @Test
-    void shouldNotThrowExceptionIfIlllegalArgumentExceptionFromService() throws JMSException {
+    void shouldThrowIllegalStateExceptionWhenIllegalStateExceptionFromService() throws JMSException {
+        final var message = new ActiveMQTextMessage();
+        message.setStringProperty(EVENT_TYPE, EVENT_SENT);
+        message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
+
+        when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
+        when(certificateEventStatisticsService.send(anyString(), anyString(), nullable(String.class)))
+            .thenThrow(IllegalStateException.class);
+
+        assertThrows(IllegalStateException.class, () -> certificateEventListenerServiceImpl.processMessage(message));
+    }
+
+    @Test
+    void shouldNotThrowExceptionIfIllegalArgumentExceptionFromService() throws JMSException {
         final var message = new ActiveMQTextMessage();
         message.setStringProperty(EVENT_TYPE, EVENT_SIGNED);
         message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
@@ -93,7 +108,7 @@ class CertificateEventListenerServiceImplTest {
         when(certificateEventStatisticsService.send(anyString(), anyString(), nullable(String.class)))
             .thenThrow(IllegalArgumentException.class);
 
-        assertDoesNotThrow(() -> certificateEventListenerServiceImpl.onMessage(message));
+        assertDoesNotThrow(() -> certificateEventListenerServiceImpl.processMessage(message));
     }
 
     @Test
@@ -105,6 +120,6 @@ class CertificateEventListenerServiceImplTest {
         when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
         when(certificateEventStatisticsService.send(anyString(), anyString(), nullable(String.class))).thenReturn(true);
 
-        assertDoesNotThrow(() -> certificateEventListenerServiceImpl.onMessage(message));
+        assertDoesNotThrow(() -> certificateEventListenerServiceImpl.processMessage(message));
     }
 }

@@ -26,55 +26,61 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventListenerService;
+import se.inera.intyg.intygstjanst.web.service.CertificateEventService;
+import se.inera.intyg.intygstjanst.web.service.CertificateEventValidator;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class CertificateEventListenerServiceImpl implements CertificateEventListenerService {
 
-    private final CertificateEventStatisticsServiceImpl certificateEventStatsisticsService;
-    private final CertificateEventMessageValidatorImpl certificateEventMessageValidator;
+    private final CertificateEventService certificateEventStatsisticsService;
+    private final CertificateEventValidator certificateEventMessageValidator;
 
     private static final String EVENT_TYPE = "eventType";
     private static final String CERTIFICATE_ID = "certificateId";
     private static final String MESSAGE_ID = "messageId";
     private static final String MESSAGE_SENT = "message-sent";
-    private static final String ERROR_MESSAGE = "Statistics message delivery failed.";
+    private static final String ERROR_MESSAGE = "Failure handling certificate event with eventType '{}', certificateId '{}' and "
+        + "messageId '{}'.";
 
     @Override
     @JmsListener(destination = "${certificate.event.queue.name}")
-    public void onMessage(Message message) throws JMSException {
+    public void processMessage(Message message) {
+        String eventType = null;
+        String certificateId = null;
+        String messageId = null;
+
         try {
-            final var eventType = message.getStringProperty(EVENT_TYPE);
-            final var certificateId = message.getStringProperty(CERTIFICATE_ID);
-            final var messageId = message.getStringProperty(MESSAGE_ID);
+            eventType = message.getStringProperty(EVENT_TYPE);
+            certificateId = message.getStringProperty(CERTIFICATE_ID);
+            messageId = message.getStringProperty(MESSAGE_ID);
+
             if (!certificateEventMessageValidator.validate(eventType, certificateId, messageId)) {
-                log.error("Received message for statistics missing required parameter(s), eventType: {}, certificateId: {}, messageId: {}.",
-                    eventType, certificateId, messageId);
+                log.error(getMissingParametersMessage(eventType, certificateId, messageId));
                 return;
             }
 
             final var success = certificateEventStatsisticsService.send(eventType, certificateId, messageId);
 
-            if (Boolean.TRUE.equals(success)) {
-                log.debug("Successfully delivered {} with eventType '{}'.", getLogString(eventType, certificateId, messageId), eventType);
-            } else {
-                throw new IllegalStateException(String.format("Failure delivering %s with eventType '%s'.",
-                    getLogString(eventType, certificateId, messageId), eventType));
+            if (!success) {
+                throw new IllegalStateException(getSendStatisticsFailedMessage(eventType, certificateId, messageId));
             }
 
-        } catch (IllegalArgumentException e) {
-            log.error(ERROR_MESSAGE, e);
+        } catch (JMSException | IllegalArgumentException e) {
+            log.error(ERROR_MESSAGE, eventType, certificateId, messageId, e);
         } catch (Exception e) {
-            log.error(ERROR_MESSAGE, e);
-            throw new JMSException(e.getMessage());
+            log.error(ERROR_MESSAGE, eventType, certificateId, messageId, e);
+            throw e;
         }
     }
 
-    private String getLogString(String eventType, String certificateId, String messageId) {
-        if (eventType.equals(MESSAGE_SENT)) {
-            return String.format("message to statistics for message id '%s' from certificate id '%s'", messageId, certificateId);
-        }
-        return String.format("message to statistics for certificate id '%s'", certificateId);
+    private String getMissingParametersMessage(String eventType, String certificateId, String messageId) {
+        return String.format("Received certificate event missing required parameter(s), eventType: '%s', certificateId: '%s', "
+            + "messageId: '%s'.", eventType, certificateId, messageId);
+    }
+    private String getSendStatisticsFailedMessage(String eventType, String certificateId, String messageId) {
+        return String.format("Failure sending statistics for event type '%s' for certificate '%s' with message '%s'.",
+            eventType, certificateId, messageId);
     }
 }

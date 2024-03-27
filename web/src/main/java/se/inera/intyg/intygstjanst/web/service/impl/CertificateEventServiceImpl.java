@@ -23,16 +23,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.web.service.CertificateEventStatisticsService;
+import se.inera.intyg.intygstjanst.web.service.CertificateEventSendService;
+import se.inera.intyg.intygstjanst.web.service.CertificateEventService;
+import se.inera.intyg.intygstjanst.web.service.GetCertificateXmlService;
+import se.inera.intyg.intygstjanst.web.service.GetMessageXmlService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
 @Service
 @RequiredArgsConstructor
-public class CertificateEventStatisticsServiceImpl implements CertificateEventStatisticsService {
+public class CertificateEventServiceImpl implements CertificateEventService {
 
     private final StatisticsService statisticsService;
-    private final GetCertificateXmlServiceImpl getCertificateXmlService;
-    private final GetMessageXmlServiceImpl getMessageXmlService;
+    private final GetCertificateXmlService getCertificateXmlService;
+    private final GetMessageXmlService getMessageXmlService;
+    private final CertificateEventSendService certificateEventSendService;
 
     private static final String CERTIFICATE_SIGNED = "certificate-signed";
     private static final String CERTIFICATE_REVOKED = "certificate-revoked";
@@ -51,14 +55,14 @@ public class CertificateEventStatisticsServiceImpl implements CertificateEventSt
             case MESSAGE_SENT:
                 return messageSent(messageId);
             default:
-                throw new IllegalArgumentException(String.format("Failure sending statistics for id '%s'. Received unknown event type "
-                    + "'%s'.", certificateId, eventType));
+                throw new IllegalArgumentException(String.format("Invalid eventType '%s' received for certificate '%s' and message '%s'.",
+                    eventType, certificateId, messageId));
         }
     }
 
     private boolean created(String certificateId) {
         final var response = getCertificateXmlService.get(certificateId);
-        final var certificateXml = decodeXml(response.getXml());
+        final var certificateXml = decodeXml(getCertificateXmlService.get(certificateId).getXml());
         return statisticsService.created(certificateXml, certificateId, response.getCertificateType(), response.getUnitId());
     }
 
@@ -70,7 +74,9 @@ public class CertificateEventStatisticsServiceImpl implements CertificateEventSt
 
     private boolean sent(String certificateId) {
         final var response = getCertificateXmlService.get(certificateId);
-        return statisticsService.sent(certificateId, response.getCertificateType(), response.getUnitId(), response.getRecipient());
+        certificateEventSendService.send(response, decodeXml(response.getXml()));
+        return statisticsService.sent(certificateId, response.getCertificateType(), response.getUnitId(),
+            response.getRecipient().getId());
     }
 
     private boolean messageSent(String messageId) {

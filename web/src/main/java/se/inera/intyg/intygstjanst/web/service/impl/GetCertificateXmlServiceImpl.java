@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import se.inera.intyg.intygstjanst.web.service.GetCertificateXmlService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
@@ -43,12 +42,7 @@ public class GetCertificateXmlServiceImpl implements GetCertificateXmlService {
 
     @Override
     public GetCertificateXmlResponse get(String certificateId) {
-        try {
-            final var url = csBaseUrl + ENDPOINT_URL;
-            return restTemplate.postForObject(url, HttpEntity.EMPTY, GetCertificateXmlResponse.class, certificateId);
-        } catch (RestClientException e) {
-            log.error("Failure fetching xml from CertificateService for certificate id '{}'.", certificateId, e);
-            throw e;
-        }
+        final var url = csBaseUrl + ENDPOINT_URL;
+        return restTemplate.postForObject(url, HttpEntity.EMPTY, GetCertificateXmlResponse.class, certificateId);
     }
 }

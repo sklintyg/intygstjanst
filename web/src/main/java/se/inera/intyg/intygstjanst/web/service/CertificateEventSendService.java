@@ -19,7 +19,10 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
-public interface CertificateEventMessageValidator {
+import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
 
-    boolean validate(String eventType, String certificateId, String messageId);
+public interface CertificateEventSendService {
+
+    void send(GetCertificateXmlResponse xmlResponse, String xml);
+
 }

@@ -34,6 +34,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
+import se.inera.intyg.intygstjanst.web.service.dto.RecipientDTO;
 
 @ExtendWith(MockitoExtension.class)
 class GetCertificateXmlServiceImplTest {
@@ -47,7 +48,7 @@ class GetCertificateXmlServiceImplTest {
     private static final String CERTIFICATE_ID = "certificateId";
     private static final String CERTIFICATE_TYPE = "fk7211";
     private static final String UNIT_ID = "unitId";
-    private static final String RECIPIENT = "recipient";
+    private static final String RECIPIENT_ID = "recipientId";
     private static final String ENCODED_XML = "xmlFromCertificateService";
 
     @Test
@@ -56,7 +57,9 @@ class GetCertificateXmlServiceImplTest {
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
             .unitId(UNIT_ID)
-            .recipient(RECIPIENT)
+            .recipient(RecipientDTO.builder()
+                .id(RECIPIENT_ID)
+                .build())
             .xml(ENCODED_XML)
             .build();
         when(restTemplate.postForObject(anyString(), eq(HttpEntity.EMPTY), eq(GetCertificateXmlResponse.class), eq(CERTIFICATE_ID)))

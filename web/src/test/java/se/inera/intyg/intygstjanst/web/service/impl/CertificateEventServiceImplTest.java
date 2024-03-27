@@ -22,6 +22,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -34,22 +35,30 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClientException;
+import se.inera.intyg.common.support.modules.support.api.exception.ExternalServiceCallException;
+import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.service.CertificateEventSendService;
+import se.inera.intyg.intygstjanst.web.service.GetCertificateXmlService;
+import se.inera.intyg.intygstjanst.web.service.GetMessageXmlService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.service.dto.GetMessageXmlResponse;
+import se.inera.intyg.intygstjanst.web.service.dto.RecipientDTO;
 
 @ExtendWith(MockitoExtension.class)
-class CertificateEventStatisticsServiceImplTest {
+class CertificateEventServiceImplTest {
 
     @Mock
     private StatisticsService statisticsService;
     @Mock
-    private GetCertificateXmlServiceImpl getCertificateXmlService;
+    private GetCertificateXmlService getCertificateXmlService;
     @Mock
-    private GetMessageXmlServiceImpl getMessageXmlService;
+    private GetMessageXmlService getMessageXmlService;
+    @Mock
+    private CertificateEventSendService certificateEventSendService;
 
     @InjectMocks
-    private CertificateEventStatisticsServiceImpl certificateEventStatisticsServiceImpl;
+    private CertificateEventServiceImpl certificateEventService;
 
     private static final String CERTIFICATE_ID = "certificateId";
     private static final String CERTIFICATE_TYPE = "fk7211";
@@ -60,14 +69,14 @@ class CertificateEventStatisticsServiceImplTest {
     private static final String EVENT_UNKNOWN = "unknown";
     private static final String UNIT_ID = "unitId";
     private static final String MESSAGE_ID = "messageId";
-    private static final String RECIPIENT = "recipient";
+    private static final String RECIPIENT_ID = "recipientId";
     private static final String TOPIC = "topic";
     private static final String DECODED_XML = "xmlFromCertificateService";
     private static final String ENCODED_XML = Base64.getEncoder().encodeToString("xmlFromCertificateService"
         .getBytes(StandardCharsets.UTF_8));
 
     @Test
-    void shouldCallStatisticsServiceCreated() {
+    void shouldCallStatisticsServiceCreated() throws RecipientUnknownException, ExternalServiceCallException {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
@@ -78,14 +87,14 @@ class CertificateEventStatisticsServiceImplTest {
         when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
         when(statisticsService.created(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
 
-        final var result = certificateEventStatisticsServiceImpl.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
+        final var result = certificateEventService.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
         verify(statisticsService).created(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnitId());
     }
 
     @Test
-    void shouldCallStatisticsServiceRevoked() {
+    void shouldCallStatisticsServiceRevoked() throws RecipientUnknownException, ExternalServiceCallException {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
@@ -96,7 +105,7 @@ class CertificateEventStatisticsServiceImplTest {
         when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
         when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
 
-        final var result = certificateEventStatisticsServiceImpl.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
+        final var result = certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
         verify(statisticsService).revoked(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnitId());
@@ -108,19 +117,22 @@ class CertificateEventStatisticsServiceImplTest {
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
             .unitId(UNIT_ID)
-            .recipient(RECIPIENT)
+            .xml(ENCODED_XML)
+            .recipient(RecipientDTO.builder()
+                .id(RECIPIENT_ID)
+                .build())
             .build();
         when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
-        when(statisticsService.sent(CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID, RECIPIENT)).thenReturn(true);
+        when(statisticsService.sent(CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID, RECIPIENT_ID)).thenReturn(true);
 
-        final var result = certificateEventStatisticsServiceImpl.send(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID);
+        final var result = certificateEventService.send(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
-        verify(statisticsService).sent(resp.getCertificateId(), resp.getCertificateType(), resp.getUnitId(), resp.getRecipient());
+        verify(statisticsService).sent(resp.getCertificateId(), resp.getCertificateType(), resp.getUnitId(), resp.getRecipient().getId());
     }
 
     @Test
-    void shouldCallStatisticsServiceMessageSent() {
+    void shouldCallStatisticsServiceMessageSent() throws RecipientUnknownException, ExternalServiceCallException {
         final var resp = GetMessageXmlResponse.builder()
             .messageId(MESSAGE_ID)
             .topic(TOPIC)
@@ -129,14 +141,51 @@ class CertificateEventStatisticsServiceImplTest {
         when(getMessageXmlService.get(MESSAGE_ID)).thenReturn(resp);
         when(statisticsService.messageSent(DECODED_XML, MESSAGE_ID, TOPIC)).thenReturn(true);
 
-        final var result = certificateEventStatisticsServiceImpl.send(EVENT_MESSAGE_SENT, CERTIFICATE_ID, MESSAGE_ID);
+        final var result = certificateEventService.send(EVENT_MESSAGE_SENT, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
         verify(statisticsService).messageSent(DECODED_XML, resp.getMessageId(), resp.getTopic());
     }
 
     @Test
-    void shouldReturnFalseIfFalseReturnedFromStatisticsServie() {
+    void shouldCallSendServiceForCertificateSentEvent() {
+        final var resp = GetCertificateXmlResponse.builder()
+            .certificateId(CERTIFICATE_ID)
+            .certificateType(CERTIFICATE_TYPE)
+            .unitId(UNIT_ID)
+            .xml(ENCODED_XML)
+            .recipient(RecipientDTO.builder()
+                .id(RECIPIENT_ID)
+                .build())
+            .build();
+        when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
+        when(statisticsService.sent(CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID, RECIPIENT_ID)).thenReturn(true);
+
+        final var result = certificateEventService.send(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID);
+
+        assertTrue(result);
+        verify(certificateEventSendService).send(resp, DECODED_XML);
+    }
+
+    @Test
+    void shouldThrowExceptionIfWhenExceptionFromCertificateEventSendService() {
+        final var resp = GetCertificateXmlResponse.builder()
+            .certificateId(CERTIFICATE_ID)
+            .certificateType(CERTIFICATE_TYPE)
+            .unitId(UNIT_ID)
+            .xml(ENCODED_XML)
+            .recipient(RecipientDTO.builder()
+                .id(RECIPIENT_ID)
+                .build())
+            .build();
+        when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
+        doThrow(IllegalStateException.class).when(certificateEventSendService).send(resp, DECODED_XML);
+
+        assertThrows(IllegalStateException.class, () -> certificateEventService.send(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID));
+    }
+
+    @Test
+    void shouldReturnFalseIfFalseReturnedFromStatisticsService() throws RecipientUnknownException, ExternalServiceCallException {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
@@ -147,14 +196,14 @@ class CertificateEventStatisticsServiceImplTest {
         when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
         when(statisticsService.created(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(false);
 
-        final var result = certificateEventStatisticsServiceImpl.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
+        final var result = certificateEventService.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
 
         assertFalse(result);
     }
 
     @Test
     void shouldThrowIllegalArgumentExceptionWhenUnknownEventType() {
-        assertThrows(IllegalArgumentException.class, () -> certificateEventStatisticsServiceImpl.send(EVENT_UNKNOWN, CERTIFICATE_ID,
+        assertThrows(IllegalArgumentException.class, () -> certificateEventService.send(EVENT_UNKNOWN, CERTIFICATE_ID,
             MESSAGE_ID));
         verifyNoInteractions(statisticsService);
         verifyNoInteractions(getCertificateXmlService);
@@ -164,13 +213,13 @@ class CertificateEventStatisticsServiceImplTest {
     @Test
     void shouldThrowRestClientExceptionWhenFailedCertificateXmlCall() {
         when(getCertificateXmlService.get(CERTIFICATE_ID)).thenThrow(RestClientException.class);
-        assertThrows(RestClientException.class, () -> certificateEventStatisticsServiceImpl.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID));
+        assertThrows(RestClientException.class, () -> certificateEventService.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID));
     }
 
     @Test
     void shouldThrowRestClientExceptionWhenFailedMessageXmlCall() {
         when(getMessageXmlService.get(MESSAGE_ID)).thenThrow(RestClientException.class);
-        assertThrows(RestClientException.class, () -> certificateEventStatisticsServiceImpl.send(EVENT_MESSAGE_SENT, CERTIFICATE_ID,
+        assertThrows(RestClientException.class, () -> certificateEventService.send(EVENT_MESSAGE_SENT, CERTIFICATE_ID,
             MESSAGE_ID));
     }
 }
