@@ -23,7 +23,6 @@ import javax.xml.ws.soap.SOAPFaultException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.common.support.xml.XmlMarshallerHelper;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventRevokeService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
@@ -35,6 +34,7 @@ import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.Revoke
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Enhet;
 import se.riv.clinicalprocess.healthcond.certificate.v3.HosPersonal;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
@@ -58,10 +58,10 @@ public class CertificateEventRevokeServiceImpl implements CertificateEventRevoke
     }
 
     @Override
-    public void revoke(GetCertificateXmlResponse xmlResponse, String decodedXml) {
+    public void revoke(GetCertificateXmlResponse xmlResponse) {
         try {
             final var logicalAddress = recipientService.getRecipient(xmlResponse.getRecipient().getId()).getLogicalAddress();
-            final var request = getRequest(xmlResponse.getRevoked(), xmlResponse.getUnitId(), decodedXml);
+            final var request = getRequest(xmlResponse.getRevoked(), xmlResponse.getCertificateId(), xmlResponse.getUnitId());
             final var wsResponse = revokeCertificateResponderInterface.revokeCertificate(logicalAddress, request);
             handleResponse(wsResponse, xmlResponse);
         } catch (SOAPFaultException | RecipientUnknownException e) {
@@ -69,32 +69,39 @@ public class CertificateEventRevokeServiceImpl implements CertificateEventRevoke
         }
     }
 
-    private static RevokeCertificateType getRequest(RevokedInformationDTO revokedInformation, String unitId,
-        String decodedXml) {
-        final var jaxbElement = XmlMarshallerHelper.unmarshal(decodedXml);
-        final var request = (RevokeCertificateType) jaxbElement.getValue();
+    private static RevokeCertificateType getRequest(RevokedInformationDTO revokedInformation, String certificateId, String unitId) {
+        final var request = new RevokeCertificateType();
+        final var id = getCertificateId(certificateId, unitId);
         request.setSkickatTidpunkt(revokedInformation.getRevokedAt());
         request.setMeddelande(revokedInformation.getMessage());
-        updateRevokedBy(request.getSkickatAv(), revokedInformation.getRevokedBy(), unitId);
-
+        request.setSkickatAv(
+            getRevokedBy(revokedInformation.getRevokedBy(), unitId)
+        );
+        request.setIntygsId(id);
         return request;
     }
 
-    private static void updateRevokedBy(HosPersonal staff, StaffDTO revokedBy, String unitId) {
+    private static IntygId getCertificateId(String certificateId, String unitId) {
+        final var id = new IntygId();
+        id.setRoot(unitId);
+        id.setExtension(certificateId);
+        return id;
+    }
+
+    private static HosPersonal getRevokedBy(StaffDTO revokedBy, String unitId) {
+        final var staff = new HosPersonal();
         final var hsaId = new HsaId();
         final var unit = new Enhet();
         final var unitHsaId = new HsaId();
-
         unitHsaId.setRoot(unitId);
         unit.setEnhetsId(unitHsaId);
-
         hsaId.setExtension(revokedBy.getPersonId());
         hsaId.setRoot(HSA_ID_OID);
-
         staff.setFullstandigtNamn(revokedBy.getFullName());
         staff.setForskrivarkod(revokedBy.getPrescriptionCode());
         staff.setEnhet(unit);
         staff.setPersonalId(hsaId);
+        return staff;
     }
 
     private void handleResponse(RevokeCertificateResponseType wsResponse, GetCertificateXmlResponse xmlResponse) {

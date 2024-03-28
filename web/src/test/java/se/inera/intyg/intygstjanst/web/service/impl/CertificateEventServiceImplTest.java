@@ -210,7 +210,7 @@ class CertificateEventServiceImplTest {
         final var result = certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
-        verify(certificateEventRevokeService, times(1)).revoke(resp, DECODED_XML);
+        verify(certificateEventRevokeService, times(1)).revoke(resp);
     }
 
     @Test
@@ -229,7 +229,7 @@ class CertificateEventServiceImplTest {
 
         certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
 
-        verify(certificateEventRevokeService, times(0)).revoke(resp, DECODED_XML);
+        verify(certificateEventRevokeService, times(0)).revoke(resp);
     }
 
     @Test

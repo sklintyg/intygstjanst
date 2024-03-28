@@ -23,6 +23,6 @@ import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
 
 public interface CertificateEventRevokeService {
 
-    void revoke(GetCertificateXmlResponse xmlResponse, String xml);
+    void revoke(GetCertificateXmlResponse xmlResponse);
 
 }

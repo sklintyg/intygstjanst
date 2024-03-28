@@ -72,7 +72,7 @@ public class CertificateEventServiceImpl implements CertificateEventService {
         final var response = getCertificateXmlService.get(certificateId);
         final var certificateXml = decodeXml(response.getXml());
         if (response.getRecipient().getSent() != null) {
-            certificateEventRevokeService.revoke(response, certificateXml);
+            certificateEventRevokeService.revoke(response);
         }
         return statisticsService.revoked(certificateXml, certificateId, response.getCertificateType(), response.getUnitId());
     }

@@ -30,8 +30,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -95,14 +93,10 @@ class CertificateEventRevokeServiceImplTest {
     private static final String ENCODED_XML = Base64.getEncoder().encodeToString("xmlFromCertificateService"
         .getBytes(StandardCharsets.UTF_8));
 
-    private String decodedXml;
     private GetCertificateXmlResponse xmlResponse;
 
     @BeforeEach
     void setUp() throws IOException {
-        decodedXml = Resources.toString(Resources.getResource("revoke-medical-certificate/valid-revokecertificate.xml"),
-            Charsets.UTF_8);
-
         xmlResponse = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
@@ -137,7 +131,7 @@ class CertificateEventRevokeServiceImplTest {
         void shouldIncludeMessage() {
             final var captor = ArgumentCaptor.forClass(RevokeCertificateType.class);
 
-            certificateEventRevokeService.revoke(xmlResponse, decodedXml);
+            certificateEventRevokeService.revoke(xmlResponse);
             verify(revokeCertificateResponderInterface).revokeCertificate(anyString(), captor.capture());
 
             assertEquals(MESSAGE, captor.getValue().getMeddelande());
@@ -147,17 +141,30 @@ class CertificateEventRevokeServiceImplTest {
         void shouldIncludeTimestamp() {
             final var captor = ArgumentCaptor.forClass(RevokeCertificateType.class);
 
-            certificateEventRevokeService.revoke(xmlResponse, decodedXml);
+            certificateEventRevokeService.revoke(xmlResponse);
             verify(revokeCertificateResponderInterface).revokeCertificate(anyString(), captor.capture());
 
             assertEquals(xmlResponse.getRevoked().getRevokedAt(), captor.getValue().getSkickatTidpunkt());
         }
 
         @Test
+        void shouldIncludeId() {
+            final var captor = ArgumentCaptor.forClass(RevokeCertificateType.class);
+
+            certificateEventRevokeService.revoke(xmlResponse);
+            verify(revokeCertificateResponderInterface).revokeCertificate(anyString(), captor.capture());
+
+            assertAll(
+                () -> assertEquals(xmlResponse.getCertificateId(), captor.getValue().getIntygsId().getExtension()),
+                () -> assertEquals(xmlResponse.getUnitId(), captor.getValue().getIntygsId().getRoot())
+            );
+        }
+
+        @Test
         void shouldIncludeStaff() {
             final var captor = ArgumentCaptor.forClass(RevokeCertificateType.class);
 
-            certificateEventRevokeService.revoke(xmlResponse, decodedXml);
+            certificateEventRevokeService.revoke(xmlResponse);
             verify(revokeCertificateResponderInterface).revokeCertificate(anyString(), captor.capture());
 
             assertAll(
@@ -182,7 +189,7 @@ class CertificateEventRevokeServiceImplTest {
         when(revokeCertificateResponderInterface.revokeCertificate(eq(LOGICAL_ADDRESS), any(RevokeCertificateType.class)))
             .thenReturn(createResponse(ResultCodeType.OK, ""));
 
-        assertDoesNotThrow(() -> certificateEventRevokeService.revoke(xmlResponse, decodedXml));
+        assertDoesNotThrow(() -> certificateEventRevokeService.revoke(xmlResponse));
     }
 
     @Test
@@ -191,7 +198,7 @@ class CertificateEventRevokeServiceImplTest {
         when(revokeCertificateResponderInterface.revokeCertificate(eq(LOGICAL_ADDRESS), any(RevokeCertificateType.class)))
             .thenReturn(createResponse(ResultCodeType.OK, ""));
 
-        certificateEventRevokeService.revoke(xmlResponse, decodedXml);
+        certificateEventRevokeService.revoke(xmlResponse);
 
         verify(monitoringLogService).logCertificateRevoked(
             xmlResponse.getCertificateId(),
@@ -206,7 +213,7 @@ class CertificateEventRevokeServiceImplTest {
         when(revokeCertificateResponderInterface.revokeCertificate(eq(LOGICAL_ADDRESS), any(RevokeCertificateType.class)))
             .thenReturn(createResponse(ResultCodeType.INFO, "infoText"));
 
-        assertDoesNotThrow(() -> certificateEventRevokeService.revoke(xmlResponse, decodedXml));
+        assertDoesNotThrow(() -> certificateEventRevokeService.revoke(xmlResponse));
     }
 
     @Test
@@ -215,7 +222,7 @@ class CertificateEventRevokeServiceImplTest {
         when(revokeCertificateResponderInterface.revokeCertificate(eq(LOGICAL_ADDRESS), any(RevokeCertificateType.class)))
             .thenReturn(createResponse(ResultCodeType.INFO, "infoText"));
 
-        certificateEventRevokeService.revoke(xmlResponse, decodedXml);
+        certificateEventRevokeService.revoke(xmlResponse);
 
         verify(monitoringLogService).logCertificateRevoked(
             xmlResponse.getCertificateId(),
@@ -230,7 +237,7 @@ class CertificateEventRevokeServiceImplTest {
         when(revokeCertificateResponderInterface.revokeCertificate(eq(LOGICAL_ADDRESS), any(RevokeCertificateType.class)))
             .thenReturn(createResponse(ResultCodeType.ERROR, "errorText"));
 
-        assertThrows(IllegalStateException.class, () -> certificateEventRevokeService.revoke(xmlResponse, decodedXml));
+        assertThrows(IllegalStateException.class, () -> certificateEventRevokeService.revoke(xmlResponse));
     }
 
     @Test
@@ -239,7 +246,7 @@ class CertificateEventRevokeServiceImplTest {
         when(revokeCertificateResponderInterface.revokeCertificate(eq(LOGICAL_ADDRESS), any(RevokeCertificateType.class)))
             .thenReturn(createResponse(null));
 
-        final var e = assertThrows(IllegalStateException.class, () -> certificateEventRevokeService.revoke(xmlResponse, decodedXml));
+        final var e = assertThrows(IllegalStateException.class, () -> certificateEventRevokeService.revoke(xmlResponse));
         assertAll(
             () -> assertTrue(e.getMessage().contains(CERTIFICATE_ID)),
             () -> assertTrue(e.getMessage().contains(CERTIFICATE_TYPE)),
@@ -253,7 +260,7 @@ class CertificateEventRevokeServiceImplTest {
         when(revokeCertificateResponderInterface.revokeCertificate(eq(LOGICAL_ADDRESS), any(RevokeCertificateType.class)))
             .thenReturn(createResponse(ResultCodeType.ERROR, ERROR_MESSAGE));
 
-        final var e = assertThrows(IllegalStateException.class, () -> certificateEventRevokeService.revoke(xmlResponse, decodedXml));
+        final var e = assertThrows(IllegalStateException.class, () -> certificateEventRevokeService.revoke(xmlResponse));
         assertAll(
             () -> assertTrue(e.getMessage().contains(CERTIFICATE_ID)),
             () -> assertTrue(e.getMessage().contains(CERTIFICATE_TYPE)),
@@ -265,13 +272,13 @@ class CertificateEventRevokeServiceImplTest {
     @Test
     void shouldThrowIllegalStateExceptionIfRecipientUnknownException() throws RecipientUnknownException {
         when(recipientService.getRecipient(RECIPIENT_ID)).thenThrow(RecipientUnknownException.class);
-        assertThrows(IllegalStateException.class, () -> certificateEventRevokeService.revoke(xmlResponse, decodedXml));
+        assertThrows(IllegalStateException.class, () -> certificateEventRevokeService.revoke(xmlResponse));
     }
 
     @Test
     void shouldThrowIllegalStateExceptionIfSoapFault() throws RecipientUnknownException {
         when(recipientService.getRecipient(RECIPIENT_ID)).thenThrow(SOAPFaultException.class);
-        assertThrows(IllegalStateException.class, () -> certificateEventRevokeService.revoke(xmlResponse, decodedXml));
+        assertThrows(IllegalStateException.class, () -> certificateEventRevokeService.revoke(xmlResponse));
     }
 
     private RevokeCertificateResponseType createResponse(ResultCodeType resultCode, String resultText) {
