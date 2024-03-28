@@ -47,6 +47,7 @@ import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.service.dto.RecipientDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.UnitDTO;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
@@ -73,7 +74,7 @@ class CertificateEventSendServiceImplTest {
     private static final String RECIPIENT_ID = "recipientId";
     private static final String RECIPIENT_NAME = "recipientName";
     private static final String LOGICAL_ADDRESS = "logicalAddress";
-    private static final Recipient RECIPIENT = new Recipient(LOGICAL_ADDRESS, RECIPIENT_NAME,  RECIPIENT_ID,
+    private static final Recipient RECIPIENT = new Recipient(LOGICAL_ADDRESS, RECIPIENT_NAME, RECIPIENT_ID,
         CertificateRecipientType.HUVUDMOTTAGARE.name(), CERTIFICATE_TYPE, true, true);
     private static final String ENCODED_XML = Base64.getEncoder().encodeToString("xmlFromCertificateService"
         .getBytes(StandardCharsets.UTF_8));
@@ -89,7 +90,11 @@ class CertificateEventSendServiceImplTest {
         xmlResponse = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
-            .unitId(UNIT_ID)
+            .unit(
+                UnitDTO.builder()
+                    .id(UNIT_ID)
+                    .build()
+            )
             .xml(ENCODED_XML)
             .recipient(RecipientDTO.builder()
                 .id(RECIPIENT_ID)
@@ -115,7 +120,7 @@ class CertificateEventSendServiceImplTest {
         certificateEventSendService.send(xmlResponse, decodedXml);
 
         verify(monitoringLogService).logCertificateSent(xmlResponse.getCertificateId(), xmlResponse.getCertificateType(),
-            xmlResponse.getUnitId(), xmlResponse.getRecipient().getId());
+            xmlResponse.getUnit().getId(), xmlResponse.getRecipient().getId());
     }
 
     @Test
@@ -136,7 +141,7 @@ class CertificateEventSendServiceImplTest {
         certificateEventSendService.send(xmlResponse, decodedXml);
 
         verify(monitoringLogService).logCertificateSent(xmlResponse.getCertificateId(), xmlResponse.getCertificateType(),
-            xmlResponse.getUnitId(), xmlResponse.getRecipient().getId());
+            xmlResponse.getUnit().getId(), xmlResponse.getRecipient().getId());
     }
 
     @Test

@@ -19,29 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import lombok.Builder;
-import lombok.Value;
-import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse.GetCertificateXmlResponseBuilder;
-
-@JsonDeserialize(builder = GetCertificateXmlResponseBuilder.class)
-@Value
-@Builder
-public class GetCertificateXmlResponse {
-
-    String certificateId;
-    String certificateType;
-    String xml;
-    RecipientDTO recipient;
-    RevokedInformationDTO revoked;
-    PersonIdDTO patientId;
-    UnitDTO careProvider;
-    UnitDTO unit;
-
-
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class GetCertificateXmlResponseBuilder {
-
-    }
+public enum PersonIdTypeDTO {
+    PERSONAL_IDENTITY_NUMBER,
+    COORDINATION_NUMBER
 }

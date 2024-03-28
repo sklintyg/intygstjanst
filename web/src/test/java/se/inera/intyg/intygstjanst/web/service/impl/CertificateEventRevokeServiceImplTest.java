@@ -50,9 +50,12 @@ import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
+import se.inera.intyg.intygstjanst.web.service.dto.PersonIdDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.PersonIdTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.RecipientDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.RevokedInformationDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.StaffDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.UnitDTO;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
@@ -73,6 +76,10 @@ class CertificateEventRevokeServiceImplTest {
     private CertificateEventRevokeServiceImpl certificateEventRevokeService;
 
     private static final String HSA_ID_OID = "1.2.752.129.2.1.4.1";
+    private static final String PERSON_ID_OID = "1.2.752.129.2.1.3.1";
+    private static final String SAMORDNING_ID_OID = "1.2.752.129.2.1.3.3";
+    private static final String ARBETSPLATS_KOD_OID = "1.2.752.29.4.71";
+
     private static final String MESSAGE = "MESSAGE";
     private static final String REASON = "REASON";
     private static final StaffDTO STAFF = StaffDTO.builder()
@@ -80,11 +87,24 @@ class CertificateEventRevokeServiceImplTest {
         .personId("PERSON_ID")
         .prescriptionCode("PRESCRIPTION_CODE")
         .build();
+    private static final UnitDTO UNIT = UnitDTO.builder()
+        .address("ADDRESS")
+        .email("EMAIL")
+        .city("CITY")
+        .phoneNumber("PHONENUMBER")
+        .zipCode("ZIPCODE")
+        .id("CARE_UNIT_ID")
+        .name("CARE_UNIT_NAME")
+        .workplaceCode("WORK_PLACE_CODE")
+        .build();
+    private static final UnitDTO CARE_PROVIDER = UnitDTO.builder()
+        .name("CARE_PROVIDER_NAME")
+        .id("CARE_PROVIDER_ID")
+        .build();
 
     private static final String ERROR_MESSAGE = "errorMessage";
     private static final String CERTIFICATE_ID = "certificateId";
     private static final String CERTIFICATE_TYPE = "fk7211";
-    private static final String UNIT_ID = "unitId";
     private static final String RECIPIENT_ID = "recipientId";
     private static final String RECIPIENT_NAME = "recipientName";
     private static final String LOGICAL_ADDRESS = "logicalAddress";
@@ -97,23 +117,7 @@ class CertificateEventRevokeServiceImplTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        xmlResponse = GetCertificateXmlResponse.builder()
-            .certificateId(CERTIFICATE_ID)
-            .certificateType(CERTIFICATE_TYPE)
-            .unitId(UNIT_ID)
-            .xml(ENCODED_XML)
-            .recipient(RecipientDTO.builder()
-                .id(RECIPIENT_ID)
-                .build())
-            .revoked(
-                RevokedInformationDTO.builder()
-                    .revokedAt(LocalDateTime.now())
-                    .revokedBy(STAFF)
-                    .message(MESSAGE)
-                    .reason(REASON)
-                    .build()
-            )
-            .build();
+        xmlResponse = getXmlResponse(PersonIdTypeDTO.PERSONAL_IDENTITY_NUMBER);
     }
 
     @Nested
@@ -148,7 +152,7 @@ class CertificateEventRevokeServiceImplTest {
         }
 
         @Test
-        void shouldIncludeId() {
+        void shouldIncludeCertificateId() {
             final var captor = ArgumentCaptor.forClass(RevokeCertificateType.class);
 
             certificateEventRevokeService.revoke(xmlResponse);
@@ -156,7 +160,7 @@ class CertificateEventRevokeServiceImplTest {
 
             assertAll(
                 () -> assertEquals(xmlResponse.getCertificateId(), captor.getValue().getIntygsId().getExtension()),
-                () -> assertEquals(xmlResponse.getUnitId(), captor.getValue().getIntygsId().getRoot())
+                () -> assertEquals(xmlResponse.getUnit().getId(), captor.getValue().getIntygsId().getRoot())
             );
         }
 
@@ -174,13 +178,75 @@ class CertificateEventRevokeServiceImplTest {
                     captor.getValue().getSkickatAv().getPersonalId().getExtension()),
                 () -> assertEquals(HSA_ID_OID,
                     captor.getValue().getSkickatAv().getPersonalId().getRoot()),
-                () -> assertEquals(xmlResponse.getUnitId(),
-                    captor.getValue().getSkickatAv().getEnhet().getEnhetsId().getRoot()),
                 () -> assertEquals(xmlResponse.getRevoked().getRevokedBy().getPrescriptionCode(),
                     captor.getValue().getSkickatAv().getForskrivarkod())
             );
         }
 
+        @Test
+        void shouldIncludeStaffUnit() {
+            final var captor = ArgumentCaptor.forClass(RevokeCertificateType.class);
+
+            certificateEventRevokeService.revoke(xmlResponse);
+            verify(revokeCertificateResponderInterface).revokeCertificate(anyString(), captor.capture());
+
+            final var convertedUnit = captor.getValue().getSkickatAv().getEnhet();
+            assertAll(
+                () -> assertEquals(UNIT.getName(), convertedUnit.getEnhetsnamn()),
+                () -> assertEquals(UNIT.getId(), convertedUnit.getEnhetsId().getExtension()),
+                () -> assertEquals(HSA_ID_OID, convertedUnit.getEnhetsId().getRoot()),
+                () -> assertEquals(UNIT.getAddress(), convertedUnit.getPostadress()),
+                () -> assertEquals(UNIT.getEmail(), convertedUnit.getEpost()),
+                () -> assertEquals(UNIT.getCity(), convertedUnit.getPostort()),
+                () -> assertEquals(UNIT.getPhoneNumber(), convertedUnit.getTelefonnummer()),
+                () -> assertEquals(UNIT.getWorkplaceCode(), convertedUnit.getArbetsplatskod().getExtension()),
+                () -> assertEquals(ARBETSPLATS_KOD_OID, convertedUnit.getArbetsplatskod().getRoot())
+            );
+        }
+
+        @Test
+        void shouldIncludeStaffCareProvider() {
+            final var captor = ArgumentCaptor.forClass(RevokeCertificateType.class);
+
+            certificateEventRevokeService.revoke(xmlResponse);
+            verify(revokeCertificateResponderInterface).revokeCertificate(anyString(), captor.capture());
+
+            final var convertedUnit = captor.getValue().getSkickatAv().getEnhet().getVardgivare();
+            assertAll(
+                () -> assertEquals(CARE_PROVIDER.getName(), convertedUnit.getVardgivarnamn()),
+                () -> assertEquals(CARE_PROVIDER.getId(), convertedUnit.getVardgivareId().getExtension()),
+                () -> assertEquals(HSA_ID_OID, convertedUnit.getVardgivareId().getRoot())
+            );
+        }
+
+        @Test
+        void shouldIncludePatientIdPersonNumberType() {
+            final var captor = ArgumentCaptor.forClass(RevokeCertificateType.class);
+
+            certificateEventRevokeService.revoke(xmlResponse);
+            verify(revokeCertificateResponderInterface).revokeCertificate(anyString(), captor.capture());
+
+            final var convertedPatientId = captor.getValue().getPatientPersonId();
+            assertAll(
+                () -> assertEquals(xmlResponse.getPatientId().getId(), convertedPatientId.getExtension()),
+                () -> assertEquals(PERSON_ID_OID, convertedPatientId.getRoot())
+            );
+        }
+
+        @Test
+        void shouldIncludePatientIdCoordinationNumber() {
+            xmlResponse = getXmlResponse(PersonIdTypeDTO.COORDINATION_NUMBER);
+            final var captor = ArgumentCaptor.forClass(RevokeCertificateType.class);
+
+            certificateEventRevokeService.revoke(xmlResponse);
+            verify(revokeCertificateResponderInterface).revokeCertificate(anyString(), captor.capture());
+
+            final var convertedPatientId = captor.getValue().getPatientPersonId();
+            assertAll(
+                () -> assertEquals(xmlResponse.getPatientId().getId(), convertedPatientId.getExtension()),
+                () -> assertEquals(SAMORDNING_ID_OID, convertedPatientId.getRoot())
+            );
+        }
     }
 
     @Test
@@ -203,7 +269,7 @@ class CertificateEventRevokeServiceImplTest {
         verify(monitoringLogService).logCertificateRevoked(
             xmlResponse.getCertificateId(),
             xmlResponse.getCertificateType(),
-            xmlResponse.getUnitId()
+            xmlResponse.getUnit().getId()
         );
     }
 
@@ -227,7 +293,7 @@ class CertificateEventRevokeServiceImplTest {
         verify(monitoringLogService).logCertificateRevoked(
             xmlResponse.getCertificateId(),
             xmlResponse.getCertificateType(),
-            xmlResponse.getUnitId()
+            xmlResponse.getUnit().getId()
         );
     }
 
@@ -292,6 +358,35 @@ class CertificateEventRevokeServiceImplTest {
         final var responseType = new RevokeCertificateResponseType();
         responseType.setResult(resultType);
         return responseType;
+    }
+
+    private static GetCertificateXmlResponse getXmlResponse(PersonIdTypeDTO personIdType) {
+        return GetCertificateXmlResponse.builder()
+            .certificateId(CERTIFICATE_ID)
+            .certificateType(CERTIFICATE_TYPE)
+            .xml(ENCODED_XML)
+            .recipient(RecipientDTO.builder()
+                .id(RECIPIENT_ID)
+                .build())
+            .revoked(
+                RevokedInformationDTO.builder()
+                    .revokedAt(LocalDateTime.now())
+                    .revokedBy(STAFF)
+                    .message(MESSAGE)
+                    .reason(REASON)
+                    .build()
+            )
+            .unit(UNIT)
+            .careProvider(
+                CARE_PROVIDER
+            )
+            .patientId(
+                PersonIdDTO.builder()
+                    .id("PERSON_ID")
+                    .type(personIdType)
+                    .build()
+            )
+            .build();
     }
 
 }

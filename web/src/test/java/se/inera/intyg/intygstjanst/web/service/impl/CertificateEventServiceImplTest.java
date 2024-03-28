@@ -45,6 +45,7 @@ import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.service.dto.GetMessageXmlResponse;
 import se.inera.intyg.intygstjanst.web.service.dto.RecipientDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.UnitDTO;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateEventServiceImplTest {
@@ -83,7 +84,11 @@ class CertificateEventServiceImplTest {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
-            .unitId(UNIT_ID)
+            .unit(
+                UnitDTO.builder()
+                    .id(UNIT_ID)
+                    .build()
+            )
             .recipient(null)
             .xml(ENCODED_XML)
             .build();
@@ -93,7 +98,7 @@ class CertificateEventServiceImplTest {
         final var result = certificateEventService.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
-        verify(statisticsService).created(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnitId());
+        verify(statisticsService).created(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getId());
     }
 
     @Test
@@ -101,7 +106,11 @@ class CertificateEventServiceImplTest {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
-            .unitId(UNIT_ID)
+            .unit(
+                UnitDTO.builder()
+                    .id(UNIT_ID)
+                    .build()
+            )
             .recipient(RecipientDTO.builder()
                 .sent(LocalDateTime.now())
                 .build())
@@ -113,7 +122,7 @@ class CertificateEventServiceImplTest {
         final var result = certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
-        verify(statisticsService).revoked(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnitId());
+        verify(statisticsService).revoked(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getId());
     }
 
     @Test
@@ -121,7 +130,11 @@ class CertificateEventServiceImplTest {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
-            .unitId(UNIT_ID)
+            .unit(
+                UnitDTO.builder()
+                    .id(UNIT_ID)
+                    .build()
+            )
             .recipient(RecipientDTO.builder()
                 .sent(null)
                 .build())
@@ -133,7 +146,7 @@ class CertificateEventServiceImplTest {
         final var result = certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
-        verify(statisticsService).revoked(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnitId());
+        verify(statisticsService).revoked(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getId());
     }
 
     @Test
@@ -141,7 +154,11 @@ class CertificateEventServiceImplTest {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
-            .unitId(UNIT_ID)
+            .unit(
+                UnitDTO.builder()
+                    .id(UNIT_ID)
+                    .build()
+            )
             .xml(ENCODED_XML)
             .recipient(RecipientDTO.builder()
                 .id(RECIPIENT_ID)
@@ -153,7 +170,8 @@ class CertificateEventServiceImplTest {
         final var result = certificateEventService.send(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
-        verify(statisticsService).sent(resp.getCertificateId(), resp.getCertificateType(), resp.getUnitId(), resp.getRecipient().getId());
+        verify(statisticsService).sent(resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getId(),
+            resp.getRecipient().getId());
     }
 
     @Test
@@ -177,7 +195,11 @@ class CertificateEventServiceImplTest {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
-            .unitId(UNIT_ID)
+            .unit(
+                UnitDTO.builder()
+                    .id(UNIT_ID)
+                    .build()
+            )
             .xml(ENCODED_XML)
             .recipient(RecipientDTO.builder()
                 .id(RECIPIENT_ID)
@@ -197,7 +219,11 @@ class CertificateEventServiceImplTest {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
-            .unitId(UNIT_ID)
+            .unit(
+                UnitDTO.builder()
+                    .id(UNIT_ID)
+                    .build()
+            )
             .xml(ENCODED_XML)
             .recipient(RecipientDTO.builder()
                 .id(RECIPIENT_ID)
@@ -218,7 +244,11 @@ class CertificateEventServiceImplTest {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
-            .unitId(UNIT_ID)
+            .unit(
+                UnitDTO.builder()
+                    .id(UNIT_ID)
+                    .build()
+            )
             .xml(ENCODED_XML)
             .recipient(RecipientDTO.builder()
                 .id(RECIPIENT_ID)
@@ -237,7 +267,11 @@ class CertificateEventServiceImplTest {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
-            .unitId(UNIT_ID)
+            .unit(
+                UnitDTO.builder()
+                    .id(UNIT_ID)
+                    .build()
+            )
             .xml(ENCODED_XML)
             .recipient(RecipientDTO.builder()
                 .id(RECIPIENT_ID)
@@ -254,7 +288,11 @@ class CertificateEventServiceImplTest {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
-            .unitId(UNIT_ID)
+            .unit(
+                UnitDTO.builder()
+                    .id(UNIT_ID)
+                    .build()
+            )
             .recipient(null)
             .xml(ENCODED_XML)
             .build();
