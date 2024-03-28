@@ -84,10 +84,13 @@ public class CertificateEventRevokeServiceImpl implements CertificateEventRevoke
         final var hsaId = new HsaId();
         final var unit = new Enhet();
         final var unitHsaId = new HsaId();
+
         unitHsaId.setRoot(unitId);
         unit.setEnhetsId(unitHsaId);
+
         hsaId.setExtension(revokedBy.getPersonId());
         hsaId.setRoot(HSA_ID_OID);
+
         staff.setFullstandigtNamn(revokedBy.getFullName());
         staff.setForskrivarkod(revokedBy.getPrescriptionCode());
         staff.setEnhet(unit);
