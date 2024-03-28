@@ -59,7 +59,7 @@ class GetCertificateXmlServiceImplTest {
             .certificateType(CERTIFICATE_TYPE)
             .unit(
                 UnitDTO.builder()
-                    .id(UNIT_ID)
+                    .unitId(UNIT_ID)
                     .build()
             )
             .recipient(RecipientDTO.builder()

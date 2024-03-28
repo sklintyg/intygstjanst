@@ -86,7 +86,7 @@ class CertificateEventServiceImplTest {
             .certificateType(CERTIFICATE_TYPE)
             .unit(
                 UnitDTO.builder()
-                    .id(UNIT_ID)
+                    .unitId(UNIT_ID)
                     .build()
             )
             .recipient(null)
@@ -98,7 +98,7 @@ class CertificateEventServiceImplTest {
         final var result = certificateEventService.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
-        verify(statisticsService).created(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getId());
+        verify(statisticsService).created(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getUnitId());
     }
 
     @Test
@@ -108,7 +108,7 @@ class CertificateEventServiceImplTest {
             .certificateType(CERTIFICATE_TYPE)
             .unit(
                 UnitDTO.builder()
-                    .id(UNIT_ID)
+                    .unitId(UNIT_ID)
                     .build()
             )
             .recipient(RecipientDTO.builder()
@@ -122,7 +122,7 @@ class CertificateEventServiceImplTest {
         final var result = certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
-        verify(statisticsService).revoked(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getId());
+        verify(statisticsService).revoked(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getUnitId());
     }
 
     @Test
@@ -132,7 +132,7 @@ class CertificateEventServiceImplTest {
             .certificateType(CERTIFICATE_TYPE)
             .unit(
                 UnitDTO.builder()
-                    .id(UNIT_ID)
+                    .unitId(UNIT_ID)
                     .build()
             )
             .recipient(RecipientDTO.builder()
@@ -146,7 +146,7 @@ class CertificateEventServiceImplTest {
         final var result = certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
-        verify(statisticsService).revoked(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getId());
+        verify(statisticsService).revoked(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getUnitId());
     }
 
     @Test
@@ -156,7 +156,7 @@ class CertificateEventServiceImplTest {
             .certificateType(CERTIFICATE_TYPE)
             .unit(
                 UnitDTO.builder()
-                    .id(UNIT_ID)
+                    .unitId(UNIT_ID)
                     .build()
             )
             .xml(ENCODED_XML)
@@ -170,7 +170,7 @@ class CertificateEventServiceImplTest {
         final var result = certificateEventService.send(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID);
 
         assertTrue(result);
-        verify(statisticsService).sent(resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getId(),
+        verify(statisticsService).sent(resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getUnitId(),
             resp.getRecipient().getId());
     }
 
@@ -197,7 +197,7 @@ class CertificateEventServiceImplTest {
             .certificateType(CERTIFICATE_TYPE)
             .unit(
                 UnitDTO.builder()
-                    .id(UNIT_ID)
+                    .unitId(UNIT_ID)
                     .build()
             )
             .xml(ENCODED_XML)
@@ -221,7 +221,7 @@ class CertificateEventServiceImplTest {
             .certificateType(CERTIFICATE_TYPE)
             .unit(
                 UnitDTO.builder()
-                    .id(UNIT_ID)
+                    .unitId(UNIT_ID)
                     .build()
             )
             .xml(ENCODED_XML)
@@ -246,7 +246,7 @@ class CertificateEventServiceImplTest {
             .certificateType(CERTIFICATE_TYPE)
             .unit(
                 UnitDTO.builder()
-                    .id(UNIT_ID)
+                    .unitId(UNIT_ID)
                     .build()
             )
             .xml(ENCODED_XML)
@@ -269,7 +269,7 @@ class CertificateEventServiceImplTest {
             .certificateType(CERTIFICATE_TYPE)
             .unit(
                 UnitDTO.builder()
-                    .id(UNIT_ID)
+                    .unitId(UNIT_ID)
                     .build()
             )
             .xml(ENCODED_XML)
@@ -290,7 +290,7 @@ class CertificateEventServiceImplTest {
             .certificateType(CERTIFICATE_TYPE)
             .unit(
                 UnitDTO.builder()
-                    .id(UNIT_ID)
+                    .unitId(UNIT_ID)
                     .build()
             )
             .recipient(null)

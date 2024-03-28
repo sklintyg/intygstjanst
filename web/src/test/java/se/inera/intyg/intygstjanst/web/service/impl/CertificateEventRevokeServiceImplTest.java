@@ -93,13 +93,13 @@ class CertificateEventRevokeServiceImplTest {
         .city("CITY")
         .phoneNumber("PHONENUMBER")
         .zipCode("ZIPCODE")
-        .id("CARE_UNIT_ID")
-        .name("CARE_UNIT_NAME")
+        .unitId("CARE_UNIT_ID")
+        .unitName("CARE_UNIT_NAME")
         .workplaceCode("WORK_PLACE_CODE")
         .build();
     private static final UnitDTO CARE_PROVIDER = UnitDTO.builder()
-        .name("CARE_PROVIDER_NAME")
-        .id("CARE_PROVIDER_ID")
+        .unitName("CARE_PROVIDER_NAME")
+        .unitId("CARE_PROVIDER_ID")
         .build();
 
     private static final String ERROR_MESSAGE = "errorMessage";
@@ -160,7 +160,7 @@ class CertificateEventRevokeServiceImplTest {
 
             assertAll(
                 () -> assertEquals(xmlResponse.getCertificateId(), captor.getValue().getIntygsId().getExtension()),
-                () -> assertEquals(xmlResponse.getUnit().getId(), captor.getValue().getIntygsId().getRoot())
+                () -> assertEquals(xmlResponse.getUnit().getUnitId(), captor.getValue().getIntygsId().getRoot())
             );
         }
 
@@ -192,8 +192,8 @@ class CertificateEventRevokeServiceImplTest {
 
             final var convertedUnit = captor.getValue().getSkickatAv().getEnhet();
             assertAll(
-                () -> assertEquals(UNIT.getName(), convertedUnit.getEnhetsnamn()),
-                () -> assertEquals(UNIT.getId(), convertedUnit.getEnhetsId().getExtension()),
+                () -> assertEquals(UNIT.getUnitName(), convertedUnit.getEnhetsnamn()),
+                () -> assertEquals(UNIT.getUnitId(), convertedUnit.getEnhetsId().getExtension()),
                 () -> assertEquals(HSA_ID_OID, convertedUnit.getEnhetsId().getRoot()),
                 () -> assertEquals(UNIT.getAddress(), convertedUnit.getPostadress()),
                 () -> assertEquals(UNIT.getEmail(), convertedUnit.getEpost()),
@@ -213,8 +213,8 @@ class CertificateEventRevokeServiceImplTest {
 
             final var convertedUnit = captor.getValue().getSkickatAv().getEnhet().getVardgivare();
             assertAll(
-                () -> assertEquals(CARE_PROVIDER.getName(), convertedUnit.getVardgivarnamn()),
-                () -> assertEquals(CARE_PROVIDER.getId(), convertedUnit.getVardgivareId().getExtension()),
+                () -> assertEquals(CARE_PROVIDER.getUnitName(), convertedUnit.getVardgivarnamn()),
+                () -> assertEquals(CARE_PROVIDER.getUnitId(), convertedUnit.getVardgivareId().getExtension()),
                 () -> assertEquals(HSA_ID_OID, convertedUnit.getVardgivareId().getRoot())
             );
         }
@@ -269,7 +269,7 @@ class CertificateEventRevokeServiceImplTest {
         verify(monitoringLogService).logCertificateRevoked(
             xmlResponse.getCertificateId(),
             xmlResponse.getCertificateType(),
-            xmlResponse.getUnit().getId()
+            xmlResponse.getUnit().getUnitId()
         );
     }
 
@@ -293,7 +293,7 @@ class CertificateEventRevokeServiceImplTest {
         verify(monitoringLogService).logCertificateRevoked(
             xmlResponse.getCertificateId(),
             xmlResponse.getCertificateType(),
-            xmlResponse.getUnit().getId()
+            xmlResponse.getUnit().getUnitId()
         );
     }
 

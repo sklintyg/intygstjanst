@@ -81,7 +81,7 @@ public class CertificateEventRevokeServiceImpl implements CertificateEventRevoke
         final var revokedInformation = response.getRevoked();
 
         final var request = new RevokeCertificateType();
-        final var id = getCertificateId(response.getCertificateId(), response.getUnit().getId());
+        final var id = getCertificateId(response.getCertificateId(), response.getUnit().getUnitId());
         request.setSkickatTidpunkt(revokedInformation.getRevokedAt());
         request.setMeddelande(revokedInformation.getMessage());
         request.setSkickatAv(
@@ -127,7 +127,7 @@ public class CertificateEventRevokeServiceImpl implements CertificateEventRevoke
     private static Enhet getUnit(UnitDTO unit, UnitDTO careProvider) {
         final var enhet = new Enhet();
 
-        enhet.setEnhetsnamn(unit.getName());
+        enhet.setEnhetsnamn(unit.getUnitName());
         enhet.setEpost(unit.getEmail());
         enhet.setPostadress(unit.getAddress());
         enhet.setPostnummer(unit.getZipCode());
@@ -142,7 +142,7 @@ public class CertificateEventRevokeServiceImpl implements CertificateEventRevoke
 
         final var unitHsaId = new HsaId();
         unitHsaId.setRoot(HSA_ID_OID);
-        unitHsaId.setExtension(unit.getId());
+        unitHsaId.setExtension(unit.getUnitId());
         enhet.setEnhetsId(unitHsaId);
 
         return enhet;
@@ -153,9 +153,9 @@ public class CertificateEventRevokeServiceImpl implements CertificateEventRevoke
 
         final var id = new HsaId();
         id.setRoot(HSA_ID_OID);
-        id.setExtension(careProvider.getId());
+        id.setExtension(careProvider.getUnitId());
 
-        vardgivare.setVardgivarnamn(careProvider.getName());
+        vardgivare.setVardgivarnamn(careProvider.getUnitName());
         vardgivare.setVardgivareId(id);
 
         return vardgivare;
@@ -165,7 +165,7 @@ public class CertificateEventRevokeServiceImpl implements CertificateEventRevoke
         final var certificateId = xmlResponse.getCertificateId();
         final var certificateType = xmlResponse.getCertificateType();
         final var recipient = xmlResponse.getRecipient().getId();
-        final var unit = xmlResponse.getUnit().getId();
+        final var unit = xmlResponse.getUnit().getUnitId();
 
         if (wsResponse.getResult() == null) {
             throw new IllegalStateException(getResultNullMessage(certificateId, certificateType, recipient));

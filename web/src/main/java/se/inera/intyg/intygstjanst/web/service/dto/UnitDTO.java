@@ -30,8 +30,8 @@ import se.inera.intyg.intygstjanst.web.service.dto.UnitDTO.UnitDTOBuilder;
 @Builder
 public class UnitDTO {
 
-    String id;
-    String name;
+    String unitId;
+    String unitName;
     String address;
     String zipCode;
     String city;

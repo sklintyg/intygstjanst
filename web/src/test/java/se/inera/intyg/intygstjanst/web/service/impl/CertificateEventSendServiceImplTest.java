@@ -92,7 +92,7 @@ class CertificateEventSendServiceImplTest {
             .certificateType(CERTIFICATE_TYPE)
             .unit(
                 UnitDTO.builder()
-                    .id(UNIT_ID)
+                    .unitId(UNIT_ID)
                     .build()
             )
             .xml(ENCODED_XML)
@@ -120,7 +120,7 @@ class CertificateEventSendServiceImplTest {
         certificateEventSendService.send(xmlResponse, decodedXml);
 
         verify(monitoringLogService).logCertificateSent(xmlResponse.getCertificateId(), xmlResponse.getCertificateType(),
-            xmlResponse.getUnit().getId(), xmlResponse.getRecipient().getId());
+            xmlResponse.getUnit().getUnitId(), xmlResponse.getRecipient().getId());
     }
 
     @Test
@@ -141,7 +141,7 @@ class CertificateEventSendServiceImplTest {
         certificateEventSendService.send(xmlResponse, decodedXml);
 
         verify(monitoringLogService).logCertificateSent(xmlResponse.getCertificateId(), xmlResponse.getCertificateType(),
-            xmlResponse.getUnit().getId(), xmlResponse.getRecipient().getId());
+            xmlResponse.getUnit().getUnitId(), xmlResponse.getRecipient().getId());
     }
 
     @Test

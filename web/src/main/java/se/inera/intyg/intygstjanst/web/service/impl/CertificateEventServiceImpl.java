@@ -65,7 +65,7 @@ public class CertificateEventServiceImpl implements CertificateEventService {
     private boolean created(String certificateId) {
         final var response = getCertificateXmlService.get(certificateId);
         final var certificateXml = decodeXml(getCertificateXmlService.get(certificateId).getXml());
-        return statisticsService.created(certificateXml, certificateId, response.getCertificateType(), response.getUnit().getId());
+        return statisticsService.created(certificateXml, certificateId, response.getCertificateType(), response.getUnit().getUnitId());
     }
 
     private boolean revoked(String certificateId) {
@@ -74,13 +74,13 @@ public class CertificateEventServiceImpl implements CertificateEventService {
         if (response.getRecipient() != null && response.getRecipient().getSent() != null) {
             certificateEventRevokeService.revoke(response);
         }
-        return statisticsService.revoked(certificateXml, certificateId, response.getCertificateType(), response.getUnit().getId());
+        return statisticsService.revoked(certificateXml, certificateId, response.getCertificateType(), response.getUnit().getUnitId());
     }
 
     private boolean sent(String certificateId) {
         final var response = getCertificateXmlService.get(certificateId);
         certificateEventSendService.send(response, decodeXml(response.getXml()));
-        return statisticsService.sent(certificateId, response.getCertificateType(), response.getUnit().getId(),
+        return statisticsService.sent(certificateId, response.getCertificateType(), response.getUnit().getUnitId(),
             response.getRecipient().getId());
     }
 
