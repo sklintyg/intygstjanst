@@ -23,11 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,8 +37,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClientException;
-import se.inera.intyg.common.support.modules.support.api.exception.ExternalServiceCallException;
-import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.web.service.CertificateEventRevokeService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventSendService;
 import se.inera.intyg.intygstjanst.web.service.GetCertificateXmlService;
 import se.inera.intyg.intygstjanst.web.service.GetMessageXmlService;
@@ -56,6 +57,8 @@ class CertificateEventServiceImplTest {
     private GetMessageXmlService getMessageXmlService;
     @Mock
     private CertificateEventSendService certificateEventSendService;
+    @Mock
+    private CertificateEventRevokeService certificateEventRevokeService;
 
     @InjectMocks
     private CertificateEventServiceImpl certificateEventService;
@@ -76,7 +79,7 @@ class CertificateEventServiceImplTest {
         .getBytes(StandardCharsets.UTF_8));
 
     @Test
-    void shouldCallStatisticsServiceCreated() throws RecipientUnknownException, ExternalServiceCallException {
+    void shouldCallStatisticsServiceCreated() {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
@@ -94,12 +97,34 @@ class CertificateEventServiceImplTest {
     }
 
     @Test
-    void shouldCallStatisticsServiceRevoked() throws RecipientUnknownException, ExternalServiceCallException {
+    void shouldCallStatisticsServiceRevokedIfSent() {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
             .unitId(UNIT_ID)
-            .recipient(null)
+            .recipient(RecipientDTO.builder()
+                .sent(LocalDateTime.now())
+                .build())
+            .xml(ENCODED_XML)
+            .build();
+        when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
+        when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
+
+        final var result = certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
+
+        assertTrue(result);
+        verify(statisticsService).revoked(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnitId());
+    }
+
+    @Test
+    void shouldCallStatisticsServiceRevokedIfNotSent() {
+        final var resp = GetCertificateXmlResponse.builder()
+            .certificateId(CERTIFICATE_ID)
+            .certificateType(CERTIFICATE_TYPE)
+            .unitId(UNIT_ID)
+            .recipient(RecipientDTO.builder()
+                .sent(null)
+                .build())
             .xml(ENCODED_XML)
             .build();
         when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
@@ -132,7 +157,7 @@ class CertificateEventServiceImplTest {
     }
 
     @Test
-    void shouldCallStatisticsServiceMessageSent() throws RecipientUnknownException, ExternalServiceCallException {
+    void shouldCallStatisticsServiceMessageSent() {
         final var resp = GetMessageXmlResponse.builder()
             .messageId(MESSAGE_ID)
             .topic(TOPIC)
@@ -168,6 +193,46 @@ class CertificateEventServiceImplTest {
     }
 
     @Test
+    void shouldCallRevokeServiceForCertificateRevokedEventIfSent() {
+        final var resp = GetCertificateXmlResponse.builder()
+            .certificateId(CERTIFICATE_ID)
+            .certificateType(CERTIFICATE_TYPE)
+            .unitId(UNIT_ID)
+            .xml(ENCODED_XML)
+            .recipient(RecipientDTO.builder()
+                .id(RECIPIENT_ID)
+                .sent(LocalDateTime.now())
+                .build())
+            .build();
+        when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
+        when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
+
+        final var result = certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
+
+        assertTrue(result);
+        verify(certificateEventRevokeService, times(1)).revoke(resp, DECODED_XML);
+    }
+
+    @Test
+    void shouldNotCallRevokeServiceForCertificateRevokedEventIfNotSent() {
+        final var resp = GetCertificateXmlResponse.builder()
+            .certificateId(CERTIFICATE_ID)
+            .certificateType(CERTIFICATE_TYPE)
+            .unitId(UNIT_ID)
+            .xml(ENCODED_XML)
+            .recipient(RecipientDTO.builder()
+                .id(RECIPIENT_ID)
+                .build())
+            .build();
+        when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
+        when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
+
+        certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
+
+        verify(certificateEventRevokeService, times(0)).revoke(resp, DECODED_XML);
+    }
+
+    @Test
     void shouldThrowExceptionIfWhenExceptionFromCertificateEventSendService() {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
@@ -185,7 +250,7 @@ class CertificateEventServiceImplTest {
     }
 
     @Test
-    void shouldReturnFalseIfFalseReturnedFromStatisticsService() throws RecipientUnknownException, ExternalServiceCallException {
+    void shouldReturnFalseIfFalseReturnedFromStatisticsService() {
         final var resp = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
