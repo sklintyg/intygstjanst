@@ -35,7 +35,6 @@ import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.Revoke
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
-import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Enhet;
 import se.riv.clinicalprocess.healthcond.certificate.v3.HosPersonal;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
@@ -43,6 +42,8 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 @Service
 @Slf4j
 public class CertificateEventRevokeServiceImpl implements CertificateEventRevokeService {
+
+    private static final String HSA_ID_OID = "1.2.752.129.2.1.4.1";
 
     private final RevokeCertificateResponderInterface revokeCertificateResponderInterface;
     private final RecipientService recipientService;
@@ -60,7 +61,7 @@ public class CertificateEventRevokeServiceImpl implements CertificateEventRevoke
     public void revoke(GetCertificateXmlResponse xmlResponse, String decodedXml) {
         try {
             final var logicalAddress = recipientService.getRecipient(xmlResponse.getRecipient().getId()).getLogicalAddress();
-            final var request = getRequest(xmlResponse.getRevoked(), xmlResponse.getCertificateId(), xmlResponse.getUnitId(), decodedXml);
+            final var request = getRequest(xmlResponse.getRevoked(), xmlResponse.getUnitId(), decodedXml);
             final var wsResponse = revokeCertificateResponderInterface.revokeCertificate(logicalAddress, request);
             handleResponse(wsResponse, xmlResponse);
         } catch (SOAPFaultException | RecipientUnknownException e) {
@@ -68,34 +69,29 @@ public class CertificateEventRevokeServiceImpl implements CertificateEventRevoke
         }
     }
 
-    private static RevokeCertificateType getRequest(RevokedInformationDTO revokedInformation, String certificateId, String unitId,
+    private static RevokeCertificateType getRequest(RevokedInformationDTO revokedInformation, String unitId,
         String decodedXml) {
         final var jaxbElement = XmlMarshallerHelper.unmarshal(decodedXml);
         final var request = (RevokeCertificateType) jaxbElement.getValue();
-        final var id = new IntygId();
-        id.setRoot(certificateId);
         request.setSkickatTidpunkt(revokedInformation.getRevokedAt());
         request.setMeddelande(revokedInformation.getMessage());
-        request.setSkickatAv(
-            getRevokedBy(revokedInformation.getRevokedBy(), unitId)
-        );
-        request.setIntygsId(id);
+        updateRevokedBy(request.getSkickatAv(), revokedInformation.getRevokedBy(), unitId);
+
         return request;
     }
 
-    private static HosPersonal getRevokedBy(StaffDTO revokedBy, String unitId) {
-        final var staff = new HosPersonal();
+    private static void updateRevokedBy(HosPersonal staff, StaffDTO revokedBy, String unitId) {
         final var hsaId = new HsaId();
         final var unit = new Enhet();
         final var unitHsaId = new HsaId();
         unitHsaId.setRoot(unitId);
         unit.setEnhetsId(unitHsaId);
-        hsaId.setRoot(revokedBy.getPersonId());
+        hsaId.setExtension(revokedBy.getPersonId());
+        hsaId.setRoot(HSA_ID_OID);
         staff.setFullstandigtNamn(revokedBy.getFullName());
         staff.setForskrivarkod(revokedBy.getPrescriptionCode());
         staff.setEnhet(unit);
         staff.setPersonalId(hsaId);
-        return staff;
     }
 
     private void handleResponse(RevokeCertificateResponseType wsResponse, GetCertificateXmlResponse xmlResponse) {

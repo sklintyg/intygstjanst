@@ -74,6 +74,7 @@ class CertificateEventRevokeServiceImplTest {
     @InjectMocks
     private CertificateEventRevokeServiceImpl certificateEventRevokeService;
 
+    private static final String HSA_ID_OID = "1.2.752.129.2.1.4.1";
     private static final String MESSAGE = "MESSAGE";
     private static final String REASON = "REASON";
     private static final StaffDTO STAFF = StaffDTO.builder()
@@ -153,16 +154,6 @@ class CertificateEventRevokeServiceImplTest {
         }
 
         @Test
-        void shouldIncludeId() {
-            final var captor = ArgumentCaptor.forClass(RevokeCertificateType.class);
-
-            certificateEventRevokeService.revoke(xmlResponse, decodedXml);
-            verify(revokeCertificateResponderInterface).revokeCertificate(anyString(), captor.capture());
-
-            assertEquals(xmlResponse.getCertificateId(), captor.getValue().getIntygsId().getRoot());
-        }
-
-        @Test
         void shouldIncludeStaff() {
             final var captor = ArgumentCaptor.forClass(RevokeCertificateType.class);
 
@@ -173,6 +164,8 @@ class CertificateEventRevokeServiceImplTest {
                 () -> assertEquals(xmlResponse.getRevoked().getRevokedBy().getFullName(),
                     captor.getValue().getSkickatAv().getFullstandigtNamn()),
                 () -> assertEquals(xmlResponse.getRevoked().getRevokedBy().getPersonId(),
+                    captor.getValue().getSkickatAv().getPersonalId().getExtension()),
+                () -> assertEquals(HSA_ID_OID,
                     captor.getValue().getSkickatAv().getPersonalId().getRoot()),
                 () -> assertEquals(xmlResponse.getUnitId(),
                     captor.getValue().getSkickatAv().getEnhet().getEnhetsId().getRoot()),
