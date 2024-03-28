@@ -19,11 +19,10 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
-import javax.jms.JMSException;
 import javax.jms.Message;
 
 public interface CertificateEventListenerService {
 
-    void onMessage(Message message) throws JMSException;
+    void processMessage(Message message);
 
 }

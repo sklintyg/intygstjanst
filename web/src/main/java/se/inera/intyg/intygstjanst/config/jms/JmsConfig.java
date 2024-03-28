@@ -99,6 +99,11 @@ public class JmsConfig {
         return template(jmsConnectionFactory, new ActiveMQQueue(internalPopulateLoaderQueue));
     }
 
+    @Bean(value = "jmsCertificateEventTemplate")
+    public JmsTemplate jmsCertificateEventTemplate(ConnectionFactory jmsConnectionFactory) {
+        return template(jmsConnectionFactory, certificateEventQueue());
+    }
+
     @Bean(value = "destinationQueue")
     public Queue destinationQueue() {
         return new ActiveMQQueue(destinationQueueName);

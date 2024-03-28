@@ -21,23 +21,23 @@ package se.inera.intyg.intygstjanst.web.service.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Value;
-import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse.GetCertificateXmlResponseBuilder;
+import se.inera.intyg.intygstjanst.web.service.dto.RecipientDTO.RecipientDTOBuilder;
 
-@JsonDeserialize(builder = GetCertificateXmlResponseBuilder.class)
+@JsonDeserialize(builder = RecipientDTOBuilder.class)
 @Value
 @Builder
-public class GetCertificateXmlResponse {
+public class RecipientDTO {
 
-    String certificateId;
-    String certificateType;
-    String unitId;
-    String xml;
-    RecipientDTO recipient;
+    String id;
+    String name;
+    LocalDateTime sent;
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static class GetCertificateXmlResponseBuilder {
+    public static class RecipientDTOBuilder {
 
     }
+
 }

@@ -19,7 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
-public interface CertificateEventStatisticsService {
+public interface CertificateEventService {
 
     boolean send(String eventType, String certificateId, String messageId);
 

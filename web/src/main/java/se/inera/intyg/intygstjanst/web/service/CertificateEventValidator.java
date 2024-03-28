@@ -17,27 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.service.dto;
+package se.inera.intyg.intygstjanst.web.service;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import lombok.Builder;
-import lombok.Value;
-import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse.GetCertificateXmlResponseBuilder;
+public interface CertificateEventValidator {
 
-@JsonDeserialize(builder = GetCertificateXmlResponseBuilder.class)
-@Value
-@Builder
-public class GetCertificateXmlResponse {
+    boolean validate(String eventType, String certificateId, String messageId);
 
-    String certificateId;
-    String certificateType;
-    String unitId;
-    String xml;
-    RecipientDTO recipient;
-
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class GetCertificateXmlResponseBuilder {
-
-    }
 }

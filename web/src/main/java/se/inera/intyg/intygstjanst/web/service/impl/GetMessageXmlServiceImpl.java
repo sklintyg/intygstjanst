@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import se.inera.intyg.intygstjanst.web.service.GetMessageXmlService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetMessageXmlResponse;
@@ -43,12 +42,7 @@ public class GetMessageXmlServiceImpl implements GetMessageXmlService {
 
     @Override
     public GetMessageXmlResponse get(String messageId) {
-        try {
-            final var url = csBaseUrl + ENDPOINT_URL;
-            return restTemplate.postForObject(url, HttpEntity.EMPTY, GetMessageXmlResponse.class, messageId);
-        } catch (RestClientException e) {
-            log.error("Failure fetching message xml from CertificateService for message id '{}'.", messageId, e);
-            throw e;
-        }
+        final var url = csBaseUrl + ENDPOINT_URL;
+        return restTemplate.postForObject(url, HttpEntity.EMPTY, GetMessageXmlResponse.class, messageId);
     }
 }
