@@ -50,7 +50,8 @@ public class CertificateEventSendServiceImpl implements CertificateEventSendServ
         this.monitoringLogService = monitoringLogService;
     }
 
-    @Override public void send(GetCertificateXmlResponse xmlResponse, String xml) {
+    @Override
+    public void send(GetCertificateXmlResponse xmlResponse, String xml) {
         try {
             final var logicalAddress = recipientService.getRecipient(xmlResponse.getRecipient().getId()).getLogicalAddress();
             final var element = XmlMarshallerHelper.unmarshal(xml);
