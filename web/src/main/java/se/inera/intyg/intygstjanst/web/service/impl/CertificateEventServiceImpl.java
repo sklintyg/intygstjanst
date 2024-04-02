@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.web.service.CertificateEventRevokeService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventSendService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventService;
 import se.inera.intyg.intygstjanst.web.service.GetCertificateXmlService;
@@ -37,6 +38,7 @@ public class CertificateEventServiceImpl implements CertificateEventService {
     private final GetCertificateXmlService getCertificateXmlService;
     private final GetMessageXmlService getMessageXmlService;
     private final CertificateEventSendService certificateEventSendService;
+    private final CertificateEventRevokeService certificateEventRevokeService;
 
     private static final String CERTIFICATE_SIGNED = "certificate-signed";
     private static final String CERTIFICATE_REVOKED = "certificate-revoked";
@@ -63,19 +65,22 @@ public class CertificateEventServiceImpl implements CertificateEventService {
     private boolean created(String certificateId) {
         final var response = getCertificateXmlService.get(certificateId);
         final var certificateXml = decodeXml(getCertificateXmlService.get(certificateId).getXml());
-        return statisticsService.created(certificateXml, certificateId, response.getCertificateType(), response.getUnitId());
+        return statisticsService.created(certificateXml, certificateId, response.getCertificateType(), response.getUnit().getUnitId());
     }
 
     private boolean revoked(String certificateId) {
         final var response = getCertificateXmlService.get(certificateId);
         final var certificateXml = decodeXml(response.getXml());
-        return statisticsService.revoked(certificateXml, certificateId, response.getCertificateType(), response.getUnitId());
+        if (response.getRecipient() != null && response.getRecipient().getSent() != null) {
+            certificateEventRevokeService.revoke(response);
+        }
+        return statisticsService.revoked(certificateXml, certificateId, response.getCertificateType(), response.getUnit().getUnitId());
     }
 
     private boolean sent(String certificateId) {
         final var response = getCertificateXmlService.get(certificateId);
         certificateEventSendService.send(response, decodeXml(response.getXml()));
-        return statisticsService.sent(certificateId, response.getCertificateType(), response.getUnitId(),
+        return statisticsService.sent(certificateId, response.getCertificateType(), response.getUnit().getUnitId(),
             response.getRecipient().getId());
     }
 

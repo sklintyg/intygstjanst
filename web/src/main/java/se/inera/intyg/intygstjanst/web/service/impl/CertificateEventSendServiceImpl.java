@@ -67,7 +67,7 @@ public class CertificateEventSendServiceImpl implements CertificateEventSendServ
         final var certificateId = xmlResponse.getCertificateId();
         final var certificateType = xmlResponse.getCertificateType();
         final var recipient = xmlResponse.getRecipient().getId();
-        final var unit = xmlResponse.getUnitId();
+        final var unit = xmlResponse.getUnit().getUnitId();
 
         if (wsResponse.getResult() == null) {
             throw new IllegalStateException(getResultNullMessage(certificateId, certificateType, recipient));

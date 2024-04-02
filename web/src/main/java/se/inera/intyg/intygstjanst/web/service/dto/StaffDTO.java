@@ -23,25 +23,24 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Value;
-import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse.GetCertificateXmlResponseBuilder;
+import se.inera.intyg.intygstjanst.web.service.dto.StaffDTO.StaffDTOBuilder;
 
-@JsonDeserialize(builder = GetCertificateXmlResponseBuilder.class)
+@JsonDeserialize(builder = StaffDTOBuilder.class)
 @Value
 @Builder
-public class GetCertificateXmlResponse {
+public class StaffDTO {
 
-    String certificateId;
-    String certificateType;
-    String xml;
-    RecipientDTO recipient;
-    RevokedInformationDTO revoked;
-    PersonIdDTO patientId;
-    UnitDTO careProvider;
-    UnitDTO unit;
+    String personId;
+    String firstName;
+    String middleName;
+    String lastName;
+    String fullName;
+    String prescriptionCode;
 
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static class GetCertificateXmlResponseBuilder {
+    public static class StaffDTOBuilder {
 
     }
+
 }
