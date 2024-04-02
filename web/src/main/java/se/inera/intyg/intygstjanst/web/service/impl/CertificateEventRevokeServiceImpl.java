@@ -52,6 +52,7 @@ public class CertificateEventRevokeServiceImpl implements CertificateEventRevoke
     private static final String PERSON_ID_OID = "1.2.752.129.2.1.3.1";
     private static final String SAMORDNING_ID_OID = "1.2.752.129.2.1.3.3";
     private static final String ARBETSPLATS_KOD_OID = "1.2.752.29.4.71";
+    private static final String DEFAULT_WOKRPLACE_CODE = "0000000";
 
     private final RevokeCertificateResponderInterface revokeCertificateResponderInterface;
     private final RecipientService recipientService;
@@ -137,7 +138,7 @@ public class CertificateEventRevokeServiceImpl implements CertificateEventRevoke
 
         final var workplaceCode = new ArbetsplatsKod();
         workplaceCode.setRoot(ARBETSPLATS_KOD_OID);
-        workplaceCode.setExtension(unit.getWorkplaceCode());
+        workplaceCode.setExtension(unit.getWorkplaceCode() != null ? unit.getWorkplaceCode() : DEFAULT_WOKRPLACE_CODE);
         enhet.setArbetsplatskod(workplaceCode);
 
         final var unitHsaId = new HsaId();
