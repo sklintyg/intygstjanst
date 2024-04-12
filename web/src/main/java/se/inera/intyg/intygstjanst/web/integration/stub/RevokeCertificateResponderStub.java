@@ -18,16 +18,27 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.ws.WebServiceProvider;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.w3._2000._09.xmldsig_.SignatureType;
+import org.w3._2002._06.xmldsig_filter2.XPathType;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
+import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.ObjectFactory;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.DatePeriodType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.PQType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.PartialDateType;
 
 @SchemaValidation
 @WebServiceProvider(targetNamespace = "urn:riv:clinicalprocess:healthcond:certificate:RevokeCertificateResponder:1")
@@ -49,7 +60,26 @@ public class RevokeCertificateResponderStub implements RevokeCertificateResponde
         store.makulera(id, meddelande);
 
         response.setResult(ResultTypeUtil.okResult());
+
+        try {
+            final var out = new PrintWriter(id + ".xml");
+            out.write(xmlToString(request));
+            out.close();
+        } catch (Exception e) {
+            return null;
+        }
+
         return response;
+    }
+
+    private String xmlToString(RevokeCertificateType type) throws JAXBException {
+        final var jaxbContext = JAXBContext.newInstance(RevokeCertificateType.class, DatePeriodType.class, SignatureType.class,
+            XPathType.class, PartialDateType.class, PQType.class);
+
+        StringWriter stringWriter = new StringWriter();
+        JAXBElement<RevokeCertificateType> requestElement = new ObjectFactory().createRevokeCertificate(type);
+        jaxbContext.createMarshaller().marshal(requestElement, stringWriter);
+        return stringWriter.toString();
     }
 
 }
