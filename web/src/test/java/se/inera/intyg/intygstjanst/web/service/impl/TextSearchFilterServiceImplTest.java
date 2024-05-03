@@ -487,6 +487,7 @@ class TextSearchFilterServiceImplTest {
                     Collections.emptyList());
                 sickLeaveUnit.setIntygLista(List.of(""));
 
+                correctDateForSickLeave(expectedResult);
                 correctDateForSickLeave(sickLeaveUnit);
 
                 final var filterResult = textSearchFilterService.filterList(List.of(expectedResult, sickLeaveUnit), "5");
@@ -1246,9 +1247,17 @@ class TextSearchFilterServiceImplTest {
     }
 
     private static void correctDateForSickLeave(SjukfallEnhet sickLeaveUnit) {
-        if (sickLeaveUnit.getStart().toString().contains("5")) {
-            sickLeaveUnit.setStart(LocalDate.now().plusDays(1));
-            sickLeaveUnit.setSlut(LocalDate.now().plusDays(1));
+        if (String.valueOf(sickLeaveUnit.getStart().getYear()).contains("5")) {
+            sickLeaveUnit.setStart(sickLeaveUnit.getStart().plusYears(1));
+            sickLeaveUnit.setSlut(sickLeaveUnit.getSlut().plusYears(1));
+        }
+        if (String.valueOf(sickLeaveUnit.getStart().getMonthValue()).contains("5")) {
+            sickLeaveUnit.setStart(sickLeaveUnit.getStart().plusMonths(1));
+            sickLeaveUnit.setSlut(sickLeaveUnit.getSlut().plusMonths(1));
+        }
+        if (String.valueOf(sickLeaveUnit.getStart().getDayOfMonth()).contains("5")) {
+            sickLeaveUnit.setStart(sickLeaveUnit.getStart().plusDays(1));
+            sickLeaveUnit.setSlut(sickLeaveUnit.getSlut().plusDays(1));
         }
     }
 }
