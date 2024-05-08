@@ -64,7 +64,7 @@ public class CitizenCertificatesFromCS {
                     .unitId(certificate.getMetadata().getUnit().getUnitId())
                     .unitName(certificate.getMetadata().getUnit().getUnitName())
                     .issued(certificate.getMetadata().getSigned())
-                    .sentDate(null)
+                    .sentDate(certificate.getMetadata().getRecipient().getSent())
                     .relations(null)
                     .build()
             )
