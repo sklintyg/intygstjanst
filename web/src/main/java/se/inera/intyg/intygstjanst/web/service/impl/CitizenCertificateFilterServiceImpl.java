@@ -46,7 +46,7 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
 
         return includedYears
             .stream()
-            .anyMatch((year) -> Integer.parseInt(year) == signedYear);
+            .anyMatch(year -> Integer.parseInt(year) == signedYear);
     }
 
     private boolean filterOnSentStatus(CitizenCertificateDTO certificate, List<CitizenCertificateStatusTypeDTO> statuses) {
@@ -54,8 +54,8 @@ public class CitizenCertificateFilterServiceImpl implements CitizenCertificateFi
             return true;
         }
 
-        final var includeSent = statuses.stream().anyMatch((status) -> status == CitizenCertificateStatusTypeDTO.SENT);
-        final var includeNotSent = statuses.stream().anyMatch((status) -> status == CitizenCertificateStatusTypeDTO.NOT_SENT);
+        final var includeSent = statuses.stream().anyMatch(status -> status == CitizenCertificateStatusTypeDTO.SENT);
+        final var includeNotSent = statuses.stream().anyMatch(status -> status == CitizenCertificateStatusTypeDTO.NOT_SENT);
 
         if (includeSent && includeNotSent) {
             return filterOnSent(certificate) || filterOnNotSent(certificate);
