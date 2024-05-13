@@ -29,7 +29,7 @@ import se.inera.intyg.common.support.validate.SamordningsnummerValidator;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
 import se.inera.intyg.intygstjanst.web.service.dto.PersonIdDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.PersonIdTypeDTO;
-import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @Service
@@ -37,8 +37,9 @@ import se.inera.intyg.schemas.contract.Personnummer;
 public class CitizenCertificatesFromCS {
 
     private final CSIntegrationService csIntegrationService;
+    private final CitizenCertificateConverter citizenCertificateConverter;
 
-    public List<CitizenCertificate> citizenCertificatesFromCS(Personnummer personId) {
+    public List<CitizenCertificateDTO> citizenCertificatesFromCS(Personnummer personId) {
         final var citizenCertificates = csIntegrationService.getCitizenCertificates(
             GetCitizenCertificatesRequest.builder()
                 .personId(
@@ -54,20 +55,7 @@ public class CitizenCertificatesFromCS {
         }
 
         return citizenCertificates.stream()
-            .map(certificate ->
-                CitizenCertificate.builder()
-                    .id(certificate.getMetadata().getId())
-                    .type(certificate.getMetadata().getType())
-                    .typeVersion(certificate.getMetadata().getTypeVersion())
-                    .additionalInfo(certificate.getMetadata().getDescription())
-                    .issuerName(certificate.getMetadata().getIssuedBy().getFullName())
-                    .unitId(certificate.getMetadata().getUnit().getUnitId())
-                    .unitName(certificate.getMetadata().getUnit().getUnitName())
-                    .issued(certificate.getMetadata().getSigned())
-                    .sentDate(certificate.getMetadata().getRecipient().getSent())
-                    .relations(null)
-                    .build()
-            )
+            .map(citizenCertificateConverter::convert)
             .collect(Collectors.toList());
     }
 
