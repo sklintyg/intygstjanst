@@ -73,23 +73,37 @@ public class CitizenCertificateConverter {
             )
             .relations(
                 Stream.concat(
-                        Stream.of(
-                            CitizenCertificateRelationDTO.builder()
-                                .certificateId(certificate.getMetadata().getRelations().getParent().getCertificateId())
-                                .timestamp(certificate.getMetadata().getRelations().getParent().getCreated())
-                                .type(CitizenCertificateRelationType.REPLACES)
-                                .build()
-                        ),
-                        Arrays.stream(certificate.getMetadata().getRelations().getChildren())
-                            .map(certificateRelation ->
-                                CitizenCertificateRelationDTO.builder()
-                                    .certificateId(certificateRelation.getCertificateId())
-                                    .timestamp(certificateRelation.getCreated())
-                                    .type(CitizenCertificateRelationType.REPLACES)
-                                    .build())
+                        parentRelation(certificate),
+                        childRelations(certificate)
                     )
                     .collect(Collectors.toList())
             )
             .build();
+    }
+
+    private static Stream<CitizenCertificateRelationDTO> childRelations(Certificate certificate) {
+        if (certificate.getMetadata().getRelations() == null || certificate.getMetadata().getRelations().getChildren() == null) {
+            return Stream.empty();
+        }
+        return Arrays.stream(certificate.getMetadata().getRelations().getChildren())
+            .map(certificateRelation ->
+                CitizenCertificateRelationDTO.builder()
+                    .certificateId(certificateRelation.getCertificateId())
+                    .timestamp(certificateRelation.getCreated())
+                    .type(CitizenCertificateRelationType.REPLACED)
+                    .build());
+    }
+
+    private static Stream<CitizenCertificateRelationDTO> parentRelation(Certificate certificate) {
+        if (certificate.getMetadata().getRelations() == null || certificate.getMetadata().getRelations().getParent() == null) {
+            return Stream.empty();
+        }
+        return Stream.of(
+            CitizenCertificateRelationDTO.builder()
+                .certificateId(certificate.getMetadata().getRelations().getParent().getCertificateId())
+                .timestamp(certificate.getMetadata().getRelations().getParent().getCreated())
+                .type(CitizenCertificateRelationType.REPLACES)
+                .build()
+        );
     }
 }
