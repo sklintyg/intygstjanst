@@ -39,7 +39,7 @@ public class CitizenCertificatesFromCS {
     private final CSIntegrationService csIntegrationService;
     private final CitizenCertificateConverter citizenCertificateConverter;
 
-    public List<CitizenCertificateDTO> citizenCertificatesFromCS(Personnummer personId) {
+    public List<CitizenCertificateDTO> get(Personnummer personId) {
         final var citizenCertificates = csIntegrationService.getCitizenCertificates(
             GetCitizenCertificatesRequest.builder()
                 .personId(

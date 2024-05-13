@@ -66,7 +66,7 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
         monitoringLogService.logCertificateListedByCitizen(request.getPersonnummer());
 
         return Stream.concat(
-                citizenCertificatesFromCS.citizenCertificatesFromCS(request.getPersonnummer()).stream(),
+                citizenCertificatesFromCS.get(request.getPersonnummer()).stream(),
                 certificates.stream().map(this::getCitizenCertificateDTO)
             )
             .filter(certificate -> citizenCertificateFilterService.filter(certificate, request))

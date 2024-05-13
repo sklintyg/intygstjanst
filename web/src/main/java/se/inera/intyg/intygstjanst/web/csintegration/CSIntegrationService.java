@@ -33,7 +33,7 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesR
 @RequiredArgsConstructor
 public class CSIntegrationService {
 
-    private static final String CITIZEN_ENDPOINT_URL = "/api/citizen";
+    private static final String CITIZEN_ENDPOINT_URL = "/api/citizen/certificate";
 
     private final RestTemplate restTemplate;
 
