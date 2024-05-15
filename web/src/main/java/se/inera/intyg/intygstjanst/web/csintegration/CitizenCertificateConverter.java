@@ -45,7 +45,7 @@ public class CitizenCertificateConverter {
             .type(
                 CitizenCertificateTypeDTO.builder()
                     .id(certificate.getMetadata().getId())
-                    .name(certificate.getMetadata().getTypeName())
+                    .name(certificate.getMetadata().getName())
                     .version(certificate.getMetadata().getTypeVersion())
                     .build()
             )
