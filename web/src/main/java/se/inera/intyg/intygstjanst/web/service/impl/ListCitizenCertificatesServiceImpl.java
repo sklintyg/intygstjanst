@@ -63,12 +63,14 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
         final var certificates = citizenCertificatesRepository
             .getCertificatesForPatient(request.getPersonnummer().getPersonnummerWithDash());
 
+        final var citizenCertificates = Stream.concat(
+            citizenCertificatesFromCS.get(request.getPersonnummer()).stream(),
+            certificates.stream().map(this::getCitizenCertificateDTO)
+        );
+
         monitoringLogService.logCertificateListedByCitizen(request.getPersonnummer());
 
-        return Stream.concat(
-                citizenCertificatesFromCS.get(request.getPersonnummer()).stream(),
-                certificates.stream().map(this::getCitizenCertificateDTO)
-            )
+        return citizenCertificates
             .filter(certificate -> citizenCertificateFilterService.filter(certificate, request))
             .collect(Collectors.toList());
     }
