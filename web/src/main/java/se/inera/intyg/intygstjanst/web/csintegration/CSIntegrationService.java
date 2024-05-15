@@ -19,21 +19,25 @@
 
 package se.inera.intyg.intygstjanst.web.csintegration;
 
-import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import se.inera.intyg.common.support.facade.model.Certificate;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesResponse;
+import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
+import se.inera.intyg.intygstjanst.web.service.dto.GetMessageXmlResponse;
 
 @Service
 @RequiredArgsConstructor
 public class CSIntegrationService {
 
     private static final String CITIZEN_ENDPOINT_URL = "/api/citizen/certificate";
+    private static final String INTERNALAPI_CERTIFICATE_XML_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/xml";
+    private static final String INTERNAL_MESSAGE_XML_ENDPOINT_URL = "/internalapi/message/{messageId}/xml";
 
     private final RestTemplate restTemplate;
 
@@ -46,9 +50,19 @@ public class CSIntegrationService {
         final var response = restTemplate.postForObject(url, request, GetCitizenCertificatesResponse.class);
 
         if (response == null) {
-            return Collections.emptyList();
+            throw new IllegalStateException("Failed to get citizen certificates from certificate service");
         }
 
         return response.getCitizenCertificates();
+    }
+
+    public GetCertificateXmlResponse getCertificateXmlResponse(String certificateId) {
+        final var url = baseUrl + INTERNALAPI_CERTIFICATE_XML_ENDPOINT_URL;
+        return restTemplate.postForObject(url, HttpEntity.EMPTY, GetCertificateXmlResponse.class, certificateId);
+    }
+
+    public GetMessageXmlResponse getMessageXmlResponse(String messageId) {
+        final var url = baseUrl + INTERNAL_MESSAGE_XML_ENDPOINT_URL;
+        return restTemplate.postForObject(url, HttpEntity.EMPTY, GetMessageXmlResponse.class, messageId);
     }
 }

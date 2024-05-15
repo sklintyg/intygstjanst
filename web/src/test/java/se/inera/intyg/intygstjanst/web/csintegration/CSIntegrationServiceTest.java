@@ -20,9 +20,10 @@
 package se.inera.intyg.intygstjanst.web.csintegration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -34,11 +35,17 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpEntity;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import se.inera.intyg.common.support.facade.model.Certificate;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesResponse;
+import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
+import se.inera.intyg.intygstjanst.web.service.dto.GetMessageXmlResponse;
+import se.inera.intyg.intygstjanst.web.service.dto.RecipientDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.UnitDTO;
 
 @ExtendWith(MockitoExtension.class)
 class CSIntegrationServiceTest {
@@ -78,12 +85,12 @@ class CSIntegrationServiceTest {
         }
 
         @Test
-        void shallReturnEmptyListIfResponseIsNull() {
+        void shallThrowIfResponseIsNull() {
             when(restTemplate.postForObject(anyString(), any(), any()))
                 .thenReturn(null);
-            final var response = csIntegrationService.getCitizenCertificates(GET_CITIZEN_CERTIFICATES_REQUEST);
 
-            assertTrue(response.isEmpty());
+            assertThrows(IllegalStateException.class,
+                () -> csIntegrationService.getCitizenCertificates(GET_CITIZEN_CERTIFICATES_REQUEST));
         }
 
         @Test
@@ -91,10 +98,83 @@ class CSIntegrationServiceTest {
             ReflectionTestUtils.setField(csIntegrationService, "baseUrl", "baseUrl");
             final var captor = ArgumentCaptor.forClass(String.class);
 
+            when(restTemplate.postForObject(anyString(), any(), any()))
+                .thenReturn(GET_CITIZEN_CERTIFICATES_RESPONSE);
+
             csIntegrationService.getCitizenCertificates(GET_CITIZEN_CERTIFICATES_REQUEST);
             verify(restTemplate).postForObject(captor.capture(), any(), any());
 
-            assertEquals("baseUrl/api/citizen", captor.getValue());
+            assertEquals("baseUrl/api/citizen/certificate", captor.getValue());
+        }
+    }
+
+    @Nested
+    class GetMessageXmlResponseTests {
+
+        private static final String MESSAGE_ID = "messageId";
+        private static final String TOPIC = "topic";
+        private static final String ENCODED_XML = "xmlFromCertificateService";
+
+        @Test
+        void shouldReturnFetchedObjectOnSuccessfulRequest() {
+            final var expectedResponse = GetMessageXmlResponse.builder()
+                .messageId(MESSAGE_ID)
+                .topic(TOPIC)
+                .xml(ENCODED_XML)
+                .build();
+            when(restTemplate.postForObject(anyString(), eq(HttpEntity.EMPTY), eq(GetMessageXmlResponse.class), eq(MESSAGE_ID)))
+                .thenReturn(expectedResponse);
+
+            final var actualResponse = csIntegrationService.getMessageXmlResponse(MESSAGE_ID);
+
+            assertEquals(expectedResponse, actualResponse);
+        }
+
+        @Test
+        void shouldThrowRestClientExceptioWhenRequestFails() {
+            when(restTemplate.postForObject(anyString(), eq(HttpEntity.EMPTY), eq(GetMessageXmlResponse.class), eq(MESSAGE_ID)))
+                .thenThrow(RestClientException.class);
+            assertThrows(RestClientException.class, () -> csIntegrationService.getMessageXmlResponse(MESSAGE_ID));
+        }
+    }
+
+    @Nested
+    class GetCertificateXmlResponseTests {
+
+        private static final String CERTIFICATE_ID = "certificateId";
+        private static final String CERTIFICATE_TYPE = "fk7211";
+        private static final String UNIT_ID = "unitId";
+        private static final String RECIPIENT_ID = "recipientId";
+        private static final String ENCODED_XML = "xmlFromCertificateService";
+
+        @Test
+        void shouldReturnFetchedObjectOnSuccessfulRequest() {
+            final var expectedResponse = GetCertificateXmlResponse.builder()
+                .certificateId(CERTIFICATE_ID)
+                .certificateType(CERTIFICATE_TYPE)
+                .unit(
+                    UnitDTO.builder()
+                        .unitId(UNIT_ID)
+                        .build()
+                )
+                .recipient(RecipientDTO.builder()
+                    .id(RECIPIENT_ID)
+                    .build())
+                .xml(ENCODED_XML)
+                .build();
+            when(restTemplate.postForObject(anyString(), eq(HttpEntity.EMPTY), eq(GetCertificateXmlResponse.class), eq(CERTIFICATE_ID)))
+                .thenReturn(expectedResponse);
+
+            final var actualResponse = csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID);
+
+            assertEquals(expectedResponse, actualResponse);
+        }
+
+        @Test
+        void shouldThrowRestClientExceptioWhenRequestFails() {
+            when(restTemplate.postForObject(anyString(), eq(HttpEntity.EMPTY), eq(GetCertificateXmlResponse.class), eq(CERTIFICATE_ID)))
+                .thenThrow(RestClientException.class);
+            assertThrows(RestClientException.class, () -> csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID));
         }
     }
 }

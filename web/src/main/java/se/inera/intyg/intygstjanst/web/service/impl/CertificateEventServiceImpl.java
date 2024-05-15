@@ -23,11 +23,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.web.csintegration.CSIntegrationService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventRevokeService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventSendService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventService;
-import se.inera.intyg.intygstjanst.web.service.GetCertificateXmlService;
-import se.inera.intyg.intygstjanst.web.service.GetMessageXmlService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
 @Service
@@ -35,8 +34,7 @@ import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 public class CertificateEventServiceImpl implements CertificateEventService {
 
     private final StatisticsService statisticsService;
-    private final GetCertificateXmlService getCertificateXmlService;
-    private final GetMessageXmlService getMessageXmlService;
+    private final CSIntegrationService csIntegrationService;
     private final CertificateEventSendService certificateEventSendService;
     private final CertificateEventRevokeService certificateEventRevokeService;
 
@@ -63,13 +61,13 @@ public class CertificateEventServiceImpl implements CertificateEventService {
     }
 
     private boolean created(String certificateId) {
-        final var response = getCertificateXmlService.get(certificateId);
-        final var certificateXml = decodeXml(getCertificateXmlService.get(certificateId).getXml());
+        final var response = csIntegrationService.getCertificateXmlResponse(certificateId);
+        final var certificateXml = decodeXml(response.getXml());
         return statisticsService.created(certificateXml, certificateId, response.getCertificateType(), response.getUnit().getUnitId());
     }
 
     private boolean revoked(String certificateId) {
-        final var response = getCertificateXmlService.get(certificateId);
+        final var response = csIntegrationService.getCertificateXmlResponse(certificateId);
         final var certificateXml = decodeXml(response.getXml());
         if (response.getRecipient() != null && response.getRecipient().getSent() != null) {
             certificateEventRevokeService.revoke(response);
@@ -78,14 +76,14 @@ public class CertificateEventServiceImpl implements CertificateEventService {
     }
 
     private boolean sent(String certificateId) {
-        final var response = getCertificateXmlService.get(certificateId);
+        final var response = csIntegrationService.getCertificateXmlResponse(certificateId);
         certificateEventSendService.send(response, decodeXml(response.getXml()));
         return statisticsService.sent(certificateId, response.getCertificateType(), response.getUnit().getUnitId(),
             response.getRecipient().getId());
     }
 
     private boolean messageSent(String messageId) {
-        final var response = getMessageXmlService.get(messageId);
+        final var response = csIntegrationService.getMessageXmlResponse(messageId);
         final var messageXml = decodeXml(response.getXml());
         return statisticsService.messageSent(messageXml, messageId, response.getTopic());
     }
