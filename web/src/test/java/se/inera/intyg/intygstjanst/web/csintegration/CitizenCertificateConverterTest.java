@@ -193,6 +193,46 @@ class CitizenCertificateConverterTest {
         }
 
         @Test
+        void shallFilterChildRelationIfNotSigned() {
+            certificateMetadataBuilder.relations(
+                CertificateRelations.builder()
+                    .children(
+                        new CertificateRelation[]{
+                            CertificateRelation.builder()
+                                .certificateId(REPLACED_CERTIFICATE_ID)
+                                .created(LocalDateTime.now())
+                                .status(CertificateStatus.REVOKED)
+                                .type(CertificateRelationType.REPLACED)
+                                .build()
+                        }
+                    )
+                    .build()
+            );
+            certificate.setMetadata(certificateMetadataBuilder.build());
+            assertTrue(citizenCertificateConverter.convert(certificate).getRelations().isEmpty());
+        }
+
+        @Test
+        void shallFilterChildRelationIfNotReplacedOrComplemented() {
+            certificateMetadataBuilder.relations(
+                CertificateRelations.builder()
+                    .children(
+                        new CertificateRelation[]{
+                            CertificateRelation.builder()
+                                .certificateId(REPLACED_CERTIFICATE_ID)
+                                .created(LocalDateTime.now())
+                                .status(CertificateStatus.SIGNED)
+                                .type(CertificateRelationType.COPIED)
+                                .build()
+                        }
+                    )
+                    .build()
+            );
+            certificate.setMetadata(certificateMetadataBuilder.build());
+            assertTrue(citizenCertificateConverter.convert(certificate).getRelations().isEmpty());
+        }
+
+        @Test
         void shallIncludeRelationReplaces() {
             certificateMetadataBuilder.relations(
                 CertificateRelations.builder()
@@ -209,6 +249,42 @@ class CitizenCertificateConverterTest {
             certificate.setMetadata(certificateMetadataBuilder.build());
             assertEquals(CitizenCertificateRelationType.REPLACES,
                 citizenCertificateConverter.convert(certificate).getRelations().get(0).getType());
+        }
+
+        @Test
+        void shallFilterParentRelationIfNotSigned() {
+            certificateMetadataBuilder.relations(
+                CertificateRelations.builder()
+                    .parent(
+                        CertificateRelation.builder()
+                            .certificateId(REPLACED_CERTIFICATE_ID)
+                            .created(LocalDateTime.now())
+                            .status(CertificateStatus.REVOKED)
+                            .type(CertificateRelationType.REPLACED)
+                            .build()
+                    )
+                    .build()
+            );
+            certificate.setMetadata(certificateMetadataBuilder.build());
+            assertTrue(citizenCertificateConverter.convert(certificate).getRelations().isEmpty());
+        }
+
+        @Test
+        void shallFilterParentRelationIfNotReplacedOrComplemented() {
+            certificateMetadataBuilder.relations(
+                CertificateRelations.builder()
+                    .parent(
+                        CertificateRelation.builder()
+                            .certificateId(REPLACED_CERTIFICATE_ID)
+                            .created(LocalDateTime.now())
+                            .status(CertificateStatus.SIGNED)
+                            .type(CertificateRelationType.COPIED)
+                            .build()
+                    )
+                    .build()
+            );
+            certificate.setMetadata(certificateMetadataBuilder.build());
+            assertTrue(citizenCertificateConverter.convert(certificate).getRelations().isEmpty());
         }
 
         @Test

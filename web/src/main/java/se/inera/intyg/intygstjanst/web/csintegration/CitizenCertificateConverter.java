@@ -24,6 +24,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.facade.model.Certificate;
+import se.inera.intyg.common.support.facade.model.CertificateRelationType;
+import se.inera.intyg.common.support.facade.model.CertificateStatus;
+import se.inera.intyg.common.support.facade.model.metadata.CertificateRelation;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateIssuerDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRecipientDTO;
@@ -85,7 +88,10 @@ public class CitizenCertificateConverter {
         if (certificate.getMetadata().getRelations() == null || certificate.getMetadata().getRelations().getChildren() == null) {
             return Stream.empty();
         }
+
         return Arrays.stream(certificate.getMetadata().getRelations().getChildren())
+            .filter(CitizenCertificateConverter::isSigned)
+            .filter(CitizenCertificateConverter::isReplacedOrComplemented)
             .map(certificateRelation ->
                 CitizenCertificateRelationDTO.builder()
                     .certificateId(certificateRelation.getCertificateId())
@@ -98,6 +104,12 @@ public class CitizenCertificateConverter {
         if (certificate.getMetadata().getRelations() == null || certificate.getMetadata().getRelations().getParent() == null) {
             return Stream.empty();
         }
+
+        if (!isSigned(certificate.getMetadata().getRelations().getParent()) || !isReplacedOrComplemented(
+            certificate.getMetadata().getRelations().getParent())) {
+            return Stream.empty();
+        }
+
         return Stream.of(
             CitizenCertificateRelationDTO.builder()
                 .certificateId(certificate.getMetadata().getRelations().getParent().getCertificateId())
@@ -105,5 +117,14 @@ public class CitizenCertificateConverter {
                 .type(CitizenCertificateRelationType.REPLACES)
                 .build()
         );
+    }
+
+    private static boolean isSigned(CertificateRelation certificateRelation) {
+        return certificateRelation.getStatus().equals(CertificateStatus.SIGNED);
+    }
+
+    private static boolean isReplacedOrComplemented(CertificateRelation certificateRelation) {
+        return certificateRelation.getType().equals(CertificateRelationType.REPLACED)
+            || certificateRelation.getType().equals(CertificateRelationType.COMPLEMENTED);
     }
 }
