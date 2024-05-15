@@ -37,10 +37,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClientException;
+import se.inera.intyg.intygstjanst.web.csintegration.CSIntegrationService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventRevokeService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventSendService;
-import se.inera.intyg.intygstjanst.web.service.GetCertificateXmlService;
-import se.inera.intyg.intygstjanst.web.service.GetMessageXmlService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.service.dto.GetMessageXmlResponse;
@@ -53,9 +52,7 @@ class CertificateEventServiceImplTest {
     @Mock
     private StatisticsService statisticsService;
     @Mock
-    private GetCertificateXmlService getCertificateXmlService;
-    @Mock
-    private GetMessageXmlService getMessageXmlService;
+    private CSIntegrationService csIntegrationService;
     @Mock
     private CertificateEventSendService certificateEventSendService;
     @Mock
@@ -92,7 +89,7 @@ class CertificateEventServiceImplTest {
             .recipient(null)
             .xml(ENCODED_XML)
             .build();
-        when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
+        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
         when(statisticsService.created(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
 
         final var result = certificateEventService.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
@@ -116,7 +113,7 @@ class CertificateEventServiceImplTest {
                 .build())
             .xml(ENCODED_XML)
             .build();
-        when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
+        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
         when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
 
         final var result = certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
@@ -140,7 +137,7 @@ class CertificateEventServiceImplTest {
                 .build())
             .xml(ENCODED_XML)
             .build();
-        when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
+        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
         when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
 
         final var result = certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
@@ -164,7 +161,7 @@ class CertificateEventServiceImplTest {
                 .id(RECIPIENT_ID)
                 .build())
             .build();
-        when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
+        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
         when(statisticsService.sent(CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID, RECIPIENT_ID)).thenReturn(true);
 
         final var result = certificateEventService.send(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID);
@@ -181,7 +178,7 @@ class CertificateEventServiceImplTest {
             .topic(TOPIC)
             .xml(ENCODED_XML)
             .build();
-        when(getMessageXmlService.get(MESSAGE_ID)).thenReturn(resp);
+        when(csIntegrationService.getMessageXmlResponse(MESSAGE_ID)).thenReturn(resp);
         when(statisticsService.messageSent(DECODED_XML, MESSAGE_ID, TOPIC)).thenReturn(true);
 
         final var result = certificateEventService.send(EVENT_MESSAGE_SENT, CERTIFICATE_ID, MESSAGE_ID);
@@ -205,7 +202,7 @@ class CertificateEventServiceImplTest {
                 .id(RECIPIENT_ID)
                 .build())
             .build();
-        when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
+        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
         when(statisticsService.sent(CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID, RECIPIENT_ID)).thenReturn(true);
 
         final var result = certificateEventService.send(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID);
@@ -230,7 +227,7 @@ class CertificateEventServiceImplTest {
                 .sent(LocalDateTime.now())
                 .build())
             .build();
-        when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
+        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
         when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
 
         final var result = certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
@@ -254,7 +251,7 @@ class CertificateEventServiceImplTest {
                 .id(RECIPIENT_ID)
                 .build())
             .build();
-        when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
+        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
         when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
 
         certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
@@ -277,7 +274,7 @@ class CertificateEventServiceImplTest {
                 .id(RECIPIENT_ID)
                 .build())
             .build();
-        when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
+        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
         doThrow(IllegalStateException.class).when(certificateEventSendService).send(resp, DECODED_XML);
 
         assertThrows(IllegalStateException.class, () -> certificateEventService.send(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID));
@@ -296,7 +293,7 @@ class CertificateEventServiceImplTest {
             .recipient(null)
             .xml(ENCODED_XML)
             .build();
-        when(getCertificateXmlService.get(CERTIFICATE_ID)).thenReturn(resp);
+        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
         when(statisticsService.created(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(false);
 
         final var result = certificateEventService.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
@@ -309,19 +306,18 @@ class CertificateEventServiceImplTest {
         assertThrows(IllegalArgumentException.class, () -> certificateEventService.send(EVENT_UNKNOWN, CERTIFICATE_ID,
             MESSAGE_ID));
         verifyNoInteractions(statisticsService);
-        verifyNoInteractions(getCertificateXmlService);
-        verifyNoInteractions(getMessageXmlService);
+        verifyNoInteractions(csIntegrationService);
     }
 
     @Test
     void shouldThrowRestClientExceptionWhenFailedCertificateXmlCall() {
-        when(getCertificateXmlService.get(CERTIFICATE_ID)).thenThrow(RestClientException.class);
+        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenThrow(RestClientException.class);
         assertThrows(RestClientException.class, () -> certificateEventService.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID));
     }
 
     @Test
     void shouldThrowRestClientExceptionWhenFailedMessageXmlCall() {
-        when(getMessageXmlService.get(MESSAGE_ID)).thenThrow(RestClientException.class);
+        when(csIntegrationService.getMessageXmlResponse(MESSAGE_ID)).thenThrow(RestClientException.class);
         assertThrows(RestClientException.class, () -> certificateEventService.send(EVENT_MESSAGE_SENT, CERTIFICATE_ID,
             MESSAGE_ID));
     }

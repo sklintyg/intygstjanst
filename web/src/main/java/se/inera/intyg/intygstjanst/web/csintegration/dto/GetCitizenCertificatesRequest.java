@@ -17,35 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.service.repo.model;
+package se.inera.intyg.intygstjanst.web.csintegration.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.Builder;
 import lombok.Value;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationDTO;
-import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate.CitizenCertificateBuilder;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest.GetCitizenCertificatesRequestBuilder;
+import se.inera.intyg.intygstjanst.web.service.dto.PersonIdDTO;
 
-@JsonDeserialize(builder = CitizenCertificateBuilder.class)
+@JsonDeserialize(builder = GetCitizenCertificatesRequestBuilder.class)
 @Value
 @Builder
-public class CitizenCertificate {
+public class GetCitizenCertificatesRequest {
 
-    String id;
-    String type;
-    String typeVersion;
-    String unitName;
-    String unitId;
-    String issuerName;
-    String additionalInfo;
-    LocalDateTime issued;
-    LocalDateTime sentDate;
-    List<CitizenCertificateRelationDTO> relations;
+    PersonIdDTO personId;
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static class CitizenCertificateBuilder {
+    public static class GetCitizenCertificatesRequestBuilder {
 
     }
 }

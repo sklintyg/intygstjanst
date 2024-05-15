@@ -21,7 +21,9 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.web.csintegration.CitizenCertificatesFromCS;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateDTOConverter;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateFilterService;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateTextService;
@@ -37,17 +39,19 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
 
     private final CitizenCertificatesRepository citizenCertificatesRepository;
     private final CitizenCertificateDTOConverter citizenCertificateDTOConverter;
+    private final CitizenCertificatesFromCS citizenCertificatesFromCS;
     private final CitizenCertificateFilterService citizenCertificateFilterService;
     private final CitizenCertificateTextService citizenCertificateTextService;
     private final MonitoringLogService monitoringLogService;
 
     public ListCitizenCertificatesServiceImpl(CitizenCertificatesRepository citizenCertificatesRepository,
-        CitizenCertificateDTOConverter citizenCertificateDTOConverter,
+        CitizenCertificateDTOConverter citizenCertificateDTOConverter, CitizenCertificatesFromCS citizenCertificatesFromCS,
         CitizenCertificateFilterService citizenCertificateFilterService,
         CitizenCertificateTextService citizenCertificateTextService,
         MonitoringLogService monitoringLogService) {
         this.citizenCertificatesRepository = citizenCertificatesRepository;
         this.citizenCertificateDTOConverter = citizenCertificateDTOConverter;
+        this.citizenCertificatesFromCS = citizenCertificatesFromCS;
         this.citizenCertificateFilterService = citizenCertificateFilterService;
         this.citizenCertificateTextService = citizenCertificateTextService;
         this.monitoringLogService = monitoringLogService;
@@ -59,12 +63,15 @@ public class ListCitizenCertificatesServiceImpl implements ListCitizenCertificat
         final var certificates = citizenCertificatesRepository
             .getCertificatesForPatient(request.getPersonnummer().getPersonnummerWithDash());
 
+        final var citizenCertificates = Stream.concat(
+            citizenCertificatesFromCS.get(request.getPersonnummer()).stream(),
+            certificates.stream().map(this::getCitizenCertificateDTO)
+        );
+
         monitoringLogService.logCertificateListedByCitizen(request.getPersonnummer());
 
-        return certificates
-            .stream()
-            .map(this::getCitizenCertificateDTO)
-            .filter((certificate) -> citizenCertificateFilterService.filter(certificate, request))
+        return citizenCertificates
+            .filter(certificate -> citizenCertificateFilterService.filter(certificate, request))
             .collect(Collectors.toList());
     }
 

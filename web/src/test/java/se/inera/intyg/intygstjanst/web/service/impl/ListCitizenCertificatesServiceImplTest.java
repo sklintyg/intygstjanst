@@ -35,6 +35,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.intygstjanst.web.csintegration.CitizenCertificatesFromCS;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateDTOConverter;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateFilterService;
 import se.inera.intyg.intygstjanst.web.service.CitizenCertificateTextService;
@@ -81,6 +82,8 @@ class ListCitizenCertificatesServiceImplTest {
     CitizenCertificatesRepositoryImpl citizenCertificatesRepository;
     @Mock
     CitizenCertificateTextService citizenCertificateTextService;
+    @Mock
+    CitizenCertificatesFromCS citizenCertificatesFromCS;
     @Mock
     CitizenCertificateDTOConverter citizenCertificateDTOConverter;
     @Mock
