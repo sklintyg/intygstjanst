@@ -19,7 +19,6 @@
 
 package se.inera.intyg.intygstjanst.web.csintegration;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,10 +48,6 @@ public class CitizenCertificatesFromCS {
                         .build())
                 .build()
         );
-
-        if (citizenCertificates.isEmpty()) {
-            return Collections.emptyList();
-        }
 
         return citizenCertificates.stream()
             .map(citizenCertificateConverter::convert)
