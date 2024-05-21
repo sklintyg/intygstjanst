@@ -19,7 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
 
 public interface CertificateEventRevokeService {
 

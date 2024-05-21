@@ -20,7 +20,9 @@
 package se.inera.intyg.intygstjanst.web.csintegration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -40,10 +42,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import se.inera.intyg.common.support.facade.model.Certificate;
+import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.CertificateExistsResponse;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateMetadataResponse;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesResponse;
-import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
-import se.inera.intyg.intygstjanst.web.service.dto.GetMessageXmlResponse;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
 import se.inera.intyg.intygstjanst.web.service.dto.RecipientDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.UnitDTO;
 
@@ -51,10 +56,11 @@ import se.inera.intyg.intygstjanst.web.service.dto.UnitDTO;
 class CSIntegrationServiceTest {
 
     private static final List<Certificate> CITIZEN_CERTIFICATES = List.of(new Certificate());
+    private static final GetCitizenCertificatesRequest GET_CITIZEN_CERTIFICATES_REQUEST = GetCitizenCertificatesRequest.builder().build();
     private static final GetCitizenCertificatesResponse GET_CITIZEN_CERTIFICATES_RESPONSE = GetCitizenCertificatesResponse.builder()
         .citizenCertificates(CITIZEN_CERTIFICATES)
         .build();
-    private static final GetCitizenCertificatesRequest GET_CITIZEN_CERTIFICATES_REQUEST = GetCitizenCertificatesRequest.builder().build();
+
     @Mock
     private RestTemplate restTemplate;
     @InjectMocks
@@ -177,4 +183,82 @@ class CSIntegrationServiceTest {
             assertThrows(RestClientException.class, () -> csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID));
         }
     }
+
+    @Nested
+    class GetCertificateExistsResponseTests {
+
+        private static final String CERTIFICATE_ID = "certificateId";
+
+        @Test
+        void shouldReturnTrueWhenCertifcateExists() {
+            final var response = CertificateExistsResponse.builder()
+                .exists(true)
+                .build();
+
+            when(restTemplate.getForObject(anyString(), eq(CertificateExistsResponse.class), eq(CERTIFICATE_ID))).thenReturn(response);
+
+            assertTrue(csIntegrationService.certificateExists(CERTIFICATE_ID));
+        }
+
+        @Test
+        void shouldReturnFalseWhenCertifcateExists() {
+            final var response = CertificateExistsResponse.builder()
+                .exists(false)
+                .build();
+
+            when(restTemplate.getForObject(anyString(), eq(CertificateExistsResponse.class), eq(CERTIFICATE_ID))).thenReturn(response);
+
+            assertFalse(csIntegrationService.certificateExists(CERTIFICATE_ID));
+        }
+
+        @Test
+        void shouldThrowIllegalStateExceptioWhenCertifcateExistsResponseIsNull() {
+            when(restTemplate.getForObject(anyString(), eq(CertificateExistsResponse.class), eq(CERTIFICATE_ID))).thenReturn(null);
+            assertThrows(IllegalStateException.class, () -> csIntegrationService.certificateExists(CERTIFICATE_ID));
+        }
+
+        @Test
+        void shouldThrowIllegalStateExceptioWhenRequestFails() {
+            when(restTemplate.getForObject(anyString(), eq(CertificateExistsResponse.class), eq(CERTIFICATE_ID)))
+                .thenThrow(RestClientException.class);
+
+            assertThrows(IllegalStateException.class, () -> csIntegrationService.certificateExists(CERTIFICATE_ID));
+        }
+    }
+
+    @Nested
+    class GetCertificateMetadataResponseTests {
+
+        private static final String CERTIFICATE_ID = "certificateId";
+
+        @Test
+        void shouldReturnMetadataWhenRequestSuccess() {
+            final var expected = CertificateMetadata.builder()
+                .id(CERTIFICATE_ID)
+                .build();
+            final var certificateMetadataResponse = GetCertificateMetadataResponse.builder()
+                .certificateMetadata(expected)
+                .build();
+
+            when(restTemplate.getForObject(anyString(), eq(GetCertificateMetadataResponse.class), eq(CERTIFICATE_ID)))
+                .thenReturn(certificateMetadataResponse);
+
+            final var actual = csIntegrationService.getCertificateMetadata(CERTIFICATE_ID);
+            assertEquals(expected, actual);
+        }
+
+        @Test
+        void shouldThrowIllegalStateExceptioWhenCertifcateMetadataResponseIsNull() {
+            when(restTemplate.getForObject(anyString(), eq(GetCertificateMetadataResponse.class), eq(CERTIFICATE_ID))).thenReturn(null);
+            assertThrows(IllegalStateException.class, () -> csIntegrationService.getCertificateMetadata(CERTIFICATE_ID));
+        }
+
+        @Test
+        void shouldThrowRestClientExceptioWhenRequestFails() {
+            when(restTemplate.getForObject(anyString(), eq(CertificateExistsResponse.class), eq(CERTIFICATE_ID)))
+                .thenThrow(RestClientException.class);
+            assertThrows(IllegalStateException.class, () -> csIntegrationService.certificateExists(CERTIFICATE_ID));
+        }
+    }
+
 }

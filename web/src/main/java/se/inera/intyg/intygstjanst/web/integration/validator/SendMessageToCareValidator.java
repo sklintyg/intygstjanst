@@ -18,19 +18,16 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
-
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
@@ -64,7 +61,8 @@ public class SendMessageToCareValidator {
         KOMPLETTERING_INCONSISTENCY_ERROR,
         PAMINNELSE_ID_INCONSISTENCY_ERROR,
         MEDDELANDE_ID_NOT_UNIQUE_ERROR,
-        TEST_CERTIFICATE
+        TEST_CERTIFICATE,
+        CERTIFICATE_REVOKED_ERROR
     }
 
     @Autowired
@@ -76,22 +74,32 @@ public class SendMessageToCareValidator {
     @Autowired
     private ArendeRepository messageRepository;
 
+    @Autowired
+    private CSSendMessageToCareValidator csSendMessageToCareValidator;
+
     public List<String> validateSendMessageToCare(SendMessageToCareType sendMessageToCareType) {
-        List<String> validationErrors = new ArrayList<>();
-        String personnummeer = sendMessageToCareType.getPatientPersonId().getExtension();
+        final var validationErrors = new ArrayList<String>();
+        final var certificateId = sendMessageToCareType.getIntygsId().getExtension();
+        final var personnummer = sendMessageToCareType.getPatientPersonId().getExtension();
 
         validateSkickatAv(sendMessageToCareType.getSkickatAv().getPart().getCode(), validationErrors);
-        validateMeddelandeId(sendMessageToCareType.getMeddelandeId(), validationErrors);
         validateMessageSubject(sendMessageToCareType.getAmne().getCode(), validationErrors);
-        validateThatCertificateExists(sendMessageToCareType.getIntygsId().getExtension(), personnummeer, validationErrors);
         validateConsistencyForQuestionVsAnswer(sendMessageToCareType, validationErrors);
+        validateConsistencyForKomplettering(sendMessageToCareType, validationErrors);
+        validateMeddelandeId(sendMessageToCareType.getMeddelandeId(), validationErrors);
         validatePaminnelse(sendMessageToCareType, validationErrors);
         validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
-        validateConsistencyForKomplettering(sendMessageToCareType, validationErrors);
-        validateTestCertificate(sendMessageToCareType.getIntygsId().getExtension(), validationErrors);
 
+        if (certificateExists(certificateId)) {
+            validateThatCertificateExists(certificateId, personnummer, validationErrors);
+            validateTestCertificate(certificateId, validationErrors);
+            return validationErrors;
+        }
+
+        csSendMessageToCareValidator.validate(certificateId, personnummer, validationErrors);
         return validationErrors;
     }
+
 
     @VisibleForTesting
     void validateSkickatAv(String code, List<String> validationErrors) {
@@ -208,8 +216,15 @@ public class SendMessageToCareValidator {
 
             if (res == null) {
                 validationErrors.add(ErrorCode.REFERENCED_MESSAGE_NOT_FOUND_ERROR.toString());
-                return;
             }
+        }
+    }
+
+    private boolean certificateExists(String certificateId) {
+        try {
+            return certificateService.getCertificateForCare(certificateId) != null;
+        } catch (InvalidCertificateException e) {
+            return false;
         }
     }
 
@@ -226,4 +241,6 @@ public class SendMessageToCareValidator {
         List<Komplettering> komplettering = sendMessageToCareType.getKomplettering();
         return komplettering != null && !komplettering.isEmpty();
     }
+
+
 }

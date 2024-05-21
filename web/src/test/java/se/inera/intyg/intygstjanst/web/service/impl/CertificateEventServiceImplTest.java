@@ -38,11 +38,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClientException;
 import se.inera.intyg.intygstjanst.web.csintegration.CSIntegrationService;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventRevokeService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventSendService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
-import se.inera.intyg.intygstjanst.web.service.dto.GetCertificateXmlResponse;
-import se.inera.intyg.intygstjanst.web.service.dto.GetMessageXmlResponse;
 import se.inera.intyg.intygstjanst.web.service.dto.RecipientDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.UnitDTO;
 

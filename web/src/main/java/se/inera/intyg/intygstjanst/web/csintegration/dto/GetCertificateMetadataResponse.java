@@ -17,12 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.web.service;
+package se.inera.intyg.intygstjanst.web.csintegration.dto;
 
-import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import lombok.Builder;
+import lombok.Value;
+import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateMetadataResponse.CertificateMetadataDTOBuilder;
 
-public interface GetMessageXmlService {
+@JsonDeserialize(builder = CertificateMetadataDTOBuilder.class)
+@Value
+@Builder
+public class GetCertificateMetadataResponse {
 
-    GetMessageXmlResponse get(String messageId);
+    CertificateMetadata certificateMetadata;
 
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class CertificateMetadataDTOBuilder {
+
+    }
 }
