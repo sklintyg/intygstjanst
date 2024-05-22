@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
@@ -65,17 +65,22 @@ public class SendMessageToCareValidator {
         CERTIFICATE_REVOKED_ERROR
     }
 
-    @Autowired
-    private CertificateService certificateService;
+    private static final String CERTIFICATE_SERVICE_ACTIVE = "certificate-service-active";
 
-    @Autowired
-    private RecipientService recipientService;
+    private final boolean certificateServiceActive;
+    private final CertificateService certificateService;
+    private final RecipientService recipientService;
+    private final ArendeRepository messageRepository;
+    private final CSSendMessageToCareValidator csSendMessageToCareValidator;
 
-    @Autowired
-    private ArendeRepository messageRepository;
-
-    @Autowired
-    private CSSendMessageToCareValidator csSendMessageToCareValidator;
+    public SendMessageToCareValidator(CertificateService certificateService, RecipientService recipientService,
+        ArendeRepository messageRepository, CSSendMessageToCareValidator csSendMessageToCareValidator, Environment environment) {
+        this.certificateService = certificateService;
+        this.recipientService = recipientService;
+        this.messageRepository = messageRepository;
+        this.csSendMessageToCareValidator = csSendMessageToCareValidator;
+        this.certificateServiceActive = environment.matchesProfiles(CERTIFICATE_SERVICE_ACTIVE);
+    }
 
     public List<String> validateSendMessageToCare(SendMessageToCareType sendMessageToCareType) {
         final var validationErrors = new ArrayList<String>();
@@ -90,13 +95,13 @@ public class SendMessageToCareValidator {
         validatePaminnelse(sendMessageToCareType, validationErrors);
         validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
 
-        if (certificateExists(certificateId)) {
-            validateThatCertificateExists(certificateId, personnummer, validationErrors);
-            validateTestCertificate(certificateId, validationErrors);
+        if (Boolean.TRUE.equals(certificateServiceActive) && !certificateExists(certificateId)) {
+            csSendMessageToCareValidator.validate(certificateId, personnummer, validationErrors);
             return validationErrors;
         }
 
-        csSendMessageToCareValidator.validate(certificateId, personnummer, validationErrors);
+        validateThatCertificateExists(certificateId, personnummer, validationErrors);
+        validateTestCertificate(certificateId, validationErrors);
         return validationErrors;
     }
 

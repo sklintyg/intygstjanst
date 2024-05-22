@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.web.integration.validator;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
@@ -32,6 +33,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.env.Environment;
+import org.springframework.test.util.ReflectionTestUtils;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
@@ -50,6 +53,8 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.MeddelandeReferens;
 @ExtendWith(MockitoExtension.class)
 class SendMessageToCareValidatorTest {
 
+    @Mock
+    private Environment environment;
     @Mock
     private RecipientService recipientService;
     @Mock
@@ -347,6 +352,27 @@ class SendMessageToCareValidatorTest {
     }
 
     @Test
+    void testValidatorDoesNotCallCsValidationIfCertificateNInIntygstjanst() throws Exception {
+        final var validationErrors = new ArrayList<String>();
+        final var sendMessageToCareType = buildSendMessageCareType("originalMessageId", Amneskod.KOMPLT.toString());
+        sendMessageToCareType.setMeddelandeId("meddelande-id");
+        sendMessageToCareType.setSistaDatumForSvar(null);
+        sendMessageToCareType.setPaminnelseMeddelandeId(null);
+        sendMessageToCareType.setSvarPa(null);
+
+        final var certificateId = sendMessageToCareType.getIntygsId().getExtension();
+        final var civicRegistrationNumber = sendMessageToCareType.getPatientPersonId().getExtension();
+
+        when(arendeRepository.findByMeddelandeId(sendMessageToCareType.getMeddelandeId())).thenReturn(null);
+        when(certificateService.getCertificateForCare(certificateId)).thenThrow(InvalidCertificateException.class);
+        ReflectionTestUtils.setField(validator, "certificateServiceActive", false);
+
+        validator.validateSendMessageToCare(sendMessageToCareType);
+
+        verifyNoInteractions(csSendMessageToCareValidator);
+    }
+
+    @Test
     void testValidatorCallsCsValidationIfCertificateNotInIntygstjanst() throws Exception {
         final var validationErrors = new ArrayList<String>();
         final var sendMessageToCareType = buildSendMessageCareType("originalMessageId", Amneskod.KOMPLT.toString());
@@ -360,6 +386,7 @@ class SendMessageToCareValidatorTest {
 
         when(arendeRepository.findByMeddelandeId(sendMessageToCareType.getMeddelandeId())).thenReturn(null);
         when(certificateService.getCertificateForCare(certificateId)).thenThrow(InvalidCertificateException.class);
+        ReflectionTestUtils.setField(validator, "certificateServiceActive", true);
 
         validator.validateSendMessageToCare(sendMessageToCareType);
 
