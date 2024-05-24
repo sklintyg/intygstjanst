@@ -45,8 +45,8 @@ public class CSSendMessageToRecipientValidator {
         validateCertificateExists(certificateExists, validationErrors);
 
         if (Boolean.TRUE.equals(certificateExists)) {
-            final var patientId = message.getPatientPersonId().getExtension();
             final var certificateMetadata = csIntegrationService.getCertificateMetadata(certificateId);
+            final var patientId = message.getPatientPersonId().getExtension();
             validatePatientId(certificateMetadata, patientId, validationErrors);
             validateSent(certificateMetadata, validationErrors);
             validateRevoked(certificateMetadata, validationErrors);
@@ -58,7 +58,7 @@ public class CSSendMessageToRecipientValidator {
 
     private void validateCertificateExists(boolean certificateExists, List<String> validationErrors) {
         if (Boolean.FALSE.equals(certificateExists)) {
-            validationErrors.add("Certificate does not exist");
+            validationErrors.add("Certificate does not exist.");
         }
     }
 
@@ -68,7 +68,7 @@ public class CSSendMessageToRecipientValidator {
 
         if (patientIdFromMessage.isEmpty() || patientIdFromCertificate.isEmpty()
             || !patientIdFromMessage.get().equals(patientIdFromCertificate.get())) {
-            validationErrors.add("PatientId from message does not match PatientId from certificate");
+            validationErrors.add("PatientId from message does not match PatientId from certificate.");
         }
     }
 
