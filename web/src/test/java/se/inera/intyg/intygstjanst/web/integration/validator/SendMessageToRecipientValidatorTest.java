@@ -54,7 +54,6 @@ public class SendMessageToRecipientValidatorTest {
 
     @Mock
     private CertificateService certificateService;
-
     @Mock
     private ArendeRepository messageRepository;
 
@@ -278,7 +277,7 @@ public class SendMessageToRecipientValidatorTest {
 
     private Certificate buildCertificate(String crn, CertificateState state) {
         Certificate certificate = new Certificate();
-        certificate.setCivicRegistrationNumber(Personnummer.createPersonnummer(crn).get());
+        certificate.setCivicRegistrationNumber(Personnummer.createPersonnummer(crn).orElseThrow());
         certificate.setStates(List.of(new CertificateStateHistoryEntry("target", state, LocalDateTime.now())));
 
         return certificate;
