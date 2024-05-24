@@ -30,8 +30,6 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse.G
 @Builder
 public class GetMessageXmlResponse {
 
-    String messageId;
-    String topic;
     String xml;
 
     @JsonPOJOBuilder(withPrefix = "")

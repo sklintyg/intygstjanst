@@ -22,7 +22,7 @@ import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
@@ -35,25 +35,30 @@ import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 
 @Component
+@RequiredArgsConstructor
 public class SendMessageToRecipientValidator {
 
-    @Autowired
-    private CertificateService certificateService;
-
-    @Autowired
-    private ArendeRepository messageRepository;
+    private final CertificateService certificateService;
+    private final ArendeRepository messageRepository;
 
     public List<String> validate(SendMessageToRecipientType message) throws InvalidCertificateException {
-        List<String> validationErrors = new ArrayList<>();
+        final var validationErrors = new ArrayList<String>();
 
-        Amneskod amne = validateAmneskod(message, validationErrors);
+        final var amne = validateAmneskod(message, validationErrors);
         validateSistaDatumForSvar(message, validationErrors);
         validateMeddelandeId(message, validationErrors);
         validatePaminnelseMeddelandeId(message, amne, validationErrors);
         validateSvarPa(message, validationErrors);
         validateCertificate(message, validationErrors);
-
         return validationErrors;
+    }
+
+    public void csValidate(SendMessageToRecipientType message, List<String> validationErrors) {
+        final var amne = validateAmneskod(message, validationErrors);
+        validateSistaDatumForSvar(message, validationErrors);
+        validateMeddelandeId(message, validationErrors);
+        validatePaminnelseMeddelandeId(message, amne, validationErrors);
+        validateSvarPa(message, validationErrors);
     }
 
     private Amneskod validateAmneskod(SendMessageToRecipientType message, List<String> validationErrors) {

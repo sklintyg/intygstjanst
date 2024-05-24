@@ -78,7 +78,8 @@ public class CSIntegrationService {
             final var response = restTemplate.getForObject(url, CertificateExistsResponse.class, certificateId);
             return Objects.requireNonNull(response).isExists();
         } catch (Exception e) {
-            throw new IllegalStateException("Failure calling certficateExists of certficate-service.");
+            throw new IllegalStateException(String.format("Failure calling certficateExists of certficate-service for certificateId '%s'.",
+                certificateId));
         }
     }
 
@@ -88,7 +89,8 @@ public class CSIntegrationService {
             final var response = restTemplate.getForObject(url, GetCertificateMetadataResponse.class, certificateId);
             return Objects.requireNonNull(response).getCertificateMetadata();
         } catch (Exception e) {
-            throw new IllegalStateException("Failure getting certificate metadata from certficate-service.");
+            throw new IllegalStateException(
+                String.format("Failure getting certificate metadata from certficate-service for certificateId '%s'.", certificateId));
         }
     }
 }

@@ -67,7 +67,7 @@ class CertificateEventListenerServiceImplTest {
         message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
 
         when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
-        when(certificateEventStatisticsService.send(anyString(), anyString(), nullable(String.class))).thenReturn(false);
+        when(certificateEventStatisticsService.processEvent(anyString(), anyString(), nullable(String.class))).thenReturn(false);
 
         assertThrows(IllegalStateException.class, () -> certificateEventListenerServiceImpl.processMessage(message));
     }
@@ -79,7 +79,8 @@ class CertificateEventListenerServiceImplTest {
         message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
 
         when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
-        when(certificateEventStatisticsService.send(anyString(), anyString(), nullable(String.class))).thenThrow(RestClientException.class);
+        when(certificateEventStatisticsService.processEvent(anyString(), anyString(), nullable(String.class)))
+            .thenThrow(RestClientException.class);
 
         assertThrows(RestClientException.class, () -> certificateEventListenerServiceImpl.processMessage(message));
     }
@@ -91,7 +92,7 @@ class CertificateEventListenerServiceImplTest {
         message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
 
         when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
-        when(certificateEventStatisticsService.send(anyString(), anyString(), nullable(String.class)))
+        when(certificateEventStatisticsService.processEvent(anyString(), anyString(), nullable(String.class)))
             .thenThrow(IllegalStateException.class);
 
         assertThrows(IllegalStateException.class, () -> certificateEventListenerServiceImpl.processMessage(message));
@@ -105,7 +106,7 @@ class CertificateEventListenerServiceImplTest {
         message.setStringProperty(MESSAGE_ID, MESSAGE_ID);
 
         when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
-        when(certificateEventStatisticsService.send(anyString(), anyString(), nullable(String.class)))
+        when(certificateEventStatisticsService.processEvent(anyString(), anyString(), nullable(String.class)))
             .thenThrow(IllegalArgumentException.class);
 
         assertDoesNotThrow(() -> certificateEventListenerServiceImpl.processMessage(message));
@@ -118,7 +119,7 @@ class CertificateEventListenerServiceImplTest {
         message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
 
         when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
-        when(certificateEventStatisticsService.send(anyString(), anyString(), nullable(String.class))).thenReturn(true);
+        when(certificateEventStatisticsService.processEvent(anyString(), anyString(), nullable(String.class))).thenReturn(true);
 
         assertDoesNotThrow(() -> certificateEventListenerServiceImpl.processMessage(message));
     }

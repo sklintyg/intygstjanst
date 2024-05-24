@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.csintegration.CSIntegrationService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventRevokeService;
+import se.inera.intyg.intygstjanst.web.service.CertificateEventSendMessageService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventSendService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
@@ -37,14 +38,15 @@ public class CertificateEventServiceImpl implements CertificateEventService {
     private final CSIntegrationService csIntegrationService;
     private final CertificateEventSendService certificateEventSendService;
     private final CertificateEventRevokeService certificateEventRevokeService;
+    private final CertificateEventSendMessageService certificateEventSendMessageService;
 
-    private static final String CERTIFICATE_SIGNED = "certificate-signed";
     private static final String CERTIFICATE_REVOKED = "certificate-revoked";
+    private static final String CERTIFICATE_SIGNED = "certificate-signed";
     private static final String CERTIFICATE_SENT = "certificate-sent";
     private static final String MESSAGE_SENT = "message-sent";
 
     @Override
-    public boolean send(String eventType, String certificateId, String messageId) {
+    public boolean processEvent(String eventType, String certificateId, String messageId) {
         switch (eventType) {
             case CERTIFICATE_SIGNED:
                 return created(certificateId);
@@ -85,7 +87,8 @@ public class CertificateEventServiceImpl implements CertificateEventService {
     private boolean messageSent(String messageId) {
         final var response = csIntegrationService.getMessageXmlResponse(messageId);
         final var messageXml = decodeXml(response.getXml());
-        return statisticsService.messageSent(messageXml, messageId, response.getTopic());
+        certificateEventSendMessageService.sendMessage(messageXml);
+        return true;
     }
 
     private String decodeXml(String xmlBase64Encoded) {

@@ -118,14 +118,11 @@ class CSIntegrationServiceTest {
     class GetMessageXmlResponseTests {
 
         private static final String MESSAGE_ID = "messageId";
-        private static final String TOPIC = "topic";
         private static final String ENCODED_XML = "xmlFromCertificateService";
 
         @Test
         void shouldReturnFetchedObjectOnSuccessfulRequest() {
             final var expectedResponse = GetMessageXmlResponse.builder()
-                .messageId(MESSAGE_ID)
-                .topic(TOPIC)
                 .xml(ENCODED_XML)
                 .build();
             when(restTemplate.postForObject(anyString(), eq(HttpEntity.EMPTY), eq(GetMessageXmlResponse.class), eq(MESSAGE_ID)))

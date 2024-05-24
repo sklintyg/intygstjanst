@@ -31,6 +31,7 @@ import static org.mockito.Mockito.when;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,6 +42,7 @@ import se.inera.intyg.intygstjanst.web.csintegration.CSIntegrationService;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventRevokeService;
+import se.inera.intyg.intygstjanst.web.service.CertificateEventSendMessageService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventSendService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.dto.RecipientDTO;
@@ -57,7 +59,8 @@ class CertificateEventServiceImplTest {
     private CertificateEventSendService certificateEventSendService;
     @Mock
     private CertificateEventRevokeService certificateEventRevokeService;
-
+    @Mock
+    private CertificateEventSendMessageService certificateEventSendMessageService;
     @InjectMocks
     private CertificateEventServiceImpl certificateEventService;
 
@@ -76,249 +79,287 @@ class CertificateEventServiceImplTest {
     private static final String ENCODED_XML = Base64.getEncoder().encodeToString("xmlFromCertificateService"
         .getBytes(StandardCharsets.UTF_8));
 
-    @Test
-    void shouldCallStatisticsServiceCreated() {
-        final var resp = GetCertificateXmlResponse.builder()
-            .certificateId(CERTIFICATE_ID)
-            .certificateType(CERTIFICATE_TYPE)
-            .unit(
-                UnitDTO.builder()
-                    .unitId(UNIT_ID)
-                    .build()
-            )
-            .recipient(null)
-            .xml(ENCODED_XML)
-            .build();
-        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
-        when(statisticsService.created(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
+    @Nested
+    class EventSigned {
 
-        final var result = certificateEventService.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
+        @Test
+        void shouldCallStatisticsServiceCreated() {
+            final var resp = GetCertificateXmlResponse.builder()
+                .certificateId(CERTIFICATE_ID)
+                .certificateType(CERTIFICATE_TYPE)
+                .unit(
+                    UnitDTO.builder()
+                        .unitId(UNIT_ID)
+                        .build()
+                )
+                .recipient(null)
+                .xml(ENCODED_XML)
+                .build();
+            when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
+            when(statisticsService.created(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
 
-        assertTrue(result);
-        verify(statisticsService).created(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getUnitId());
+            final var result = certificateEventService.processEvent(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
+
+            assertTrue(result);
+            verify(statisticsService).created(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getUnitId());
+        }
+
+        @Test
+        void shouldReturnFalseIfFalseReturnedFromStatisticsService() {
+            final var resp = GetCertificateXmlResponse.builder()
+                .certificateId(CERTIFICATE_ID)
+                .certificateType(CERTIFICATE_TYPE)
+                .unit(
+                    UnitDTO.builder()
+                        .unitId(UNIT_ID)
+                        .build()
+                )
+                .recipient(null)
+                .xml(ENCODED_XML)
+                .build();
+            when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
+            when(statisticsService.created(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(false);
+
+            final var result = certificateEventService.processEvent(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
+
+            assertFalse(result);
+        }
+
+        @Test
+        void shouldThrowRestClientExceptionWhenFailedCertificateXmlCall() {
+            when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenThrow(RestClientException.class);
+            assertThrows(RestClientException.class, () -> certificateEventService.processEvent(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID));
+        }
     }
 
-    @Test
-    void shouldCallStatisticsServiceRevokedIfSent() {
-        final var resp = GetCertificateXmlResponse.builder()
-            .certificateId(CERTIFICATE_ID)
-            .certificateType(CERTIFICATE_TYPE)
-            .unit(
-                UnitDTO.builder()
-                    .unitId(UNIT_ID)
-                    .build()
-            )
-            .recipient(RecipientDTO.builder()
-                .sent(LocalDateTime.now())
-                .build())
-            .xml(ENCODED_XML)
-            .build();
-        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
-        when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
+    @Nested
+    class EventSent {
 
-        final var result = certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
+        @Test
+        void shouldCallSendServiceForCertificateSentEvent() {
+            final var resp = GetCertificateXmlResponse.builder()
+                .certificateId(CERTIFICATE_ID)
+                .certificateType(CERTIFICATE_TYPE)
+                .unit(
+                    UnitDTO.builder()
+                        .unitId(UNIT_ID)
+                        .build()
+                )
+                .xml(ENCODED_XML)
+                .recipient(RecipientDTO.builder()
+                    .id(RECIPIENT_ID)
+                    .build())
+                .build();
+            when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
+            when(statisticsService.sent(CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID, RECIPIENT_ID)).thenReturn(true);
 
-        assertTrue(result);
-        verify(statisticsService).revoked(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getUnitId());
+            final var result = certificateEventService.processEvent(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID);
+
+            assertTrue(result);
+            verify(certificateEventSendService).send(resp, DECODED_XML);
+        }
+
+        @Test
+        void shouldCallStatisticsServiceSent() {
+            final var resp = GetCertificateXmlResponse.builder()
+                .certificateId(CERTIFICATE_ID)
+                .certificateType(CERTIFICATE_TYPE)
+                .unit(
+                    UnitDTO.builder()
+                        .unitId(UNIT_ID)
+                        .build()
+                )
+                .xml(ENCODED_XML)
+                .recipient(RecipientDTO.builder()
+                    .id(RECIPIENT_ID)
+                    .build())
+                .build();
+            when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
+            when(statisticsService.sent(CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID, RECIPIENT_ID)).thenReturn(true);
+
+            final var result = certificateEventService.processEvent(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID);
+
+            assertTrue(result);
+            verify(statisticsService).sent(resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getUnitId(),
+                resp.getRecipient().getId());
+        }
+
+        @Test
+        void shouldThrowExceptionIfWhenExceptionFromCertificateEventSendService() {
+            final var resp = GetCertificateXmlResponse.builder()
+                .certificateId(CERTIFICATE_ID)
+                .certificateType(CERTIFICATE_TYPE)
+                .unit(
+                    UnitDTO.builder()
+                        .unitId(UNIT_ID)
+                        .build()
+                )
+                .xml(ENCODED_XML)
+                .recipient(RecipientDTO.builder()
+                    .id(RECIPIENT_ID)
+                    .build())
+                .build();
+            when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
+            doThrow(IllegalStateException.class).when(certificateEventSendService).send(resp, DECODED_XML);
+
+            assertThrows(IllegalStateException.class, () -> certificateEventService.processEvent(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID));
+        }
     }
 
-    @Test
-    void shouldCallStatisticsServiceRevokedIfNotSent() {
-        final var resp = GetCertificateXmlResponse.builder()
-            .certificateId(CERTIFICATE_ID)
-            .certificateType(CERTIFICATE_TYPE)
-            .unit(
-                UnitDTO.builder()
-                    .unitId(UNIT_ID)
-                    .build()
-            )
-            .recipient(RecipientDTO.builder()
-                .sent(null)
-                .build())
-            .xml(ENCODED_XML)
-            .build();
-        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
-        when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
+    @Nested
+    class EventRevoked {
 
-        final var result = certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
+        @Test
+        void shouldCallStatisticsServiceRevokedIfSent() {
+            final var resp = GetCertificateXmlResponse.builder()
+                .certificateId(CERTIFICATE_ID)
+                .certificateType(CERTIFICATE_TYPE)
+                .unit(
+                    UnitDTO.builder()
+                        .unitId(UNIT_ID)
+                        .build()
+                )
+                .recipient(RecipientDTO.builder()
+                    .sent(LocalDateTime.now())
+                    .build())
+                .xml(ENCODED_XML)
+                .build();
+            when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
+            when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
 
-        assertTrue(result);
-        verify(statisticsService).revoked(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getUnitId());
+            final var result = certificateEventService.processEvent(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
+
+            assertTrue(result);
+            verify(statisticsService).revoked(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getUnitId());
+        }
+
+        @Test
+        void shouldCallStatisticsServiceRevokedIfNotSent() {
+            final var resp = GetCertificateXmlResponse.builder()
+                .certificateId(CERTIFICATE_ID)
+                .certificateType(CERTIFICATE_TYPE)
+                .unit(
+                    UnitDTO.builder()
+                        .unitId(UNIT_ID)
+                        .build()
+                )
+                .recipient(RecipientDTO.builder()
+                    .sent(null)
+                    .build())
+                .xml(ENCODED_XML)
+                .build();
+            when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
+            when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
+
+            final var result = certificateEventService.processEvent(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
+
+            assertTrue(result);
+            verify(statisticsService).revoked(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getUnitId());
+        }
+
+        @Test
+        void shouldCallRevokeServiceForCertificateRevokedEventIfSent() {
+            final var resp = GetCertificateXmlResponse.builder()
+                .certificateId(CERTIFICATE_ID)
+                .certificateType(CERTIFICATE_TYPE)
+                .unit(
+                    UnitDTO.builder()
+                        .unitId(UNIT_ID)
+                        .build()
+                )
+                .xml(ENCODED_XML)
+                .recipient(RecipientDTO.builder()
+                    .id(RECIPIENT_ID)
+                    .sent(LocalDateTime.now())
+                    .build())
+                .build();
+            when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
+            when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
+
+            final var result = certificateEventService.processEvent(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
+
+            assertTrue(result);
+            verify(certificateEventRevokeService, times(1)).revoke(resp);
+        }
+
+        @Test
+        void shouldNotCallRevokeServiceForCertificateRevokedEventIfNotSent() {
+            final var resp = GetCertificateXmlResponse.builder()
+                .certificateId(CERTIFICATE_ID)
+                .certificateType(CERTIFICATE_TYPE)
+                .unit(
+                    UnitDTO.builder()
+                        .unitId(UNIT_ID)
+                        .build()
+                )
+                .xml(ENCODED_XML)
+                .recipient(RecipientDTO.builder()
+                    .id(RECIPIENT_ID)
+                    .build())
+                .build();
+            when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
+            when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
+
+            certificateEventService.processEvent(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
+
+            verify(certificateEventRevokeService, times(0)).revoke(resp);
+        }
     }
 
-    @Test
-    void shouldCallStatisticsServiceSent() {
-        final var resp = GetCertificateXmlResponse.builder()
-            .certificateId(CERTIFICATE_ID)
-            .certificateType(CERTIFICATE_TYPE)
-            .unit(
-                UnitDTO.builder()
-                    .unitId(UNIT_ID)
-                    .build()
-            )
-            .xml(ENCODED_XML)
-            .recipient(RecipientDTO.builder()
-                .id(RECIPIENT_ID)
-                .build())
-            .build();
-        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
-        when(statisticsService.sent(CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID, RECIPIENT_ID)).thenReturn(true);
+    @Nested
+    class EventMessageSent {
 
-        final var result = certificateEventService.send(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID);
+        @Test
+        void shouldReturnTrueIfNoExceptionFromSendMessageService() {
+            final var resp = GetMessageXmlResponse.builder()
+                .xml(ENCODED_XML)
+                .build();
+            when(csIntegrationService.getMessageXmlResponse(MESSAGE_ID)).thenReturn(resp);
 
-        assertTrue(result);
-        verify(statisticsService).sent(resp.getCertificateId(), resp.getCertificateType(), resp.getUnit().getUnitId(),
-            resp.getRecipient().getId());
+            final var result = certificateEventService.processEvent(EVENT_MESSAGE_SENT, CERTIFICATE_ID, MESSAGE_ID);
+            assertTrue(result);
+        }
+
+        @Test
+        void shouldThrowIfExceptionFromSendMessageService() {
+            final var resp = GetMessageXmlResponse.builder()
+                .xml(ENCODED_XML)
+                .build();
+            when(csIntegrationService.getMessageXmlResponse(MESSAGE_ID)).thenReturn(resp);
+            doThrow(IllegalStateException.class).when(certificateEventSendMessageService).sendMessage(DECODED_XML);
+
+            assertThrows(IllegalStateException.class,
+                () -> certificateEventService.processEvent(EVENT_MESSAGE_SENT, CERTIFICATE_ID, MESSAGE_ID));
+        }
+
+        @Test
+        void shouldNotCallStatisticsServiceMessageSent() {
+            final var resp = GetMessageXmlResponse.builder()
+                .xml(ENCODED_XML)
+                .build();
+            when(csIntegrationService.getMessageXmlResponse(MESSAGE_ID)).thenReturn(resp);
+
+            certificateEventService.processEvent(EVENT_MESSAGE_SENT, CERTIFICATE_ID, MESSAGE_ID);
+            verifyNoInteractions(statisticsService);
+        }
+
+        @Test
+        void shouldThrowRestClientExceptionWhenFailedMessageXmlCall() {
+            when(csIntegrationService.getMessageXmlResponse(MESSAGE_ID)).thenThrow(RestClientException.class);
+            assertThrows(RestClientException.class, () -> certificateEventService.processEvent(EVENT_MESSAGE_SENT, CERTIFICATE_ID,
+                MESSAGE_ID));
+        }
     }
 
-    @Test
-    void shouldCallStatisticsServiceMessageSent() {
-        final var resp = GetMessageXmlResponse.builder()
-            .messageId(MESSAGE_ID)
-            .topic(TOPIC)
-            .xml(ENCODED_XML)
-            .build();
-        when(csIntegrationService.getMessageXmlResponse(MESSAGE_ID)).thenReturn(resp);
-        when(statisticsService.messageSent(DECODED_XML, MESSAGE_ID, TOPIC)).thenReturn(true);
-
-        final var result = certificateEventService.send(EVENT_MESSAGE_SENT, CERTIFICATE_ID, MESSAGE_ID);
-
-        assertTrue(result);
-        verify(statisticsService).messageSent(DECODED_XML, resp.getMessageId(), resp.getTopic());
+    @Nested
+    class EventUnknown {
+        @Test
+        void shouldThrowIllegalArgumentExceptionWhenUnknownEventType() {
+            assertThrows(IllegalArgumentException.class, () -> certificateEventService.processEvent(EVENT_UNKNOWN, CERTIFICATE_ID,
+                MESSAGE_ID));
+            verifyNoInteractions(statisticsService);
+            verifyNoInteractions(csIntegrationService);
+        }
     }
 
-    @Test
-    void shouldCallSendServiceForCertificateSentEvent() {
-        final var resp = GetCertificateXmlResponse.builder()
-            .certificateId(CERTIFICATE_ID)
-            .certificateType(CERTIFICATE_TYPE)
-            .unit(
-                UnitDTO.builder()
-                    .unitId(UNIT_ID)
-                    .build()
-            )
-            .xml(ENCODED_XML)
-            .recipient(RecipientDTO.builder()
-                .id(RECIPIENT_ID)
-                .build())
-            .build();
-        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
-        when(statisticsService.sent(CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID, RECIPIENT_ID)).thenReturn(true);
-
-        final var result = certificateEventService.send(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID);
-
-        assertTrue(result);
-        verify(certificateEventSendService).send(resp, DECODED_XML);
-    }
-
-    @Test
-    void shouldCallRevokeServiceForCertificateRevokedEventIfSent() {
-        final var resp = GetCertificateXmlResponse.builder()
-            .certificateId(CERTIFICATE_ID)
-            .certificateType(CERTIFICATE_TYPE)
-            .unit(
-                UnitDTO.builder()
-                    .unitId(UNIT_ID)
-                    .build()
-            )
-            .xml(ENCODED_XML)
-            .recipient(RecipientDTO.builder()
-                .id(RECIPIENT_ID)
-                .sent(LocalDateTime.now())
-                .build())
-            .build();
-        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
-        when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
-
-        final var result = certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
-
-        assertTrue(result);
-        verify(certificateEventRevokeService, times(1)).revoke(resp);
-    }
-
-    @Test
-    void shouldNotCallRevokeServiceForCertificateRevokedEventIfNotSent() {
-        final var resp = GetCertificateXmlResponse.builder()
-            .certificateId(CERTIFICATE_ID)
-            .certificateType(CERTIFICATE_TYPE)
-            .unit(
-                UnitDTO.builder()
-                    .unitId(UNIT_ID)
-                    .build()
-            )
-            .xml(ENCODED_XML)
-            .recipient(RecipientDTO.builder()
-                .id(RECIPIENT_ID)
-                .build())
-            .build();
-        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
-        when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
-
-        certificateEventService.send(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
-
-        verify(certificateEventRevokeService, times(0)).revoke(resp);
-    }
-
-    @Test
-    void shouldThrowExceptionIfWhenExceptionFromCertificateEventSendService() {
-        final var resp = GetCertificateXmlResponse.builder()
-            .certificateId(CERTIFICATE_ID)
-            .certificateType(CERTIFICATE_TYPE)
-            .unit(
-                UnitDTO.builder()
-                    .unitId(UNIT_ID)
-                    .build()
-            )
-            .xml(ENCODED_XML)
-            .recipient(RecipientDTO.builder()
-                .id(RECIPIENT_ID)
-                .build())
-            .build();
-        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
-        doThrow(IllegalStateException.class).when(certificateEventSendService).send(resp, DECODED_XML);
-
-        assertThrows(IllegalStateException.class, () -> certificateEventService.send(EVENT_SENT, CERTIFICATE_ID, MESSAGE_ID));
-    }
-
-    @Test
-    void shouldReturnFalseIfFalseReturnedFromStatisticsService() {
-        final var resp = GetCertificateXmlResponse.builder()
-            .certificateId(CERTIFICATE_ID)
-            .certificateType(CERTIFICATE_TYPE)
-            .unit(
-                UnitDTO.builder()
-                    .unitId(UNIT_ID)
-                    .build()
-            )
-            .recipient(null)
-            .xml(ENCODED_XML)
-            .build();
-        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
-        when(statisticsService.created(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(false);
-
-        final var result = certificateEventService.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
-
-        assertFalse(result);
-    }
-
-    @Test
-    void shouldThrowIllegalArgumentExceptionWhenUnknownEventType() {
-        assertThrows(IllegalArgumentException.class, () -> certificateEventService.send(EVENT_UNKNOWN, CERTIFICATE_ID,
-            MESSAGE_ID));
-        verifyNoInteractions(statisticsService);
-        verifyNoInteractions(csIntegrationService);
-    }
-
-    @Test
-    void shouldThrowRestClientExceptionWhenFailedCertificateXmlCall() {
-        when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenThrow(RestClientException.class);
-        assertThrows(RestClientException.class, () -> certificateEventService.send(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID));
-    }
-
-    @Test
-    void shouldThrowRestClientExceptionWhenFailedMessageXmlCall() {
-        when(csIntegrationService.getMessageXmlResponse(MESSAGE_ID)).thenThrow(RestClientException.class);
-        assertThrows(RestClientException.class, () -> certificateEventService.send(EVENT_MESSAGE_SENT, CERTIFICATE_ID,
-            MESSAGE_ID));
-    }
 }

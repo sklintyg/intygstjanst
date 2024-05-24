@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:SendMessageToRecipient xmlns:ns6="urn:riv:clinicalprocess:healthcond:certificate:3.4" xmlns:ns5="urn:riv:clinicalprocess:healthcond:certificate:3.2" xmlns:ns2="urn:riv:clinicalprocess:healthcond:certificate:SendMessageToRecipientResponder:2" xmlns:ns4="urn:riv:clinicalprocess:healthcond:certificate:3" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="urn:riv:clinicalprocess:healthcond:certificate:types:3">
+  <ns2:meddelande-id>messageId</ns2:meddelande-id>
+  <ns2:referens-id>referenceId</ns2:referens-id>
+  <ns2:skickatTidpunkt>2024-05-22T17:04:00</ns2:skickatTidpunkt>
+  <ns2:intygs-id>
+    <ns3:root>1</ns3:root>
+    <ns3:extension>certificateId</ns3:extension>
+  </ns2:intygs-id>
+  <ns2:patientPerson-id>
+    <ns3:root>1.2.752.129.2.1.3.1</ns3:root>
+    <ns3:extension>191212121212</ns3:extension>
+  </ns2:patientPerson-id>
+  <ns2:logiskAdressMottagare>logicalAddress</ns2:logiskAdressMottagare>
+  <ns2:amne>
+    <ns3:code>KOMPLT</ns3:code>
+    <ns3:codeSystem>ffa59d8f-8d7e-46ae-ac9e-31804e8e8499</ns3:codeSystem>
+  </ns2:amne>
+  <ns2:rubrik>Komplettering</ns2:rubrik>
+  <ns2:meddelande>Kan inte komplettera intyg certificateId</ns2:meddelande>
+  <ns2:skickatAv>
+    <ns4:personal-id>
+      <ns3:root>1.2.752.129.2.1.4.1</ns3:root>
+      <ns3:extension>staffId</ns3:extension>
+    </ns4:personal-id>
+    <ns4:fullstandigtNamn>Firstname Lastname</ns4:fullstandigtNamn>
+    <ns4:enhet>
+      <ns4:enhets-id>
+        <ns3:root>1.2.752.129.2.1.4.1</ns3:root>
+        <ns3:extension>unitId</ns3:extension>
+      </ns4:enhets-id>
+      <ns4:arbetsplatskod>
+        <ns3:root>1.2.752.29.4.71</ns3:root>
+        <ns3:extension>12345</ns3:extension>
+      </ns4:arbetsplatskod>
+      <ns4:enhetsnamn>unitName</ns4:enhetsnamn>
+      <ns4:postadress>Street 1</ns4:postadress>
+      <ns4:postnummer>zipCode</ns4:postnummer>
+      <ns4:postort>city</ns4:postort>
+      <ns4:telefonnummer>0812341234</ns4:telefonnummer>
+      <ns4:vardgivare>
+        <ns4:vardgivare-id>
+          <ns3:root>1.2.752.129.2.1.4.1</ns3:root>
+          <ns3:extension>careProviderId</ns3:extension>
+        </ns4:vardgivare-id>
+        <ns4:vardgivarnamn>careProviderName</ns4:vardgivarnamn>
+      </ns4:vardgivare>
+    </ns4:enhet>
+  </ns2:skickatAv>
+</ns2:SendMessageToRecipient>

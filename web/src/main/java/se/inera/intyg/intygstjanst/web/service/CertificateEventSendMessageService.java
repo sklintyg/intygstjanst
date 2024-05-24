@@ -19,8 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
-public interface CertificateEventService {
+public interface CertificateEventSendMessageService {
 
-    boolean processEvent(String eventType, String certificateId, String messageId);
-
+    void sendMessage(String xml);
 }

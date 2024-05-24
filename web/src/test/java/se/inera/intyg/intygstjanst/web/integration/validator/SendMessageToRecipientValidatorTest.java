@@ -21,10 +21,12 @@ package se.inera.intyg.intygstjanst.web.integration.validator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,10 +53,12 @@ public class SendMessageToRecipientValidatorTest {
     private static final String MEDDELANDE_ID = "meddelandeId";
     private static final String INTYG_ID = "intygsId";
     private static final String PATIENT_CRN = "191212121212";
+    private static final String SVAR_PA_MEDDELANDE_ID = "svarPaMeddelandeId";
+    private static final String PAMINNELSE_MEDDELANDE_ID = "paminnelseMeddelandeId";
+    private static final String SUBJECT_CODE_OVRIGT = "OVRIGT";
 
     @Mock
     private CertificateService certificateService;
-
     @Mock
     private ArendeRepository messageRepository;
 
@@ -83,7 +87,7 @@ public class SendMessageToRecipientValidatorTest {
         setupCertificateExist(PATIENT_CRN);
         SendMessageToRecipientType message = buildOkMessage(PATIENT_CRN);
         message.getAmne().setCode("AVSTMN");
-        message.setPaminnelseMeddelandeId("paminnelseMeddelandeId");
+        message.setPaminnelseMeddelandeId(PAMINNELSE_MEDDELANDE_ID);
         List<String> validationErrors = validator.validate(message);
         assertFalse(validationErrors.isEmpty());
     }
@@ -100,7 +104,7 @@ public class SendMessageToRecipientValidatorTest {
 
     @Test
     public void paminnelseMeddelandeExistTest() throws Exception {
-        final String paminnelseMeddelandeId = "paminnelseMeddelandeId";
+        final String paminnelseMeddelandeId = PAMINNELSE_MEDDELANDE_ID;
         setupMeddelandeExist(paminnelseMeddelandeId);
         setupCertificateExist(PATIENT_CRN);
         SendMessageToRecipientType message = buildOkMessage(PATIENT_CRN);
@@ -113,7 +117,7 @@ public class SendMessageToRecipientValidatorTest {
 
     @Test
     public void paminnelseMeddelandeDoesNotExistTest() throws Exception {
-        final String paminnelseMeddelandeId = "paminnelseMeddelandeId";
+        final String paminnelseMeddelandeId = PAMINNELSE_MEDDELANDE_ID;
         setupCertificateExist(PATIENT_CRN);
         SendMessageToRecipientType message = buildOkMessage(PATIENT_CRN);
         message.getAmne().setCode("PAMINN");
@@ -134,7 +138,7 @@ public class SendMessageToRecipientValidatorTest {
 
     @Test
     public void sistaDatumForSvarOnAnswerTest() throws Exception {
-        final String svarPaMeddelandeId = "svarPaMeddelandeId";
+        final String svarPaMeddelandeId = SVAR_PA_MEDDELANDE_ID;
         setupMeddelandeExist(svarPaMeddelandeId);
         setupCertificateExist(PATIENT_CRN);
         SendMessageToRecipientType message = buildOkMessage(PATIENT_CRN);
@@ -147,7 +151,7 @@ public class SendMessageToRecipientValidatorTest {
 
     @Test
     public void sistaDatumForSvarOnPaminnTest() throws Exception {
-        final String paminnelseMeddelandeId = "svarPaMeddelandeId";
+        final String paminnelseMeddelandeId = SVAR_PA_MEDDELANDE_ID;
         setupMeddelandeExist(paminnelseMeddelandeId);
         setupCertificateExist(PATIENT_CRN);
         SendMessageToRecipientType message = buildOkMessage(PATIENT_CRN);
@@ -168,11 +172,11 @@ public class SendMessageToRecipientValidatorTest {
 
     @Test
     public void svarPaMeddelandeExistTest() throws Exception {
-        final String svarPaMeddelandeId = "svarPaMeddelandeId";
-        setupMeddelandeExist(svarPaMeddelandeId, "OVRIGT");
+        final String svarPaMeddelandeId = SVAR_PA_MEDDELANDE_ID;
+        setupMeddelandeExist(svarPaMeddelandeId, SUBJECT_CODE_OVRIGT);
         setupCertificateExist(PATIENT_CRN);
         SendMessageToRecipientType message = buildOkMessage(PATIENT_CRN);
-        message.getAmne().setCode("OVRIGT");
+        message.getAmne().setCode(SUBJECT_CODE_OVRIGT);
         message.setSvarPa(new MeddelandeReferens());
         message.getSvarPa().setMeddelandeId(svarPaMeddelandeId);
         List<String> validationErrors = validator.validate(message);
@@ -182,7 +186,7 @@ public class SendMessageToRecipientValidatorTest {
 
     @Test
     public void svarPaMeddelandeDoesNotExistTest() throws Exception {
-        final String svarPaMeddelandeId = "svarPaMeddelandeId";
+        final String svarPaMeddelandeId = SVAR_PA_MEDDELANDE_ID;
         setupCertificateExist(PATIENT_CRN);
         SendMessageToRecipientType message = buildOkMessage(PATIENT_CRN);
         message.setSvarPa(new MeddelandeReferens());
@@ -193,11 +197,11 @@ public class SendMessageToRecipientValidatorTest {
 
     @Test
     public void svarPaAmneNotConsistentTest() throws Exception {
-        final String svarPaMeddelandeId = "svarPaMeddelandeId";
+        final String svarPaMeddelandeId = SVAR_PA_MEDDELANDE_ID;
         setupMeddelandeExist(svarPaMeddelandeId, "KOMPLT");
         setupCertificateExist(PATIENT_CRN);
         SendMessageToRecipientType message = buildOkMessage(PATIENT_CRN);
-        message.getAmne().setCode("OVRIGT");
+        message.getAmne().setCode(SUBJECT_CODE_OVRIGT);
         message.setSvarPa(new MeddelandeReferens());
         message.getSvarPa().setMeddelandeId(svarPaMeddelandeId);
         List<String> validationErrors = validator.validate(message);
@@ -250,6 +254,90 @@ public class SendMessageToRecipientValidatorTest {
         assertTrue(validationErrors.isEmpty());
     }
 
+
+    @Test
+    public void csValidateShouldNotReturnValidationErrorForValidMessage() {
+        final var validationErrors = new ArrayList<String>();
+        validator.csValidate(buildOkMessage(PATIENT_CRN), validationErrors);
+        assertTrue(validationErrors.isEmpty());
+    }
+
+    @Test
+    public void csValidateShouldNotCallCertificateService() {
+        final var validationErrors = new ArrayList<String>();
+        validator.csValidate(buildOkMessage(PATIENT_CRN), validationErrors);
+        verifyNoInteractions(certificateService);
+    }
+
+    @Test
+    public void csValidateShouldReturnValidationErrorForInvalidAmneskod() {
+        final var validationErrors = new ArrayList<String>();
+        final var message = buildOkMessage(PATIENT_CRN);
+        message.getAmne().setCode("invalid-amneskod");
+
+        validator.csValidate(message, validationErrors);
+        assertEquals(1, validationErrors.size());
+        assertTrue(validationErrors.contains("Invalid amneskod"));
+    }
+
+    @Test
+    public void csValidateShouldReturnValidationErrorForNonUniqueMeddelandeId() {
+        final var validationErrors = new ArrayList<String>();
+        when(messageRepository.findByMeddelandeId(MEDDELANDE_ID)).thenReturn(new Arende());
+
+        validator.csValidate(buildOkMessage(PATIENT_CRN), validationErrors);
+        assertEquals(1, validationErrors.size());
+        assertTrue(validationErrors.contains("MeddelandeId is not globally unique"));
+    }
+
+    @Test
+    public void csValidateShouldReturnValidationErrorForSistaDatumForSvarOnAnswer() {
+        final var validationErrors = new ArrayList<String>();
+        final var arende = new Arende();
+        arende.setAmne("KOMPLT");
+
+        final var message = buildOkMessage(PATIENT_CRN);
+        message.setSvarPa(new MeddelandeReferens());
+        message.getSvarPa().setMeddelandeId(SVAR_PA_MEDDELANDE_ID);
+        message.setSistaDatumForSvar(LocalDate.now().plusDays(7));
+
+        when(messageRepository.findByMeddelandeId(SVAR_PA_MEDDELANDE_ID)).thenReturn(arende);
+
+        validator.csValidate(message, validationErrors);
+        assertEquals(1, validationErrors.size());
+        assertTrue(validationErrors.contains("SistaDatumForSvar is only valid on Questions"));
+    }
+
+    @Test
+    public void csValidateShouldReturnValidationErrorForPaminnelseMeddelandeDoesNotExist() {
+        final var validationErrors = new ArrayList<String>();
+        final var message = buildOkMessage(PATIENT_CRN);
+        message.getAmne().setCode("PAMINN");
+        message.setPaminnelseMeddelandeId(PAMINNELSE_MEDDELANDE_ID);
+
+        validator.csValidate(message, validationErrors);
+        assertEquals(1, validationErrors.size());
+        assertTrue(validationErrors.contains("Paminnelse Meddelande does not exist"));
+    }
+
+    @Test
+    public void csValidateShouldReturnValidationErrorForSvarPaAmneNotConsistentTest() {
+        final var validationErrors = new ArrayList<String>();
+        final var arende = new Arende();
+        arende.setAmne("KOMPLT");
+
+        final var message = buildOkMessage(PATIENT_CRN);
+        message.getAmne().setCode(SUBJECT_CODE_OVRIGT);
+        message.setSvarPa(new MeddelandeReferens());
+        message.getSvarPa().setMeddelandeId(SVAR_PA_MEDDELANDE_ID);
+
+        when(messageRepository.findByMeddelandeId(SVAR_PA_MEDDELANDE_ID)).thenReturn(arende);
+
+        validator.csValidate(message, validationErrors);
+        assertEquals(1, validationErrors.size());
+        assertTrue(validationErrors.contains("Svar amne is not consistent with question"));
+    }
+
     private void setupMeddelandeExist(String meddelandeId) {
         setupMeddelandeExist(meddelandeId, null);
     }
@@ -278,7 +366,7 @@ public class SendMessageToRecipientValidatorTest {
 
     private Certificate buildCertificate(String crn, CertificateState state) {
         Certificate certificate = new Certificate();
-        certificate.setCivicRegistrationNumber(Personnummer.createPersonnummer(crn).get());
+        certificate.setCivicRegistrationNumber(Personnummer.createPersonnummer(crn).orElseThrow());
         certificate.setStates(List.of(new CertificateStateHistoryEntry("target", state, LocalDateTime.now())));
 
         return certificate;
