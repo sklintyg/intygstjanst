@@ -42,8 +42,8 @@ public class CSIntegrationService {
     private static final String CITIZEN_ENDPOINT_URL = "/api/citizen/certificate";
     private static final String INTERNALAPI_CERTIFICATE_XML_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/xml";
     private static final String INTERNAL_MESSAGE_XML_ENDPOINT_URL = "/internalapi/message/{messageId}/xml";
-    private static final String INTERNAL_CERTIFICATE_METADATA_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/exists";
-    private static final String INTERNAL_CERTIFICATE_EXISTS_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/metadata";
+    private static final String INTERNAL_CERTIFICATE_METADATA_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/metadata";
+    private static final String INTERNAL_CERTIFICATE_EXISTS_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/exists";
 
     private final RestTemplate restTemplate;
 
