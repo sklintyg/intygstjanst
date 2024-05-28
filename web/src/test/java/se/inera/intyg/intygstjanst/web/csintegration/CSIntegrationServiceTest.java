@@ -221,6 +221,23 @@ class CSIntegrationServiceTest {
 
             assertThrows(IllegalStateException.class, () -> csIntegrationService.certificateExists(CERTIFICATE_ID));
         }
+
+        @Test
+        void shouldSetUrlCorrect() {
+            ReflectionTestUtils.setField(csIntegrationService, "baseUrl", "baseUrl");
+            final var response = CertificateExistsResponse.builder()
+                .exists(false)
+                .build();
+            final var captor = ArgumentCaptor.forClass(String.class);
+
+            when(restTemplate.getForObject(anyString(), eq(CertificateExistsResponse.class), eq(CERTIFICATE_ID)))
+                .thenReturn(response);
+
+            csIntegrationService.certificateExists(CERTIFICATE_ID);
+            verify(restTemplate).getForObject(captor.capture(), eq(CertificateExistsResponse.class), eq(CERTIFICATE_ID));
+
+            assertEquals("baseUrl/internalapi/certificate/{certificateId}/exists", captor.getValue());
+        }
     }
 
     @Nested
@@ -254,8 +271,23 @@ class CSIntegrationServiceTest {
         void shouldThrowRestClientExceptioWhenRequestFails() {
             when(restTemplate.getForObject(anyString(), eq(CertificateExistsResponse.class), eq(CERTIFICATE_ID)))
                 .thenThrow(RestClientException.class);
-            assertThrows(IllegalStateException.class, () -> csIntegrationService.certificateExists(CERTIFICATE_ID));
+            assertThrows(IllegalStateException.class, () -> csIntegrationService.getCertificateMetadata(CERTIFICATE_ID));
+        }
+
+        @Test
+        void shouldSetUrlCorrect() {
+            ReflectionTestUtils.setField(csIntegrationService, "baseUrl", "baseUrl");
+            final var response = GetCertificateMetadataResponse.builder()
+                .build();
+            final var captor = ArgumentCaptor.forClass(String.class);
+
+            when(restTemplate.getForObject(anyString(), eq(GetCertificateMetadataResponse.class), eq(CERTIFICATE_ID)))
+                .thenReturn(response);
+
+            csIntegrationService.getCertificateMetadata(CERTIFICATE_ID);
+            verify(restTemplate).getForObject(captor.capture(), eq(GetCertificateMetadataResponse.class), eq(CERTIFICATE_ID));
+
+            assertEquals("baseUrl/internalapi/certificate/{certificateId}/metadata", captor.getValue());
         }
     }
-
 }
