@@ -24,9 +24,9 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Value;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
-import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateMetadataResponse.CertificateMetadataDTOBuilder;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateMetadataResponse.GetCertificateMetadataResponseBuilder;
 
-@JsonDeserialize(builder = CertificateMetadataDTOBuilder.class)
+@JsonDeserialize(builder = GetCertificateMetadataResponseBuilder.class)
 @Value
 @Builder
 public class GetCertificateMetadataResponse {
@@ -34,7 +34,7 @@ public class GetCertificateMetadataResponse {
     CertificateMetadata certificateMetadata;
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static class CertificateMetadataDTOBuilder {
+    public static class GetCertificateMetadataResponseBuilder {
 
     }
 }
