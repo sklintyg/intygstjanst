@@ -26,12 +26,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.web.csintegration.util.CertificateServiceProfile;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
@@ -65,21 +65,21 @@ public class SendMessageToCareValidator {
         CERTIFICATE_REVOKED_ERROR
     }
 
-    private static final String CERTIFICATE_SERVICE_ACTIVE = "certificate-service-active";
 
-    private final boolean certificateServiceActive;
     private final CertificateService certificateService;
     private final RecipientService recipientService;
     private final ArendeRepository messageRepository;
     private final CSSendMessageToCareValidator csSendMessageToCareValidator;
+    private final CertificateServiceProfile certificateServiceProfile;
 
     public SendMessageToCareValidator(CertificateService certificateService, RecipientService recipientService,
-        ArendeRepository messageRepository, CSSendMessageToCareValidator csSendMessageToCareValidator, Environment environment) {
+        ArendeRepository messageRepository, CSSendMessageToCareValidator csSendMessageToCareValidator,
+        CertificateServiceProfile certificateServiceProfile) {
         this.certificateService = certificateService;
         this.recipientService = recipientService;
         this.messageRepository = messageRepository;
         this.csSendMessageToCareValidator = csSendMessageToCareValidator;
-        this.certificateServiceActive = environment.matchesProfiles(CERTIFICATE_SERVICE_ACTIVE);
+        this.certificateServiceProfile = certificateServiceProfile;
     }
 
     public List<String> validateSendMessageToCare(SendMessageToCareType sendMessageToCareType) {
@@ -95,7 +95,7 @@ public class SendMessageToCareValidator {
         validatePaminnelse(sendMessageToCareType, validationErrors);
         validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
 
-        if (Boolean.TRUE.equals(certificateServiceActive) && !certificateExists(certificateId)) {
+        if (certificateServiceProfile.active() && !certificateExists(certificateId)) {
             csSendMessageToCareValidator.validate(certificateId, personnummer, validationErrors);
             return validationErrors;
         }

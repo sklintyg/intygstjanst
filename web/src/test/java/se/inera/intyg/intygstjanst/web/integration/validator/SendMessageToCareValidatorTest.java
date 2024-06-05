@@ -33,12 +33,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.env.Environment;
-import org.springframework.test.util.ReflectionTestUtils;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.web.csintegration.util.CertificateServiceProfile;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.integration.util.SendMessageToCareUtil;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.Amneskod;
@@ -54,7 +53,7 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.MeddelandeReferens;
 class SendMessageToCareValidatorTest {
 
     @Mock
-    private Environment environment;
+    private CertificateServiceProfile certificateServiceProfile;
     @Mock
     private RecipientService recipientService;
     @Mock
@@ -353,7 +352,6 @@ class SendMessageToCareValidatorTest {
 
     @Test
     void testValidatorDoesNotCallCsValidationIfCertificateNInIntygstjanst() throws Exception {
-        final var validationErrors = new ArrayList<String>();
         final var sendMessageToCareType = buildSendMessageCareType("originalMessageId", Amneskod.KOMPLT.toString());
         sendMessageToCareType.setMeddelandeId("meddelande-id");
         sendMessageToCareType.setSistaDatumForSvar(null);
@@ -365,7 +363,7 @@ class SendMessageToCareValidatorTest {
 
         when(arendeRepository.findByMeddelandeId(sendMessageToCareType.getMeddelandeId())).thenReturn(null);
         when(certificateService.getCertificateForCare(certificateId)).thenThrow(InvalidCertificateException.class);
-        ReflectionTestUtils.setField(validator, "certificateServiceActive", false);
+        when(certificateServiceProfile.active()).thenReturn(false);
 
         validator.validateSendMessageToCare(sendMessageToCareType);
 
@@ -386,7 +384,7 @@ class SendMessageToCareValidatorTest {
 
         when(arendeRepository.findByMeddelandeId(sendMessageToCareType.getMeddelandeId())).thenReturn(null);
         when(certificateService.getCertificateForCare(certificateId)).thenThrow(InvalidCertificateException.class);
-        ReflectionTestUtils.setField(validator, "certificateServiceActive", true);
+        when(certificateServiceProfile.active()).thenReturn(true);
 
         validator.validateSendMessageToCare(sendMessageToCareType);
 
