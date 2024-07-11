@@ -19,19 +19,24 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_AND_FILTER_PROTECTED_PATIENTS;
 import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_ACTIVE_SICK_LEAVE_CERTIFICATES;
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_AND_FILTER_PROTECTED_PATIENTS;
+import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_SICK_LEAVES_FROM_DB;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.infra.sjukfall.dto.IntygData;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory;
+import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
 import se.inera.intyg.intygstjanst.web.service.CreateSickLeaveFilter;
-import se.inera.intyg.intygstjanst.web.service.PuFilterService;
 import se.inera.intyg.intygstjanst.web.service.GetActiveSickLeaveCertificates;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeaveFilterService;
+import se.inera.intyg.intygstjanst.web.service.PuFilterService;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceRequest;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
 
@@ -43,13 +48,18 @@ public class GetSickLeaveFilterServiceImpl implements GetSickLeaveFilterService 
     private final GetActiveSickLeaveCertificates getActiveSickLeaveCertificates;
     private final CreateSickLeaveFilter createSickLeaveFilter;
     private final PuFilterService puFilterService;
+    private final SjukfallCertificateDao sjukfallCertificateDao;
+    private final IntygsDataConverter intygsDataConverter;
 
     public GetSickLeaveFilterServiceImpl(HsaService hsaService, GetActiveSickLeaveCertificates getActiveSickLeaveCertificates,
-        CreateSickLeaveFilter createSickLeaveFilter, PuFilterService puFilterService) {
+        CreateSickLeaveFilter createSickLeaveFilter, PuFilterService puFilterService, SjukfallCertificateDao sjukfallCertificateDao,
+        IntygsDataConverter intygsDataConverter) {
         this.getActiveSickLeaveCertificates = getActiveSickLeaveCertificates;
         this.hsaService = hsaService;
         this.createSickLeaveFilter = createSickLeaveFilter;
         this.puFilterService = puFilterService;
+        this.sjukfallCertificateDao = sjukfallCertificateDao;
+        this.intygsDataConverter = intygsDataConverter;
     }
 
     @Override
@@ -66,11 +76,28 @@ public class GetSickLeaveFilterServiceImpl implements GetSickLeaveFilterService 
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_ACTIVE_SICK_LEAVE_CERTIFICATES, intygDataList.size()));
 
-        sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
-        puFilterService.enrichWithPatientNameAndFilter(intygDataList, getSickLeaveFilterServiceRequest.getProtectedPersonFilterId());
-        LOG.info(sickLeaveLogMessageFactory.message(GET_AND_FILTER_PROTECTED_PATIENTS, intygDataList.size()));
+        final var patientIds = intygDataList.stream()
+            .map(IntygData::getPatientId)
+            .collect(Collectors.toList());
 
-        return createSickLeaveFilter.create(intygDataList);
+        sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
+        final var sjukfallCertificate = sjukfallCertificateDao.findAllSjukfallCertificate(
+            careProviderId,
+            careUnitAndSubUnits,
+            patientIds
+        );
+        LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES_FROM_DB, sjukfallCertificate.size()));
+
+        final var intygDataWithRespectToRelations = intygsDataConverter.convert(sjukfallCertificate);
+
+        sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
+        puFilterService.enrichWithPatientNameAndFilter(
+            intygDataWithRespectToRelations,
+            getSickLeaveFilterServiceRequest.getProtectedPersonFilterId()
+        );
+        LOG.info(sickLeaveLogMessageFactory.message(GET_AND_FILTER_PROTECTED_PATIENTS, intygDataWithRespectToRelations.size()));
+
+        return createSickLeaveFilter.create(intygDataWithRespectToRelations);
     }
 
     private static List<String> getUnitIdFromRequestIfProvided(String unitId, List<String> careUnitAndSubUnits) {

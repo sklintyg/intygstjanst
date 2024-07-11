@@ -24,7 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +42,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.Lakare;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
+import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
 import se.inera.intyg.intygstjanst.web.service.CreateSickLeaveFilter;
 import se.inera.intyg.intygstjanst.web.service.GetActiveSickLeaveCertificates;
 import se.inera.intyg.intygstjanst.web.service.PuFilterService;
@@ -57,6 +63,10 @@ class GetSickLeaveFilterServiceImplTest {
     private CreateSickLeaveFilter createSickLeaveFilter;
     @Mock
     private PuFilterService puFilterService;
+    @Mock
+    private SjukfallCertificateDao sjukfallCertificateDao;
+    @Mock
+    private IntygsDataConverter intygsDataConverter;
     @InjectMocks
     private GetSickLeaveFilterServiceImpl getSickLeaveFilterService;
 
@@ -174,12 +184,17 @@ class GetSickLeaveFilterServiceImplTest {
     void shallCallPuFilterServiceWithListOfIntygData() {
         final var captor = ArgumentCaptor.forClass(List.class);
         final var list = Collections.singletonList(new IntygData());
+        final var sjukfallList = List.of(mock(SjukfallCertificate.class));
+        final var convertedList = Collections.singletonList(new IntygData());
         when(getActiveSickLeaveCertificates.get(anyString(), anyList(), anyList(), anyInt())).thenReturn(list);
+        when(sjukfallCertificateDao.findAllSjukfallCertificate(anyString(), anyList(), anyList()))
+            .thenReturn(sjukfallList);
+        when(intygsDataConverter.convert(sjukfallList)).thenReturn(convertedList);
 
         getSickLeaveFilterService.get(getSickLeaveFilterServiceRequestBuilder.build());
 
         verify(puFilterService).enrichWithPatientNameAndFilter(captor.capture(), anyString());
-        assertEquals(list, captor.getValue());
+        assertEquals(convertedList, captor.getValue());
     }
 
     @Test
