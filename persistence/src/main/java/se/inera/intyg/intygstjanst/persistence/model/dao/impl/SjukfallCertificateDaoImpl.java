@@ -123,7 +123,8 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     }
 
     @Override
-    public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds, int maxDagarSedanAvslut) {
+    public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
+        int maxDagarSedanAvslut) {
         final var today = LocalDate.now();
         final var recentlyClosed = today.minusDays(maxDagarSedanAvslut);
 
