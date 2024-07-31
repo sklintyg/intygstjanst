@@ -74,6 +74,9 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     public List<SjukfallCertificate> findActiveSjukfallCertificate(String careGiverId, List<String> unitIds, List<String> doctorIds,
         LocalDate activeDate, LocalDate recentlyClosed) {
 
+        final var patientsWithActiveCertificates = patientsWithActiveCertificates(careGiverId, unitIds, activeDate, recentlyClosed);
+        final var replacedOrComplementedCertificates = replacedOrComplementedIntygForPersonnummerList(patientsWithActiveCertificates);
+
         final var queryStrBuilder = new StringBuilder();
         queryStrBuilder.append("SELECT DISTINCT sc FROM SjukfallCertificate sc ");
         queryStrBuilder.append("JOIN FETCH sc.sjukfallCertificateWorkCapacity scwc ");
@@ -90,6 +93,9 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         }
         queryStrBuilder.append("AND sc.deleted = FALSE ");
         queryStrBuilder.append("AND sc.testCertificate = FALSE ");
+        if (isNotEmpty(replacedOrComplementedCertificates)) {
+            queryStrBuilder.append("AND sc.id NOT IN (:replacedOrComplementedCertificates)");
+        }
 
         final var sjukfallCertificateTypedQuery = entityManager.createQuery(queryStrBuilder.toString(), SjukfallCertificate.class)
             .setParameter("careGiverHsaId", careGiverId)
@@ -104,6 +110,10 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
             sjukfallCertificateTypedQuery.setParameter("recentlyClosed", recentlyClosed.format(DateTimeFormatter.ISO_DATE));
         }
 
+        if (isNotEmpty(replacedOrComplementedCertificates)) {
+            sjukfallCertificateTypedQuery.setParameter("replacedOrComplementedCertificates", replacedOrComplementedCertificates);
+        }
+
         return sjukfallCertificateTypedQuery.getResultList();
     }
 
@@ -113,42 +123,42 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     }
 
     @Override
-    public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(
-        String careGiverHsaId, List<String> careUnitHsaIds, int maxDagarSedanAvslut) {
+    public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
+        int maxDagarSedanAvslut) {
+        final var today = LocalDate.now();
+        final var recentlyClosed = today.minusDays(maxDagarSedanAvslut);
 
-        String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
-        String recentlyClosed = LocalDate.now().minusDays(maxDagarSedanAvslut).format(DateTimeFormatter.ISO_DATE);
+        final var personNummerList = patientsWithActiveCertificates(careGiverHsaId, careUnitHsaIds, today, recentlyClosed);
 
-        // First, get personnummer for all patients having a currently ongoing intyg.
-        List<String> personNummerList = entityManager
-            .createQuery(BASE_QUERY + "", String.class)
+        return querySjukfallCertificatesForUnitsAndPersonnummer(
+            careGiverHsaId, careUnitHsaIds, personNummerList, recentlyClosed.format(DateTimeFormatter.ISO_DATE), false
+        );
+    }
+
+    private List<String> patientsWithActiveCertificates(String careGiverHsaId, List<String> careUnitHsaIds, LocalDate today,
+        LocalDate recentlyClosed) {
+        return entityManager
+            .createQuery(BASE_QUERY, String.class)
             .setParameter("careGiverHsaId", careGiverHsaId)
             .setParameter("careUnitHsaId", careUnitHsaIds)
-            .setParameter("today", today)
-            .setParameter("recentlyClosed", recentlyClosed)
+            .setParameter("today", today.format(DateTimeFormatter.ISO_DATE))
+            .setParameter("recentlyClosed",
+                recentlyClosed == null ? today.format(DateTimeFormatter.ISO_DATE) : recentlyClosed.format(DateTimeFormatter.ISO_DATE)
+            )
             .getResultList();
-
-        return querySjukfallCertificatesForUnitsAndPersonnummer(careGiverHsaId, careUnitHsaIds, personNummerList, recentlyClosed, false);
     }
 
     @Override
     public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
         int maxDagarSedanAvslut, boolean onlyActiveSickLeaves) {
+        final var today = LocalDate.now();
+        final var recentlyClosed = today.minusDays(maxDagarSedanAvslut);
 
-        String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
-        String recentlyClosed = LocalDate.now().minusDays(maxDagarSedanAvslut).format(DateTimeFormatter.ISO_DATE);
+        final var personNummerList = patientsWithActiveCertificates(careGiverHsaId, careUnitHsaIds, today, recentlyClosed);
 
-        // First, get personnummer for all patients having a currently ongoing intyg.
-        List<String> personNummerList = entityManager
-            .createQuery(BASE_QUERY + "", String.class)
-            .setParameter("careGiverHsaId", careGiverHsaId)
-            .setParameter("careUnitHsaId", careUnitHsaIds)
-            .setParameter("today", today)
-            .setParameter("recentlyClosed", recentlyClosed)
-            .getResultList();
-
-        return querySjukfallCertificatesForUnitsAndPersonnummer(careGiverHsaId, careUnitHsaIds, personNummerList, recentlyClosed,
-            onlyActiveSickLeaves);
+        return querySjukfallCertificatesForUnitsAndPersonnummer(
+            careGiverHsaId, careUnitHsaIds, personNummerList, recentlyClosed.format(DateTimeFormatter.ISO_DATE), onlyActiveSickLeaves
+        );
     }
 
     @Override
