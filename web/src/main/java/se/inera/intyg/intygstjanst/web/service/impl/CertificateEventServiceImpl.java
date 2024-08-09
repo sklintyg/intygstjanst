@@ -22,6 +22,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.csintegration.CSIntegrationService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventRevokeService;
@@ -31,6 +32,7 @@ import se.inera.intyg.intygstjanst.web.service.CertificateEventService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class CertificateEventServiceImpl implements CertificateEventService {
 
@@ -47,6 +49,16 @@ public class CertificateEventServiceImpl implements CertificateEventService {
 
     @Override
     public boolean processEvent(String eventType, String certificateId, String messageId) {
+        final var metadata = csIntegrationService.getCertificateMetadata(certificateId);
+
+        if (metadata.isTestCertificate()) {
+            log.info(String.format(
+                    "Not processing event of type '%S' for certificate with id '%s' since it is test indicated", eventType, certificateId
+                )
+            );
+            return true;
+        }
+
         switch (eventType) {
             case CERTIFICATE_SIGNED:
                 return created(certificateId);
@@ -57,8 +69,9 @@ public class CertificateEventServiceImpl implements CertificateEventService {
             case MESSAGE_SENT:
                 return messageSent(messageId);
             default:
-                throw new IllegalArgumentException(String.format("Invalid eventType '%s' received for certificate '%s' and message '%s'.",
-                    eventType, certificateId, messageId));
+                throw new IllegalArgumentException(
+                    String.format("Invalid eventType '%s' received for certificate '%s' and message '%s'.",
+                        eventType, certificateId, messageId));
         }
     }
 
