@@ -53,12 +53,12 @@ public class CertificateListServiceImpl implements CertificateListService {
         CertificateListResponse certificateListResponse = new CertificateListResponse();
 
         var civicRegistrationNumber = parameters.getCivicRegistrationNumber() == null
-            || parameters.getCivicRegistrationNumber().equals("") ? null
+            || parameters.getCivicRegistrationNumber().isEmpty() ? null
             : Personnummer.createPersonnummer(parameters.getCivicRegistrationNumber()).get();
 
         var certificates = certificateDao.findCertificates(civicRegistrationNumber, parameters.getUnitIds(), parameters.getFromDate(),
             parameters.getToDate(), parameters.getOrderBy(), parameters.isOrderAscending(), parameters.getTypes(), parameters.getHsaId());
-        LOGGER.debug("Getting signed certificates for units (" + Arrays.toString(parameters.getUnitIds()) + ")");
+        LOGGER.debug(String.format("Getting signed certificates for units (%s)", Arrays.toString(parameters.getUnitIds())));
         var certificateTypes = certificateDao.getCertificateTypes();
 
         var certificateList = certificates.stream()
@@ -69,7 +69,8 @@ public class CertificateListServiceImpl implements CertificateListService {
 
         sortList(certificateList, parameters.getOrderBy(), parameters.isOrderAscending());
         certificateListResponse.setTotalCount(certificateList.size());
-        certificateListResponse.setCertificates(getSubList(certificateList, parameters.getStartFrom(), parameters.getPageSize()));
+        certificateListResponse.setCertificates(getSubList(certificateList, parameters.getStartFrom(),
+            parameters.getPageSize() >= 0 ? parameters.getPageSize() : certificateList.size()));
         return certificateListResponse;
     }
 
