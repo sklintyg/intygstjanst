@@ -52,7 +52,10 @@ public class CertificateEventServiceImpl implements CertificateEventService {
         final var metadata = csIntegrationService.getCertificateMetadata(certificateId);
 
         if (metadata.isTestCertificate()) {
-            log.info(String.format("Not processing event for certificate with id '%s' since it is test indicated", certificateId));
+            log.info(String.format(
+                    "Not processing event of type '%S' for certificate with id '%s' since it is test indicated", eventType, certificateId
+                )
+            );
             return true;
         }
 
