@@ -46,6 +46,7 @@ import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateUni
 class CitizenCertificateConverterTest {
 
     private static final String ID = "certificateId";
+    private static final String TYPE = "type";
     private static final String NAME = "certificateName";
     private static final String TYPE_VERSION = "typeVersion";
     private static final String UNIT_ID = "unitId";
@@ -67,6 +68,7 @@ class CitizenCertificateConverterTest {
         certificateMetadataBuilder = CertificateMetadata.builder()
             .id(ID)
             .name(NAME)
+            .type(TYPE)
             .typeVersion(TYPE_VERSION)
             .signed(LocalDateTime.now())
             .modified(LocalDateTime.now().plusDays(5))
@@ -107,11 +109,11 @@ class CitizenCertificateConverterTest {
     @Test
     void shallIncludeType() {
         final var expectedType = CitizenCertificateTypeDTO.builder()
-            .id(ID)
+            .id(TYPE)
             .name(NAME)
             .version(TYPE_VERSION)
             .build();
-        
+
         assertEquals(expectedType, citizenCertificateConverter.convert(certificate).getType());
     }
 
