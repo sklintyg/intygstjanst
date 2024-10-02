@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -31,6 +31,11 @@ public class DiagnosisFromFile {
 
     public DiagnosisFromFile(String line, boolean firstLineInFile) {
         initFromString(line, firstLineInFile);
+    }
+
+    public DiagnosisFromFile(String code, String name) {
+        this.code = code;
+        this.name = name;
     }
 
     public String getName() {

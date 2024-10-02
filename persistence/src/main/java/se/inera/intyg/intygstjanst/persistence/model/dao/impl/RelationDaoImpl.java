@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -65,34 +65,34 @@ public class RelationDaoImpl implements RelationDao {
     public Map<String, List<Relation>> getRelations(List<String> certificateIds, List<String> revokedCertificateIds) {
         final var query = entityManager.createQuery(
                 "SELECT r FROM Relation r "
-                        + "WHERE r.toIntygsId IN :certificateIds OR r.fromIntygsId IN :certificateIds",
-                        Relation.class
-                )
-                .setParameter("certificateIds", certificateIds);
+                    + "WHERE r.toIntygsId IN :certificateIds OR r.fromIntygsId IN :certificateIds",
+                Relation.class
+            )
+            .setParameter("certificateIds", certificateIds);
 
         final var relations = query.getResultList()
-                .stream()
-                .filter((relation) ->
-                        !revokedCertificateIds.contains(relation.getToIntygsId())
-                                && !revokedCertificateIds.contains(relation.getFromIntygsId()))
-                .collect(Collectors.toList());
+            .stream()
+            .filter((relation) ->
+                !revokedCertificateIds.contains(relation.getToIntygsId())
+                    && !revokedCertificateIds.contains(relation.getFromIntygsId()))
+            .collect(Collectors.toList());
 
         return certificateIds
-                .stream()
-                .filter((id) -> !revokedCertificateIds.contains(id))
-                .collect(
-                        Collectors.toMap(id -> id, id -> getRelationsForCertificate(relations, id))
-                );
+            .stream()
+            .filter((id) -> !revokedCertificateIds.contains(id))
+            .collect(
+                Collectors.toMap(id -> id, id -> getRelationsForCertificate(relations, id))
+            );
     }
 
     private List<Relation> getRelationsForCertificate(List<Relation> relations, String certificateId) {
         return relations
-                .stream()
-                .filter(
-                        (relation) -> relation.getToIntygsId().equals(certificateId)
-                                || relation.getFromIntygsId().equals(certificateId)
-                )
-                .collect(Collectors.toList());
+            .stream()
+            .filter(
+                (relation) -> relation.getToIntygsId().equals(certificateId)
+                    || relation.getFromIntygsId().equals(certificateId)
+            )
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -123,9 +123,9 @@ public class RelationDaoImpl implements RelationDao {
 
     @Override
     public void eraseTestCertificates(List<String> ids) {
-        for (var id: ids) {
+        for (var id : ids) {
             final var relationList = getGraph(id);
-            for (var relation: relationList) {
+            for (var relation : relationList) {
                 entityManager.remove(relation);
             }
         }

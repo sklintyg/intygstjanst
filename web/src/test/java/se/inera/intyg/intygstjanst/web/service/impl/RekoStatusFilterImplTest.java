@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class RekoStatusFilterImplTest {
-                                 
+
     @InjectMocks
     private RekoStatusFilterImpl rekoStatusFilter;
 
@@ -64,12 +64,12 @@ class RekoStatusFilterImplTest {
     }
 
     private static final List<Reko> REKO_STATUSES = Arrays.asList(
-            getRekoStatus(PATIENT_ID_1, RekoStatusType.REKO_3.toString(), LocalDateTime.now()),
-            getRekoStatus(PATIENT_ID_2, RekoStatusType.REKO_3.toString(), LocalDateTime.now()),
-            getRekoStatus(PATIENT_ID_3, RekoStatusType.REKO_3.toString(), LocalDateTime.now()),
-            getRekoStatus(PATIENT_ID_3, RekoStatusType.REKO_4.toString(), LocalDateTime.now().plusDays(1)),
-            getRekoStatus(PATIENT_ID_4, RekoStatusType.REKO_5.toString(), LocalDateTime.now()),
-            getRekoStatus(PATIENT_ID_5, RekoStatusType.REKO_6.toString(), LocalDateTime.now())
+        getRekoStatus(PATIENT_ID_1, RekoStatusType.REKO_3.toString(), LocalDateTime.now()),
+        getRekoStatus(PATIENT_ID_2, RekoStatusType.REKO_3.toString(), LocalDateTime.now()),
+        getRekoStatus(PATIENT_ID_3, RekoStatusType.REKO_3.toString(), LocalDateTime.now()),
+        getRekoStatus(PATIENT_ID_3, RekoStatusType.REKO_4.toString(), LocalDateTime.now().plusDays(1)),
+        getRekoStatus(PATIENT_ID_4, RekoStatusType.REKO_5.toString(), LocalDateTime.now()),
+        getRekoStatus(PATIENT_ID_5, RekoStatusType.REKO_6.toString(), LocalDateTime.now())
     );
 
     private SjukfallEnhet setUpSickLeave(String patientId, LocalDate start, LocalDate end) {
@@ -86,42 +86,42 @@ class RekoStatusFilterImplTest {
     @BeforeEach
     void setup() {
         final var sickLeaveWrongStartDate = setUpSickLeave(PATIENT_ID_1,
-                SICK_LEAVE_TIMESTAMP.plusDays(10),
-                SICK_LEAVE_TIMESTAMP.plusDays(20)
+            SICK_LEAVE_TIMESTAMP.plusDays(10),
+            SICK_LEAVE_TIMESTAMP.plusDays(20)
         );
 
         final var sickLeaveWrongEndDate = setUpSickLeave(PATIENT_ID_2,
-                SICK_LEAVE_TIMESTAMP.minusDays(3),
-                SICK_LEAVE_TIMESTAMP.minusDays(2)
+            SICK_LEAVE_TIMESTAMP.minusDays(3),
+            SICK_LEAVE_TIMESTAMP.minusDays(2)
         );
 
         final var sickLeaveWrongPatientId = setUpSickLeave(WRONG_PATIENT_ID,
-                SICK_LEAVE_TIMESTAMP.minusDays(1),
-                SICK_LEAVE_TIMESTAMP.plusDays(4)
+            SICK_LEAVE_TIMESTAMP.minusDays(1),
+            SICK_LEAVE_TIMESTAMP.plusDays(4)
         );
 
         final var sickLeaveSeveralStatuses = setUpSickLeave(PATIENT_ID_3,
-                SICK_LEAVE_TIMESTAMP.minusDays(1),
-                SICK_LEAVE_TIMESTAMP.plusDays(4)
+            SICK_LEAVE_TIMESTAMP.minusDays(1),
+            SICK_LEAVE_TIMESTAMP.plusDays(4)
         );
 
         final var sickLeaveWithSameDateAsStartDate = setUpSickLeave(PATIENT_ID_4,
-                SICK_LEAVE_TIMESTAMP,
-                SICK_LEAVE_TIMESTAMP.plusDays(4)
+            SICK_LEAVE_TIMESTAMP,
+            SICK_LEAVE_TIMESTAMP.plusDays(4)
         );
 
         final var sickLeaveWithSameDateAsEndDate = setUpSickLeave(PATIENT_ID_5,
-                SICK_LEAVE_TIMESTAMP.minusDays(1),
-                SICK_LEAVE_TIMESTAMP
+            SICK_LEAVE_TIMESTAMP.minusDays(1),
+            SICK_LEAVE_TIMESTAMP
         );
 
         SICK_LEAVES = Arrays.asList(
-                sickLeaveWrongStartDate,
-                sickLeaveWrongEndDate,
-                sickLeaveWrongPatientId,
-                sickLeaveSeveralStatuses,
-                sickLeaveWithSameDateAsStartDate,
-                sickLeaveWithSameDateAsEndDate
+            sickLeaveWrongStartDate,
+            sickLeaveWrongEndDate,
+            sickLeaveWrongPatientId,
+            sickLeaveSeveralStatuses,
+            sickLeaveWithSameDateAsStartDate,
+            sickLeaveWithSameDateAsEndDate
         );
     }
 
@@ -131,9 +131,9 @@ class RekoStatusFilterImplTest {
         @Test
         void shouldNotReturnRekoStatusForWrongPatientId() {
             final var result = rekoStatusFilter.filter(REKO_STATUSES,
-                    SICK_LEAVES.get(2).getPatient().getId(),
-                    SICK_LEAVES.get(2).getSlut(),
-                    SICK_LEAVES.get(2).getStart()
+                SICK_LEAVES.get(2).getPatient().getId(),
+                SICK_LEAVES.get(2).getSlut(),
+                SICK_LEAVES.get(2).getStart()
             );
 
             assertTrue(result.isEmpty());
@@ -142,9 +142,9 @@ class RekoStatusFilterImplTest {
         @Test
         void shouldNotReturnRekoStatusIfSickLeaveTimeStampIsBeforeStartDate() {
             final var result = rekoStatusFilter.filter(REKO_STATUSES,
-                    SICK_LEAVES.get(0).getPatient().getId(),
-                    SICK_LEAVES.get(0).getSlut(),
-                    SICK_LEAVES.get(0).getStart()
+                SICK_LEAVES.get(0).getPatient().getId(),
+                SICK_LEAVES.get(0).getSlut(),
+                SICK_LEAVES.get(0).getStart()
             );
 
             assertTrue(result.isEmpty());
@@ -153,9 +153,9 @@ class RekoStatusFilterImplTest {
         @Test
         void shouldNotReturnRekoStatusIfSickLeaveTimeStampIsAfterEndDate() {
             final var result = rekoStatusFilter.filter(REKO_STATUSES,
-                    SICK_LEAVES.get(1).getPatient().getId(),
-                    SICK_LEAVES.get(1).getSlut(),
-                    SICK_LEAVES.get(1).getStart()
+                SICK_LEAVES.get(1).getPatient().getId(),
+                SICK_LEAVES.get(1).getSlut(),
+                SICK_LEAVES.get(1).getStart()
             );
 
             assertTrue(result.isEmpty());
@@ -164,9 +164,9 @@ class RekoStatusFilterImplTest {
         @Test
         void shouldReturnLatestRekoStatusIfTwoAreCorrect() {
             final var result = rekoStatusFilter.filter(REKO_STATUSES,
-                    SICK_LEAVES.get(3).getPatient().getId(),
-                    SICK_LEAVES.get(3).getSlut(),
-                    SICK_LEAVES.get(3).getStart()
+                SICK_LEAVES.get(3).getPatient().getId(),
+                SICK_LEAVES.get(3).getSlut(),
+                SICK_LEAVES.get(3).getStart()
             );
 
             assertEquals(RekoStatusType.REKO_4.toString(), result.get().getStatus());
@@ -175,10 +175,10 @@ class RekoStatusFilterImplTest {
         @Test
         void shouldReturnRekoStatusWithStartDateEqualToSickLeaveDate() {
             final var result = rekoStatusFilter.filter(
-                    REKO_STATUSES,
-                    SICK_LEAVES.get(4).getPatient().getId(),
-                    SICK_LEAVES.get(4).getSlut(),
-                    SICK_LEAVES.get(4).getStart()
+                REKO_STATUSES,
+                SICK_LEAVES.get(4).getPatient().getId(),
+                SICK_LEAVES.get(4).getSlut(),
+                SICK_LEAVES.get(4).getStart()
             );
 
             assertEquals(RekoStatusType.REKO_5.toString(), result.get().getStatus());
@@ -187,10 +187,10 @@ class RekoStatusFilterImplTest {
         @Test
         void shouldSetRekoStatusForSickLeaveWithEndDateEqualToSickLeaveDate() {
             final var result = rekoStatusFilter.filter(
-                    REKO_STATUSES,
-                    SICK_LEAVES.get(5).getPatient().getId(),
-                    SICK_LEAVES.get(5).getSlut(),
-                    SICK_LEAVES.get(5).getStart()
+                REKO_STATUSES,
+                SICK_LEAVES.get(5).getPatient().getId(),
+                SICK_LEAVES.get(5).getSlut(),
+                SICK_LEAVES.get(5).getStart()
             );
 
             assertEquals(RekoStatusType.REKO_6.toString(), result.get().getStatus());

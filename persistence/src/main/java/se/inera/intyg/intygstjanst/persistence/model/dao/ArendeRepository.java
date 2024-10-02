@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -34,8 +34,9 @@ public interface ArendeRepository extends JpaRepository<Arende, Long> {
 
     /**
      * Find all messages for a single certificate.
+     *
      * @param certificateId Id of certificate
-     * @return  List of messages
+     * @return List of messages
      */
     List<Arende> findByIntygsId(String certificateId);
 

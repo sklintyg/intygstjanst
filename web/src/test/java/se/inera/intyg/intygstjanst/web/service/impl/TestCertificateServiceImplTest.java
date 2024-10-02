@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -214,7 +214,7 @@ public class TestCertificateServiceImplTest {
 
         final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
 
-        assertEquals(3 , actualEraseResult.getErasedCount());
+        assertEquals(3, actualEraseResult.getErasedCount());
         assertEquals(0, actualEraseResult.getFailedCount());
         verify(eraseTestCertificateService, times(1)).eraseTestCertificates(any());
         verify(monitoringLogService, times(3)).logTestCertificateErased(any(), any());
@@ -232,7 +232,7 @@ public class TestCertificateServiceImplTest {
 
         final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
 
-        assertEquals(4 , actualEraseResult.getErasedCount());
+        assertEquals(4, actualEraseResult.getErasedCount());
         assertEquals(0, actualEraseResult.getFailedCount());
         verify(eraseTestCertificateService, times(2)).eraseTestCertificates(any());
         verify(monitoringLogService, times(4)).logTestCertificateErased(any(), any());
@@ -247,16 +247,17 @@ public class TestCertificateServiceImplTest {
         certificateList.add(testCertificateSingle);
 
         doReturn(certificateList).when(certificateDao).findTestCertificates(any(), any());
-        doThrow(new RuntimeException()).when(eraseTestCertificateService).eraseTestCertificates(argThat(new ArgumentMatcher<List<String>>() {
-            @Override
-            public boolean matches(List<String> argument) {
-                return argument.size() == 1;
-            }
-        }));
+        doThrow(new RuntimeException()).when(eraseTestCertificateService)
+            .eraseTestCertificates(argThat(new ArgumentMatcher<List<String>>() {
+                @Override
+                public boolean matches(List<String> argument) {
+                    return argument.size() == 1;
+                }
+            }));
 
         final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
 
-        assertEquals(3 , actualEraseResult.getErasedCount());
+        assertEquals(3, actualEraseResult.getErasedCount());
         assertEquals(1, actualEraseResult.getFailedCount());
         verify(eraseTestCertificateService, times(2)).eraseTestCertificates(any());
         verify(monitoringLogService, times(3)).logTestCertificateErased(any(), any());
@@ -271,16 +272,17 @@ public class TestCertificateServiceImplTest {
         certificateList.add(testCertificateSingle);
 
         doReturn(certificateList).when(certificateDao).findTestCertificates(any(), any());
-        doThrow(new RuntimeException()).when(eraseTestCertificateService).eraseTestCertificates(argThat(new ArgumentMatcher<List<String>>() {
-            @Override
-            public boolean matches(List<String> argument) {
-                return argument.size() == 3;
-            }
-        }));
+        doThrow(new RuntimeException()).when(eraseTestCertificateService)
+            .eraseTestCertificates(argThat(new ArgumentMatcher<List<String>>() {
+                @Override
+                public boolean matches(List<String> argument) {
+                    return argument.size() == 3;
+                }
+            }));
 
         final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
 
-        assertEquals(1 , actualEraseResult.getErasedCount());
+        assertEquals(1, actualEraseResult.getErasedCount());
         assertEquals(3, actualEraseResult.getFailedCount());
         verify(eraseTestCertificateService, times(2)).eraseTestCertificates(any());
         verify(monitoringLogService, times(1)).logTestCertificateErased(any(), any());

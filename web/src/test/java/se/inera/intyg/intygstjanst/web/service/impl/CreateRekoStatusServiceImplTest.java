@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -37,6 +37,7 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class CreateRekoStatusServiceImplTest {
+
     @Mock
     private RekoRepository rekoRepository;
 
@@ -54,19 +55,20 @@ class CreateRekoStatusServiceImplTest {
 
     @Nested
     class TestRekoRepository {
+
         @Test
         void shouldCallWithCorrectPatientId() {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
             createRekoStatusService.create(
-                    PATIENT_ID,
-                    STATUS,
-                    CARE_PROVIDER_ID,
-                    CARE_UNIT_ID,
-                    UNIT_ID,
-                    STAFF_ID,
-                    STAFF_NAME,
-                    SICK_LEAVE_TIMESTAMP
+                PATIENT_ID,
+                STATUS,
+                CARE_PROVIDER_ID,
+                CARE_UNIT_ID,
+                UNIT_ID,
+                STAFF_ID,
+                STAFF_NAME,
+                SICK_LEAVE_TIMESTAMP
             );
             verify(rekoRepository).save(captor.capture());
 
@@ -78,14 +80,14 @@ class CreateRekoStatusServiceImplTest {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
             createRekoStatusService.create(
-                    PATIENT_ID,
-                    STATUS,
-                    CARE_PROVIDER_ID,
-                    CARE_UNIT_ID,
-                    UNIT_ID,
-                    STAFF_ID,
-                    STAFF_NAME,
-                    SICK_LEAVE_TIMESTAMP
+                PATIENT_ID,
+                STATUS,
+                CARE_PROVIDER_ID,
+                CARE_UNIT_ID,
+                UNIT_ID,
+                STAFF_ID,
+                STAFF_NAME,
+                SICK_LEAVE_TIMESTAMP
             );
             verify(rekoRepository).save(captor.capture());
 
@@ -97,14 +99,14 @@ class CreateRekoStatusServiceImplTest {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
             createRekoStatusService.create(
-                    PATIENT_ID,
-                    STATUS,
-                    CARE_PROVIDER_ID,
-                    CARE_UNIT_ID,
-                    UNIT_ID,
-                    STAFF_ID,
-                    STAFF_NAME,
-                    SICK_LEAVE_TIMESTAMP
+                PATIENT_ID,
+                STATUS,
+                CARE_PROVIDER_ID,
+                CARE_UNIT_ID,
+                UNIT_ID,
+                STAFF_ID,
+                STAFF_NAME,
+                SICK_LEAVE_TIMESTAMP
             );
             verify(rekoRepository).save(captor.capture());
 
@@ -116,14 +118,14 @@ class CreateRekoStatusServiceImplTest {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
             createRekoStatusService.create(
-                    PATIENT_ID,
-                    STATUS,
-                    CARE_PROVIDER_ID,
-                    CARE_UNIT_ID,
-                    UNIT_ID,
-                    STAFF_ID,
-                    STAFF_NAME,
-                    SICK_LEAVE_TIMESTAMP
+                PATIENT_ID,
+                STATUS,
+                CARE_PROVIDER_ID,
+                CARE_UNIT_ID,
+                UNIT_ID,
+                STAFF_ID,
+                STAFF_NAME,
+                SICK_LEAVE_TIMESTAMP
             );
             verify(rekoRepository).save(captor.capture());
 
@@ -135,14 +137,14 @@ class CreateRekoStatusServiceImplTest {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
             createRekoStatusService.create(
-                    PATIENT_ID,
-                    STATUS,
-                    CARE_PROVIDER_ID,
-                    CARE_UNIT_ID,
-                    UNIT_ID,
-                    STAFF_ID,
-                    STAFF_NAME,
-                    SICK_LEAVE_TIMESTAMP
+                PATIENT_ID,
+                STATUS,
+                CARE_PROVIDER_ID,
+                CARE_UNIT_ID,
+                UNIT_ID,
+                STAFF_ID,
+                STAFF_NAME,
+                SICK_LEAVE_TIMESTAMP
             );
             verify(rekoRepository).save(captor.capture());
 
@@ -154,14 +156,14 @@ class CreateRekoStatusServiceImplTest {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
             createRekoStatusService.create(
-                    PATIENT_ID,
-                    STATUS,
-                    CARE_PROVIDER_ID,
-                    CARE_UNIT_ID,
-                    UNIT_ID,
-                    STAFF_ID,
-                    STAFF_NAME,
-                    SICK_LEAVE_TIMESTAMP
+                PATIENT_ID,
+                STATUS,
+                CARE_PROVIDER_ID,
+                CARE_UNIT_ID,
+                UNIT_ID,
+                STAFF_ID,
+                STAFF_NAME,
+                SICK_LEAVE_TIMESTAMP
             );
             verify(rekoRepository).save(captor.capture());
 
@@ -173,14 +175,14 @@ class CreateRekoStatusServiceImplTest {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
             createRekoStatusService.create(
-                    PATIENT_ID,
-                    STATUS,
-                    CARE_PROVIDER_ID,
-                    CARE_UNIT_ID,
-                    UNIT_ID,
-                    STAFF_ID,
-                    STAFF_NAME,
-                    SICK_LEAVE_TIMESTAMP
+                PATIENT_ID,
+                STATUS,
+                CARE_PROVIDER_ID,
+                CARE_UNIT_ID,
+                UNIT_ID,
+                STAFF_ID,
+                STAFF_NAME,
+                SICK_LEAVE_TIMESTAMP
             );
             verify(rekoRepository).save(captor.capture());
 
@@ -192,14 +194,14 @@ class CreateRekoStatusServiceImplTest {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
             createRekoStatusService.create(
-                    PATIENT_ID,
-                    STATUS,
-                    CARE_PROVIDER_ID,
-                    CARE_UNIT_ID,
-                    UNIT_ID,
-                    STAFF_ID,
-                    STAFF_NAME,
-                    SICK_LEAVE_TIMESTAMP
+                PATIENT_ID,
+                STATUS,
+                CARE_PROVIDER_ID,
+                CARE_UNIT_ID,
+                UNIT_ID,
+                STAFF_ID,
+                STAFF_NAME,
+                SICK_LEAVE_TIMESTAMP
             );
             verify(rekoRepository).save(captor.capture());
 
@@ -211,14 +213,14 @@ class CreateRekoStatusServiceImplTest {
             final var captor = ArgumentCaptor.forClass(Reko.class);
 
             createRekoStatusService.create(
-                    PATIENT_ID,
-                    STATUS,
-                    CARE_PROVIDER_ID,
-                    CARE_UNIT_ID,
-                    UNIT_ID,
-                    STAFF_ID,
-                    STAFF_NAME,
-                    SICK_LEAVE_TIMESTAMP
+                PATIENT_ID,
+                STATUS,
+                CARE_PROVIDER_ID,
+                CARE_UNIT_ID,
+                UNIT_ID,
+                STAFF_ID,
+                STAFF_NAME,
+                SICK_LEAVE_TIMESTAMP
             );
             verify(rekoRepository).save(captor.capture());
 

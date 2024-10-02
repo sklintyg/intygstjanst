@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -46,6 +46,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RekoStatusDecoratorImplTest {
+
     @Mock
     private RekoRepository rekoRepository;
     @Mock
@@ -74,8 +75,8 @@ class RekoStatusDecoratorImplTest {
     }
 
     private static final List<Reko> REKO_STATUSES = Arrays.asList(
-            getRekoStatus(PATIENT_ID_1, RekoStatusType.REKO_3.toString(), LocalDateTime.now()),
-            getRekoStatus(PATIENT_ID_2, RekoStatusType.REKO_3.toString(), LocalDateTime.now()));
+        getRekoStatus(PATIENT_ID_1, RekoStatusType.REKO_3.toString(), LocalDateTime.now()),
+        getRekoStatus(PATIENT_ID_2, RekoStatusType.REKO_3.toString(), LocalDateTime.now()));
 
     private SjukfallEnhet setUpSickLeave(String patientId, LocalDate start, LocalDate end) {
         final var sickLeave = new SjukfallEnhet();
@@ -91,28 +92,28 @@ class RekoStatusDecoratorImplTest {
     @BeforeEach
     void setup() {
         final var firstSickLeave = setUpSickLeave(PATIENT_ID_1,
-                SICK_LEAVE_TIMESTAMP.plusDays(10),
-                SICK_LEAVE_TIMESTAMP.plusDays(20)
+            SICK_LEAVE_TIMESTAMP.plusDays(10),
+            SICK_LEAVE_TIMESTAMP.plusDays(20)
         );
 
         final var secondSickLeave = setUpSickLeave(PATIENT_ID_2,
-                SICK_LEAVE_TIMESTAMP.minusDays(3),
-                SICK_LEAVE_TIMESTAMP.minusDays(2)
+            SICK_LEAVE_TIMESTAMP.minusDays(3),
+            SICK_LEAVE_TIMESTAMP.minusDays(2)
         );
 
-
         SICK_LEAVES = Arrays.asList(
-                firstSickLeave,
-                secondSickLeave
+            firstSickLeave,
+            secondSickLeave
         );
 
         when(rekoStatusFilter
-                .filter(anyList(), anyString(), any(LocalDate.class), any(LocalDate.class)))
-                .thenReturn(Optional.of(FILTERED_REKO));
+            .filter(anyList(), anyString(), any(LocalDate.class), any(LocalDate.class)))
+            .thenReturn(Optional.of(FILTERED_REKO));
     }
 
     @Nested
     class TestRekoRepository {
+
         @Test
         void shouldCallWithCorrectPatientIds() {
             final var captor = ArgumentCaptor.forClass(List.class);
@@ -138,7 +139,9 @@ class RekoStatusDecoratorImplTest {
 
     @Nested
     class TestRekoStatusDecoration {
+
         private RekoStatusDTO reko = new RekoStatusDTO();
+
         @BeforeEach
         void setup() {
             when(rekoRepository.findByPatientIdInAndCareUnitId(anyList(), anyString())).thenReturn(REKO_STATUSES);
@@ -160,7 +163,7 @@ class RekoStatusDecoratorImplTest {
             rekoStatusDecorator.decorate(SICK_LEAVES, CARE_UNIT_ID);
 
             verify(rekoStatusFilter, times(SICK_LEAVES.size()))
-                    .filter(anyList(), anyString(), any(LocalDate.class), any(LocalDate.class));
+                .filter(anyList(), anyString(), any(LocalDate.class), any(LocalDate.class));
         }
 
         @Test

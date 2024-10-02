@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -41,12 +41,12 @@ public class CitizenCertificateRelationConverterImpl implements CitizenCertifica
         }
 
         return Optional.of(
-                CitizenCertificateRelationDTO
-                    .builder()
-                    .certificateId(getRelatedId(certificateId, relation.getToIntygsId(), relation.getFromIntygsId()))
-                    .timestamp(relation.getCreated())
-                    .type(getType(certificateId, relation.getToIntygsId()))
-                    .build()
+            CitizenCertificateRelationDTO
+                .builder()
+                .certificateId(getRelatedId(certificateId, relation.getToIntygsId(), relation.getFromIntygsId()))
+                .timestamp(relation.getCreated())
+                .type(getType(certificateId, relation.getToIntygsId()))
+                .build()
         );
     }
 

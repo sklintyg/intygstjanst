@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -35,8 +35,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import se.inera.intyg.common.support.model.common.internal.GrundData;
 import se.inera.intyg.common.support.model.common.internal.HoSPersonal;
-import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.infra.certificate.dto.CertificateListRequest;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
@@ -64,24 +62,29 @@ public class CertificateListServiceImplTest {
 
     private final GrundData basicData = mock(GrundData.class);
     private final HoSPersonal creatorOfCert = mock(HoSPersonal.class);
-    private final Personnummer CIVIC_REGISTRATION_NUMBER = Personnummer.createPersonnummer(CIVIC_REGISTRATION_NUMBER_STRING).get();
+    private static final Personnummer CIVIC_REGISTRATION_NUMBER = Personnummer.createPersonnummer(CIVIC_REGISTRATION_NUMBER_STRING).get();
 
     @Test
-    public void getEmptyListOfCertificates() throws ModuleNotFoundException, ModuleException {
+    public void getEmptyListOfCertificates() {
         testGetCertificates(true, false);
     }
 
     @Test
-    public void getListOfCertificates() throws ModuleNotFoundException, ModuleException {
+    public void getListOfCertificates() {
         testGetCertificates(false, false);
     }
 
     @Test
-    public void getSortedListOfCertificates() throws ModuleNotFoundException, ModuleException {
+    public void shouldUsePageSizeSetToNegativeAsTotalSizeOfList() {
+        testGetCertificates(false, false, -1);
+    }
+
+    @Test
+    public void getSortedListOfCertificates() {
         testGetCertificates(false, true);
     }
 
-    private void testGetCertificates(boolean isEmpty, boolean sortList) throws ModuleNotFoundException, ModuleException {
+    private void testGetCertificates(boolean isEmpty, boolean sortList, int pageSize) {
         List<Certificate> certificates;
         Set<String> types = new HashSet<>();
         CertificateListRequest request = new CertificateListRequest();
@@ -89,7 +92,7 @@ public class CertificateListServiceImplTest {
         request.setUnitIds(CARE_UNIT_IDS);
         request.setHsaId(HSA_ID);
         request.setStartFrom(0);
-        request.setPageSize(10);
+        request.setPageSize(pageSize);
         types.add(CERT_TYPE);
         request.setTypes(types);
 
@@ -114,6 +117,11 @@ public class CertificateListServiceImplTest {
             .thenReturn(certificates);
         var response = certificateListService.listCertificatesForDoctor(request);
         assertEquals(certificates.size(), response.getCertificates().size());
+    }
+
+
+    private void testGetCertificates(boolean isEmpty, boolean sortList) {
+        testGetCertificates(isEmpty, sortList, 10);
     }
 
     private Certificate buildCertificate(String type, String certID) {

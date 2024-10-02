@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -173,7 +173,6 @@ public class IntygInfoServiceImpl implements IntygInfoService {
                 events.add(event);
             }
         });
-
 
         List<Relation> relations = relationService.getChildRelations(certificate.getId());
 

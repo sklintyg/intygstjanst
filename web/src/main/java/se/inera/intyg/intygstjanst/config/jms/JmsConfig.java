@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.config.jms;
 
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Queue;
+import java.util.Objects;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.pool.PooledConnectionFactory;
@@ -39,7 +40,6 @@ import se.inera.intyg.intygstjanst.web.integration.test.Receiver;
  * Creates connection factory and JMS templates for communicating with ActiveMQ. Note that this JmsConfig creates its
  * {@link ActiveMQConnectionFactory} directly rather than looking up a container-provided ConnectionFactory through
  * JNDI.
- *
  * Created by Magnus Ekstrand 2018-06-13
  */
 @Configuration
@@ -64,10 +64,13 @@ public class JmsConfig {
     @Value("${populate.loader.queueName}")
     private String internalPopulateLoaderQueue;
 
+    @Value("${certificate.event.queue.name}")
+    private String certificateEventQueue;
+
     @Bean
     public JmsListenerContainerFactory jmsListenerContainerFactory(JmsTransactionManager jmsTransactionManager) {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
-        factory.setConnectionFactory(jmsTransactionManager.getConnectionFactory());
+        factory.setConnectionFactory(Objects.requireNonNull(jmsTransactionManager.getConnectionFactory()));
         factory.setDestinationResolver(destinationResolver());
         factory.setSessionTransacted(true);
         factory.setTransactionManager(jmsTransactionManager);
@@ -96,6 +99,11 @@ public class JmsConfig {
         return template(jmsConnectionFactory, new ActiveMQQueue(internalPopulateLoaderQueue));
     }
 
+    @Bean(value = "jmsCertificateEventTemplate")
+    public JmsTemplate jmsCertificateEventTemplate(ConnectionFactory jmsConnectionFactory) {
+        return template(jmsConnectionFactory, certificateEventQueue());
+    }
+
     @Bean(value = "destinationQueue")
     public Queue destinationQueue() {
         return new ActiveMQQueue(destinationQueueName);
@@ -106,6 +114,10 @@ public class JmsConfig {
         return new ActiveMQQueue(internalNotificationQueue);
     }
 
+    @Bean("certificateEventQueue")
+    public Queue certificateEventQueue() {
+        return new ActiveMQQueue(certificateEventQueue);
+    }
 
     @Bean
     public DestinationResolver destinationResolver() {

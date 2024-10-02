@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -79,11 +79,11 @@ class GetSickLeaveCertificatesImplTest {
         void shallIncludeCareProviderIdWhenQueryActiveSjukfallCertificate() {
             final var careProviderIdCaptor = ArgumentCaptor.forClass(String.class);
             getSickLeaveCertificates.get(CARE_PROVIDER_ID,
-                    UNIT_IDS,
-                    PATIENT_IDS,
-                    MAX_CERTIFICATE_GAP,
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED,
-                    PROTECTED_PERSON_FILTER_ID
+                UNIT_IDS,
+                PATIENT_IDS,
+                MAX_CERTIFICATE_GAP,
+                MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED,
+                PROTECTED_PERSON_FILTER_ID
             );
             verify(sjukfallCertificateDao).findAllSjukfallCertificate(careProviderIdCaptor.capture(), anyList(), anyList());
             assertEquals(CARE_PROVIDER_ID, careProviderIdCaptor.getValue());
@@ -93,11 +93,11 @@ class GetSickLeaveCertificatesImplTest {
         void shallThrowExceptionIfCareProviderIdIsNull() {
             assertThrows(IllegalArgumentException.class,
                 () -> getSickLeaveCertificates.get(null,
-                        UNIT_IDS,
-                        PATIENT_IDS,
-                        MAX_CERTIFICATE_GAP,
-                        MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED,
-                        PROTECTED_PERSON_FILTER_ID
+                    UNIT_IDS,
+                    PATIENT_IDS,
+                    MAX_CERTIFICATE_GAP,
+                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED,
+                    PROTECTED_PERSON_FILTER_ID
                 )
 
             );
@@ -107,12 +107,12 @@ class GetSickLeaveCertificatesImplTest {
         void shallThrowExceptionIfCareProviderIdIsEmpty() {
             assertThrows(IllegalArgumentException.class,
                 () -> getSickLeaveCertificates.get(
-                        " ",
-                        UNIT_IDS,
-                        PATIENT_IDS,
-                        MAX_CERTIFICATE_GAP,
-                        MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED,
-                        PROTECTED_PERSON_FILTER_ID
+                    " ",
+                    UNIT_IDS,
+                    PATIENT_IDS,
+                    MAX_CERTIFICATE_GAP,
+                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED,
+                    PROTECTED_PERSON_FILTER_ID
                 )
             );
         }
@@ -125,12 +125,12 @@ class GetSickLeaveCertificatesImplTest {
         void shallIncludeUnitIdsWhenQueryActiveSjukfallCertificate() {
             final var unitIdsCaptor = ArgumentCaptor.forClass(List.class);
             getSickLeaveCertificates.get(
-                    CARE_PROVIDER_ID,
-                    UNIT_IDS,
-                    PATIENT_IDS,
-                    MAX_CERTIFICATE_GAP,
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED,
-                    PROTECTED_PERSON_FILTER_ID);
+                CARE_PROVIDER_ID,
+                UNIT_IDS,
+                PATIENT_IDS,
+                MAX_CERTIFICATE_GAP,
+                MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED,
+                PROTECTED_PERSON_FILTER_ID);
             verify(sjukfallCertificateDao).findAllSjukfallCertificate(anyString(), unitIdsCaptor.capture(), anyList());
             assertEquals(UNIT_IDS, unitIdsCaptor.getValue());
         }
@@ -139,12 +139,12 @@ class GetSickLeaveCertificatesImplTest {
         void shallThrowExceptionIfUnitIdsIsNull() {
             assertThrows(IllegalArgumentException.class,
                 () -> getSickLeaveCertificates.get(
-                        CARE_PROVIDER_ID,
-                        null,
-                        PATIENT_IDS,
-                        MAX_CERTIFICATE_GAP,
-                        MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED,
-                        PROTECTED_PERSON_FILTER_ID
+                    CARE_PROVIDER_ID,
+                    null,
+                    PATIENT_IDS,
+                    MAX_CERTIFICATE_GAP,
+                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED,
+                    PROTECTED_PERSON_FILTER_ID
                 )
             );
         }
@@ -181,7 +181,7 @@ class GetSickLeaveCertificatesImplTest {
         void shallIncludeUnitIdsWhenQueryActiveSjukfallCertificate() {
             final var patientIdsCaptor = ArgumentCaptor.forClass(List.class);
             getSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, PATIENT_IDS, MAX_CERTIFICATE_GAP,
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
+                MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
             verify(sjukfallCertificateDao).findAllSjukfallCertificate(anyString(), anyList(), patientIdsCaptor.capture());
             assertEquals(PATIENT_IDS, patientIdsCaptor.getValue());
         }
@@ -226,7 +226,7 @@ class GetSickLeaveCertificatesImplTest {
         void shallIncludeMaxCertificateGapWhenCalculatingSickLeaves() {
             final var intygParametrarCapture = ArgumentCaptor.forClass(IntygParametrar.class);
             getSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, PATIENT_IDS, MAX_CERTIFICATE_GAP,
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
+                MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
             verify(sjukfallEngineService).beraknaSjukfallForEnhet(anyList(), intygParametrarCapture.capture());
             assertEquals(MAX_CERTIFICATE_GAP, intygParametrarCapture.getValue().getMaxIntygsGlapp());
         }
@@ -235,7 +235,7 @@ class GetSickLeaveCertificatesImplTest {
         void shallIncludeMaxDaysSinceSickLeaveCompletedWhenCalculatingSickLeaves() {
             final var intygParametrarCapture = ArgumentCaptor.forClass(IntygParametrar.class);
             getSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, PATIENT_IDS, MAX_CERTIFICATE_GAP,
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
+                MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
             verify(sjukfallEngineService).beraknaSjukfallForEnhet(anyList(), intygParametrarCapture.capture());
             assertEquals(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, intygParametrarCapture.getValue().getMaxAntalDagarSedanSjukfallAvslut());
         }
@@ -245,7 +245,7 @@ class GetSickLeaveCertificatesImplTest {
             final var expectedTodayDate = LocalDate.now();
             final var intygParametrarCapture = ArgumentCaptor.forClass(IntygParametrar.class);
             getSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, PATIENT_IDS, MAX_CERTIFICATE_GAP,
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
+                MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
             verify(sjukfallEngineService).beraknaSjukfallForEnhet(anyList(), intygParametrarCapture.capture());
             assertEquals(expectedTodayDate, intygParametrarCapture.getValue().getAktivtDatum());
         }
@@ -253,10 +253,11 @@ class GetSickLeaveCertificatesImplTest {
 
     @Nested
     class PuFilterTest {
+
         @Test
         void shallCallPuFilterService() {
             getSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, PATIENT_IDS, MAX_CERTIFICATE_GAP,
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
+                MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
             verify(puFilterService).enrichWithPatientNameAndFilter(anyList(), anyString());
         }
 
@@ -266,7 +267,7 @@ class GetSickLeaveCertificatesImplTest {
             when(intygDataConverter.convert(any())).thenReturn(intygDataList);
             final var captor = ArgumentCaptor.forClass(List.class);
             getSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, PATIENT_IDS, MAX_CERTIFICATE_GAP,
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
+                MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
             verify(puFilterService).enrichWithPatientNameAndFilter(captor.capture(), anyString());
             assertEquals(intygDataList, captor.getValue());
         }
@@ -275,7 +276,7 @@ class GetSickLeaveCertificatesImplTest {
         void shallCallPuFilterServiceWithFilterOnProtectedPerson() {
             final var captor = ArgumentCaptor.forClass(String.class);
             getSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, PATIENT_IDS, MAX_CERTIFICATE_GAP,
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
+                MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, PROTECTED_PERSON_FILTER_ID);
             verify(puFilterService).enrichWithPatientNameAndFilter(anyList(), captor.capture());
             assertEquals(PROTECTED_PERSON_FILTER_ID, captor.getValue());
         }

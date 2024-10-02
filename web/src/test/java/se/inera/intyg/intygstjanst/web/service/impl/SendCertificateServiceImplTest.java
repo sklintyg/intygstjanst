@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -46,190 +46,193 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @ExtendWith(MockitoExtension.class)
 class SendCertificateServiceImplTest {
 
-  private static final SendCertificateRequestDTO REQUEST = SendCertificateRequestDTO
-      .builder()
-      .certificateId("id")
-      .hsaId("hsaId")
-      .patientId(Personnummer.createPersonnummer("191212121212").get())
-      .recipientId("recipient")
-      .build();
+    private static final SendCertificateRequestDTO REQUEST = SendCertificateRequestDTO
+        .builder()
+        .certificateId("id")
+        .hsaId("hsaId")
+        .patientId(Personnummer.createPersonnummer("191212121212").get())
+        .recipientId("recipient")
+        .build();
 
-  private static Certificate certificate;
+    private static Certificate certificate;
 
-  @Mock
-  CertificateService certificateService;
-  @Mock
-  StatisticsService statisticsService;
-  @Mock
-  InternalNotificationService internalNotificationService;
-  @InjectMocks
-  SendCertificateServiceImpl sendCertificateService;
+    @Mock
+    CertificateService certificateService;
+    @Mock
+    StatisticsService statisticsService;
+    @Mock
+    InternalNotificationService internalNotificationService;
+    @InjectMocks
+    SendCertificateServiceImpl sendCertificateService;
 
-  @BeforeEach
-  void setup() throws InvalidCertificateException {
-    certificate = getCertificate();
-    when(certificateService.getCertificateForCare(anyString()))
-        .thenReturn(certificate);
-  }
-
-  private Certificate getCertificate() {
-    final var certificate = new Certificate("id");
-    certificate.setType("Lisjp");
-    certificate.setCareUnitId("unitId");
-    return certificate;
-  }
-
-  @Nested
-  class StatisticsServiceTest {
-    @SneakyThrows
-    @Test
-    void shouldSendCertificateId() {
-      sendCertificateService.send(REQUEST);
-
-      final var captor = ArgumentCaptor.forClass(String.class);
-
-      verify(statisticsService).sent(captor.capture(), anyString(), anyString(), anyString());
-      assertEquals(REQUEST.getCertificateId(), captor.getValue());
+    @BeforeEach
+    void setup() throws InvalidCertificateException {
+        certificate = getCertificate();
+        when(certificateService.getCertificateForCare(anyString()))
+            .thenReturn(certificate);
     }
 
-    @SneakyThrows
-    @Test
-    void shouldSendCertificateType() {
-      sendCertificateService.send(REQUEST);
-
-      final var captor = ArgumentCaptor.forClass(String.class);
-
-      verify(statisticsService).sent(anyString(), captor.capture(), anyString(), anyString());
-      assertEquals(certificate.getType(), captor.getValue());
-    }
-
-    @SneakyThrows
-    @Test
-    void shouldSendCareUnitId() {
-      sendCertificateService.send(REQUEST);
-
-      final var captor = ArgumentCaptor.forClass(String.class);
-
-      verify(statisticsService).sent(anyString(), anyString(), captor.capture(), anyString());
-      assertEquals(certificate.getCareUnitId(), captor.getValue());
-    }
-
-    @SneakyThrows
-    @Test
-    void shouldSendRecipientId() {
-      sendCertificateService.send(REQUEST);
-
-      final var captor = ArgumentCaptor.forClass(String.class);
-
-      verify(statisticsService).sent(anyString(), anyString(), anyString(), captor.capture());
-      assertEquals(REQUEST.getRecipientId(), captor.getValue());
-    }
-  }
-
-  @Nested
-  class InternalNotificationServiceTest {
-
-    @SneakyThrows
-    @Test
-    void shouldSendCertificate() {
-      sendCertificateService.send(REQUEST);
-
-      final var captor = ArgumentCaptor.forClass(Certificate.class);
-
-      verify(internalNotificationService).notifyCareIfSentByCitizen(captor.capture(), anyString(), anyString());
-      assertEquals(certificate, captor.getValue());
-    }
-
-    @SneakyThrows
-    @Test
-    void shouldSendPatientId() {
-      sendCertificateService.send(REQUEST);
-
-      final var captor = ArgumentCaptor.forClass(String.class);
-
-      verify(internalNotificationService).notifyCareIfSentByCitizen(any(), captor.capture(), anyString());
-      assertEquals("191212121212", captor.getValue());
-    }
-
-    @SneakyThrows
-    @Test
-    void shouldSendHosId() {
-      sendCertificateService.send(REQUEST);
-
-      final var captor = ArgumentCaptor.forClass(String.class);
-
-      verify(internalNotificationService).notifyCareIfSentByCitizen(any(), anyString(), captor.capture());
-      assertEquals(REQUEST.getHsaId(), captor.getValue());
+    private Certificate getCertificate() {
+        final var certificate = new Certificate("id");
+        certificate.setType("Lisjp");
+        certificate.setCareUnitId("unitId");
+        return certificate;
     }
 
     @Nested
-    class AlreadySent {
-      @SneakyThrows
-      @BeforeEach
-      void setup() {
-        when(certificateService.sendCertificate(any(), anyString(), anyString())).thenReturn(
-            SendStatus.ALREADY_SENT);
-      }
+    class StatisticsServiceTest {
 
-      @SneakyThrows
-      @Test
-      void shouldNotCallInternalNotification() {
-        sendCertificateService.send(REQUEST);
+        @SneakyThrows
+        @Test
+        void shouldSendCertificateId() {
+            sendCertificateService.send(REQUEST);
 
-        verify(internalNotificationService, times(0)).notifyCareIfSentByCitizen(any(), any(), any());
-      }
+            final var captor = ArgumentCaptor.forClass(String.class);
 
-      @SneakyThrows
-      @Test
-      void shouldNotCallStatisticsService() {
-        sendCertificateService.send(REQUEST);
+            verify(statisticsService).sent(captor.capture(), anyString(), anyString(), anyString());
+            assertEquals(REQUEST.getCertificateId(), captor.getValue());
+        }
 
-        verify(statisticsService, times(0)).sent(any(), any(), any(), any());
-      }
+        @SneakyThrows
+        @Test
+        void shouldSendCertificateType() {
+            sendCertificateService.send(REQUEST);
 
-      @SneakyThrows
-      @Test
-      void shouldReturnSentStatus() {
-        final var response = sendCertificateService.send(REQUEST);
+            final var captor = ArgumentCaptor.forClass(String.class);
 
-        assertEquals(SendStatus.ALREADY_SENT, response);
-      }
-    }
-  }
+            verify(statisticsService).sent(anyString(), captor.capture(), anyString(), anyString());
+            assertEquals(certificate.getType(), captor.getValue());
+        }
 
-  @Nested
-  class SendCertificate {
-    @SneakyThrows
-    @Test
-    void shouldSendPatientId() {
-      sendCertificateService.send(REQUEST);
+        @SneakyThrows
+        @Test
+        void shouldSendCareUnitId() {
+            sendCertificateService.send(REQUEST);
 
-      final var captor = ArgumentCaptor.forClass(Personnummer.class);
+            final var captor = ArgumentCaptor.forClass(String.class);
 
-      verify(certificateService).sendCertificate(captor.capture(), anyString(), anyString());
-      assertEquals(REQUEST.getPatientId(), captor.getValue());
-    }
+            verify(statisticsService).sent(anyString(), anyString(), captor.capture(), anyString());
+            assertEquals(certificate.getCareUnitId(), captor.getValue());
+        }
 
-    @SneakyThrows
-    @Test
-    void shouldSendCertificateId() {
-      sendCertificateService.send(REQUEST);
+        @SneakyThrows
+        @Test
+        void shouldSendRecipientId() {
+            sendCertificateService.send(REQUEST);
 
-      final var captor = ArgumentCaptor.forClass(String.class);
+            final var captor = ArgumentCaptor.forClass(String.class);
 
-      verify(certificateService).sendCertificate(any(), captor.capture(), anyString());
-      assertEquals(REQUEST.getCertificateId(), captor.getValue());
+            verify(statisticsService).sent(anyString(), anyString(), anyString(), captor.capture());
+            assertEquals(REQUEST.getRecipientId(), captor.getValue());
+        }
     }
 
-    @SneakyThrows
-    @Test
-    void shouldSendRecipient() {
-      sendCertificateService.send(REQUEST);
+    @Nested
+    class InternalNotificationServiceTest {
 
-      final var captor = ArgumentCaptor.forClass(String.class);
+        @SneakyThrows
+        @Test
+        void shouldSendCertificate() {
+            sendCertificateService.send(REQUEST);
 
-      verify(certificateService).sendCertificate(any(), anyString(), captor.capture());
-      assertEquals(REQUEST.getRecipientId(), captor.getValue());
+            final var captor = ArgumentCaptor.forClass(Certificate.class);
+
+            verify(internalNotificationService).notifyCareIfSentByCitizen(captor.capture(), anyString(), anyString());
+            assertEquals(certificate, captor.getValue());
+        }
+
+        @SneakyThrows
+        @Test
+        void shouldSendPatientId() {
+            sendCertificateService.send(REQUEST);
+
+            final var captor = ArgumentCaptor.forClass(String.class);
+
+            verify(internalNotificationService).notifyCareIfSentByCitizen(any(), captor.capture(), anyString());
+            assertEquals("191212121212", captor.getValue());
+        }
+
+        @SneakyThrows
+        @Test
+        void shouldSendHosId() {
+            sendCertificateService.send(REQUEST);
+
+            final var captor = ArgumentCaptor.forClass(String.class);
+
+            verify(internalNotificationService).notifyCareIfSentByCitizen(any(), anyString(), captor.capture());
+            assertEquals(REQUEST.getHsaId(), captor.getValue());
+        }
+
+        @Nested
+        class AlreadySent {
+
+            @SneakyThrows
+            @BeforeEach
+            void setup() {
+                when(certificateService.sendCertificate(any(), anyString(), anyString())).thenReturn(
+                    SendStatus.ALREADY_SENT);
+            }
+
+            @SneakyThrows
+            @Test
+            void shouldNotCallInternalNotification() {
+                sendCertificateService.send(REQUEST);
+
+                verify(internalNotificationService, times(0)).notifyCareIfSentByCitizen(any(), any(), any());
+            }
+
+            @SneakyThrows
+            @Test
+            void shouldNotCallStatisticsService() {
+                sendCertificateService.send(REQUEST);
+
+                verify(statisticsService, times(0)).sent(any(), any(), any(), any());
+            }
+
+            @SneakyThrows
+            @Test
+            void shouldReturnSentStatus() {
+                final var response = sendCertificateService.send(REQUEST);
+
+                assertEquals(SendStatus.ALREADY_SENT, response);
+            }
+        }
     }
-  }
+
+    @Nested
+    class SendCertificate {
+
+        @SneakyThrows
+        @Test
+        void shouldSendPatientId() {
+            sendCertificateService.send(REQUEST);
+
+            final var captor = ArgumentCaptor.forClass(Personnummer.class);
+
+            verify(certificateService).sendCertificate(captor.capture(), anyString(), anyString());
+            assertEquals(REQUEST.getPatientId(), captor.getValue());
+        }
+
+        @SneakyThrows
+        @Test
+        void shouldSendCertificateId() {
+            sendCertificateService.send(REQUEST);
+
+            final var captor = ArgumentCaptor.forClass(String.class);
+
+            verify(certificateService).sendCertificate(any(), captor.capture(), anyString());
+            assertEquals(REQUEST.getCertificateId(), captor.getValue());
+        }
+
+        @SneakyThrows
+        @Test
+        void shouldSendRecipient() {
+            sendCertificateService.send(REQUEST);
+
+            final var captor = ArgumentCaptor.forClass(String.class);
+
+            verify(certificateService).sendCertificate(any(), anyString(), captor.capture());
+            assertEquals(REQUEST.getRecipientId(), captor.getValue());
+        }
+    }
 }

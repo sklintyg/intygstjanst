@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -159,6 +159,7 @@ class CitizenCertificateControllerTest {
 
     @Nested
     class SendCertificate {
+
         private final CitizenCertificateSendRequestDTO request = CitizenCertificateSendRequestDTO
             .builder()
             .certificateId("certificateId")

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenCertificateRecipientConverterImplTest {
+
     private static final LocalDateTime SENT_TIMESTAMP = LocalDateTime.now();
     private static final String CERTIFICATE_TYPE = "type";
     private static final String RECIPIENT_ID = "id";
@@ -54,24 +55,24 @@ class CitizenCertificateRecipientConverterImplTest {
     @BeforeEach
     void setup() {
         recipients = List.of(
-                new Recipient(
-                        "address",
-                        "other name",
-                        "other id",
-                        CertificateRecipientType.MOTTAGARE.toString(),
-                        List.of(CERTIFICATE_TYPE),
-                        true,
-                        true
-                ),
-                new Recipient(
-                        "address",
-                        RECIPIENT_NAME,
-                        RECIPIENT_ID,
-                        CertificateRecipientType.HUVUDMOTTAGARE.toString(),
-                        List.of(CERTIFICATE_TYPE),
-                        true,
-                        true
-                )
+            new Recipient(
+                "address",
+                "other name",
+                "other id",
+                CertificateRecipientType.MOTTAGARE.toString(),
+                List.of(CERTIFICATE_TYPE),
+                true,
+                true
+            ),
+            new Recipient(
+                "address",
+                RECIPIENT_NAME,
+                RECIPIENT_ID,
+                CertificateRecipientType.HUVUDMOTTAGARE.toString(),
+                List.of(CERTIFICATE_TYPE),
+                true,
+                true
+            )
         );
 
         Mockito.when(recipientRepo.listRecipients()).thenReturn(recipients);
@@ -104,6 +105,7 @@ class CitizenCertificateRecipientConverterImplTest {
 
     @Nested
     class Sent {
+
         @BeforeEach
         void setup() {
             Mockito.when(recipientRepo.listRecipients()).thenReturn(recipients);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -350,7 +350,7 @@ public class ListCertificatesForCitizenResponderImplTest {
         assertEquals(2, response.getIntygsLista().getIntyg().size());
     }
 
-    @Test (expected = ServerException.class)
+    @Test(expected = ServerException.class)
     public void listTestCertificateFK() throws Exception {
         Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");

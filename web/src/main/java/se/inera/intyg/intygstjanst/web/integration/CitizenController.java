@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -134,7 +134,7 @@ public class CitizenController {
         }
 
         final List<ResponseObject> responseList = certificateService.listCertificatesForCitizen(pnr.get(),
-            null, null, null)
+                null, null, null)
             .stream()
             .filter(c -> filter(c, parameters.isArchived()))
             .filter(c -> !c.isTestCertificate())

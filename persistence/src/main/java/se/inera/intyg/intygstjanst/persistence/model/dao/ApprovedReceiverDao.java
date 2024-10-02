@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -33,6 +33,7 @@ public interface ApprovedReceiverDao {
 
     /**
      * Erase any data related to test certificates passed as ids.
+     *
      * @param ids Certificate ids.
      */
     void eraseTestCertificates(List<String> ids);

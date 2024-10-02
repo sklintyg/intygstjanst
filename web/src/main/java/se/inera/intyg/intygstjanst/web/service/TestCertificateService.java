@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -32,7 +32,6 @@ public interface TestCertificateService {
      * Any related certificates (e.g. renewed, complemented etc) will also be erased.
      *
      * Important! When the test certificates are erased, it will not be possible to recover them.
-     *
      */
     TestCertificateEraseResult eraseTestCertificates(LocalDateTime from, LocalDateTime to);
 }

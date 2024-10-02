@@ -15,21 +15,13 @@ ext {
     infraVersion = System.properties['infraVersion'] ?: '3.21.0-SNAPSHOT'
     refDataVersion = System.properties['refDataVersion'] ?: '1.0-SNAPSHOT'
 
-//    intygHealthcondRehabilitationSchemasVersion = "1.1.3.1"
-//    intygClinicalprocessSchemasVersion = "1.0.24.1"
-//    rivtaClinicalprocessSchemasVersion = "4.0.5.2"
-//    rivtaGetPersonsPersonSchemasVersion = "3.1.1.1"
-//    rivtaInsuranceprocessSchemasVersion = "3.1.0.5.1"
-//    rivtaItintegrationMonitoringSchemasVersion = "1.0.0.5.1"
-//    schemasContractVersion = "2.1.8.1"
-
-    intygHealthcondRehabilitationSchemasVersion = "0-SNAPSHOT"
-    intygClinicalprocessSchemasVersion = "0-SNAPSHOT"
-    rivtaClinicalprocessSchemasVersion = "0-SNAPSHOT"
-    rivtaGetPersonsPersonSchemasVersion = "0-SNAPSHOT"
-    rivtaInsuranceprocessSchemasVersion = "0-SNAPSHOT"
-    rivtaItintegrationMonitoringSchemasVersion = "0-SNAPSHOT"
-    schemasContractVersion = "0-SNAPSHOT"
+    intygHealthcondRehabilitationSchemasVersion = "1.1.3.1"
+    intygClinicalprocessSchemasVersion = "1.0.24.1"
+    rivtaClinicalprocessSchemasVersion = "4.0.5.2"
+    rivtaGetPersonsPersonSchemasVersion = "3.1.1.1"
+    rivtaInsuranceprocessSchemasVersion = "3.1.0.5.1"
+    rivtaItintegrationMonitoringSchemasVersion = "1.0.0.5.1"
+    schemasContractVersion = "2.1.8.1"
 
     commonsIoVersion = "2.14.0"
     cxfVersion = "4.0.3"
@@ -74,7 +66,7 @@ allprojects {
         testImplementation "junit:junit"
         testImplementation "org.junit.jupiter:junit-jupiter-api"
         testImplementation "org.junit.jupiter:junit-jupiter-params"
-        testImplementation "org.mockito:mockito-core"
+        testImplementation "org.mockito:mockito-inline"
         testImplementation "org.mockito:mockito-junit-jupiter"
         testImplementation "se.inera.intyg.refdata:refdata:${refDataVersion}"
 

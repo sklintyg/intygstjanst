@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -37,6 +37,7 @@ import se.inera.intyg.intygstjanst.web.service.CertificateListService;
 @Controller
 @Path("/certificatelist")
 public class CertificateListController {
+
     final CertificateListService certificateListService;
 
     @Autowired
@@ -46,6 +47,7 @@ public class CertificateListController {
 
     /**
      * Internal REST endpoint to retrieve list of signed certificates for a doctor on the logged in unit.
+     *
      * @param parameters Parameters of filter query including filters that user has chosen or default filters.
      * @return Response including a list of all signed certificates and the total amount of certificates.
      */

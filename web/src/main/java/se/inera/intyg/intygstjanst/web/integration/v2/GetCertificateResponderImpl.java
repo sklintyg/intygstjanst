@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -89,9 +89,10 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
 
     /**
      * Validate if the certificate is a test certificate and the part asking for the certificate is a receiver of certificates.
-     * @param certificateId  the certificates to validate.
-     * @param partCode  the part code.
-     * @return  true if the part isn't allowed to retrieve test certificates
+     *
+     * @param certificateId the certificates to validate.
+     * @param partCode the part code.
+     * @return true if the part isn't allowed to retrieve test certificates
      */
     private boolean isInvalidPartForTestCertificate(String certificateId, String partCode) throws InvalidCertificateException {
         return certificateService.isTestCertificate(certificateId) && !"HSVARD".equalsIgnoreCase(partCode);

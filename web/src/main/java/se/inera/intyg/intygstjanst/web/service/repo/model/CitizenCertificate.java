@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -19,24 +19,33 @@
 
 package se.inera.intyg.intygstjanst.web.service.repo.model;
 
-import lombok.Builder;
-import lombok.Data;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationDTO;
-
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.Builder;
+import lombok.Value;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationDTO;
+import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate.CitizenCertificateBuilder;
 
-@Data
+@JsonDeserialize(builder = CitizenCertificateBuilder.class)
+@Value
 @Builder
 public class CitizenCertificate {
-    private String id;
-    private String type;
-    private String typeVersion;
-    private String unitName;
-    private String unitId;
-    private String issuerName;
-    private String additionalInfo;
-    private LocalDateTime issued;
-    private LocalDateTime sentDate;
-    private List<CitizenCertificateRelationDTO> relations;
+
+    String id;
+    String type;
+    String typeVersion;
+    String unitName;
+    String unitId;
+    String issuerName;
+    String additionalInfo;
+    LocalDateTime issued;
+    LocalDateTime sentDate;
+    List<CitizenCertificateRelationDTO> relations;
+
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class CitizenCertificateBuilder {
+
+    }
 }

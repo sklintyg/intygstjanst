@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -234,8 +234,10 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
 
     @Test
     public void shouldEraseSjukfallCertificates() {
-        final var certificate1 = buildSjukfallCertificate(CARE_GIVER_1_ID, CARE_UNIT_1_ID, CARE_UNIT_1_NAME, defaultWorkCapacities(), false);
-        final var certificate2 = buildSjukfallCertificate(CARE_GIVER_2_ID, CARE_UNIT_1_ID, CARE_UNIT_1_NAME, defaultWorkCapacities(), false);
+        final var certificate1 = buildSjukfallCertificate(CARE_GIVER_1_ID, CARE_UNIT_1_ID, CARE_UNIT_1_NAME, defaultWorkCapacities(),
+            false);
+        final var certificate2 = buildSjukfallCertificate(CARE_GIVER_2_ID, CARE_UNIT_1_ID, CARE_UNIT_1_NAME, defaultWorkCapacities(),
+            false);
         entityManager.persist(certificate1);
         entityManager.persist(certificate2);
 

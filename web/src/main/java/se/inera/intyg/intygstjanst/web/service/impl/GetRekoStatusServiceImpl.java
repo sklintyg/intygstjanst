@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Inera AB (http://www.inera.se)
+ * Copyright (C) 2024 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -30,13 +30,14 @@ import java.time.LocalDate;
 
 @Service
 public class GetRekoStatusServiceImpl implements GetRekoStatusService {
+
     private final RekoRepository rekoRepository;
     private final RekoStatusFilter rekoStatusFilter;
     private final RekoStatusConverter rekoStatusConverter;
 
     public GetRekoStatusServiceImpl(RekoRepository rekoRepository,
-                                    RekoStatusFilter rekoStatusFilter,
-                                    RekoStatusConverter rekoStatusConverter) {
+        RekoStatusFilter rekoStatusFilter,
+        RekoStatusConverter rekoStatusConverter) {
         this.rekoRepository = rekoRepository;
         this.rekoStatusFilter = rekoStatusFilter;
         this.rekoStatusConverter = rekoStatusConverter;
