@@ -124,7 +124,6 @@ public class Certificate {
      * Time this certificate was signed.
      */
     @Column(name = "SIGNED_DATE", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime")
     private LocalDateTime signedDate;
 
     /**

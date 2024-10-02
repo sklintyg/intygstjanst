@@ -35,7 +35,7 @@ import org.hibernate.annotations.Type;
 public class Reko {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "STATUS", nullable = false)
     private String status;
@@ -52,10 +52,8 @@ public class Reko {
     @Column(name = "UNIT_ID")
     private String unitId;
     @Column(name = "SICK_LEAVE_TIMESTAMP", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime")
     private LocalDateTime sickLeaveTimestamp;
 
     @Column(name = "REGISTRATION_TIMESTAMP", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime")
     private LocalDateTime registrationTimestamp;
 }

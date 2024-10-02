@@ -19,7 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.ScheduledMessage;
 import org.springframework.beans.factory.annotation.Qualifier;

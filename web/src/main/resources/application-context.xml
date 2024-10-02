@@ -54,11 +54,6 @@
     <!-- Initializes caching, required by hsa-services-config.xml -->
     <import resource="classpath:basic-cache-config.xml" />
 
-    <!-- HSA stub-->
-    <import resource="classpath:hsatk-stub-context.xml"/>
-    <!-- HSA service -->
-    <import resource="classpath:/hsatk-services-config.xml"/>
-
     <!-- PU stub-->
     <import resource="classpath:pu-stub-context.xml" />
     <!-- PU service -->

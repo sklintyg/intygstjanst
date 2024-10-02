@@ -36,7 +36,6 @@ gretty {
 }
 
 test { exclude '**/*IT*' }
-war.dependsOn createVersionPropertyFile
 
 tasks.register('restAssuredTest', Test) {
     outputs.upToDateWhen { false }
@@ -59,7 +58,6 @@ dependencies {
 
     implementation "se.inera.intyg.infra:certificate:${infraVersion}"
     implementation "se.inera.intyg.infra:hsa-integration-api:${infraVersion}"
-    implementation "se.inera.intyg.infra:hsatk-integration:${infraVersion}"
     implementation "se.inera.intyg.infra:intyginfo:${infraVersion}"
     implementation "se.inera.intyg.infra:message:${infraVersion}"
     implementation "se.inera.intyg.infra:monitoring:${infraVersion}"

@@ -21,8 +21,8 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBException;
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.ws.soap.SOAPFaultException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

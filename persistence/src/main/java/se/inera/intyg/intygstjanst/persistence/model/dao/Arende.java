@@ -35,7 +35,7 @@ public class Arende {
      * The (system-wide) unique id for this entity.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long internReferens;
 
     @Column(name = "INTYGS_ID")
@@ -57,7 +57,6 @@ public class Arende {
     private String logiskAdressmottagare;
 
     @Column(name = "TIMESTAMP")
-    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime")
     private LocalDateTime timestamp;
 
     public Long getInternReferens() {

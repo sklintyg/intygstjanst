@@ -19,7 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 public interface CertificateEventRedeliveryService {
 

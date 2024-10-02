@@ -32,7 +32,7 @@ import org.hibernate.annotations.Type;
 public class PopulateFailures {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
 
@@ -43,7 +43,6 @@ public class PopulateFailures {
     private String populateId;
 
     @Column(name = "TIMESTAMP")
-    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime")
     private LocalDateTime timestamp;
 
     @Column(name = "EXCEPTION")

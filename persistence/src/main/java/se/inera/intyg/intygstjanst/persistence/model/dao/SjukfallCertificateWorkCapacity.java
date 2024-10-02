@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.persistence.model.dao;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -35,7 +36,7 @@ public class SjukfallCertificateWorkCapacity {
      * Just needed for JPA compliance.
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private long id;
 

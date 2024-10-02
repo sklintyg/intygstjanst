@@ -21,14 +21,11 @@ package se.inera.intyg.intygstjanst.persistence.model.dao;
 import com.google.common.collect.Ordering;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import org.hibernate.annotations.Type;
-import org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime;
 import se.inera.intyg.common.support.model.CertificateState;
 
 /**
@@ -45,7 +42,6 @@ public class CertificateStateHistoryEntry {
     private CertificateState state;
 
     @Column(name = "TIMESTAMP")
-    @Convert(converter = PersistentLocalDateTime.class)
     private LocalDateTime timestamp;
 
     private static final Ordering<LocalDateTime> ORDERING_DESC_TIME_NULL_LAST = Ordering.<LocalDateTime>natural().reverse().nullsFirst();

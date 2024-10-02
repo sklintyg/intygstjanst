@@ -66,7 +66,6 @@ public class SjukfallCertificate {
      * Date and time when the certificate was signed.
      */
     @Column(name = "SIGNING_DATETIME", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime")
     private LocalDateTime signingDateTime;
 
     /**

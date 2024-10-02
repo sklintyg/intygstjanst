@@ -34,7 +34,7 @@ import jakarta.persistence.Table;
 @Table(name = "APPROVED_RECEIVER")
 public class ApprovedReceiver {
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "ID", nullable = false)
     private Long id;

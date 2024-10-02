@@ -36,7 +36,7 @@ import org.hibernate.annotations.Type;
 @Table(name = "RELATION")
 public class Relation {
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "ID", nullable = false)
     private Long id;
@@ -50,7 +50,6 @@ public class Relation {
     @Column(name = "RELATION_KOD", nullable = false)
     private String relationKod;
 
-    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime")
     @Column(name = "CREATED_DATE", nullable = false)
     private LocalDateTime created;
 
