@@ -106,6 +106,7 @@ dependencies {
     compileOnly "jakarta.persistence:jakarta.persistence-api"
     runtimeOnly "se.inera.intyg.infra:hsa-integration-intyg-proxy-service:${infraVersion}"
     runtimeOnly "com.mysql:mysql-connector-j"
+    runtimeOnly "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider"
 
     testImplementation "org.springframework:spring-test"
     testImplementation "org.xmlunit:xmlunit-legacy"
