@@ -237,10 +237,9 @@
 	</changeSet>
 
 	<changeSet id="11" author="kol">
-		<!-- initial creation of tables -->
-
+		<validCheckSum>8:031d1580f13a7ff533597a064832899a</validCheckSum>
 		<createTable tableName="ARENDE">
-			<column name="internReferens" type="bigint">
+			<column name="internReferens" type="bigint" autoIncrement="true">
 				<constraints unique="true" nullable="false" />
 			</column>
 			<column name="INTYGS_ID" type="varchar(255)">
@@ -265,10 +264,6 @@
         <constraints nullable="false" />
       </column>
 		</createTable>
-
-		<!-- Add auto incremented id column to table -->
-		<addAutoIncrement columnDataType="bigint" columnName="internReferens"
-			incrementBy="1" startWith="1" tableName="ARENDE" />
 	</changeSet>
 
   <changeSet id="12" author="ef">
@@ -330,8 +325,9 @@
   </changeSet>
 
   <changeSet id="36" author="el">
+		<validCheckSum>8:d66d21c15a900fd00b67e5de4f7826fa</validCheckSum>
     <createTable tableName="RELATION">
-      <column name="ID" type="bigint">
+      <column name="ID" type="bigint" autoIncrement="true">
         <constraints primaryKey="true" nullable="false"/>
       </column>
       <column name="FROM_INTYG_ID" type="varchar(255)">
@@ -347,10 +343,6 @@
         <constraints nullable="false"/>
       </column>
     </createTable>
-
-    <!-- Add auto incremented id column to table -->
-    <addAutoIncrement columnDataType="bigint" columnName="ID"
-        incrementBy="1" startWith="1" tableName="RELATION"/>
   </changeSet>
 
   <changeSet id="37" author="kja">
@@ -387,9 +379,9 @@
 	</changeSet>
 
 	<changeSet id="39" author="el">
-
+		<validCheckSum>8:1115b4fae84177b3ac655432ad094344</validCheckSum>
 		<createTable tableName="APPROVED_RECEIVER">
-			<column name="ID" type="bigint">
+			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="CERTIFICATE_ID" type="varchar(255)">
@@ -399,10 +391,6 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-
-			<!-- Add auto incremented id column to table -->
-		<addAutoIncrement columnDataType="bigint" columnName="ID"
-						  incrementBy="1" startWith="1" tableName="APPROVED_RECEIVER"/>
 
 		<createIndex tableName="APPROVED_RECEIVER" indexName="IDX_APPROVED_RECEIVER_CERTIFICATE_ID">
 			<column name="CERTIFICATE_ID"></column>
@@ -495,6 +483,7 @@
 	</changeSet>
 
 	<changeSet id="48" author="mj">
+		<validCheckSum>8:f9f8c07c0c9fcd2047ab4ab0189764b8</validCheckSum>
 		<createTable tableName="CERTIFICATE_METADATA">
 			<column name="CERTIFICATE_ID" type="varchar(255)">
 				<constraints primaryKey="true" nullable="false"/>
@@ -552,7 +541,7 @@
 		</sql>
 
 		<createTable tableName="POPULATE_FAILURES">
-			<column name="ID" type="bigint">
+			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints primaryKey="true" unique="true" nullable="false"/>
 			</column>
 			<column name="JOB_NAME" type="varchar(255)">
@@ -568,10 +557,6 @@
 				<constraints nullable="true"/>
 			</column>
 		</createTable>
-
-		<addAutoIncrement columnDataType="bigint"
-				columnName="ID" incrementBy="1" startWith="1"
-				tableName="POPULATE_FAILURES"/>
 
 		<createIndex indexName="IDX_POPULATE_FAILURES_POPULATE_ID"
 				tableName="POPULATE_FAILURES" unique="false">
@@ -649,8 +634,9 @@
 	</changeSet>
 
 	<changeSet id="54" author="cs">
+		<validCheckSum>8:7e48d3898d444ef180787361f7da14de</validCheckSum>
 		<createTable tableName="REKO">
-			<column name="ID" type="bigint">
+			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="STATUS" type="varchar(255)">
@@ -687,7 +673,5 @@
 			<column name="SICK_LEAVE_TIMESTAMP"/>
 		</createIndex>
 
-		<addAutoIncrement columnDataType="bigint" columnName="ID"
-				incrementBy="1" startWith="1" tableName="REKO" />
 	</changeSet>
 </databaseChangeLog>
