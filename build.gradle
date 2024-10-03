@@ -78,7 +78,11 @@ allprojects {
         testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
     }
 
-    compileJava { options.encoding = "UTF-8" }
+    compileJava {
+        options.encoding = "UTF-8"
+        options.compilerArgs.add("-parameters")
+    }
+
     compileJava.dependsOn processResources
     test { useJUnitPlatform() }
 
