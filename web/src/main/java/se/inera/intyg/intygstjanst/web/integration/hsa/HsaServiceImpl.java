@@ -71,7 +71,7 @@ public class HsaServiceImpl implements HsaService {
     }
 
     @Override
-    @Cacheable(value = EMPLOYEE_NAME_CACHE, key = "#doctorId")
+    @Cacheable(cacheNames = EMPLOYEE_NAME_CACHE, key = "#doctorId")
     public String getHsaEmployeeName(String doctorId) {
         try {
             final var employee = hsaEmployeeService.getEmployee(null, doctorId, null);
