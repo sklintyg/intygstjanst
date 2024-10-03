@@ -19,7 +19,7 @@ gretty {
 
     jvmArgs = [
             "-Dcatalina.base=${buildDir}/catalina.base",
-            "-Dspring.profiles.active=dev,bootstrap,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub,certificate-service-active",
+            "-Dspring.profiles.active=dev,bootstrap,testability-api,caching-enabled,it-fk-stub,certificate-service-active",
             "-Dlogback.file=${applicationDir}/config/logback-dev.xml",
             "-Djava.awt.headless=true",
             "-Dfile.encoding=UTF-8",
@@ -31,8 +31,6 @@ gretty {
             "-Ddev.http.port.internal=${useInternalHttpPort}",
             "-Dxml.catalog.cacheEnabled=false"
     ]
-
-    dependencies { gretty "se.inera.intyg.refdata:refdata:${refDataVersion}" }
 }
 
 test { exclude '**/*IT*' }
@@ -86,6 +84,8 @@ dependencies {
     implementation "se.inera.intyg.common:ts-diabetes:${commonVersion}"
     implementation "se.inera.intyg.common:tstrk1009:${commonVersion}"
     implementation "se.inera.intyg.common:tstrk1062:${commonVersion}"
+
+    implementation "se.inera.intyg.refdata:refdata-featureK1J-357:${refDataVersion}"
 
     implementation "com.google.guava:guava:${guavaVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"
