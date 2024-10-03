@@ -21,7 +21,7 @@ ext {
     schemasContractVersion = "2.1.8.2"
 
     commonsIoVersion = "2.14.0"
-    cxfVersion = "4.0.3"
+    cxfVersion = "4.0.5"
     geronimoJmsVersion = "1.1.1"
     guavaVersion = "32.1.3-jre"
     jadiraUserTypeVersion = "7.0.0.CR1"
