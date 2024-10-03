@@ -21,7 +21,7 @@ package se.inera.intyg.intygstjanst.web.csintegration;
 
 import java.util.List;
 import java.util.Objects;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,6 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesR
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
 
 @Service
-@RequiredArgsConstructor
 public class CSIntegrationService {
 
     private static final String CITIZEN_ENDPOINT_URL = "/api/citizen/certificate";
@@ -49,6 +48,10 @@ public class CSIntegrationService {
 
     @Value("${certificateservice.base.url}")
     private String baseUrl;
+
+    public CSIntegrationService(@Qualifier("csRestTemplate") RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     public List<Certificate> getCitizenCertificates(GetCitizenCertificatesRequest request) {
         final var url = baseUrl + CITIZEN_ENDPOINT_URL;
