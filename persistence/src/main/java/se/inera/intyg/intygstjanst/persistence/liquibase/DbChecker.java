@@ -20,13 +20,8 @@ package se.inera.intyg.intygstjanst.persistence.liquibase;
 
 import java.sql.SQLException;
 import java.util.List;
-
 import javax.sql.DataSource;
-
 import liquibase.LabelExpression;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import liquibase.Liquibase;
 import liquibase.changelog.ChangeSet;
 import liquibase.database.Database;
@@ -34,6 +29,8 @@ import liquibase.database.DatabaseConnection;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DbChecker {
 

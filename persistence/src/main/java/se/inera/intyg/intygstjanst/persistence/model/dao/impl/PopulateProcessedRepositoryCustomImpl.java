@@ -18,10 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import se.inera.intyg.intygstjanst.persistence.model.dao.PopulateProcessedRepositoryCustom;
 
 public class PopulateProcessedRepositoryCustomImpl implements PopulateProcessedRepositoryCustom {

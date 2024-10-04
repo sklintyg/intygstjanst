@@ -20,16 +20,13 @@ package se.inera.intyg.intygstjanst.web.integration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import jakarta.xml.bind.JAXBException;
 import java.util.List;
-
-import javax.xml.bind.JAXBException;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;

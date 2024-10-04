@@ -18,6 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import jakarta.ws.rs.InternalServerErrorException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.time.LocalDate;
@@ -25,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.ws.rs.InternalServerErrorException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;

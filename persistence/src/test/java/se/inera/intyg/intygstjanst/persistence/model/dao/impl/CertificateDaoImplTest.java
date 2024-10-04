@@ -30,14 +30,14 @@ import static se.inera.intyg.common.support.model.CertificateState.RECEIVED;
 import static se.inera.intyg.common.support.model.CertificateState.RESTORED;
 import static se.inera.intyg.common.support.model.CertificateState.SENT;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.common.support.model.CertificateState;

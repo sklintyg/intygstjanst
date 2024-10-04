@@ -18,10 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.hsa;
 
+import jakarta.xml.ws.WebServiceException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.xml.ws.WebServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +71,7 @@ public class HsaServiceImpl implements HsaService {
     }
 
     @Override
-    @Cacheable(value = EMPLOYEE_NAME_CACHE, key = "#doctorId")
+    @Cacheable(cacheNames = EMPLOYEE_NAME_CACHE, key = "#doctorId")
     public String getHsaEmployeeName(String doctorId) {
         try {
             final var employee = hsaEmployeeService.getEmployee(null, doctorId, null);

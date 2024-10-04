@@ -20,8 +20,8 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static java.lang.invoke.MethodHandles.lookup;
 
-import javax.jms.Queue;
-import javax.jms.TextMessage;
+import jakarta.jms.Queue;
+import jakarta.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

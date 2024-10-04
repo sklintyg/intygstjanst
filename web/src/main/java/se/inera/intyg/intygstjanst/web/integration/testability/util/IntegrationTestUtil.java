@@ -19,6 +19,7 @@
 package se.inera.intyg.intygstjanst.web.integration.testability.util;
 
 
+import jakarta.xml.bind.JAXB;
 import java.io.StringReader;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,7 +27,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.xml.bind.JAXB;
 import org.springframework.stereotype.Component;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;

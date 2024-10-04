@@ -20,16 +20,16 @@ package se.inera.intyg.intygstjanst.web.service.monitoring;
 
 import io.prometheus.client.Collector;
 import io.prometheus.client.Gauge;
+import jakarta.annotation.PostConstruct;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.sql.Time;
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

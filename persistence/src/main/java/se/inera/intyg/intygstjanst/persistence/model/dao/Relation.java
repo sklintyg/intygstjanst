@@ -18,15 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.Type;
 
 /**
@@ -38,7 +36,7 @@ import org.hibernate.annotations.Type;
 @Table(name = "RELATION")
 public class Relation {
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "ID", nullable = false)
     private Long id;
@@ -52,7 +50,6 @@ public class Relation {
     @Column(name = "RELATION_KOD", nullable = false)
     private String relationKod;
 
-    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime")
     @Column(name = "CREATED_DATE", nullable = false)
     private LocalDateTime created;
 

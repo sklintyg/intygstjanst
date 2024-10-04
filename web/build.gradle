@@ -7,7 +7,7 @@ gretty {
     def useInternalHttpPort = 8180 + (instance as Integer)
     def applicationDir = "${rootProject.projectDir}/devops/dev"
 
-    servletContainer = 'tomcat9'
+    servletContainer = 'tomcat10'
     contextPath = '/inera-certificate'
 
     integrationTestTask = null
@@ -19,7 +19,7 @@ gretty {
 
     jvmArgs = [
             "-Dcatalina.base=${buildDir}/catalina.base",
-            "-Dspring.profiles.active=dev,bootstrap,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub,certificate-service-active",
+            "-Dspring.profiles.active=dev,bootstrap,testability-api,caching-enabled,it-fk-stub,certificate-service-active",
             "-Dlogback.file=${applicationDir}/config/logback-dev.xml",
             "-Djava.awt.headless=true",
             "-Dfile.encoding=UTF-8",
@@ -31,12 +31,9 @@ gretty {
             "-Ddev.http.port.internal=${useInternalHttpPort}",
             "-Dxml.catalog.cacheEnabled=false"
     ]
-
-    dependencies { gretty "se.inera.intyg.refdata:refdata:${refDataVersion}" }
 }
 
 test { exclude '**/*IT*' }
-war.dependsOn createVersionPropertyFile
 
 tasks.register('restAssuredTest', Test) {
     outputs.upToDateWhen { false }
@@ -59,7 +56,6 @@ dependencies {
 
     implementation "se.inera.intyg.infra:certificate:${infraVersion}"
     implementation "se.inera.intyg.infra:hsa-integration-api:${infraVersion}"
-    implementation "se.inera.intyg.infra:hsatk-integration:${infraVersion}"
     implementation "se.inera.intyg.infra:intyginfo:${infraVersion}"
     implementation "se.inera.intyg.infra:message:${infraVersion}"
     implementation "se.inera.intyg.infra:monitoring:${infraVersion}"
@@ -89,6 +85,8 @@ dependencies {
     implementation "se.inera.intyg.common:tstrk1009:${commonVersion}"
     implementation "se.inera.intyg.common:tstrk1062:${commonVersion}"
 
+    implementation "se.inera.intyg.refdata:refdata-featureK1J-357:${refDataVersion}"
+
     implementation "com.google.guava:guava:${guavaVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "io.prometheus:simpleclient_servlet"
@@ -100,7 +98,7 @@ dependencies {
     implementation "org.apache.activemq:activemq-spring"
     implementation "org.apache.cxf:cxf-rt-features-logging:${cxfVersion}"
     implementation "org.apache.cxf:cxf-rt-frontend-jaxws:${cxfVersion}"
-    implementation "org.jvnet.jaxb2_commons:jaxb2-basics:${jaxb2Version}"
+    implementation "codes.rafael.jaxb2_commons:jaxb2-basics:${jaxb2Version}"
     implementation "org.springframework:spring-jms"
     implementation "org.springframework:spring-webmvc"
     implementation "org.springframework.data:spring-data-jpa"
@@ -108,6 +106,7 @@ dependencies {
     compileOnly "jakarta.persistence:jakarta.persistence-api"
     runtimeOnly "se.inera.intyg.infra:hsa-integration-intyg-proxy-service:${infraVersion}"
     runtimeOnly "com.mysql:mysql-connector-j"
+    runtimeOnly "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider"
 
     testImplementation "org.springframework:spring-test"
     testImplementation "org.xmlunit:xmlunit-legacy"

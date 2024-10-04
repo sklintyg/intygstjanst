@@ -30,7 +30,7 @@
           class="se.inera.intyg.common.util.integration.json.CustomObjectMapper" />
 
     <bean id="jacksonJsonProvider"
-          class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider">
+          class="com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider">
       <property name="mapper" ref="objectMapper" />
     </bean>
 

@@ -18,12 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * Relation entity. Forms an association between two Certificates of a given type.
@@ -34,7 +34,7 @@ import javax.persistence.Table;
 @Table(name = "APPROVED_RECEIVER")
 public class ApprovedReceiver {
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "ID", nullable = false)
     private Long id;

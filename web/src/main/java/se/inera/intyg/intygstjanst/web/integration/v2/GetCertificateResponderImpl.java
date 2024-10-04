@@ -18,16 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v2;
 
+import jakarta.xml.bind.JAXB;
 import java.io.StringReader;
 import java.util.stream.Collectors;
-
-import javax.xml.bind.JAXB;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
