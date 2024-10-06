@@ -18,9 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.service.repo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -31,23 +33,33 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.util.ReflectionTestUtils;
+import se.inera.intyg.intygstjanst.logging.MdcHelper;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
+
+@ExtendWith(MockitoExtension.class)
 public class RecipientRepoImplTest {
 
+    @Mock
+    private MdcHelper mdcHelper;
+
+    @InjectMocks
     private RecipientRepoImpl repo;
 
     private List<Recipient> allRecipients;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
-        repo = new RecipientRepoImpl();
         String recipientFile = "recipients.json";
 
         injectRecipientFile(recipientFile);
@@ -58,6 +70,9 @@ public class RecipientRepoImplTest {
         Recipient[] rec = objectMapper.readValue(Files.newInputStream(Paths.get(uri)),
             Recipient[].class);
         allRecipients = Arrays.asList(rec);
+
+        doReturn("traceId").when(mdcHelper).traceId();
+        doReturn("spanId").when(mdcHelper).spanId();
 
         repo.init();
     }
@@ -76,49 +91,50 @@ public class RecipientRepoImplTest {
 
     @Test
     public void testChangingToIncorrectFileKeepsPreviousRecipients() {
+
         try {
             injectRecipientFile("missing");
             repo.update();
         } catch (IOException e) {
         }
         // Make sure the recipients loaded by init() still remain!
-        assertEquals(String.format("Expected 5 recipients after update, was %s", repo.listRecipients().size()),
-            5, repo.listRecipients().size());
+        assertEquals(5, repo.listRecipients().size(),
+            () -> String.format("Expected 5 recipients after update, was %s", repo.listRecipients().size()));
         assertTrue(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }
 
     @Test
     public void testAddingRecipientToFile() throws IOException {
-        assertEquals(String.format("Expected 5 recipients before update, was %s", repo.listRecipients().size()),
-            5, repo.listRecipients().size());
+        assertEquals(5, repo.listRecipients().size(),
+            () -> String.format("Expected 5 recipients before update, was %s", repo.listRecipients().size()));
 
         // Change file and update
         injectRecipientFile("recipients_updated.json");
         repo.update();
 
-        assertEquals(String.format("Expected 6 recipients after update, was %s", repo.listRecipients().size()),
-            6, repo.listRecipients().size());
+        assertEquals(6, repo.listRecipients().size(),
+            () -> String.format("Expected 6 recipients after update, was %s", repo.listRecipients().size()));
         assertFalse(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }
 
     @Test
     public void testChangedRecipientInFile() throws IOException, RecipientUnknownException {
-        assertEquals(String.format("Expected 5 recipients before update, was %s", repo.listRecipients().size()),
-            5, repo.listRecipients().size());
+        assertEquals(5, repo.listRecipients().size(),
+            () -> String.format("Expected 5 recipients before update, was %s", repo.listRecipients().size()));
         assertEquals("Transportstyrelsen", repo.getRecipient("TRANSP").getName());
 
         // Change file and update
         injectRecipientFile("recipients_changed.json");
         repo.update();
 
-        assertEquals(String.format("Expected 5 recipients after update, was %s", repo.listRecipients().size()),
-            5, repo.listRecipients().size());
+        assertEquals(5, repo.listRecipients().size(),
+            () -> String.format("Expected 5 recipients after update, was %s", repo.listRecipients().size()));
         assertEquals("Changed", repo.getRecipient("TRANSP").getName());
         assertTrue(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }
 
     @Test
-    public void testGetPrimaryRecipients() throws IOException {
+    public void testGetPrimaryRecipients() {
         List<Recipient> recipients = new ArrayList<>();
         recipients.add(repo.getRecipientFkassa());
         recipients.add(repo.getRecipientHsvard());
@@ -133,12 +149,11 @@ public class RecipientRepoImplTest {
         assertTrue(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
     }
 
-    @Test(expected = ServerException.class)
+    @Test
     public void testInitWithMissingPrimaryRecipients() throws IOException {
-        // Clear to enable loading a non valid recipient file
         repo.clear();
-        // Change file and update
         injectRecipientFile("recipients_missing_primary.json");
-        repo.update();
+
+        assertThrows(ServerException.class, () -> repo.update());
     }
 }
