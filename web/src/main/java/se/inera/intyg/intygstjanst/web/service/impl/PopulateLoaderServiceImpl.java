@@ -42,6 +42,7 @@ import org.springframework.jms.core.MessageCreator;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import se.inera.intyg.intygstjanst.logging.MdcCloseableMap;
 import se.inera.intyg.intygstjanst.logging.MdcHelper;
 import se.inera.intyg.intygstjanst.persistence.model.dao.PopulateProcessedRepository;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
@@ -81,13 +82,13 @@ public class PopulateLoaderServiceImpl implements PopulateLoaderService {
     @Scheduled(cron = "${populate.loader.cron:-}")
     @SchedulerLock(name = POPULATE_SHEDLOCK_JOB_NAME)
     public void populate() {
-        try {
-            MDC.put(MDC_TRACE_ID_KEY, mdcHelper.traceId());
-            MDC.put(MDC_SPAN_ID_KEY, mdcHelper.spanId());
-
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MDC_TRACE_ID_KEY, mdcHelper.traceId())
+                .put(MDC_SPAN_ID_KEY, mdcHelper.spanId())
+                .build()
+        ) {
             executeJob();
-        } finally {
-            MDC.clear();
         }
     }
 

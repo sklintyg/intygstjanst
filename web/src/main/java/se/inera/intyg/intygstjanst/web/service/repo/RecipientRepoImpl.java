@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
+import se.inera.intyg.intygstjanst.logging.MdcCloseableMap;
 import se.inera.intyg.intygstjanst.logging.MdcHelper;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
@@ -124,13 +125,13 @@ public class RecipientRepoImpl implements RecipientRepo {
 
     @Scheduled(cron = "${recipients.update.cron}")
     public void update() {
-        try {
-            MDC.put(MDC_TRACE_ID_KEY, mdcHelper.traceId());
-            MDC.put(MDC_SPAN_ID_KEY, mdcHelper.spanId());
-
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MDC_TRACE_ID_KEY, mdcHelper.traceId())
+                .put(MDC_SPAN_ID_KEY, mdcHelper.spanId())
+                .build()
+        ) {
             executeJob();
-        } finally {
-            MDC.clear();
         }
     }
 
