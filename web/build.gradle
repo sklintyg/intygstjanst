@@ -33,16 +33,6 @@ gretty {
     ]
 }
 
-test { exclude '**/*IT*' }
-
-tasks.register('restAssuredTest', Test) {
-    outputs.upToDateWhen { false }
-    systemProperty "integration.tests.baseUrl", System.properties['baseUrl'] ?: "http://localhost:8080/"
-    systemProperty "integration.tests.actuatorUrl", System.properties['actuatorUrl'] ?: "http://localhost:8180"
-    include '**/*IT*'
-    useJUnitPlatform()
-}
-
 dependencies {
     implementation project(':intygstjanst-persistence')
 
