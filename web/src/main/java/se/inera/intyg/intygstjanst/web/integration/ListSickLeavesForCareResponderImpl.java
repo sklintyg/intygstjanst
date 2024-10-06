@@ -30,6 +30,8 @@ import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.integration.converter.SjukfallCertificateConverter;
@@ -66,6 +68,7 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
 
     @Override
     @PrometheusTimeMethod
+    @PerformanceLogging(eventType = "list-sick-leaves", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public ListSickLeavesForCareResponseType listSickLeavesForCare(String logicalAddress, ListSickLeavesForCareType params) {
 
         ListSickLeavesForCareResponseType responseType = new ListSickLeavesForCareResponseType();

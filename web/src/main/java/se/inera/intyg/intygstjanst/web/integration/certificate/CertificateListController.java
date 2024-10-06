@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.certificate.dto.CertificateListRequest;
 import se.inera.intyg.infra.certificate.dto.CertificateListResponse;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.CertificateListService;
 
 /**
@@ -56,6 +58,7 @@ public class CertificateListController {
     @Path("/certificates/doctor")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @PerformanceLogging(eventType = "list-certificates", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public CertificateListResponse listCertificatesForDoctor(@RequestBody CertificateListRequest parameters) {
         return certificateListService.listCertificatesForDoctor(parameters);
     }

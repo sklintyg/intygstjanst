@@ -28,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.ListCitizenCertificatesService;
 import se.inera.intyg.intygstjanst.web.service.SendCertificateService;
 import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
@@ -54,6 +56,7 @@ public class CitizenCertificateController {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
+    @PerformanceLogging(eventType = "list-certificates", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public ListCitizenCertificatesResponseDTO getCitizenCertificates(
         @RequestBody CitizenCertificatesRequestDTO request) {
 
@@ -80,6 +83,7 @@ public class CitizenCertificateController {
     @Path("/send")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
+    @PerformanceLogging(eventType = "send-certificate", eventAction = MdcLogConstants.EVENT_TYPE_CHANGE)
     public void sendCitizenCertificate(
         @RequestBody CitizenCertificateSendRequestDTO request) {
 

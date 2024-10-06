@@ -32,6 +32,8 @@ import se.inera.intyg.infra.certificate.dto.DiagnosedCertificate;
 import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate;
 import se.inera.intyg.infra.certificate.dto.TypedCertificateRequest;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.TypedCertificateService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
@@ -54,6 +56,7 @@ public class TypedCertificateController {
     @Path("/diagnosed/unit")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @PerformanceLogging(eventType = "list-certificates", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public List<DiagnosedCertificate> listDiagnosedCertificatesForCareUnit(@RequestBody TypedCertificateRequest parameters) {
         var units = parameters.getUnitIds();
 
@@ -73,6 +76,7 @@ public class TypedCertificateController {
     @Path("/doctors")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @PerformanceLogging(eventType = "list-doctors", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public List<String> listDoctorsForCareUnit(@RequestBody TypedCertificateRequest parameters) {
         var units = parameters.getUnitIds();
 
@@ -91,6 +95,7 @@ public class TypedCertificateController {
     @Path("/diagnosed/person")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @PerformanceLogging(eventType = "list-certificates", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public List<DiagnosedCertificate> listDiagnosedCertificatesForCitizen(@RequestBody TypedCertificateRequest parameters) {
         var optionalPersonnummer = Personnummer.createPersonnummer(parameters.getPersonId());
 
@@ -110,6 +115,7 @@ public class TypedCertificateController {
     @Path("/sickleave/person")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @PerformanceLogging(eventType = "list-certificates", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public List<SickLeaveCertificate> listSickLeaveCertificatesForCitizen(@RequestBody TypedCertificateRequest parameters) {
         var optionalPersonnummer = Personnummer.createPersonnummer(parameters.getPersonId());
 
@@ -123,6 +129,4 @@ public class TypedCertificateController {
             parameters.getToDate(),
             parameters.getUnitIds());
     }
-
-
 }

@@ -99,6 +99,7 @@ dependencies {
     implementation "org.apache.activemq:activemq-spring"
     implementation "org.apache.cxf:cxf-rt-features-logging:${cxfVersion}"
     implementation "org.apache.cxf:cxf-rt-frontend-jaxws:${cxfVersion}"
+    implementation "org.aspectj:aspectjweaver"
     implementation "codes.rafael.jaxb2_commons:jaxb2-basics:${jaxb2Version}"
     implementation "org.springframework:spring-jms"
     implementation "org.springframework:spring-webmvc"

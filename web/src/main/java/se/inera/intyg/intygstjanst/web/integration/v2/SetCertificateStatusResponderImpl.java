@@ -28,6 +28,8 @@ import se.inera.intyg.common.support.integration.module.exception.InvalidCertifi
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
@@ -54,6 +56,7 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
 
     @Override
     @PrometheusTimeMethod
+    @PerformanceLogging(eventType = "set-certificate-status", eventAction = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SetCertificateStatusResponseType setCertificateStatus(String logicalAddress, SetCertificateStatusType parameters) {
         SetCertificateStatusResponseType response = new SetCertificateStatusResponseType();
         String certificateId = parameters.getIntygsId().getExtension();

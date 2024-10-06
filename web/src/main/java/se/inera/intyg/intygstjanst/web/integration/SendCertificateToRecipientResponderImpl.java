@@ -30,6 +30,8 @@ import se.inera.intyg.common.support.integration.module.exception.CertificateRev
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.exception.ExternalServiceCallException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
@@ -51,6 +53,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
 
     @Override
     @PrometheusTimeMethod
+    @PerformanceLogging(eventType = "send-certificate", eventAction = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SendCertificateToRecipientResponseType sendCertificateToRecipient(
         final String logicalAddress, final SendCertificateToRecipientType request) {
 

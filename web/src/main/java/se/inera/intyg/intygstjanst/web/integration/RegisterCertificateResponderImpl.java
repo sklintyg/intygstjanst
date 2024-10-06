@@ -46,6 +46,8 @@ import se.inera.intyg.infra.integration.pu.model.PersonSvar.Status;
 import se.inera.intyg.infra.integration.pu.services.PUService;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.infra.monitoring.logging.LogMarkers;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.integration.util.CertificateHolderConverter;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.ObjectFactory;
@@ -89,6 +91,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
 
     @Override
     @PrometheusTimeMethod
+    @PerformanceLogging(eventType = "register-certificate", eventAction = MdcLogConstants.EVENT_TYPE_CREATION)
     public RegisterCertificateResponseType registerCertificate(String logicalAddress, RegisterCertificateType registerCertificate) {
         try {
             final String intygsTyp = getIntygsTyp(registerCertificate);

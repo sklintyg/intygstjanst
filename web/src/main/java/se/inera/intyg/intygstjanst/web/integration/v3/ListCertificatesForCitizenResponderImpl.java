@@ -36,6 +36,8 @@ import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.integration.CitizenController;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
@@ -67,6 +69,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
 
     @Override
     @PrometheusTimeMethod
+    @PerformanceLogging(eventType = "list-certificate", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public ListCertificatesForCitizenResponseType listCertificatesForCitizen(String logicalAddress,
         ListCertificatesForCitizenType parameters) {
 

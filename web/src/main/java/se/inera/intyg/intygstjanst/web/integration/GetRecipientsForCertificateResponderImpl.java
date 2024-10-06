@@ -32,6 +32,8 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcer
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.RecipientType;
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.v1.utils.ResultTypeUtil;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
@@ -51,6 +53,7 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
 
     @Override
     @PrometheusTimeMethod
+    @PerformanceLogging(eventType = "list-certificate-recipients", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public GetRecipientsForCertificateResponseType getRecipientsForCertificate(String logicalAddress,
         GetRecipientsForCertificateType request) {
 

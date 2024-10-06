@@ -27,6 +27,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.MessageService;
 
 /**
@@ -43,6 +45,7 @@ public class MessageController {
     @Path("/{certificateId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @PerformanceLogging(eventType = "retrieve-messages", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public Response findMessagesByCertificateId(@PathParam("certificateId") String certificateId) {
         if (certificateId == null || certificateId.trim().isEmpty()) {
             return Response.status(400, "Missing certificateId").build();
