@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<included>
+  <appender name="ECS_JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="co.elastic.logging.logback.EcsEncoder">
+      <serviceName>${APP_NAME}</serviceName>
+    </encoder>
+  </appender>
+</included>

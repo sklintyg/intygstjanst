@@ -20,7 +20,7 @@ gretty {
     jvmArgs = [
             "-Dcatalina.base=${buildDir}/catalina.base",
             "-Dspring.profiles.active=dev,bootstrap,testability-api,caching-enabled,it-fk-stub,certificate-service-active",
-            "-Dlogback.file=${applicationDir}/config/logback-dev.xml",
+            "-Dlogback.file=${applicationDir}/config/logback-spring.xml",
             "-Djava.awt.headless=true",
             "-Dfile.encoding=UTF-8",
             "-Dapplication.dir=${applicationDir}",
@@ -87,6 +87,7 @@ dependencies {
 
     implementation "se.inera.intyg.refdata:refdata-featureK1J-357:${refDataVersion}"
 
+    implementation "co.elastic.logging:logback-ecs-encoder:${logbackEcsEncoderVersion}"
     implementation "com.google.guava:guava:${guavaVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "io.prometheus:simpleclient_servlet"

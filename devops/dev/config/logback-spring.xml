@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" debug="true" scanPeriod="15 seconds">
+  <property name="APP_NAME" value="${APP_NAME:-intygstjanst}"/>
+
+  <include resource="logback/logback-spring-base.xml"/>
+
+  <logger level="WARN" name="org.apache.cxf"/>
+
+  <root level="INFO">
+    <appender-ref ref="ECS_JSON_CONSOLE"/>
+  </root>
+</configuration>
