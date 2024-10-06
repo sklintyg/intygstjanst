@@ -18,6 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.logging;
 
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.EVENT_CATEGORY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.EVENT_CATEGORY_PROCESS;
+
 import java.io.Closeable;
 import java.util.Collections;
 import java.util.Map;
@@ -26,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.MDC;
 
 public class MdcCloseableMap implements Closeable {
+
     private final Set<String> keys;
 
     private MdcCloseableMap(Map<String, String> entries) {
@@ -39,10 +43,13 @@ public class MdcCloseableMap implements Closeable {
     }
 
     public static Builder builder() {
-        return new Builder();
+        final var builder = new Builder();
+        builder.put(EVENT_CATEGORY, EVENT_CATEGORY_PROCESS);
+        return builder;
     }
 
     public static class Builder {
+
         private final Map<String, String> mdc = new ConcurrentHashMap<>();
 
         public Builder put(String key, String value) {

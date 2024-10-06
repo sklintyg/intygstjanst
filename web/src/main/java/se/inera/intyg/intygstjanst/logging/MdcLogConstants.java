@@ -28,6 +28,7 @@ public class MdcLogConstants {
     public static final String EVENT_ACTION = "event.action";
     public static final String EVENT_CATEGORY = "event.category";
     public static final String EVENT_CATEGORY_PROCESS = "[process]";
+    public static final String EVENT_CATEGORY_API = "[api]";
     public static final String EVENT_TYPE = "event.type";
     public static final String EVENT_START = "event.start";
     public static final String EVENT_END = "event.end";

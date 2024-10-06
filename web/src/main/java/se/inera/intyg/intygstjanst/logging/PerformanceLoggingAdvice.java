@@ -47,6 +47,7 @@ public class PerformanceLoggingAdvice {
                     .put(MdcLogConstants.EVENT_DURATION, Long.toString(duration))
                     .put(MdcLogConstants.EVENT_TYPE, performanceLogging.eventType())
                     .put(MdcLogConstants.EVENT_ACTION, performanceLogging.eventAction())
+                    .put(MdcLogConstants.EVENT_CATEGORY, MdcLogConstants.EVENT_CATEGORY_API)
                     .put(MdcLogConstants.EVENT_CLASS, className)
                     .put(MdcLogConstants.EVENT_METHOD, methodName)
                     .build()
