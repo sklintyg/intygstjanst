@@ -21,7 +21,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.infra.monitoring.logging.LogMarkers;
+import se.inera.intyg.intygstjanst.logging.LogMarkers;
 import se.inera.intyg.intygstjanst.logging.MdcCloseableMap;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
