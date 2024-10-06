@@ -1,8 +1,8 @@
 package se.inera.intyg.intygstjanst.logging;
 
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.MDC_SESSION_ID_KEY;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.MDC_SPAN_ID_KEY;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.MDC_TRACE_ID_KEY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SESSION_ID_KEY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SPAN_ID_KEY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.TRACE_ID_KEY;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -28,9 +28,9 @@ public class MdcServletFilter implements Filter {
       throws IOException, ServletException {
     try {
       if (request instanceof HttpServletRequest http) {
-        MDC.put(MDC_SESSION_ID_KEY, mdcHelper.sessionId(http));
-        MDC.put(MDC_TRACE_ID_KEY, mdcHelper.traceId(http));
-        MDC.put(MDC_SPAN_ID_KEY, mdcHelper.spanId());
+        MDC.put(SESSION_ID_KEY, mdcHelper.sessionId(http));
+        MDC.put(TRACE_ID_KEY, mdcHelper.traceId(http));
+        MDC.put(SPAN_ID_KEY, mdcHelper.spanId());
       }
       chain.doFilter(request, response);
     } finally {

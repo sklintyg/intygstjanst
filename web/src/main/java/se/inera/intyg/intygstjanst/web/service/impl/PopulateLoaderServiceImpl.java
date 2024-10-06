@@ -18,9 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.MDC_SESSION_ID_KEY;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.MDC_SPAN_ID_KEY;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.MDC_TRACE_ID_KEY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SPAN_ID_KEY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.TRACE_ID_KEY;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +31,6 @@ import java.util.stream.Stream;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -84,8 +82,8 @@ public class PopulateLoaderServiceImpl implements PopulateLoaderService {
     public void populate() {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MDC_TRACE_ID_KEY, mdcHelper.traceId())
-                .put(MDC_SPAN_ID_KEY, mdcHelper.spanId())
+                .put(TRACE_ID_KEY, mdcHelper.traceId())
+                .put(SPAN_ID_KEY, mdcHelper.spanId())
                 .build()
         ) {
             executeJob();

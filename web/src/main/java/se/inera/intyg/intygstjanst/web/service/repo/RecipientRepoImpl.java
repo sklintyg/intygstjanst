@@ -18,8 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.web.service.repo;
 
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.MDC_SPAN_ID_KEY;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.MDC_TRACE_ID_KEY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SPAN_ID_KEY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.TRACE_ID_KEY;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
@@ -35,7 +35,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -127,8 +126,8 @@ public class RecipientRepoImpl implements RecipientRepo {
     public void update() {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MDC_TRACE_ID_KEY, mdcHelper.traceId())
-                .put(MDC_SPAN_ID_KEY, mdcHelper.spanId())
+                .put(TRACE_ID_KEY, mdcHelper.traceId())
+                .put(SPAN_ID_KEY, mdcHelper.spanId())
                 .build()
         ) {
             executeJob();
