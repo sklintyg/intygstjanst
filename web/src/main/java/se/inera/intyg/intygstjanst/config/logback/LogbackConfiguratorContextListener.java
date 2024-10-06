@@ -22,7 +22,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.classic.util.ContextInitializer;
 import ch.qos.logback.core.joran.spi.JoranException;
-import ch.qos.logback.core.util.StatusPrinter;
+import ch.qos.logback.core.util.StatusPrinter2;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import java.io.IOException;
@@ -48,13 +48,11 @@ public class LogbackConfiguratorContextListener implements ServletContextListene
         final Resource resource = getConfigurationResource(getConfigurationUri(servletContextEvent));
 
         if (!resource.exists()) {
-            LOG.error("Can't read logback configuration from "
-                + resource.getDescription() + " - Keep default configuration");
+            LOG.error("Can't read logback configuration from {} - Keep default configuration", resource.getDescription());
             return;
         }
 
-        LOG.info("Found logback configuration " + resource.getDescription()
-            + " - Overriding default configuration");
+        LOG.info("Found logback configuration {} - Overriding default configuration", resource.getDescription());
         final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 
         try {
@@ -65,9 +63,7 @@ public class LogbackConfiguratorContextListener implements ServletContextListene
             } catch (JoranException e) {
                 LOG.error("Can't fallback to default (auto) configuration", e);
             }
-            LOG.error(
-                "Can't configure logback from " + resource.getDescription()
-                    + " - Keep default configuration", ex);
+            LOG.error("Can't configure logback from {} - Keep default configuration", resource.getDescription(), ex);
         }
     }
 
@@ -77,18 +73,14 @@ public class LogbackConfiguratorContextListener implements ServletContextListene
             : new FileSystemResource(uri);
     }
 
-    //
     private void configure(final LoggerContext ctx, final Resource config) throws IOException, JoranException {
         final JoranConfigurator jc = new JoranConfigurator();
         jc.setContext(ctx);
         ctx.reset();
-        final InputStream in = config.getInputStream();
-        try {
+        try (final InputStream in = config.getInputStream()) {
             jc.doConfigure(in);
-        } finally {
-            in.close();
         }
-        StatusPrinter.printIfErrorsOccured(ctx);
+        new StatusPrinter2().printIfErrorsOccured(ctx);
         ctx.start();
     }
 
