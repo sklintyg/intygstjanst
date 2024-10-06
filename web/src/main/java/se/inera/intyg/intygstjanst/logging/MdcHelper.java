@@ -29,6 +29,10 @@ public class MdcHelper {
             .orElse(generateId());
     }
 
+    public String traceId() {
+        return generateId();
+    }
+
     public String spanId() {
         return generateId();
     }

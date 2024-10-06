@@ -18,6 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.MDC_SESSION_ID_KEY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.MDC_SPAN_ID_KEY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.MDC_TRACE_ID_KEY;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +32,7 @@ import java.util.stream.Stream;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +42,7 @@ import org.springframework.jms.core.MessageCreator;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import se.inera.intyg.intygstjanst.logging.MdcHelper;
 import se.inera.intyg.intygstjanst.persistence.model.dao.PopulateProcessedRepository;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.PopulateLoaderService;
@@ -56,6 +62,9 @@ public class PopulateLoaderServiceImpl implements PopulateLoaderService {
     PopulateService service;
 
     @Autowired
+    MdcHelper mdcHelper;
+
+    @Autowired
     PopulateProcessedRepository processedRepository;
 
     @Autowired
@@ -72,6 +81,17 @@ public class PopulateLoaderServiceImpl implements PopulateLoaderService {
     @Scheduled(cron = "${populate.loader.cron:-}")
     @SchedulerLock(name = POPULATE_SHEDLOCK_JOB_NAME)
     public void populate() {
+        try {
+            MDC.put(MDC_TRACE_ID_KEY, mdcHelper.traceId());
+            MDC.put(MDC_SPAN_ID_KEY, mdcHelper.spanId());
+
+            executeJob();
+        } finally {
+            MDC.clear();
+        }
+    }
+
+    private void executeJob() {
         if (countPendingMessages() == 0) {
             LOG.info("No IDs on queue: Starting populate loader run with batch size: " + batchSize + " and splitting into "
                 + NR_OF_BATCHES + " batches.");

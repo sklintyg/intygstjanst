@@ -18,6 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.service.repo;
 
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.MDC_SPAN_ID_KEY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.MDC_TRACE_ID_KEY;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -32,10 +35,13 @@ import java.util.Set;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
+import se.inera.intyg.intygstjanst.logging.MdcHelper;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
@@ -58,6 +64,8 @@ public class RecipientRepoImpl implements RecipientRepo {
     @Value("${recipient.file}")
     private String recipientFile;
 
+    @Autowired
+    private MdcHelper mdcHelper;
 
     /**
      * Initial setup of the in-memory database.
@@ -116,6 +124,17 @@ public class RecipientRepoImpl implements RecipientRepo {
 
     @Scheduled(cron = "${recipients.update.cron}")
     public void update() {
+        try {
+            MDC.put(MDC_TRACE_ID_KEY, mdcHelper.traceId());
+            MDC.put(MDC_SPAN_ID_KEY, mdcHelper.spanId());
+
+            executeJob();
+        } finally {
+            MDC.clear();
+        }
+    }
+
+    private void executeJob() {
         LOG.info("Performing scheduled recipient update.");
         ObjectMapper objectMapper = new ObjectMapper();
 

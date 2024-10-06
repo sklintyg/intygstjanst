@@ -60,6 +60,12 @@ class MdcHelperTest {
       final var result = mdcHelper.traceId(httpServletRequest);
       assertNotNull(result);
     }
+
+    @Test
+    void shouldGeneratetraceId() {
+      final var result = mdcHelper.traceId();
+      assertNotNull(result);
+    }
   }
 
   @Nested
