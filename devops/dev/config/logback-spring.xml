@@ -4,8 +4,6 @@
 
   <include resource="logback/logback-spring-base.xml"/>
 
-  <logger level="WARN" name="org.apache.cxf"/>
-
   <root level="INFO">
     <appender-ref ref="ECS_JSON_CONSOLE"/>
   </root>
