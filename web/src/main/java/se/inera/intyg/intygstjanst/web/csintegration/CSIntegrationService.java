@@ -21,11 +21,12 @@ package se.inera.intyg.intygstjanst.web.csintegration;
 
 import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_SESSION_ID_HEADER;
 import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_TRACE_ID_HEADER;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.*;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SESSION_ID_KEY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.TRACE_ID_KEY;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -39,6 +40,7 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesR
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
 
 @Service
+@RequiredArgsConstructor
 public class CSIntegrationService {
 
     private static final String CITIZEN_ENDPOINT_URL = "/api/citizen/certificate";
@@ -47,11 +49,10 @@ public class CSIntegrationService {
     private static final String INTERNAL_CERTIFICATE_METADATA_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/metadata";
     private static final String INTERNAL_CERTIFICATE_EXISTS_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/exists";
 
-    @Value("${certificateservice.base.url}")
-    private String baseUrl;
+    private final RestClient csRestClient;
 
     public List<Certificate> getCitizenCertificates(GetCitizenCertificatesRequest request) {
-        final var response = RestClient.create(baseUrl)
+        final var response = csRestClient
             .post()
             .uri(CITIZEN_ENDPOINT_URL)
             .body(request)
@@ -69,7 +70,7 @@ public class CSIntegrationService {
     }
 
     public GetCertificateXmlResponse getCertificateXmlResponse(String certificateId) {
-        return RestClient.create(baseUrl)
+        return csRestClient
             .post()
             .uri(INTERNALAPI_CERTIFICATE_XML_ENDPOINT_URL, certificateId)
             .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
@@ -80,7 +81,7 @@ public class CSIntegrationService {
     }
 
     public GetMessageXmlResponse getMessageXmlResponse(String messageId) {
-        return RestClient.create(baseUrl)
+        return csRestClient
             .post()
             .uri(INTERNAL_MESSAGE_XML_ENDPOINT_URL, messageId)
             .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
@@ -91,7 +92,7 @@ public class CSIntegrationService {
     }
 
     public boolean certificateExists(String certificateId) {
-        final var response = RestClient.create(baseUrl)
+        final var response = csRestClient
             .get()
             .uri(INTERNAL_CERTIFICATE_EXISTS_ENDPOINT_URL, certificateId)
             .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
@@ -109,7 +110,7 @@ public class CSIntegrationService {
     }
 
     public CertificateMetadata getCertificateMetadata(String certificateId) {
-        final var response = RestClient.create(baseUrl)
+        final var response = csRestClient
             .get()
             .uri(INTERNAL_CERTIFICATE_METADATA_ENDPOINT_URL, certificateId)
             .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
