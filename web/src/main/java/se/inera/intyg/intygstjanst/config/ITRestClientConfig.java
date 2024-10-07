@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 
 @Configuration
-public class RestClientConfig {
+public class ITRestClientConfig {
 
     @Value("${certificateservice.base.url}")
     private String baseUrl;
