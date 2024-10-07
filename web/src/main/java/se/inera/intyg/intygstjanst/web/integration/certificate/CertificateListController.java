@@ -58,7 +58,7 @@ public class CertificateListController {
     @Path("/certificates/doctor")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PerformanceLogging(eventType = "list-certificates", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public CertificateListResponse listCertificatesForDoctor(@RequestBody CertificateListRequest parameters) {
         return certificateListService.listCertificatesForDoctor(parameters);
     }

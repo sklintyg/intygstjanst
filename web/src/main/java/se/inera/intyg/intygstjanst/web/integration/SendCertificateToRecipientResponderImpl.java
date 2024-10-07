@@ -53,7 +53,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventType = "send-certificate", eventAction = MdcLogConstants.EVENT_TYPE_CHANGE)
+    @PerformanceLogging(eventAction = "send-certificate", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SendCertificateToRecipientResponseType sendCertificateToRecipient(
         final String logicalAddress, final SendCertificateToRecipientType request) {
 

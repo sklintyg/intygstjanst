@@ -56,7 +56,7 @@ public class TypedCertificateController {
     @Path("/diagnosed/unit")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PerformanceLogging(eventType = "list-certificates", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public List<DiagnosedCertificate> listDiagnosedCertificatesForCareUnit(@RequestBody TypedCertificateRequest parameters) {
         var units = parameters.getUnitIds();
 
@@ -76,7 +76,7 @@ public class TypedCertificateController {
     @Path("/doctors")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PerformanceLogging(eventType = "list-doctors", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "list-doctors", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public List<String> listDoctorsForCareUnit(@RequestBody TypedCertificateRequest parameters) {
         var units = parameters.getUnitIds();
 
@@ -95,7 +95,7 @@ public class TypedCertificateController {
     @Path("/diagnosed/person")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PerformanceLogging(eventType = "list-certificates", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public List<DiagnosedCertificate> listDiagnosedCertificatesForCitizen(@RequestBody TypedCertificateRequest parameters) {
         var optionalPersonnummer = Personnummer.createPersonnummer(parameters.getPersonId());
 
@@ -115,7 +115,7 @@ public class TypedCertificateController {
     @Path("/sickleave/person")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PerformanceLogging(eventType = "list-certificates", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public List<SickLeaveCertificate> listSickLeaveCertificatesForCitizen(@RequestBody TypedCertificateRequest parameters) {
         var optionalPersonnummer = Personnummer.createPersonnummer(parameters.getPersonId());
 

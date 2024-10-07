@@ -59,7 +59,7 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventType = "set-certificate-status", eventAction = MdcLogConstants.EVENT_TYPE_CHANGE)
+    @PerformanceLogging(eventAction = "set-certificate-status", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SetCertificateStatusResponseType setCertificateStatus(AttributedURIType logicalAddress,
         SetCertificateStatusRequestType request) {
 

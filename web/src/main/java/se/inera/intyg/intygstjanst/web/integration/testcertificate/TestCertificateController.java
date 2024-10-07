@@ -46,7 +46,7 @@ public class TestCertificateController {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/erase")
-    @PerformanceLogging(eventType = "erase-test-certificate", eventAction = MdcLogConstants.EVENT_TYPE_DELETION)
+    @PerformanceLogging(eventAction = "erase-test-certificate", eventType = MdcLogConstants.EVENT_TYPE_DELETION)
     public Response eraseTestCertificates(@RequestBody TestCertificateEraseRequest eraseRequest) {
 
         if (eraseRequest.getTo() == null) {

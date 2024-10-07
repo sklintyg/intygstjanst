@@ -67,7 +67,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventType = "send-certificate", eventAction = MdcLogConstants.EVENT_TYPE_CHANGE)
+    @PerformanceLogging(eventAction = "send-certificate", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SendMedicalCertificateResponseType sendMedicalCertificate(
         final AttributedURIType logicalAddress, final SendMedicalCertificateRequestType request) {
 

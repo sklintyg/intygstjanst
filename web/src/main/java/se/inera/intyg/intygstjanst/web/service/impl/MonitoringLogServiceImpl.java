@@ -38,8 +38,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     public void logCertificateRegistered(String certificateId, String certificateType, String careUnit) {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.CERTIFICATE_REGISTERED))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_REGISTERED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
@@ -53,8 +53,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     public void logCertificateRetrieved(String certificateId, String certificateType, String careUnit, String partId) {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.CERTIFICATE_RETRIEVED))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_ACCESSED)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_RETRIEVED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_ACCESSED)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
@@ -70,8 +70,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
         String recipient) {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.CERTIFICATE_SENT))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_CHANGE)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_SENT))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CHANGE)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
@@ -86,8 +86,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     public void logCertificateRevoked(String certificateId, String certificateType, String careUnit) {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.CERTIFICATE_REVOKED))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_DELETION)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_REVOKED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_DELETION)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
@@ -101,8 +101,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     public void logCertificateRevokeSent(String certificateId, String certificateType, String careUnit, String recipientId) {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.CERTIFICATE_REVOKE_SENT))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_CHANGE)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_REVOKE_SENT))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CHANGE)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
@@ -118,8 +118,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
         final var hashedCitizenId = Personnummer.getPersonnummerHashSafe(citizenId);
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.CERTIFICATE_LISTED_BY_CITIZEN))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_ACCESSED)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_LISTED_BY_CITIZEN))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_ACCESSED)
                 .put(MdcLogConstants.USER_ID, hashedCitizenId)
                 .build()
         ) {
@@ -132,8 +132,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
         final var hashedCitizenId = Personnummer.getPersonnummerHashSafe(citizenId);
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.CERTIFICATE_LISTED_BY_CARE))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_ACCESSED)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_LISTED_BY_CARE))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_ACCESSED)
                 .put(MdcLogConstants.USER_ID, hashedCitizenId)
                 .build()
         ) {
@@ -145,8 +145,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     public void logCertificateStatusChanged(String certificateId, String status) {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.CERTIFICATE_STATUS_CHANGED))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_CHANGE)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_STATUS_CHANGED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CHANGE)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
                 .build()
         ) {
@@ -158,8 +158,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     public void logStatisticsCreated(String certificateId, String certificateType, String careUnit) {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.STATISTICS_CREATED))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.STATISTICS_CREATED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
@@ -173,8 +173,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     public void logStatisticsSent(String certificateId, String certificateType, String careUnit, String recipient) {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.STATISTICS_SENT))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.STATISTICS_SENT))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
@@ -189,8 +189,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     public void logStatisticsRevoked(String certificateId, String certificateType, String careUnit) {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.STATISTICS_REVOKED))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.STATISTICS_REVOKED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
@@ -204,9 +204,10 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     public void logStatisticsMessageSent(String certificateId, String topic) {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.STATISTICS_MESSAGE_SENT))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.STATISTICS_MESSAGE_SENT))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
+                .put(MdcLogConstants.EVENT_MESSAGE_TOPIC, topic)
                 .build()
         ) {
             logEvent(MonitoringEvent.STATISTICS_MESSAGE_SENT, topic, certificateId);
@@ -217,8 +218,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     public void logSendMessageToCareReceived(String certificateId, String careUnit) {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.SEND_MESSAGE_TO_CARE_RECEIVED))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.SEND_MESSAGE_TO_CARE_RECEIVED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
                 .build()
@@ -231,8 +232,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     public void logSendMessageToRecipient(String certificateId, String recipient) {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.SEND_MESSAGE_TO_RECIPIENT))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.SEND_MESSAGE_TO_RECIPIENT))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
                 .put(MdcLogConstants.EVENT_RECIPIENT, recipient)
                 .build()
@@ -245,8 +246,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     public void logApprovedReceiversRegistered(String receivers, String certificateId) {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.APPROVED_RECEIVER_REGISTERED))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.APPROVED_RECEIVER_REGISTERED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
                 .build()
         ) {
@@ -258,8 +259,8 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
     public void logTestCertificateErased(String certificateId, String careUnit) {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
-                .put(MdcLogConstants.EVENT_TYPE, toEventType(MonitoringEvent.TEST_CERTIFICATE_ERASED))
-                .put(MdcLogConstants.EVENT_ACTION, MdcLogConstants.EVENT_TYPE_DELETION)
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.TEST_CERTIFICATE_ERASED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_DELETION)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
                 .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
                 .build()

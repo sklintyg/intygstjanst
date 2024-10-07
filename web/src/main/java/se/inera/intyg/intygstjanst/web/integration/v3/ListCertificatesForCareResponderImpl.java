@@ -65,7 +65,7 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventType = "list-certificate", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "list-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public ListCertificatesForCareResponseType listCertificatesForCare(String logicalAddress, ListCertificatesForCareType parameters) {
         ListCertificatesForCareResponseType response = new ListCertificatesForCareResponseType();
         response.setIntygsLista(new ListaType());

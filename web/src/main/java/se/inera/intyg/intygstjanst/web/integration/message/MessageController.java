@@ -45,7 +45,7 @@ public class MessageController {
     @Path("/{certificateId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PerformanceLogging(eventType = "retrieve-messages", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "retrieve-messages", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public Response findMessagesByCertificateId(@PathParam("certificateId") String certificateId) {
         if (certificateId == null || certificateId.trim().isEmpty()) {
             return Response.status(400, "Missing certificateId").build();

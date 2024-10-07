@@ -72,7 +72,7 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventType = "revoke-certificate", eventAction = MdcLogConstants.EVENT_TYPE_DELETION)
+    @PerformanceLogging(eventAction = "revoke-certificate", eventType = MdcLogConstants.EVENT_TYPE_DELETION)
     public RevokeCertificateResponseType revokeCertificate(String logicalAddress, RevokeCertificateType request) {
         RevokeCertificateResponseType response = new RevokeCertificateResponseType();
 

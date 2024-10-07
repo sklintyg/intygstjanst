@@ -50,7 +50,7 @@ public class RekoController {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PerformanceLogging(eventType = "create-reko-status", eventAction = MdcLogConstants.EVENT_TYPE_CREATION)
+    @PerformanceLogging(eventAction = "create-reko-status", eventType = MdcLogConstants.EVENT_TYPE_CREATION)
     public RekoStatusDTO createRekoStatus(@RequestBody CreateRekoStatusRequestDTO request) {
         return createRekoStatusService.create(
             request.patientId,
@@ -69,7 +69,7 @@ public class RekoController {
     @Path("/patient")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PerformanceLogging(eventType = "retrieve-reko-status", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "retrieve-reko-status", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public RekoStatusDTO getRekoStatus(@RequestBody GetRekoStatusRequestDTO request) {
         return getRekoStatusService.get(
             request.getPatientId(),

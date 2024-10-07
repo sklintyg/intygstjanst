@@ -58,7 +58,7 @@ public class ListRelationsForCertificateResponderImpl implements ListRelationsFo
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventType = "list-certificate-relations", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "list-certificate-relations", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public ListRelationsForCertificateResponseType listRelationsForCertificate(String logicalAddress,
         ListRelationsForCertificateType listRelationsForCertificateType) {
         long start = System.currentTimeMillis();

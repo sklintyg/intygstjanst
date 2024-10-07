@@ -48,7 +48,7 @@ public class IntygInfoController {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PerformanceLogging(eventType = "retrieve-certificate-info", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "retrieve-certificate-info", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public Response getIntygInfo(@PathParam("id") String id) {
 
         Optional<ItIntygInfo> intygInfo = intygInfoService.getIntygInfo(id);
@@ -64,7 +64,7 @@ public class IntygInfoController {
     @GET
     @Path("/{hsaId}/count")
     @Produces(MediaType.APPLICATION_JSON)
-    @PerformanceLogging(eventType = "retrieve-certificate-count", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "retrieve-certificate-count", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public Long getCertificateCountForCareProvider(@PathParam("hsaId") String hsaId) {
         return intygInfoService.getCertificateCount(hsaId);
     }

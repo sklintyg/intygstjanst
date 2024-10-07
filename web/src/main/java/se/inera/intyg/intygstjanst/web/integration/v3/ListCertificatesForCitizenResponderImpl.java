@@ -69,7 +69,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventType = "list-certificate", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "list-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public ListCertificatesForCitizenResponseType listCertificatesForCitizen(String logicalAddress,
         ListCertificatesForCitizenType parameters) {
 

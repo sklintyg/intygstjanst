@@ -44,7 +44,7 @@ public class ListCertificatesResponderImpl implements ListCertificatesResponderI
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventType = "list-certificates", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public ListCertificatesResponseType listCertificates(AttributedURIType logicalAddress, ListCertificatesRequestType parameters) {
 
         ListCertificatesResponseType response = new ListCertificatesResponseType();

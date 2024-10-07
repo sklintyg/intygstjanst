@@ -53,7 +53,7 @@ public class GetRecipientsForCertificateResponderImpl implements GetRecipientsFo
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventType = "list-certificate-recipients", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "list-certificate-recipients", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public GetRecipientsForCertificateResponseType getRecipientsForCertificate(String logicalAddress,
         GetRecipientsForCertificateType request) {
 

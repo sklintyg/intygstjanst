@@ -91,7 +91,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventType = "register-certificate", eventAction = MdcLogConstants.EVENT_TYPE_CREATION)
+    @PerformanceLogging(eventAction = "register-certificate", eventType = MdcLogConstants.EVENT_TYPE_CREATION)
     public RegisterCertificateResponseType registerCertificate(String logicalAddress, RegisterCertificateType registerCertificate) {
         try {
             final String intygsTyp = getIntygsTyp(registerCertificate);

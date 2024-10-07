@@ -68,7 +68,7 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventType = "list-sick-leaves", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "list-sick-leaves", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public ListSickLeavesForCareResponseType listSickLeavesForCare(String logicalAddress, ListSickLeavesForCareType params) {
 
         ListSickLeavesForCareResponseType responseType = new ListSickLeavesForCareResponseType();

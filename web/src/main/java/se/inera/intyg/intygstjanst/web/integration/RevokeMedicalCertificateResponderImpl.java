@@ -74,7 +74,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
     @Transactional
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventType = "revoke-certificate", eventAction = MdcLogConstants.EVENT_TYPE_DELETION)
+    @PerformanceLogging(eventAction = "revoke-certificate", eventType = MdcLogConstants.EVENT_TYPE_DELETION)
     public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress,
         RevokeMedicalCertificateRequestType request) {
 

@@ -61,7 +61,7 @@ public class SickLeaveController {
     @Path("/active")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PerformanceLogging(eventType = "list-sick-leaves", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "list-sick-leaves", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public Response getActiveSickLeavesForCareUnit(@RequestBody SickLeaveRequestDTO sickLeaveRequestDTO) {
         final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var sjukfallEnhetList = getSickLeavesService.get(
@@ -93,7 +93,7 @@ public class SickLeaveController {
     @Path("/filters")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PerformanceLogging(eventType = "list-sick-leaves-filter", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "list-sick-leaves-filter", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public Response populateFilters(@RequestBody PopulateFiltersRequestDTO populateFiltersRequestDTO) {
         final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var getSickLeaveFilterServiceResponse = getSickLeaveFilterService.get(

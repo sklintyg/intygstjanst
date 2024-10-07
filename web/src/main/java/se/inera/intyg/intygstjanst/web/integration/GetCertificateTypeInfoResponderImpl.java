@@ -41,7 +41,7 @@ public class GetCertificateTypeInfoResponderImpl implements GetCertificateTypeIn
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventType = "retrieve-certificate-type-info", eventAction = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "retrieve-certificate-type-info", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public GetCertificateTypeInfoResponseType getCertificateTypeInfo(String logicalAddress, GetCertificateTypeInfoType request) {
 
         if (isNullOrEmpty(request)) {
