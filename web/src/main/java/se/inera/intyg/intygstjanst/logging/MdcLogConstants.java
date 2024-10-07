@@ -35,6 +35,7 @@ public class MdcLogConstants {
     public static final String EVENT_DURATION = "event.duration";
     public static final String EVENT_CLASS = "event.class";
     public static final String EVENT_METHOD = "event.method";
+    public static final String EVENT_OUTCOME = "event.outcome";
     public static final String EVENT_CERTIFICATE_ID = "event.certificate.id";
     public static final String EVENT_CERTIFICATE_TYPE = "event.certificate.type";
     public static final String EVENT_CERTIFICATE_CARE_UNIT_ID = "event.certificate.care_unit.id";
