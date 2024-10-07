@@ -21,7 +21,9 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.infra.monitoring.logging.LogMarkers;
+import se.inera.intyg.intygstjanst.logging.LogMarkers;
+import se.inera.intyg.intygstjanst.logging.MdcCloseableMap;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
@@ -34,83 +36,237 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
 
     @Override
     public void logCertificateRegistered(String certificateId, String certificateType, String careUnit) {
-        logEvent(MonitoringEvent.CERTIFICATE_REGISTERED, certificateId, certificateType, careUnit);
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_REGISTERED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.CERTIFICATE_REGISTERED, certificateId, certificateType, careUnit);
+        }
     }
 
     @Override
     public void logCertificateRetrieved(String certificateId, String certificateType, String careUnit, String partId) {
-        logEvent(MonitoringEvent.CERTIFICATE_RETRIEVED, certificateId, certificateType, careUnit, partId);
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_RETRIEVED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_ACCESSED)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
+                .put(MdcLogConstants.EVENT_PART_ID, partId)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.CERTIFICATE_RETRIEVED, certificateId, certificateType, careUnit, partId);
+        }
     }
 
     @Override
     public void logCertificateSent(String certificateId, String certificateType, String careUnit,
         String recipient) {
-        logEvent(MonitoringEvent.CERTIFICATE_SENT, certificateId, certificateType, careUnit, recipient);
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_SENT))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CHANGE)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
+                .put(MdcLogConstants.EVENT_RECIPIENT, recipient)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.CERTIFICATE_SENT, certificateId, certificateType, careUnit, recipient);
+        }
     }
 
     @Override
     public void logCertificateRevoked(String certificateId, String certificateType, String careUnit) {
-        logEvent(MonitoringEvent.CERTIFICATE_REVOKED, certificateId, certificateType, careUnit);
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_REVOKED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_DELETION)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.CERTIFICATE_REVOKED, certificateId, certificateType, careUnit);
+        }
     }
 
     @Override
     public void logCertificateRevokeSent(String certificateId, String certificateType, String careUnit, String recipientId) {
-        logEvent(MonitoringEvent.CERTIFICATE_REVOKE_SENT, certificateId, certificateType, careUnit, recipientId);
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_REVOKE_SENT))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CHANGE)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
+                .put(MdcLogConstants.EVENT_RECIPIENT, recipientId)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.CERTIFICATE_REVOKE_SENT, certificateId, certificateType, careUnit, recipientId);
+        }
     }
 
     @Override
     public void logCertificateListedByCitizen(Personnummer citizenId) {
-        logEvent(MonitoringEvent.CERTIFICATE_LISTED_BY_CITIZEN, Personnummer.getPersonnummerHashSafe(citizenId));
+        final var hashedCitizenId = Personnummer.getPersonnummerHashSafe(citizenId);
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_LISTED_BY_CITIZEN))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_ACCESSED)
+                .put(MdcLogConstants.USER_ID, hashedCitizenId)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.CERTIFICATE_LISTED_BY_CITIZEN, hashedCitizenId);
+        }
     }
 
     @Override
     public void logCertificateListedByCare(Personnummer citizenId) {
-        logEvent(MonitoringEvent.CERTIFICATE_LISTED_BY_CARE, Personnummer.getPersonnummerHashSafe(citizenId));
+        final var hashedCitizenId = Personnummer.getPersonnummerHashSafe(citizenId);
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_LISTED_BY_CARE))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_ACCESSED)
+                .put(MdcLogConstants.USER_ID, hashedCitizenId)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.CERTIFICATE_LISTED_BY_CARE, hashedCitizenId);
+        }
     }
 
     @Override
     public void logCertificateStatusChanged(String certificateId, String status) {
-        logEvent(MonitoringEvent.CERTIFICATE_STATUS_CHANGED, certificateId, status);
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_STATUS_CHANGED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CHANGE)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.CERTIFICATE_STATUS_CHANGED, certificateId, status);
+        }
     }
 
     @Override
     public void logStatisticsCreated(String certificateId, String certificateType, String careUnit) {
-        logEvent(MonitoringEvent.STATISTICS_CREATED, certificateId, certificateType, careUnit);
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.STATISTICS_CREATED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.STATISTICS_CREATED, certificateId, certificateType, careUnit);
+        }
     }
 
     @Override
     public void logStatisticsSent(String certificateId, String certificateType, String careUnit, String recipient) {
-        logEvent(MonitoringEvent.STATISTICS_SENT, certificateId, certificateType, careUnit, recipient);
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.STATISTICS_SENT))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
+                .put(MdcLogConstants.EVENT_RECIPIENT, recipient)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.STATISTICS_SENT, certificateId, certificateType, careUnit, recipient);
+        }
     }
 
     @Override
     public void logStatisticsRevoked(String certificateId, String certificateType, String careUnit) {
-        logEvent(MonitoringEvent.STATISTICS_REVOKED, certificateId, certificateType, careUnit);
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.STATISTICS_REVOKED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_TYPE, certificateType)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.STATISTICS_REVOKED, certificateId, certificateType, careUnit);
+        }
     }
 
     @Override
     public void logStatisticsMessageSent(String certificateId, String topic) {
-        logEvent(MonitoringEvent.STATISTICS_MESSAGE_SENT, topic, certificateId);
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.STATISTICS_MESSAGE_SENT))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
+                .put(MdcLogConstants.EVENT_MESSAGE_TOPIC, topic)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.STATISTICS_MESSAGE_SENT, topic, certificateId);
+        }
     }
 
     @Override
-    public void logSendMessageToCareReceived(String intygsId, String careUnit) {
-        logEvent(MonitoringEvent.SEND_MESSAGE_TO_CARE_RECEIVED, intygsId, careUnit);
+    public void logSendMessageToCareReceived(String certificateId, String careUnit) {
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.SEND_MESSAGE_TO_CARE_RECEIVED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.SEND_MESSAGE_TO_CARE_RECEIVED, certificateId, careUnit);
+        }
     }
 
     @Override
-    public void logSendMessageToRecipient(String intygsId, String recipient) {
-        logEvent(MonitoringEvent.SEND_MESSAGE_TO_RECIPIENT, intygsId, recipient);
+    public void logSendMessageToRecipient(String certificateId, String recipient) {
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.SEND_MESSAGE_TO_RECIPIENT))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
+                .put(MdcLogConstants.EVENT_RECIPIENT, recipient)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.SEND_MESSAGE_TO_RECIPIENT, certificateId, recipient);
+        }
     }
 
     @Override
-    public void logApprovedReceiversRegistered(String receivers, String intygsId) {
-        logEvent(MonitoringEvent.APPROVED_RECEIVER_REGISTERED, receivers, intygsId);
+    public void logApprovedReceiversRegistered(String receivers, String certificateId) {
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.APPROVED_RECEIVER_REGISTERED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_CREATION)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.APPROVED_RECEIVER_REGISTERED, receivers, certificateId);
+        }
     }
 
     @Override
     public void logTestCertificateErased(String certificateId, String careUnit) {
-        logEvent(MonitoringEvent.TEST_CERTIFICATE_ERASED, certificateId, careUnit);
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.TEST_CERTIFICATE_ERASED))
+                .put(MdcLogConstants.EVENT_TYPE, MdcLogConstants.EVENT_TYPE_DELETION)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
+                .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
+                .build()
+        ) {
+            logEvent(MonitoringEvent.TEST_CERTIFICATE_ERASED, certificateId, careUnit);
+        }
     }
 
     private void logEvent(MonitoringEvent logEvent, Object... logMsgArgs) {
@@ -119,6 +275,10 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
         logMsg.append(logEvent.name()).append(SPACE).append(logEvent.getMessage());
 
         LOG.info(LogMarkers.MONITORING, logMsg.toString(), logMsgArgs);
+    }
+
+    private String toEventType(MonitoringEvent monitoringEvent) {
+        return monitoringEvent.name().toLowerCase().replace("_", "-");
     }
 
     private enum MonitoringEvent {

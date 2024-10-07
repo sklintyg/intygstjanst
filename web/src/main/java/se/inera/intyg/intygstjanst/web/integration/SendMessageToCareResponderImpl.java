@@ -26,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator;
@@ -61,6 +63,7 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
 
     @Override
     @PrometheusTimeMethod
+    @PerformanceLogging(eventAction = "send-messsage-to-care", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SendMessageToCareResponseType sendMessageToCare(String logicalAddress, SendMessageToCareType parameters) {
         List<String> validationErrors = validator.validateSendMessageToCare(parameters);
         if (!validationErrors.isEmpty()) {

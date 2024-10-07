@@ -20,26 +20,31 @@
 package se.inera.intyg.intygstjanst.web.csintegration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_SESSION_ID_HEADER;
+import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_TRACE_ID_HEADER;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SESSION_ID_KEY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.TRACE_ID_KEY;
 
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpEntity;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.client.RestClientException;
+import org.slf4j.MDC;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClient.RequestBodyUriSpec;
+import org.springframework.web.client.RestClient.RequestHeadersUriSpec;
+import org.springframework.web.client.RestClient.ResponseSpec;
 import org.springframework.web.client.RestTemplate;
 import se.inera.intyg.common.support.facade.model.Certificate;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
@@ -49,245 +54,220 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlRespon
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
-import se.inera.intyg.intygstjanst.web.service.dto.RecipientDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.UnitDTO;
 
 @ExtendWith(MockitoExtension.class)
 class CSIntegrationServiceTest {
 
     private static final List<Certificate> CITIZEN_CERTIFICATES = List.of(new Certificate());
     private static final GetCitizenCertificatesRequest GET_CITIZEN_CERTIFICATES_REQUEST = GetCitizenCertificatesRequest.builder().build();
-    private static final GetCitizenCertificatesResponse GET_CITIZEN_CERTIFICATES_RESPONSE = GetCitizenCertificatesResponse.builder()
-        .citizenCertificates(CITIZEN_CERTIFICATES)
-        .build();
 
     @Mock
     private RestTemplate restTemplate;
+    @Mock
+    private RestClient restClient;
     @InjectMocks
     private CSIntegrationService csIntegrationService;
 
     @Nested
     class GetCitizenCertificatesTest {
 
-        @Test
-        void shouldPreformPostUsingRequest() {
-            when(restTemplate.postForObject(anyString(), any(), any()))
-                .thenReturn(GET_CITIZEN_CERTIFICATES_RESPONSE);
-            final var captor = ArgumentCaptor.forClass(GetCitizenCertificatesRequest.class);
+        private RequestBodyUriSpec requestBodyUriSpec;
+        private ResponseSpec responseSpec;
 
-            csIntegrationService.getCitizenCertificates(GET_CITIZEN_CERTIFICATES_REQUEST);
-            verify(restTemplate).postForObject(anyString(), captor.capture(), any());
+        @BeforeEach
+        void setUp() {
+            requestBodyUriSpec = mock(RestClient.RequestBodyUriSpec.class);
+            responseSpec = mock(RestClient.ResponseSpec.class);
 
-            assertEquals(GET_CITIZEN_CERTIFICATES_REQUEST, captor.getValue());
+            MDC.put(TRACE_ID_KEY, "traceId");
+            MDC.put(SESSION_ID_KEY, "sessionId");
+
+            when(restClient.post()).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.uri(eq("/api/citizen/certificate"))).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_TRACE_ID_HEADER, "traceId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.body(any(GetCitizenCertificatesRequest.class))).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.contentType(MediaType.APPLICATION_JSON)).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.retrieve()).thenReturn(responseSpec);
         }
 
         @Test
-        void shouldReturnListOfCitizenCertificate() {
-            when(restTemplate.postForObject(anyString(), any(), any()))
-                .thenReturn(GET_CITIZEN_CERTIFICATES_RESPONSE);
-            final var response = csIntegrationService.getCitizenCertificates(GET_CITIZEN_CERTIFICATES_REQUEST);
+        void shallReturnGetCitizenCertificatesResponse() {
+            final var expectedResponse = GetCitizenCertificatesResponse.builder()
+                .citizenCertificates(CITIZEN_CERTIFICATES)
+                .build();
 
-            assertEquals(CITIZEN_CERTIFICATES, response);
+            doReturn(expectedResponse).when(responseSpec).body(GetCitizenCertificatesResponse.class);
+
+            final var actualResponse = csIntegrationService.getCitizenCertificates(GET_CITIZEN_CERTIFICATES_REQUEST);
+
+            assertEquals(expectedResponse.getCitizenCertificates(), actualResponse);
         }
 
         @Test
         void shallThrowIfResponseIsNull() {
-            when(restTemplate.postForObject(anyString(), any(), any()))
-                .thenReturn(null);
+            doReturn(null).when(responseSpec).body(GetCitizenCertificatesResponse.class);
 
-            assertThrows(IllegalStateException.class,
-                () -> csIntegrationService.getCitizenCertificates(GET_CITIZEN_CERTIFICATES_REQUEST));
-        }
-
-        @Test
-        void shouldSetUrlCorrect() {
-            ReflectionTestUtils.setField(csIntegrationService, "baseUrl", "baseUrl");
-            final var captor = ArgumentCaptor.forClass(String.class);
-
-            when(restTemplate.postForObject(anyString(), any(), any()))
-                .thenReturn(GET_CITIZEN_CERTIFICATES_RESPONSE);
-
-            csIntegrationService.getCitizenCertificates(GET_CITIZEN_CERTIFICATES_REQUEST);
-            verify(restTemplate).postForObject(captor.capture(), any(), any());
-
-            assertEquals("baseUrl/api/citizen/certificate", captor.getValue());
+            assertThrows(IllegalStateException.class, () -> csIntegrationService.getCitizenCertificates(GET_CITIZEN_CERTIFICATES_REQUEST));
         }
     }
 
     @Nested
     class GetMessageXmlResponseTests {
 
-        private static final String MESSAGE_ID = "messageId";
-        private static final String ENCODED_XML = "xmlFromCertificateService";
+        private RequestBodyUriSpec requestBodyUriSpec;
+        private ResponseSpec responseSpec;
 
-        @Test
-        void shouldReturnFetchedObjectOnSuccessfulRequest() {
-            final var expectedResponse = GetMessageXmlResponse.builder()
-                .xml(ENCODED_XML)
-                .build();
-            when(restTemplate.postForObject(anyString(), eq(HttpEntity.EMPTY), eq(GetMessageXmlResponse.class), eq(MESSAGE_ID)))
-                .thenReturn(expectedResponse);
+        @BeforeEach
+        void setUp() {
+            requestBodyUriSpec = mock(RestClient.RequestBodyUriSpec.class);
+            responseSpec = mock(RestClient.ResponseSpec.class);
 
-            final var actualResponse = csIntegrationService.getMessageXmlResponse(MESSAGE_ID);
+            MDC.put(TRACE_ID_KEY, "traceId");
+            MDC.put(SESSION_ID_KEY, "sessionId");
 
-            assertEquals(expectedResponse, actualResponse);
+            when(restClient.post()).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.uri("/internalapi/message/{messageId}/xml", "messageId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_TRACE_ID_HEADER, "traceId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.contentType(MediaType.APPLICATION_JSON)).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.retrieve()).thenReturn(responseSpec);
         }
 
         @Test
-        void shouldThrowRestClientExceptioWhenRequestFails() {
-            when(restTemplate.postForObject(anyString(), eq(HttpEntity.EMPTY), eq(GetMessageXmlResponse.class), eq(MESSAGE_ID)))
-                .thenThrow(RestClientException.class);
-            assertThrows(RestClientException.class, () -> csIntegrationService.getMessageXmlResponse(MESSAGE_ID));
+        void shallReturnGetCitizenCertificatesResponse() {
+            final var expectedResponse = GetMessageXmlResponse.builder()
+                .xml("xmlFromCertificateService")
+                .build();
+
+            doReturn(expectedResponse).when(responseSpec).body(GetMessageXmlResponse.class);
+
+            final var actualResponse = csIntegrationService.getMessageXmlResponse("messageId");
+
+            assertEquals(expectedResponse, actualResponse);
         }
     }
 
     @Nested
     class GetCertificateXmlResponseTests {
 
-        private static final String CERTIFICATE_ID = "certificateId";
-        private static final String CERTIFICATE_TYPE = "fk7211";
-        private static final String UNIT_ID = "unitId";
-        private static final String RECIPIENT_ID = "recipientId";
-        private static final String ENCODED_XML = "xmlFromCertificateService";
+        private RequestBodyUriSpec requestBodyUriSpec;
+        private ResponseSpec responseSpec;
 
-        @Test
-        void shouldReturnFetchedObjectOnSuccessfulRequest() {
-            final var expectedResponse = GetCertificateXmlResponse.builder()
-                .certificateId(CERTIFICATE_ID)
-                .certificateType(CERTIFICATE_TYPE)
-                .unit(
-                    UnitDTO.builder()
-                        .unitId(UNIT_ID)
-                        .build()
-                )
-                .recipient(RecipientDTO.builder()
-                    .id(RECIPIENT_ID)
-                    .build())
-                .xml(ENCODED_XML)
-                .build();
-            when(restTemplate.postForObject(anyString(), eq(HttpEntity.EMPTY), eq(GetCertificateXmlResponse.class), eq(CERTIFICATE_ID)))
-                .thenReturn(expectedResponse);
+        @BeforeEach
+        void setUp() {
+            requestBodyUriSpec = mock(RestClient.RequestBodyUriSpec.class);
+            responseSpec = mock(RestClient.ResponseSpec.class);
 
-            final var actualResponse = csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID);
+            MDC.put(TRACE_ID_KEY, "traceId");
+            MDC.put(SESSION_ID_KEY, "sessionId");
 
-            assertEquals(expectedResponse, actualResponse);
+            when(restClient.post()).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.uri("/internalapi/certificate/{certificateId}/xml", "certificateId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_TRACE_ID_HEADER, "traceId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.contentType(MediaType.APPLICATION_JSON)).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.retrieve()).thenReturn(responseSpec);
         }
 
         @Test
-        void shouldThrowRestClientExceptioWhenRequestFails() {
-            when(restTemplate.postForObject(anyString(), eq(HttpEntity.EMPTY), eq(GetCertificateXmlResponse.class), eq(CERTIFICATE_ID)))
-                .thenThrow(RestClientException.class);
-            assertThrows(RestClientException.class, () -> csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID));
+        void shallReturnGetCitizenCertificatesResponse() {
+            final var expectedResponse = GetCertificateXmlResponse.builder()
+                .xml("xmlFromCertificateService")
+                .build();
+
+            doReturn(expectedResponse).when(responseSpec).body(GetCertificateXmlResponse.class);
+
+            final var actualResponse = csIntegrationService.getCertificateXmlResponse("certificateId");
+
+            assertEquals(expectedResponse, actualResponse);
         }
     }
 
     @Nested
     class GetCertificateExistsResponseTests {
 
-        private static final String CERTIFICATE_ID = "certificateId";
+        private RequestHeadersUriSpec requestBodyUriSpec;
+        private ResponseSpec responseSpec;
+
+        @BeforeEach
+        void setUp() {
+            requestBodyUriSpec = mock(RestClient.RequestHeadersUriSpec.class);
+            responseSpec = mock(RestClient.ResponseSpec.class);
+
+            MDC.put(TRACE_ID_KEY, "traceId");
+            MDC.put(SESSION_ID_KEY, "sessionId");
+
+            when(restClient.get()).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.uri("/internalapi/certificate/{certificateId}/exists", "certificateId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_TRACE_ID_HEADER, "traceId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.retrieve()).thenReturn(responseSpec);
+        }
 
         @Test
-        void shouldReturnTrueWhenCertifcateExists() {
-            final var response = CertificateExistsResponse.builder()
+        void shallReturnGetCitizenCertificatesResponse() {
+            final var expectedResponse = CertificateExistsResponse.builder()
                 .exists(true)
                 .build();
 
-            when(restTemplate.getForObject(anyString(), eq(CertificateExistsResponse.class), eq(CERTIFICATE_ID))).thenReturn(response);
+            doReturn(expectedResponse).when(responseSpec).body(CertificateExistsResponse.class);
 
-            assertTrue(csIntegrationService.certificateExists(CERTIFICATE_ID));
+            final var actualResponse = csIntegrationService.certificateExists("certificateId");
+
+            assertEquals(expectedResponse.isExists(), actualResponse);
         }
 
         @Test
-        void shouldReturnFalseWhenCertifcateExists() {
-            final var response = CertificateExistsResponse.builder()
-                .exists(false)
-                .build();
+        void shallThrowIfResponseIsNull() {
+            doReturn(null).when(responseSpec).body(CertificateExistsResponse.class);
 
-            when(restTemplate.getForObject(anyString(), eq(CertificateExistsResponse.class), eq(CERTIFICATE_ID))).thenReturn(response);
-
-            assertFalse(csIntegrationService.certificateExists(CERTIFICATE_ID));
-        }
-
-        @Test
-        void shouldThrowIllegalStateExceptioWhenCertifcateExistsResponseIsNull() {
-            when(restTemplate.getForObject(anyString(), eq(CertificateExistsResponse.class), eq(CERTIFICATE_ID))).thenReturn(null);
-            assertThrows(IllegalStateException.class, () -> csIntegrationService.certificateExists(CERTIFICATE_ID));
-        }
-
-        @Test
-        void shouldThrowIllegalStateExceptioWhenRequestFails() {
-            when(restTemplate.getForObject(anyString(), eq(CertificateExistsResponse.class), eq(CERTIFICATE_ID)))
-                .thenThrow(RestClientException.class);
-
-            assertThrows(IllegalStateException.class, () -> csIntegrationService.certificateExists(CERTIFICATE_ID));
-        }
-
-        @Test
-        void shouldSetUrlCorrect() {
-            ReflectionTestUtils.setField(csIntegrationService, "baseUrl", "baseUrl");
-            final var response = CertificateExistsResponse.builder()
-                .exists(false)
-                .build();
-            final var captor = ArgumentCaptor.forClass(String.class);
-
-            when(restTemplate.getForObject(anyString(), eq(CertificateExistsResponse.class), eq(CERTIFICATE_ID)))
-                .thenReturn(response);
-
-            csIntegrationService.certificateExists(CERTIFICATE_ID);
-            verify(restTemplate).getForObject(captor.capture(), eq(CertificateExistsResponse.class), eq(CERTIFICATE_ID));
-
-            assertEquals("baseUrl/internalapi/certificate/{certificateId}/exists", captor.getValue());
+            assertThrows(IllegalStateException.class, () -> csIntegrationService.certificateExists("certificateId"));
         }
     }
 
     @Nested
     class GetCertificateMetadataResponseTests {
 
-        private static final String CERTIFICATE_ID = "certificateId";
+        private RequestHeadersUriSpec requestBodyUriSpec;
+        private ResponseSpec responseSpec;
 
-        @Test
-        void shouldReturnMetadataWhenRequestSuccess() {
-            final var expected = CertificateMetadata.builder()
-                .id(CERTIFICATE_ID)
-                .build();
-            final var certificateMetadataResponse = GetCertificateMetadataResponse.builder()
-                .certificateMetadata(expected)
-                .build();
+        @BeforeEach
+        void setUp() {
+            requestBodyUriSpec = mock(RestClient.RequestHeadersUriSpec.class);
+            responseSpec = mock(RestClient.ResponseSpec.class);
 
-            when(restTemplate.getForObject(anyString(), eq(GetCertificateMetadataResponse.class), eq(CERTIFICATE_ID)))
-                .thenReturn(certificateMetadataResponse);
+            MDC.put(TRACE_ID_KEY, "traceId");
+            MDC.put(SESSION_ID_KEY, "sessionId");
 
-            final var actual = csIntegrationService.getCertificateMetadata(CERTIFICATE_ID);
-            assertEquals(expected, actual);
+            when(restClient.get()).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.uri("/internalapi/certificate/{certificateId}/metadata", "certificateId")).thenReturn(
+                requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_TRACE_ID_HEADER, "traceId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.retrieve()).thenReturn(responseSpec);
         }
 
         @Test
-        void shouldThrowIllegalStateExceptioWhenCertifcateMetadataResponseIsNull() {
-            when(restTemplate.getForObject(anyString(), eq(GetCertificateMetadataResponse.class), eq(CERTIFICATE_ID))).thenReturn(null);
-            assertThrows(IllegalStateException.class, () -> csIntegrationService.getCertificateMetadata(CERTIFICATE_ID));
-        }
-
-        @Test
-        void shouldThrowRestClientExceptioWhenRequestFails() {
-            when(restTemplate.getForObject(anyString(), eq(CertificateExistsResponse.class), eq(CERTIFICATE_ID)))
-                .thenThrow(RestClientException.class);
-            assertThrows(IllegalStateException.class, () -> csIntegrationService.getCertificateMetadata(CERTIFICATE_ID));
-        }
-
-        @Test
-        void shouldSetUrlCorrect() {
-            ReflectionTestUtils.setField(csIntegrationService, "baseUrl", "baseUrl");
-            final var response = GetCertificateMetadataResponse.builder()
+        void shallReturnGetCitizenCertificatesResponse() {
+            final var expectedResponse = GetCertificateMetadataResponse.builder()
+                .certificateMetadata(
+                    CertificateMetadata.builder().build()
+                )
                 .build();
-            final var captor = ArgumentCaptor.forClass(String.class);
 
-            when(restTemplate.getForObject(anyString(), eq(GetCertificateMetadataResponse.class), eq(CERTIFICATE_ID)))
-                .thenReturn(response);
+            doReturn(expectedResponse).when(responseSpec).body(GetCertificateMetadataResponse.class);
 
-            csIntegrationService.getCertificateMetadata(CERTIFICATE_ID);
-            verify(restTemplate).getForObject(captor.capture(), eq(GetCertificateMetadataResponse.class), eq(CERTIFICATE_ID));
+            final var actualResponse = csIntegrationService.getCertificateMetadata("certificateId");
 
-            assertEquals("baseUrl/internalapi/certificate/{certificateId}/metadata", captor.getValue());
+            assertEquals(expectedResponse.getCertificateMetadata(), actualResponse);
+        }
+
+        @Test
+        void shallThrowIfResponseIsNull() {
+            doReturn(null).when(responseSpec).body(GetCertificateMetadataResponse.class);
+
+            assertThrows(IllegalStateException.class, () -> csIntegrationService.getCertificateMetadata("certificateId"));
         }
     }
 }

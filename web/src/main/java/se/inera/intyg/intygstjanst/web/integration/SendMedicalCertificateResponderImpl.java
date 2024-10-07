@@ -38,6 +38,8 @@ import se.inera.intyg.common.support.modules.support.api.exception.ExternalServi
 import se.inera.intyg.common.support.validate.CertificateValidationException;
 import se.inera.intyg.infra.monitoring.logging.LogMarkers;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
@@ -65,6 +67,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
 
     @Override
     @PrometheusTimeMethod
+    @PerformanceLogging(eventAction = "send-certificate", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SendMedicalCertificateResponseType sendMedicalCertificate(
         final AttributedURIType logicalAddress, final SendMedicalCertificateRequestType request) {
 

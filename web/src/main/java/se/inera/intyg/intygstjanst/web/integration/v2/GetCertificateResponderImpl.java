@@ -33,6 +33,8 @@ import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.integration.util.CertificateStateFilterUtil;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
@@ -59,6 +61,7 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
 
     @Override
     @PrometheusTimeMethod
+    @PerformanceLogging(eventAction = "retrieve-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public GetCertificateResponseType getCertificate(String logicalAddress, GetCertificateType request) {
 
         final String certificateId = request.getIntygsId().getExtension();

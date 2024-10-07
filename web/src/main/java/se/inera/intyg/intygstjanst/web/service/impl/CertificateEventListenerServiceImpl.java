@@ -19,12 +19,19 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.EVENT_CERTIFICATE_ID;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.EVENT_MESSAGE_ID;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SPAN_ID_KEY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.TRACE_ID_KEY;
+
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.logging.MdcHelper;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventListenerService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventValidator;
@@ -36,6 +43,7 @@ public class CertificateEventListenerServiceImpl implements CertificateEventList
 
     private final CertificateEventService certificateEventService;
     private final CertificateEventValidator certificateEventMessageValidator;
+    private final MdcHelper mdcHelper;
 
     private static final String EVENT_TYPE = "eventType";
     private static final String CERTIFICATE_ID = "certificateId";
@@ -54,6 +62,12 @@ public class CertificateEventListenerServiceImpl implements CertificateEventList
             certificateId = message.getStringProperty(CERTIFICATE_ID);
             messageId = message.getStringProperty(MESSAGE_ID);
 
+            MDC.put(TRACE_ID_KEY, mdcHelper.traceId());
+            MDC.put(SPAN_ID_KEY, mdcHelper.spanId());
+            MDC.put(EVENT_CERTIFICATE_ID, certificateId);
+            MDC.put(EVENT_MESSAGE_ID, messageId);
+            MDC.put(EVENT_TYPE, eventType);
+
             if (!certificateEventMessageValidator.validate(eventType, certificateId, messageId)) {
                 log.error(getMissingParametersMessage(eventType, certificateId, messageId));
                 return;
@@ -70,6 +84,8 @@ public class CertificateEventListenerServiceImpl implements CertificateEventList
         } catch (Exception e) {
             log.error(ERROR_MESSAGE, eventType, certificateId, messageId, e);
             throw e;
+        } finally {
+            MDC.clear();
         }
     }
 

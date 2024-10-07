@@ -66,8 +66,11 @@
     <bean id="puResponseValidator" class="se.inera.intyg.intygstjanst.web.integration.validator.IntygstjanstPUResponseValidator" primary="true"/>
 
     <context:annotation-config/>
-    <context:component-scan
-            base-package="se.inera.intyg.intygstjanst.config,se.inera.intyg.intygstjanst.persistence,se.inera.intyg.intygstjanst.web"/>
+    <context:component-scan base-package=
+        "se.inera.intyg.intygstjanst.config,
+         se.inera.intyg.intygstjanst.logging,
+         se.inera.intyg.intygstjanst.persistence,
+         se.inera.intyg.intygstjanst.web"/>
 
     <!-- If bootstrap is specified let's bootstrap data -->
     <beans profile="bootstrap">

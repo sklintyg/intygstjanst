@@ -19,7 +19,6 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients.v1.ListKnownRecipientsResponderInterface;
@@ -28,6 +27,8 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients.v1.RecipientType;
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.v1.utils.ResultTypeUtil;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 
 public class ListKnownRecipientsResponderImpl implements ListKnownRecipientsResponderInterface {
@@ -37,6 +38,7 @@ public class ListKnownRecipientsResponderImpl implements ListKnownRecipientsResp
 
     @Override
     @PrometheusTimeMethod
+    @PerformanceLogging(eventAction = "list-recipients", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public ListKnownRecipientsResponseType listKnownRecipients(String logicalAddress, ListKnownRecipientsType request) {
         ListKnownRecipientsResponseType response = new ListKnownRecipientsResponseType();
         List<RecipientType> recipientTypeList = recipientService.listRecipients().stream()
@@ -47,7 +49,7 @@ public class ListKnownRecipientsResponderImpl implements ListKnownRecipientsResp
                 recipientType.setTrusted(r.isTrusted());
                 return recipientType;
             })
-            .collect(Collectors.toList());
+            .toList();
 
         if (recipientTypeList.isEmpty()) {
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "No recipients found!"));

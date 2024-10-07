@@ -27,6 +27,8 @@ import jakarta.ws.rs.core.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.CreateRekoStatusService;
 import se.inera.intyg.intygstjanst.web.service.GetRekoStatusService;
 
@@ -48,6 +50,7 @@ public class RekoController {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
+    @PerformanceLogging(eventAction = "create-reko-status", eventType = MdcLogConstants.EVENT_TYPE_CREATION)
     public RekoStatusDTO createRekoStatus(@RequestBody CreateRekoStatusRequestDTO request) {
         return createRekoStatusService.create(
             request.patientId,
@@ -66,6 +69,7 @@ public class RekoController {
     @Path("/patient")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
+    @PerformanceLogging(eventAction = "retrieve-reko-status", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public RekoStatusDTO getRekoStatus(@RequestBody GetRekoStatusRequestDTO request) {
         return getRekoStatusService.get(
             request.getPatientId(),

@@ -460,6 +460,7 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> findCertificatesWithoutMetadata(int maxNumber) {
         String sql =
             "SELECT c.ID FROM CERTIFICATE c "

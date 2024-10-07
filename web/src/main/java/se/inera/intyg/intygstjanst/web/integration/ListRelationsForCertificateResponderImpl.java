@@ -35,6 +35,8 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcer
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
@@ -56,6 +58,7 @@ public class ListRelationsForCertificateResponderImpl implements ListRelationsFo
 
     @Override
     @PrometheusTimeMethod
+    @PerformanceLogging(eventAction = "list-certificate-relations", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public ListRelationsForCertificateResponseType listRelationsForCertificate(String logicalAddress,
         ListRelationsForCertificateType listRelationsForCertificateType) {
         long start = System.currentTimeMillis();

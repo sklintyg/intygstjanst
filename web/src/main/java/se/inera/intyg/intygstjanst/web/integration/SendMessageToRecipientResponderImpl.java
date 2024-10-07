@@ -30,6 +30,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToRecipientValidator;
 import se.inera.intyg.intygstjanst.web.service.ArendeService;
@@ -64,6 +66,7 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
 
     @Override
     @PrometheusTimeMethod
+    @PerformanceLogging(eventAction = "send-messsage-to-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress, SendMessageToRecipientType parameters) {
         checkNotNull(parameters);
 

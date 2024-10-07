@@ -18,6 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SPAN_ID_KEY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.TRACE_ID_KEY;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +40,8 @@ import org.springframework.jms.core.MessageCreator;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import se.inera.intyg.intygstjanst.logging.MdcCloseableMap;
+import se.inera.intyg.intygstjanst.logging.MdcHelper;
 import se.inera.intyg.intygstjanst.persistence.model.dao.PopulateProcessedRepository;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.PopulateLoaderService;
@@ -56,6 +61,9 @@ public class PopulateLoaderServiceImpl implements PopulateLoaderService {
     PopulateService service;
 
     @Autowired
+    MdcHelper mdcHelper;
+
+    @Autowired
     PopulateProcessedRepository processedRepository;
 
     @Autowired
@@ -72,6 +80,17 @@ public class PopulateLoaderServiceImpl implements PopulateLoaderService {
     @Scheduled(cron = "${populate.loader.cron:-}")
     @SchedulerLock(name = POPULATE_SHEDLOCK_JOB_NAME)
     public void populate() {
+        try (MdcCloseableMap mdc =
+            MdcCloseableMap.builder()
+                .put(TRACE_ID_KEY, mdcHelper.traceId())
+                .put(SPAN_ID_KEY, mdcHelper.spanId())
+                .build()
+        ) {
+            executeJob();
+        }
+    }
+
+    private void executeJob() {
         if (countPendingMessages() == 0) {
             LOG.info("No IDs on queue: Starting populate loader run with batch size: " + batchSize + " and splitting into "
                 + NR_OF_BATCHES + " batches.");

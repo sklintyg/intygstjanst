@@ -28,6 +28,8 @@ import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.CertificateExportService;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
@@ -44,6 +46,7 @@ public class CertificateExportController {
     @GET
     @Path("certificatetexts")
     @Produces(MediaType.APPLICATION_JSON)
+    @PerformanceLogging(eventAction = "retrieve-certificate-texts", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public List<CertificateTextDTO> getCertificateTexts() {
         return certificateExportService.getCertificateTexts();
     }
@@ -51,6 +54,7 @@ public class CertificateExportController {
     @GET
     @Path("/certificates/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public CertificateExportPageDTO getCertificates(@PathParam("id") String careProviderId, @QueryParam("size") int size,
         @QueryParam("page") int page) {
         return certificateExportService.getCertificateExportPage(careProviderId, page, size);
@@ -59,6 +63,7 @@ public class CertificateExportController {
     @DELETE
     @Path("/certificates/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @PerformanceLogging(eventAction = "erase-certificates", eventType = MdcLogConstants.EVENT_TYPE_DELETION)
     public void eraseDataForCareProvider(@PathParam("id") String careProviderId) {
         certificateExportService.eraseCertificates(careProviderId, eraseCertificatesPageSize);
     }

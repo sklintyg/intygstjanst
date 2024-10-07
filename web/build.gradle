@@ -20,7 +20,7 @@ gretty {
     jvmArgs = [
             "-Dcatalina.base=${buildDir}/catalina.base",
             "-Dspring.profiles.active=dev,bootstrap,testability-api,caching-enabled,it-fk-stub,certificate-service-active",
-            "-Dlogback.file=${applicationDir}/config/logback-dev.xml",
+            "-Dlogback.file=${applicationDir}/config/logback-spring.xml",
             "-Djava.awt.headless=true",
             "-Dfile.encoding=UTF-8",
             "-Dapplication.dir=${applicationDir}",
@@ -31,16 +31,6 @@ gretty {
             "-Ddev.http.port.internal=${useInternalHttpPort}",
             "-Dxml.catalog.cacheEnabled=false"
     ]
-}
-
-test { exclude '**/*IT*' }
-
-tasks.register('restAssuredTest', Test) {
-    outputs.upToDateWhen { false }
-    systemProperty "integration.tests.baseUrl", System.properties['baseUrl'] ?: "http://localhost:8080/"
-    systemProperty "integration.tests.actuatorUrl", System.properties['actuatorUrl'] ?: "http://localhost:8180"
-    include '**/*IT*'
-    useJUnitPlatform()
 }
 
 dependencies {
@@ -87,6 +77,7 @@ dependencies {
 
     implementation "se.inera.intyg.refdata:refdata-featureK1J-357:${refDataVersion}"
 
+    implementation "co.elastic.logging:logback-ecs-encoder:${logbackEcsEncoderVersion}"
     implementation "com.google.guava:guava:${guavaVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "io.prometheus:simpleclient_servlet"
@@ -98,6 +89,7 @@ dependencies {
     implementation "org.apache.activemq:activemq-spring"
     implementation "org.apache.cxf:cxf-rt-features-logging:${cxfVersion}"
     implementation "org.apache.cxf:cxf-rt-frontend-jaxws:${cxfVersion}"
+    implementation "org.aspectj:aspectjweaver"
     implementation "codes.rafael.jaxb2_commons:jaxb2-basics:${jaxb2Version}"
     implementation "org.springframework:spring-jms"
     implementation "org.springframework:spring-webmvc"

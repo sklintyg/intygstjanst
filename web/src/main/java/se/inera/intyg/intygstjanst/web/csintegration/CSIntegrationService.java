@@ -19,13 +19,17 @@
 
 package se.inera.intyg.intygstjanst.web.csintegration;
 
+import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_SESSION_ID_HEADER;
+import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_TRACE_ID_HEADER;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SESSION_ID_KEY;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.TRACE_ID_KEY;
+
 import java.util.List;
-import java.util.Objects;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.MDC;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 import se.inera.intyg.common.support.facade.model.Certificate;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.CertificateExistsResponse;
@@ -36,6 +40,7 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesR
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
 
 @Service
+@RequiredArgsConstructor
 public class CSIntegrationService {
 
     private static final String CITIZEN_ENDPOINT_URL = "/api/citizen/certificate";
@@ -44,19 +49,18 @@ public class CSIntegrationService {
     private static final String INTERNAL_CERTIFICATE_METADATA_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/metadata";
     private static final String INTERNAL_CERTIFICATE_EXISTS_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/exists";
 
-    private final RestTemplate restTemplate;
-
-    @Value("${certificateservice.base.url}")
-    private String baseUrl;
-
-    public CSIntegrationService(@Qualifier("csRestTemplate") RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    private final RestClient csRestClient;
 
     public List<Certificate> getCitizenCertificates(GetCitizenCertificatesRequest request) {
-        final var url = baseUrl + CITIZEN_ENDPOINT_URL;
-
-        final var response = restTemplate.postForObject(url, request, GetCitizenCertificatesResponse.class);
+        final var response = csRestClient
+            .post()
+            .uri(CITIZEN_ENDPOINT_URL)
+            .body(request)
+            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+            .contentType(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .body(GetCitizenCertificatesResponse.class);
 
         if (response == null) {
             throw new IllegalStateException("Failed to get citizen certificates from certificate service");
@@ -66,34 +70,60 @@ public class CSIntegrationService {
     }
 
     public GetCertificateXmlResponse getCertificateXmlResponse(String certificateId) {
-        final var url = baseUrl + INTERNALAPI_CERTIFICATE_XML_ENDPOINT_URL;
-        return restTemplate.postForObject(url, HttpEntity.EMPTY, GetCertificateXmlResponse.class, certificateId);
+        return csRestClient
+            .post()
+            .uri(INTERNALAPI_CERTIFICATE_XML_ENDPOINT_URL, certificateId)
+            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+            .contentType(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .body(GetCertificateXmlResponse.class);
     }
 
     public GetMessageXmlResponse getMessageXmlResponse(String messageId) {
-        final var url = baseUrl + INTERNAL_MESSAGE_XML_ENDPOINT_URL;
-        return restTemplate.postForObject(url, HttpEntity.EMPTY, GetMessageXmlResponse.class, messageId);
+        return csRestClient
+            .post()
+            .uri(INTERNAL_MESSAGE_XML_ENDPOINT_URL, messageId)
+            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+            .contentType(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .body(GetMessageXmlResponse.class);
     }
 
     public boolean certificateExists(String certificateId) {
-        try {
-            final var url = baseUrl + INTERNAL_CERTIFICATE_EXISTS_ENDPOINT_URL;
-            final var response = restTemplate.getForObject(url, CertificateExistsResponse.class, certificateId);
-            return Objects.requireNonNull(response).isExists();
-        } catch (Exception e) {
-            throw new IllegalStateException(String.format("Failure calling certficateExists of certficate-service for certificateId '%s'.",
-                certificateId));
+        final var response = csRestClient
+            .get()
+            .uri(INTERNAL_CERTIFICATE_EXISTS_ENDPOINT_URL, certificateId)
+            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+            .retrieve()
+            .body(CertificateExistsResponse.class);
+
+        if (response == null) {
+            throw new IllegalStateException(
+                String.format("Failure calling certficateExists of certficate-service for certificateId '%s'.", certificateId)
+            );
         }
+
+        return response.isExists();
     }
 
     public CertificateMetadata getCertificateMetadata(String certificateId) {
-        try {
-            final var url = baseUrl + INTERNAL_CERTIFICATE_METADATA_ENDPOINT_URL;
-            final var response = restTemplate.getForObject(url, GetCertificateMetadataResponse.class, certificateId);
-            return Objects.requireNonNull(response).getCertificateMetadata();
-        } catch (Exception e) {
+        final var response = csRestClient
+            .get()
+            .uri(INTERNAL_CERTIFICATE_METADATA_ENDPOINT_URL, certificateId)
+            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+            .retrieve()
+            .body(GetCertificateMetadataResponse.class);
+
+        if (response == null) {
             throw new IllegalStateException(
-                String.format("Failure getting certificate metadata from certficate-service for certificateId '%s'.", certificateId));
+                String.format("Failure getting certificate metadata from certficate-service for certificateId '%s'.", certificateId)
+            );
         }
+
+        return response.getCertificateMetadata();
     }
 }

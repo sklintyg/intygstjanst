@@ -24,6 +24,8 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypei
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoType;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateTypeInfo;
@@ -39,6 +41,7 @@ public class GetCertificateTypeInfoResponderImpl implements GetCertificateTypeIn
 
     @Override
     @PrometheusTimeMethod
+    @PerformanceLogging(eventAction = "retrieve-certificate-type-info", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public GetCertificateTypeInfoResponseType getCertificateTypeInfo(String logicalAddress, GetCertificateTypeInfoType request) {
 
         if (isNullOrEmpty(request)) {

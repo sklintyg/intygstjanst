@@ -22,10 +22,13 @@ package se.inera.intyg.intygstjanst.config;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import org.apache.cxf.Bus;
 import org.apache.cxf.ext.logging.LoggingFeature;
+import org.apache.cxf.ext.logging.slf4j.Slf4jVerboseEventSender;
+import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -55,6 +58,9 @@ public class ApplicationConfig implements TransactionManagementConfigurer {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
+    @Value("${logging.soap.enable:false}")
+    private boolean loggingSoapEnable;
+
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
         return new PropertySourcesPlaceholderConfigurer();
@@ -62,7 +68,8 @@ public class ApplicationConfig implements TransactionManagementConfigurer {
 
     @PostConstruct
     public Bus init() {
-        bus.setFeatures(new ArrayList<>(Arrays.asList(loggingFeature())));
+        bus.setFeatures(new ArrayList<>(Collections.singletonList(loggingFeature())));
+        bus.setProperty("org.apache.cxf.logging.enable", Boolean.toString(loggingSoapEnable));
         return bus;
     }
 
@@ -78,7 +85,15 @@ public class ApplicationConfig implements TransactionManagementConfigurer {
     public LoggingFeature loggingFeature() {
         LoggingFeature loggingFeature = new LoggingFeature();
         loggingFeature.setPrettyLogging(true);
+        loggingFeature.setSender(slf4jVerboseEventSender());
         return loggingFeature;
+    }
+
+    @Bean
+    public Slf4jVerboseEventSender slf4jVerboseEventSender() {
+        final var slf4jVerboseEventSender = new Slf4jVerboseEventSender();
+        slf4jVerboseEventSender.setLoggingLevel(Level.INFO);
+        return slf4jVerboseEventSender;
     }
 
     @Bean
