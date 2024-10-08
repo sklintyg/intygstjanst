@@ -36,12 +36,6 @@ public interface SjukfallCertificateDao {
         List<String> careUnitHsaIds,
         int maxDagarSedanAvslut);
 
-    List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(
-        String careGiverHsaId,
-        List<String> careUnitHsaIds,
-        int maxDagarSedanAvslut,
-        boolean onlyActiveSickLeaves);
-
     List<SjukfallCertificate> findActiveSjukfallCertificateForPersonOnCareUnits(
         String careGiverHsaId,
         List<String> careUnitHsaIds,
