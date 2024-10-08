@@ -18,6 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.EVENT_CATEGORY_DATABASE;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.EVENT_TYPE_ACCESSED;
+
 import com.google.common.base.Strings;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -34,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
@@ -71,6 +75,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     private EntityManager entityManager;
 
     @Override
+    @PerformanceLogging(eventAction = "find-active-sick-leaves", eventType = EVENT_TYPE_ACCESSED, eventCategory = EVENT_CATEGORY_DATABASE)
     public List<SjukfallCertificate> findActiveSjukfallCertificate(String careGiverId, List<String> unitIds, List<String> doctorIds,
         LocalDate activeDate, LocalDate recentlyClosed) {
 
@@ -118,11 +123,13 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     }
 
     @Override
+    @PerformanceLogging(eventAction = "find-all-sick-leaves", eventType = EVENT_TYPE_ACCESSED, eventCategory = EVENT_CATEGORY_DATABASE)
     public List<SjukfallCertificate> findAllSjukfallCertificate(String careGiverId, List<String> unitIds, List<String> patientIds) {
         return querySjukfallCertificatesForUnitsAndPersonnummer(careGiverId, unitIds, patientIds, null, false);
     }
 
     @Override
+    @PerformanceLogging(eventAction = "find-active-sick-leaves-care-unit", eventType = EVENT_TYPE_ACCESSED, eventCategory = EVENT_CATEGORY_DATABASE)
     public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
         int maxDagarSedanAvslut) {
         final var today = LocalDate.now();
@@ -149,19 +156,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     }
 
     @Override
-    public List<SjukfallCertificate> findActiveSjukfallCertificateForCareUnits(String careGiverHsaId, List<String> careUnitHsaIds,
-        int maxDagarSedanAvslut, boolean onlyActiveSickLeaves) {
-        final var today = LocalDate.now();
-        final var recentlyClosed = today.minusDays(maxDagarSedanAvslut);
-
-        final var personNummerList = patientsWithActiveCertificates(careGiverHsaId, careUnitHsaIds, today, recentlyClosed);
-
-        return querySjukfallCertificatesForUnitsAndPersonnummer(
-            careGiverHsaId, careUnitHsaIds, personNummerList, recentlyClosed.format(DateTimeFormatter.ISO_DATE), onlyActiveSickLeaves
-        );
-    }
-
-    @Override
+    @PerformanceLogging(eventAction = "find-active-sick-leaves-staff-care-unit", eventType = EVENT_TYPE_ACCESSED, eventCategory = EVENT_CATEGORY_DATABASE)
     public List<SjukfallCertificate> findActiveSjukfallCertificateForPersonOnCareUnits(
         String careGiverHsaId, List<String> careUnitHsaIds, String personnummer, int maxDagarSedanAvslut) {
 
@@ -183,6 +178,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
     }
 
     @Override
+    @PerformanceLogging(eventAction = "find-active-sick-leaves-staff", eventType = EVENT_TYPE_ACCESSED, eventCategory = EVENT_CATEGORY_DATABASE)
     public List<SjukfallCertificate> findSjukfallCertificateForPerson(String personnummer) {
         return querySjukfallCertificatesForPersonnummer(personnummer);
     }

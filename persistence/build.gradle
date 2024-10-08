@@ -4,6 +4,8 @@ sourceSets.main.output.resourcesDir = sourceSets.main.output.getClassesDirs().ge
 jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
 dependencies {
+    implementation project(':intygstjanst-logging')
+    
     implementation "com.fasterxml.jackson.core:jackson-annotations"
     implementation "com.google.guava:guava:${guavaVersion}"
     implementation "com.h2database:h2"

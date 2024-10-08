@@ -34,6 +34,7 @@ gretty {
 }
 
 dependencies {
+    implementation project(':intygstjanst-logging')
     implementation project(':intygstjanst-persistence')
 
     implementation "se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:${intygClinicalprocessSchemasVersion}"
