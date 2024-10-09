@@ -68,13 +68,13 @@ public class SoapIntegrationServiceImpl implements SoapIntegrationService {
     }
 
     @Override
-    @PerformanceLogging(eventAction = "revoke-certificate-notify-recipient", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "revoke-certificate-notify-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public RevokeCertificateResponseType revokeCertificate(String logicalAddress, RevokeCertificateType revokeCertificateType) {
         return revokeCertificateResponderInterface.revokeCertificate(logicalAddress, revokeCertificateType);
     }
 
     @Override
-    @PerformanceLogging(eventAction = "revoke-medical-certificate-notify-recipient", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "revoke-medical-certificate-notify-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress,
         RevokeMedicalCertificateRequestType revokeMedicalCertificateRequestType) {
         return revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(logicalAddress, revokeMedicalCertificateRequestType);
