@@ -19,11 +19,9 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,7 +45,6 @@ import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType;
-import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
@@ -55,7 +52,6 @@ import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.Resu
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
-import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.MissingModuleException;
@@ -64,6 +60,7 @@ import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.SoapIntegrationService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
@@ -85,7 +82,7 @@ public class CertificateSenderServiceImplTest {
     private static final String RECIPIENT_LOGICALADDRESS = "FKORG";
     private static final String RECIPIENT_DEFAULT_LOGICALADDRESS = "FKORG-DEFAULT";
     private static final String RECIPIENT_CERTIFICATETYPES = "fk7263";
-    private static Certificate certificate = CertificateFactory
+    private static final Certificate certificate = CertificateFactory
         .buildCertificate(CERTIFICATE_ID, CERTIFICATE_TYPE, CERTIFICATE_TYPE_VERSION);
     @Mock
     private RecipientService recipientService;
@@ -94,9 +91,7 @@ public class CertificateSenderServiceImplTest {
     @Mock
     private ModuleEntryPoint moduleEntryPoint;
     @Mock
-    private ModuleApi moduleApi;
-    @Mock
-    private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponderInterface;
+    private SoapIntegrationService soapIntegrationService;
     @Mock
     private MonitoringLogService monitoringLogService;
     @InjectMocks
@@ -124,7 +119,6 @@ public class CertificateSenderServiceImplTest {
     @Before
     public void setupModuleRestApiFactory() throws ModuleNotFoundException {
         when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
-        when(moduleRegistry.getModuleApi(or(isNull(), anyString()), or(isNull(), anyString()))).thenReturn(moduleApi);
         when(moduleEntryPoint.getDefaultRecipient()).thenReturn(RECIPIENT_DEFAULT_LOGICALADDRESS);
     }
 
@@ -137,20 +131,20 @@ public class CertificateSenderServiceImplTest {
     @Test
     public void testSend() throws Exception {
         senderService.sendCertificate(certificate, RECIPIENT_ID_FKASSA);
-        verify(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_LOGICALADDRESS), eq(RECIPIENT_ID_FKASSA));
+        verify(soapIntegrationService).sendCertificateToRecipient(certificate, RECIPIENT_LOGICALADDRESS, RECIPIENT_ID_FKASSA);
     }
 
     @Test
-    public void testSendWithDefaultRecipient() throws ModuleException {
+    public void testSendWithDefaultRecipient() throws ModuleException, ModuleNotFoundException {
         senderService.sendCertificate(certificate, null);
-        verify(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_DEFAULT_LOGICALADDRESS), Mockito.isNull());
+        verify(soapIntegrationService).sendCertificateToRecipient(eq(certificate), eq(RECIPIENT_DEFAULT_LOGICALADDRESS), Mockito.isNull());
     }
 
     @Test(expected = ServerException.class)
     public void testSendWithFailingModule() throws Exception {
         // web service call fails
-        doThrow(new ModuleException("")).when(moduleApi).sendCertificateToRecipient(anyString(), eq(RECIPIENT_LOGICALADDRESS),
-            eq(RECIPIENT_ID_FKASSA));
+        doThrow(new ModuleException("")).when(soapIntegrationService).sendCertificateToRecipient(certificate, RECIPIENT_LOGICALADDRESS,
+            RECIPIENT_ID_FKASSA);
         senderService.sendCertificate(certificate, RECIPIENT_ID_FKASSA);
     }
 
@@ -176,7 +170,7 @@ public class CertificateSenderServiceImplTest {
         final String nonFkRecipient = RECIPIENT_ID_TRANSP;
         RevokeMedicalCertificateResponseType revokeMedicalCertificateResponse = new RevokeMedicalCertificateResponseType();
         revokeMedicalCertificateResponse.setResult(ResultOfCallUtil.okResult());
-        when(revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(any(AttributedURIType.class),
+        when(soapIntegrationService.revokeMedicalCertificate(any(AttributedURIType.class),
             any(RevokeMedicalCertificateRequestType.class))).thenReturn(revokeMedicalCertificateResponse);
         when(recipientService.getRecipient(nonFkRecipient)).thenReturn(createRecipient());
         RevokeType revokeData = new RevokeType();
@@ -188,7 +182,7 @@ public class CertificateSenderServiceImplTest {
         ArgumentCaptor<AttributedURIType> uriCaptor = ArgumentCaptor.forClass(AttributedURIType.class);
         ArgumentCaptor<RevokeMedicalCertificateRequestType> requestCaptor = ArgumentCaptor
             .forClass(RevokeMedicalCertificateRequestType.class);
-        verify(revokeMedicalCertificateResponderInterface).revokeMedicalCertificate(uriCaptor.capture(), requestCaptor.capture());
+        verify(soapIntegrationService).revokeMedicalCertificate(uriCaptor.capture(), requestCaptor.capture());
 
         assertEquals(RECIPIENT_LOGICALADDRESS, uriCaptor.getValue().getValue());
         assertEquals(CERTIFICATE_ID, requestCaptor.getValue().getRevoke().getLakarutlatande().getLakarutlatandeId());
@@ -199,7 +193,7 @@ public class CertificateSenderServiceImplTest {
         final String nonFkRecipient = RECIPIENT_ID_TRANSP;
         RevokeMedicalCertificateResponseType revokeMedicalCertificateResponse = new RevokeMedicalCertificateResponseType();
         revokeMedicalCertificateResponse.setResult(ResultOfCallUtil.failResult("error"));
-        when(revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(any(AttributedURIType.class),
+        when(soapIntegrationService.revokeMedicalCertificate(any(AttributedURIType.class),
             any(RevokeMedicalCertificateRequestType.class))).thenReturn(revokeMedicalCertificateResponse);
         when(recipientService.getRecipient(nonFkRecipient)).thenReturn(createRecipient());
         RevokeType revokeData = new RevokeType();

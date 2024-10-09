@@ -45,7 +45,7 @@ import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToRecipi
 import se.inera.intyg.intygstjanst.web.service.ArendeService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponderInterface;
+import se.inera.intyg.intygstjanst.web.service.SoapIntegrationService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Amneskod;
@@ -70,10 +70,10 @@ public class SendMessageToRecipientResponderImplTest {
     private ArendeService arendeService;
 
     @Mock
-    private SendMessageToRecipientResponderInterface sendMessageToRecipientResponder;
+    private CertificateService certificateService;
 
     @Mock
-    private CertificateService certificateService;
+    private SoapIntegrationService soapIntegrationService;
 
     @InjectMocks
     private SendMessageToRecipientResponderImpl responder;
@@ -165,19 +165,19 @@ public class SendMessageToRecipientResponderImplTest {
     private void setupClientResponse(ResultType result) {
         SendMessageToRecipientResponseType response = new SendMessageToRecipientResponseType();
         response.setResult(result);
-        when(sendMessageToRecipientResponder.sendMessageToRecipient(anyString(), any(SendMessageToRecipientType.class)))
+        when(soapIntegrationService.sendMessageToRecipient(anyString(), any(SendMessageToRecipientType.class)))
             .thenReturn(response);
     }
 
     private void assertInvocations(
         VerificationMode monitoringLogInvocation,
         VerificationMode arendeServiceInvocation,
-        VerificationMode sendMessageToRecipientClientInvocation) throws JAXBException, InvalidCertificateException {
+        VerificationMode sendMessageToRecipient) throws JAXBException, InvalidCertificateException {
 
         verify(validator).validate(any(SendMessageToRecipientType.class)); // always call validator
         verify(arendeService, arendeServiceInvocation).processIncomingMessage(any(Arende.class));
         verify(monitoringLog, monitoringLogInvocation).logSendMessageToRecipient(or(isNull(), anyString()), anyString());
-        verify(sendMessageToRecipientResponder, sendMessageToRecipientClientInvocation)
+        verify(soapIntegrationService, sendMessageToRecipient)
             .sendMessageToRecipient(eq(LOGICAL_ADDRESS_RECIPIENT), any(SendMessageToRecipientType.class));
     }
 }

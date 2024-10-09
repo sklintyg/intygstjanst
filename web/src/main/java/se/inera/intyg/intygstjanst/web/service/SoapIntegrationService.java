@@ -41,6 +41,6 @@ public interface SoapIntegrationService {
         AttributedURIType logicalAdress, RevokeMedicalCertificateRequestType revokeMedicalCertificateRequestType);
 
 
-    SendMessageToRecipientResponseType sendMessageToRecipent(String logicalAddress, SendMessageToRecipientType sendMessageToRecipientType);
+    SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress, SendMessageToRecipientType sendMessageToRecipientType);
 
 }

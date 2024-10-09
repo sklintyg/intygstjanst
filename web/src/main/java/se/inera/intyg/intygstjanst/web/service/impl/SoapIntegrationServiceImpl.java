@@ -78,7 +78,7 @@ public class SoapIntegrationServiceImpl implements SoapIntegrationService {
 
     @Override
     @PerformanceLogging(eventAction = "send-message-to-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
-    public SendMessageToRecipientResponseType sendMessageToRecipent(String logicalAddress,
+    public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress,
         SendMessageToRecipientType sendMessageToRecipientType) {
         return sendMessageToRecipientResponder.sendMessageToRecipient(logicalAddress, sendMessageToRecipientType);
     }

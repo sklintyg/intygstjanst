@@ -26,7 +26,6 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
@@ -64,10 +63,6 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
     @Autowired
     private SoapIntegrationService soapIntegrationService;
 
-    @Autowired
-    @Qualifier("sendMessageToRecipientClient")
-    private SendMessageToRecipientResponderInterface sendMessageToRecipientResponder;
-
     @Override
     @PrometheusTimeMethod
     @PerformanceLogging(eventAction = "send-messsage-to-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
@@ -92,7 +87,7 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
                 response = new SendMessageToRecipientResponseType();
                 response.setResult(ResultTypeUtil.okResult());
             } else {
-                response = soapIntegrationService.sendMessageToRecipent(logicalAddress, parameters);
+                response = soapIntegrationService.sendMessageToRecipient(parameters.getLogiskAdressMottagare(), parameters);
             }
 
             if (response.getResult().getResultCode() != ResultCodeType.ERROR) {
