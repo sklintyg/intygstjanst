@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
-import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
@@ -118,7 +117,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
         AttributedURIType logicalAddress = getLogicalAddress(recipientId);
 
-        RevokeMedicalCertificateResponseType sendResponse = soapIntegrationService.revokeMedicalCertificate(logicalAddress, request);
+        final var sendResponse = soapIntegrationService.revokeMedicalCertificate(logicalAddress, request);
 
         if (sendResponse.getResult().getResultCode() != OK) {
             String message = "Failed to send question to '" + recipientId + "' when revoking certificate '" + certificate.getId()

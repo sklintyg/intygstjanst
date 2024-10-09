@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
@@ -51,6 +52,9 @@ public class SoapIntegrationServiceImpl implements SoapIntegrationService {
     private RevokeCertificateResponderInterface revokeCertificateResponderInterface;
 
     @Autowired
+    private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponderInterface;
+
+    @Autowired
     @Qualifier("sendMessageToRecipientClient")
     private SendMessageToRecipientResponderInterface sendMessageToRecipientResponder;
 
@@ -71,9 +75,9 @@ public class SoapIntegrationServiceImpl implements SoapIntegrationService {
 
     @Override
     @PerformanceLogging(eventAction = "revoke-medical-certificate-notify-recipient", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAdress,
+    public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress,
         RevokeMedicalCertificateRequestType revokeMedicalCertificateRequestType) {
-        return null;
+        return revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(logicalAddress, revokeMedicalCertificateRequestType);
     }
 
     @Override
