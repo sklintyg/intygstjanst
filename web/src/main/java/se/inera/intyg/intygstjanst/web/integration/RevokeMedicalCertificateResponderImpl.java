@@ -19,14 +19,12 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import java.util.Optional;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3.wsaddressing10.AttributedURIType;
-
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
@@ -37,8 +35,8 @@ import se.inera.intyg.common.support.integration.module.exception.CertificateRev
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
-import se.inera.intyg.infra.monitoring.logging.LogMarkers;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.infra.monitoring.logging.LogMarkers;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -46,7 +44,12 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistory
 import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
 import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.integration.validator.RevokeRequestValidator;
-import se.inera.intyg.intygstjanst.web.service.*;
+import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
+import se.inera.intyg.intygstjanst.web.service.CertificateService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
+import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCertificateResponderInterface {

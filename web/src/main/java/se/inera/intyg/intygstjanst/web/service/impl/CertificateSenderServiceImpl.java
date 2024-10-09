@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
-import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
@@ -42,6 +41,7 @@ import se.inera.intyg.intygstjanst.web.exception.SubsystemCallException;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.SoapIntegrationService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
@@ -62,10 +62,10 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
     private IntygModuleRegistry moduleRegistry;
 
     @Autowired
-    private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponderInterface;
+    private MonitoringLogService monitoringLogService;
 
     @Autowired
-    private MonitoringLogService monitoringLogService;
+    SoapIntegrationService soapIntegrationService;
 
     @Override
     public void sendCertificate(Certificate certificate, String recipientId) {
@@ -89,8 +89,8 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
                         String.format("Recipient %s is not available for certificate type %s", recipientId, certType.toString()));
                 }
             }
-            moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion())
-                .sendCertificateToRecipient(certificate.getOriginalCertificate().getDocument(), logicalAddress, recipientId);
+
+            soapIntegrationService.sendCertificateToRecipient(certificate, logicalAddress, recipientId);
 
             monitoringLogService.logCertificateSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(), recipientId);
 
@@ -118,9 +118,7 @@ public class CertificateSenderServiceImpl implements CertificateSenderService {
 
         AttributedURIType logicalAddress = getLogicalAddress(recipientId);
 
-        RevokeMedicalCertificateResponseType sendResponse = revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(
-            logicalAddress,
-            request);
+        RevokeMedicalCertificateResponseType sendResponse = soapIntegrationService.revokeMedicalCertificate(logicalAddress, request);
 
         if (sendResponse.getResult().getResultCode() != OK) {
             String message = "Failed to send question to '" + recipientId + "' when revoking certificate '" + certificate.getId()

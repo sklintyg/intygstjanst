@@ -32,6 +32,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import se.inera.intyg.common.support.facade.model.Certificate;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.CertificateExistsResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateMetadataResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
@@ -51,6 +53,7 @@ public class CSIntegrationService {
 
     private final RestClient csRestClient;
 
+    @PerformanceLogging(eventAction = "list-certificates-for-citizen", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public List<Certificate> getCitizenCertificates(GetCitizenCertificatesRequest request) {
         final var response = csRestClient
             .post()
@@ -69,6 +72,7 @@ public class CSIntegrationService {
         return response.getCitizenCertificates();
     }
 
+    @PerformanceLogging(eventAction = "retrieve-certificate-xml-response", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public GetCertificateXmlResponse getCertificateXmlResponse(String certificateId) {
         return csRestClient
             .post()
@@ -80,6 +84,7 @@ public class CSIntegrationService {
             .body(GetCertificateXmlResponse.class);
     }
 
+    @PerformanceLogging(eventAction = "retrieve-message-xml-response", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public GetMessageXmlResponse getMessageXmlResponse(String messageId) {
         return csRestClient
             .post()
@@ -91,6 +96,7 @@ public class CSIntegrationService {
             .body(GetMessageXmlResponse.class);
     }
 
+    @PerformanceLogging(eventAction = "retrieve-certificate-exists", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public boolean certificateExists(String certificateId) {
         final var response = csRestClient
             .get()
@@ -109,6 +115,7 @@ public class CSIntegrationService {
         return response.isExists();
     }
 
+    @PerformanceLogging(eventAction = "retrieve-certificate-metadata", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public CertificateMetadata getCertificateMetadata(String certificateId) {
         final var response = csRestClient
             .get()

@@ -37,6 +37,7 @@ import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToRecipi
 import se.inera.intyg.intygstjanst.web.service.ArendeService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.SoapIntegrationService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
@@ -59,6 +60,9 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
 
     @Autowired
     private CertificateService certificateService;
+
+    @Autowired
+    private SoapIntegrationService soapIntegrationService;
 
     @Autowired
     @Qualifier("sendMessageToRecipientClient")
@@ -88,7 +92,7 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
                 response = new SendMessageToRecipientResponseType();
                 response.setResult(ResultTypeUtil.okResult());
             } else {
-                response = sendMessageToRecipientResponder.sendMessageToRecipient(parameters.getLogiskAdressMottagare(), parameters);
+                response = soapIntegrationService.sendMessageToRecipent(logicalAddress, parameters);
             }
 
             if (response.getResult().getResultCode() != ResultCodeType.ERROR) {
