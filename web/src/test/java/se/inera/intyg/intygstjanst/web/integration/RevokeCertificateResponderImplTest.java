@@ -66,9 +66,6 @@ public class RevokeCertificateResponderImplTest {
     private MonitoringLogService monitoringService;
 
     @Mock
-    private RevokeCertificateResponderInterface revokeInterface;
-
-    @Mock
     private CertificateService certificateService;
 
     @Mock
@@ -144,7 +141,7 @@ public class RevokeCertificateResponderImplTest {
         verify(certificateService, times(1)).revokeCertificateForStatistics(any());
         verify(sjukfallCertificateService, times(1)).revoked(any());
         verify(monitoringService, times(1)).logCertificateRevoked(eq(certificateId), or(isNull(), anyString()), any());
-        verify(revokeInterface, times(0)).revokeCertificate(eq(logicalAddress), any());
+        verify(soapIntegrationService, times(0)).revokeCertificate(eq(logicalAddress), any());
     }
 
     @Test
@@ -170,7 +167,7 @@ public class RevokeCertificateResponderImplTest {
         verify(certificateService, times(0)).revokeCertificateForStatistics(any());
         verify(sjukfallCertificateService, times(0)).revoked(any());
         verify(monitoringService, times(0)).logCertificateRevoked(eq(certificateId), or(isNull(), anyString()), any());
-        verify(revokeInterface, times(0)).revokeCertificate(eq(logicalAddress), any());
+        verify(soapIntegrationService, times(0)).revokeCertificate(eq(logicalAddress), any());
     }
 
     @Test
@@ -197,7 +194,7 @@ public class RevokeCertificateResponderImplTest {
         verify(certificateService, times(0)).revokeCertificateForStatistics(any());
         verify(sjukfallCertificateService, times(0)).revoked(any());
         verify(monitoringService, times(0)).logCertificateRevoked(eq(certificateId), anyString(), any());
-        verify(revokeInterface, times(0)).revokeCertificate(eq(logicalAddress), any());
+        verify(soapIntegrationService, times(0)).revokeCertificate(eq(logicalAddress), any());
     }
 
     private Certificate createCertificate(String certificateId, CertificateStateHistoryEntry... entries) {

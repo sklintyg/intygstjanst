@@ -58,7 +58,7 @@ public class CertificateEventRevokeServiceImpl implements CertificateEventRevoke
     private final SoapIntegrationService soapIntegrationService;
 
     public CertificateEventRevokeServiceImpl(
-        RecipientService recipientService, MonitoringLogService monitoringLogService, final SoapIntegrationService soapIntegrationService) {
+        RecipientService recipientService, MonitoringLogService monitoringLogService, SoapIntegrationService soapIntegrationService) {
         this.recipientService = recipientService;
         this.monitoringLogService = monitoringLogService;
         this.soapIntegrationService = soapIntegrationService;
