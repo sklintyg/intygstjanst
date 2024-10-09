@@ -36,6 +36,9 @@ import se.inera.intyg.intygstjanst.web.service.SoapIntegrationService;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
@@ -49,15 +52,18 @@ public class SoapIntegrationServiceImpl implements SoapIntegrationService {
 
     @Autowired
     @Qualifier("revokeCertificateClient")
-    private RevokeCertificateResponderInterface revokeCertificateResponderInterface;
+    private RevokeCertificateResponderInterface revokeCertificateResponder;
 
     @Autowired
-    private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponderInterface;
+    private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponder;
 
     @Autowired
     @Qualifier("sendMessageToRecipientClient")
     private SendMessageToRecipientResponderInterface sendMessageToRecipientResponder;
 
+    @Autowired
+    @Qualifier("sendMessageToCareClient")
+    private SendMessageToCareResponderInterface sendMessageToCareResponder;
 
     @Override
     @PerformanceLogging(eventAction = "send-certificate-to-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
@@ -70,14 +76,14 @@ public class SoapIntegrationServiceImpl implements SoapIntegrationService {
     @Override
     @PerformanceLogging(eventAction = "revoke-certificate-notify-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public RevokeCertificateResponseType revokeCertificate(String logicalAddress, RevokeCertificateType revokeCertificateType) {
-        return revokeCertificateResponderInterface.revokeCertificate(logicalAddress, revokeCertificateType);
+        return revokeCertificateResponder.revokeCertificate(logicalAddress, revokeCertificateType);
     }
 
     @Override
     @PerformanceLogging(eventAction = "revoke-medical-certificate-notify-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress,
         RevokeMedicalCertificateRequestType revokeMedicalCertificateRequestType) {
-        return revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(logicalAddress, revokeMedicalCertificateRequestType);
+        return revokeMedicalCertificateResponder.revokeMedicalCertificate(logicalAddress, revokeMedicalCertificateRequestType);
     }
 
     @Override
@@ -85,6 +91,13 @@ public class SoapIntegrationServiceImpl implements SoapIntegrationService {
     public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress,
         SendMessageToRecipientType sendMessageToRecipientType) {
         return sendMessageToRecipientResponder.sendMessageToRecipient(logicalAddress, sendMessageToRecipientType);
+    }
+
+    @Override
+    @PerformanceLogging(eventAction = "send-message-to-care", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+    public SendMessageToCareResponseType sendMessageToCare(String logicalAddress,
+        SendMessageToCareType sendMessageToCareType) {
+        return sendMessageToCareResponder.sendMessageToCare(logicalAddress, sendMessageToCareType);
     }
 
 }

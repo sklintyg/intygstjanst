@@ -42,6 +42,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator;
 import se.inera.intyg.intygstjanst.web.service.ArendeService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.SoapIntegrationService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponseType;
@@ -62,25 +63,25 @@ public class SendMessageToCareResponderImplTest {
     private ArendeService sendMessageToCareService;
 
     @Mock
-    private SendMessageToCareResponderInterface fwdResponder;
-
-    @Mock
     private MonitoringLogService logService;
 
     @Mock
     private StatisticsService statisticsService;
+
+    @Mock
+    SoapIntegrationService soapIntegrationService;
 
     @InjectMocks
     private SendMessageToCareResponderImpl responder;
 
     @Test
     public void testSendMessage() throws Exception {
-        when(fwdResponder.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
+        when(soapIntegrationService.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
             .thenReturn(createClientResponse(ResultTypeUtil.okResult()));
 
         SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, buildSendMessageToCareType());
         assertEquals(ResultCodeType.OK, responseType.getResult().getResultCode());
-        verify(fwdResponder).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
+        verify(soapIntegrationService).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
         verify(statisticsService, times(1)).messageSent(anyString(), anyString(), anyString());
         verify(sendMessageToCareService).processIncomingMessage((any(Arende.class)));
         verify(logService).logSendMessageToCareReceived(anyString(), anyString());
@@ -89,13 +90,13 @@ public class SendMessageToCareResponderImplTest {
     @Test
     public void testSendMessageClientInfo() throws Exception {
         final String clientInfoText = "info here";
-        when(fwdResponder.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
+        when(soapIntegrationService.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
             .thenReturn(createClientResponse(ResultTypeUtil.infoResult(clientInfoText)));
 
         SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, buildSendMessageToCareType());
         assertEquals(ResultCodeType.INFO, responseType.getResult().getResultCode());
         assertEquals(clientInfoText, responseType.getResult().getResultText());
-        verify(fwdResponder).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
+        verify(soapIntegrationService).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
         verify(statisticsService, times(1)).messageSent(anyString(), anyString(), anyString());
         verify(sendMessageToCareService).processIncomingMessage((any(Arende.class)));
         verify(logService).logSendMessageToCareReceived(anyString(), anyString());
@@ -110,7 +111,7 @@ public class SendMessageToCareResponderImplTest {
         assertEquals(ErrorIdType.VALIDATION_ERROR, responseType.getResult().getErrorId());
         assertEquals("Validation of SendMessageToCare failed for message with question id 4 and certificate id intygsidextension. [fel]",
             responseType.getResult().getResultText());
-        verify(fwdResponder, never()).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
+        verify(soapIntegrationService, never()).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
         verify(statisticsService, times(0)).messageSent(anyString(), anyString(), anyString());
         verify(sendMessageToCareService, never()).processIncomingMessage((any(Arende.class)));
         verify(logService, never()).logSendMessageToCareReceived(anyString(), anyString());
@@ -121,14 +122,14 @@ public class SendMessageToCareResponderImplTest {
         final ErrorIdType clientErrorId = ErrorIdType.TECHNICAL_ERROR;
         final String clientErrorText = "fel";
 
-        when(fwdResponder.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
+        when(soapIntegrationService.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
             .thenReturn(createClientResponse(ResultTypeUtil.errorResult(clientErrorId, clientErrorText)));
 
         SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, buildSendMessageToCareType());
         assertEquals(ResultCodeType.ERROR, responseType.getResult().getResultCode());
         assertEquals(clientErrorId, responseType.getResult().getErrorId());
         assertEquals(clientErrorText, responseType.getResult().getResultText());
-        verify(fwdResponder, times(1)).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
+        verify(soapIntegrationService, times(1)).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
         verify(statisticsService, times(0)).messageSent(anyString(), anyString(), anyString());
         verify(sendMessageToCareService, never()).processIncomingMessage((any(Arende.class)));
         verify(logService, never()).logSendMessageToCareReceived(anyString(), anyString());
@@ -136,13 +137,13 @@ public class SendMessageToCareResponderImplTest {
 
     @Test
     public void testSendMessageProcessThrowsException() throws Exception {
-        when(fwdResponder.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
+        when(soapIntegrationService.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
             .thenReturn(createClientResponse(ResultTypeUtil.okResult()));
         when(sendMessageToCareService.processIncomingMessage(any(Arende.class))).thenThrow(new PersistenceException("Exception message"));
 
         SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, buildSendMessageToCareType());
         assertEquals(ResultCodeType.OK, responseType.getResult().getResultCode());
-        verify(fwdResponder).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
+        verify(soapIntegrationService).sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
         verify(statisticsService, times(1)).messageSent(anyString(), anyString(), anyString());
         verify(sendMessageToCareService).processIncomingMessage((any(Arende.class)));
         verify(logService).logSendMessageToCareReceived(anyString(), anyString());

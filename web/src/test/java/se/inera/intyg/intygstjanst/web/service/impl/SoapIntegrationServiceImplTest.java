@@ -43,6 +43,9 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
@@ -63,6 +66,9 @@ class SoapIntegrationServiceImplTest {
 
   @Mock
   private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponderInterface;
+
+  @Mock
+  private SendMessageToCareResponderInterface sendMessageToCareResponder;
 
 
   @InjectMocks
@@ -119,5 +125,16 @@ class SoapIntegrationServiceImplTest {
         .thenReturn(expected);
 
     assertEquals(expected, soapIntegrationServiceImpl.sendMessageToRecipient(LOGICAL_ADDRESS, request));
+  }
+
+  @Test
+  void shouldSendMessageToCare() {
+    final var expected = new SendMessageToCareResponseType();
+    final var request = new SendMessageToCareType();
+
+    when(sendMessageToCareResponder.sendMessageToCare(LOGICAL_ADDRESS, request))
+        .thenReturn(expected);
+
+    assertEquals(expected, soapIntegrationServiceImpl.sendMessageToCare(LOGICAL_ADDRESS, request));
   }
 }

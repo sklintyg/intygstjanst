@@ -27,6 +27,8 @@ import se.inera.intyg.common.support.modules.support.api.exception.ModuleExcepti
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 
@@ -40,7 +42,8 @@ public interface SoapIntegrationService {
     RevokeMedicalCertificateResponseType revokeMedicalCertificate(
         AttributedURIType logicalAdress, RevokeMedicalCertificateRequestType revokeMedicalCertificateRequestType);
 
-
     SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress, SendMessageToRecipientType sendMessageToRecipientType);
+
+    SendMessageToCareResponseType sendMessageToCare(String logicalAddress, SendMessageToCareType sendMessageToCareType);
 
 }

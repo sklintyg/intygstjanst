@@ -23,7 +23,6 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
@@ -33,6 +32,7 @@ import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator;
 import se.inera.intyg.intygstjanst.web.service.ArendeService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.SoapIntegrationService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponseType;
@@ -58,8 +58,7 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
     private SendMessageToCareValidator validator;
 
     @Autowired
-    @Qualifier("sendMessageToCareClient")
-    private SendMessageToCareResponderInterface sendMessageToCareResponder;
+    private SoapIntegrationService soapIntegrationService;
 
     @Override
     @PrometheusTimeMethod
@@ -75,7 +74,7 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
             return response;
         }
 
-        SendMessageToCareResponseType response = sendMessageToCareResponder.sendMessageToCare(parameters.getLogiskAdressMottagare(),
+        SendMessageToCareResponseType response = soapIntegrationService.sendMessageToCare(parameters.getLogiskAdressMottagare(),
             parameters);
 
         if (response.getResult().getResultCode() != ResultCodeType.ERROR) {
