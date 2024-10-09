@@ -72,7 +72,7 @@ public class CSIntegrationService {
         return response.getCitizenCertificates();
     }
 
-    @PerformanceLogging(eventAction = "retrieve-certificate-xml-response", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "retrieve-certificate-xml", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public GetCertificateXmlResponse getCertificateXmlResponse(String certificateId) {
         return csRestClient
             .post()
@@ -84,7 +84,7 @@ public class CSIntegrationService {
             .body(GetCertificateXmlResponse.class);
     }
 
-    @PerformanceLogging(eventAction = "retrieve-message-xml-response", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "retrieve-message-xml", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public GetMessageXmlResponse getMessageXmlResponse(String messageId) {
         return csRestClient
             .post()
