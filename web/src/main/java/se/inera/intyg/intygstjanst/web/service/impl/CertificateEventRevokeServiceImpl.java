@@ -21,18 +21,17 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import jakarta.xml.ws.soap.SOAPFaultException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventRevokeService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
+import se.inera.intyg.intygstjanst.web.service.SoapIntegrationService;
 import se.inera.intyg.intygstjanst.web.service.dto.PersonIdDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.PersonIdTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.StaffDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.UnitDTO;
-import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.ArbetsplatsKod;
@@ -54,16 +53,15 @@ public class CertificateEventRevokeServiceImpl implements CertificateEventRevoke
     private static final String ARBETSPLATS_KOD_OID = "1.2.752.29.4.71";
     private static final String DEFAULT_WOKRPLACE_CODE = "0000000";
 
-    private final RevokeCertificateResponderInterface revokeCertificateResponderInterface;
     private final RecipientService recipientService;
     private final MonitoringLogService monitoringLogService;
+    private final SoapIntegrationService soapIntegrationService;
 
     public CertificateEventRevokeServiceImpl(
-        @Qualifier("revokeCertificateClient") RevokeCertificateResponderInterface revokeCertificateResponderInterface,
-        RecipientService recipientService, MonitoringLogService monitoringLogService) {
-        this.revokeCertificateResponderInterface = revokeCertificateResponderInterface;
+        RecipientService recipientService, MonitoringLogService monitoringLogService, SoapIntegrationService soapIntegrationService) {
         this.recipientService = recipientService;
         this.monitoringLogService = monitoringLogService;
+        this.soapIntegrationService = soapIntegrationService;
     }
 
     @Override
@@ -71,7 +69,7 @@ public class CertificateEventRevokeServiceImpl implements CertificateEventRevoke
         try {
             final var logicalAddress = recipientService.getRecipient(xmlResponse.getRecipient().getId()).getLogicalAddress();
             final var request = getRequest(xmlResponse);
-            final var wsResponse = revokeCertificateResponderInterface.revokeCertificate(logicalAddress, request);
+            final var wsResponse = soapIntegrationService.revokeCertificate(logicalAddress, request);
             handleResponse(wsResponse, xmlResponse);
         } catch (SOAPFaultException | RecipientUnknownException e) {
             throw new IllegalStateException(e);

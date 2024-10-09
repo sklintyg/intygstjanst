@@ -26,7 +26,6 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
@@ -37,6 +36,7 @@ import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToRecipi
 import se.inera.intyg.intygstjanst.web.service.ArendeService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.SoapIntegrationService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
@@ -61,8 +61,7 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
     private CertificateService certificateService;
 
     @Autowired
-    @Qualifier("sendMessageToRecipientClient")
-    private SendMessageToRecipientResponderInterface sendMessageToRecipientResponder;
+    private SoapIntegrationService soapIntegrationService;
 
     @Override
     @PrometheusTimeMethod
@@ -88,7 +87,7 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
                 response = new SendMessageToRecipientResponseType();
                 response.setResult(ResultTypeUtil.okResult());
             } else {
-                response = sendMessageToRecipientResponder.sendMessageToRecipient(parameters.getLogiskAdressMottagare(), parameters);
+                response = soapIntegrationService.sendMessageToRecipient(parameters.getLogiskAdressMottagare(), parameters);
             }
 
             if (response.getResult().getResultCode() != ResultCodeType.ERROR) {

@@ -19,14 +19,11 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import java.util.Optional;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -42,6 +39,7 @@ import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
+import se.inera.intyg.intygstjanst.web.service.SoapIntegrationService;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
@@ -67,8 +65,7 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
     private RecipientService recipientService;
 
     @Autowired
-    @Qualifier("revokeCertificateClient")
-    private RevokeCertificateResponderInterface externalRevokeClient;
+    private SoapIntegrationService soapIntegrationService;
 
     @Override
     @PrometheusTimeMethod
@@ -121,7 +118,8 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
                 .distinct()
                 .forEach(recipient -> {
                     try {
-                        externalRevokeClient.revokeCertificate(recipientService.getRecipient(recipient).getLogicalAddress(), request);
+                        final var logicalAdress = recipientService.getRecipient(recipient).getLogicalAddress();
+                        soapIntegrationService.revokeCertificate(logicalAdress, request);
                     } catch (RecipientUnknownException e) {
                         LOG.warn("Could not find the logicalAddress to send revoke to {}", recipient);
                     }
