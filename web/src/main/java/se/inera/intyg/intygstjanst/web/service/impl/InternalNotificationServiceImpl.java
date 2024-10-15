@@ -62,6 +62,17 @@ public class InternalNotificationServiceImpl implements InternalNotificationServ
         }
     }
 
+    @Override
+    public void notifyCareIfSentByCitizen(
+        se.inera.intyg.common.support.facade.model.Certificate certificate, String personId,
+        String hsaId) {
+        if (personId != null && hsaId == null) {
+            notifyCertificateSentByCitizenToRecipient(
+                certificate.getMetadata().getId(), certificate.getMetadata().getType(), certificate.getMetadata().getTypeVersion(), certificate.getMetadata().getUnit().getUnitId()
+            );
+        }
+    }
+
     private void notifyCertificateSentByCitizenToRecipient(String certificateId, String certificateType, String certificateTypeVersion,
         String careUnitId) {
         boolean rc = sendCertificateSentByCitizienToInternalNotificationQueue(SENT, certificateId, certificateType, certificateTypeVersion,

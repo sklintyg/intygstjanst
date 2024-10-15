@@ -40,12 +40,15 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlRespon
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateRequestDTO;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateResponseDTO;
 
 @Service
 @RequiredArgsConstructor
 public class CSIntegrationService {
 
     private static final String CITIZEN_ENDPOINT_URL = "/api/citizen/certificate";
+    private static final String CITIZEN_ENDPOINT_URL_SEND = "/api/citizen/certificate/{certificateId}/send";
     private static final String INTERNALAPI_CERTIFICATE_XML_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/xml";
     private static final String INTERNAL_MESSAGE_XML_ENDPOINT_URL = "/internalapi/message/{messageId}/xml";
     private static final String INTERNAL_CERTIFICATE_METADATA_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/metadata";
@@ -132,5 +135,24 @@ public class CSIntegrationService {
         }
 
         return response.getCertificateMetadata();
+    }
+
+    @PerformanceLogging(eventAction = "send-certificate-for-citizen", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+    public Certificate sendCitizenCertificates(SendCitizenCertificateRequestDTO request, String certificateId) {
+        final var response = csRestClient
+            .post()
+            .uri(CITIZEN_ENDPOINT_URL_SEND, certificateId)
+            .body(request)
+            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+            .contentType(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .body(SendCitizenCertificateResponseDTO.class);
+
+        if (response == null) {
+            throw new IllegalStateException("Failed to get citizen certificates from certificate service");
+        }
+
+        return response.getCitizenCertificate();
     }
 }

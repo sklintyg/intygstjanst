@@ -31,42 +31,72 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
+import se.inera.intyg.common.support.facade.model.metadata.Unit;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InternalNotificationServiceImplTest {
 
-    private static final String INTYG_ID = "intyg-1";
-    private static final String ENHET_ID = "enhet-1";
-    private static final String INTYG_TYP = "lijsp";
-    private static final String PERSON_ID = "personId";
-    private static final String HSA_ID = "hsaId";
+  private static final String INTYG_ID = "intyg-1";
+  private static final String ENHET_ID = "enhet-1";
+  private static final String INTYG_TYP = "lijsp";
+  private static final String PERSON_ID = "personId";
+  private static final String HSA_ID = "hsaId";
 
-    @Mock
-    private JmsTemplate jmsTemplate;
+  @Mock
+  private JmsTemplate jmsTemplate;
 
-    @Mock
-    private Queue internalNotificationQueue;
+  @Mock
+  private Queue internalNotificationQueue;
 
-    @InjectMocks
-    private InternalNotificationServiceImpl testee;
+  @InjectMocks
+  private InternalNotificationServiceImpl testee;
 
-    @Test
-    public void testSendsNotificationIfSentByCitizen() {
-        testee.notifyCareIfSentByCitizen(buildCert(), PERSON_ID, null);
-        verify(jmsTemplate, times(1)).send(any(Queue.class), any(MessageCreator.class));
-    }
 
-    @Test
-    public void testDoesNotNotifiyWhenHsaIdIsDefined() {
-        testee.notifyCareIfSentByCitizen(buildCert(), PERSON_ID, HSA_ID);
-        verifyNoInteractions(jmsTemplate);
-    }
+  @Test
+  public void testSendsNotificationIfSentByCitizen() {
+    testee.notifyCareIfSentByCitizen(buildCert(), PERSON_ID, null);
+    verify(jmsTemplate, times(1)).send(any(Queue.class), any(MessageCreator.class));
+  }
 
-    private Certificate buildCert() {
-        Certificate c = new Certificate(INTYG_ID);
-        c.setCareUnitId(ENHET_ID);
-        c.setType(INTYG_TYP);
-        return c;
-    }
+  @Test
+  public void testDoesNotNotifiyWhenHsaIdIsDefined() {
+    testee.notifyCareIfSentByCitizen(buildCert(), PERSON_ID, HSA_ID);
+    verifyNoInteractions(jmsTemplate);
+  }
+
+  @Test
+  public void facadeCertificateSendsNotificationIfSentByCitizen() {
+    final var certificate = new se.inera.intyg.common.support.facade.model.Certificate();
+    certificate.setMetadata(
+        CertificateMetadata.builder()
+            .id("id")
+            .type("type")
+            .typeVersion("typeVersion")
+            .unit(
+                Unit.builder()
+                    .unitId("unitId")
+                    .build()
+            )
+            .build()
+    );
+    testee.notifyCareIfSentByCitizen(certificate,
+        PERSON_ID, null);
+    verify(jmsTemplate, times(1)).send(any(Queue.class), any(MessageCreator.class));
+  }
+
+  @Test
+  public void facadeCertificateDoesNotNotifiyWhenHsaIdIsDefined() {
+    testee.notifyCareIfSentByCitizen(new se.inera.intyg.common.support.facade.model.Certificate(),
+        PERSON_ID, HSA_ID);
+    verifyNoInteractions(jmsTemplate);
+  }
+
+  private Certificate buildCert() {
+    Certificate c = new Certificate(INTYG_ID);
+    c.setCareUnitId(ENHET_ID);
+    c.setType(INTYG_TYP);
+    return c;
+  }
 }
