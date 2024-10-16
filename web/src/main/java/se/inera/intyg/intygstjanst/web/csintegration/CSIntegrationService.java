@@ -150,7 +150,7 @@ public class CSIntegrationService {
             .body(SendCitizenCertificateResponseDTO.class);
 
         if (response == null) {
-            throw new IllegalStateException("Failed to get citizen certificates from certificate service");
+            throw new IllegalStateException("Failed to send citizen certificates from certificate service");
         }
 
         return response.getCitizenCertificate();
