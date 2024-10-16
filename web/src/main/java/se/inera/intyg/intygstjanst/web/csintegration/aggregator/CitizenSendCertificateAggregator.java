@@ -41,7 +41,7 @@ public class CitizenSendCertificateAggregator implements SendCertificateService 
     @Override
     public SendStatus send(SendCertificateRequestDTO request)
         throws InvalidCertificateException, TestCertificateException, CertificateRevokedException, RecipientUnknownException {
-        if (!certificateServiceProfile.active()) {
+        if (Boolean.FALSE.equals(certificateServiceProfile.active())) {
             return sendCertificateServiceImpl.send(request);
         }
 

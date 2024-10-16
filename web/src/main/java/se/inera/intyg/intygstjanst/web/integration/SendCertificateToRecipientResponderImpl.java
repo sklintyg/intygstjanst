@@ -19,12 +19,10 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import java.util.Optional;
-
+import lombok.RequiredArgsConstructor;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -45,11 +43,12 @@ import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 
 @SchemaValidation
+@RequiredArgsConstructor
 public class SendCertificateToRecipientResponderImpl implements SendCertificateToRecipientResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SendCertificateToRecipientResponderImpl.class);
-    @Autowired
-    private SendCertificateService sendCertificateService;
+
+    private final SendCertificateService citizenSendCertificateAggregator;
 
     @Override
     @PrometheusTimeMethod
@@ -66,7 +65,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
         Optional<Personnummer> personnummer = Personnummer.createPersonnummer(request.getPatientPersonId().getExtension());
 
         try {
-            final var sendStatus = sendCertificateService.send(
+            final var sendStatus = citizenSendCertificateAggregator.send(
                 SendCertificateRequestDTO
                     .builder()
                     .certificateId(intygsId)

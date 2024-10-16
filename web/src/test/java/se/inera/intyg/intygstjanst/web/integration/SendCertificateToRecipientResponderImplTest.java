@@ -18,7 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,13 +27,12 @@ import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.IN
 import static se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType.OK;
 
 import lombok.SneakyThrows;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
@@ -43,7 +42,6 @@ import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.web.service.SendCertificateService;
 import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
 import se.inera.intyg.schemas.contract.Personnummer;
-import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
@@ -53,8 +51,8 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.HosPersonal;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SendCertificateToRecipientResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class SendCertificateToRecipientResponderImplTest {
 
     private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").get();
     private static final String CERTIFICATE_ID = "Intygs-id-1234567890";
@@ -62,15 +60,13 @@ public class SendCertificateToRecipientResponderImplTest {
 
     private static final String LOGICAL_ADDRESS = "Intygstjänsten";
     private SendCertificateToRecipientType request;
-
-
     @Mock
     private SendCertificateService sendCertificateService;
     @InjectMocks
-    private SendCertificateToRecipientResponderInterface responder = new SendCertificateToRecipientResponderImpl();
+    private SendCertificateToRecipientResponderImpl responder;
 
     @Test
-    public void testSendCertificateToRecipient() throws Exception {
+    void testSendCertificateToRecipient() throws Exception {
 
         SendCertificateToRecipientType request = createRequest();
         request.getMottagare().setCode("FKASSA");
@@ -82,7 +78,7 @@ public class SendCertificateToRecipientResponderImplTest {
     }
 
     @Test
-    public void testSendCertificateToRecipientAlreadySent() throws Exception {
+    void testSendCertificateToRecipientAlreadySent() throws Exception {
 
         when(sendCertificateService.send(any())).thenReturn(SendStatus.ALREADY_SENT);
 
@@ -95,7 +91,7 @@ public class SendCertificateToRecipientResponderImplTest {
     }
 
     @Test
-    public void testSendCertificateToRecipientInvalidCertificate() throws Exception {
+    void testSendCertificateToRecipientInvalidCertificate() throws Exception {
         when(sendCertificateService.send(any()))
             .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, PERSONNUMMER));
 
@@ -107,7 +103,7 @@ public class SendCertificateToRecipientResponderImplTest {
     }
 
     @Test
-    public void testSendCertificateToRecipientCertificateRevoked() throws Exception {
+    void testSendCertificateToRecipientCertificateRevoked() throws Exception {
         when(sendCertificateService.send(any()))
             .thenThrow(new CertificateRevokedException(CERTIFICATE_ID));
 
@@ -118,7 +114,7 @@ public class SendCertificateToRecipientResponderImplTest {
     }
 
     @Test
-    public void testSendCertificateToRecipientRecipientUnknown() throws Exception {
+    void testSendCertificateToRecipientRecipientUnknown() throws Exception {
         when(sendCertificateService.send(any()))
             .thenThrow(new RecipientUnknownException(""));
 
@@ -130,7 +126,7 @@ public class SendCertificateToRecipientResponderImplTest {
     }
 
     @Test
-    public void testSendCertificateToRecipientServerException() throws Exception {
+    void testSendCertificateToRecipientServerException() throws Exception {
         when(sendCertificateService.send(any()))
             .thenThrow(new ServerException());
 
@@ -142,7 +138,7 @@ public class SendCertificateToRecipientResponderImplTest {
     }
 
     @Test
-    public void testSendTestCertificateToRecipientTestCertificateException() throws Exception {
+    void testSendTestCertificateToRecipientTestCertificateException() throws Exception {
         when(sendCertificateService.send(any()))
             .thenThrow(new TestCertificateException(CERTIFICATE_ID));
 
@@ -161,7 +157,7 @@ public class SendCertificateToRecipientResponderImplTest {
 
     @SneakyThrows
     @Test
-    public void shouldSendPatientId() {
+    void shouldSendPatientId() {
         setup();
         final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
         responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
@@ -174,7 +170,7 @@ public class SendCertificateToRecipientResponderImplTest {
 
     @SneakyThrows
     @Test
-    public void shouldSendCertificateId() {
+    void shouldSendCertificateId() {
         setup();
         final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
         responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
@@ -186,7 +182,7 @@ public class SendCertificateToRecipientResponderImplTest {
 
     @SneakyThrows
     @Test
-    public void shouldSendRecipientId() {
+    void shouldSendRecipientId() {
         setup();
         final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
         responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
@@ -198,7 +194,7 @@ public class SendCertificateToRecipientResponderImplTest {
 
     @SneakyThrows
     @Test
-    public void shouldSendHsaId() {
+    void shouldSendHsaId() {
         setup();
         final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
         responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);

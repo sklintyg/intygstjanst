@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.facade.model.Certificate;
+import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
+import se.inera.intyg.common.support.facade.model.metadata.CertificateRecipient;
+import se.inera.intyg.common.support.facade.model.metadata.Unit;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateRequestDTO;
@@ -20,6 +24,7 @@ import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.web.service.InternalNotificationService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.dto.PersonIdDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.PersonIdTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
@@ -29,6 +34,25 @@ import se.inera.intyg.schemas.contract.Personnummer;
 class CitizenSendCertificateFromCSTest {
 
     private static final String CERTIFICATE_ID = "certificateId";
+    private static final String CERTIFICATE_TYPE = "certificateType";
+    private static final String UNIT_ID = "unitId";
+    private static final String RECIPIENT_ID = "recipientId";
+    private static final CertificateMetadata CERTIFICATE_METADATA = CertificateMetadata.builder()
+        .id(CERTIFICATE_ID)
+        .type(CERTIFICATE_TYPE)
+        .unit(
+            Unit.builder()
+                .unitId(UNIT_ID)
+                .build()
+        )
+        .recipient(
+            CertificateRecipient.builder()
+                .id(RECIPIENT_ID)
+                .build()
+        )
+        .build();
+    @Mock
+    MonitoringLogService monitoringLogService;
     @Mock
     CSIntegrationService csIntegrationService;
     @Mock
@@ -66,10 +90,11 @@ class CitizenSendCertificateFromCSTest {
             .patientId(PERSONAL_IDENTITY_NUMBER)
             .build();
 
-        final var certificate = new Certificate();
+        final var certificate = mock(Certificate.class);
 
         doReturn(true).when(csIntegrationService).certificateExists(CERTIFICATE_ID);
         doReturn(certificate).when(csIntegrationService).sendCitizenCertificates(argumentCaptor.capture(), eq(CERTIFICATE_ID));
+        doReturn(CERTIFICATE_METADATA).when(certificate).getMetadata();
 
         citizenSendCertificateFromCS.send(request);
         assertEquals(argumentCaptor.getValue(), expectedRequest);
@@ -84,13 +109,32 @@ class CitizenSendCertificateFromCSTest {
             .patientId(PERSONAL_IDENTITY_NUMBER)
             .build();
 
-        final var certificate = new Certificate();
+        final var certificate = mock(Certificate.class);
 
         doReturn(true).when(csIntegrationService).certificateExists(CERTIFICATE_ID);
         doReturn(certificate).when(csIntegrationService).sendCitizenCertificates(argumentCaptor.capture(), eq(CERTIFICATE_ID));
+        doReturn(CERTIFICATE_METADATA).when(certificate).getMetadata();
 
         citizenSendCertificateFromCS.send(request);
         verify(internalNotificationService).notifyCareIfSentByCitizen(certificate, PERSONAL_IDENTITY_NUMBER.getOriginalPnr(), null);
+    }
+
+    @Test
+    void shallMonitorLog()
+        throws TestCertificateException, CertificateRevokedException, RecipientUnknownException, InvalidCertificateException {
+        final var argumentCaptor = ArgumentCaptor.forClass(SendCitizenCertificateRequestDTO.class);
+        final var request = SendCertificateRequestDTO.builder()
+            .certificateId(CERTIFICATE_ID)
+            .patientId(PERSONAL_IDENTITY_NUMBER)
+            .build();
+
+        final var certificate = mock(Certificate.class);
+
+        doReturn(true).when(csIntegrationService).certificateExists(CERTIFICATE_ID);
+        doReturn(certificate).when(csIntegrationService).sendCitizenCertificates(argumentCaptor.capture(), eq(CERTIFICATE_ID));
+        doReturn(CERTIFICATE_METADATA).when(certificate).getMetadata();
+        citizenSendCertificateFromCS.send(request);
+        verify(monitoringLogService).logCertificateSent(CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID, RECIPIENT_ID);
     }
 
     @Test
@@ -110,10 +154,11 @@ class CitizenSendCertificateFromCSTest {
             .patientId(PERSONAL_IDENTITY_NUMBER)
             .build();
 
-        final var certificate = new Certificate();
+        final var certificate = mock(Certificate.class);
 
         doReturn(true).when(csIntegrationService).certificateExists(CERTIFICATE_ID);
         doReturn(certificate).when(csIntegrationService).sendCitizenCertificates(requestToCS, CERTIFICATE_ID);
+        doReturn(CERTIFICATE_METADATA).when(certificate).getMetadata();
 
         final var result = citizenSendCertificateFromCS.send(request);
         assertEquals(SendStatus.OK, result);

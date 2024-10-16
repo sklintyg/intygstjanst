@@ -30,6 +30,7 @@ import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.web.service.InternalNotificationService;
+import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.SendCertificateService;
 import se.inera.intyg.intygstjanst.web.service.dto.PersonIdDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
@@ -38,39 +39,47 @@ import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
 @RequiredArgsConstructor
 public class CitizenSendCertificateFromCS implements SendCertificateService {
 
-  private final CSIntegrationService csIntegrationService;
-  private final InternalNotificationService internalNotificationService;
+    private final CSIntegrationService csIntegrationService;
+    private final InternalNotificationService internalNotificationService;
+    private final MonitoringLogService monitoringLogService;
 
-  @Override
-  public SendStatus send(SendCertificateRequestDTO request)
-      throws InvalidCertificateException, TestCertificateException, CertificateRevokedException, RecipientUnknownException {
-    if (Boolean.FALSE.equals(csIntegrationService.certificateExists(request.getCertificateId()))) {
-      return null;
+    @Override
+    public SendStatus send(SendCertificateRequestDTO request)
+        throws InvalidCertificateException, TestCertificateException, CertificateRevokedException, RecipientUnknownException {
+        if (Boolean.FALSE.equals(csIntegrationService.certificateExists(request.getCertificateId()))) {
+            return null;
+        }
+
+        final var certificate = csIntegrationService.sendCitizenCertificates(
+            getSendCitizenCertificateRequest(request),
+            request.getCertificateId()
+        );
+
+        monitoringLogService.logCertificateSent(
+            certificate.getMetadata().getId(),
+            certificate.getMetadata().getType(),
+            certificate.getMetadata().getUnit().getUnitId(),
+            certificate.getMetadata().getRecipient().getId()
+        );
+
+        internalNotificationService.notifyCareIfSentByCitizen(
+            certificate,
+            request.getPatientId().getOriginalPnr(),
+            request.getHsaId()
+        );
+
+        return SendStatus.OK;
     }
 
-    final var certificate = csIntegrationService.sendCitizenCertificates(
-        getSendCitizenCertificateRequest(request),
-        request.getCertificateId()
-    );
-
-    internalNotificationService.notifyCareIfSentByCitizen(
-        certificate,
-        request.getPatientId().getOriginalPnr(),
-        request.getHsaId()
-    );
-
-    return SendStatus.OK;
-  }
-
-  private static SendCitizenCertificateRequestDTO getSendCitizenCertificateRequest(
-      SendCertificateRequestDTO request) {
-    return SendCitizenCertificateRequestDTO.builder()
-        .personId(
-            PersonIdDTO.builder()
-                .id(request.getPatientId().getOriginalPnr())
-                .type(getType(request.getPatientId()))
-                .build()
-        )
-        .build();
-  }
+    private static SendCitizenCertificateRequestDTO getSendCitizenCertificateRequest(
+        SendCertificateRequestDTO request) {
+        return SendCitizenCertificateRequestDTO.builder()
+            .personId(
+                PersonIdDTO.builder()
+                    .id(request.getPatientId().getOriginalPnr())
+                    .type(getType(request.getPatientId()))
+                    .build()
+            )
+            .build();
+    }
 }
