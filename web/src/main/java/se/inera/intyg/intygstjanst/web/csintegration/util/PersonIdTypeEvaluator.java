@@ -16,12 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.service;
+package se.inera.intyg.intygstjanst.web.csintegration.util;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import java.util.Optional;
+import se.inera.intyg.common.support.validate.SamordningsnummerValidator;
+import se.inera.intyg.intygstjanst.web.service.dto.PersonIdTypeDTO;
+import se.inera.intyg.schemas.contract.Personnummer;
 
-public interface InternalNotificationService {
+public class PersonIdTypeEvaluator {
 
-    void notifyCareIfSentByCitizen(Certificate certificate, String personId, String hsaId);
-    void notifyCareIfSentByCitizen(se.inera.intyg.common.support.facade.model.Certificate certificate, String personId, String hsaId);
+    private PersonIdTypeEvaluator() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    public static PersonIdTypeDTO getType(Personnummer personId) {
+        return SamordningsnummerValidator.isSamordningsNummer(
+            Optional.of(personId)) ? PersonIdTypeDTO.COORDINATION_NUMBER
+            : PersonIdTypeDTO.PERSONAL_IDENTITY_NUMBER;
+    }
 }

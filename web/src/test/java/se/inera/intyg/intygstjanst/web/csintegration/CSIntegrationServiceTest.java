@@ -54,12 +54,18 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlRespon
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateRequestDTO;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateResponseDTO;
 
 @ExtendWith(MockitoExtension.class)
 class CSIntegrationServiceTest {
 
     private static final List<Certificate> CITIZEN_CERTIFICATES = List.of(new Certificate());
+    private static final Certificate CITIZEN_CERTIFICATE = new Certificate();
     private static final GetCitizenCertificatesRequest GET_CITIZEN_CERTIFICATES_REQUEST = GetCitizenCertificatesRequest.builder().build();
+    private static final String CERTIFICATE_ID = "certificateId";
+    private static final SendCitizenCertificateRequestDTO SEND_CITIZEN_CERTIFICATE_REQUEST = SendCitizenCertificateRequestDTO.builder()
+        .build();
 
     @Mock
     private RestTemplate restTemplate;
@@ -145,6 +151,43 @@ class CSIntegrationServiceTest {
             final var actualResponse = csIntegrationService.getMessageXmlResponse("messageId");
 
             assertEquals(expectedResponse, actualResponse);
+        }
+    }
+
+    @Nested
+    class SendCitizenCertificateRequestDTOTests {
+
+        private RequestBodyUriSpec requestBodyUriSpec;
+        private ResponseSpec responseSpec;
+
+        @BeforeEach
+        void setUp() {
+            requestBodyUriSpec = mock(RestClient.RequestBodyUriSpec.class);
+            responseSpec = mock(RestClient.ResponseSpec.class);
+
+            MDC.put(TRACE_ID_KEY, "traceId");
+            MDC.put(SESSION_ID_KEY, "sessionId");
+
+            when(restClient.post()).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.uri("/api/citizen/certificate/{certificateId}/send", CERTIFICATE_ID)).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_TRACE_ID_HEADER, "traceId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.body(any(SendCitizenCertificateRequestDTO.class))).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.contentType(MediaType.APPLICATION_JSON)).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.retrieve()).thenReturn(responseSpec);
+        }
+
+        @Test
+        void shallReturnSendCitizenCertificateResponse() {
+            final var expectedResponse = SendCitizenCertificateResponseDTO.builder()
+                .citizenCertificate(CITIZEN_CERTIFICATE)
+                .build();
+
+            doReturn(expectedResponse).when(responseSpec).body(SendCitizenCertificateResponseDTO.class);
+
+            final var actualResponse = csIntegrationService.sendCitizenCertificates(SEND_CITIZEN_CERTIFICATE_REQUEST, CERTIFICATE_ID);
+
+            assertEquals(expectedResponse.getCitizenCertificate(), actualResponse);
         }
     }
 

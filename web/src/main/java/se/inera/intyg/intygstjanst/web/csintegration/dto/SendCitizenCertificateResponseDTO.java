@@ -16,12 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+package se.inera.intyg.intygstjanst.web.csintegration.dto;
 
-public interface InternalNotificationService {
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import lombok.Builder;
+import lombok.Value;
+import se.inera.intyg.common.support.facade.model.Certificate;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateResponseDTO.SendCitizenCertificateResponseDTOBuilder;
 
-    void notifyCareIfSentByCitizen(Certificate certificate, String personId, String hsaId);
-    void notifyCareIfSentByCitizen(se.inera.intyg.common.support.facade.model.Certificate certificate, String personId, String hsaId);
+@JsonDeserialize(builder = SendCitizenCertificateResponseDTOBuilder.class)
+@Value
+@Builder
+public class SendCitizenCertificateResponseDTO {
+
+    Certificate citizenCertificate;
+
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class SendCitizenCertificateResponseDTOBuilder {
+
+    }
 }

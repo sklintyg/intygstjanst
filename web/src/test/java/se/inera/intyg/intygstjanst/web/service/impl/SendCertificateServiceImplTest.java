@@ -148,7 +148,7 @@ class SendCertificateServiceImplTest {
 
             final var captor = ArgumentCaptor.forClass(String.class);
 
-            verify(internalNotificationService).notifyCareIfSentByCitizen(any(), captor.capture(), anyString());
+            verify(internalNotificationService).notifyCareIfSentByCitizen(any(Certificate.class), captor.capture(), anyString());
             assertEquals("191212121212", captor.getValue());
         }
 
@@ -159,7 +159,7 @@ class SendCertificateServiceImplTest {
 
             final var captor = ArgumentCaptor.forClass(String.class);
 
-            verify(internalNotificationService).notifyCareIfSentByCitizen(any(), anyString(), captor.capture());
+            verify(internalNotificationService).notifyCareIfSentByCitizen(any(Certificate.class), anyString(), captor.capture());
             assertEquals(REQUEST.getHsaId(), captor.getValue());
         }
 
@@ -178,7 +178,7 @@ class SendCertificateServiceImplTest {
             void shouldNotCallInternalNotification() {
                 sendCertificateService.send(REQUEST);
 
-                verify(internalNotificationService, times(0)).notifyCareIfSentByCitizen(any(), any(), any());
+                verify(internalNotificationService, times(0)).notifyCareIfSentByCitizen(any(Certificate.class), any(), any());
             }
 
             @SneakyThrows

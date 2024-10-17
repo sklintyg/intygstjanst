@@ -43,12 +43,12 @@ public class CitizenCertificateController {
     private static final String UTF_8_CHARSET = ";charset=utf-8";
 
     private final ListCitizenCertificatesService listCitizenCertificatesService;
-    private final SendCertificateService sendCertificateService;
+    private final SendCertificateService citizenSendCertificateAggregator;
 
     public CitizenCertificateController(ListCitizenCertificatesService listCitizenCertificatesService,
-        SendCertificateService sendCertificateService) {
+        SendCertificateService citizenSendCertificateAggregator) {
         this.listCitizenCertificatesService = listCitizenCertificatesService;
-        this.sendCertificateService = sendCertificateService;
+        this.citizenSendCertificateAggregator = citizenSendCertificateAggregator;
     }
 
     @PrometheusTimeMethod
@@ -92,7 +92,7 @@ public class CitizenCertificateController {
         final var convertedPatientId = Personnummer.createPersonnummer(request.getPatientId()).orElseThrow();
 
         try {
-            sendCertificateService.send(
+            citizenSendCertificateAggregator.send(
                 SendCertificateRequestDTO
                     .builder()
                     .certificateId(request.getCertificateId())
