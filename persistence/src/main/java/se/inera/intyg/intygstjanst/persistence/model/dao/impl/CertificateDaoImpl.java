@@ -263,7 +263,7 @@ public class CertificateDaoImpl implements CertificateDao {
         jpqlBuffer.append("FROM CertificateMetaData cm ");
         jpqlBuffer.append("JOIN cm.certificate c ");
         jpqlBuffer.append("WHERE c.careUnitId in (:careUnitIdValue) ");
-        jpqlBuffer.append("AND cm.isRevoked = 0 ");
+        jpqlBuffer.append("AND cm.isRevoked = false ");
 
         if (listContainsValues(types)) {
             jpqlBuffer.append("AND c.type in (:typesValue) ");
