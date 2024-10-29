@@ -62,7 +62,7 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventAction = "send-messsage-to-care", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+    @PerformanceLogging(eventAction = "send-message-to-care", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SendMessageToCareResponseType sendMessageToCare(String logicalAddress, SendMessageToCareType parameters) {
         List<String> validationErrors = validator.validateSendMessageToCare(parameters);
         if (!validationErrors.isEmpty()) {

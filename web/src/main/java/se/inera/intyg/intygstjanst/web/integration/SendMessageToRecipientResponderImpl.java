@@ -65,7 +65,7 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventAction = "send-messsage-to-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+    @PerformanceLogging(eventAction = "send-message-to-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress, SendMessageToRecipientType parameters) {
         checkNotNull(parameters);
 
