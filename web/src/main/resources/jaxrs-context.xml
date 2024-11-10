@@ -25,12 +25,7 @@
         http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
         http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd">
 
-	<beans>
-
-		<bean id="jacksonJsonProvider"
-				class="com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider">
-			<property name="mapper" ref="objectMapper"/>
-		</bean>
+  <beans>
 
 		<jaxrs:server id="sendMessageToCareStub" address="/api/send-message-to-care">
 			<jaxrs:serviceBeans>
