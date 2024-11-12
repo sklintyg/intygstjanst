@@ -26,36 +26,29 @@
         http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd">
 
   <beans>
-    <bean id="objectMapper"
-          class="se.inera.intyg.common.util.integration.json.CustomObjectMapper" />
-
-    <bean id="jacksonJsonProvider"
-          class="com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider">
-      <property name="mapper" ref="objectMapper" />
-    </bean>
 
     <jaxrs:server id="sendMessageToCareStub" address="/api/send-message-to-care">
       <jaxrs:serviceBeans>
-        <bean class="se.inera.intyg.intygstjanst.web.integration.stub.SendMessageToCareResponderStubRestApi" />
+        <bean class="se.inera.intyg.intygstjanst.web.integration.stub.SendMessageToCareResponderStubRestApi"/>
       </jaxrs:serviceBeans>
     </jaxrs:server>
 
     <!-- Internal API -->
     <jaxrs:server id="internalApi" address="/internalapi">
       <jaxrs:serviceBeans>
-        <bean class="se.inera.intyg.intygstjanst.web.integration.CitizenController" />
-        <bean class="se.inera.intyg.intygstjanst.web.integration.intyginfo.IntygInfoController" />
-        <bean class="se.inera.intyg.intygstjanst.web.integration.testcertificate.TestCertificateController" />
-        <bean class="se.inera.intyg.intygstjanst.web.integration.message.MessageController" />
-        <bean class="se.inera.intyg.intygstjanst.web.integration.certificate.TypedCertificateController" />
-        <bean class="se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveController" />
-        <bean class="se.inera.intyg.intygstjanst.web.integration.reko.RekoController" />
-        <bean class="se.inera.intyg.intygstjanst.web.integration.citizen.CitizenCertificateController" />
-        <bean class="se.inera.intyg.intygstjanst.web.integration.certificate.CertificateListController" />
-        <bean class="se.inera.intyg.intygstjanst.web.integration.certificateexport.CertificateExportController" />
+        <bean class="se.inera.intyg.intygstjanst.web.integration.CitizenController"/>
+        <bean class="se.inera.intyg.intygstjanst.web.integration.intyginfo.IntygInfoController"/>
+        <bean class="se.inera.intyg.intygstjanst.web.integration.testcertificate.TestCertificateController"/>
+        <bean class="se.inera.intyg.intygstjanst.web.integration.message.MessageController"/>
+        <bean class="se.inera.intyg.intygstjanst.web.integration.certificate.TypedCertificateController"/>
+        <bean class="se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveController"/>
+        <bean class="se.inera.intyg.intygstjanst.web.integration.reko.RekoController"/>
+        <bean class="se.inera.intyg.intygstjanst.web.integration.citizen.CitizenCertificateController"/>
+        <bean class="se.inera.intyg.intygstjanst.web.integration.certificate.CertificateListController"/>
+        <bean class="se.inera.intyg.intygstjanst.web.integration.certificateexport.CertificateExportController"/>
       </jaxrs:serviceBeans>
       <jaxrs:providers>
-        <ref bean="jacksonJsonProvider" />
+        <ref bean="jacksonJsonProvider"/>
       </jaxrs:providers>
     </jaxrs:server>
   </beans>
@@ -67,17 +60,17 @@
   <beans profile="dev,testability-api">
     <jaxrs:server id="certificateService" address="/resources">
       <jaxrs:serviceBeans>
-        <ref bean="certificateBean" />
-        <ref bean="sjukfallCertBean" />
-        <ref bean="fkBean" />
-        <ref bean="statisticsServiceBean" />
-        <bean class="se.inera.intyg.intygstjanst.web.integration.testability.TestabilityController" />
+        <ref bean="certificateBean"/>
+        <ref bean="sjukfallCertBean"/>
+        <ref bean="fkBean"/>
+        <ref bean="statisticsServiceBean"/>
+        <bean class="se.inera.intyg.intygstjanst.web.integration.testability.TestabilityController"/>
       </jaxrs:serviceBeans>
       <jaxrs:providers>
-        <ref bean="jacksonJsonProvider" />
+        <ref bean="jacksonJsonProvider"/>
       </jaxrs:providers>
       <jaxrs:extensionMappings>
-        <entry key="json" value="application/json" />
+        <entry key="json" value="application/json"/>
       </jaxrs:extensionMappings>
     </jaxrs:server>
 
@@ -88,7 +81,7 @@
     <bean id="sjukfallCertBean" class="se.inera.intyg.intygstjanst.web.integration.test.SjukfallCertResource">
       <property name="txManager" ref="transactionManager"/>
     </bean>
-    <bean id="fkBean" class="se.inera.intyg.intygstjanst.web.integration.stub.FkStubResource" />
+    <bean id="fkBean" class="se.inera.intyg.intygstjanst.web.integration.stub.FkStubResource"/>
   </beans>
 
 </beans>
