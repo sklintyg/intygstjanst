@@ -45,7 +45,7 @@ import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.AdditionalMetaData;
 import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
-import se.inera.intyg.infra.integration.pu.services.PUService;
+import se.inera.intyg.infra.pu.integration.api.services.PUService;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
@@ -430,7 +430,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     }
 
     private boolean isPatientTestIndicated(Personnummer civicRegistrationNumber) {
-        return puService.getPerson(civicRegistrationNumber).getPerson().isTestIndicator();
+        return puService.getPerson(civicRegistrationNumber).getPerson().testIndicator();
     }
 
     private void addTestCertificateFlagIfPatientIsTestIndicated(Certificate certificate) {

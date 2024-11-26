@@ -19,24 +19,26 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.infra.integration.pu.model.Person;
-import se.inera.intyg.infra.integration.pu.model.PersonSvar;
-import se.inera.intyg.infra.integration.pu.services.PUService;
+import se.inera.intyg.infra.pu.integration.api.model.Person;
+import se.inera.intyg.infra.pu.integration.api.model.PersonSvar;
+import se.inera.intyg.infra.pu.integration.api.services.PUService;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.schemas.contract.Personnummer;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class PuFilterServiceImplTest {
@@ -180,7 +182,7 @@ public class PuFilterServiceImplTest {
 
     private Person buildPerson(String pnr, boolean sekretess, boolean avliden) {
         return new Person(createPnr(pnr), sekretess, avliden, "Fornamn", null, "Efternamn",
-            "Gatan 1", "11212", "Orten");
+            "Gatan 1", "11212", "Orten", false);
     }
 
     private List<IntygData> buildIntygDataList(String... personId) {
@@ -202,7 +204,7 @@ public class PuFilterServiceImplTest {
     private Map<Personnummer, PersonSvar> buildPersonMap(PersonSvar... arr) {
         Map<Personnummer, PersonSvar> persons = new HashMap<>();
         Arrays.stream(arr).forEach(ps -> {
-            Personnummer pnr = ps.getPerson() == null ? null : ps.getPerson().getPersonnummer();
+            Personnummer pnr = ps.getPerson() == null ? null : ps.getPerson().personnummer();
             persons.put(pnr, ps);
         });
         return persons;
@@ -214,4 +216,3 @@ public class PuFilterServiceImplTest {
             .orElseThrow(() -> new IllegalArgumentException("Cannot create Personnummer object with pnr: " + pnr));
     }
 }
-

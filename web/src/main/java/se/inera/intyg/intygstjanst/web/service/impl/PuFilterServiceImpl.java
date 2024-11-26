@@ -20,18 +20,20 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import com.google.common.base.Joiner;
+import java.lang.invoke.MethodHandles;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.infra.integration.pu.model.PersonSvar;
-import se.inera.intyg.infra.integration.pu.services.PUService;
+import se.inera.intyg.infra.pu.integration.api.model.PersonSvar;
+import se.inera.intyg.infra.pu.integration.api.services.PUService;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.intygstjanst.web.service.PuFilterService;
 import se.inera.intyg.schemas.contract.Personnummer;
-
-import java.lang.invoke.MethodHandles;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class PuFilterServiceImpl implements PuFilterService {
@@ -65,7 +67,7 @@ public class PuFilterServiceImpl implements PuFilterService {
             final var personSvar = personSvarMap.get(pnr.get());
             final var patientNotFound = personSvar.getStatus() == PersonSvar.Status.NOT_FOUND;
             if (personSvar.getStatus() == PersonSvar.Status.FOUND || patientNotFound) {
-                if (patientNotFound || personSvar.getPerson().isSekretessmarkering()) {
+                if (patientNotFound || personSvar.getPerson().sekretessmarkering()) {
 
                     final var updatedName = patientNotFound ? SEKRETESS_SKYDDAD_NAME_UNKNOWN : SEKRETESS_SKYDDAD_NAME_PLACEHOLDER;
                     item.setPatientNamn(updatedName);
@@ -74,7 +76,7 @@ public class PuFilterServiceImpl implements PuFilterService {
                         i.remove();
                     }
 
-                } else if (personSvar.getPerson().isAvliden()) {
+                } else if (personSvar.getPerson().avliden()) {
                     i.remove();
                 } else if (joinNames(personSvar).equals("")) {
                     item.setPatientNamn(SEKRETESS_SKYDDAD_NAME_UNKNOWN);
@@ -140,9 +142,8 @@ public class PuFilterServiceImpl implements PuFilterService {
 
     private String joinNames(PersonSvar personSvar) {
         return Joiner.on(' ').skipNulls()
-            .join(personSvar.getPerson().getFornamn(),
-                personSvar.getPerson().getMellannamn(),
-                personSvar.getPerson().getEfternamn());
+            .join(personSvar.getPerson().fornamn(),
+                personSvar.getPerson().mellannamn(),
+                personSvar.getPerson().efternamn());
     }
 }
-
