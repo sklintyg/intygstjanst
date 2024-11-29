@@ -19,7 +19,7 @@ gretty {
 
     jvmArgs = [
             "-Dcatalina.base=${buildDir}/catalina.base",
-            "-Dspring.profiles.active=dev,bootstrap,testability-api,caching-enabled,it-fk-stub,certificate-service-active",
+            "-Dspring.profiles.active=dev,bootstrap,testability-api,caching-enabled,it-fk-stub,certificate-service-active,pu-integration-intyg-proxy-service",
             "-Dlogback.file=${applicationDir}/config/logback-spring.xml",
             "-Djava.awt.headless=true",
             "-Dfile.encoding=UTF-8",
@@ -47,6 +47,7 @@ dependencies {
 
     implementation "se.inera.intyg.infra:certificate:${infraVersion}"
     implementation "se.inera.intyg.infra:hsa-integration-api:${infraVersion}"
+    implementation "se.inera.intyg.infra:pu-integration-api:${infraVersion}"
     implementation "se.inera.intyg.infra:intyginfo:${infraVersion}"
     implementation "se.inera.intyg.infra:message:${infraVersion}"
     implementation "se.inera.intyg.infra:monitoring:${infraVersion}"
@@ -99,6 +100,7 @@ dependencies {
 
     compileOnly "jakarta.persistence:jakarta.persistence-api"
     runtimeOnly "se.inera.intyg.infra:hsa-integration-intyg-proxy-service:${infraVersion}"
+    runtimeOnly "se.inera.intyg.infra:pu-integration-intyg-proxy-service:${infraVersion}"
     runtimeOnly "com.mysql:mysql-connector-j"
 
     testImplementation "org.springframework:spring-test"
