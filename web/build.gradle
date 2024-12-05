@@ -94,6 +94,7 @@ dependencies {
     implementation "org.apache.cxf:cxf-rt-frontend-jaxws:${cxfVersion}"
     implementation "org.aspectj:aspectjweaver"
     implementation "codes.rafael.jaxb2_commons:jaxb2-basics:${jaxb2Version}"
+    implementation "org.slf4j:jul-to-slf4j"
     implementation "org.springframework:spring-jms"
     implementation "org.springframework:spring-webmvc"
     implementation "org.springframework.data:spring-data-jpa"
