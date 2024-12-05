@@ -19,6 +19,8 @@
 package se.inera.intyg.intygstjanst.config;
 
 
+import static java.util.logging.LogManager.getLogManager;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import jakarta.annotation.Nonnull;
@@ -28,6 +30,7 @@ import java.util.Collections;
 import org.apache.cxf.Bus;
 import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.ext.logging.slf4j.Slf4jVerboseEventSender;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,7 +75,13 @@ public class ApplicationConfig implements TransactionManagementConfigurer {
     public Bus init() {
         bus.setFeatures(new ArrayList<>(Collections.singletonList(loggingFeature())));
         bus.setProperty("org.apache.cxf.logging.enable", Boolean.toString(loggingSoapEnable));
+        configureApacheCxfToUseLogback();
         return bus;
+    }
+
+    private static void configureApacheCxfToUseLogback() {
+        getLogManager().reset();
+        SLF4JBridgeHandler.install();
     }
 
     @Bean
