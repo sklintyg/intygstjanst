@@ -61,9 +61,6 @@ public class JmsConfig {
     @Value("${activemq.internal.notification.queue.name}")
     private String internalNotificationQueue;
 
-    @Value("${populate.loader.queueName}")
-    private String internalPopulateLoaderQueue;
-
     @Value("${certificate.event.queue.name}")
     private String certificateEventQueue;
 
@@ -92,11 +89,6 @@ public class JmsConfig {
     @Bean
     public JmsTemplate jmsTemplate() {
         return template(connectionFactory(), destinationQueue());
-    }
-
-    @Bean(value = "jmsPopulateTemplate")
-    public JmsTemplate jmsPopulateLoaderTemplate(ConnectionFactory jmsConnectionFactory) {
-        return template(jmsConnectionFactory, new ActiveMQQueue(internalPopulateLoaderQueue));
     }
 
     @Bean(value = "jmsCertificateEventTemplate")
