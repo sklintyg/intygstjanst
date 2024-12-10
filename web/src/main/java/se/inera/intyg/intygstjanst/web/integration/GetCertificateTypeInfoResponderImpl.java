@@ -41,7 +41,7 @@ public class GetCertificateTypeInfoResponderImpl implements GetCertificateTypeIn
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventAction = "retrieve-certificate-type-info", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "retrieve-certificate-type-info", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
     public GetCertificateTypeInfoResponseType getCertificateTypeInfo(String logicalAddress, GetCertificateTypeInfoType request) {
 
         if (isNullOrEmpty(request)) {
@@ -61,6 +61,6 @@ public class GetCertificateTypeInfoResponderImpl implements GetCertificateTypeIn
     }
 
     private boolean isNullOrEmpty(GetCertificateTypeInfoType request) {
-        return request == null || request.getIntygsId() == null || request.getIntygsId().trim().length() == 0;
+        return request == null || request.getIntygsId() == null || request.getIntygsId().trim().isEmpty();
     }
 }
