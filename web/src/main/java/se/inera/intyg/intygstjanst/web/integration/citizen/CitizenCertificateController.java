@@ -56,7 +56,7 @@ public class CitizenCertificateController {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
     public ListCitizenCertificatesResponseDTO getCitizenCertificates(
         @RequestBody CitizenCertificatesRequestDTO request) {
 
@@ -83,7 +83,7 @@ public class CitizenCertificateController {
     @Path("/send")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PerformanceLogging(eventAction = "send-certificate", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+    @PerformanceLogging(eventAction = "send-certificate", eventType = MdcLogConstants.EVENT_TYPE_CHANGE, isActive = false)
     public void sendCitizenCertificate(
         @RequestBody CitizenCertificateSendRequestDTO request) {
 

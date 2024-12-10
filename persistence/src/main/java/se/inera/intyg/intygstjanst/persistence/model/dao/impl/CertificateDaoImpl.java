@@ -460,21 +460,6 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<String> findCertificatesWithoutMetadata(int maxNumber) {
-        String sql =
-            "SELECT c.ID FROM CERTIFICATE c "
-                + "WHERE c.ID NOT IN ("
-                + "SELECT cm.CERTIFICATE_ID FROM CERTIFICATE_METADATA cm WHERE c.ID = cm.CERTIFICATE_ID "
-                + "UNION ALL "
-                + "SELECT pp.POPULATE_ID FROM POPULATE_PROCESSED pp WHERE c.ID = pp.POPULATE_ID AND pp.JOB_NAME = 'METADATA' "
-                + "UNION ALL "
-                + "SELECT pf.POPULATE_ID FROM POPULATE_FAILURES pf WHERE c.ID = pf.POPULATE_ID AND pf.JOB_NAME = 'METADATA' "
-                + ") LIMIT " + maxNumber + ";";
-        return (List<String>) entityManager.createNativeQuery(sql).getResultList();
-    }
-
-    @Override
     public List<CertificateType> getCertificateTypes() {
         var criteriaBuilder = entityManager.getCriteriaBuilder();
         var query = criteriaBuilder.createQuery(CertificateType.class);

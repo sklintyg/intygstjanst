@@ -48,7 +48,7 @@ public class IntygInfoController {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PerformanceLogging(eventAction = "retrieve-certificate-info", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "retrieve-certificate-info", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
     public Response getIntygInfo(@PathParam("id") String id) {
 
         Optional<ItIntygInfo> intygInfo = intygInfoService.getIntygInfo(id);

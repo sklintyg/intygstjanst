@@ -61,7 +61,7 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
 
     @Override
     @PrometheusTimeMethod
-    @PerformanceLogging(eventAction = "retrieve-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "retrieve-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
     public GetCertificateResponseType getCertificate(String logicalAddress, GetCertificateType request) {
 
         final String certificateId = request.getIntygsId().getExtension();

@@ -56,7 +56,7 @@ public class CSIntegrationService {
 
     private final RestClient csRestClient;
 
-    @PerformanceLogging(eventAction = "list-certificates-for-citizen", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "list-certificates-for-citizen", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
     public List<Certificate> getCitizenCertificates(GetCitizenCertificatesRequest request) {
         final var response = csRestClient
             .post()
@@ -75,7 +75,7 @@ public class CSIntegrationService {
         return response.getCitizenCertificates();
     }
 
-    @PerformanceLogging(eventAction = "retrieve-certificate-xml", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "retrieve-certificate-xml", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
     public GetCertificateXmlResponse getCertificateXmlResponse(String certificateId) {
         return csRestClient
             .post()
@@ -87,7 +87,7 @@ public class CSIntegrationService {
             .body(GetCertificateXmlResponse.class);
     }
 
-    @PerformanceLogging(eventAction = "retrieve-message-xml", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "retrieve-message-xml", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
     public GetMessageXmlResponse getMessageXmlResponse(String messageId) {
         return csRestClient
             .post()
@@ -99,7 +99,7 @@ public class CSIntegrationService {
             .body(GetMessageXmlResponse.class);
     }
 
-    @PerformanceLogging(eventAction = "retrieve-certificate-exists", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "retrieve-certificate-exists", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
     public boolean certificateExists(String certificateId) {
         final var response = csRestClient
             .get()
@@ -118,7 +118,7 @@ public class CSIntegrationService {
         return response.isExists();
     }
 
-    @PerformanceLogging(eventAction = "retrieve-certificate-metadata", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+    @PerformanceLogging(eventAction = "retrieve-certificate-metadata", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
     public CertificateMetadata getCertificateMetadata(String certificateId) {
         final var response = csRestClient
             .get()
@@ -137,7 +137,7 @@ public class CSIntegrationService {
         return response.getCertificateMetadata();
     }
 
-    @PerformanceLogging(eventAction = "send-certificate-for-citizen", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+    @PerformanceLogging(eventAction = "send-certificate-for-citizen", eventType = MdcLogConstants.EVENT_TYPE_CHANGE, isActive = false)
     public Certificate sendCitizenCertificates(SendCitizenCertificateRequestDTO request, String certificateId) {
         final var response = csRestClient
             .post()

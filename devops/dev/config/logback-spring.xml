@@ -2,6 +2,8 @@
 <configuration scan="true" debug="true" scanPeriod="15 seconds">
 	<property name="APP_NAME" value="${APP_NAME:-intygstjanst}"/>
 
+	<logger name="org.apache.cxf.phase.PhaseInterceptorChain" level="ERROR"/>
+	
 	<include resource="logback/logback-spring-base.xml"/>
 
 	<root level="INFO">
