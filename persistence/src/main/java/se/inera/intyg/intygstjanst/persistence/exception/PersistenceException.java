@@ -18,14 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.persistence.exception;
 
-import se.inera.intyg.schemas.contract.Personnummer;
-
 public class PersistenceException extends Exception {
 
     private static final long serialVersionUID = -659903598786532595L;
 
-    public PersistenceException(String certificateId, Personnummer civicRegistrationNumber) {
-        super(String.format("Certificate '%s' does not exist for user '%s'.", certificateId,
-            Personnummer.getPersonnummerHashSafe(civicRegistrationNumber)));
+    public PersistenceException(String certificateId, String civicRegistrationNumberHash) {
+        super(String.format("Certificate '%s' does not exist for user '%s'.", certificateId, civicRegistrationNumberHash));
     }
 }

@@ -20,7 +20,9 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.logging.LogMarkers;
 import se.inera.intyg.intygstjanst.logging.MdcCloseableMap;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
@@ -29,6 +31,9 @@ import se.inera.intyg.schemas.contract.Personnummer;
 
 @Service
 public class MonitoringLogServiceImpl implements MonitoringLogService {
+
+    @Autowired
+    private HashUtility hashUtility;
 
     private static final String SPACE = " ";
 
@@ -115,7 +120,7 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
 
     @Override
     public void logCertificateListedByCitizen(Personnummer citizenId) {
-        final var hashedCitizenId = Personnummer.getPersonnummerHashSafe(citizenId);
+        final var hashedCitizenId = hashUtility.hash(citizenId.getPersonnummer());
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
                 .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_LISTED_BY_CITIZEN))
@@ -129,7 +134,7 @@ public class MonitoringLogServiceImpl implements MonitoringLogService {
 
     @Override
     public void logCertificateListedByCare(Personnummer citizenId) {
-        final var hashedCitizenId = Personnummer.getPersonnummerHashSafe(citizenId);
+        final var hashedCitizenId = hashUtility.hash(citizenId.getPersonnummer());
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
                 .put(MdcLogConstants.EVENT_ACTION, toEventType(MonitoringEvent.CERTIFICATE_LISTED_BY_CARE))

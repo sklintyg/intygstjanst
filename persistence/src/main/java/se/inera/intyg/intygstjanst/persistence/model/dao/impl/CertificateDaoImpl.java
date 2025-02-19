@@ -35,11 +35,13 @@ import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -55,6 +57,9 @@ import se.inera.intyg.schemas.contract.Personnummer;
  */
 @Repository
 public class CertificateDaoImpl implements CertificateDao {
+
+    @Autowired
+    private HashUtility hashUtility;
 
     private static final Logger LOG = LoggerFactory.getLogger(CertificateDaoImpl.class);
     private static final int MONTHS = -3;
@@ -86,8 +91,8 @@ public class CertificateDaoImpl implements CertificateDao {
             return Collections.emptyList();
         }
         if (types != null && !types.isEmpty()) {
-            List<String> typesList = new ArrayList<String>(types);
-            predicates.add(criteriaBuilder.lower(root.<String>get("type")).in(toLowerCase(typesList)));
+            List<String> typesList = new ArrayList<>(types);
+            predicates.add(criteriaBuilder.lower(root.get("type")).in(toLowerCase(typesList)));
         }
         if (toDate != null) {
             predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("signedDate"), toDate.plusDays(1)));
@@ -139,7 +144,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
         // filter by certificate types
         if (types != null && !types.isEmpty()) {
-            predicates.add(criteriaBuilder.lower(root.<String>get("type")).in(toLowerCase(types)));
+            predicates.add(criteriaBuilder.lower(root.get("type")).in(toLowerCase(types)));
         }
 
         // filter by care unit
@@ -184,7 +189,7 @@ public class CertificateDaoImpl implements CertificateDao {
 
         // filter by certificate types
         if (types != null && !types.isEmpty()) {
-            predicates.add(criteriaBuilder.lower(root.<String>get("type")).in(toLowerCase(types)));
+            predicates.add(criteriaBuilder.lower(root.get("type")).in(toLowerCase(types)));
         }
 
         if (fromDate != null) {
@@ -315,12 +320,13 @@ public class CertificateDaoImpl implements CertificateDao {
         // if provided, the civic registration number has to match the certificate's civic registration number
         if (civicRegistrationNumber != null && !certificate.getCivicRegistrationNumber().equals(civicRegistrationNumber)) {
 
-            LOG.warn(String.format("Trying to access certificate '%s' for user '%s' but certificate's user is '%s'.",
+            final var civicRegistrationNumberHash = hashUtility.hash(civicRegistrationNumber.getPersonnummer());
+            LOG.warn("Trying to access certificate '{}' for user '{}' but certificate's user is '{}'.",
                 certificateId,
-                civicRegistrationNumber.getPersonnummerHash(),
-                certificate.getCivicRegistrationNumber().getPersonnummerHash()));
+                civicRegistrationNumberHash,
+                hashUtility.hash(certificate.getCivicRegistrationNumber().getPersonnummer()));
 
-            throw new PersistenceException(certificateId, civicRegistrationNumber);
+            throw new PersistenceException(certificateId, civicRegistrationNumberHash);
         }
 
         return certificate;
@@ -350,7 +356,7 @@ public class CertificateDaoImpl implements CertificateDao {
         Certificate certificate = entityManager.find(Certificate.class, id);
 
         if (certificate == null || !certificate.getCivicRegistrationNumber().equals(civicRegistrationNumber)) {
-            throw new PersistenceException(id, civicRegistrationNumber);
+            throw new PersistenceException(id, hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
         }
 
         CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(target, state, timestamp);

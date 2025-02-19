@@ -1,5 +1,8 @@
 dependencies {
+    implementation "com.google.guava:guava:${guavaVersion}"
     implementation "jakarta.servlet:jakarta.servlet-api"
     implementation "org.aspectj:aspectjweaver"
     implementation "org.springframework:spring-webmvc"
+
+    testImplementation "org.springframework:spring-test"
 }

@@ -31,16 +31,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
@@ -51,7 +50,6 @@ import se.inera.intyg.intygstjanst.web.service.SoapIntegrationService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.intyg.schemas.contract.Personnummer;
-import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
@@ -73,6 +71,9 @@ public class RevokeCertificateResponderImplTest {
 
     @Mock
     private RecipientService recipientService;
+
+    @Mock
+    private HashUtility hashUtility;
 
     @Mock
     private SoapIntegrationService soapIntegrationService;

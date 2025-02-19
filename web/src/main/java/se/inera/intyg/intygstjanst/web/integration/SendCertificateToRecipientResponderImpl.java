@@ -28,6 +28,7 @@ import se.inera.intyg.common.support.integration.module.exception.CertificateRev
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.exception.ExternalServiceCallException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
@@ -49,6 +50,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
     private static final Logger LOGGER = LoggerFactory.getLogger(SendCertificateToRecipientResponderImpl.class);
 
     private final SendCertificateService citizenSendCertificateAggregator;
+    private final HashUtility hashUtility;
 
     @Override
     @PrometheusTimeMethod
@@ -87,7 +89,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
         } catch (InvalidCertificateException ex) {
             // return ERROR if no such certificate does exist
             LOGGER.error("Certificate '{}' does not exist for user '{}'.",
-                intygsId, personnummer.map(Personnummer::getPersonnummerHash).orElse(null));
+                intygsId, personnummer.map(value -> hashUtility.hash(value.getPersonnummer())).orElse(null));
             response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR,
                 String.format("Unknown certificate ID: %s", intygsId)));
         } catch (CertificateRevokedException ex) {

@@ -34,6 +34,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
@@ -45,6 +46,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
@@ -83,6 +85,9 @@ public class RevokeMedicalCertificateResponderImplTest {
 
     @Mock
     private RecipientService recipientService;
+
+    @Spy
+    private HashUtility hashUtility;
 
     @InjectMocks
     private RevokeMedicalCertificateResponderInterface responder = new RevokeMedicalCertificateResponderImpl();
@@ -169,7 +174,8 @@ public class RevokeMedicalCertificateResponderImplTest {
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
 
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
-        assertEquals("No certificate 'intygs-id-1234567890' found to revoke for patient '" + PERSONNUMMER.getPersonnummerHash() + "'.",
+        assertEquals("No certificate 'intygs-id-1234567890' found to revoke for patient '"
+                + hashUtility.hash(PERSONNUMMER.getPersonnummer()) + "'.",
             response.getResult().getErrorText());
         Mockito.verifyNoInteractions(statisticsService);
         Mockito.verifyNoInteractions(sjukfallCertificateService);

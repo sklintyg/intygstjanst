@@ -41,7 +41,7 @@ import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @ExtendWith(MockitoExtension.class)
-public class PuFilterServiceImplTest {
+class PuFilterServiceImplTest {
 
     @Mock
     private PUService puService;
@@ -56,7 +56,7 @@ public class PuFilterServiceImplTest {
     private static final String LAKARE1_NAMN = "Läkare Läkarsson";
 
     @Test
-    public void testSekretessmarkeradIsNotFilteredWhenFilterOnProtectedPersonIsFalse() {
+    void testSekretessmarkeradIsNotFilteredWhenFilterOnProtectedPersonIsFalse() {
         mockPersonSvar(false, true);
         List<IntygData> list = buildIntygDataList(TOLVANSSON_PNR);
 
@@ -66,7 +66,7 @@ public class PuFilterServiceImplTest {
     }
 
     @Test
-    public void testSekretessmarkeradIsFilteredWhenFilterOnProtectedPersonIsTrue() {
+    void testSekretessmarkeradIsFilteredWhenFilterOnProtectedPersonIsTrue() {
         mockPersonSvar(false, true);
         final var list = buildIntygDataList(TOLVANSSON_PNR);
 
@@ -75,7 +75,7 @@ public class PuFilterServiceImplTest {
     }
 
     @Test
-    public void testDeceasedIsFilteredWhenFilterOnProtectedPersonIsFalse() {
+    void testDeceasedIsFilteredWhenFilterOnProtectedPersonIsFalse() {
         mockPersonSvar(true, false);
         List<IntygData> list = buildIntygDataList(TOLVANSSON_PNR);
 
@@ -85,7 +85,7 @@ public class PuFilterServiceImplTest {
     }
 
     @Test
-    public void testDeceasedIsFilteredWhenFilterOnProtectedPersonIsTrue() {
+    void testDeceasedIsFilteredWhenFilterOnProtectedPersonIsTrue() {
         mockPersonSvar(true, false);
         final var list = buildIntygDataList(TOLVANSSON_PNR);
 
@@ -94,7 +94,7 @@ public class PuFilterServiceImplTest {
     }
 
     @Test
-    public void testExceptionIsThrownWhenPersonSvarIncludesAnError() {
+    void testExceptionIsThrownWhenPersonSvarIncludesAnError() {
         mockPersonSvarError();
         assertThrows(
             IllegalStateException.class,
@@ -103,35 +103,35 @@ public class PuFilterServiceImplTest {
     }
 
     @Test
-    public void testNameIsAppliedFromPersonSvar() {
+    void testNameIsAppliedFromPersonSvar() {
         mockPersonSvar(false, false);
         final var list = buildIntygDataList(TOLVANSSON_PNR);
 
         puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
-        assertEquals("Fornamn Efternamn", list.get(0).getPatientNamn());
+        assertEquals("Fornamn Efternamn", list.getFirst().getPatientNamn());
     }
 
     @Test
-    public void testNameIsReplacedWhenSekretessmarkerad() {
+    void testNameIsReplacedWhenSekretessmarkerad() {
         mockPersonSvar(false, true);
         final var list = buildIntygDataList(TOLVANSSON_PNR);
 
         puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
 
-        assertEquals("Skyddad personuppgift", list.get(0).getPatientNamn());
+        assertEquals("Skyddad personuppgift", list.getFirst().getPatientNamn());
     }
 
     @Test
-    public void testNameIsReplacedByPlaceholderIfFromPersonSvarWasNotFound() {
+    void testNameIsReplacedByPlaceholderIfFromPersonSvarWasNotFound() {
         mockPersonSvarNotFound();
         final var list = buildIntygDataList(TOLVANSSON_PNR);
 
         puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
-        assertEquals("Namn okänt", list.get(0).getPatientNamn());
+        assertEquals("Namn okänt", list.getFirst().getPatientNamn());
     }
 
     @Test
-    public void testFilterIsAppliedIfPersonSvarWasNotFoundAndFilterOnProtectedPersonTrue() {
+    void testFilterIsAppliedIfPersonSvarWasNotFoundAndFilterOnProtectedPersonTrue() {
         mockPersonSvarNotFound();
         final var list = buildIntygDataList(TOLVANSSON_PNR);
 
@@ -141,7 +141,7 @@ public class PuFilterServiceImplTest {
     }
 
     @Test
-    public void testFilterIsNotAppliedIfPersonSvarWasNotFoundAndFilterOnProtectedPersonFalse() {
+    void testFilterIsNotAppliedIfPersonSvarWasNotFoundAndFilterOnProtectedPersonFalse() {
         mockPersonSvarNotFound();
         final var list = buildIntygDataList(TOLVANSSON_PNR);
 
@@ -151,7 +151,7 @@ public class PuFilterServiceImplTest {
     }
 
     @Test
-    public void testEnrichPatientsWhenPersonnummerHasInvalidDigit() {
+    void testEnrichPatientsWhenPersonnummerHasInvalidDigit() {
         assertThrows(
             IllegalStateException.class,
             () -> puFilterService.enrichWithPatientNameAndFilter(buildIntygDataList(TOLVANSSON_PNR_INVALID), LAKARE1_HSA_ID)
