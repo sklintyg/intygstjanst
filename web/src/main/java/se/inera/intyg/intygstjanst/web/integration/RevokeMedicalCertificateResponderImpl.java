@@ -37,6 +37,7 @@ import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.infra.monitoring.logging.LogMarkers;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -73,6 +74,9 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
 
     @Autowired
     private RecipientService recipientService;
+
+    @Autowired
+    private HashUtility hashUtility;
 
     @Transactional
     @Override
@@ -192,12 +196,8 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
     }
 
     private String getPersonnummerHash(Optional<Personnummer> personnummer, RevokeMedicalCertificateRequestType request) {
-        if (personnummer.isPresent()) {
-            return personnummer.get().getPersonnummerHash();
-        }
-
-        // Return the personalId in the request, it's invalid personalId so it's okey to return it
-        return getPatientId(getPatient(request));
+        // If personnnummer is not present, id from request can be returned since it is not valid
+        return personnummer.isPresent() ? hashUtility.hash(personnummer.get().getPersonnummer()) : getPatientId(getPatient(request));
     }
 
 }

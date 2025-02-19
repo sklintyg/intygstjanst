@@ -19,13 +19,11 @@
 package se.inera.intyg.intygstjanst.web.integration;
 
 import java.util.Optional;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
-
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.rivtabp20.v1.SendMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType;
@@ -36,8 +34,9 @@ import se.inera.intyg.common.support.integration.module.exception.CertificateRev
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.exception.ExternalServiceCallException;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
-import se.inera.intyg.infra.monitoring.logging.LogMarkers;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.infra.monitoring.logging.LogMarkers;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -64,6 +63,9 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
 
     @Autowired
     private StatisticsService statisticsService;
+
+    @Autowired
+    private HashUtility hashUtility;
 
     @Override
     @PrometheusTimeMethod
@@ -202,7 +204,9 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
     }
 
     private String getPersonnummerHash(Optional<Personnummer> personnummer, SendMedicalCertificateRequestType request) {
-        return personnummer.map(Personnummer::getPersonnummerHash).orElseGet(() -> getPatientId(getPatient(request)));
+        // If personnnummer is not present, id from request can be returned since it is not valid
+        return personnummer.isPresent() ? hashUtility.hash(personnummer.get().getPersonnummer()) : getPatientId(getPatient(request));
+
     }
 
 }

@@ -29,6 +29,7 @@ import se.inera.intyg.common.support.integration.module.exception.CertificateRev
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -67,6 +68,9 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
     @Autowired
     private SoapIntegrationService soapIntegrationService;
 
+    @Autowired
+    private HashUtility hashUtility;
+
     @Override
     @PrometheusTimeMethod
     @PerformanceLogging(eventAction = "revoke-certificate", eventType = MdcLogConstants.EVENT_TYPE_DELETION)
@@ -104,10 +108,7 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
     }
 
     private String getPersonnummerHash(Optional<Personnummer> personnummer) {
-        if (personnummer.isPresent()) {
-            return personnummer.get().getPersonnummerHash();
-        }
-        return "<unknown person id>";
+        return personnummer.isPresent() ? hashUtility.hash(personnummer.get().getPersonnummer()) : "<unknown person id>";
     }
 
     private void nofifyStakeholders(RevokeCertificateType request, Certificate certificate) {

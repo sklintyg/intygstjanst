@@ -20,33 +20,33 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import com.google.common.base.Joiner;
-import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.pu.integration.api.model.PersonSvar;
 import se.inera.intyg.infra.pu.integration.api.services.PUService;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.web.service.PuFilterService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @Service
+@Slf4j
 public class PuFilterServiceImpl implements PuFilterService {
 
     private static final String SEKRETESS_SKYDDAD_NAME_PLACEHOLDER = "Skyddad personuppgift";
     private static final String SEKRETESS_SKYDDAD_NAME_UNKNOWN = "Namn okänt";
 
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
-
     private final PUService puService;
+    private final HashUtility hashUtility;
 
-    public PuFilterServiceImpl(PUService puService) {
+    public PuFilterServiceImpl(PUService puService, HashUtility hashUtility) {
         this.puService = puService;
+        this.hashUtility = hashUtility;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class PuFilterServiceImpl implements PuFilterService {
             final var pnr = getPersonnummerOfOptional(item.getPatientId());
             if (pnr.isEmpty()) {
                 i.remove();
-                LOG.warn("Problem parsing personnummer returned by PU service. Removing from list of sjukfall.");
+                log.warn("Problem parsing personnummer returned by PU service. Removing from list of sjukfall.");
                 continue;
             }
 
@@ -123,7 +123,7 @@ public class PuFilterServiceImpl implements PuFilterService {
         try {
             personnummer = getPersonnummer(pnr);
         } catch (Exception e) {
-            LOG.info(e.getMessage());
+            log.info(e.getMessage());
         }
 
         return Optional.ofNullable(personnummer);
@@ -134,7 +134,8 @@ public class PuFilterServiceImpl implements PuFilterService {
             .orElseThrow(() -> new RuntimeException("Found unparsable personnummer '" + pnr + "'"));
 
         if (!personnummer.verifyControlDigit()) {
-            throw new RuntimeException("Found personnummer '" + personnummer.getPersonnummerHash() + "' with invalid control digit");
+            throw new RuntimeException("Found personnummer '" + hashUtility.hash(personnummer.getPersonnummer())
+                + "' with invalid control digit");
         }
 
         return personnummer;

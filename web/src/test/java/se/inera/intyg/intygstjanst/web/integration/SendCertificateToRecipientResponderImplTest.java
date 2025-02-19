@@ -35,6 +35,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
@@ -62,6 +63,8 @@ class SendCertificateToRecipientResponderImplTest {
     private SendCertificateToRecipientType request;
     @Mock
     private SendCertificateService sendCertificateService;
+    @Mock
+    private HashUtility hashUtility;
     @InjectMocks
     private SendCertificateToRecipientResponderImpl responder;
 
