@@ -136,8 +136,9 @@ public class SendMedicalCertificateResponderImplTest {
 
     @Test
     public void testSendMedicalCertificateInvalidCertificate() throws Exception {
+        final var pnr = hashUtility.hash(PERSONNUMMER.getPersonnummer());
         when(certificateService.getCertificateForCare(CERTIFICATE_ID))
-            .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, PERSONNUMMER));
+            .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, pnr));
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), createRequest());
 
         assertEquals(ERROR, response.getResult().getResultCode());
