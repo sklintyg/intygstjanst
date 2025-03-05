@@ -29,13 +29,16 @@ import jakarta.xml.bind.Unmarshaller;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import javax.xml.transform.stream.StreamSource;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
@@ -45,6 +48,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
@@ -60,7 +64,7 @@ import se.inera.intyg.schemas.contract.Personnummer;
 public class RevokeMedicalCertificateResponderImplTest {
 
     private static final String CERTIFICATE_ID = "intygs-id-1234567890";
-    private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").get();
+    private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").orElseThrow();
     private static final String FKASSA = "FKASSA";
     private static final String TRANSP = "TRANSP";
 
@@ -84,8 +88,16 @@ public class RevokeMedicalCertificateResponderImplTest {
     @Mock
     private RecipientService recipientService;
 
+    @Spy
+    private HashUtility hashUtility;
+
     @InjectMocks
     private RevokeMedicalCertificateResponderInterface responder = new RevokeMedicalCertificateResponderImpl();
+
+    @Before
+    public void setup() {
+        ReflectionTestUtils.setField(hashUtility, "salt", "salt");
+    }
 
     private RevokeMedicalCertificateRequestType cachedRevokeRequest;
 
@@ -163,13 +175,15 @@ public class RevokeMedicalCertificateResponderImplTest {
 
     @Test
     public void testRevokeUnknownCertificate() throws Exception {
+        final var pnr = hashUtility.hash(PERSONNUMMER.getPersonnummer());
         when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID))
-            .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, PERSONNUMMER));
+            .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, pnr));
 
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
 
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
-        assertEquals("No certificate 'intygs-id-1234567890' found to revoke for patient '" + PERSONNUMMER.getPersonnummerHash() + "'.",
+        assertEquals("No certificate 'intygs-id-1234567890' found to revoke for patient '"
+                + hashUtility.hash(PERSONNUMMER.getPersonnummer()) + "'.",
             response.getResult().getErrorText());
         Mockito.verifyNoInteractions(statisticsService);
         Mockito.verifyNoInteractions(sjukfallCertificateService);
@@ -284,21 +298,6 @@ public class RevokeMedicalCertificateResponderImplTest {
 
         assertEquals(ResultCodeEnum.OK, response.getResult().getResultCode());
     }
-
-    // INTYG-4086: Namn ej oblig.
-//    @Test
-//    public void testRevokeMedicalCertificateSaknatPatientnamn() throws Exception {
-//        RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
-//        invalidRequest.getRevoke().getLakarutlatande().getPatient().setFullstandigtNamn(null);
-//        RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
-//
-//        assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
-//        assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
-//        assertEquals("Validation Error(s) found: No Patient fullstandigtNamn elements found or set!", response.getResult().getErrorText());
-//        Mockito.verifyZeroInteractions(statisticsService);
-//        Mockito.verifyZeroInteractions(sjukfallCertificateService);
-//        Mockito.verifyZeroInteractions(certificateService);
-//    }
 
     @Test
     public void testRevokeMedicalCertificateSaknatSigneringsdatum() throws Exception {
@@ -421,8 +420,8 @@ public class RevokeMedicalCertificateResponderImplTest {
 
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
-        assertEquals("Validation Error(s) found: No enhets-id found!\n" +
-            "Wrong o.i.d. for enhetsId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
+        assertEquals("Validation Error(s) found: No enhets-id found!\n"
+            + "Wrong o.i.d. for enhetsId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
         Mockito.verifyNoInteractions(statisticsService);
         Mockito.verifyNoInteractions(sjukfallCertificateService);
         Mockito.verifyNoInteractions(certificateService);
@@ -493,8 +492,8 @@ public class RevokeMedicalCertificateResponderImplTest {
 
         assertEquals(ResultCodeEnum.ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
-        assertEquals("Validation Error(s) found: No vardgivare-id found!\n" +
-            "Wrong o.i.d. for vardgivareId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
+        assertEquals("Validation Error(s) found: No vardgivare-id found!\n"
+            + "Wrong o.i.d. for vardgivareId! Should be 1.2.752.129.2.1.4.1", response.getResult().getErrorText());
         Mockito.verifyNoInteractions(statisticsService);
         Mockito.verifyNoInteractions(sjukfallCertificateService);
         Mockito.verifyNoInteractions(certificateService);

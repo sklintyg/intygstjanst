@@ -24,7 +24,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @PropertySource("classpath:test.properties")
-@ComponentScan(basePackages = "se.inera.intyg.intygstjanst.persistence")
+@ComponentScan(basePackages = {"se.inera.intyg.intygstjanst.persistence", "se.inera.intyg.intygstjanst.logging"})
 public class TestConfig {
 
 }

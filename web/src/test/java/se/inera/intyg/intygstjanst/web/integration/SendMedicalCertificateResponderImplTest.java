@@ -29,20 +29,19 @@ import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.ER
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.INFO;
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
 
+import iso.v21090.dt.v1.II;
 import java.time.LocalDateTime;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.w3.wsaddressing10.AttributedURIType;
-
-import iso.v21090.dt.v1.II;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType;
-import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.rivtabp20.v1.SendMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendMedicalCertificateResponseType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType;
@@ -53,6 +52,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
@@ -93,11 +93,15 @@ public class SendMedicalCertificateResponderImplTest {
     @Mock
     private StatisticsService statisticsService;
 
+    @Spy
+    private HashUtility hashUtility;
+
     @InjectMocks
-    private SendMedicalCertificateResponderInterface responder = new SendMedicalCertificateResponderImpl();
+    private SendMedicalCertificateResponderImpl responder;
 
     @Before
     public void setupPrimaryRecipient() {
+        ReflectionTestUtils.setField(hashUtility, "salt", "salt");
         when(recipientService.getPrimaryRecipientFkassa()).thenReturn(createFkRecipient());
     }
 
@@ -132,14 +136,16 @@ public class SendMedicalCertificateResponderImplTest {
 
     @Test
     public void testSendMedicalCertificateInvalidCertificate() throws Exception {
+        final var pnr = hashUtility.hash(PERSONNUMMER.getPersonnummer());
         when(certificateService.getCertificateForCare(CERTIFICATE_ID))
-            .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, PERSONNUMMER));
+            .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, pnr));
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), createRequest());
 
         assertEquals(ERROR, response.getResult().getResultCode());
         assertEquals(ErrorIdEnum.VALIDATION_ERROR, response.getResult().getErrorId());
         assertEquals(
-            "No certificate 'Intygs-id-1234567890' found to send for patient '9a8b138a666f84da32e9383b49a15f46f6e08d2c492352aa0dfcc3f993773b0d'.",
+            "No certificate 'Intygs-id-1234567890' found to send for patient "
+                + "'be125ef854ae8e7083ab76ebd2d7cd748e05603e02aec5cc3afeacd57d8f5f4b'.",
             response.getResult().getErrorText());
 
         verify(recipientService, never()).getPrimaryRecipientFkassa();

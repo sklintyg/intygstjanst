@@ -31,16 +31,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-
+import org.springframework.test.util.ReflectionTestUtils;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
@@ -51,7 +53,6 @@ import se.inera.intyg.intygstjanst.web.service.SoapIntegrationService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.intyg.schemas.contract.Personnummer;
-import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
@@ -74,11 +75,19 @@ public class RevokeCertificateResponderImplTest {
     @Mock
     private RecipientService recipientService;
 
+    @Spy
+    private HashUtility hashUtility;
+
     @Mock
     private SoapIntegrationService soapIntegrationService;
 
     @InjectMocks
     private RevokeCertificateResponderImpl revokeCertificateResponder;
+
+    @Before
+    public void setup() {
+        ReflectionTestUtils.setField(hashUtility, "salt", "salt");
+    }
 
     @Test
     public void testRevokeCertificate() throws Exception {
@@ -146,12 +155,13 @@ public class RevokeCertificateResponderImplTest {
 
     @Test
     public void testRevokeCertificateNotExisting() throws Exception {
-        final String certificateId = "certificateId";
-        final String patientId = "19121212-1212";
-        final String logicalAddress = "logicalAddress";
+        final var certificateId = "certificateId";
+        final var patientId = "191212121212";
+        final var logicalAddress = "logicalAddress";
+        final var hashedPnr = hashUtility.hash(createPnr(patientId).getPersonnummer());
 
         when(certificateService.revokeCertificate(any(), eq(certificateId)))
-            .thenThrow(new InvalidCertificateException(certificateId, createPnr(patientId)));
+            .thenThrow(new InvalidCertificateException(certificateId, hashedPnr));
 
         RevokeCertificateType request = new RevokeCertificateType();
         request.setIntygsId(new IntygId());

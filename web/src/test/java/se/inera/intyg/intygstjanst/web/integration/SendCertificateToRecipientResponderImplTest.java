@@ -35,6 +35,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
@@ -54,7 +55,7 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.HosPersonal;
 @ExtendWith(MockitoExtension.class)
 class SendCertificateToRecipientResponderImplTest {
 
-    private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").get();
+    private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").orElseThrow();
     private static final String CERTIFICATE_ID = "Intygs-id-1234567890";
     private static final String RECIPIENT_ID = "TRANSP";
 
@@ -62,17 +63,19 @@ class SendCertificateToRecipientResponderImplTest {
     private SendCertificateToRecipientType request;
     @Mock
     private SendCertificateService sendCertificateService;
+    @Mock
+    private HashUtility hashUtility;
     @InjectMocks
     private SendCertificateToRecipientResponderImpl responder;
 
     @Test
     void testSendCertificateToRecipient() throws Exception {
 
-        SendCertificateToRecipientType request = createRequest();
-        request.getMottagare().setCode("FKASSA");
+        SendCertificateToRecipientType sendCertificateToRecipient = createRequest();
+        sendCertificateToRecipient.getMottagare().setCode("FKASSA");
         when(sendCertificateService.send(any())).thenReturn(SendStatus.OK);
 
-        SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
+        SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, sendCertificateToRecipient);
 
         assertEquals(OK, response.getResult().getResultCode());
     }
@@ -82,9 +85,9 @@ class SendCertificateToRecipientResponderImplTest {
 
         when(sendCertificateService.send(any())).thenReturn(SendStatus.ALREADY_SENT);
 
-        SendCertificateToRecipientType request = createRequest();
-        request.getMottagare().setCode("FKASSA");
-        SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
+        SendCertificateToRecipientType sendCertificateToRecipient = createRequest();
+        sendCertificateToRecipient.getMottagare().setCode("FKASSA");
+        SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, sendCertificateToRecipient);
 
         assertEquals(INFO, response.getResult().getResultCode());
         assertEquals("Certificate 'Intygs-id-1234567890' already sent to 'FKASSA'.", response.getResult().getResultText());
@@ -92,8 +95,9 @@ class SendCertificateToRecipientResponderImplTest {
 
     @Test
     void testSendCertificateToRecipientInvalidCertificate() throws Exception {
+        final var pnr = hashUtility.hash(PERSONNUMMER.getPersonnummer());
         when(sendCertificateService.send(any()))
-            .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, PERSONNUMMER));
+            .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, pnr));
 
         SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
 
@@ -207,19 +211,19 @@ class SendCertificateToRecipientResponderImplTest {
 
     private SendCertificateToRecipientType createRequest() {
 
-        SendCertificateToRecipientType request = new SendCertificateToRecipientType();
-        request.setPatientPersonId(new PersonId());
-        request.getPatientPersonId().setExtension(PERSONNUMMER.getPersonnummer());
-        request.setMottagare(new Part());
-        request.getMottagare().setCode(RECIPIENT_ID);
-        request.setIntygsId(new IntygId());
-        request.getIntygsId().setExtension(CERTIFICATE_ID);
+        SendCertificateToRecipientType sendCertificateToRecipient = new SendCertificateToRecipientType();
+        sendCertificateToRecipient.setPatientPersonId(new PersonId());
+        sendCertificateToRecipient.getPatientPersonId().setExtension(PERSONNUMMER.getPersonnummer());
+        sendCertificateToRecipient.setMottagare(new Part());
+        sendCertificateToRecipient.getMottagare().setCode(RECIPIENT_ID);
+        sendCertificateToRecipient.setIntygsId(new IntygId());
+        sendCertificateToRecipient.getIntygsId().setExtension(CERTIFICATE_ID);
         SendCertificateToRecipientType.SkickatAv skickatAv = new SendCertificateToRecipientType.SkickatAv();
         skickatAv.setPersonId(new PersonId());
         skickatAv.setHosPersonal(new HosPersonal());
         skickatAv.getHosPersonal().setPersonalId(new HsaId());
         skickatAv.getHosPersonal().getPersonalId().setExtension("EXTENSION");
-        request.setSkickatAv(skickatAv);
-        return request;
+        sendCertificateToRecipient.setSkickatAv(skickatAv);
+        return sendCertificateToRecipient;
     }
 }

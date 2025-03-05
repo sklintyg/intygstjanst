@@ -46,6 +46,7 @@ import se.inera.intyg.common.support.modules.support.api.dto.AdditionalMetaData;
 import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.infra.pu.integration.api.services.PUService;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
@@ -103,6 +104,9 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
     @Autowired
     private PUService puService;
 
+    @Autowired
+    private HashUtility hashUtility;
+
     @Override
     @Transactional(readOnly = true)
     public List<Certificate> listCertificatesForCitizen(Personnummer civicRegistrationNumber, List<String> certificateTypes,
@@ -130,11 +134,11 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         try {
             certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
         } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
+            throw new InvalidCertificateException(certificateId, hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
         }
 
         if (certificate == null) {
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
+            throw new InvalidCertificateException(certificateId, hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
         }
 
         if (certificate.isRevoked()) {
@@ -189,11 +193,13 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         try {
             certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
         } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
+            throw new InvalidCertificateException(certificateId, civicRegistrationNumber == null ? null
+                : hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
         }
 
         if (certificate == null) {
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
+            throw new InvalidCertificateException(certificateId, civicRegistrationNumber == null ? null
+                : hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
         }
 
         if (certificate.isRevoked()) {
@@ -224,7 +230,7 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
 
             certificateDao.updateStatus(certificateId, civicRegistrationNumber, state, target, timestamp);
         } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
+            throw new InvalidCertificateException(certificateId, hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
         }
     }
 
@@ -251,11 +257,13 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         try {
             certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
         } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
+            throw new InvalidCertificateException(certificateId, civicRegistrationNumber == null ? null
+                : hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
         }
 
         if (certificate == null) {
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber);
+            throw new InvalidCertificateException(certificateId, civicRegistrationNumber == null ? null
+                : hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
         }
 
         if (certificate.isRevoked()) {
@@ -330,7 +338,8 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         try {
             checkForExistingCertificate(certificate.getId(), certificate.getCivicRegistrationNumber());
         } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificate.getId(), certificate.getCivicRegistrationNumber());
+            throw new InvalidCertificateException(certificate.getId(), certificate.getCivicRegistrationNumber() == null ? null
+                : hashUtility.hash(certificate.getCivicRegistrationNumber().getPersonnummer()));
         }
 
         // add initial RECEIVED state using current time as receiving timestamp
@@ -363,11 +372,11 @@ public class CertificateServiceImpl implements CertificateService, ModuleContain
         try {
             certificate = getCertificateInternal(personId, certificateId);
         } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificateId, personId);
+            throw new InvalidCertificateException(certificateId, personId == null ? null : hashUtility.hash(personId.getPersonnummer()));
         }
 
         if (certificate == null) {
-            throw new InvalidCertificateException(certificateId, personId);
+            throw new InvalidCertificateException(certificateId, personId == null ? null : hashUtility.hash(personId.getPersonnummer()));
         }
 
         return ConverterUtil.toCertificateHolder(certificate);

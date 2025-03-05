@@ -28,14 +28,14 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-
+import org.springframework.test.util.ReflectionTestUtils;
 import se.inera.ifv.insuranceprocess.certificate.v1.StatusType;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtabp20.v1.SetCertificateStatusResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusRequestType;
@@ -43,6 +43,7 @@ import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusrespond
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
@@ -70,11 +71,15 @@ public class SetCertificateStatusResponderImplTest {
     @Mock
     private RecipientService recipientService;
 
+    @Spy
+    private HashUtility hashUtility;
+
     @InjectMocks
     private SetCertificateStatusResponderInterface responder = new SetCertificateStatusResponderImpl();
 
     @Before
     public void init() throws RecipientUnknownException {
+        ReflectionTestUtils.setField(hashUtility, "salt", "salt");
         Recipient recipient = new Recipient("logicalAddress", "name", RECIPIENT_FKASSA, CertificateRecipientType.HUVUDMOTTAGARE.name(),
             "fk7263", true, true);
         when(recipientService.getPrimaryRecipientFkassa()).thenReturn(recipient);
@@ -147,21 +152,22 @@ public class SetCertificateStatusResponderImplTest {
 
     @Test
     public void testSetCertificateStatusInvalidCertificate() throws Exception {
-        LocalDateTime timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
-        doThrow(new InvalidCertificateException(CERTIFICATE_ID, createPnr("19001122-3344"))).when(certificateService)
-            .setCertificateState(createPnr("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA, CertificateState.CANCELLED,
-                timestamp);
+        final var timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
+        final var pnr = "19001122-3344";
+        doThrow(new InvalidCertificateException(CERTIFICATE_ID, hashUtility.hash(createPnr(pnr).getPersonnummer())))
+            .when(certificateService).setCertificateState(createPnr(pnr),
+                CERTIFICATE_ID, RECIPIENT_FKASSA, CertificateState.CANCELLED, timestamp);
 
         SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
         request.setCertificateId(CERTIFICATE_ID);
-        request.setNationalIdentityNumber("19001122-3344");
+        request.setNationalIdentityNumber(pnr);
         request.setStatus(StatusType.CANCELLED);
         request.setTarget(RECIPIENT_FKASSA);
         request.setTimestamp(timestamp);
 
         responder.setCertificateStatus(null, request);
 
-        verify(certificateService).setCertificateState(createPnr("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA,
+        verify(certificateService).setCertificateState(createPnr(pnr), CERTIFICATE_ID, RECIPIENT_FKASSA,
             CertificateState.CANCELLED, timestamp);
         verify(monitoringLogService, never()).logCertificateStatusChanged(anyString(), anyString());
     }
