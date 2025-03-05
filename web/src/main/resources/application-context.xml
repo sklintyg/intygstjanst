@@ -57,7 +57,6 @@
     <!-- PU service -->
     <import resource="classpath:pu-services-config.xml" />
     <import resource="classpath:pu-ignite-config.xml" />
-    <import resource="classpath:persistence-bean-config.xml" />
 
     <import resource="classpath:/hsa-integration-intyg-proxy-service-config.xml"/>
 
