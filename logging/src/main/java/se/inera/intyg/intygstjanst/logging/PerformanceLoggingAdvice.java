@@ -36,16 +36,18 @@ public class PerformanceLoggingAdvice {
         if (performanceLogging.isActive()) {
             final var start = LocalDateTime.now();
             var success = true;
+            final var className = joinPoint.getSignature().getDeclaringTypeName();
+            final var methodName = joinPoint.getSignature().getName();
             try {
                 return joinPoint.proceed();
             } catch (final Throwable throwable) {
                 success = false;
+                log.error( "FAILED TO CALL '%s - %s'".formatted(className, methodName), throwable);
                 throw throwable;
             } finally {
                 final var end = LocalDateTime.now();
                 final var duration = Duration.between(start, end).toMillis();
-                final var className = joinPoint.getSignature().getDeclaringTypeName();
-                final var methodName = joinPoint.getSignature().getName();
+
                 try (final var mdcLogConstants =
                     MdcCloseableMap.builder()
                         .put(MdcLogConstants.EVENT_START, start.toString())
