@@ -81,6 +81,7 @@ dependencies {
 
     implementation "co.elastic.logging:logback-ecs-encoder:${logbackEcsEncoderVersion}"
     implementation "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     implementation "com.google.guava:guava:${guavaVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "io.prometheus:simpleclient_servlet"

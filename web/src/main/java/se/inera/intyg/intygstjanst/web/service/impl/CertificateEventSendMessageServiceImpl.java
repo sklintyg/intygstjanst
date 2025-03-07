@@ -19,10 +19,13 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.ws.soap.SOAPFaultException;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -62,6 +65,7 @@ public class CertificateEventSendMessageServiceImpl implements CertificateEventS
     @Transactional(rollbackFor = IllegalStateException.class)
     public void sendMessage(String xml) {
         try {
+            log.info("TEMP_LOG xml: {}", xml);
             final var wsRequest =  (SendMessageToRecipientType) XmlMarshallerHelper.unmarshal(xml).getValue();
             final var certificateId = wsRequest.getIntygsId().getExtension();
             final var logicalAddress = wsRequest.getLogiskAdressMottagare();
@@ -122,8 +126,11 @@ public class CertificateEventSendMessageServiceImpl implements CertificateEventS
 
         try {
             final var message = ArendeConverter.convertSendMessageToRecipient(wsRequest);
+            log.info("TEMP_LOG wsRequest: {}", JsonMapper.builder().addModule(new JavaTimeModule()).build().writeValueAsString(wsRequest));
+            log.info("TEMP_LOG message: {}", message);
+            log.info("TEMP_LOG message-data: {}", message.getMeddelande());
             arendeService.processIncomingMessage(message);
-        } catch (JAXBException | IllegalArgumentException e) {
+        } catch (JAXBException | IllegalArgumentException | JsonProcessingException e) {
             throw new IllegalArgumentException(persistenceFailureMessage(certificateId, messageId, recipient, topic), e);
         }
     }
