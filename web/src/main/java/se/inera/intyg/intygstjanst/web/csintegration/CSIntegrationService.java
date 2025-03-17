@@ -35,6 +35,9 @@ import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.CertificateExistsResponse;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificateInternalResponseDTO;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificatesRequestDTO;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportInternalResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateMetadataResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
@@ -42,6 +45,7 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesR
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateResponseDTO;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.TotalExportsInternalResponseDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +57,8 @@ public class CSIntegrationService {
     private static final String INTERNAL_MESSAGE_XML_ENDPOINT_URL = "/internalapi/message/{messageId}/xml";
     private static final String INTERNAL_CERTIFICATE_METADATA_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/metadata";
     private static final String INTERNAL_CERTIFICATE_EXISTS_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/exists";
+    private static final String INTERNALAPI_EXPORT_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL = "/internalapi/certificate/export/{careProviderId}";
+    private static final String INTERNALAPI_TOTAL_EXPORT_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL = "/internalapi/certificate/export/{careProviderId}/total";
 
     private final RestClient csRestClient;
 
@@ -154,5 +160,41 @@ public class CSIntegrationService {
         }
 
         return response.getCitizenCertificate();
+    }
+
+    public List<ExportCertificateInternalResponseDTO> getInternalExportCertificatesForCareProvider(ExportCertificatesRequestDTO request,
+        String careProviderId) {
+        final var response = csRestClient
+            .post()
+            .uri(INTERNALAPI_EXPORT_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL, careProviderId)
+            .body(request)
+            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+            .contentType(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .body(ExportInternalResponseDTO.class);
+
+        if (response == null) {
+            throw new IllegalStateException("Failed to retrieve exports from certificate service");
+        }
+
+        return response.getExports();
+    }
+
+    public TotalExportsInternalResponseDTO getInternalTotalExportForCareProvider(
+        String careProviderId) {
+        final var response = csRestClient
+            .get()
+            .uri(INTERNALAPI_TOTAL_EXPORT_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL, careProviderId)
+            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+            .retrieve()
+            .body(TotalExportsInternalResponseDTO.class);
+
+        if (response == null) {
+            throw new IllegalStateException("Failed to retrieve total exports from certificate service");
+        }
+
+        return response;
     }
 }

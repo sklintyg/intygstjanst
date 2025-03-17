@@ -16,22 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.service.dto;
+package se.inera.intyg.intygstjanst.web.csintegration.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import lombok.Builder;
+import lombok.Value;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificatesRequestDTO.ExportCertificatesRequestDTOBuilder;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class CertificateXmlDTO {
+@JsonDeserialize(builder = ExportCertificatesRequestDTOBuilder.class)
+@Value
+@Builder
+public class ExportCertificatesRequestDTO {
 
-    private String id;
-    private boolean revoked;
-    private String xml;
+    int page;
+    int size;
 
-    public static CertificateXmlDTO of(String id, boolean revoked, String xml) {
-        return new CertificateXmlDTO(id, revoked, xml);
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class ExportCertificatesRequestDTOBuilder {
+
     }
 }
