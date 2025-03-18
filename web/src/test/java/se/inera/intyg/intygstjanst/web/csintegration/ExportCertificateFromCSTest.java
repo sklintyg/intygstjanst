@@ -33,6 +33,17 @@ class ExportCertificateFromCSTest {
 
     private static final String CARE_PROVIDER_ID = "careProviderId";
     private static final String ENCODED_XML = "xml";
+    private static final ExportInternalResponseDTO EXPORT_INTERNAL_RESPONSE_DTO = ExportInternalResponseDTO.builder()
+        .exports(
+            List.of(
+                ExportCertificateInternalResponseDTO.builder()
+                    .certificateId("id")
+                    .revoked(false)
+                    .xml(ENCODED_XML)
+                    .build()
+            )
+        )
+        .build();
     private static final String DECODED_XML = new String(Base64.getDecoder().decode(ENCODED_XML), StandardCharsets.UTF_8);
     @Mock
     CSIntegrationService csIntegrationService;
@@ -64,10 +75,9 @@ class ExportCertificateFromCSTest {
         @MethodSource("providePageNumberArguments")
         void shallCalculatePageNumber(long totalFromIT, int collected, int batchSize, int expectedPageNumber) {
             final var argumentCaptor = ArgumentCaptor.forClass(ExportCertificatesRequestDTO.class);
-            final var exportInternalResponseDTO = ExportInternalResponseDTO.builder().exports(Collections.emptyList()).build();
             final var exportPageDTO = CertificateExportPageDTO.of(CARE_PROVIDER_ID, 0, totalFromIT, 0, Collections.emptyList());
 
-            doReturn(exportInternalResponseDTO).when(csIntegrationService)
+            doReturn(EXPORT_INTERNAL_RESPONSE_DTO.getExports()).when(csIntegrationService)
                 .getInternalExportCertificatesForCareProvider(argumentCaptor.capture(), eq(CARE_PROVIDER_ID));
 
             exportCertificateFromCS.addCertificatesFromCS(exportPageDTO, CARE_PROVIDER_ID, collected, batchSize);
@@ -97,19 +107,8 @@ class ExportCertificateFromCSTest {
             .totalCertificates(10)
             .totalRevokedCertificates(5)
             .build();
-        final var exportInternalResponseDTO = ExportInternalResponseDTO.builder()
-            .exports(
-                List.of(
-                    ExportCertificateInternalResponseDTO.builder()
-                        .certificateId("id")
-                        .revoked(false)
-                        .xml(ENCODED_XML)
-                        .build()
-                )
-            )
-            .build();
 
-        doReturn(exportInternalResponseDTO).when(csIntegrationService)
+        doReturn(EXPORT_INTERNAL_RESPONSE_DTO.getExports()).when(csIntegrationService)
             .getInternalExportCertificatesForCareProvider(any(ExportCertificatesRequestDTO.class), eq(CARE_PROVIDER_ID));
         doReturn(totalExportsInternalResponseDTO).when(csIntegrationService).getInternalTotalExportForCareProvider(CARE_PROVIDER_ID);
 
