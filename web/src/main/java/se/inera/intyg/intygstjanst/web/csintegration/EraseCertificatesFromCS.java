@@ -2,7 +2,6 @@ package se.inera.intyg.intygstjanst.web.csintegration;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.web.csintegration.dto.EraseCertificatesRequestDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -10,11 +9,8 @@ public class EraseCertificatesFromCS {
 
     private final CSIntegrationService csIntegrationService;
 
-    public void eraseCertificates(String careProviderId, int erasePageSize) {
+    public void eraseCertificates(String careProviderId) {
         csIntegrationService.eraseCertificatesForCareProvider(
-            EraseCertificatesRequestDTO.builder()
-                .batchSize(erasePageSize)
-                .build(),
             careProviderId
         );
     }

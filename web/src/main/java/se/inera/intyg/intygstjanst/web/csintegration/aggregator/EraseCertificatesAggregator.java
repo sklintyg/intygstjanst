@@ -14,17 +14,17 @@ public class EraseCertificatesAggregator {
     private final EraseCertificatesFromIT eraseCertificatesFromIT;
     private final CertificateServiceProfile certificateServiceProfile;
 
-    public void eraseCertificates(String careProviderId, int erasePageSize) {
+    public void eraseCertificates(String careProviderId) {
         if (careProviderId == null || careProviderId.isBlank()) {
             throw new IllegalArgumentException("careProviderId cannot be null or empty");
         }
 
-        eraseCertificatesFromIT.eraseCertificates(careProviderId, erasePageSize);
+        eraseCertificatesFromIT.eraseCertificates(careProviderId);
 
         if (!certificateServiceProfile.active()) {
             return;
         }
 
-        eraseCertificatesFromCS.eraseCertificates(careProviderId, erasePageSize);
+        eraseCertificatesFromCS.eraseCertificates(careProviderId);
     }
 }

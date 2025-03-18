@@ -35,7 +35,6 @@ import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.CertificateExistsResponse;
-import se.inera.intyg.intygstjanst.web.csintegration.dto.EraseCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificateInternalResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportInternalResponseDTO;
@@ -200,14 +199,12 @@ public class CSIntegrationService {
         return response;
     }
 
-    public void eraseCertificatesForCareProvider(EraseCertificatesRequestDTO request, String careProviderId) {
+    public void eraseCertificatesForCareProvider(String careProviderId) {
         final var response = csRestClient
-            .post()
+            .delete()
             .uri(INTERNALAPI_ERASE_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL, careProviderId)
-            .body(request)
             .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
             .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
-            .contentType(MediaType.APPLICATION_JSON)
             .retrieve()
             .toBodilessEntity();
 

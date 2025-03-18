@@ -36,9 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -70,7 +67,8 @@ public class CertificateExportServiceImpl implements CertificateExportService {
     private final ExportCertificateAggregator exportCertificateAggregator;
 
     public CertificateExportServiceImpl(CertificateRepository certificateRepository, ArendeRepository arendeRepository,
-        PathMatchingResourcePatternResolver resourceResolver, EraseCertificatesAggregator eraseCertificatesAggregator, ExportCertificateAggregator exportCertificateAggregator) {
+        PathMatchingResourcePatternResolver resourceResolver, EraseCertificatesAggregator eraseCertificatesAggregator,
+        ExportCertificateAggregator exportCertificateAggregator) {
         this.certificateRepository = certificateRepository;
         this.arendeRepository = arendeRepository;
         this.resourceResolver = resourceResolver;
@@ -96,8 +94,8 @@ public class CertificateExportServiceImpl implements CertificateExportService {
     }
 
     @Override
-    public void eraseCertificates(String careProviderId, int erasePageSize) {
-        eraseCertificatesAggregator.eraseCertificates(careProviderId, erasePageSize);
+    public void eraseCertificates(String careProviderId) {
+        eraseCertificatesAggregator.eraseCertificates(careProviderId);
     }
 
     private List<CertificateTextDTO> getCertificateTexts(List<Resource> textFiles) throws IOException, ParserConfigurationException,

@@ -3,6 +3,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -20,6 +21,9 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 @RequiredArgsConstructor
 public class EraseCertificatesFromIT {
 
+    @Value("${erase.certificates.page.size:1000}")
+    private int eraseCertificatesPageSize;
+    
     private final CertificateRepository certificateRepository;
     private final ArendeRepository arendeRepository;
     private final ApprovedReceiverDao approvedReceiverDao;
@@ -27,8 +31,8 @@ public class EraseCertificatesFromIT {
     private final SjukfallCertificateDao sjukfallCertificateDao;
     private final CertificateDao certificateDao;
 
-    public void eraseCertificates(String careProviderId, int erasePageSize) {
-        final var erasePageable = PageRequest.of(0, erasePageSize, Sort.by(Direction.ASC, "signedDate", "id"));
+    public void eraseCertificates(String careProviderId) {
+        final var erasePageable = PageRequest.of(0, eraseCertificatesPageSize, Sort.by(Direction.ASC, "signedDate", "id"));
         Page<String> certificateIdPage = Page.empty();
         int erasedMessagesTotal = 0;
         int erasedSjukfallTotal = 0;

@@ -51,7 +51,6 @@ import org.springframework.web.client.RestTemplate;
 import se.inera.intyg.common.support.facade.model.Certificate;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.CertificateExistsResponse;
-import se.inera.intyg.intygstjanst.web.csintegration.dto.EraseCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificateInternalResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportInternalResponseDTO;
@@ -424,25 +423,23 @@ class CSIntegrationServiceTest {
     @Nested
     class EraseCertificatesForCareProviderTests {
 
-        private RequestBodyUriSpec requestBodyUriSpec;
+        private RequestHeadersUriSpec requestHeadersUriSpec;
         private ResponseSpec responseSpec;
 
         @BeforeEach
         void setUp() {
-            requestBodyUriSpec = mock(RestClient.RequestBodyUriSpec.class);
+            requestHeadersUriSpec = mock(RestClient.RequestBodyUriSpec.class);
             responseSpec = mock(RestClient.ResponseSpec.class);
 
             MDC.put(TRACE_ID_KEY, "traceId");
             MDC.put(SESSION_ID_KEY, "sessionId");
 
-            when(restClient.post()).thenReturn(requestBodyUriSpec);
-            when(requestBodyUriSpec.uri("/internalapi/certificate/erase/{careProviderId}", "careProviderId")).thenReturn(
-                requestBodyUriSpec);
-            when(requestBodyUriSpec.header(LOG_TRACE_ID_HEADER, "traceId")).thenReturn(requestBodyUriSpec);
-            when(requestBodyUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId")).thenReturn(requestBodyUriSpec);
-            when(requestBodyUriSpec.body(any(EraseCertificatesRequestDTO.class))).thenReturn(requestBodyUriSpec);
-            when(requestBodyUriSpec.contentType(MediaType.APPLICATION_JSON)).thenReturn(requestBodyUriSpec);
-            when(requestBodyUriSpec.retrieve()).thenReturn(responseSpec);
+            when(restClient.delete()).thenReturn(requestHeadersUriSpec);
+            when(requestHeadersUriSpec.uri("/internalapi/certificate/erase/{careProviderId}", "careProviderId")).thenReturn(
+                requestHeadersUriSpec);
+            when(requestHeadersUriSpec.header(LOG_TRACE_ID_HEADER, "traceId")).thenReturn(requestHeadersUriSpec);
+            when(requestHeadersUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId")).thenReturn(requestHeadersUriSpec);
+            when(requestHeadersUriSpec.retrieve()).thenReturn(responseSpec);
         }
 
         @Test
@@ -450,8 +447,7 @@ class CSIntegrationServiceTest {
             final var responseEntity = ResponseEntity.ok().build();
             doReturn(responseEntity).when(responseSpec).toBodilessEntity();
 
-            final var request = EraseCertificatesRequestDTO.builder().build();
-            csIntegrationService.eraseCertificatesForCareProvider(request, "careProviderId");
+            csIntegrationService.eraseCertificatesForCareProvider("careProviderId");
 
             verify(responseSpec).toBodilessEntity();
         }
@@ -461,10 +457,8 @@ class CSIntegrationServiceTest {
             final var responseEntity = ResponseEntity.status(500).build();
             doReturn(responseEntity).when(responseSpec).toBodilessEntity();
 
-            final var request = EraseCertificatesRequestDTO.builder().build();
-
             assertThrows(IllegalStateException.class,
-                () -> csIntegrationService.eraseCertificatesForCareProvider(request, "careProviderId"));
+                () -> csIntegrationService.eraseCertificatesForCareProvider("careProviderId"));
         }
     }
 }

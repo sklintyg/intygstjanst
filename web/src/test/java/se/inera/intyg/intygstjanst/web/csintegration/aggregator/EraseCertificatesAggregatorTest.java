@@ -31,29 +31,29 @@ class EraseCertificatesAggregatorTest {
     @Test
     void shallThrowExceptionIfCareProviderIdIsNull() {
         assertThrows(IllegalArgumentException.class, () ->
-            eraseCertificatesAggregator.eraseCertificates(null, ERASE_PAGE_SIZE));
+            eraseCertificatesAggregator.eraseCertificates(null));
     }
 
     @Test
     void shallThrowExceptionIfCareProviderIdIsBlank() {
         assertThrows(IllegalArgumentException.class, () ->
-            eraseCertificatesAggregator.eraseCertificates("", ERASE_PAGE_SIZE));
+            eraseCertificatesAggregator.eraseCertificates(""));
     }
 
     @Test
     void shallNotEraseCertificatesFromCSIfProfileInactive() {
         doReturn(false).when(certificateServiceProfile).active();
-        eraseCertificatesAggregator.eraseCertificates(CARE_PROVIDER_ID, ERASE_PAGE_SIZE);
+        eraseCertificatesAggregator.eraseCertificates(CARE_PROVIDER_ID);
         verifyNoInteractions(eraseCertificatesFromCS);
-        verify(eraseCertificatesFromIT).eraseCertificates(CARE_PROVIDER_ID, ERASE_PAGE_SIZE);
+        verify(eraseCertificatesFromIT).eraseCertificates(CARE_PROVIDER_ID);
     }
 
 
     @Test
     void shallEraseCertificatesFromCSIfProfileActive() {
         doReturn(true).when(certificateServiceProfile).active();
-        eraseCertificatesAggregator.eraseCertificates(CARE_PROVIDER_ID, ERASE_PAGE_SIZE);
-        verify(eraseCertificatesFromCS).eraseCertificates(CARE_PROVIDER_ID, ERASE_PAGE_SIZE);
-        verify(eraseCertificatesFromIT).eraseCertificates(CARE_PROVIDER_ID, ERASE_PAGE_SIZE);
+        eraseCertificatesAggregator.eraseCertificates(CARE_PROVIDER_ID);
+        verify(eraseCertificatesFromCS).eraseCertificates(CARE_PROVIDER_ID);
+        verify(eraseCertificatesFromIT).eraseCertificates(CARE_PROVIDER_ID);
     }
 }

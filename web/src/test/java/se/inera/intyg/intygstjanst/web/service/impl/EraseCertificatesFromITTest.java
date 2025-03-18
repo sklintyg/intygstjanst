@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +31,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.test.util.ReflectionTestUtils;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
@@ -62,6 +64,11 @@ class EraseCertificatesFromITTest {
     private static final Pageable ERASE_PAGEABLE = PageRequest.of(PAGE, ERASE_SIZE, Sort.by(Direction.ASC, "signedDate", "id"));
     private final List<List<String>> certIds = new ArrayList<>();
 
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(eraseCertificatesFromIT, "eraseCertificatesPageSize", ERASE_SIZE);
+    }
+
     @Nested
     class EraseCertificates {
 
@@ -75,7 +82,7 @@ class EraseCertificatesFromITTest {
             setupPageMock(true);
             setupEraseMocks(false);
 
-            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID, ERASE_PAGEABLE.getPageSize());
+            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
 
             verify(certificateRepository, times(3)).findCertificateIdsForCareProvider(CARE_PROVIDER_ID, ERASE_PAGEABLE);
         }
@@ -85,7 +92,7 @@ class EraseCertificatesFromITTest {
             setupPageMock(true);
             setupEraseMocks(false);
 
-            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID, ERASE_PAGEABLE.getPageSize());
+            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
 
             assertAll(
                 () -> verify(approvedReceiverDao, times(3)).eraseApprovedReceivers(certIdCaptor.capture(), eq(CARE_PROVIDER_ID)),
@@ -100,7 +107,7 @@ class EraseCertificatesFromITTest {
             setupPageMock(true);
             setupEraseMocks(false);
 
-            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID, ERASE_PAGEABLE.getPageSize());
+            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
 
             assertAll(
                 () -> verify(relationDao, times(3)).eraseCertificateRelations(certIdCaptor.capture(), eq(CARE_PROVIDER_ID)),
@@ -115,7 +122,7 @@ class EraseCertificatesFromITTest {
             setupPageMock(true);
             setupEraseMocks(false);
 
-            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID, ERASE_PAGEABLE.getPageSize());
+            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
 
             assertAll(
                 () -> verify(arendeRepository, times(3)).eraseArendenByCertificateIds(certIdCaptor.capture()),
@@ -130,7 +137,7 @@ class EraseCertificatesFromITTest {
             setupPageMock(true);
             setupEraseMocks(false);
 
-            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID, ERASE_PAGEABLE.getPageSize());
+            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
 
             assertAll(
                 () -> verify(sjukfallCertificateDao, times(3)).eraseCertificates(certIdCaptor.capture(), eq(CARE_PROVIDER_ID)),
@@ -145,7 +152,7 @@ class EraseCertificatesFromITTest {
             setupPageMock(true);
             setupEraseMocks(false);
 
-            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID, ERASE_PAGEABLE.getPageSize());
+            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
 
             assertAll(
                 () -> verify(certificateDao, times(3)).eraseCertificates(certIdCaptor.capture(), eq(CARE_PROVIDER_ID)),
@@ -161,10 +168,10 @@ class EraseCertificatesFromITTest {
             setupEraseMocks(true);
 
             assertThrows(IllegalArgumentException.class, () -> eraseCertificatesFromIT
-                .eraseCertificates(CARE_PROVIDER_ID, ERASE_PAGEABLE.getPageSize()));
+                .eraseCertificates(CARE_PROVIDER_ID));
 
             final var exception = assertThrows(IllegalArgumentException.class, () -> eraseCertificatesFromIT
-                .eraseCertificates(CARE_PROVIDER_ID, ERASE_PAGEABLE.getPageSize()));
+                .eraseCertificates(CARE_PROVIDER_ID));
 
             assertEquals("TestException", exception.getMessage());
         }
@@ -174,7 +181,7 @@ class EraseCertificatesFromITTest {
     public void shouldNotMakeEraseCallsIfCareProviderWithoutCertificates() {
         setupPageMock(false);
 
-        eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID, ERASE_PAGEABLE.getPageSize());
+        eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
 
         assertAll(
             () -> verify(certificateRepository, times(1)).findCertificateIdsForCareProvider(CARE_PROVIDER_ID, ERASE_PAGEABLE),
