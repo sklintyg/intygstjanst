@@ -35,6 +35,7 @@ import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.CertificateExistsResponse;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.EraseCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateMetadataResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
@@ -154,5 +155,9 @@ public class CSIntegrationService {
         }
 
         return response.getCitizenCertificate();
+    }
+
+    public void eraseCertificatesForCareProvider(EraseCertificatesRequestDTO request) {
+        
     }
 }
