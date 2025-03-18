@@ -49,6 +49,9 @@ import org.springframework.web.client.RestTemplate;
 import se.inera.intyg.common.support.facade.model.Certificate;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.CertificateExistsResponse;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificateInternalResponseDTO;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificatesRequestDTO;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportInternalResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateMetadataResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
@@ -56,6 +59,7 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesR
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateResponseDTO;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.TotalExportsInternalResponseDTO;
 
 @ExtendWith(MockitoExtension.class)
 class CSIntegrationServiceTest {
@@ -311,6 +315,106 @@ class CSIntegrationServiceTest {
             doReturn(null).when(responseSpec).body(GetCertificateMetadataResponse.class);
 
             assertThrows(IllegalStateException.class, () -> csIntegrationService.getCertificateMetadata("certificateId"));
+        }
+    }
+
+    @Nested
+    class GetInternalExportCertificatesForCareProviderTests {
+
+        private RequestBodyUriSpec requestBodyUriSpec;
+        private ResponseSpec responseSpec;
+
+        @BeforeEach
+        void setUp() {
+            requestBodyUriSpec = mock(RestClient.RequestBodyUriSpec.class);
+            responseSpec = mock(RestClient.ResponseSpec.class);
+
+            MDC.put(TRACE_ID_KEY, "traceId");
+            MDC.put(SESSION_ID_KEY, "sessionId");
+
+            when(restClient.post()).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.uri("/internalapi/certificate/export/{careProviderId}", "careProviderId")).thenReturn(
+                requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_TRACE_ID_HEADER, "traceId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.body(any(ExportCertificatesRequestDTO.class))).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.contentType(MediaType.APPLICATION_JSON)).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.retrieve()).thenReturn(responseSpec);
+        }
+
+        @Test
+        void shallReturnExportInternalResponseDTO() {
+            final var expectedResponse = ExportInternalResponseDTO.builder()
+                .exports(
+                    List.of(ExportCertificateInternalResponseDTO.builder().build())
+                )
+                .build();
+
+            doReturn(expectedResponse).when(responseSpec).body(ExportInternalResponseDTO.class);
+
+            final var actualResponse = csIntegrationService.getInternalExportCertificatesForCareProvider(
+                ExportCertificatesRequestDTO.builder().build(), "careProviderId"
+            );
+
+            assertEquals(expectedResponse.getExports(), actualResponse);
+        }
+
+        @Test
+        void shallThrowIfResponseIsNull() {
+            final var exportCertificatesRequestDTO = ExportCertificatesRequestDTO.builder().build();
+            doReturn(null).when(responseSpec).body(ExportInternalResponseDTO.class);
+
+            assertThrows(IllegalStateException.class, () -> csIntegrationService.getInternalExportCertificatesForCareProvider(
+                exportCertificatesRequestDTO, "careProviderId"
+            ));
+        }
+    }
+
+    @Nested
+    class GetInternalTotalExportForCareProviderTests {
+
+        private RequestHeadersUriSpec requestBodyUriSpec;
+        private ResponseSpec responseSpec;
+
+        @BeforeEach
+        void setUp() {
+
+            requestBodyUriSpec = mock(RestClient.RequestHeadersUriSpec.class);
+            responseSpec = mock(RestClient.ResponseSpec.class);
+
+            MDC.put(TRACE_ID_KEY, "traceId");
+            MDC.put(SESSION_ID_KEY, "sessionId");
+
+            when(restClient.get()).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.uri("/internalapi/certificate/export/{careProviderId}/total", "careProviderId")).thenReturn(
+                requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_TRACE_ID_HEADER, "traceId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.retrieve()).thenReturn(responseSpec);
+        }
+
+        @Test
+        void shallReturnExportInternalResponseDTO() {
+            final var expectedResponse = TotalExportsInternalResponseDTO.builder()
+                .totalCertificates(1L)
+                .totalRevokedCertificates(1L)
+                .build();
+
+            doReturn(expectedResponse).when(responseSpec).body(TotalExportsInternalResponseDTO.class);
+
+            final var actualResponse = csIntegrationService.getInternalTotalExportForCareProvider("careProviderId");
+
+            assertEquals(expectedResponse.getTotalCertificates(), actualResponse.getTotalCertificates());
+            assertEquals(expectedResponse.getTotalRevokedCertificates(), actualResponse.getTotalRevokedCertificates());
+        }
+
+        @Test
+        void shallThrowIfResponseIsNull() {
+            doReturn(null).when(responseSpec).body(TotalExportsInternalResponseDTO.class);
+
+            assertThrows(IllegalStateException.class, () -> csIntegrationService.getInternalTotalExportForCareProvider(
+                "careProviderId"
+            ));
         }
     }
 }

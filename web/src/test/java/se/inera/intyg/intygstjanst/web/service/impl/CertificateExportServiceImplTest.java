@@ -21,6 +21,8 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -50,10 +52,14 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.csintegration.aggregator.EraseCertificatesAggregator;
+import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ExportCertificateAggregator;
+import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateExportServiceImplTest {
 
+    @Mock
+    private ExportCertificateAggregator exportCertificateAggregator;
     @Mock
     private EraseCertificatesAggregator eraseCertificatesAggregator;
     @Mock
@@ -125,41 +131,13 @@ class CertificateExportServiceImplTest {
     @Nested
     class GetCertificateExportPage {
 
-        @BeforeEach
-        void setUp() {
-            when(certificateRepository.findTotalRevokedForCareProvider(any(String.class))).thenReturn(1L);
-            when(certificateRepository.findCertificatesForCareProvider(eq(CARE_PROVIDER_ID), any(Pageable.class)))
-                .thenReturn(getCertificatePage());
-        }
-
         @Test
-        public void shouldSetProperCounts() {
-            final var certificateExportPage = certificateExportService.getCertificateExportPage(CARE_PROVIDER_ID, PAGE, EXPORT_SIZE);
+        void shallReturnCertificateExportPageDTO() {
+            final var expectedExportPage = CertificateExportPageDTO.of(CARE_PROVIDER_ID, 1, 1, 1, new ArrayList<>());
+            when(exportCertificateAggregator.exportPage(CARE_PROVIDER_ID, PAGE, EXPORT_SIZE)).thenReturn(expectedExportPage);
 
-            assertAll(
-                () -> assertEquals(CARE_PROVIDER_ID, certificateExportPage.getCareProviderId()),
-                () -> assertEquals(0, certificateExportPage.getPage()),
-                () -> assertEquals(3, certificateExportPage.getCount()),
-                () -> assertEquals(3, certificateExportPage.getTotal()),
-                () -> assertEquals(1, certificateExportPage.getTotalRevoked())
-            );
-        }
-
-        @Test
-        public void shouldHaveCorrectNumberOfCertificates() {
-            final var certificateExportPage = certificateExportService.getCertificateExportPage(CARE_PROVIDER_ID, PAGE, EXPORT_SIZE);
-            assertEquals(3, certificateExportPage.getCertificateXmls().size());
-        }
-
-        @Test
-        public void shouldSetRevokedOnRevokedCertificatesOnly() {
-            final var certificateExportPage = certificateExportService.getCertificateExportPage(CARE_PROVIDER_ID, PAGE, EXPORT_SIZE);
-
-            assertAll(
-                () -> assertFalse(certificateExportPage.getCertificateXmls().get(0).isRevoked()),
-                () -> assertTrue(certificateExportPage.getCertificateXmls().get(1).isRevoked()),
-                () -> assertFalse(certificateExportPage.getCertificateXmls().get(2).isRevoked())
-            );
+            final var actualExportPage = certificateExportService.getCertificateExportPage(CARE_PROVIDER_ID, PAGE, EXPORT_SIZE);
+            assertEquals(expectedExportPage, actualExportPage);
         }
     }
 

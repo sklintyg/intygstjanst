@@ -46,6 +46,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
 import se.inera.intyg.intygstjanst.web.csintegration.aggregator.EraseCertificatesAggregator;
+import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ExportCertificateAggregator;
 import se.inera.intyg.intygstjanst.web.service.CertificateExportService;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
@@ -66,13 +67,15 @@ public class CertificateExportServiceImpl implements CertificateExportService {
     private final ArendeRepository arendeRepository;
     private final PathMatchingResourcePatternResolver resourceResolver;
     private final EraseCertificatesAggregator eraseCertificatesAggregator;
+    private final ExportCertificateAggregator exportCertificateAggregator;
 
     public CertificateExportServiceImpl(CertificateRepository certificateRepository, ArendeRepository arendeRepository,
-        PathMatchingResourcePatternResolver resourceResolver, EraseCertificatesAggregator eraseCertificatesAggregator) {
+        PathMatchingResourcePatternResolver resourceResolver, EraseCertificatesAggregator eraseCertificatesAggregator, ExportCertificateAggregator exportCertificateAggregator) {
         this.certificateRepository = certificateRepository;
         this.arendeRepository = arendeRepository;
         this.resourceResolver = resourceResolver;
         this.eraseCertificatesAggregator = eraseCertificatesAggregator;
+        this.exportCertificateAggregator = exportCertificateAggregator;
     }
 
     @Override
@@ -88,15 +91,8 @@ public class CertificateExportServiceImpl implements CertificateExportService {
     }
 
     @Override
-    public CertificateExportPageDTO getCertificateExportPage(String careProviderId, int page, int size) {
-        final var pageable = PageRequest.of(page, size, Sort.by(Direction.ASC, "signedDate", "id"));
-        final var certificatePage = certificateRepository.findCertificatesForCareProvider(careProviderId, pageable);
-        final var certificates = certificatePage.getContent();
-        final var totalCertificates = certificatePage.getTotalElements();
-        final var totalRevoked = certificateRepository.findTotalRevokedForCareProvider(careProviderId);
-        final var certificateXmls = getCertificateXmls(certificates);
-        final var certificateCount = certificatePage.getNumberOfElements();
-        return new CertificateExportPageDTO(careProviderId, page, certificateCount, totalCertificates, totalRevoked, certificateXmls);
+    public CertificateExportPageDTO getCertificateExportPage(String careProviderId, int collected, int batchSize) {
+        return exportCertificateAggregator.exportPage(careProviderId, collected, batchSize);
     }
 
     @Override
