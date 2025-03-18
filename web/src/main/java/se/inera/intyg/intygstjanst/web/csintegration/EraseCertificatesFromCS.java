@@ -13,9 +13,9 @@ public class EraseCertificatesFromCS {
     public void eraseCertificates(String careProviderId, int erasePageSize) {
         csIntegrationService.eraseCertificatesForCareProvider(
             EraseCertificatesRequestDTO.builder()
-                .careProviderId(careProviderId)
-                .erasePageSize(erasePageSize)
-                .build()
+                .batchSize(erasePageSize)
+                .build(),
+            careProviderId
         );
     }
 }

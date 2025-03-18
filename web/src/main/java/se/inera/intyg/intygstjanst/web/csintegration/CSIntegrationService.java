@@ -35,10 +35,10 @@ import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.CertificateExistsResponse;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.EraseCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificateInternalResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportInternalResponseDTO;
-import se.inera.intyg.intygstjanst.web.csintegration.dto.EraseCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateMetadataResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
@@ -60,6 +60,7 @@ public class CSIntegrationService {
     private static final String INTERNAL_CERTIFICATE_EXISTS_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/exists";
     private static final String INTERNALAPI_EXPORT_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL = "/internalapi/certificate/export/{careProviderId}";
     private static final String INTERNALAPI_TOTAL_EXPORT_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL = "/internalapi/certificate/export/{careProviderId}/total";
+    private static final String INTERNALAPI_ERASE_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL = "/internalapi/certificate/erase/{careProviderId}";
 
     private final RestClient csRestClient;
 
@@ -198,8 +199,20 @@ public class CSIntegrationService {
 
         return response;
     }
-}
-    public void eraseCertificatesForCareProvider(EraseCertificatesRequestDTO request) {
 
+    public void eraseCertificatesForCareProvider(EraseCertificatesRequestDTO request, String careProviderId) {
+        final var response = csRestClient
+            .post()
+            .uri(INTERNALAPI_ERASE_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL, careProviderId)
+            .body(request)
+            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+            .contentType(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .toBodilessEntity();
+
+        if (response.getStatusCode().isError()) {
+            throw new IllegalStateException("Failed to erase certificates from certificate service");
+        }
     }
 }

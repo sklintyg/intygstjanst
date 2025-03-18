@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_SESSION_ID_HEADER;
 import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_TRACE_ID_HEADER;
@@ -41,6 +42,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.MDC;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.RequestBodyUriSpec;
 import org.springframework.web.client.RestClient.RequestHeadersUriSpec;
@@ -49,6 +51,7 @@ import org.springframework.web.client.RestTemplate;
 import se.inera.intyg.common.support.facade.model.Certificate;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.CertificateExistsResponse;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.EraseCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificateInternalResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportInternalResponseDTO;
@@ -415,6 +418,53 @@ class CSIntegrationServiceTest {
             assertThrows(IllegalStateException.class, () -> csIntegrationService.getInternalTotalExportForCareProvider(
                 "careProviderId"
             ));
+        }
+    }
+
+    @Nested
+    class EraseCertificatesForCareProviderTests {
+
+        private RequestBodyUriSpec requestBodyUriSpec;
+        private ResponseSpec responseSpec;
+
+        @BeforeEach
+        void setUp() {
+            requestBodyUriSpec = mock(RestClient.RequestBodyUriSpec.class);
+            responseSpec = mock(RestClient.ResponseSpec.class);
+
+            MDC.put(TRACE_ID_KEY, "traceId");
+            MDC.put(SESSION_ID_KEY, "sessionId");
+
+            when(restClient.post()).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.uri("/internalapi/certificate/erase/{careProviderId}", "careProviderId")).thenReturn(
+                requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_TRACE_ID_HEADER, "traceId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.body(any(EraseCertificatesRequestDTO.class))).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.contentType(MediaType.APPLICATION_JSON)).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.retrieve()).thenReturn(responseSpec);
+        }
+
+        @Test
+        void shallEraseCertificatesForCareProvider() {
+            final var responseEntity = ResponseEntity.ok().build();
+            doReturn(responseEntity).when(responseSpec).toBodilessEntity();
+
+            final var request = EraseCertificatesRequestDTO.builder().build();
+            csIntegrationService.eraseCertificatesForCareProvider(request, "careProviderId");
+
+            verify(responseSpec).toBodilessEntity();
+        }
+
+        @Test
+        void shallThrowIfResponseIsError() {
+            final var responseEntity = ResponseEntity.status(500).build();
+            doReturn(responseEntity).when(responseSpec).toBodilessEntity();
+
+            final var request = EraseCertificatesRequestDTO.builder().build();
+
+            assertThrows(IllegalStateException.class,
+                () -> csIntegrationService.eraseCertificatesForCareProvider(request, "careProviderId"));
         }
     }
 }

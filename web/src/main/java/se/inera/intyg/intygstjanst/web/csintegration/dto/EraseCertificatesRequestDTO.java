@@ -11,9 +11,8 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.EraseCertificatesReques
 @Value
 @Builder
 public class EraseCertificatesRequestDTO {
-
-    String careProviderId;
-    int erasePageSize;
+    
+    int batchSize;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class EraseCertificatesRequestDTOBuilder {
