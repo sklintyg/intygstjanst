@@ -15,6 +15,10 @@ public class EraseCertificatesAggregator {
     private final CertificateServiceProfile certificateServiceProfile;
 
     public void eraseCertificates(String careProviderId, int erasePageSize) {
+        if (careProviderId == null || careProviderId.isBlank()) {
+            throw new IllegalArgumentException("careProviderId cannot be null or empty");
+        }
+
         eraseCertificatesFromIT.eraseCertificates(careProviderId, erasePageSize);
 
         if (!certificateServiceProfile.active()) {

@@ -1,5 +1,6 @@
 package se.inera.intyg.intygstjanst.web.csintegration.aggregator;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -26,6 +27,18 @@ class EraseCertificatesAggregatorTest {
     CertificateServiceProfile certificateServiceProfile;
     @InjectMocks
     EraseCertificatesAggregator eraseCertificatesAggregator;
+
+    @Test
+    void shallThrowExceptionIfCareProviderIdIsNull() {
+        assertThrows(IllegalArgumentException.class, () ->
+            eraseCertificatesAggregator.eraseCertificates(null, ERASE_PAGE_SIZE));
+    }
+
+    @Test
+    void shallThrowExceptionIfCareProviderIdIsBlank() {
+        assertThrows(IllegalArgumentException.class, () ->
+            eraseCertificatesAggregator.eraseCertificates("", ERASE_PAGE_SIZE));
+    }
 
     @Test
     void shallNotEraseCertificatesFromCSIfProfileInactive() {

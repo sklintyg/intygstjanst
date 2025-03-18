@@ -40,4 +40,5 @@ class EraseCertificatesFromCSTest {
         verify(csIntegrationService).eraseCertificatesForCareProvider(argumentCaptor.capture(), eq("careProviderId"));
         assertEquals(expectedBatchSize, argumentCaptor.getValue().getBatchSize());
     }
+
 }
