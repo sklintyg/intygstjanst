@@ -55,9 +55,9 @@ public class CertificateExportController {
     @Path("/certificates/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public CertificateExportPageDTO getCertificates(@PathParam("id") String careProviderId, @QueryParam("size") int size,
-        @QueryParam("page") int page) {
-        return certificateExportService.getCertificateExportPage(careProviderId, page, size);
+    public CertificateExportPageDTO getCertificates(@PathParam("id") String careProviderId, @QueryParam("batchSize") int batchSize,
+        @QueryParam("collected") int collected) {
+        return certificateExportService.getCertificateExportPage(careProviderId, collected, batchSize);
     }
 
     @DELETE

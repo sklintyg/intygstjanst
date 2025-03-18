@@ -50,6 +50,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ExportCertificateAggregator;
 import se.inera.intyg.intygstjanst.web.service.CertificateExportService;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
@@ -73,10 +74,12 @@ public class CertificateExportServiceImpl implements CertificateExportService {
     private final RelationDao relationDao;
     private final SjukfallCertificateDao sjukfallCertificateDao;
     private final CertificateDao certificateDao;
+    private final ExportCertificateAggregator exportCertificateAggregator;
 
     public CertificateExportServiceImpl(CertificateRepository certificateRepository, ArendeRepository arendeRepository,
         PathMatchingResourcePatternResolver resourceResolver, ApprovedReceiverDao approvedReceiverDao, RelationDao relationDao,
-        SjukfallCertificateDao sjukfallCertificateDao, CertificateDao certificateDao) {
+        SjukfallCertificateDao sjukfallCertificateDao, CertificateDao certificateDao,
+        ExportCertificateAggregator exportCertificateAggregator) {
         this.certificateRepository = certificateRepository;
         this.arendeRepository = arendeRepository;
         this.resourceResolver = resourceResolver;
@@ -84,6 +87,7 @@ public class CertificateExportServiceImpl implements CertificateExportService {
         this.relationDao = relationDao;
         this.sjukfallCertificateDao = sjukfallCertificateDao;
         this.certificateDao = certificateDao;
+        this.exportCertificateAggregator = exportCertificateAggregator;
     }
 
     @Override
@@ -99,15 +103,8 @@ public class CertificateExportServiceImpl implements CertificateExportService {
     }
 
     @Override
-    public CertificateExportPageDTO getCertificateExportPage(String careProviderId, int page, int size) {
-        final var pageable = PageRequest.of(page, size, Sort.by(Direction.ASC, "signedDate", "id"));
-        final var certificatePage = certificateRepository.findCertificatesForCareProvider(careProviderId, pageable);
-        final var certificates = certificatePage.getContent();
-        final var totalCertificates = certificatePage.getTotalElements();
-        final var totalRevoked = certificateRepository.findTotalRevokedForCareProvider(careProviderId);
-        final var certificateXmls = getCertificateXmls(certificates);
-        final var certificateCount = certificatePage.getNumberOfElements();
-        return new CertificateExportPageDTO(careProviderId, page, certificateCount, totalCertificates, totalRevoked, certificateXmls);
+    public CertificateExportPageDTO getCertificateExportPage(String careProviderId, int collected, int batchSize) {
+        return exportCertificateAggregator.exportPage(careProviderId, collected, batchSize);
     }
 
     @Override
