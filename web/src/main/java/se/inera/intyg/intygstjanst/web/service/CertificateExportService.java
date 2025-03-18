@@ -28,6 +28,6 @@ public interface CertificateExportService {
 
     CertificateExportPageDTO getCertificateExportPage(String careProviderId, int page, int size);
 
-    void eraseCertificates(String carProviderId, int erasePageSize);
+    void eraseCertificates(String carProviderId);
 
 }

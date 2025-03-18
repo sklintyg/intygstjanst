@@ -59,6 +59,7 @@ public class CSIntegrationService {
     private static final String INTERNAL_CERTIFICATE_EXISTS_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/exists";
     private static final String INTERNALAPI_EXPORT_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL = "/internalapi/certificate/export/{careProviderId}";
     private static final String INTERNALAPI_TOTAL_EXPORT_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL = "/internalapi/certificate/export/{careProviderId}/total";
+    private static final String INTERNALAPI_ERASE_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL = "/internalapi/certificate/erase/{careProviderId}";
 
     private final RestClient csRestClient;
 
@@ -196,5 +197,19 @@ public class CSIntegrationService {
         }
 
         return response;
+    }
+
+    public void eraseCertificatesForCareProvider(String careProviderId) {
+        final var response = csRestClient
+            .delete()
+            .uri(INTERNALAPI_ERASE_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL, careProviderId)
+            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+            .retrieve()
+            .toBodilessEntity();
+
+        if (response.getStatusCode().isError()) {
+            throw new IllegalStateException("Failed to erase certificates from certificate service");
+        }
     }
 }

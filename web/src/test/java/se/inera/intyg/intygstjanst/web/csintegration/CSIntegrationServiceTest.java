@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_SESSION_ID_HEADER;
 import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_TRACE_ID_HEADER;
@@ -41,6 +42,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.MDC;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.RequestBodyUriSpec;
 import org.springframework.web.client.RestClient.RequestHeadersUriSpec;
@@ -415,6 +417,48 @@ class CSIntegrationServiceTest {
             assertThrows(IllegalStateException.class, () -> csIntegrationService.getInternalTotalExportForCareProvider(
                 "careProviderId"
             ));
+        }
+    }
+
+    @Nested
+    class EraseCertificatesForCareProviderTests {
+
+        private RequestHeadersUriSpec requestHeadersUriSpec;
+        private ResponseSpec responseSpec;
+
+        @BeforeEach
+        void setUp() {
+            requestHeadersUriSpec = mock(RestClient.RequestBodyUriSpec.class);
+            responseSpec = mock(RestClient.ResponseSpec.class);
+
+            MDC.put(TRACE_ID_KEY, "traceId");
+            MDC.put(SESSION_ID_KEY, "sessionId");
+
+            when(restClient.delete()).thenReturn(requestHeadersUriSpec);
+            when(requestHeadersUriSpec.uri("/internalapi/certificate/erase/{careProviderId}", "careProviderId")).thenReturn(
+                requestHeadersUriSpec);
+            when(requestHeadersUriSpec.header(LOG_TRACE_ID_HEADER, "traceId")).thenReturn(requestHeadersUriSpec);
+            when(requestHeadersUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId")).thenReturn(requestHeadersUriSpec);
+            when(requestHeadersUriSpec.retrieve()).thenReturn(responseSpec);
+        }
+
+        @Test
+        void shallEraseCertificatesForCareProvider() {
+            final var responseEntity = ResponseEntity.ok().build();
+            doReturn(responseEntity).when(responseSpec).toBodilessEntity();
+
+            csIntegrationService.eraseCertificatesForCareProvider("careProviderId");
+
+            verify(responseSpec).toBodilessEntity();
+        }
+
+        @Test
+        void shallThrowIfResponseIsError() {
+            final var responseEntity = ResponseEntity.status(500).build();
+            doReturn(responseEntity).when(responseSpec).toBodilessEntity();
+
+            assertThrows(IllegalStateException.class,
+                () -> csIntegrationService.eraseCertificatesForCareProvider("careProviderId"));
         }
     }
 }

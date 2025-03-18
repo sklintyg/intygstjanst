@@ -27,7 +27,6 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.CertificateExportService;
@@ -39,9 +38,6 @@ public class CertificateExportController {
 
     @Autowired
     CertificateExportService certificateExportService;
-
-    @Value("${erase.certificates.page.size:1000}")
-    private int eraseCertificatesPageSize;
 
     @GET
     @Path("certificatetexts")
@@ -65,6 +61,6 @@ public class CertificateExportController {
     @Produces(MediaType.APPLICATION_JSON)
     @PerformanceLogging(eventAction = "erase-certificates", eventType = MdcLogConstants.EVENT_TYPE_DELETION)
     public void eraseDataForCareProvider(@PathParam("id") String careProviderId) {
-        certificateExportService.eraseCertificates(careProviderId, eraseCertificatesPageSize);
+        certificateExportService.eraseCertificates(careProviderId);
     }
 }
