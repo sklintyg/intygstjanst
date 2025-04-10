@@ -72,6 +72,13 @@ public class PuFilterServiceImpl implements PuFilterService {
                 }
 
                 final var personSvar = personSvarMap.get(pnr.get());
+                if (personSvar == null) {
+                    i.remove();
+                    log.warn(
+                        "No PersonSvar found for personnummer returned by PU service. Removing from list of sjukfall. CertificateId: {}",
+                        item.getIntygId());
+                    continue;
+                }
                 final var patientNotFound = personSvar.getStatus() == PersonSvar.Status.NOT_FOUND;
                 if (personSvar.getStatus() == PersonSvar.Status.FOUND || patientNotFound) {
                     if (patientNotFound || personSvar.getPerson().sekretessmarkering()) {
