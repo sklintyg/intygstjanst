@@ -51,43 +51,54 @@ public class PuFilterServiceImpl implements PuFilterService {
 
     @Override
     public void enrichWithPatientNameAndFilter(List<IntygData> sickLeaves, String protectedPersonFilterId) {
-        final var personSvarMap = fetchPersons(sickLeaves);
+        Map<Personnummer, PersonSvar> personSvarMap = null;
+        try {
+            personSvarMap = fetchPersons(sickLeaves);
+        } catch (Exception e) {
+            log.error("Error fetching persons from PU service", e);
+            throw e;
+        }
 
-        final var i = sickLeaves.iterator();
-        while (i.hasNext()) {
-            final var item = i.next();
+        try {
+            final var i = sickLeaves.iterator();
+            while (i.hasNext()) {
+                final var item = i.next();
 
-            final var pnr = getPersonnummerOfOptional(item.getPatientId());
-            if (pnr.isEmpty()) {
-                i.remove();
-                log.warn("Problem parsing personnummer returned by PU service. Removing from list of sjukfall.");
-                continue;
-            }
-
-            final var personSvar = personSvarMap.get(pnr.get());
-            final var patientNotFound = personSvar.getStatus() == PersonSvar.Status.NOT_FOUND;
-            if (personSvar.getStatus() == PersonSvar.Status.FOUND || patientNotFound) {
-                if (patientNotFound || personSvar.getPerson().sekretessmarkering()) {
-
-                    final var updatedName = patientNotFound ? SEKRETESS_SKYDDAD_NAME_UNKNOWN : SEKRETESS_SKYDDAD_NAME_PLACEHOLDER;
-                    item.setPatientNamn(updatedName);
-
-                    if (protectedPersonFilterId == null || !protectedPersonFilterId.equals(item.getLakareId())) {
-                        i.remove();
-                    }
-
-                } else if (personSvar.getPerson().avliden()) {
+                final var pnr = getPersonnummerOfOptional(item.getPatientId());
+                if (pnr.isEmpty()) {
                     i.remove();
-                } else if (joinNames(personSvar).equals("")) {
-                    item.setPatientNamn(SEKRETESS_SKYDDAD_NAME_UNKNOWN);
-                } else {
-                    item.setPatientNamn(joinNames(personSvar));
+                    log.warn("Problem parsing personnummer returned by PU service. Removing from list of sjukfall.");
+                    continue;
                 }
-            } else if (personSvar.getStatus() == PersonSvar.Status.ERROR) {
-                throw new IllegalStateException("Could not contact PU service, not showing any sjukfall.");
-            } else {
-                item.setPatientNamn(SEKRETESS_SKYDDAD_NAME_UNKNOWN);
+
+                final var personSvar = personSvarMap.get(pnr.get());
+                final var patientNotFound = personSvar.getStatus() == PersonSvar.Status.NOT_FOUND;
+                if (personSvar.getStatus() == PersonSvar.Status.FOUND || patientNotFound) {
+                    if (patientNotFound || personSvar.getPerson().sekretessmarkering()) {
+
+                        final var updatedName = patientNotFound ? SEKRETESS_SKYDDAD_NAME_UNKNOWN : SEKRETESS_SKYDDAD_NAME_PLACEHOLDER;
+                        item.setPatientNamn(updatedName);
+
+                        if (protectedPersonFilterId == null || !protectedPersonFilterId.equals(item.getLakareId())) {
+                            i.remove();
+                        }
+
+                    } else if (personSvar.getPerson().avliden()) {
+                        i.remove();
+                    } else if (joinNames(personSvar).equals("")) {
+                        item.setPatientNamn(SEKRETESS_SKYDDAD_NAME_UNKNOWN);
+                    } else {
+                        item.setPatientNamn(joinNames(personSvar));
+                    }
+                } else if (personSvar.getStatus() == PersonSvar.Status.ERROR) {
+                    throw new IllegalStateException("Could not contact PU service, not showing any sjukfall.");
+                } else {
+                    item.setPatientNamn(SEKRETESS_SKYDDAD_NAME_UNKNOWN);
+                }
             }
+        } catch (Exception e) {
+            log.error("Error decorating patient name and filter", e);
+            throw e;
         }
     }
 

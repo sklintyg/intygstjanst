@@ -27,6 +27,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
@@ -72,11 +73,17 @@ public class GetSickLeaveCertificatesImpl implements GetSickLeaveCertificates {
             patientIds
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES_FROM_DB, sjukfallCertificate.size()));
+        List<IntygData> intygDataList = null;
+        try {
+            intygDataList = intygDataConverter.convert(sjukfallCertificate);
 
-        final var intygDataList = intygDataConverter.convert(sjukfallCertificate);
+            sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
+            puFilterService.enrichWithPatientNameAndFilter(intygDataList, protectedPersonFilterId);
+        } catch (Exception ex) {
+            LOG.error("Error while filtering sick leaves: ", ex);
+            throw ex;
+        }
 
-        sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
-        puFilterService.enrichWithPatientNameAndFilter(intygDataList, protectedPersonFilterId);
         LOG.info(sickLeaveLogMessageFactory.message(GET_AND_FILTER_PROTECTED_PATIENTS, intygDataList.size()));
 
         return sjukfallEngineService.beraknaSjukfallForEnhet(
