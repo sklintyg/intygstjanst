@@ -69,7 +69,9 @@ class CreateSickLeaveFilterImplTest {
         new RekoStatusTypeDTO(RekoStatusType.REKO_3.toString(), RekoStatusType.REKO_3.getName()),
         new RekoStatusTypeDTO(RekoStatusType.REKO_4.toString(), RekoStatusType.REKO_4.getName()),
         new RekoStatusTypeDTO(RekoStatusType.REKO_5.toString(), RekoStatusType.REKO_5.getName()),
-        new RekoStatusTypeDTO(RekoStatusType.REKO_6.toString(), RekoStatusType.REKO_6.getName())
+        new RekoStatusTypeDTO(RekoStatusType.REKO_6.toString(), RekoStatusType.REKO_6.getName()),
+        new RekoStatusTypeDTO(RekoStatusType.REKO_7.toString(), RekoStatusType.REKO_7.getName()),
+        new RekoStatusTypeDTO(RekoStatusType.REKO_8.toString(), RekoStatusType.REKO_8.getName())
     );
 
     private static final List<OccupationTypeDTO> OCCUPATION_TYPE_DTO_LIST = Arrays.asList(
@@ -220,14 +222,14 @@ class CreateSickLeaveFilterImplTest {
         @Test
         void shallSetAllStatuses() {
             final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
-            assertEquals(6, actualFilter.getRekoStatusTypes().size());
+            assertEquals(8, actualFilter.getRekoStatusTypes().size());
         }
 
         @Test
         void shallSetFirstStatus() {
             final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
-            assertEquals(RekoStatusType.REKO_1.toString(), actualFilter.getRekoStatusTypes().get(0).getId());
-            assertEquals(RekoStatusType.REKO_1.getName(), actualFilter.getRekoStatusTypes().get(0).getName());
+            assertEquals(RekoStatusType.REKO_1.toString(), actualFilter.getRekoStatusTypes().getFirst().getId());
+            assertEquals(RekoStatusType.REKO_1.getName(), actualFilter.getRekoStatusTypes().getFirst().getName());
         }
 
         @Test
@@ -272,8 +274,8 @@ class CreateSickLeaveFilterImplTest {
         @Test
         void shallContainOccupationNuvarandeArbete() {
             final var actualFilter = createSickLeaveFilter.create(Collections.singletonList(new IntygData()));
-            assertEquals(actualFilter.getOccupationTypes().get(0).getId(), OccupationType.NUVARANDE_ARBETE.toString());
-            assertEquals(actualFilter.getOccupationTypes().get(0).getName(), OccupationType.NUVARANDE_ARBETE.getName());
+            assertEquals(actualFilter.getOccupationTypes().getFirst().getId(), OccupationType.NUVARANDE_ARBETE.toString());
+            assertEquals(actualFilter.getOccupationTypes().getFirst().getName(), OccupationType.NUVARANDE_ARBETE.getName());
         }
 
         @Test
