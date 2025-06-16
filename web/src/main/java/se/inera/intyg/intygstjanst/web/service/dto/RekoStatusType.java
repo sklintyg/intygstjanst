@@ -21,12 +21,14 @@ package se.inera.intyg.intygstjanst.web.service.dto;
 
 public enum RekoStatusType {
 
-    REKO_1("Ingen"),
+    REKO_1("-"),
     REKO_2("Kontaktad"),
     REKO_3("Aktiv"),
     REKO_4("Uppföljning"),
     REKO_5("Avslutad"),
-    REKO_6("Avböjt");
+    REKO_6("Avböjt"),
+    REKO_7("Lämnas utan åtgärd"),
+    REKO_8("Medicinsk rehab");
 
     private final String name;
 
