@@ -41,6 +41,7 @@ public class CertificateEventServiceImpl implements CertificateEventService {
     private final CertificateEventSendService certificateEventSendService;
     private final CertificateEventRevokeService certificateEventRevokeService;
     private final CertificateEventSendMessageService certificateEventSendMessageService;
+    private final HandleSickleaveService handleSickleaveService;
 
     private static final String CERTIFICATE_REVOKED = "certificate-revoked";
     private static final String CERTIFICATE_SIGNED = "certificate-signed";
@@ -78,6 +79,7 @@ public class CertificateEventServiceImpl implements CertificateEventService {
     private boolean created(String certificateId) {
         final var response = csIntegrationService.getCertificateXmlResponse(certificateId);
         final var certificateXml = decodeXml(response.getXml());
+        handleSickleaveService.created(response, certificateXml);
         return statisticsService.created(certificateXml, certificateId, response.getCertificateType(), response.getUnit().getUnitId());
     }
 

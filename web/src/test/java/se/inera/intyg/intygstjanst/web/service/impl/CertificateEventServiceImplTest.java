@@ -63,6 +63,8 @@ class CertificateEventServiceImplTest {
     private CertificateEventRevokeService certificateEventRevokeService;
     @Mock
     private CertificateEventSendMessageService certificateEventSendMessageService;
+    @Mock
+    private HandleSickleaveService handleSickleaveService;
     @InjectMocks
     private CertificateEventServiceImpl certificateEventService;
 
@@ -139,6 +141,26 @@ class CertificateEventServiceImplTest {
                 assertTrue(result);
                 verify(statisticsService).created(DECODED_XML, resp.getCertificateId(), resp.getCertificateType(),
                     resp.getUnit().getUnitId());
+            }
+
+            @Test
+            void shouldCallHandleSickleaveService() {
+                final var resp = GetCertificateXmlResponse.builder()
+                    .certificateId(CERTIFICATE_ID)
+                    .certificateType(CERTIFICATE_TYPE)
+                    .unit(
+                        UnitDTO.builder()
+                            .unitId(UNIT_ID)
+                            .build()
+                    )
+                    .recipient(null)
+                    .xml(ENCODED_XML)
+                    .build();
+                when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
+
+                certificateEventService.processEvent(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
+
+                verify(handleSickleaveService).created(resp, DECODED_XML);
             }
 
             @Test
