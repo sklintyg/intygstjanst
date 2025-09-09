@@ -35,8 +35,7 @@ public class HandleSickLeaveService {
             .map(CertificateDataElement::getValue)
             .map(CertificateDataValueBoolean.class::cast)
             .map(CertificateDataValueBoolean::getSelected)
-            .orElseThrow(
-                () -> new IllegalStateException("Could not find data element %s in certificate".formatted(QUESTION_SMITTBARARPENNING_ID)));
+            .orElse(false);
 
         if (questionSmittbararpenning) {
             return;

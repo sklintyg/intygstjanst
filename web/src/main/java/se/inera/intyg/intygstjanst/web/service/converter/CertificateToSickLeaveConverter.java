@@ -96,9 +96,9 @@ public class CertificateToSickLeaveConverter {
     private Integer toCapacityPercentage(String id) {
         return switch (SickLeaveCapacity.valueOf(id)) {
             case HELT_NEDSATT -> 100;
-            case NEDSATT_3_4 -> 75;
-            case NEDSATT_HALFTEN -> 50;
-            case NEDSATT_1_4 -> 25;
+            case TRE_FJARDEDEL -> 75;
+            case HALFTEN -> 50;
+            case EN_FJARDEDEL -> 25;
         };
     }
 
@@ -123,6 +123,6 @@ public class CertificateToSickLeaveConverter {
     }
 
     enum SickLeaveCapacity {
-        HELT_NEDSATT, NEDSATT_3_4, NEDSATT_HALFTEN, NEDSATT_1_4
+      HELT_NEDSATT, TRE_FJARDEDEL, HALFTEN, EN_FJARDEDEL
     }
 }

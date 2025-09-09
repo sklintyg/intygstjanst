@@ -24,6 +24,7 @@ import java.util.Base64;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.intygstjanst.web.csintegration.CSIntegrationService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventRevokeService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventSendMessageService;
@@ -48,33 +49,34 @@ public class CertificateEventServiceImpl implements CertificateEventService {
     private static final String CERTIFICATE_SENT = "certificate-sent";
     private static final String MESSAGE_SENT = "message-sent";
 
-    @Override
-    public boolean processEvent(String eventType, String certificateId, String messageId) {
-        final var metadata = csIntegrationService.getCertificateMetadata(certificateId);
+  @Transactional
+  @Override
+  public boolean processEvent(String eventType, String certificateId, String messageId) {
+    final var metadata = csIntegrationService.getCertificateMetadata(certificateId);
 
-        if (metadata.isTestCertificate()) {
-            log.info(String.format(
-                    "Not processing event of type '%S' for certificate with id '%s' since it is test indicated", eventType, certificateId
-                )
-            );
-            return true;
-        }
-
-        switch (eventType) {
-            case CERTIFICATE_SIGNED:
-                return created(certificateId);
-            case CERTIFICATE_REVOKED:
-                return revoked(certificateId);
-            case CERTIFICATE_SENT:
-                return sent(certificateId);
-            case MESSAGE_SENT:
-                return messageSent(messageId);
-            default:
-                throw new IllegalArgumentException(
-                    String.format("Invalid eventType '%s' received for certificate '%s' and message '%s'.",
-                        eventType, certificateId, messageId));
-        }
+    if (metadata.isTestCertificate()) {
+      log.info(String.format(
+              "Not processing event of type '%S' for certificate with id '%s' since it is test indicated", eventType, certificateId
+          )
+      );
+      return true;
     }
+
+    switch (eventType) {
+      case CERTIFICATE_SIGNED:
+        return created(certificateId);
+      case CERTIFICATE_REVOKED:
+        return revoked(certificateId);
+      case CERTIFICATE_SENT:
+        return sent(certificateId);
+      case MESSAGE_SENT:
+        return messageSent(messageId);
+      default:
+        throw new IllegalArgumentException(
+            String.format("Invalid eventType '%s' received for certificate '%s' and message '%s'.",
+                eventType, certificateId, messageId));
+    }
+  }
 
     private boolean created(String certificateId) {
         final var response = csIntegrationService.getCertificateXmlResponse(certificateId);
