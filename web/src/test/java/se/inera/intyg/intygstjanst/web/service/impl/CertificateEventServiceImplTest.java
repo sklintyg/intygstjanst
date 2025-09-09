@@ -160,7 +160,7 @@ class CertificateEventServiceImplTest {
 
                 certificateEventService.processEvent(EVENT_SIGNED, CERTIFICATE_ID, MESSAGE_ID);
 
-                verify(handleSickleaveService).created(resp, DECODED_XML);
+                verify(handleSickleaveService).created(resp);
             }
 
             @Test

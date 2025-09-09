@@ -79,7 +79,7 @@ public class CertificateEventServiceImpl implements CertificateEventService {
     private boolean created(String certificateId) {
         final var response = csIntegrationService.getCertificateXmlResponse(certificateId);
         final var certificateXml = decodeXml(response.getXml());
-        handleSickleaveService.created(response, certificateXml);
+        handleSickleaveService.created(response);
         return statisticsService.created(certificateXml, certificateId, response.getCertificateType(), response.getUnit().getUnitId());
     }
 
