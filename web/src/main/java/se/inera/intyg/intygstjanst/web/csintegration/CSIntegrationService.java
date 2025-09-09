@@ -85,10 +85,10 @@ public class CSIntegrationService {
     }
 
     @PerformanceLogging(eventAction = "retrieve-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
-    public Certificate getCertificate(String id) {
+    public Certificate getCertificate(String certificateId) {
         final var response = csRestClient
             .post()
-            .uri(INTERNALAPI_GET_CERTIFICATE_URL, id)
+            .uri(INTERNALAPI_GET_CERTIFICATE_URL, certificateId)
             .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
             .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
             .contentType(MediaType.APPLICATION_JSON)

@@ -41,7 +41,7 @@ public class CertificateEventServiceImpl implements CertificateEventService {
     private final CertificateEventSendService certificateEventSendService;
     private final CertificateEventRevokeService certificateEventRevokeService;
     private final CertificateEventSendMessageService certificateEventSendMessageService;
-    private final HandleSickleaveService handleSickleaveService;
+    private final HandleSickLeaveService handleSickleaveService;
 
     private static final String CERTIFICATE_REVOKED = "certificate-revoked";
     private static final String CERTIFICATE_SIGNED = "certificate-signed";

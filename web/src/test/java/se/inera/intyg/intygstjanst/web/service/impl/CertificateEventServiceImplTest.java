@@ -64,7 +64,7 @@ class CertificateEventServiceImplTest {
     @Mock
     private CertificateEventSendMessageService certificateEventSendMessageService;
     @Mock
-    private HandleSickleaveService handleSickleaveService;
+    private HandleSickLeaveService handleSickleaveService;
     @InjectMocks
     private CertificateEventServiceImpl certificateEventService;
 
