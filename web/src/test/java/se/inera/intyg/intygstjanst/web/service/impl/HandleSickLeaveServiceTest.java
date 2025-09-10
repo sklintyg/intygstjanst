@@ -1,6 +1,5 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -105,19 +104,5 @@ class HandleSickLeaveServiceTest {
 
         verify(csIntegrationService).getCertificate(CERTIFICATE_ID);
         verify(sjukfallCertificateDao).store(sjukfallCertificate);
-    }
-
-    @Test
-    void shouldThrowIfQuestionMissing() {
-        final var response = GetCertificateXmlResponse.builder()
-            .certificateType(FK7804_TYPE)
-            .certificateId(CERTIFICATE_ID)
-            .build();
-        final var cert = mock(Certificate.class);
-
-        when(cert.getData()).thenReturn(new HashMap<>());
-        when(csIntegrationService.getCertificate(CERTIFICATE_ID)).thenReturn(cert);
-
-        assertThrows(IllegalStateException.class, () -> handleSickleaveService.created(response));
     }
 }

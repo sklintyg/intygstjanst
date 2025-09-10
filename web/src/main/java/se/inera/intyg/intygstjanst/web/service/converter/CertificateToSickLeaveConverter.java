@@ -26,6 +26,8 @@ public class CertificateToSickLeaveConverter {
     private static final String QUESTION_DIAGNOSIS_ID = "6";
     private static final String QUESTION_NEDSATTNING_ARBETSFORMAGA_ID = "32";
     private static final String QUESTION_SYSSELSATTNING_ID = "28";
+    private static final String MISSING_ELEMENT_IN_CERTIFICATE = "Could not find data element %s in certificate";
+    private static final String LISJP = "lisjp";
 
     public SjukfallCertificate convert(Certificate certificate) {
         final var metadata = certificate.getMetadata();
@@ -48,7 +50,7 @@ public class CertificateToSickLeaveConverter {
 
         sickLeaveCertificate.setBiDiagnoseCode1(getDiagnoses(certificate).size() > 1 ? getDiagnoses(certificate).get(1).getCode() : null);
         sickLeaveCertificate.setBiDiagnoseCode2(getDiagnoses(certificate).size() > 2 ? getDiagnoses(certificate).get(2).getCode() : null);
-        
+
         return sickLeaveCertificate;
     }
 
@@ -61,8 +63,7 @@ public class CertificateToSickLeaveConverter {
             .map(CertificateDataValueCodeList.class::cast)
             .map(CertificateDataValueCodeList::getList)
             .orElseThrow(
-                () -> new IllegalStateException(
-                    "Could not find data element %s in certificate".formatted(QUESTION_SYSSELSATTNING_ID)));
+                () -> new IllegalStateException(MISSING_ELEMENT_IN_CERTIFICATE.formatted(QUESTION_SYSSELSATTNING_ID)));
 
         return codeList.stream()
             .map(CertificateDataValueCode::getId)
@@ -79,8 +80,7 @@ public class CertificateToSickLeaveConverter {
             .map(CertificateDataValueDateRangeList.class::cast)
             .map(CertificateDataValueDateRangeList::getList)
             .orElseThrow(
-                () -> new IllegalStateException(
-                    "Could not find data element %s in certificate".formatted(QUESTION_NEDSATTNING_ARBETSFORMAGA_ID)));
+                () -> new IllegalStateException(MISSING_ELEMENT_IN_CERTIFICATE.formatted(QUESTION_NEDSATTNING_ARBETSFORMAGA_ID)));
 
         for (CertificateDataValueDateRange dateRange : dateRanges) {
             final var workCapacity = new SjukfallCertificateWorkCapacity();
@@ -93,15 +93,6 @@ public class CertificateToSickLeaveConverter {
         return workCapacities;
     }
 
-    private Integer toCapacityPercentage(String id) {
-        return switch (SickLeaveCapacity.valueOf(id)) {
-            case HELT_NEDSATT -> 100;
-            case TRE_FJARDEDEL -> 75;
-            case HALFTEN -> 50;
-            case EN_FJARDEDEL -> 25;
-        };
-    }
-
     private static List<CertificateDataValueDiagnosis> getDiagnoses(Certificate certificate) {
         return certificate.getData().entrySet().stream()
             .filter(e -> QUESTION_DIAGNOSIS_ID.equals(e.getKey()))
@@ -111,18 +102,27 @@ public class CertificateToSickLeaveConverter {
             .map(CertificateDataValueDiagnosisList.class::cast)
             .map(CertificateDataValueDiagnosisList::getList)
             .orElseThrow(
-                () -> new IllegalStateException("Could not find data element %s in certificate".formatted(QUESTION_DIAGNOSIS_ID)));
+                () -> new IllegalStateException(MISSING_ELEMENT_IN_CERTIFICATE.formatted(QUESTION_DIAGNOSIS_ID)));
+    }
+
+    private Integer toCapacityPercentage(String id) {
+        return switch (SickLeaveCapacity.valueOf(id)) {
+            case HELT_NEDSATT -> 100;
+            case TRE_FJARDEDEL -> 75;
+            case HALFTEN -> 50;
+            case EN_FJARDEDEL -> 25;
+        };
     }
 
     private String toSjukfallCertificateType(String type) {
         if (FK_7804_TYPE.equals(type)) {
-            return "lisjp";
+            return LISJP;
         }
 
         throw new IllegalStateException("Unknown certificate type: " + type);
     }
 
     enum SickLeaveCapacity {
-      HELT_NEDSATT, TRE_FJARDEDEL, HALFTEN, EN_FJARDEDEL
+        HELT_NEDSATT, TRE_FJARDEDEL, HALFTEN, EN_FJARDEDEL
     }
 }
