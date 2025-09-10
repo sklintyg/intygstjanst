@@ -28,7 +28,7 @@ public class HandleSickLeaveService {
 
         final var certificate = csIntegrationService.getCertificate(response.getCertificateId());
 
-        final var questionSmittbararpenningIsTrue = certificate.getData().entrySet().stream()
+        final var notIncludedSickLeave = certificate.getData().entrySet().stream()
             .filter(e -> QUESTION_SMITTBARARPENNING_ID.equals(e.getKey()))
             .findFirst()
             .map(Entry::getValue)
@@ -37,10 +37,11 @@ public class HandleSickLeaveService {
             .map(CertificateDataValueBoolean::getSelected)
             .orElse(false);
 
-        if (questionSmittbararpenningIsTrue) {
+        if (notIncludedSickLeave) {
             return;
         }
 
-        sjukfallCertificateDao.store(certificateToSickLeaveConverter.convert(certificate));
+        final var sickLeaveCertificate = certificateToSickLeaveConverter.convert(certificate);
+        sjukfallCertificateDao.store(sickLeaveCertificate);
     }
 }
