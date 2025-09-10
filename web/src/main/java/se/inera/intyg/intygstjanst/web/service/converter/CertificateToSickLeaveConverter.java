@@ -67,7 +67,7 @@ public class CertificateToSickLeaveConverter {
 
         return codeList.stream()
             .map(CertificateDataValueCode::getId)
-            .collect(Collectors.joining(", "));
+            .collect(Collectors.joining(","));
     }
 
     private List<SjukfallCertificateWorkCapacity> buildWorkCapacities(Map<String, CertificateDataElement> data) {

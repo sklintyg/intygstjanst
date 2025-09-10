@@ -151,7 +151,7 @@ class CertificateToSickLeaveConverterTest {
     @Test
     void shouldConvertEmployment() {
         final var result = converter.convert(buildCertificate());
-        assertEquals(EMPLOYMENT_1 + ", " + EMPLOYMENT_2, result.getEmployment());
+        assertEquals(EMPLOYMENT_1 + "," + EMPLOYMENT_2, result.getEmployment());
     }
 
     @Test
