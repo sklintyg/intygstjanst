@@ -39,6 +39,7 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificateIntern
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportInternalResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateMetadataResponse;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesResponse;
@@ -52,6 +53,7 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.TotalExportsInternalRes
 public class CSIntegrationService {
 
     private static final String CITIZEN_ENDPOINT_URL = "/api/citizen/certificate";
+    private static final String INTERNALAPI_GET_CERTIFICATE_URL = "/internalapi/certificate/{certificateId}";
     private static final String CITIZEN_ENDPOINT_URL_SEND = "/api/citizen/certificate/{certificateId}/send";
     private static final String INTERNALAPI_CERTIFICATE_XML_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/xml";
     private static final String INTERNAL_MESSAGE_XML_ENDPOINT_URL = "/internalapi/message/{messageId}/xml";
@@ -80,6 +82,24 @@ public class CSIntegrationService {
         }
 
         return response.getCitizenCertificates();
+    }
+
+    @PerformanceLogging(eventAction = "retrieve-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
+    public Certificate getCertificate(String certificateId) {
+        final var response = csRestClient
+            .post()
+            .uri(INTERNALAPI_GET_CERTIFICATE_URL, certificateId)
+            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+            .contentType(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .body(GetCertificateResponse.class);
+
+        if (response == null) {
+            throw new IllegalStateException("Failed to get certificate from certificate service");
+        }
+
+        return response.getCertificate();
     }
 
     @PerformanceLogging(eventAction = "retrieve-certificate-xml", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
