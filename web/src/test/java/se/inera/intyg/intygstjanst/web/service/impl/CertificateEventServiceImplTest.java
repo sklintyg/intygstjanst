@@ -321,6 +321,30 @@ class CertificateEventServiceImplTest {
             }
 
             @Test
+            void shouldCallHandleSickLeaveRevoked() {
+                final var resp = GetCertificateXmlResponse.builder()
+                    .certificateId(CERTIFICATE_ID)
+                    .certificateType(CERTIFICATE_TYPE)
+                    .unit(
+                        UnitDTO.builder()
+                            .unitId(UNIT_ID)
+                            .build()
+                    )
+                    .recipient(RecipientDTO.builder()
+                        .sent(null)
+                        .build())
+                    .xml(ENCODED_XML)
+                    .build();
+                when(csIntegrationService.getCertificateXmlResponse(CERTIFICATE_ID)).thenReturn(resp);
+                when(statisticsService.revoked(DECODED_XML, CERTIFICATE_ID, CERTIFICATE_TYPE, UNIT_ID)).thenReturn(true);
+
+                final var result = certificateEventService.processEvent(EVENT_REVOKED, CERTIFICATE_ID, MESSAGE_ID);
+
+                assertTrue(result);
+                verify(handleSickleaveService).revoked(resp);
+            }
+
+            @Test
             void shouldCallRevokeServiceForCertificateRevokedEventIfSent() {
                 final var resp = GetCertificateXmlResponse.builder()
                     .certificateId(CERTIFICATE_ID)

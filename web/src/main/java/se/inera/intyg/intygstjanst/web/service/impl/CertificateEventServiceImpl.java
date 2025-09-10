@@ -49,34 +49,34 @@ public class CertificateEventServiceImpl implements CertificateEventService {
     private static final String CERTIFICATE_SENT = "certificate-sent";
     private static final String MESSAGE_SENT = "message-sent";
 
-  @Transactional
-  @Override
-  public boolean processEvent(String eventType, String certificateId, String messageId) {
-    final var metadata = csIntegrationService.getCertificateMetadata(certificateId);
+    @Transactional
+    @Override
+    public boolean processEvent(String eventType, String certificateId, String messageId) {
+        final var metadata = csIntegrationService.getCertificateMetadata(certificateId);
 
-    if (metadata.isTestCertificate()) {
-      log.info(String.format(
-              "Not processing event of type '%S' for certificate with id '%s' since it is test indicated", eventType, certificateId
-          )
-      );
-      return true;
-    }
+        if (metadata.isTestCertificate()) {
+            log.info(String.format(
+                    "Not processing event of type '%S' for certificate with id '%s' since it is test indicated", eventType, certificateId
+                )
+            );
+            return true;
+        }
 
-    switch (eventType) {
-      case CERTIFICATE_SIGNED:
-        return created(certificateId);
-      case CERTIFICATE_REVOKED:
-        return revoked(certificateId);
-      case CERTIFICATE_SENT:
-        return sent(certificateId);
-      case MESSAGE_SENT:
-        return messageSent(messageId);
-      default:
-        throw new IllegalArgumentException(
-            String.format("Invalid eventType '%s' received for certificate '%s' and message '%s'.",
-                eventType, certificateId, messageId));
+        switch (eventType) {
+            case CERTIFICATE_SIGNED:
+                return created(certificateId);
+            case CERTIFICATE_REVOKED:
+                return revoked(certificateId);
+            case CERTIFICATE_SENT:
+                return sent(certificateId);
+            case MESSAGE_SENT:
+                return messageSent(messageId);
+            default:
+                throw new IllegalArgumentException(
+                    String.format("Invalid eventType '%s' received for certificate '%s' and message '%s'.",
+                        eventType, certificateId, messageId));
+        }
     }
-  }
 
     private boolean created(String certificateId) {
         final var response = csIntegrationService.getCertificateXmlResponse(certificateId);
@@ -91,6 +91,7 @@ public class CertificateEventServiceImpl implements CertificateEventService {
         if (response.getRecipient() != null && response.getRecipient().getSent() != null) {
             certificateEventRevokeService.revoke(response);
         }
+        handleSickleaveService.revoked(response);
         return statisticsService.revoked(certificateXml, certificateId, response.getCertificateType(), response.getUnit().getUnitId());
     }
 
