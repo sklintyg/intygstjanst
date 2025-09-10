@@ -46,6 +46,7 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesR
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateResponseDTO;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.TotalExportsInternalResponseDTO;
 
 @Service
@@ -54,6 +55,7 @@ public class CSIntegrationService {
 
     private static final String CITIZEN_ENDPOINT_URL = "/api/citizen/certificate";
     private static final String INTERNALAPI_GET_CERTIFICATE_URL = "/internalapi/certificate/{certificateId}";
+    private static final String INTERNALAPI_GET_SICK_LEAVE_CERTIFICATE_URL = "/internalapi/certificate/{certificateId}/sickleave";
     private static final String CITIZEN_ENDPOINT_URL_SEND = "/api/citizen/certificate/{certificateId}/send";
     private static final String INTERNALAPI_CERTIFICATE_XML_ENDPOINT_URL = "/internalapi/certificate/{certificateId}/xml";
     private static final String INTERNAL_MESSAGE_XML_ENDPOINT_URL = "/internalapi/message/{messageId}/xml";
@@ -231,5 +233,23 @@ public class CSIntegrationService {
         if (response.getStatusCode().isError()) {
             throw new IllegalStateException("Failed to erase certificates from certificate service");
         }
+    }
+
+    @PerformanceLogging(eventAction = "retrieve-sick-leave-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
+    public SickLeaveResponseDTO getSickLeaveCertificate(String certificateId) {
+      final var response = csRestClient
+          .post()
+          .uri(INTERNALAPI_GET_SICK_LEAVE_CERTIFICATE_URL, certificateId)
+          .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+          .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+          .contentType(MediaType.APPLICATION_JSON)
+          .retrieve()
+          .body(SickLeaveResponseDTO.class);
+
+      if (response == null) {
+        throw new IllegalStateException("Failed to get sick leave certificate from certificate service");
+      }
+
+      return response;
     }
 }

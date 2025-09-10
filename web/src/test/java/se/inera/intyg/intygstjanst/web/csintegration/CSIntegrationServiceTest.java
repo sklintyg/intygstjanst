@@ -19,6 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.csintegration;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,6 +51,8 @@ import org.springframework.web.client.RestClient.ResponseSpec;
 import org.springframework.web.client.RestTemplate;
 import se.inera.intyg.common.support.facade.model.Certificate;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
+import se.inera.intyg.intygstjanst.persistence.model.builder.SjukfallCertificateBuilder;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.CertificateExistsResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificateInternalResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificatesRequestDTO;
@@ -62,17 +65,19 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesR
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateResponseDTO;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.TotalExportsInternalResponseDTO;
 
 @ExtendWith(MockitoExtension.class)
 class CSIntegrationServiceTest {
 
     private static final List<Certificate> CITIZEN_CERTIFICATES = List.of(new Certificate());
-    private static final Certificate CITIZEN_CERTIFICATE = new Certificate();
-    private static final GetCitizenCertificatesRequest GET_CITIZEN_CERTIFICATES_REQUEST = GetCitizenCertificatesRequest.builder().build();
-    private static final String CERTIFICATE_ID = "certificateId";
-    private static final SendCitizenCertificateRequestDTO SEND_CITIZEN_CERTIFICATE_REQUEST = SendCitizenCertificateRequestDTO.builder()
+  private static final Certificate CITIZEN_CERTIFICATE = new Certificate();
+  private static final GetCitizenCertificatesRequest GET_CITIZEN_CERTIFICATES_REQUEST = GetCitizenCertificatesRequest.builder().build();
+  private static final String CERTIFICATE_ID = "certificateId";
+  private static final SendCitizenCertificateRequestDTO SEND_CITIZEN_CERTIFICATE_REQUEST = SendCitizenCertificateRequestDTO.builder()
         .build();
+  private static final SjukfallCertificate SJUKFALL_CERTIFICATE = new SjukfallCertificate(CERTIFICATE_ID);
 
     @Mock
     private RestTemplate restTemplate;
@@ -503,6 +508,53 @@ class CSIntegrationServiceTest {
       doReturn(null).when(responseSpec).body(GetCertificateResponse.class);
 
       assertThrows(IllegalStateException.class, () -> csIntegrationService.getCertificate("certificateId"));
+    }
+  }
+
+  @Nested
+  class getSickLeaveCertificateTests {
+    private RequestBodyUriSpec requestBodyUriSpec;
+    private ResponseSpec responseSpec;
+
+    @BeforeEach
+    void setUp() {
+      requestBodyUriSpec = mock(RestClient.RequestBodyUriSpec.class);
+      responseSpec = mock(RestClient.ResponseSpec.class);
+
+      MDC.put(TRACE_ID_KEY, "traceId");
+      MDC.put(SESSION_ID_KEY, "sessionId");
+
+      when(restClient.post()).thenReturn(requestBodyUriSpec);
+      when(requestBodyUriSpec.uri("/internalapi/certificate/{certificateId}/sickleave", "certificateId")).thenReturn(requestBodyUriSpec);
+      when(requestBodyUriSpec.header(LOG_TRACE_ID_HEADER, "traceId")).thenReturn(requestBodyUriSpec);
+      when(requestBodyUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId")).thenReturn(requestBodyUriSpec);
+      when(requestBodyUriSpec.contentType(MediaType.APPLICATION_JSON)).thenReturn(requestBodyUriSpec);
+      when(requestBodyUriSpec.retrieve()).thenReturn(responseSpec);
+    }
+
+    @Test
+    void shallReturnSickLeaveCertificateResponse() {
+
+      final var expectedResponse = SickLeaveResponseDTO.builder()
+          .sickLeaveCertificate(SJUKFALL_CERTIFICATE)
+          .available(true)
+          .build();
+
+      doReturn(expectedResponse).when(responseSpec).body(SickLeaveResponseDTO.class);
+
+      final var actualResponse = csIntegrationService.getSickLeaveCertificate(CERTIFICATE_ID);
+
+      assertAll(
+          () -> assertEquals(expectedResponse.isAvailable(), actualResponse.isAvailable()),
+          () -> assertEquals(expectedResponse.getSickLeaveCertificate(), actualResponse.getSickLeaveCertificate())
+      );
+    }
+
+    @Test
+    void shallThrowIfResponseIsNull() {
+      doReturn(null).when(responseSpec).body(SickLeaveResponseDTO.class);
+
+      assertThrows(IllegalStateException.class, () -> csIntegrationService.getSickLeaveCertificate("certificateId"));
     }
   }
 }
