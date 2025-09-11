@@ -13,7 +13,7 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveResponseDTO.Si
 public class SickLeaveResponseDTO {
 
   boolean available;
-  SjukfallCertificate sickLeaveCertificate;
+  SickLeaveCertificateDTO sickLeaveCertificate;
 
   @JsonPOJOBuilder(withPrefix = "")
   public static class SickLeaveResponseDTOBuilder {

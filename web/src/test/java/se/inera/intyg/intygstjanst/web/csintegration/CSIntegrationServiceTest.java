@@ -33,6 +33,7 @@ import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_TRACE_ID_HEADER;
 import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SESSION_ID_KEY;
 import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.TRACE_ID_KEY;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -65,6 +66,7 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesR
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateResponseDTO;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveCertificateDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.TotalExportsInternalResponseDTO;
 
@@ -78,6 +80,24 @@ class CSIntegrationServiceTest {
   private static final SendCitizenCertificateRequestDTO SEND_CITIZEN_CERTIFICATE_REQUEST = SendCitizenCertificateRequestDTO.builder()
         .build();
   private static final SjukfallCertificate SJUKFALL_CERTIFICATE = new SjukfallCertificate(CERTIFICATE_ID);
+  private static final SickLeaveCertificateDTO SICK_LEAVE_CERTIFICATE_DTO = SickLeaveCertificateDTO.builder()
+      .id("12345")
+      .type("TYPE_A")
+      .signingDoctorId("ID")
+      .signingDoctorName("NAME")
+      .signingDateTime(LocalDateTime.of(2025, 1, 1, 12, 0))
+      .careUnitId("CAR_ID")
+      .careUnitName("CARE_UNIT")
+      .careGiverId("CG_ID")
+      .civicRegistrationNumber("NUMBER")
+      .patientName("PATIENT")
+      .diagnoseCode("DIA_CODE")
+      .biDiagnoseCode1("BI_CODE1")
+      .biDiagnoseCode2("BI_CODE2")
+      .employment("EMPLOYMENT")
+      .deleted(false)
+      .testCertificate(false)
+      .build();
 
     @Mock
     private RestTemplate restTemplate;
@@ -536,7 +556,7 @@ class CSIntegrationServiceTest {
     void shallReturnSickLeaveCertificateResponse() {
 
       final var expectedResponse = SickLeaveResponseDTO.builder()
-          .sickLeaveCertificate(SJUKFALL_CERTIFICATE)
+          .sickLeaveCertificate(SICK_LEAVE_CERTIFICATE_DTO)
           .available(true)
           .build();
 
