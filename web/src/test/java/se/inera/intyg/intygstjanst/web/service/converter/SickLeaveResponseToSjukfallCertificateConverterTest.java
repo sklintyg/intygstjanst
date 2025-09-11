@@ -3,9 +3,11 @@ package se.inera.intyg.intygstjanst.web.service.converter;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveCertificateDTO;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveCertificateWorkCapacityDTO;
 
 class SickLeaveResponseToSjukfallCertificateConverterTest {
 
@@ -26,7 +28,7 @@ class SickLeaveResponseToSjukfallCertificateConverterTest {
   private static final boolean DELETED = false;
   private static final boolean TEST_CERTIFICATE = false;
   private SickLeaveCertificateDTO sickLeaveCertificate;
-  private SickLeaveResponseToSjukfallCertificateConverter converter;
+  private SickLeaveCertificateToSjukfallCertificateConverter converter;
 
   @BeforeEach
   void setUp() {
@@ -48,15 +50,35 @@ class SickLeaveResponseToSjukfallCertificateConverterTest {
         .employment(EMPLOYMENT)
         .deleted(DELETED)
         .testCertificate(TEST_CERTIFICATE)
+        .sjukfallCertificateWorkCapacity(List.of(
+            SickLeaveCertificateWorkCapacityDTO.builder()
+                .fromDate("2024-01-01")
+                .toDate("2024-01-15")
+                .capacityPercentage(50)
+            .build()))
         .build();
 
-    converter = new SickLeaveResponseToSjukfallCertificateConverter();
+    converter = new SickLeaveCertificateToSjukfallCertificateConverter();
   }
 
   @Test
   void shallThrowIfInputIsNull() {
     sickLeaveCertificate = null;
     assertThrows(IllegalStateException.class, () -> converter.convert(sickLeaveCertificate));
+  }
+
+  @Test
+  void shallConvertWorkCapacitiesCorrectly() {
+    final var result = converter.convert(sickLeaveCertificate);
+
+    final var workCapacity = result.getSjukfallCertificateWorkCapacity().get(0);
+
+    assertAll(
+        () -> assertNotNull(result.getSjukfallCertificateWorkCapacity()),
+        () -> assertEquals(1, result.getSjukfallCertificateWorkCapacity().size()),
+        () -> assertEquals("2024-01-01", workCapacity.getFromDate()),
+        () -> assertEquals("2024-01-15", workCapacity.getToDate()),
+        () -> assertEquals(50, workCapacity.getCapacityPercentage()));
   }
 
   @Test

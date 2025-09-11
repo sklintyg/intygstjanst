@@ -17,13 +17,13 @@ import se.inera.intyg.intygstjanst.web.csintegration.CSIntegrationService;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveCertificateDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveResponseDTO;
-import se.inera.intyg.intygstjanst.web.service.converter.SickLeaveResponseToSjukfallCertificateConverter;
+import se.inera.intyg.intygstjanst.web.service.converter.SickLeaveCertificateToSjukfallCertificateConverter;
 
 @ExtendWith(MockitoExtension.class)
 class HandleSickLeaveServiceTest {
 
     @Mock
-    private SickLeaveResponseToSjukfallCertificateConverter converter;
+    private SickLeaveCertificateToSjukfallCertificateConverter converter;
     @Mock
     private SjukfallCertificateDao sjukfallCertificateDao;
     @Mock
