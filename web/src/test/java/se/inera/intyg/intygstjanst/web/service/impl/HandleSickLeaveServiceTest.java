@@ -5,7 +5,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,20 +12,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.common.support.facade.model.Certificate;
-import se.inera.intyg.common.support.facade.model.CertificateDataElement;
-import se.inera.intyg.common.support.facade.model.value.CertificateDataValueBoolean;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.csintegration.CSIntegrationService;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
-import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSickLeaveConverter;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveCertificateDTO;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveResponseDTO;
+import se.inera.intyg.intygstjanst.web.service.converter.SickLeaveCertificateToSjukfallCertificateConverter;
 
 @ExtendWith(MockitoExtension.class)
 class HandleSickLeaveServiceTest {
 
     @Mock
-    private CertificateToSickLeaveConverter certificateToSickLeaveConverter;
+    private SickLeaveCertificateToSjukfallCertificateConverter converter;
     @Mock
     private SjukfallCertificateDao sjukfallCertificateDao;
     @Mock
@@ -35,79 +32,81 @@ class HandleSickLeaveServiceTest {
     private HandleSickLeaveService handleSickleaveService;
 
     private static final String FK7804_TYPE = "fk7804";
-    private static final String OTHER_TYPE = "otherType";
     private static final String CERTIFICATE_ID = "certId";
-    private static final String QUESTION_ID = "27";
+    private static final SickLeaveCertificateDTO SICK_LEAVE_CERTIFICATE_DTO =
+        SickLeaveCertificateDTO.builder()
+            .id(CERTIFICATE_ID)
+            .type(FK7804_TYPE)
+            .signingDoctorId("signingDoctorId")
+            .signingDoctorName("signingDoctorName")
+            .signingDateTime(null)
+            .careUnitId("careUnitId")
+            .careUnitName("careUnitName")
+            .careGiverId("careGiverId")
+            .civicRegistrationNumber("civicRegistrationNumber")
+            .patientName("patientName")
+            .diagnoseCode("diagnoseCode")
+            .biDiagnoseCode1("biDiagnoseCode1")
+            .biDiagnoseCode2("biDiagnoseCode2")
+            .employment("employment")
+            .deleted(false)
+            .testCertificate(false)
+            .build();
 
     @BeforeEach
     void setUp() {
-        handleSickleaveService = new HandleSickLeaveService(sjukfallCertificateDao, csIntegrationService, certificateToSickLeaveConverter);
+        handleSickleaveService = new HandleSickLeaveService(sjukfallCertificateDao, csIntegrationService, converter);
     }
 
     @Nested
     class CreatedTests {
 
         @Test
-        void shouldNotStoreIfTypeIsNotFk7804() {
-            var response = GetCertificateXmlResponse.builder()
-                .certificateType(OTHER_TYPE)
-                .build();
-            handleSickleaveService.created(response);
-            verifyNoInteractions(csIntegrationService, sjukfallCertificateDao);
-        }
-
-        @Test
-        void shouldNotStoreIfQuestionIsTrue() {
+        void shouldNotStoreIfNotAvailable() {
             final var response = GetCertificateXmlResponse.builder()
                 .certificateType(FK7804_TYPE)
                 .certificateId(CERTIFICATE_ID)
                 .build();
 
-            final var cert = mock(Certificate.class);
-            final var dataElement = mock(CertificateDataElement.class);
-            final var value = mock(CertificateDataValueBoolean.class);
+            final var cert = mock(SickLeaveResponseDTO.class);
 
-            when(value.getSelected()).thenReturn(true);
-            when(dataElement.getValue()).thenReturn(value);
+          final var data = SickLeaveResponseDTO.builder()
+              .sickLeaveCertificate(SICK_LEAVE_CERTIFICATE_DTO)
+              .available(false)
+              .build();
 
-            final var data = new HashMap<String, CertificateDataElement>();
-            data.put(QUESTION_ID, dataElement);
-
-            when(cert.getData()).thenReturn(data);
-            when(csIntegrationService.getCertificate(CERTIFICATE_ID)).thenReturn(cert);
+            when(cert.isAvailable()).thenReturn(data.isAvailable());
+            when(csIntegrationService.getSickLeaveCertificate(CERTIFICATE_ID)).thenReturn(cert);
 
             handleSickleaveService.created(response);
 
-            verify(csIntegrationService).getCertificate(CERTIFICATE_ID);
+            verify(csIntegrationService).getSickLeaveCertificate(CERTIFICATE_ID);
             verifyNoInteractions(sjukfallCertificateDao);
         }
 
         @Test
-        void shouldStoreIfQuestionIsFalse() {
-            final var response = GetCertificateXmlResponse.builder()
-                .certificateType(FK7804_TYPE)
-                .certificateId(CERTIFICATE_ID)
-                .build();
+        void shouldStoreIfAvailable() {
+          final var response = GetCertificateXmlResponse.builder()
+              .certificateType(FK7804_TYPE)
+              .certificateId(CERTIFICATE_ID)
+              .build();
 
-            final var cert = mock(Certificate.class);
-            final var dataElement = mock(CertificateDataElement.class);
-            final var value = mock(CertificateDataValueBoolean.class);
+          final var cert = mock(SickLeaveResponseDTO.class);
 
-            when(value.getSelected()).thenReturn(false);
-            when(dataElement.getValue()).thenReturn(value);
+          final var data = SickLeaveResponseDTO.builder()
+              .sickLeaveCertificate(SICK_LEAVE_CERTIFICATE_DTO)
+              .available(true)
+              .build();
 
-            final var sjukfallCertificate = new SjukfallCertificate(CERTIFICATE_ID);
-            final var data = new HashMap<String, CertificateDataElement>();
-            data.put(QUESTION_ID, dataElement);
 
-            when(csIntegrationService.getCertificate(CERTIFICATE_ID)).thenReturn(cert);
-            when(cert.getData()).thenReturn(data);
-            when(certificateToSickLeaveConverter.convert(cert)).thenReturn(sjukfallCertificate);
+          when(cert.getSickLeaveCertificate()).thenReturn(data.getSickLeaveCertificate());
+          when(cert.isAvailable()).thenReturn(data.isAvailable());
+          when(csIntegrationService.getSickLeaveCertificate(CERTIFICATE_ID)).thenReturn(cert);
 
-            handleSickleaveService.created(response);
+          handleSickleaveService.created(response);
 
-            verify(csIntegrationService).getCertificate(CERTIFICATE_ID);
-            verify(sjukfallCertificateDao).store(sjukfallCertificate);
+          verify(csIntegrationService).getSickLeaveCertificate(CERTIFICATE_ID);
+          verify(sjukfallCertificateDao).store(converter.convert(data.getSickLeaveCertificate()));
         }
     }
 
@@ -115,63 +114,51 @@ class HandleSickLeaveServiceTest {
     class RevokedTests {
 
         @Test
-        void shouldNotRevokeIfTypeIsNotFk7804() {
-            var response = GetCertificateXmlResponse.builder()
-                .certificateType(OTHER_TYPE)
-                .build();
-            handleSickleaveService.revoked(response);
-            verifyNoInteractions(csIntegrationService, sjukfallCertificateDao);
-        }
-
-        @Test
-        void shouldNotRevokeIfQuestionIsTrue() {
+        void shouldNotRevokeIfNotAvailable() {
             final var response = GetCertificateXmlResponse.builder()
                 .certificateType(FK7804_TYPE)
                 .certificateId(CERTIFICATE_ID)
                 .build();
 
-            final var cert = mock(Certificate.class);
-            final var dataElement = mock(CertificateDataElement.class);
-            final var value = mock(CertificateDataValueBoolean.class);
+            final var cert = mock(SickLeaveResponseDTO.class);
 
-            when(value.getSelected()).thenReturn(true);
-            when(dataElement.getValue()).thenReturn(value);
+            final var data = SickLeaveResponseDTO.builder()
+                .sickLeaveCertificate(SICK_LEAVE_CERTIFICATE_DTO)
+                .available(false)
+                .build();
 
-            final var data = new HashMap<String, CertificateDataElement>();
-            data.put(QUESTION_ID, dataElement);
 
-            when(cert.getData()).thenReturn(data);
-            when(csIntegrationService.getCertificate(CERTIFICATE_ID)).thenReturn(cert);
+            when(cert.isAvailable()).thenReturn(data.isAvailable());
+            when(csIntegrationService.getSickLeaveCertificate(CERTIFICATE_ID)).thenReturn(cert);
 
             handleSickleaveService.revoked(response);
 
-            verify(csIntegrationService).getCertificate(CERTIFICATE_ID);
+            verify(csIntegrationService).getSickLeaveCertificate(CERTIFICATE_ID);
             verifyNoInteractions(sjukfallCertificateDao);
         }
 
         @Test
-        void shouldRevokeIfQuestionIsFalse() {
+        void shouldRevokeIfAvailable() {
             final var response = GetCertificateXmlResponse.builder()
                 .certificateType(FK7804_TYPE)
                 .certificateId(CERTIFICATE_ID)
                 .build();
 
-            final var cert = mock(Certificate.class);
-            final var dataElement = mock(CertificateDataElement.class);
-            final var value = mock(CertificateDataValueBoolean.class);
+            final var cert = mock(SickLeaveResponseDTO.class);
 
-            when(value.getSelected()).thenReturn(false);
-            when(dataElement.getValue()).thenReturn(value);
+            final var data = SickLeaveResponseDTO.builder()
+                .sickLeaveCertificate(SICK_LEAVE_CERTIFICATE_DTO)
+                .available(true)
+                .build();
 
-            final var data = new HashMap<String, CertificateDataElement>();
-            data.put(QUESTION_ID, dataElement);
 
-            when(csIntegrationService.getCertificate(CERTIFICATE_ID)).thenReturn(cert);
-            when(cert.getData()).thenReturn(data);
+            when(cert.getSickLeaveCertificate()).thenReturn(data.getSickLeaveCertificate());
+            when(cert.isAvailable()).thenReturn(data.isAvailable());
+            when(csIntegrationService.getSickLeaveCertificate(CERTIFICATE_ID)).thenReturn(cert);
 
             handleSickleaveService.revoked(response);
 
-            verify(csIntegrationService).getCertificate(CERTIFICATE_ID);
+            verify(csIntegrationService).getSickLeaveCertificate(CERTIFICATE_ID);
             verify(sjukfallCertificateDao).revoke(CERTIFICATE_ID);
         }
     }
