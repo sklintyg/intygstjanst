@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveCertificateDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveCertificateWorkCapacityDTO;
 
-class SickLeaveResponseToSjukfallCertificateConverterTest {
+class SickLeaveCertificateToSjukfallCertificateConverterTest {
 
   private static final String ID = "12345";
   private static final String TYPE = "TYPE_A";
