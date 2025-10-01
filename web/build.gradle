@@ -77,7 +77,7 @@ dependencies {
     implementation "se.inera.intyg.common:tstrk1009:${commonVersion}"
     implementation "se.inera.intyg.common:tstrk1062:${commonVersion}"
 
-    implementation "se.inera.intyg.refdata:refdata-featureK1J-357:${refDataVersion}"
+    implementation "se.inera.intyg.refdata:refdata:${refDataVersion}"
 
     implementation "co.elastic.logging:logback-ecs-encoder:${logbackEcsEncoderVersion}"
     implementation "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider"
