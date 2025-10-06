@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.web.csintegration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
@@ -38,6 +39,7 @@ import se.inera.intyg.common.support.facade.model.metadata.CertificateRelations;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateSummary;
 import se.inera.intyg.common.support.facade.model.metadata.Unit;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateIssuerDTO;
+import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRecipientDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationType;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateSummaryDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateTypeDTO;
@@ -152,6 +154,13 @@ class CitizenCertificateConverterTest {
     @Test
     void shallIncludeRecipientId() {
         assertEquals(RECIPIENT_ID, citizenCertificateConverter.convert(certificate).getRecipient().getId());
+    }
+
+    @Test
+    void shallNotIncludeRecipientIfNoRecipient() {
+        certificateMetadataBuilder.recipient(null);
+        certificate.setMetadata(certificateMetadataBuilder.build());
+        assertNull(citizenCertificateConverter.convert(certificate).getRecipient());
     }
 
     @Test
