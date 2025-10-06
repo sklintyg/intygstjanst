@@ -39,7 +39,6 @@ import se.inera.intyg.common.support.facade.model.metadata.CertificateRelations;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateSummary;
 import se.inera.intyg.common.support.facade.model.metadata.Unit;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateIssuerDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRecipientDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationType;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateSummaryDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateTypeDTO;
@@ -47,287 +46,289 @@ import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateUni
 
 class CitizenCertificateConverterTest {
 
-    private static final String ID = "certificateId";
-    private static final String TYPE = "type";
-    private static final String NAME = "certificateName";
-    private static final String TYPE_VERSION = "typeVersion";
-    private static final String UNIT_ID = "unitId";
-    private static final String UNIT_NAME = "unitName";
-    private static final String FULL_NAME = "fullName";
-    private static final String SUMMARY_LABEL = "summaryLabel";
-    private static final String SUMMARY_VALUE = "summaryValue";
-    private static final String RECIPIENT_ID = "recipientId";
-    private static final String RECIPIENT_NAME = "recipientName";
-    private CitizenCertificateConverter citizenCertificateConverter;
-    private Certificate certificate;
-    private CertificateMetadata.CertificateMetadataBuilder certificateMetadataBuilder;
+  private static final String ID = "certificateId";
+  private static final String TYPE = "type";
+  private static final String NAME = "certificateName";
+  private static final String TYPE_VERSION = "typeVersion";
+  private static final String UNIT_ID = "unitId";
+  private static final String UNIT_NAME = "unitName";
+  private static final String FULL_NAME = "fullName";
+  private static final String SUMMARY_LABEL = "summaryLabel";
+  private static final String SUMMARY_VALUE = "summaryValue";
+  private static final String RECIPIENT_ID = "recipientId";
+  private static final String RECIPIENT_NAME = "recipientName";
+  private CitizenCertificateConverter citizenCertificateConverter;
+  private Certificate certificate;
+  private CertificateMetadata.CertificateMetadataBuilder certificateMetadataBuilder;
 
-    @BeforeEach
-    void setUp() {
-        citizenCertificateConverter = new CitizenCertificateConverter();
-        certificate = new Certificate();
+  @BeforeEach
+  void setUp() {
+    citizenCertificateConverter = new CitizenCertificateConverter();
+    certificate = new Certificate();
 
-        certificateMetadataBuilder = CertificateMetadata.builder()
-            .id(ID)
-            .name(NAME)
-            .type(TYPE)
-            .typeVersion(TYPE_VERSION)
-            .signed(LocalDateTime.now())
-            .modified(LocalDateTime.now().plusDays(5))
-            .unit(
-                Unit.builder()
-                    .unitId(UNIT_ID)
-                    .unitName(UNIT_NAME)
-                    .build()
-            )
-            .issuedBy(Staff.builder()
-                .fullName(FULL_NAME)
+    certificateMetadataBuilder = CertificateMetadata.builder()
+        .id(ID)
+        .name(NAME)
+        .type(TYPE)
+        .typeVersion(TYPE_VERSION)
+        .signed(LocalDateTime.now())
+        .modified(LocalDateTime.now().plusDays(5))
+        .unit(
+            Unit.builder()
+                .unitId(UNIT_ID)
+                .unitName(UNIT_NAME)
                 .build()
-            )
-            .summary(
-                CertificateSummary.builder()
-                    .label(SUMMARY_LABEL)
-                    .value(SUMMARY_VALUE)
-                    .build()
-            )
-            .recipient(
-                CertificateRecipient.builder()
-                    .id(RECIPIENT_ID)
-                    .name(RECIPIENT_NAME)
-                    .sent(LocalDateTime.now())
-                    .build()
-            );
-
-        certificate.setMetadata(
-            certificateMetadataBuilder.build()
+        )
+        .issuedBy(Staff.builder()
+            .fullName(FULL_NAME)
+            .build()
+        )
+        .summary(
+            CertificateSummary.builder()
+                .label(SUMMARY_LABEL)
+                .value(SUMMARY_VALUE)
+                .build()
+        )
+        .recipient(
+            CertificateRecipient.builder()
+                .id(RECIPIENT_ID)
+                .name(RECIPIENT_NAME)
+                .sent(LocalDateTime.now())
+                .build()
         );
+
+    certificate.setMetadata(
+        certificateMetadataBuilder.build()
+    );
+  }
+
+  @Test
+  void shallIncludeId() {
+    assertEquals(ID, citizenCertificateConverter.convert(certificate).getId());
+  }
+
+  @Test
+  void shallIncludeType() {
+    final var expectedType = CitizenCertificateTypeDTO.builder()
+        .id(TYPE)
+        .name(NAME)
+        .version(TYPE_VERSION)
+        .build();
+
+    assertEquals(expectedType, citizenCertificateConverter.convert(certificate).getType());
+  }
+
+  @Test
+  void shallIncludeUnit() {
+    final var expectedUnit = CitizenCertificateUnitDTO.builder()
+        .id(UNIT_ID)
+        .name(UNIT_NAME)
+        .build();
+    assertEquals(expectedUnit, citizenCertificateConverter.convert(certificate).getUnit());
+  }
+
+  @Test
+  void shallIncludeIssued() {
+    assertNotNull(citizenCertificateConverter.convert(certificate).getIssued());
+  }
+
+
+  @Test
+  void shallIncludeIssuer() {
+    final var expectedIssuer = CitizenCertificateIssuerDTO.builder()
+        .name(FULL_NAME)
+        .build();
+    assertEquals(expectedIssuer, citizenCertificateConverter.convert(certificate).getIssuer());
+  }
+
+  @Test
+  void shallIncludeSummary() {
+    final var expectedSummary = CitizenCertificateSummaryDTO.builder()
+        .label(SUMMARY_LABEL)
+        .value(SUMMARY_VALUE)
+        .build();
+    assertEquals(expectedSummary, citizenCertificateConverter.convert(certificate).getSummary());
+  }
+
+  @Test
+  void shallIncludeRecipientId() {
+    assertEquals(RECIPIENT_ID,
+        citizenCertificateConverter.convert(certificate).getRecipient().getId());
+  }
+
+  @Test
+  void shallNotIncludeRecipientIfNoRecipient() {
+    certificateMetadataBuilder.recipient(null);
+    certificate.setMetadata(certificateMetadataBuilder.build());
+    assertNull(citizenCertificateConverter.convert(certificate).getRecipient());
+  }
+
+  @Test
+  void shallIncludeRecipientName() {
+    assertEquals(RECIPIENT_NAME,
+        citizenCertificateConverter.convert(certificate).getRecipient().getName());
+  }
+
+  @Test
+  void shallIncludeRecipientSent() {
+    assertNotNull(citizenCertificateConverter.convert(certificate).getRecipient().getSent());
+  }
+
+  @Nested
+  class RelationsTests {
+
+    private static final String REPLACED_CERTIFICATE_ID = "replacedCertificateId";
+
+    @Test
+    void shallReturnEmptyRelationsIfMissing() {
+      assertTrue(citizenCertificateConverter.convert(certificate).getRelations().isEmpty());
     }
 
     @Test
-    void shallIncludeId() {
-        assertEquals(ID, citizenCertificateConverter.convert(certificate).getId());
+    void shallIncludeRelationReplaced() {
+      certificateMetadataBuilder.relations(
+          CertificateRelations.builder()
+              .children(
+                  new CertificateRelation[]{
+                      CertificateRelation.builder()
+                          .certificateId(REPLACED_CERTIFICATE_ID)
+                          .created(LocalDateTime.now())
+                          .status(CertificateStatus.SIGNED)
+                          .type(CertificateRelationType.REPLACED)
+                          .build()
+                  }
+              )
+              .build()
+      );
+      certificate.setMetadata(certificateMetadataBuilder.build());
+      assertEquals(CitizenCertificateRelationType.REPLACED,
+          citizenCertificateConverter.convert(certificate).getRelations().getFirst().getType());
     }
 
     @Test
-    void shallIncludeType() {
-        final var expectedType = CitizenCertificateTypeDTO.builder()
-            .id(TYPE)
-            .name(NAME)
-            .version(TYPE_VERSION)
-            .build();
-
-        assertEquals(expectedType, citizenCertificateConverter.convert(certificate).getType());
+    void shallFilterChildRelationIfNotSigned() {
+      certificateMetadataBuilder.relations(
+          CertificateRelations.builder()
+              .children(
+                  new CertificateRelation[]{
+                      CertificateRelation.builder()
+                          .certificateId(REPLACED_CERTIFICATE_ID)
+                          .created(LocalDateTime.now())
+                          .status(CertificateStatus.REVOKED)
+                          .type(CertificateRelationType.REPLACED)
+                          .build()
+                  }
+              )
+              .build()
+      );
+      certificate.setMetadata(certificateMetadataBuilder.build());
+      assertTrue(citizenCertificateConverter.convert(certificate).getRelations().isEmpty());
     }
 
     @Test
-    void shallIncludeUnit() {
-        final var expectedUnit = CitizenCertificateUnitDTO.builder()
-            .id(UNIT_ID)
-            .name(UNIT_NAME)
-            .build();
-        assertEquals(expectedUnit, citizenCertificateConverter.convert(certificate).getUnit());
+    void shallFilterChildRelationIfNotReplacedOrComplemented() {
+      certificateMetadataBuilder.relations(
+          CertificateRelations.builder()
+              .children(
+                  new CertificateRelation[]{
+                      CertificateRelation.builder()
+                          .certificateId(REPLACED_CERTIFICATE_ID)
+                          .created(LocalDateTime.now())
+                          .status(CertificateStatus.SIGNED)
+                          .type(CertificateRelationType.COPIED)
+                          .build()
+                  }
+              )
+              .build()
+      );
+      certificate.setMetadata(certificateMetadataBuilder.build());
+      assertTrue(citizenCertificateConverter.convert(certificate).getRelations().isEmpty());
     }
 
     @Test
-    void shallIncludeIssued() {
-        assertNotNull(citizenCertificateConverter.convert(certificate).getIssued());
-    }
-
-
-    @Test
-    void shallIncludeIssuer() {
-        final var expectedIssuer = CitizenCertificateIssuerDTO.builder()
-            .name(FULL_NAME)
-            .build();
-        assertEquals(expectedIssuer, citizenCertificateConverter.convert(certificate).getIssuer());
-    }
-
-    @Test
-    void shallIncludeSummary() {
-        final var expectedSummary = CitizenCertificateSummaryDTO.builder()
-            .label(SUMMARY_LABEL)
-            .value(SUMMARY_VALUE)
-            .build();
-        assertEquals(expectedSummary, citizenCertificateConverter.convert(certificate).getSummary());
+    void shallIncludeRelationReplaces() {
+      certificateMetadataBuilder.relations(
+          CertificateRelations.builder()
+              .parent(
+                  CertificateRelation.builder()
+                      .certificateId(REPLACED_CERTIFICATE_ID)
+                      .created(LocalDateTime.now())
+                      .status(CertificateStatus.SIGNED)
+                      .type(CertificateRelationType.REPLACED)
+                      .build()
+              )
+              .build()
+      );
+      certificate.setMetadata(certificateMetadataBuilder.build());
+      assertEquals(CitizenCertificateRelationType.REPLACES,
+          citizenCertificateConverter.convert(certificate).getRelations().getFirst().getType());
     }
 
     @Test
-    void shallIncludeRecipientId() {
-        assertEquals(RECIPIENT_ID, citizenCertificateConverter.convert(certificate).getRecipient().getId());
+    void shallFilterParentRelationIfNotSigned() {
+      certificateMetadataBuilder.relations(
+          CertificateRelations.builder()
+              .parent(
+                  CertificateRelation.builder()
+                      .certificateId(REPLACED_CERTIFICATE_ID)
+                      .created(LocalDateTime.now())
+                      .status(CertificateStatus.REVOKED)
+                      .type(CertificateRelationType.REPLACED)
+                      .build()
+              )
+              .build()
+      );
+      certificate.setMetadata(certificateMetadataBuilder.build());
+      assertTrue(citizenCertificateConverter.convert(certificate).getRelations().isEmpty());
     }
 
     @Test
-    void shallNotIncludeRecipientIfNoRecipient() {
-        certificateMetadataBuilder.recipient(null);
-        certificate.setMetadata(certificateMetadataBuilder.build());
-        assertNull(citizenCertificateConverter.convert(certificate).getRecipient());
+    void shallFilterParentRelationIfNotReplacedOrComplemented() {
+      certificateMetadataBuilder.relations(
+          CertificateRelations.builder()
+              .parent(
+                  CertificateRelation.builder()
+                      .certificateId(REPLACED_CERTIFICATE_ID)
+                      .created(LocalDateTime.now())
+                      .status(CertificateStatus.SIGNED)
+                      .type(CertificateRelationType.COPIED)
+                      .build()
+              )
+              .build()
+      );
+      certificate.setMetadata(certificateMetadataBuilder.build());
+      assertTrue(citizenCertificateConverter.convert(certificate).getRelations().isEmpty());
     }
 
     @Test
-    void shallIncludeRecipientName() {
-        assertEquals(RECIPIENT_NAME, citizenCertificateConverter.convert(certificate).getRecipient().getName());
+    void shallIncludeRelationsReplacesAndReplaced() {
+      certificateMetadataBuilder.relations(
+          CertificateRelations.builder()
+              .parent(
+                  CertificateRelation.builder()
+                      .certificateId(REPLACED_CERTIFICATE_ID)
+                      .created(LocalDateTime.now())
+                      .status(CertificateStatus.SIGNED)
+                      .type(CertificateRelationType.REPLACED)
+                      .build()
+              )
+              .children(
+                  new CertificateRelation[]{
+                      CertificateRelation.builder()
+                          .certificateId(REPLACED_CERTIFICATE_ID)
+                          .created(LocalDateTime.now())
+                          .status(CertificateStatus.SIGNED)
+                          .type(CertificateRelationType.REPLACED)
+                          .build()
+                  }
+              )
+              .build()
+      );
+      certificate.setMetadata(certificateMetadataBuilder.build());
+      assertEquals(CitizenCertificateRelationType.REPLACES,
+          citizenCertificateConverter.convert(certificate).getRelations().get(0).getType());
+      assertEquals(CitizenCertificateRelationType.REPLACED,
+          citizenCertificateConverter.convert(certificate).getRelations().get(1).getType());
     }
-
-    @Test
-    void shallIncludeRecipientSent() {
-        assertNotNull(citizenCertificateConverter.convert(certificate).getRecipient().getSent());
-    }
-
-    @Nested
-    class RelationsTests {
-
-        private static final String REPLACED_CERTIFICATE_ID = "replacedCertificateId";
-
-        @Test
-        void shallReturnEmptyRelationsIfMissing() {
-            assertTrue(citizenCertificateConverter.convert(certificate).getRelations().isEmpty());
-        }
-
-        @Test
-        void shallIncludeRelationReplaced() {
-            certificateMetadataBuilder.relations(
-                CertificateRelations.builder()
-                    .children(
-                        new CertificateRelation[]{
-                            CertificateRelation.builder()
-                                .certificateId(REPLACED_CERTIFICATE_ID)
-                                .created(LocalDateTime.now())
-                                .status(CertificateStatus.SIGNED)
-                                .type(CertificateRelationType.REPLACED)
-                                .build()
-                        }
-                    )
-                    .build()
-            );
-            certificate.setMetadata(certificateMetadataBuilder.build());
-            assertEquals(CitizenCertificateRelationType.REPLACED,
-                citizenCertificateConverter.convert(certificate).getRelations().get(0).getType());
-        }
-
-        @Test
-        void shallFilterChildRelationIfNotSigned() {
-            certificateMetadataBuilder.relations(
-                CertificateRelations.builder()
-                    .children(
-                        new CertificateRelation[]{
-                            CertificateRelation.builder()
-                                .certificateId(REPLACED_CERTIFICATE_ID)
-                                .created(LocalDateTime.now())
-                                .status(CertificateStatus.REVOKED)
-                                .type(CertificateRelationType.REPLACED)
-                                .build()
-                        }
-                    )
-                    .build()
-            );
-            certificate.setMetadata(certificateMetadataBuilder.build());
-            assertTrue(citizenCertificateConverter.convert(certificate).getRelations().isEmpty());
-        }
-
-        @Test
-        void shallFilterChildRelationIfNotReplacedOrComplemented() {
-            certificateMetadataBuilder.relations(
-                CertificateRelations.builder()
-                    .children(
-                        new CertificateRelation[]{
-                            CertificateRelation.builder()
-                                .certificateId(REPLACED_CERTIFICATE_ID)
-                                .created(LocalDateTime.now())
-                                .status(CertificateStatus.SIGNED)
-                                .type(CertificateRelationType.COPIED)
-                                .build()
-                        }
-                    )
-                    .build()
-            );
-            certificate.setMetadata(certificateMetadataBuilder.build());
-            assertTrue(citizenCertificateConverter.convert(certificate).getRelations().isEmpty());
-        }
-
-        @Test
-        void shallIncludeRelationReplaces() {
-            certificateMetadataBuilder.relations(
-                CertificateRelations.builder()
-                    .parent(
-                        CertificateRelation.builder()
-                            .certificateId(REPLACED_CERTIFICATE_ID)
-                            .created(LocalDateTime.now())
-                            .status(CertificateStatus.SIGNED)
-                            .type(CertificateRelationType.REPLACED)
-                            .build()
-                    )
-                    .build()
-            );
-            certificate.setMetadata(certificateMetadataBuilder.build());
-            assertEquals(CitizenCertificateRelationType.REPLACES,
-                citizenCertificateConverter.convert(certificate).getRelations().get(0).getType());
-        }
-
-        @Test
-        void shallFilterParentRelationIfNotSigned() {
-            certificateMetadataBuilder.relations(
-                CertificateRelations.builder()
-                    .parent(
-                        CertificateRelation.builder()
-                            .certificateId(REPLACED_CERTIFICATE_ID)
-                            .created(LocalDateTime.now())
-                            .status(CertificateStatus.REVOKED)
-                            .type(CertificateRelationType.REPLACED)
-                            .build()
-                    )
-                    .build()
-            );
-            certificate.setMetadata(certificateMetadataBuilder.build());
-            assertTrue(citizenCertificateConverter.convert(certificate).getRelations().isEmpty());
-        }
-
-        @Test
-        void shallFilterParentRelationIfNotReplacedOrComplemented() {
-            certificateMetadataBuilder.relations(
-                CertificateRelations.builder()
-                    .parent(
-                        CertificateRelation.builder()
-                            .certificateId(REPLACED_CERTIFICATE_ID)
-                            .created(LocalDateTime.now())
-                            .status(CertificateStatus.SIGNED)
-                            .type(CertificateRelationType.COPIED)
-                            .build()
-                    )
-                    .build()
-            );
-            certificate.setMetadata(certificateMetadataBuilder.build());
-            assertTrue(citizenCertificateConverter.convert(certificate).getRelations().isEmpty());
-        }
-
-        @Test
-        void shallIncludeRelationsReplacesAndReplaced() {
-            certificateMetadataBuilder.relations(
-                CertificateRelations.builder()
-                    .parent(
-                        CertificateRelation.builder()
-                            .certificateId(REPLACED_CERTIFICATE_ID)
-                            .created(LocalDateTime.now())
-                            .status(CertificateStatus.SIGNED)
-                            .type(CertificateRelationType.REPLACED)
-                            .build()
-                    )
-                    .children(
-                        new CertificateRelation[]{
-                            CertificateRelation.builder()
-                                .certificateId(REPLACED_CERTIFICATE_ID)
-                                .created(LocalDateTime.now())
-                                .status(CertificateStatus.SIGNED)
-                                .type(CertificateRelationType.REPLACED)
-                                .build()
-                        }
-                    )
-                    .build()
-            );
-            certificate.setMetadata(certificateMetadataBuilder.build());
-            assertEquals(CitizenCertificateRelationType.REPLACES,
-                citizenCertificateConverter.convert(certificate).getRelations().get(0).getType());
-            assertEquals(CitizenCertificateRelationType.REPLACED,
-                citizenCertificateConverter.convert(certificate).getRelations().get(1).getType());
-        }
-    }
+  }
 }
