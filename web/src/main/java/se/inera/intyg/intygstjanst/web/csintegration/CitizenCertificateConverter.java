@@ -68,6 +68,7 @@ public class CitizenCertificateConverter {
                     .build()
             )
             .recipient(
+                certificate.getMetadata().getRecipient() == null ? null :
                 CitizenCertificateRecipientDTO.builder()
                     .id(certificate.getMetadata().getRecipient().getId())
                     .name(certificate.getMetadata().getRecipient().getName())
