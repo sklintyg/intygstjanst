@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.web.csintegration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
@@ -151,12 +152,21 @@ class CitizenCertificateConverterTest {
 
     @Test
     void shallIncludeRecipientId() {
-        assertEquals(RECIPIENT_ID, citizenCertificateConverter.convert(certificate).getRecipient().getId());
+        assertEquals(RECIPIENT_ID,
+            citizenCertificateConverter.convert(certificate).getRecipient().getId());
+    }
+
+    @Test
+    void shallNotIncludeRecipientIfNoRecipient() {
+        certificateMetadataBuilder.recipient(null);
+        certificate.setMetadata(certificateMetadataBuilder.build());
+        assertNull(citizenCertificateConverter.convert(certificate).getRecipient());
     }
 
     @Test
     void shallIncludeRecipientName() {
-        assertEquals(RECIPIENT_NAME, citizenCertificateConverter.convert(certificate).getRecipient().getName());
+        assertEquals(RECIPIENT_NAME,
+            citizenCertificateConverter.convert(certificate).getRecipient().getName());
     }
 
     @Test
@@ -192,7 +202,7 @@ class CitizenCertificateConverterTest {
             );
             certificate.setMetadata(certificateMetadataBuilder.build());
             assertEquals(CitizenCertificateRelationType.REPLACED,
-                citizenCertificateConverter.convert(certificate).getRelations().get(0).getType());
+                citizenCertificateConverter.convert(certificate).getRelations().getFirst().getType());
         }
 
         @Test
@@ -251,7 +261,7 @@ class CitizenCertificateConverterTest {
             );
             certificate.setMetadata(certificateMetadataBuilder.build());
             assertEquals(CitizenCertificateRelationType.REPLACES,
-                citizenCertificateConverter.convert(certificate).getRelations().get(0).getType());
+                citizenCertificateConverter.convert(certificate).getRelations().getFirst().getType());
         }
 
         @Test

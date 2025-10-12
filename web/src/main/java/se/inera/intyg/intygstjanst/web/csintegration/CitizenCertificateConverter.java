@@ -20,7 +20,6 @@
 package se.inera.intyg.intygstjanst.web.csintegration;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.facade.model.Certificate;
@@ -68,18 +67,19 @@ public class CitizenCertificateConverter {
                     .build()
             )
             .recipient(
-                CitizenCertificateRecipientDTO.builder()
-                    .id(certificate.getMetadata().getRecipient().getId())
-                    .name(certificate.getMetadata().getRecipient().getName())
-                    .sent(certificate.getMetadata().getRecipient().getSent())
-                    .build()
+                certificate.getMetadata().getRecipient() == null ? null :
+                    CitizenCertificateRecipientDTO.builder()
+                        .id(certificate.getMetadata().getRecipient().getId())
+                        .name(certificate.getMetadata().getRecipient().getName())
+                        .sent(certificate.getMetadata().getRecipient().getSent())
+                        .build()
             )
             .relations(
                 Stream.concat(
                         parentRelation(certificate),
                         childRelations(certificate)
                     )
-                    .collect(Collectors.toList())
+                    .toList()
             )
             .build();
     }
