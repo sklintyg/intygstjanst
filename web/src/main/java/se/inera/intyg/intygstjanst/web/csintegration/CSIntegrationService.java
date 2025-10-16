@@ -67,6 +67,7 @@ public class CSIntegrationService {
     private static final String INTERNALAPI_EXPORT_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL = "/internalapi/certificate/export/{careProviderId}";
     private static final String INTERNALAPI_TOTAL_EXPORT_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL = "/internalapi/certificate/export/{careProviderId}/total";
     private static final String INTERNALAPI_ERASE_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL = "/internalapi/certificate/erase/{careProviderId}";
+    private static final String INTERNALAPI_PATIENT_SICKLEAVE = "/internalapi/patient/sickleave";
 
     private final RestClient csRestClient;
 
@@ -258,10 +259,10 @@ public class CSIntegrationService {
 
     @PerformanceLogging(eventAction = "retrieve-sick-leave-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
     public List<SickLeaveCertificate> getSickLeaveCertificates(SickLeaveCertificatesRequestDTO request) {
-        // TODO: Sync api endpoint, request and response with certificate-service
         final var response = csRestClient
             .post()
-            .uri("/internalapi/sickleave")
+            .uri(INTERNALAPI_PATIENT_SICKLEAVE)
+            .body(request)
             .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
             .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
             .contentType(MediaType.APPLICATION_JSON)

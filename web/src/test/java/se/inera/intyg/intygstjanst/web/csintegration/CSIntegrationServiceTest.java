@@ -597,9 +597,10 @@ class CSIntegrationServiceTest {
             MDC.put(SESSION_ID_KEY, "sessionId");
 
             when(restClient.post()).thenReturn(requestBodyUriSpec);
-            when(requestBodyUriSpec.uri("/internalapi/sickleave")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.uri("/internalapi/patient/sickleave")).thenReturn(requestBodyUriSpec);
             when(requestBodyUriSpec.header(LOG_TRACE_ID_HEADER, "traceId")).thenReturn(requestBodyUriSpec);
             when(requestBodyUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.body(any(SickLeaveCertificatesRequestDTO.class))).thenReturn(requestBodyUriSpec);
             when(requestBodyUriSpec.contentType(MediaType.APPLICATION_JSON)).thenReturn(requestBodyUriSpec);
             when(requestBodyUriSpec.retrieve()).thenReturn(responseSpec);
         }
