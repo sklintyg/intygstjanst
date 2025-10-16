@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import se.inera.intyg.common.support.facade.model.Certificate;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
+import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.CertificateExistsResponse;
@@ -46,6 +47,8 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesR
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateResponseDTO;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveCertificatesRequestDTO;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveCertificatesResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.TotalExportsInternalResponseDTO;
 
@@ -237,19 +240,38 @@ public class CSIntegrationService {
 
     @PerformanceLogging(eventAction = "retrieve-sick-leave-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
     public SickLeaveResponseDTO getSickLeaveCertificate(String certificateId) {
-      final var response = csRestClient
-          .post()
-          .uri(INTERNALAPI_GET_SICK_LEAVE_CERTIFICATE_URL, certificateId)
-          .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
-          .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
-          .contentType(MediaType.APPLICATION_JSON)
-          .retrieve()
-          .body(SickLeaveResponseDTO.class);
+        final var response = csRestClient
+            .post()
+            .uri(INTERNALAPI_GET_SICK_LEAVE_CERTIFICATE_URL, certificateId)
+            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+            .contentType(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .body(SickLeaveResponseDTO.class);
 
-      if (response == null) {
-        throw new IllegalStateException("Failed to get sick leave certificate from certificate service");
-      }
+        if (response == null) {
+            throw new IllegalStateException("Failed to get sick leave certificate from certificate service");
+        }
 
-      return response;
+        return response;
+    }
+
+    @PerformanceLogging(eventAction = "retrieve-sick-leave-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
+    public List<SickLeaveCertificate> getSickLeaveCertificates(SickLeaveCertificatesRequestDTO request) {
+        // TODO: Sync api endpoint, request and response with certificate-service
+        final var response = csRestClient
+            .post()
+            .uri("/internalapi/sickleave")
+            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+            .contentType(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .body(SickLeaveCertificatesResponseDTO.class);
+
+        if (response == null) {
+            throw new IllegalStateException("Failed to get sick leave certificates from certificate service");
+        }
+
+        return response.getCertificates();
     }
 }

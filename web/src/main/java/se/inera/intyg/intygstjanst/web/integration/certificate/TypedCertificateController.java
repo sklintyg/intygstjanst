@@ -123,6 +123,7 @@ public class TypedCertificateController {
             return Collections.emptyList();
         }
 
+        // TODO: Aggregate with certificates from CS.
         return typedCertificateService.listSickLeaveCertificatesForPerson(optionalPersonnummer.get(),
             parameters.getCertificateTypes(),
             parameters.getFromDate(),
