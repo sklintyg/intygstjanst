@@ -18,8 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -28,16 +28,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import se.inera.intyg.common.support.model.CertificateState;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
@@ -46,14 +44,14 @@ import se.inera.intyg.infra.certificate.dto.DiagnosedCertificate;
 import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.web.csintegration.GetSickLeaveCertificatesFromCS;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToDiagnosedCertificateConverter;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSickLeaveCertificateConverter;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TypedCertificateServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class TypedCertificateServiceImplTest {
 
     private static final String CERT_ID = "cert-123";
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
@@ -65,33 +63,25 @@ public class TypedCertificateServiceImplTest {
     private static final String CERT_TYPE_AG7804 = "ag7804";
     private static final String CERT_TYPE_LUSE = "luse";
 
-
-    private final Personnummer pNr = Personnummer.createPersonnummer(PERSONNUMMER).get();
+    private final Personnummer pNr = Personnummer.createPersonnummer(PERSONNUMMER).orElseThrow();
 
     @Mock
     private IntygModuleRegistry moduleRegistry;
-
     @Mock
     private CertificateDao certificateDao;
-
     @Mock
     private CertificateToDiagnosedCertificateConverter diagnosedCertificateConverter;
-
     @Mock
     private CertificateToSickLeaveCertificateConverter sickLeaveCertificateConverter;
-
+    @Mock
+    private GetSickLeaveCertificatesFromCS getSickLeaveCertificatesFromCS;
+    @InjectMocks
     private TypedCertificateServiceImpl typedCertificateService;
 
     private final ModuleApi moduleApi = mock(ModuleApi.class);
 
-    @Before
-    public void setup() {
-        typedCertificateService = new TypedCertificateServiceImpl(certificateDao, moduleRegistry, diagnosedCertificateConverter,
-            sickLeaveCertificateConverter);
-    }
-
     @Test
-    public void listDiagnosedCertificatesForPerson() throws ModuleNotFoundException, ModuleException {
+    void listDiagnosedCertificatesForPerson() throws ModuleNotFoundException, ModuleException {
         List<Certificate> certificates = Collections.singletonList(buildCertificate(CERT_TYPE_LUSE));
         when(certificateDao.findCertificate(any(), any(), any(), any(), any())).thenReturn(certificates);
         when(moduleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
@@ -107,24 +97,24 @@ public class TypedCertificateServiceImplTest {
     }
 
     @Test
-    public void listSickLeaveCertificatesForPerson() throws ModuleNotFoundException, ModuleException {
-        List<Certificate> certificates = Collections.singletonList(buildCertificate(CERT_TYPE_AG7804));
+    void listSickLeaveCertificatesForPerson() throws ModuleNotFoundException, ModuleException {
+        final var expected = List.of(new SickLeaveCertificate(), new SickLeaveCertificate());
+        
+        final var certificates = Collections.singletonList(buildCertificate(CERT_TYPE_AG7804));
         when(certificateDao.findCertificate(any(), any(), any(), any(), any())).thenReturn(certificates);
         when(moduleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(null);
         when(sickLeaveCertificateConverter.convertAg7804(any(), any())).thenReturn(new SickLeaveCertificate());
+        when(getSickLeaveCertificatesFromCS.get(any(), any(), any(), any(), any())).thenReturn(List.of(new SickLeaveCertificate()));
 
-        var sickLeaveCertificates = typedCertificateService
-            .listSickLeaveCertificatesForPerson(pNr, Collections.singletonList(CERT_TYPE_LUSE), null,
-                null, Collections.singletonList(CARE_UNIT_ID));
+        final var actual = typedCertificateService.listSickLeaveCertificatesForPerson(pNr, Collections.singletonList(CERT_TYPE_LUSE), null,
+            null, Collections.singletonList(CARE_UNIT_ID));
 
-        assertNotNull(sickLeaveCertificates);
-        assertEquals(1, sickLeaveCertificates.size());
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void shallUseQueryWithMetaDataForFindingDiagnosCertificates() {
-        List<Certificate> certificates = Collections.singletonList(buildCertificate(CERT_TYPE_LUSE));
+    void shallUseQueryWithMetaDataForFindingDiagnosCertificates() {
         when(certificateDao.findCertificatesUsingMetaDataTable(any(), any(), any(), any(), any())).thenReturn(Collections.emptyList());
 
         typedCertificateService.listDiagnosedCertificatesForCareUnits(Collections.singletonList(CARE_UNIT_ID),
@@ -134,8 +124,7 @@ public class TypedCertificateServiceImplTest {
     }
 
     @Test
-    public void shallUseQueryWithMetaDataForFindingDoctors() {
-        List<Certificate> certificates = Collections.singletonList(buildCertificate(CERT_TYPE_LUSE));
+    void shallUseQueryWithMetaDataForFindingDoctors() {
         when(certificateDao.findDoctorIds(any(), any(), any(), any())).thenReturn(Collections.emptyList());
 
         typedCertificateService
@@ -155,17 +144,6 @@ public class TypedCertificateServiceImplTest {
         certificate.setCareUnitId(CARE_UNIT_ID);
         certificate.setCareUnitName(CARE_UNIT_NAME);
         certificate.setOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "XML", certificate));
-        return certificate;
-    }
-
-    private Certificate setDoctorName(Certificate certificate, String name) {
-        certificate.setSigningDoctorName(name);
-        return certificate;
-    }
-
-    private Certificate setRevoked(Certificate certificate) {
-        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry("", CertificateState.CANCELLED, LocalDateTime.now());
-        certificate.setStates(Collections.singletonList(state));
         return certificate;
     }
 }
