@@ -127,6 +127,8 @@ public class TypedCertificateController {
             parameters.getCertificateTypes(),
             parameters.getFromDate(),
             parameters.getToDate(),
-            parameters.getUnitIds());
+            parameters.getUnitIds(),
+            parameters.getDoctorIds()
+        );
     }
 }

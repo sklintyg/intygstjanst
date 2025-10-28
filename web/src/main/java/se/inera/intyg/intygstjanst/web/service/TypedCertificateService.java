@@ -64,10 +64,11 @@ public interface TypedCertificateService {
      * @param fromDate First signing date of selection
      * @param toDate Last signing date of selection
      * @param units List of units the certificates are bound to
+     * @param doctorIds List of doctor ids the certificates are signed by
      * @return List of certificates with sickleave information
      */
     List<SickLeaveCertificate> listSickLeaveCertificatesForPerson(Personnummer personId, List<String> certificateTypeList,
-        LocalDate fromDate, LocalDate toDate, List<String> units);
+        LocalDate fromDate, LocalDate toDate, List<String> units, List<String> doctorIds);
 
     /**
      * List doctors that have signed certificates on unit(s)
