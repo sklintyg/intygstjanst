@@ -33,7 +33,7 @@ class GetSickLeaveCertificatesFromCSTest {
 
         final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
 
-        getSickLeaveCertificatesFromCS.get(Personnummer.createPersonnummer(expected).orElseThrow(), null, null, null, null);
+        getSickLeaveCertificatesFromCS.get(Personnummer.createPersonnummer(expected).orElseThrow(), null, null, null, null, null);
 
         verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
 
@@ -49,7 +49,7 @@ class GetSickLeaveCertificatesFromCSTest {
 
         final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
 
-        getSickLeaveCertificatesFromCS.get(Personnummer.createPersonnummer(expected).orElseThrow(), null, null, null, null);
+        getSickLeaveCertificatesFromCS.get(Personnummer.createPersonnummer(expected).orElseThrow(), null, null, null, null, null);
 
         verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
 
@@ -65,7 +65,7 @@ class GetSickLeaveCertificatesFromCSTest {
 
         final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
 
-        getSickLeaveCertificatesFromCS.get(null, expected, null, null, null);
+        getSickLeaveCertificatesFromCS.get(null, expected, null, null, null, null);
 
         verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
 
@@ -78,7 +78,7 @@ class GetSickLeaveCertificatesFromCSTest {
 
         final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
 
-        getSickLeaveCertificatesFromCS.get(null, null, expected, null, null);
+        getSickLeaveCertificatesFromCS.get(null, null, expected, null, null, null);
 
         verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
 
@@ -91,7 +91,7 @@ class GetSickLeaveCertificatesFromCSTest {
 
         final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
 
-        getSickLeaveCertificatesFromCS.get(null, null, null, expected, null);
+        getSickLeaveCertificatesFromCS.get(null, null, null, expected, null, null);
 
         verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
 
@@ -104,11 +104,24 @@ class GetSickLeaveCertificatesFromCSTest {
 
         final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
 
-        getSickLeaveCertificatesFromCS.get(null, null, null, null, expected);
+        getSickLeaveCertificatesFromCS.get(null, null, null, null, expected, null);
 
         verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
 
         assertEquals(expected, captor.getValue().getIssuedByUnitIds());
+    }
+
+    @Test
+    void shallContainIssuedByStaffIdsListWhenProvided() {
+        final var expected = List.of("A", "B", "C");
+
+        final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
+
+        getSickLeaveCertificatesFromCS.get(null, null, null, null, null, expected);
+
+        verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
+
+        assertEquals(expected, captor.getValue().getIssuedByStaffIds());
     }
 
     @Test
@@ -121,7 +134,7 @@ class GetSickLeaveCertificatesFromCSTest {
 
         when(csIntegrationService.getSickLeaveCertificates(any(SickLeaveCertificatesRequestDTO.class))).thenReturn(expected);
 
-        final var actual = getSickLeaveCertificatesFromCS.get(null, null, null, null, null);
+        final var actual = getSickLeaveCertificatesFromCS.get(null, null, null, null, null, null);
 
         assertEquals(expected, actual);
     }

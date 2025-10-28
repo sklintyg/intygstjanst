@@ -37,7 +37,7 @@ public class GetSickLeaveCertificatesFromCS {
     private final CSIntegrationService csIntegrationService;
 
     public List<SickLeaveCertificate> get(Personnummer personId, List<String> certificateTypeList, LocalDate fromDate, LocalDate toDate,
-        List<String> units) {
+        List<String> units, List<String> doctorIds) {
         final var request = SickLeaveCertificatesRequestDTO.builder()
             .personId(
                 personId == null ? null :
@@ -46,14 +46,11 @@ public class GetSickLeaveCertificatesFromCS {
                         .type(getType(personId))
                         .build()
             )
-            .certificateTypes(
-                certificateTypeList == null ? List.of() : certificateTypeList
-            )
+            .certificateTypes(certificateTypeList == null ? List.of() : certificateTypeList)
             .signedFrom(fromDate)
             .signedTo(toDate)
-            .issuedByUnitIds(
-                units == null ? List.of() : units
-            )
+            .issuedByUnitIds(units == null ? List.of() : units)
+            .issuedByStaffIds(doctorIds == null ? List.of() : doctorIds)
             .build();
 
         return csIntegrationService.getSickLeaveCertificates(request);

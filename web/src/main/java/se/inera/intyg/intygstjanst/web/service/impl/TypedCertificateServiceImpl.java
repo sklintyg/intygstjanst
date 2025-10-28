@@ -96,14 +96,19 @@ public class TypedCertificateServiceImpl implements TypedCertificateService {
 
     @Override
     public List<SickLeaveCertificate> listSickLeaveCertificatesForPerson(Personnummer personId, List<String> certificateTypeList,
-        LocalDate fromDate, LocalDate toDate, List<String> units) {
+        LocalDate fromDate, LocalDate toDate, List<String> units, List<String> doctorIds) {
 
-        final var certificates = certificateDao.findCertificate(personId, certificateTypeList, fromDate, toDate, units);
+        final var certificates = certificateDao.findCertificate(personId, certificateTypeList, fromDate, toDate, units).stream()
+            .filter(certificate ->
+                doctorIds == null || doctorIds.isEmpty() || doctorIds.contains(certificate.getCertificateMetaData().getDoctorId())
+            )
+            .toList();
 
         LOGGER.debug("Getting sickleave certificates of types ({}) for person on units ({}})", certificateTypeList, units);
 
         final var sickLeaveCertificatesFromIT = transformListToSickLeaveCertificates(certificates);
-        final var sickLeaveCertificatesFromCS = getSickLeaveCertificatesFromCS.get(personId, certificateTypeList, fromDate, toDate, units);
+        final var sickLeaveCertificatesFromCS = getSickLeaveCertificatesFromCS.get(personId, certificateTypeList, fromDate, toDate, units,
+            doctorIds);
 
         return Stream.concat(
             sickLeaveCertificatesFromIT.stream(),

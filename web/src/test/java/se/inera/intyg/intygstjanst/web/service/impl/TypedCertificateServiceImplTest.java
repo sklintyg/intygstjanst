@@ -44,6 +44,7 @@ import se.inera.intyg.infra.certificate.dto.DiagnosedCertificate;
 import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.csintegration.GetSickLeaveCertificatesFromCS;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToDiagnosedCertificateConverter;
@@ -57,6 +58,7 @@ class TypedCertificateServiceImplTest {
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
     private static final String PERSONNUMMER = "19121212-1212";
     private static final String DOC_NAME = "Doc Name";
+    private static final String DOC_ID = "Doc Id";
     private static final String CARE_UNIT_ID = "enhet-1";
     private static final String CARE_UNIT_NAME = "Enhet1";
     private static final String CARE_GIVER_ID = "vardgivare-1";
@@ -99,16 +101,47 @@ class TypedCertificateServiceImplTest {
     @Test
     void listSickLeaveCertificatesForPerson() throws ModuleNotFoundException, ModuleException {
         final var expected = List.of(new SickLeaveCertificate(), new SickLeaveCertificate());
-        
+
         final var certificates = Collections.singletonList(buildCertificate(CERT_TYPE_AG7804));
         when(certificateDao.findCertificate(any(), any(), any(), any(), any())).thenReturn(certificates);
         when(moduleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
         when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(null);
         when(sickLeaveCertificateConverter.convertAg7804(any(), any())).thenReturn(new SickLeaveCertificate());
-        when(getSickLeaveCertificatesFromCS.get(any(), any(), any(), any(), any())).thenReturn(List.of(new SickLeaveCertificate()));
+        when(getSickLeaveCertificatesFromCS.get(any(), any(), any(), any(), any(), any())).thenReturn(List.of(new SickLeaveCertificate()));
 
         final var actual = typedCertificateService.listSickLeaveCertificatesForPerson(pNr, Collections.singletonList(CERT_TYPE_LUSE), null,
-            null, Collections.singletonList(CARE_UNIT_ID));
+            null, Collections.singletonList(CARE_UNIT_ID), null);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shallFilterSickLeaveCertificatesForPersonOnStaffIdsWhenMatching() throws ModuleNotFoundException, ModuleException {
+        final var expected = List.of(new SickLeaveCertificate(), new SickLeaveCertificate());
+
+        final var certificates = Collections.singletonList(buildCertificate(CERT_TYPE_AG7804));
+        when(certificateDao.findCertificate(any(), any(), any(), any(), any())).thenReturn(certificates);
+        when(moduleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
+        when(moduleApi.getUtlatandeFromXml(anyString())).thenReturn(null);
+        when(sickLeaveCertificateConverter.convertAg7804(any(), any())).thenReturn(new SickLeaveCertificate());
+        when(getSickLeaveCertificatesFromCS.get(any(), any(), any(), any(), any(), any())).thenReturn(List.of(new SickLeaveCertificate()));
+
+        final var actual = typedCertificateService.listSickLeaveCertificatesForPerson(pNr, Collections.singletonList(CERT_TYPE_LUSE), null,
+            null, Collections.singletonList(CARE_UNIT_ID), List.of(DOC_ID));
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shallFilterSickLeaveCertificatesForPersonOnStaffIdsWhenNotMatching() {
+        final var expected = List.of(new SickLeaveCertificate());
+
+        final var certificates = Collections.singletonList(buildCertificate(CERT_TYPE_AG7804));
+        when(certificateDao.findCertificate(any(), any(), any(), any(), any())).thenReturn(certificates);
+        when(getSickLeaveCertificatesFromCS.get(any(), any(), any(), any(), any(), any())).thenReturn(List.of(new SickLeaveCertificate()));
+
+        final var actual = typedCertificateService.listSickLeaveCertificatesForPerson(pNr, Collections.singletonList(CERT_TYPE_LUSE), null,
+            null, Collections.singletonList(CARE_UNIT_ID), List.of("OTHER DOC ID"));
 
         assertEquals(expected, actual);
     }
@@ -134,7 +167,7 @@ class TypedCertificateServiceImplTest {
     }
 
     private Certificate buildCertificate(String type) {
-        var certificate = new Certificate(CERT_ID);
+        final var certificate = new Certificate(CERT_ID);
         certificate.setType(type);
         certificate.setTypeVersion("1.0");
         certificate.setSignedDate(CERT_SIGNING_DATETIME);
@@ -143,6 +176,9 @@ class TypedCertificateServiceImplTest {
         certificate.setCareGiverId(CARE_GIVER_ID);
         certificate.setCareUnitId(CARE_UNIT_ID);
         certificate.setCareUnitName(CARE_UNIT_NAME);
+        final var metaData = new CertificateMetaData();
+        metaData.setDoctorId(DOC_ID);
+        certificate.setCertificateMetaData(metaData);
         certificate.setOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "XML", certificate));
         return certificate;
     }

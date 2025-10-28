@@ -19,6 +19,7 @@ public class SickLeaveCertificatesRequestDTO {
     LocalDate signedFrom;
     LocalDate signedTo;
     List<String> issuedByUnitIds;
+    List<String> issuedByStaffIds;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class SickLeaveCertificatesRequestDTOBuilder {
