@@ -21,11 +21,14 @@ package se.inera.intyg.intygstjanst.web.csintegration;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.facade.model.Certificate;
 import se.inera.intyg.common.support.facade.model.CertificateRelationType;
 import se.inera.intyg.common.support.facade.model.CertificateStatus;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateRelation;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateIssuerDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRecipientDTO;
@@ -36,14 +39,17 @@ import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateTyp
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateUnitDTO;
 
 @Service
+@RequiredArgsConstructor
 public class CitizenCertificateConverter {
+
+    private final IntygModuleRegistry intygModuleRegistry;
 
     public CitizenCertificateDTO convert(Certificate certificate) {
         return CitizenCertificateDTO.builder()
             .id(certificate.getMetadata().getId())
             .type(
                 CitizenCertificateTypeDTO.builder()
-                    .id(certificate.getMetadata().getType())
+                    .id(getCertificateType(certificate))
                     .name(certificate.getMetadata().getName())
                     .version(certificate.getMetadata().getTypeVersion())
                     .build()
@@ -82,6 +88,14 @@ public class CitizenCertificateConverter {
                     .toList()
             )
             .build();
+    }
+
+    private String getCertificateType(Certificate certificate) {
+        return intygModuleRegistry.getModuleEntryPoints().stream()
+            .filter(entryPoint -> entryPoint.certificateServiceTypeId().equals(certificate.getMetadata().getType()))
+            .findFirst()
+            .map(ModuleEntryPoint::getModuleId)
+            .orElse(certificate.getMetadata().getType());
     }
 
     private static Stream<CitizenCertificateRelationDTO> childRelations(Certificate certificate) {
