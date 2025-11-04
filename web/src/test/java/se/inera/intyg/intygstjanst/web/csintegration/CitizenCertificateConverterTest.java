@@ -23,11 +23,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.facade.model.Certificate;
 import se.inera.intyg.common.support.facade.model.CertificateRelationType;
 import se.inera.intyg.common.support.facade.model.CertificateStatus;
@@ -38,16 +45,20 @@ import se.inera.intyg.common.support.facade.model.metadata.CertificateRelation;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateRelations;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateSummary;
 import se.inera.intyg.common.support.facade.model.metadata.Unit;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateIssuerDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationType;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateSummaryDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateUnitDTO;
 
+@ExtendWith(MockitoExtension.class)
 class CitizenCertificateConverterTest {
 
     private static final String ID = "certificateId";
     private static final String TYPE = "type";
+    private static final String MAPPED_TYPE = "mappedType";
     private static final String NAME = "certificateName";
     private static final String TYPE_VERSION = "typeVersion";
     private static final String UNIT_ID = "unitId";
@@ -57,13 +68,16 @@ class CitizenCertificateConverterTest {
     private static final String SUMMARY_VALUE = "summaryValue";
     private static final String RECIPIENT_ID = "recipientId";
     private static final String RECIPIENT_NAME = "recipientName";
-    private CitizenCertificateConverter citizenCertificateConverter;
     private Certificate certificate;
     private CertificateMetadata.CertificateMetadataBuilder certificateMetadataBuilder;
 
+    @Mock
+    private IntygModuleRegistry intygModuleRegistry;
+    @InjectMocks
+    private CitizenCertificateConverter citizenCertificateConverter;
+
     @BeforeEach
     void setUp() {
-        citizenCertificateConverter = new CitizenCertificateConverter();
         certificate = new Certificate();
 
         certificateMetadataBuilder = CertificateMetadata.builder()
@@ -100,6 +114,8 @@ class CitizenCertificateConverterTest {
         certificate.setMetadata(
             certificateMetadataBuilder.build()
         );
+
+        when(intygModuleRegistry.getModuleEntryPoints()).thenReturn(List.of());
     }
 
     @Test
@@ -114,6 +130,22 @@ class CitizenCertificateConverterTest {
             .name(NAME)
             .version(TYPE_VERSION)
             .build();
+
+        assertEquals(expectedType, citizenCertificateConverter.convert(certificate).getType());
+    }
+
+    @Test
+    void shallIncludeMappedType() {
+        final var expectedType = CitizenCertificateTypeDTO.builder()
+            .id(MAPPED_TYPE)
+            .name(NAME)
+            .version(TYPE_VERSION)
+            .build();
+
+        final var mockedEntryPoint = mock(ModuleEntryPoint.class);
+        when(mockedEntryPoint.getModuleId()).thenReturn(MAPPED_TYPE);
+        when(mockedEntryPoint.certificateServiceTypeId()).thenReturn(TYPE);
+        when(intygModuleRegistry.getModuleEntryPoints()).thenReturn(List.of(mockedEntryPoint));
 
         assertEquals(expectedType, citizenCertificateConverter.convert(certificate).getType());
     }
