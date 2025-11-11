@@ -46,10 +46,14 @@ import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ValidSickLeaveAggregator;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
 
 @ExtendWith(MockitoExtension.class)
 class GetActiveSickLeaveCertificatesImplTest {
+
+    @Mock
+    private ValidSickLeaveAggregator validSickLeaveAggregator;
 
     @Mock
     private SjukfallCertificateDao sjukfallCertificateDao;
@@ -263,6 +267,7 @@ class GetActiveSickLeaveCertificatesImplTest {
         doReturn(sjukfallCertificateList)
             .when(sjukfallCertificateDao)
             .findActiveSjukfallCertificate(anyString(), anyList(), anyList(), any(LocalDate.class), any(LocalDate.class));
+        doReturn(sjukfallCertificateList).when(validSickLeaveAggregator).get(sjukfallCertificateList);
 
         final var intygDataOne = new IntygData();
         intygDataOne.setIntygId("INTYG_DATA_ONE");

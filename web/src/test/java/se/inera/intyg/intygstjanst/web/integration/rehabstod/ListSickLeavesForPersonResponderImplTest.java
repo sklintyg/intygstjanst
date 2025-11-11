@@ -21,22 +21,22 @@ package se.inera.intyg.intygstjanst.web.integration.rehabstod;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ResultCodeEnum;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ValidSickLeaveAggregator;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
 
 /**
@@ -44,6 +44,9 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ListSickLeavesForPersonResponderImplTest {
+
+    @Mock
+    private ValidSickLeaveAggregator validSickLeaveAggregator;
 
     @Mock
     private SjukfallCertificateDao sjukfallCertificateDao;
@@ -84,6 +87,7 @@ public class ListSickLeavesForPersonResponderImplTest {
         final List<SjukfallCertificate> sjukfallCertificateList = Arrays.asList(realSjukfallCertificate, testSjukfallCertificate);
 
         when(sjukfallCertificateDao.findSjukfallCertificateForPerson(anyString())).thenReturn(sjukfallCertificateList);
+        doReturn(List.of(realSjukfallCertificate)).when(validSickLeaveAggregator).get(sjukfallCertificateList);
 
         ListSickLeavesForPersonType params = new ListSickLeavesForPersonType();
         params.setPersonId(patientId);

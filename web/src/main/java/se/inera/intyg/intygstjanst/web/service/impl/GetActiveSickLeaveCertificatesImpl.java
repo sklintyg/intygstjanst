@@ -21,13 +21,13 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ValidSickLeaveAggregator;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
 import se.inera.intyg.intygstjanst.web.service.GetActiveSickLeaveCertificates;
 
@@ -40,12 +40,15 @@ public class GetActiveSickLeaveCertificatesImpl implements GetActiveSickLeaveCer
 
     private final SjukfallEngineService sjukfallEngineService;
 
+    private final ValidSickLeaveAggregator validSickLeaveAggregator;
+
     public GetActiveSickLeaveCertificatesImpl(SjukfallCertificateDao sjukfallCertificateDao,
         IntygsDataConverter intygDataConverter,
-        SjukfallEngineService sjukfallEngineService) {
+        SjukfallEngineService sjukfallEngineService, ValidSickLeaveAggregator validSickLeaveAggregator) {
         this.sjukfallCertificateDao = sjukfallCertificateDao;
         this.intygDataConverter = intygDataConverter;
         this.sjukfallEngineService = sjukfallEngineService;
+        this.validSickLeaveAggregator = validSickLeaveAggregator;
     }
 
     @Override
@@ -65,7 +68,9 @@ public class GetActiveSickLeaveCertificatesImpl implements GetActiveSickLeaveCer
             recentlyClosed
         );
 
-        final var intygDataList = intygDataConverter.convert(sjukfallCertificate);
+        final var sjukfallCertificates = validSickLeaveAggregator.get(sjukfallCertificate);
+
+        final var intygDataList = intygDataConverter.convert(sjukfallCertificates);
 
         final var activeIntygIds = sjukfallEngineService
             .beraknaSjukfallForEnhet(
@@ -77,11 +82,11 @@ public class GetActiveSickLeaveCertificatesImpl implements GetActiveSickLeaveCer
                 )
             ).stream()
             .map(SjukfallEnhet::getAktivIntygsId)
-            .collect(Collectors.toList());
+            .toList();
 
         return intygDataList.stream()
             .filter(intygData -> activeIntygIds.contains(intygData.getIntygId()))
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private static void assertCareProviderId(String careProviderId) {

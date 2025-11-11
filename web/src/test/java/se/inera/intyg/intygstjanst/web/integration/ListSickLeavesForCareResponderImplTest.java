@@ -29,7 +29,6 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,11 +36,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ValidSickLeaveAggregator;
 import se.inera.intyg.intygstjanst.web.integration.converter.SjukfallCertificateConverter;
 import se.inera.intyg.intygstjanst.web.integration.converter.SjukfallConverter;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
@@ -56,6 +55,9 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ListSickLeavesForCareResponderImplTest {
+
+    @Mock
+    private ValidSickLeaveAggregator validSickLeaveAggregator;
 
     @Mock
     private HsaService hsaService;
@@ -91,9 +93,10 @@ public class ListSickLeavesForCareResponderImplTest {
 
     @Test
     public void testListSickLeavesForCare() {
-
+        final var sjukfallCertificates = buildSjukfallCertificates();
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
-            .thenReturn(buildSjukfallCertificates());
+            .thenReturn(sjukfallCertificates);
+        when(validSickLeaveAggregator.get(sjukfallCertificates)).thenReturn(sjukfallCertificates);
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
         assertEquals(1, response.getSjukfallLista().getSjukfall().size());
@@ -121,9 +124,10 @@ public class ListSickLeavesForCareResponderImplTest {
 
     @Test
     public void testListSickLeavesForCareForCorrectDoctor() {
-
+        final var sjukfallCertificates = buildSjukfallCertificates();
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
-            .thenReturn(buildSjukfallCertificates());
+            .thenReturn(sjukfallCertificates);
+        when(validSickLeaveAggregator.get(sjukfallCertificates)).thenReturn(sjukfallCertificates);
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, lakareId));
         assertEquals(1, response.getSjukfallLista().getSjukfall().size());

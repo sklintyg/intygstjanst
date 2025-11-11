@@ -64,6 +64,8 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlRespon
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.GetValidSickLeaveCertificateIdsInternalRequest;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.GetValidSickLeaveCertificateIdsInternalResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveCertificateDTO;
@@ -631,6 +633,58 @@ class CSIntegrationServiceTest {
             final var request = SickLeaveCertificatesRequestDTO.builder().build();
             assertThrows(IllegalStateException.class,
                 () -> csIntegrationService.getSickLeaveCertificates(request)
+            );
+        }
+    }
+
+    @Nested
+    class GetValidSickLeaveIdsTests {
+
+        private RequestBodyUriSpec requestBodyUriSpec;
+        private ResponseSpec responseSpec;
+
+        @BeforeEach
+        void setUp() {
+            requestBodyUriSpec = mock(RestClient.RequestBodyUriSpec.class);
+            responseSpec = mock(RestClient.ResponseSpec.class);
+
+            MDC.put(TRACE_ID_KEY, "traceId");
+            MDC.put(SESSION_ID_KEY, "sessionId");
+
+            when(restClient.post()).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.uri("/internalapi/certificate/sickleave/valid")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_TRACE_ID_HEADER, "traceId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId")).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.body(any(GetValidSickLeaveCertificateIdsInternalRequest.class))).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.contentType(MediaType.APPLICATION_JSON)).thenReturn(requestBodyUriSpec);
+            when(requestBodyUriSpec.retrieve()).thenReturn(responseSpec);
+        }
+
+        @Test
+        void shallReturnGetValidSickLeaveCertificateIdsInternalResponse() {
+            final var expected = List.of(
+                CERTIFICATE_ID,
+                CERTIFICATE_ID
+            );
+
+            final var response = GetValidSickLeaveCertificateIdsInternalResponse.builder()
+                .certificateIds(expected)
+                .build();
+
+            doReturn(response).when(responseSpec).body(GetValidSickLeaveCertificateIdsInternalResponse.class);
+
+            final var actual = csIntegrationService.getValidSickLeaveIds(GetValidSickLeaveCertificateIdsInternalRequest.builder().build());
+
+            assertEquals(expected, actual);
+        }
+
+        @Test
+        void shallThrowIfResponseIsNull() {
+            doReturn(null).when(responseSpec).body(GetValidSickLeaveCertificateIdsInternalResponse.class);
+
+            final var request = GetValidSickLeaveCertificateIdsInternalRequest.builder().build();
+            assertThrows(IllegalStateException.class,
+                () -> csIntegrationService.getValidSickLeaveIds(request)
             );
         }
     }

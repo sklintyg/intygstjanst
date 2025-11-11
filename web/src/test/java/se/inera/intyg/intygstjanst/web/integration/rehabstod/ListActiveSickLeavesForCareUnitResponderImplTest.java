@@ -30,19 +30,18 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ResultCodeEnum;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ValidSickLeaveAggregator;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
@@ -56,6 +55,9 @@ public class ListActiveSickLeavesForCareUnitResponderImplTest {
     private static final String CAREGIVER_HSAID = "vardgivare-1";
     private static final String CAREUNIT_HSAID = "enhet-1";
     private static final int MAX_DAGAR_SEDAN_AVSLUT = 0;
+
+    @Mock
+    private ValidSickLeaveAggregator validSickLeaveAggregator;
 
     @Mock
     private HsaService hsaService;
@@ -156,11 +158,13 @@ public class ListActiveSickLeavesForCareUnitResponderImplTest {
         final SjukfallCertificate testSjukfallCertificate = new SjukfallCertificate("testSjukfallCertificateId");
         testSjukfallCertificate.setTestCertificate(true);
         final List<SjukfallCertificate> sjukfallCertificateList = Arrays.asList(realSjukfallCertificate, testSjukfallCertificate);
+        final var sjukfallCertificates = List.of(realSjukfallCertificate);
 
         when(hsaService.getHsaIdForVardgivare(CAREUNIT_HSAID)).thenReturn(CAREGIVER_HSAID);
         when(hsaService.getHsaIdForUnderenheter(CAREUNIT_HSAID)).thenReturn(new ArrayList<>());
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(anyString(), anyList(), anyInt()))
             .thenReturn(sjukfallCertificateList);
+        when(validSickLeaveAggregator.get(sjukfallCertificates)).thenReturn(sjukfallCertificates);
 
         ListActiveSickLeavesForCareUnitType params = new ListActiveSickLeavesForCareUnitType();
         params.setEnhetsId(hsaId);

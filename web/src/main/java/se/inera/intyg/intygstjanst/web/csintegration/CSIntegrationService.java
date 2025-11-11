@@ -45,6 +45,8 @@ import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlRespon
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.GetValidSickLeaveCertificateIdsInternalRequest;
+import se.inera.intyg.intygstjanst.web.csintegration.dto.GetValidSickLeaveCertificateIdsInternalResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateRequestDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SendCitizenCertificateResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveCertificatesRequestDTO;
@@ -68,6 +70,7 @@ public class CSIntegrationService {
     private static final String INTERNALAPI_TOTAL_EXPORT_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL = "/internalapi/certificate/export/{careProviderId}/total";
     private static final String INTERNALAPI_ERASE_CERTIFICATE_CAREPROVIDER_ENDPOINT_URL = "/internalapi/certificate/erase/{careProviderId}";
     private static final String INTERNALAPI_PATIENT_SICKLEAVE = "/internalapi/patient/sickleave";
+    private static final String INTERNALAPI_VALID_SICKLEAVE = "/internalapi/certificate/sickleave/valid";
 
     private final RestClient csRestClient;
 
@@ -274,5 +277,24 @@ public class CSIntegrationService {
         }
 
         return response.getCertificates();
+    }
+
+    @PerformanceLogging(eventAction = "get-valid-sick-leave-certificate-ids", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
+    public List<String> getValidSickLeaveIds(GetValidSickLeaveCertificateIdsInternalRequest request) {
+        final var response = csRestClient
+            .post()
+            .uri(INTERNALAPI_VALID_SICKLEAVE)
+            .body(request)
+            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+            .contentType(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .body(GetValidSickLeaveCertificateIdsInternalResponse.class);
+
+        if (response == null) {
+            throw new IllegalStateException("Failed to get sick leave certificate ids from certificate service");
+        }
+
+        return response.getCertificateIds();
     }
 }
