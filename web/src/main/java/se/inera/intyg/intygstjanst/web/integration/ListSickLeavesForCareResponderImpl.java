@@ -34,6 +34,7 @@ import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ValidSickLeaveAggregator;
 import se.inera.intyg.intygstjanst.web.integration.converter.SjukfallCertificateConverter;
 import se.inera.intyg.intygstjanst.web.integration.converter.SjukfallConverter;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
@@ -50,6 +51,9 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCareResponderInterface {
 
     private static final int MAX_LEN = Integer.MAX_VALUE;
+
+    @Autowired
+    private ValidSickLeaveAggregator validSickLeaveAggregator;
 
     @Autowired
     private HsaService hsaService;
@@ -96,8 +100,10 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
         List<SjukfallCertificate> certificates = sjukfallCertificateDao
             .findActiveSjukfallCertificateForCareUnits(careGiverHsaId, hsaIdList, 0);
 
+        final var sjukfallCertificates = validSickLeaveAggregator.get(certificates);
+
         // Convert to the IntygData format that the SjukfallEngine accepts.
-        List<IntygData> intygDataList = sjukfallCertificateConverter.convert(certificates);
+        List<IntygData> intygDataList = sjukfallCertificateConverter.convert(sjukfallCertificates);
 
         // Feed the intygdata into the sjukfallengine
         IntygParametrar sjukfallEngineParams = new IntygParametrar(params.getMaxDagarMellanIntyg(), LocalDate.now());
