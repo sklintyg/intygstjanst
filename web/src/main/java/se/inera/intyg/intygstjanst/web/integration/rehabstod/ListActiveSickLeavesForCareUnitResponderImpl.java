@@ -18,13 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.rehabstod;
 
+import com.google.common.base.Strings;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.common.base.Strings;
-
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitType;
@@ -32,6 +29,7 @@ import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickle
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ValidSickLeaveAggregator;
 import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
 import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallCertificateIntygsDataConverter;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -49,6 +47,9 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
 
     @Autowired
     private SjukfallCertificateDao sjukfallCertificateDao;
+
+    @Autowired
+    private ValidSickLeaveAggregator validSickLeaveAggregator;
 
     @Override
     @PrometheusTimeMethod
@@ -72,7 +73,9 @@ public class ListActiveSickLeavesForCareUnitResponderImpl implements ListActiveS
         final List<SjukfallCertificate> activeSjukfallCertificateForCareUnits =
             getSjukfallCertificates(careGiverHsaId, hsaIdList, personnummer, maxDagarSedanAvslut);
 
-        return getResponse(response, activeSjukfallCertificateForCareUnits);
+        final var sjukfallCertificates = validSickLeaveAggregator.get(activeSjukfallCertificateForCareUnits);
+
+        return getResponse(response, sjukfallCertificates);
     }
 
     /**
