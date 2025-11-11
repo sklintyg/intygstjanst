@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
@@ -82,11 +83,11 @@ public class GetActiveSickLeaveCertificatesImpl implements GetActiveSickLeaveCer
                 )
             ).stream()
             .map(SjukfallEnhet::getAktivIntygsId)
-            .toList();
+            .collect(Collectors.toList());
 
         return intygDataList.stream()
             .filter(intygData -> activeIntygIds.contains(intygData.getIntygId()))
-            .toList();
+            .collect(Collectors.toList());
     }
 
     private static void assertCareProviderId(String careProviderId) {
