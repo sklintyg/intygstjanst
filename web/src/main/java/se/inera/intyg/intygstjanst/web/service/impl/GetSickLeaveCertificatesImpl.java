@@ -31,6 +31,7 @@ import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ValidSickLeaveAggregator;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeaveCertificates;
@@ -49,13 +50,16 @@ public class GetSickLeaveCertificatesImpl implements GetSickLeaveCertificates {
 
     private final PuFilterService puFilterService;
 
+    private final ValidSickLeaveAggregator validSickLeaveAggregator;
+
 
     public GetSickLeaveCertificatesImpl(SjukfallCertificateDao sjukfallCertificateDao, IntygsDataConverter intygDataConverter,
-        SjukfallEngineService sjukfallEngineService, PuFilterService puFilterService) {
+        SjukfallEngineService sjukfallEngineService, PuFilterService puFilterService, ValidSickLeaveAggregator validSickLeaveAggregator) {
         this.sjukfallCertificateDao = sjukfallCertificateDao;
         this.intygDataConverter = intygDataConverter;
         this.sjukfallEngineService = sjukfallEngineService;
         this.puFilterService = puFilterService;
+        this.validSickLeaveAggregator = validSickLeaveAggregator;
     }
 
     @Override
@@ -71,9 +75,11 @@ public class GetSickLeaveCertificatesImpl implements GetSickLeaveCertificates {
             unitIds,
             patientIds
         );
+
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES_FROM_DB, sjukfallCertificate.size()));
 
-        final var intygDataList = intygDataConverter.convert(sjukfallCertificate);
+        final var sjukfallCertificates = validSickLeaveAggregator.get(sjukfallCertificate);
+        final var intygDataList = intygDataConverter.convert(sjukfallCertificates);
 
         sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
         puFilterService.enrichWithPatientNameAndFilter(intygDataList, protectedPersonFilterId);

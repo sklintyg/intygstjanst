@@ -245,6 +245,19 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         return erasedCertificatesCount;
     }
 
+    @Override
+    public List<String> findSickLeavesStoredInCS(List<String> sickLeaveIds) {
+        final var sickLeavesStoredInIT = entityManager.createQuery(
+                "SELECT c.id FROM Certificate c WHERE c.id IN (:ids)", String.class
+            )
+            .setParameter("ids", sickLeaveIds)
+            .getResultList();
+
+        return sickLeaveIds.stream()
+            .filter(id -> !sickLeavesStoredInIT.contains(id))
+            .toList();
+    }
+
     private List<SjukfallCertificate> querySjukfallCertificatesForPersonnummer(String personnummer) {
 
         if (LOG.isDebugEnabled()) {

@@ -25,7 +25,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -44,11 +46,15 @@ import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ValidSickLeaveAggregator;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
 import se.inera.intyg.intygstjanst.web.service.PuFilterService;
 
 @ExtendWith(MockitoExtension.class)
 class GetSickLeaveCertificatesImplTest {
+
+    @Mock
+    private ValidSickLeaveAggregator validSickLeaveAggregator;
 
     @Mock
     private SjukfallCertificateDao sjukfallCertificateDao;
@@ -296,6 +302,7 @@ class GetSickLeaveCertificatesImplTest {
         doReturn(sjukfallCertificateList)
             .when(sjukfallCertificateDao)
             .findAllSjukfallCertificate(anyString(), anyList(), anyList());
+        doReturn(sjukfallCertificateList).when(validSickLeaveAggregator).get(sjukfallCertificateList);
 
         final var intygDataOne = new IntygData();
         intygDataOne.setIntygId("INTYG_DATA_ONE");

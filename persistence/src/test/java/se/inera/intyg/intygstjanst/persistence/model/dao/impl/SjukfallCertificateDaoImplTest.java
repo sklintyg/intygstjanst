@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,13 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
@@ -254,6 +251,20 @@ public class SjukfallCertificateDaoImplTest extends TestSupport {
 
         assertEquals(0, erasedCount);
     }
+
+    @Test
+    public void shouldReturnIdsStoredInCS() {
+        final var inCSId = "in-cs-id";
+        final var certificate = buildCertificate();
+
+        entityManager.persist(certificate);
+
+        final var result = sjukfallCertificateDao.findSickLeavesStoredInCS(List.of(certificate.getId(), inCSId));
+
+        assertEquals(1, result.size());
+        assertEquals(inCSId, result.getFirst());
+    }
+
 
     private String buildDefaultSjukfallCertificate() {
         SjukfallCertificate sc = buildSjukfallCertificate(CARE_GIVER_1_ID, CARE_UNIT_1_ID, CARE_UNIT_1_NAME,

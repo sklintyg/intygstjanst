@@ -19,12 +19,9 @@
 package se.inera.intyg.intygstjanst.web.integration.rehabstod;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonType;
@@ -33,6 +30,7 @@ import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesfo
 import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ValidSickLeaveAggregator;
 import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallCertificateIntygsDataConverter;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsLista;
@@ -43,6 +41,9 @@ import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsLista;
 public class ListSickLeavesForPersonResponderImpl implements ListSickLeavesForPersonResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ListSickLeavesForPersonResponderImpl.class);
+
+    @Autowired
+    private ValidSickLeaveAggregator validSickLeaveAggregator;
 
     @Autowired
     private SjukfallCertificateDao sjukfallCertificateDao;
@@ -79,10 +80,11 @@ public class ListSickLeavesForPersonResponderImpl implements ListSickLeavesForPe
      * Retrieves list of SjukfallCertificate for the patient and making sure that no test certificates are included.
      */
     private List<SjukfallCertificate> getSjukfallCertificate(Personnummer personnummer) {
-        return sjukfallCertificateDao.findSjukfallCertificateForPerson(personnummer.getPersonnummerWithDash())
+        final var sjukfallCertificate = sjukfallCertificateDao.findSjukfallCertificateForPerson(personnummer.getPersonnummerWithDash())
             .stream()
-            .filter(sjukfallCertificate -> !sjukfallCertificate.isTestCertificate())
-            .collect(Collectors.toList());
+            .toList();
+
+        return validSickLeaveAggregator.get(sjukfallCertificate);
     }
 
     private ResultType createResultType(ResultCodeEnum resultCode, String message) {

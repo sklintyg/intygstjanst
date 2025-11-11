@@ -57,4 +57,6 @@ public interface SjukfallCertificateDao {
     void eraseTestCertificates(List<String> ids);
 
     int eraseCertificates(List<String> careProviderIds, String careProviderId);
+
+    List<String> findSickLeavesStoredInCS(List<String> sickLeaveIds);
 }
