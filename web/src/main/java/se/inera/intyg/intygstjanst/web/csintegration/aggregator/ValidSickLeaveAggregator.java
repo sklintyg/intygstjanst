@@ -23,6 +23,12 @@ public class ValidSickLeaveAggregator {
 
         final var sickLeavesStoredInCS = sjukfallCertificateDao.findSickLeavesStoredInCS(sickLeaveIds);
 
+        if (sickLeavesStoredInCS.isEmpty()) {
+            return sjukfallCertificate.stream()
+                .filter(sickLeave -> !sickLeave.isTestCertificate())
+                .toList();
+        }
+
         final var validSickLeaveIdsFromCS = csIntegrationService.getValidSickLeaveIds(
             GetValidSickLeaveCertificateIdsInternalRequest.builder()
                 .certificateIds(sickLeavesStoredInCS)

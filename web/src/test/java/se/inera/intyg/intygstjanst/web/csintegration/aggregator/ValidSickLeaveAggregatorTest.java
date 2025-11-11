@@ -33,19 +33,18 @@ class ValidSickLeaveAggregatorTest {
         final var certA = new SjukfallCertificate("a");
         certA.setTestCertificate(false);
         final var certB = new SjukfallCertificate("b");
-        certB.setTestCertificate(true);
+        certB.setTestCertificate(false);
 
         final var input = List.of(certA, certB);
         final var ids = List.of("a", "b");
 
         when(sjukfallCertificateDao.findSickLeavesStoredInCS(ids)).thenReturn(List.of());
-        when(csIntegrationService.getValidSickLeaveIds(any(GetValidSickLeaveCertificateIdsInternalRequest.class)))
-            .thenReturn(List.of());
 
         final var result = validSickLeaveAggregator.get(input);
 
-        assertEquals(1, result.size());
+        assertEquals(2, result.size());
         assertTrue(result.stream().anyMatch(c -> "a".equals(c.getId())));
+        assertTrue(result.stream().anyMatch(c -> "b".equals(c.getId())));
     }
 
     @Test
