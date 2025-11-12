@@ -85,6 +85,16 @@ class PuFilterServiceImplTest {
     }
 
     @Test
+    void testDeceasedAndSekretessmarkeradIsFilteredWhenFilterOnProtectedPersonIsFalse() {
+        mockPersonSvar(true, true);
+        List<IntygData> list = buildIntygDataList(TOLVANSSON_PNR);
+
+        puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
+
+        assertEquals(0, list.size());
+    }
+
+    @Test
     void testDeceasedIsFilteredWhenFilterOnProtectedPersonIsTrue() {
         mockPersonSvar(true, false);
         final var list = buildIntygDataList(TOLVANSSON_PNR);
