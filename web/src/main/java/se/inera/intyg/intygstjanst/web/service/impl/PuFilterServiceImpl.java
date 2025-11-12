@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.pu.integration.api.model.PersonSvar;
+import se.inera.intyg.infra.pu.integration.api.model.PersonSvar.Status;
 import se.inera.intyg.infra.pu.integration.api.services.PUService;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.intygstjanst.logging.HashUtility;
@@ -66,8 +67,11 @@ public class PuFilterServiceImpl implements PuFilterService {
 
             final var personSvar = personSvarMap.get(pnr.get());
             final var patientNotFound = personSvar.getStatus() == PersonSvar.Status.NOT_FOUND;
-            if (personSvar.getStatus() == PersonSvar.Status.FOUND || patientNotFound) {
-                if (patientNotFound || personSvar.getPerson().sekretessmarkering()) {
+            final var patientFound = personSvar.getStatus() == Status.FOUND;
+            if (patientFound || patientNotFound) {
+                if (patientFound && personSvar.getPerson().avliden()) {
+                    i.remove();
+                } else if (patientNotFound || personSvar.getPerson().sekretessmarkering()) {
 
                     final var updatedName = patientNotFound ? SEKRETESS_SKYDDAD_NAME_UNKNOWN : SEKRETESS_SKYDDAD_NAME_PLACEHOLDER;
                     item.setPatientNamn(updatedName);
@@ -76,9 +80,7 @@ public class PuFilterServiceImpl implements PuFilterService {
                         i.remove();
                     }
 
-                } else if (personSvar.getPerson().avliden()) {
-                    i.remove();
-                } else if (joinNames(personSvar).equals("")) {
+                } else if (joinNames(personSvar).isEmpty()) {
                     item.setPatientNamn(SEKRETESS_SKYDDAD_NAME_UNKNOWN);
                 } else {
                     item.setPatientNamn(joinNames(personSvar));
