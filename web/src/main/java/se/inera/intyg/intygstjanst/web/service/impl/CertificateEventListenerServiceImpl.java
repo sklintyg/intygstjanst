@@ -72,7 +72,6 @@ public class CertificateEventListenerServiceImpl implements CertificateEventList
             MDC.put(SPAN_ID_KEY, mdcHelper.spanId());
             MDC.put(SESSION_ID_KEY, sessionId == null ? "-" : sessionId);
             MDC.put(TRACE_ID_KEY, traceId == null ? mdcHelper.traceId() : traceId);
-
             MDC.put(EVENT_CERTIFICATE_ID, certificateId);
             MDC.put(EVENT_MESSAGE_ID, messageId == null ? "-" : messageId);
             MDC.put(EVENT_TYPE, eventType);
