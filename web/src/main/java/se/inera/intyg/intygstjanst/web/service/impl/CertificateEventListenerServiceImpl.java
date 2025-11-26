@@ -68,7 +68,6 @@ public class CertificateEventListenerServiceImpl implements CertificateEventList
             sessionId = message.getStringProperty(SESSION_ID_KEY);
             traceId = message.getStringProperty(TRACE_ID_KEY);
 
-            MDC.put(TRACE_ID_KEY, mdcHelper.traceId());
             MDC.put(SPAN_ID_KEY, mdcHelper.spanId());
             MDC.put(SESSION_ID_KEY, sessionId == null ? "-" : sessionId);
             MDC.put(TRACE_ID_KEY, traceId == null ? mdcHelper.traceId() : traceId);
