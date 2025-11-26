@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.EVENT_CERTIFICATE_ID;
 import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.EVENT_MESSAGE_ID;
+import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SESSION_ID_KEY;
 import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SPAN_ID_KEY;
 import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.TRACE_ID_KEY;
 
@@ -32,6 +33,7 @@ import org.slf4j.MDC;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.logging.MdcHelper;
+import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventListenerService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventValidator;
@@ -56,16 +58,22 @@ public class CertificateEventListenerServiceImpl implements CertificateEventList
         String eventType = null;
         String certificateId = null;
         String messageId = null;
+        String sessionId = null;
+        String traceId = null;
 
         try {
             eventType = message.getStringProperty(EVENT_TYPE);
             certificateId = message.getStringProperty(CERTIFICATE_ID);
             messageId = message.getStringProperty(MESSAGE_ID);
+            sessionId = message.getStringProperty(SESSION_ID_KEY);
+            traceId = message.getStringProperty(TRACE_ID_KEY);
 
             MDC.put(TRACE_ID_KEY, mdcHelper.traceId());
             MDC.put(SPAN_ID_KEY, mdcHelper.spanId());
+            MDC.put(SESSION_ID_KEY, sessionId == null ? "-" : sessionId);
+            MDC.put(TRACE_ID_KEY, traceId == null ? mdcHelper.traceId() : traceId);
             MDC.put(EVENT_CERTIFICATE_ID, certificateId);
-            MDC.put(EVENT_MESSAGE_ID, messageId);
+            MDC.put(EVENT_MESSAGE_ID, messageId == null ? "-" : messageId);
             MDC.put(EVENT_TYPE, eventType);
 
             if (!certificateEventMessageValidator.validate(eventType, certificateId, messageId)) {
