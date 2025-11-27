@@ -31,7 +31,6 @@ import se.inera.intyg.common.support.integration.module.exception.InvalidCertifi
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.web.csintegration.util.CertificateServiceProfile;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
@@ -70,16 +69,13 @@ public class SendMessageToCareValidator {
     private final RecipientService recipientService;
     private final ArendeRepository messageRepository;
     private final CSSendMessageToCareValidator csSendMessageToCareValidator;
-    private final CertificateServiceProfile certificateServiceProfile;
 
     public SendMessageToCareValidator(CertificateService certificateService, RecipientService recipientService,
-        ArendeRepository messageRepository, CSSendMessageToCareValidator csSendMessageToCareValidator,
-        CertificateServiceProfile certificateServiceProfile) {
+        ArendeRepository messageRepository, CSSendMessageToCareValidator csSendMessageToCareValidator) {
         this.certificateService = certificateService;
         this.recipientService = recipientService;
         this.messageRepository = messageRepository;
         this.csSendMessageToCareValidator = csSendMessageToCareValidator;
-        this.certificateServiceProfile = certificateServiceProfile;
     }
 
     public List<String> validateSendMessageToCare(SendMessageToCareType sendMessageToCareType) {
@@ -95,7 +91,7 @@ public class SendMessageToCareValidator {
         validatePaminnelse(sendMessageToCareType, validationErrors);
         validateConsistencyOfSubject(sendMessageToCareType, validationErrors);
 
-        if (certificateServiceProfile.active() && !certificateExists(certificateId)) {
+        if (!certificateExists(certificateId)) {
             csSendMessageToCareValidator.validate(certificateId, personnummer, validationErrors);
             return validationErrors;
         }

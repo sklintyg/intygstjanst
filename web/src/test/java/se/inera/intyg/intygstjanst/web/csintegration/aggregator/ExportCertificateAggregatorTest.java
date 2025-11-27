@@ -1,8 +1,6 @@
 package se.inera.intyg.intygstjanst.web.csintegration.aggregator;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -11,8 +9,6 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -30,7 +26,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.csintegration.ExportCertificateFromCS;
-import se.inera.intyg.intygstjanst.web.csintegration.util.CertificateServiceProfile;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,8 +33,6 @@ class ExportCertificateAggregatorTest {
 
     @Mock
     ExportCertificateFromCS exportCertificateFromCS;
-    @Mock
-    private CertificateServiceProfile certificateServiceProfile;
     @Mock
     private CertificateRepository certificateRepository;
     @InjectMocks
@@ -53,53 +46,12 @@ class ExportCertificateAggregatorTest {
 
     private static final Pageable EXPORT_PAGEABLE = PageRequest.of(COLLECTED, EXPORT_SIZE, Sort.by(Direction.ASC, "signedDate", "id"));
 
-    @Nested
-    class GetCertificateExportPageFromWC {
-
-        @BeforeEach
-        void setUp() {
-            when(certificateRepository.findTotalRevokedForCareProvider(any(String.class))).thenReturn(1L);
-            when(certificateRepository.findCertificatesForCareProvider(eq(CARE_PROVIDER_ID), any(Pageable.class)))
-                .thenReturn(getCertificatePage());
-            when(certificateServiceProfile.active()).thenReturn(false);
-        }
-
-        @Test
-        void shouldSetProperCounts() {
-            final var certificateExportPage = exportCertificateAggregator.exportPage(CARE_PROVIDER_ID, COLLECTED, EXPORT_SIZE);
-
-            assertAll(
-                () -> assertEquals(CARE_PROVIDER_ID, certificateExportPage.getCareProviderId()),
-                () -> assertEquals(3, certificateExportPage.getCount()),
-                () -> assertEquals(3, certificateExportPage.getTotal()),
-                () -> assertEquals(1, certificateExportPage.getTotalRevoked())
-            );
-        }
-
-        @Test
-        void shouldHaveCorrectNumberOfCertificates() {
-            final var certificateExportPage = exportCertificateAggregator.exportPage(CARE_PROVIDER_ID, COLLECTED, EXPORT_SIZE);
-            assertEquals(3, certificateExportPage.getCertificateXmls().size());
-        }
-
-        @Test
-        void shouldSetRevokedOnRevokedCertificatesOnly() {
-            final var certificateExportPage = exportCertificateAggregator.exportPage(CARE_PROVIDER_ID, COLLECTED, EXPORT_SIZE);
-
-            assertAll(
-                () -> assertFalse(certificateExportPage.getCertificateXmls().getFirst().isRevoked()),
-                () -> assertTrue(certificateExportPage.getCertificateXmls().get(1).isRevoked()),
-                () -> assertFalse(certificateExportPage.getCertificateXmls().get(2).isRevoked())
-            );
-        }
-    }
 
     @Test
     void shallIncludeCertificatesFromCS() {
         when(certificateRepository.findTotalRevokedForCareProvider(any(String.class))).thenReturn(1L);
         when(certificateRepository.findCertificatesForCareProvider(eq(CARE_PROVIDER_ID), any(Pageable.class)))
             .thenReturn(getCertificatePage());
-        when(certificateServiceProfile.active()).thenReturn(true);
 
         final var expectedResult = CertificateExportPageDTO.of(
             CARE_PROVIDER_ID,
@@ -124,7 +76,6 @@ class ExportCertificateAggregatorTest {
         when(certificateRepository.findTotalRevokedForCareProvider(any(String.class))).thenReturn(1L);
         when(certificateRepository.findCertificatesForCareProvider(eq(CARE_PROVIDER_ID), any(Pageable.class)))
             .thenReturn(certificatePage);
-        when(certificateServiceProfile.active()).thenReturn(true);
         when(exportCertificateFromCS.addCertificatesFromCS(argumentCaptor.capture(), eq(CARE_PROVIDER_ID),
             eq(certificatePage.getNumberOfElements()), eq(EXPORT_SIZE))).thenReturn(
             CertificateExportPageDTO.of(CARE_PROVIDER_ID, 0, 3, 1, Collections.emptyList()));

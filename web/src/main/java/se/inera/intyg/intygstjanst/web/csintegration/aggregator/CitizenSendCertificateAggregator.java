@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.intygstjanst.web.csintegration.util.CertificateServiceProfile;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
@@ -34,16 +33,12 @@ import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
 @RequiredArgsConstructor
 public class CitizenSendCertificateAggregator implements SendCertificateService {
 
-    private final CertificateServiceProfile certificateServiceProfile;
     private final SendCertificateService sendCertificateServiceImpl;
     private final SendCertificateService citizenSendCertificateFromCS;
 
     @Override
     public SendStatus send(SendCertificateRequestDTO request)
         throws InvalidCertificateException, TestCertificateException, CertificateRevokedException, RecipientUnknownException {
-        if (Boolean.FALSE.equals(certificateServiceProfile.active())) {
-            return sendCertificateServiceImpl.send(request);
-        }
 
         final var responseFromCS = citizenSendCertificateFromCS.send(request);
 
