@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
 import se.inera.intyg.intygstjanst.web.csintegration.ExportCertificateFromCS;
-import se.inera.intyg.intygstjanst.web.csintegration.util.CertificateServiceProfile;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateXmlDTO;
 
@@ -19,7 +18,6 @@ import se.inera.intyg.intygstjanst.web.service.dto.CertificateXmlDTO;
 public class ExportCertificateAggregator {
 
     private final CertificateRepository certificateRepository;
-    private final CertificateServiceProfile certificateServiceProfile;
     private final ExportCertificateFromCS exportCertificateFromCS;
 
     public CertificateExportPageDTO exportPage(String careProviderId, int collected, int batchSize) {
@@ -42,9 +40,6 @@ public class ExportCertificateAggregator {
             certificateXmls
         );
 
-        if (Boolean.FALSE.equals(certificateServiceProfile.active())) {
-            return certificateExportPage;
-        }
 
         return exportCertificateFromCS.addCertificatesFromCS(certificateExportPage, careProviderId, collected, batchSize);
     }

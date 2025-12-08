@@ -37,7 +37,6 @@ import se.inera.intyg.common.support.integration.module.exception.InvalidCertifi
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.web.csintegration.util.CertificateServiceProfile;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.integration.util.SendMessageToCareUtil;
 import se.inera.intyg.intygstjanst.web.integration.validator.SendMessageToCareValidator.Amneskod;
@@ -52,8 +51,6 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.MeddelandeReferens;
 @ExtendWith(MockitoExtension.class)
 class SendMessageToCareValidatorTest {
 
-    @Mock
-    private CertificateServiceProfile certificateServiceProfile;
     @Mock
     private RecipientService recipientService;
     @Mock
@@ -362,8 +359,7 @@ class SendMessageToCareValidatorTest {
         final var civicRegistrationNumber = sendMessageToCareType.getPatientPersonId().getExtension();
 
         when(arendeRepository.findByMeddelandeId(sendMessageToCareType.getMeddelandeId())).thenReturn(null);
-        when(certificateService.getCertificateForCare(certificateId)).thenThrow(InvalidCertificateException.class);
-        when(certificateServiceProfile.active()).thenReturn(false);
+        when(certificateService.getCertificateForCare(certificateId)).thenReturn(new Certificate(certificateId));
 
         validator.validateSendMessageToCare(sendMessageToCareType);
 
@@ -384,7 +380,6 @@ class SendMessageToCareValidatorTest {
 
         when(arendeRepository.findByMeddelandeId(sendMessageToCareType.getMeddelandeId())).thenReturn(null);
         when(certificateService.getCertificateForCare(certificateId)).thenThrow(InvalidCertificateException.class);
-        when(certificateServiceProfile.active()).thenReturn(true);
 
         validator.validateSendMessageToCare(sendMessageToCareType);
 

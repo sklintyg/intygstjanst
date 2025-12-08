@@ -53,16 +53,9 @@
     <!-- Initializes caching, required by hsa-services-config.xml -->
     <import resource="classpath:basic-cache-config.xml" />
 
-    <!-- PU stub-->
-    <import resource="classpath:pu-stub-context.xml" />
-    <!-- PU service -->
-    <import resource="classpath:pu-services-config.xml" />
-    <import resource="classpath:pu-ignite-config.xml" />
-
+		<!-- Intyg Proxy Service  -->
     <import resource="classpath:/hsa-integration-intyg-proxy-service-config.xml"/>
-
-    <!-- Use the same PU validator for both prod and test. Set as primary so it is used instead of the default validator in infra -->
-    <bean id="puResponseValidator" class="se.inera.intyg.intygstjanst.web.integration.validator.IntygstjanstPUResponseValidator" primary="true"/>
+		<import resource="classpath:/pu-integration-intyg-proxy-service-config.xml"/>
 
     <context:annotation-config/>
     <context:component-scan base-package=
@@ -78,7 +71,4 @@
         </bean>
     </beans>
 
-    <beans profile="pu-integration-intyg-proxy-service">
-        <import resource="classpath:/pu-integration-intyg-proxy-service-config.xml"/>
-    </beans>
 </beans>

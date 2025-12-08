@@ -21,13 +21,11 @@ package se.inera.intyg.intygstjanst.web.csintegration;
 
 import static se.inera.intyg.intygstjanst.web.csintegration.util.PersonIdTypeEvaluator.getType;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
-import se.inera.intyg.intygstjanst.web.csintegration.util.CertificateServiceProfile;
 import se.inera.intyg.intygstjanst.web.service.dto.PersonIdDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -36,15 +34,11 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @RequiredArgsConstructor
 public class CitizenCertificatesFromCS {
 
-    private final CertificateServiceProfile certificateServiceProfile;
     private final CSIntegrationService csIntegrationService;
     private final CitizenCertificateConverter citizenCertificateConverter;
 
     public List<CitizenCertificateDTO> get(Personnummer personId) {
-        if (!certificateServiceProfile.active()) {
-            return Collections.emptyList();
-        }
-        
+
         final var citizenCertificates = csIntegrationService.getCitizenCertificates(
             GetCitizenCertificatesRequest.builder()
                 .personId(

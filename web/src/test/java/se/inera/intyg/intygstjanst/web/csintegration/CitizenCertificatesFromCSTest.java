@@ -31,7 +31,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.facade.model.Certificate;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCitizenCertificatesRequest;
-import se.inera.intyg.intygstjanst.web.csintegration.util.CertificateServiceProfile;
 import se.inera.intyg.intygstjanst.web.service.dto.PersonIdDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.PersonIdTypeDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
@@ -44,8 +43,6 @@ class CitizenCertificatesFromCSTest {
     private static final Personnummer PERSONAL_IDENTITY_NUMBER = Personnummer.createPersonnummer("191212121212").orElseThrow();
     private static final Personnummer COORDINATION_NUMBER = Personnummer.createPersonnummer("191212721212").orElseThrow();
     @Mock
-    private CertificateServiceProfile certificateServiceProfile;
-    @Mock
     private CSIntegrationService csIntegrationService;
     @Mock
     private CitizenCertificateConverter citizenCertificateConverter;
@@ -53,16 +50,8 @@ class CitizenCertificatesFromCSTest {
     private CitizenCertificatesFromCS citizenCertificatesFromCS;
 
     @Test
-    void shallReturnEmptyListIfCertificateServiceProfileIsInactive() {
-        doReturn(false).when(certificateServiceProfile).active();
-        final var actualResult = citizenCertificatesFromCS.get(PERSONAL_IDENTITY_NUMBER);
-        assertEquals(Collections.emptyList(), actualResult);
-    }
-
-    @Test
     void shallReturnEmptyListIfResponseFromCSIsEmpty() {
         final var expectedResult = Collections.emptyList();
-        doReturn(true).when(certificateServiceProfile).active();
 
         doReturn(Collections.emptyList()).when(csIntegrationService).getCitizenCertificates(
             GetCitizenCertificatesRequest.builder()
@@ -82,7 +71,6 @@ class CitizenCertificatesFromCSTest {
     void shallReturnEmptyListForRequestWithCoordinationNumberIfResponseFromCSIsEmpty() {
         final var expectedResult = Collections.emptyList();
 
-        doReturn(true).when(certificateServiceProfile).active();
         doReturn(Collections.emptyList()).when(csIntegrationService).getCitizenCertificates(
             GetCitizenCertificatesRequest.builder()
                 .personId(
@@ -104,7 +92,6 @@ class CitizenCertificatesFromCSTest {
         final var certificate = new Certificate();
         final var responseFromCS = List.of(certificate);
 
-        doReturn(true).when(certificateServiceProfile).active();
         doReturn(responseFromCS).when(csIntegrationService).getCitizenCertificates(
             GetCitizenCertificatesRequest.builder()
                 .personId(
