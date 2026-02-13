@@ -1,8 +1,13 @@
-pluginManagement {
+dependencyResolutionManagement {
     repositories {
         mavenLocal()
-        maven { url "https://nexus.drift.inera.se/repository/it-public/" }
+        maven { url = "https://nexus.drift.inera.se/repository/it-public/" }
         gradlePluginPortal()
+    }
+    versionCatalogs {
+        libs {
+            from("se.inera.intyg.bom:catalog:${System.properties['intygBomVersion'] ?: '0.0.1-SNAPSHOT'}")
+        }
     }
 }
 
@@ -11,10 +16,7 @@ rootProject.name = 'intygstjanst'
 include 'intygstjanst-logging'
 include ':intygstjanst-persistence'
 include ':intygstjanst-web'
-include ':intygstjanst-liquibase-runner'
 
 project(':intygstjanst-logging').projectDir = "$rootDir/logging" as File
 project(':intygstjanst-persistence').projectDir = "$rootDir/persistence" as File
 project(':intygstjanst-web').projectDir = "$rootDir/web" as File
-project(':intygstjanst-liquibase-runner').projectDir = "$rootDir/tools/liquibase-runner" as File
-

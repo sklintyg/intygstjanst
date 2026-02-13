@@ -19,7 +19,7 @@ gretty {
 
     jvmArgs = [
             "-Dcatalina.base=${buildDir}/catalina.base",
-            "-Dspring.profiles.active=dev,bootstrap,testability-api,caching-enabled,it-fk-stub,pu-integration-intyg-proxy-service",
+            "-Dspring.profiles.active=dev,bootstrap,testability-api,caching-enabled,it-fk-stub",
             "-Dlogback.file=${applicationDir}/config/logback-spring.xml",
             "-Djava.awt.headless=true",
             "-Dfile.encoding=UTF-8",
@@ -42,7 +42,6 @@ dependencies {
     implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
     implementation "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     implementation "se.riv.insuranceprocess.healthreporting:insuranceprocess-healthreporting-schemas:${rivtaInsuranceprocessSchemasVersion}"
-    implementation "se.riv.itintegration.monitoring:itintegration-monitoring-schemas:${rivtaItintegrationMonitoringSchemasVersion}"
 
     implementation "se.inera.intyg.infra:certificate:${infraVersion}"
     implementation "se.inera.intyg.infra:hsa-integration-api:${infraVersion}"
@@ -50,7 +49,6 @@ dependencies {
     implementation "se.inera.intyg.infra:intyginfo:${infraVersion}"
     implementation "se.inera.intyg.infra:message:${infraVersion}"
     implementation "se.inera.intyg.infra:monitoring:${infraVersion}"
-    implementation "se.inera.intyg.infra:pu-integration:${infraVersion}"
     implementation "se.inera.intyg.infra:security-filter:${infraVersion}"
     implementation "se.inera.intyg.infra:sjukfall-engine:${infraVersion}"
     implementation "se.inera.intyg.infra:testcertificate:${infraVersion}"
@@ -78,38 +76,46 @@ dependencies {
 
     implementation "se.inera.intyg.refdata:refdata:${refDataVersion}"
 
-    implementation "co.elastic.logging:logback-ecs-encoder:${logbackEcsEncoderVersion}"
+    implementation "ch.qos.logback:logback-classic"
+    implementation "co.elastic.logging:logback-ecs-encoder"
+    implementation "codes.rafael.jaxb2_commons:jaxb2-basics"
     implementation "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider"
-    implementation "com.google.guava:guava:${guavaVersion}"
-    implementation "commons-io:commons-io:${commonsIoVersion}"
+    implementation "com.google.guava:guava"
+    implementation "commons-io:commons-io"
     implementation "io.prometheus:simpleclient_servlet"
     implementation "jakarta.transaction:jakarta.transaction-api"
     implementation "jakarta.ws.rs:jakarta.ws.rs-api"
-    implementation "net.javacrumbs.shedlock:shedlock-spring:${shedlockSpringVersion}"
-    implementation "net.javacrumbs.shedlock:shedlock-provider-redis-spring:${shedlockSpringVersion}"
-    implementation "org.antlr:ST4:${stAntlr4Version}"
+    implementation "net.javacrumbs.shedlock:shedlock-spring"
+    implementation "net.javacrumbs.shedlock:shedlock-provider-redis-spring"
+    implementation "org.antlr:ST4"
     implementation "org.apache.activemq:activemq-spring"
-    implementation "org.apache.cxf:cxf-rt-features-logging:${cxfVersion}"
-    implementation "org.apache.cxf:cxf-rt-frontend-jaxws:${cxfVersion}"
+    implementation "org.apache.cxf:cxf-rt-features-logging"
+    implementation "org.apache.cxf:cxf-rt-frontend-jaxws"
     implementation "org.aspectj:aspectjweaver"
-    implementation "codes.rafael.jaxb2_commons:jaxb2-basics:${jaxb2Version}"
     implementation "org.slf4j:jul-to-slf4j"
     implementation "org.springframework:spring-jms"
     implementation "org.springframework:spring-webmvc"
     implementation "org.springframework.data:spring-data-jpa"
 
+    annotationProcessor 'org.projectlombok:lombok'
+
     compileOnly "jakarta.persistence:jakarta.persistence-api"
+
     runtimeOnly "se.inera.intyg.infra:hsa-integration-intyg-proxy-service:${infraVersion}"
     runtimeOnly "se.inera.intyg.infra:pu-integration-intyg-proxy-service:${infraVersion}"
     runtimeOnly "com.mysql:mysql-connector-j"
+    runtimeOnly "com.sun.xml.messaging.saaj:saaj-impl"
 
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation "org.mockito:mockito-core"
+    testImplementation "org.mockito:mockito-junit-jupiter"
     testImplementation "org.springframework:spring-test"
     testImplementation "org.xmlunit:xmlunit-legacy"
 
     testCompileOnly "jakarta.persistence:jakarta.persistence-api"
+    testCompileOnly 'org.projectlombok:lombok'
 
-    // We explicitly declare this as a testRuntime dependency so Restassured tests loads the correct XSD for
-    // SetCertificateStatusResponder_1.0.xsd (as it exists in two different schemas)
     testRuntimeOnly "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     testRuntimeOnly "jakarta.servlet:jakarta.servlet-api"
 }

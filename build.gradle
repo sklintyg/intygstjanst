@@ -1,79 +1,53 @@
 plugins {
+    alias(libs.plugins.com.github.ben.manes.versions)
+    alias(libs.plugins.org.cyclonedx.bom)
+    alias(libs.plugins.org.sonarqube)
     id "org.gretty" version "4.1.10" apply false
-    id 'test-report-aggregation'
-    id 'org.sonarqube' version '7.2.2.6593'
-    id "org.owasp.dependencycheck" version "12.1.9"
-    id 'jacoco'
-    id 'org.cyclonedx.bom' version '3.1.0'
 }
 
 ext {
-    commonVersion = System.properties['commonVersion'] ?: '4.0.0-SNAPSHOT'
-    infraVersion = System.properties['infraVersion'] ?: '4.0.0-SNAPSHOT'
+    intygBomVersion = '1.0.0.7'
+
+    commonVersion = System.properties['commonVersion'] ?: '4.1.0-SNAPSHOT'
+    infraVersion = System.properties['infraVersion'] ?: '4.1.0-SNAPSHOT'
     refDataVersion = '2.0.22'
 
-    intygHealthcondRehabilitationSchemasVersion = "1.1.3.2"
-    intygClinicalprocessSchemasVersion = "1.0.24.2"
-    rivtaClinicalprocessSchemasVersion = "4.0.5.3"
-    rivtaInsuranceprocessSchemasVersion = "3.1.0.5.2"
-    rivtaItintegrationMonitoringSchemasVersion = "1.0.0.5.2"
-    schemasContractVersion = "2.1.8.2"
-
-    commonsIoVersion = "2.14.0"
-    cxfVersion = "4.0.5"
-    geronimoJmsVersion = "1.1.1"
-    guavaVersion = "33.0.0-jre"
-    jakartaJwsApiVersion = "3.0.0"
-    jaxb2Version = "3.0.0"
-    logbackEcsEncoderVersion = "1.6.0"
-    picocliVersion = "4.7.5"
-    stAntlr4Version = "4.3.4"
-    shedlockSpringVersion = "5.16.0"
-
-    springbootMavenBomVersion = "3.3.4"
-
-    nvdMirror = 'https://vulnz-nvd-mirror-devtest.intyg.nordicmedtest.se'
+    intygHealthcondRehabilitationSchemasVersion = "1.2.0.1"
+    intygClinicalprocessSchemasVersion = "1.1.0.1"
+    rivtaClinicalprocessSchemasVersion = "4.0.5.4"
+    rivtaInsuranceprocessSchemasVersion = "3.1.0.5.3"
+    schemasContractVersion = "2.2.0.1"
 }
+
+apply from: 'gradle/configureIntygBom.gradle'
+
+group = 'se.inera.intyg.intygstjanst'
+version = System.properties['buildVersion'] ?: '4.0.0-SNAPSHOT'
 
 allprojects {
     apply plugin: 'java'
-    apply plugin: 'jacoco'
+    apply plugin: 'test-report-aggregation'
+    repositories {
+        mavenLocal()
+        maven { url = "https://nexus.drift.inera.se/repository/it-public/" }
+        mavenCentral()
+    }
+}
 
-    group = 'se.inera.intyg.intygstjanst'
-    version = System.properties['buildVersion'] ?: '4.0.0-SNAPSHOT'
+subprojects {
+    apply plugin: 'jacoco'
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(21)
+            languageVersion = JavaLanguageVersion.of(javaVersion)
         }
     }
 
-    dependencies {
-        implementation platform("org.springframework.boot:spring-boot-dependencies:${springbootMavenBomVersion}")
-        annotationProcessor platform("org.springframework.boot:spring-boot-dependencies:${springbootMavenBomVersion}")
-        testImplementation platform("org.springframework.boot:spring-boot-dependencies:${springbootMavenBomVersion}")
-        testAnnotationProcessor platform("org.springframework.boot:spring-boot-dependencies:${springbootMavenBomVersion}")
-
-        implementation "ch.qos.logback:logback-classic"
-        implementation "jakarta.annotation:jakarta.annotation-api"
-        implementation "jakarta.jws:jakarta.jws-api:${jakartaJwsApiVersion}"
-        implementation "jakarta.xml.ws:jakarta.xml.ws-api"
-
-        runtimeOnly "com.sun.xml.messaging.saaj:saaj-impl"
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
-
-        testImplementation "junit:junit"
-        testImplementation "org.junit.jupiter:junit-jupiter-api"
-        testImplementation "org.junit.jupiter:junit-jupiter-params"
-        testImplementation "org.mockito:mockito-core"
-        testImplementation "org.mockito:mockito-junit-jupiter"
-
-        testCompileOnly 'org.projectlombok:lombok'
-        testAnnotationProcessor 'org.projectlombok:lombok'
-
-        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
-        testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
+    configurations {
+        mockitoAgent
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
     }
 
     compileJava {
@@ -81,17 +55,26 @@ allprojects {
         options.compilerArgs.add("-parameters")
     }
 
-    compileJava.dependsOn processResources
-    testing.suites {
-        test { useJUnitJupiter() }
+    dependencies {
+        implementation platform("se.inera.intyg.bom:platform:${intygBomVersion}")
+        annotationProcessor platform("se.inera.intyg.bom:platform:${intygBomVersion}")
+        testImplementation platform("se.inera.intyg.bom:platform:${intygBomVersion}")
+        testAnnotationProcessor platform("se.inera.intyg.bom:platform:${intygBomVersion}")
+        mockitoAgent platform("se.inera.intyg.bom:platform:${intygBomVersion}")
+        mockitoAgent("org.mockito:mockito-core") { transitive = false }
     }
 
-    repositories {
-        mavenLocal()
-        maven { url "https://nexus.drift.inera.se/repository/it-public/" }
-        mavenCentral {
-            content {
-                excludeGroupByRegex "se\\.inera.*"
+    test {
+        jvmArgs += [
+                "-javaagent:${configurations.mockitoAgent.asPath}",
+                "-Xshare:off"
+        ]
+    }
+
+    testing {
+        suites {
+            test {
+                useJUnitJupiter()
             }
         }
     }
@@ -115,32 +98,15 @@ allprojects {
     }
 }
 
-subprojects.collect { subproject -> subproject.name }.each { subprojectName ->
-    dependencies { testReportAggregation project(":${subprojectName}") }
+reporting {
+    subprojects.collect { subproject -> subproject.name }.each { subprojectName ->
+        dependencies { testReportAggregation project(":${subprojectName}") }
+    }
 }
 
 sonar {
     properties {
         property "sonar.projectKey", "intyg-intygstjanst"
         property "sonar.projectName", "intyg-intygstjanst"
-        property "sonar.dependencyCheck.jsonReportPath", "${layout.buildDirectory.get()}/reports/dependency-check-report.json" as String
-        property "sonar.dependencyCheck.htmlReportPath", "${layout.buildDirectory.get()}/reports/dependency-check-report.html" as String
-    }
-}
-
-dependencyCheck {
-    formats = ['HTML', 'JSON']
-    nvd.setDatafeedUrl(nvdMirror)
-    analyzers.setAssemblyEnabled(false)
-    analyzers.setCentralEnabled(false)
-    analyzers.ossIndex.setUsername(project.properties.get('ossIndexUsername') as String)
-    analyzers.ossIndex.setPassword(project.properties.get('ossIndexPassword') as String)
-}
-
-reporting {
-    dependencies {
-        testReportAggregation project(':intygstjanst-persistence')
-        testReportAggregation project(':intygstjanst-web')
-        testReportAggregation project(':intygstjanst-liquibase-runner')
     }
 }
