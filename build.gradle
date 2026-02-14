@@ -21,12 +21,13 @@ ext {
 
 apply from: 'gradle/configureIntygBom.gradle'
 
-group = 'se.inera.intyg.intygstjanst'
-version = System.properties['buildVersion'] ?: '4.0.0-SNAPSHOT'
-
 allprojects {
     apply plugin: 'java'
     apply plugin: 'test-report-aggregation'
+
+    group = 'se.inera.intyg.intygstjanst'
+    version = System.properties['buildVersion'] ?: '4.0.0-SNAPSHOT'
+
     repositories {
         mavenLocal()
         maven { url = "https://nexus.drift.inera.se/repository/it-public/" }
@@ -95,6 +96,10 @@ subprojects {
                 ])
             }))
         }
+    }
+
+    tasks.matching { it.name == "cyclonedxDirectBom" }.configureEach { t ->
+        t.includeConfigs = ['^runtimeClasspath$']
     }
 }
 
