@@ -34,12 +34,12 @@ import static org.mockito.Mockito.when;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import java.io.IOException;
-import java.util.List;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.ws.soap.SOAPFaultException;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -94,7 +94,7 @@ class CertificateEventSendMessageServiceImplTest {
 
     @BeforeEach
     void setUp() throws IOException, JAXBException {
-        decodedXml = Resources.toString(Resources.getResource(EXAMPLE_MESSAGE_FILE_PATH), Charsets.UTF_8);
+        decodedXml = Resources.toString(Resources.getResource(EXAMPLE_MESSAGE_FILE_PATH), StandardCharsets.UTF_8);
 
         final var sendMessageToRecipientType = (SendMessageToRecipientType) XmlMarshallerHelper.unmarshal(decodedXml).getValue();
         arende = ArendeConverter.convertSendMessageToRecipient(sendMessageToRecipientType);

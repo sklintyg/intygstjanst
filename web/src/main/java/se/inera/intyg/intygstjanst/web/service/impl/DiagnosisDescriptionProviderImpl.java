@@ -59,8 +59,8 @@ public class DiagnosisDescriptionProviderImpl implements DiagnosisDescriptionPro
         final var diagnosisDescriptionMap = new HashMap<String, String>();
         try (LineIterator it = IOUtils.lineIterator(resource.getInputStream(), StandardCharsets.ISO_8859_1)) {
             while (it.hasNext()) {
-                final String line = it.nextLine();
-                final var diagnosisCode = new DiagnosisFromFile(line, diagnosisDescriptionMap.size() == 0);
+                final String line = it.next();
+                final var diagnosisCode = new DiagnosisFromFile(line, diagnosisDescriptionMap.isEmpty());
                 if (diagnosisCode.getCode() != null) {
                     diagnosisDescriptionMap.put(diagnosisCode.getCode(), diagnosisCode.getName());
                 }

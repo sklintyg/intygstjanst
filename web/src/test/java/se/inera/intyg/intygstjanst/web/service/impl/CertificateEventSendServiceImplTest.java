@@ -28,12 +28,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
+import jakarta.xml.ws.soap.SOAPFaultException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import jakarta.xml.ws.soap.SOAPFaultException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -86,7 +85,7 @@ class CertificateEventSendServiceImplTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        decodedXml = Resources.toString(Resources.getResource(EXAMPLE_CERTIFICATE_FILE_PATH), Charsets.UTF_8);
+        decodedXml = Resources.toString(Resources.getResource(EXAMPLE_CERTIFICATE_FILE_PATH), StandardCharsets.UTF_8);
 
         xmlResponse = GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)

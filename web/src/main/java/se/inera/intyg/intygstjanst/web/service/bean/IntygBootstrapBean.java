@@ -18,12 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.web.service.bean;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -101,7 +101,7 @@ public class IntygBootstrapBean {
                 String intygMajorTypeVersion = resourceFilename.split("\\.", -1)[1];
                 LOG.info("Bootstrapping certificate '{}' from module {} (version {})", resource.getFilename(), moduleName,
                     intygMajorTypeVersion);
-                String xmlString = Resources.toString(resource.getURL(), Charsets.UTF_8);
+                String xmlString = Resources.toString(resource.getURL(), StandardCharsets.UTF_8);
 
                 ModuleApi moduleApi = moduleRegistry.getModuleApi(moduleName, intygMajorTypeVersion);
                 bootstrapCertificate(xmlString, moduleApi,
@@ -216,7 +216,7 @@ public class IntygBootstrapBean {
                 try {
                     Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
                     if (entityManager.find(Certificate.class, certificate.getId()) == null) {
-                        String contentString = Resources.toString(content.getURL(), Charsets.UTF_8);
+                        String contentString = Resources.toString(content.getURL(), StandardCharsets.UTF_8);
                         OriginalCertificate originalCertificate = new OriginalCertificate(certificate.getSignedDate(), contentString,
                             certificate);
 
@@ -263,7 +263,7 @@ public class IntygBootstrapBean {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     try {
-                        String contentString = Resources.toString(content.getURL(), Charsets.UTF_8);
+                        String contentString = Resources.toString(content.getURL(), StandardCharsets.UTF_8);
 
                         ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
                         Utlatande utlatande = moduleApi.getUtlatandeFromXml(contentString);

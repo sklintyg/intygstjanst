@@ -20,6 +20,7 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
@@ -47,12 +48,8 @@ public class DiagnosisChapterProviderImpl implements DiagnosisChapterProvider {
         Resource resource = resourceLoader.getResource(diagnosisChaptersFile);
 
         List<DiagnosKapitel> list = new ArrayList<>();
-        try (LineIterator it = IOUtils.lineIterator(resource.getInputStream(), "UTF-8")) {
-
-            while (it.hasNext()) {
-                final String line = it.nextLine();
-                list.add(new DiagnosKapitel(line));
-            }
+        try (LineIterator it = IOUtils.lineIterator(resource.getInputStream(), StandardCharsets.UTF_8)) {
+            it.forEachRemaining(line -> list.add(new DiagnosKapitel(line)));
         }
         return list;
     }
