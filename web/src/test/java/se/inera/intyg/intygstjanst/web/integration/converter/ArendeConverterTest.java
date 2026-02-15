@@ -23,7 +23,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -32,6 +31,7 @@ import jakarta.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -132,7 +132,7 @@ public class ArendeConverterTest {
     }
 
     private String loadXmlMessageFromFile() throws IOException {
-        String fileXml = Resources.toString(getResource(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML), Charsets.UTF_8);
+        String fileXml = Resources.toString(getResource(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML), StandardCharsets.UTF_8);
         return fileXml.replaceAll("[\\n\\t]", "");
     }
 

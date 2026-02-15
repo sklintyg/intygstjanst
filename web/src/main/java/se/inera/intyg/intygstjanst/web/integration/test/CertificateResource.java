@@ -18,7 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.test;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.io.Resources;
 import jakarta.persistence.EntityManager;
@@ -34,6 +33,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -353,7 +353,7 @@ public class CertificateResource {
             return certificateHolder.getOriginalCertificate();
         } else {
             return Resources.toString(new ClassPathResource("content/intyg-" + certificateHolder.getType() + "-content.xml").getURL(),
-                    Charsets.UTF_8)
+                    StandardCharsets.UTF_8)
                 .replace("CERTIFICATE_ID", certificateHolder.getId())
                 .replace("PATIENT_CRN", certificateHolder.getCivicRegistrationNumber().getPersonnummer())
                 .replace("CAREUNIT_ID", certificateHolder.getCareUnitId())

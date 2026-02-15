@@ -5,12 +5,12 @@ jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
 dependencies {
     implementation project(':intygstjanst-logging')
-    
+
     implementation "com.fasterxml.jackson.core:jackson-annotations"
-    implementation "com.google.guava:guava:${guavaVersion}"
-    implementation "com.h2database:h2"
+    implementation "com.google.guava:guava"
     implementation "com.zaxxer:HikariCP"
     implementation "jakarta.persistence:jakarta.persistence-api"
+    implementation "jakarta.xml.ws:jakarta.xml.ws-api"
     implementation "org.hibernate.orm:hibernate-core"
     implementation "org.hibernate.orm:hibernate-hikaricp"
     implementation "org.liquibase:liquibase-core"
@@ -18,5 +18,11 @@ dependencies {
     implementation "se.inera.intyg.common:common-support:${commonVersion}"
     implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
 
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation "junit:junit"
     testImplementation "org.springframework:spring-test"
+
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
+    testRuntimeOnly "com.h2database:h2"
 }
