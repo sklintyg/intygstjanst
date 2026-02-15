@@ -6,8 +6,6 @@ plugins {
 }
 
 ext {
-    intygBomVersion = '1.0.0.7'
-
     commonVersion = System.properties['commonVersion'] ?: '4.1.0-SNAPSHOT'
     infraVersion = System.properties['infraVersion'] ?: '4.1.0-SNAPSHOT'
     refDataVersion = '2.0.22'
