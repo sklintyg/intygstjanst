@@ -78,9 +78,13 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
             return Collections.emptyList();
         }
 
+        LOG.info("Active sickleave intygsIds: {}", intygData.stream().map(IntygData::getIntygId).toList());
+
         final var patientIds = intygData.stream()
             .map(IntygData::getPatientId)
             .collect(Collectors.toList());
+
+        LOG.info("Active sickleave patientIds: {}", patientIds);
 
         sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
         final var sjukfallEnhetList = getSickLeaveCertificates.get(
@@ -92,6 +96,14 @@ public class GetSickLeavesServiceImpl implements GetSickLeavesService {
             getSickLeaveServiceRequest.getProtectedPersonFilterId()
         );
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES, intygData.size()));
+
+        sjukfallEnhetList.forEach(sickLeave ->
+            LOG.info("Active sickleave for patient '{}' with active intyg '{}' with intygIds '{}'",
+                sickLeave.getPatient() == null ? "patient null" : sickLeave.getPatient().getId(),
+                sickLeave.getAktivIntygsId(),
+                sickLeave.getIntygLista()
+            )
+        );
 
         sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
         rekoStatusDecorator.decorate(sjukfallEnhetList, getSickLeaveServiceRequest.getCareUnitId());

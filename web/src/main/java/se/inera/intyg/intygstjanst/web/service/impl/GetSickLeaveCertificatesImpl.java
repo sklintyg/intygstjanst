@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
+import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ValidSickLeaveAggregator;
 import se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory;
@@ -76,9 +77,12 @@ public class GetSickLeaveCertificatesImpl implements GetSickLeaveCertificates {
             patientIds
         );
 
+        LOG.info("Sickleave certificates fetched from database {}", sjukfallCertificate.stream().map(SjukfallCertificate::getId));
+
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES_FROM_DB, sjukfallCertificate.size()));
 
         final var sjukfallCertificates = validSickLeaveAggregator.get(sjukfallCertificate);
+        LOG.info("Sickleave certificates validated in cs {}", sjukfallCertificate.stream().map(SjukfallCertificate::getId));
         final var intygDataList = intygDataConverter.convert(sjukfallCertificates);
 
         sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
