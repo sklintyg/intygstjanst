@@ -27,6 +27,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
@@ -77,16 +78,18 @@ public class GetSickLeaveCertificatesImpl implements GetSickLeaveCertificates {
             patientIds
         );
 
-        LOG.info("Sickleave certificates fetched from database {}", sjukfallCertificate.stream().map(SjukfallCertificate::getId));
+        LOG.info("Sickleave certificates fetched from database {}", sjukfallCertificate.stream().map(SjukfallCertificate::getId).toList());
 
         LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES_FROM_DB, sjukfallCertificate.size()));
 
         final var sjukfallCertificates = validSickLeaveAggregator.get(sjukfallCertificate);
-        LOG.info("Sickleave certificates validated in cs {}", sjukfallCertificate.stream().map(SjukfallCertificate::getId));
+        LOG.info("Sickleave certificates validated in cs {}", sjukfallCertificate.stream().map(SjukfallCertificate::getId).toList());
         final var intygDataList = intygDataConverter.convert(sjukfallCertificates);
 
         sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
         puFilterService.enrichWithPatientNameAndFilter(intygDataList, protectedPersonFilterId);
+        LOG.info("Sickleave certificates after filtering protected patients {}",
+            intygDataList.stream().map(IntygData::getIntygId).toList());
         LOG.info(sickLeaveLogMessageFactory.message(GET_AND_FILTER_PROTECTED_PATIENTS, intygDataList.size()));
 
         return sjukfallEngineService.beraknaSjukfallForEnhet(
