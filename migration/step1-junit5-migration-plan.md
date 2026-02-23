@@ -248,11 +248,11 @@ Run `./gradlew test` after every batch.
 
 > Final cleanup. After all test code is migrated, remove the bridge dependencies.
 
-- [ ] `persistence/build.gradle` — Remove `testImplementation "junit:junit"` and `testRuntimeOnly "org.junit.vintage:junit-vintage-engine""`
-- [ ] `persistence/build.gradle` — Add `testImplementation "org.junit.jupiter:junit-jupiter"` and
+- [x] `persistence/build.gradle` — Remove `testImplementation "junit:junit"` and `testRuntimeOnly "org.junit.vintage:junit-vintage-engine""`
+- [x] `persistence/build.gradle` — Add `testImplementation "org.junit.jupiter:junit-jupiter"` and
   `testImplementation "org.mockito:mockito-junit-jupiter"` (if not already inherited)
-- [ ] `web/build.gradle` — Remove `testRuntimeOnly "org.junit.vintage:junit-vintage-engine"`
-- [ ] Verify no file imports `org.junit.Test`, `org.junit.runner`, `org.junit.Before`, `org.junit.After`, `org.junit.Assert`, or
+- [x] `web/build.gradle` — Remove `testRuntimeOnly "org.junit.vintage:junit-vintage-engine"`
+- [x] Verify no file imports `org.junit.Test`, `org.junit.runner`, `org.junit.Before`, `org.junit.After`, `org.junit.Assert`, or
   `junit.framework`
 
 **Verify:**
@@ -397,16 +397,16 @@ public abstract class TestSupport { ...
 
 ## Progress Tracker
 
-| Batch     | Description                                  | Files                         | Status        |
-|-----------|----------------------------------------------|-------------------------------|---------------|
-| 0         | Logging module                               | 2                             | ✅ Done        |
-| 1         | Plain JUnit 4 tests (no runner)              | 7                             | ✅ Done        |
-| 2         | Plain JUnit 4 + @Before (no runner)          | 3                             | ✅ Done        |
-| 3         | Mockito runner — validators & stubs          | 8                             | ✅ Done        |
-| 4         | Mockito runner — integration responders pt 1 | 10                            | ✅ Done        |
-| 5         | Mockito runner — integration responders pt 2 | 14                            | ✅ Done        |
-| 6         | Mockito runner — service impl tests          | 12                            | ✅ Done        |
-| 7         | Spring integration tests — persistence       | 6+1                           | ✅ Done        |
-| 8         | Remove JUnit 4 deps from build.gradle        | 4                             | ⬜ Not started |
-| **Total** |                                              | **~60 files + 3 build files** |               |
+| Batch     | Description                                  | Files                         | Status |
+|-----------|----------------------------------------------|-------------------------------|--------|
+| 0         | Logging module                               | 2                             | ✅ Done |
+| 1         | Plain JUnit 4 tests (no runner)              | 7                             | ✅ Done |
+| 2         | Plain JUnit 4 + @Before (no runner)          | 3                             | ✅ Done |
+| 3         | Mockito runner — validators & stubs          | 8                             | ✅ Done |
+| 4         | Mockito runner — integration responders pt 1 | 10                            | ✅ Done |
+| 5         | Mockito runner — integration responders pt 2 | 14                            | ✅ Done |
+| 6         | Mockito runner — service impl tests          | 12                            | ✅ Done |
+| 7         | Spring integration tests — persistence       | 6+1                           | ✅ Done |
+| 8         | Remove JUnit 4 deps from build.gradle        | 4                             | ✅ Done |
+| **Total** |                                              | **~60 files + 3 build files** |        |
 
