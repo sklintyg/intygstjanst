@@ -204,18 +204,18 @@ Run `./gradlew test` after every batch.
 
 > Service layer tests. Includes the single `@After` case.
 
-- [ ] `web/.../service/impl/RecipientServiceImplTest.java` — Pattern B + `@Before`
-- [ ] `web/.../service/impl/CertificateSenderServiceImplTest.java` — Pattern B + `@Before`
-- [ ] `web/.../service/impl/CertificateServiceImplTest.java` — Pattern B + `@Before`
-- [ ] `web/.../service/impl/SjukfallCertificateServiceImplTest.java` — Pattern B
-- [ ] `web/.../service/impl/MessageServiceImplTest.java` — Pattern B
-- [ ] `web/.../service/impl/MonitoringLogServiceImplTest.java` — **Pattern C** (B + `@After` → `@AfterEach`)
-- [ ] `web/.../service/impl/IntygInfoServiceImplTest.java` — Pattern B + `@Before`
-- [ ] `web/.../service/impl/StatisticsServiceImplTest.java` — Pattern B
-- [ ] `web/.../service/impl/CertificateListServiceImplTest.java` — Pattern B
-- [ ] `web/.../service/impl/ArendeServiceImplTest.java` — Pattern B
-- [ ] `web/.../service/impl/InternalNotificationServiceImplTest.java` — Pattern B
-- [ ] `web/.../service/impl/TestCertificateServiceImplTest.java` — Pattern B + `@Before`
+- [x] `web/.../service/impl/RecipientServiceImplTest.java` — Pattern B + `@Before`
+- [x] `web/.../service/impl/CertificateSenderServiceImplTest.java` — Pattern B + `@Before`
+- [x] `web/.../service/impl/CertificateServiceImplTest.java` — Pattern B + `@Before`
+- [x] `web/.../service/impl/SjukfallCertificateServiceImplTest.java` — Pattern B
+- [x] `web/.../service/impl/MessageServiceImplTest.java` — Pattern B
+- [x] `web/.../service/impl/MonitoringLogServiceImplTest.java` — **Pattern C** (B + `@After` → `@AfterEach`)
+- [x] `web/.../service/impl/IntygInfoServiceImplTest.java` — Pattern B + `@Before`
+- [x] `web/.../service/impl/StatisticsServiceImplTest.java` — Pattern B
+- [x] `web/.../service/impl/CertificateListServiceImplTest.java` — Pattern B
+- [x] `web/.../service/impl/ArendeServiceImplTest.java` — Pattern B
+- [x] `web/.../service/impl/InternalNotificationServiceImplTest.java` — Pattern B
+- [x] `web/.../service/impl/TestCertificateServiceImplTest.java` — Pattern B + `@Before`
 
 **Verify:** `./gradlew test`
 
@@ -405,7 +405,7 @@ public abstract class TestSupport { ...
 | 3         | Mockito runner — validators & stubs          | 8                             | ✅ Done        |
 | 4         | Mockito runner — integration responders pt 1 | 10                            | ✅ Done        |
 | 5         | Mockito runner — integration responders pt 2 | 14                            | ✅ Done        |
-| 6         | Mockito runner — service impl tests          | 12                            | ⬜ Not started |
+| 6         | Mockito runner — service impl tests          | 12                            | ✅ Done        |
 | 7         | Spring integration tests — persistence       | 6+1                           | ⬜ Not started |
 | 8         | Remove JUnit 4 deps from build.gradle        | 4                             | ⬜ Not started |
 | **Total** |                                              | **~60 files + 3 build files** |               |

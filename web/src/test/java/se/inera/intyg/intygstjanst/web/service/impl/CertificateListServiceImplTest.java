@@ -18,7 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -28,11 +28,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.model.common.internal.GrundData;
 import se.inera.intyg.common.support.model.common.internal.HoSPersonal;
 import se.inera.intyg.infra.certificate.dto.CertificateListRequest;
@@ -41,8 +41,8 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CertificateListServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class CertificateListServiceImplTest {
 
     private static final String CERT_ID = "cert-123";
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.now().plusMonths(-1);
@@ -62,25 +62,26 @@ public class CertificateListServiceImplTest {
 
     private final GrundData basicData = mock(GrundData.class);
     private final HoSPersonal creatorOfCert = mock(HoSPersonal.class);
-    private static final Personnummer CIVIC_REGISTRATION_NUMBER = Personnummer.createPersonnummer(CIVIC_REGISTRATION_NUMBER_STRING).get();
+    private static final Personnummer CIVIC_REGISTRATION_NUMBER = Personnummer.createPersonnummer(CIVIC_REGISTRATION_NUMBER_STRING)
+        .orElseThrow();
 
     @Test
-    public void getEmptyListOfCertificates() {
+    void getEmptyListOfCertificates() {
         testGetCertificates(true, false);
     }
 
     @Test
-    public void getListOfCertificates() {
+    void getListOfCertificates() {
         testGetCertificates(false, false);
     }
 
     @Test
-    public void shouldUsePageSizeSetToNegativeAsTotalSizeOfList() {
+    void shouldUsePageSizeSetToNegativeAsTotalSizeOfList() {
         testGetCertificates(false, false, -1);
     }
 
     @Test
-    public void getSortedListOfCertificates() {
+    void getSortedListOfCertificates() {
         testGetCertificates(false, true);
     }
 
@@ -137,4 +138,3 @@ public class CertificateListServiceImplTest {
         return certificate;
     }
 }
-

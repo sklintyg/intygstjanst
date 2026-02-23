@@ -18,22 +18,22 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 
-@RunWith(MockitoJUnitRunner.class)
-public class MessageServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class MessageServiceImplTest {
 
     @Mock
     private ArendeRepository messageRepository;
@@ -42,7 +42,7 @@ public class MessageServiceImplTest {
     private MessageServiceImpl messageServiceImpl;
 
     @Test
-    public void testFindMessagesForCertificateIdFoundOne() {
+    void testFindMessagesForCertificateIdFoundOne() {
         final var certificateId = "certificateId";
         final var messageId = "messageId";
         final var messageContent = "messageContent";
@@ -66,16 +66,16 @@ public class MessageServiceImplTest {
 
         assertNotNull(actualMessages);
         assertEquals(messages.size(), actualMessages.size());
-        assertEquals(certificateId, actualMessages.get(0).getCertificateId());
-        assertEquals(messageId, actualMessages.get(0).getMessageId());
-        assertEquals(messageContent, actualMessages.get(0).getMessageContent());
-        assertEquals(subject, actualMessages.get(0).getSubject());
-        assertEquals(logicalAddress, actualMessages.get(0).getLogicalAddress());
-        assertEquals(timestamp, actualMessages.get(0).getTimestamp());
+        assertEquals(certificateId, actualMessages.getFirst().getCertificateId());
+        assertEquals(messageId, actualMessages.getFirst().getMessageId());
+        assertEquals(messageContent, actualMessages.getFirst().getMessageContent());
+        assertEquals(subject, actualMessages.getFirst().getSubject());
+        assertEquals(logicalAddress, actualMessages.getFirst().getLogicalAddress());
+        assertEquals(timestamp, actualMessages.getFirst().getTimestamp());
     }
 
     @Test
-    public void testFindMessagesForCertificateIdFoundNone() {
+    void testFindMessagesForCertificateIdFoundNone() {
         final var certificateId = "certificateId";
         final var messages = new ArrayList<Arende>();
 
@@ -88,7 +88,7 @@ public class MessageServiceImplTest {
     }
 
     @Test
-    public void testFindMessagesForCertificateIdFoundMany() {
+    void testFindMessagesForCertificateIdFoundMany() {
         final var certificateId = "certificateId";
         final var messageId = "messageId";
         final var messageContent = "messageContent";

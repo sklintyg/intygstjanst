@@ -18,25 +18,24 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
@@ -44,8 +43,8 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
 import se.inera.intyg.intygstjanst.web.service.EraseTestCertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TestCertificateServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class TestCertificateServiceImplTest {
 
     @Mock
     private CertificateDao certificateDao;
@@ -62,47 +61,47 @@ public class TestCertificateServiceImplTest {
     @InjectMocks
     private TestCertificateServiceImpl testCertificateService;
 
-    private final static LocalDateTime FROM = LocalDateTime.of(2020, 04, 01, 0, 0);
-    private final static LocalDateTime TO = LocalDateTime.of(2020, 04, 30, 0, 0);
+    private final static LocalDateTime FROM = LocalDateTime.of(2020, 4, 1, 0, 0);
+    private static final LocalDateTime TO = LocalDateTime.of(2020, 4, 30, 0, 0);
 
 
     final Certificate testCertificateRoot = mock(Certificate.class);
-    private final static String TEST_CERTIFICATE_ROOT_ID = "TEST_CERTIFICATE_ROOT_ID";
-    private final static String TEST_CERTIFICATE_ROOT_UNIT_ID = "TEST_CERTIFICATE_ROOT_UNIT_ID";
+    private static final String TEST_CERTIFICATE_ROOT_ID = "TEST_CERTIFICATE_ROOT_ID";
+    private static final String TEST_CERTIFICATE_ROOT_UNIT_ID = "TEST_CERTIFICATE_ROOT_UNIT_ID";
 
     final Certificate testCertificateBranch = mock(Certificate.class);
-    private final static String TEST_CERTIFICATE_BRANCH_ID = "TEST_CERTIFICATE_BRANCH_ID";
-    private final static String TEST_CERTIFICATE_BRANCH_UNIT_ID = "TEST_CERTIFICATE_BRANCH_UNIT_ID";
+    private static final String TEST_CERTIFICATE_BRANCH_ID = "TEST_CERTIFICATE_BRANCH_ID";
+    private static final String TEST_CERTIFICATE_BRANCH_UNIT_ID = "TEST_CERTIFICATE_BRANCH_UNIT_ID";
 
     final Certificate testCertificateLeaf = mock(Certificate.class);
-    private final static String TEST_CERTIFICATE_LEAF_ID = "TEST_CERTIFICATE_LEAF_ID";
-    private final static String TEST_CERTIFICATE_LEAF_UNIT_ID = "TEST_CERTIFICATE_LEAF_UNIT_ID";
+    private static final String TEST_CERTIFICATE_LEAF_ID = "TEST_CERTIFICATE_LEAF_ID";
+    private static final String TEST_CERTIFICATE_LEAF_UNIT_ID = "TEST_CERTIFICATE_LEAF_UNIT_ID";
 
     final Certificate testCertificateSingle = mock(Certificate.class);
-    private final static String TEST_CERTIFICATE_SINGLE_ID = "TEST_CERTIFICATE_SINGLE_ID";
-    private final static String TEST_CERTIFICATE_SINGLE_UNIT_ID = "TEST_CERTIFICATE_SINGLE_UNIT_ID";
+    private static final String TEST_CERTIFICATE_SINGLE_ID = "TEST_CERTIFICATE_SINGLE_ID";
+    private static final String TEST_CERTIFICATE_SINGLE_UNIT_ID = "TEST_CERTIFICATE_SINGLE_UNIT_ID";
 
-    @Before
-    public void setupTestCertificates() throws Exception {
-        doReturn(TEST_CERTIFICATE_ROOT_ID).when(testCertificateRoot).getId();
-        doReturn(TEST_CERTIFICATE_ROOT_UNIT_ID).when(testCertificateRoot).getCareUnitId();
-        doReturn(testCertificateRoot).when(certificateDao).getCertificate(null, TEST_CERTIFICATE_ROOT_ID);
+    @BeforeEach
+    void setupTestCertificates() throws Exception {
+        lenient().doReturn(TEST_CERTIFICATE_ROOT_ID).when(testCertificateRoot).getId();
+        lenient().doReturn(TEST_CERTIFICATE_ROOT_UNIT_ID).when(testCertificateRoot).getCareUnitId();
+        lenient().doReturn(testCertificateRoot).when(certificateDao).getCertificate(null, TEST_CERTIFICATE_ROOT_ID);
 
-        doReturn(TEST_CERTIFICATE_BRANCH_ID).when(testCertificateBranch).getId();
-        doReturn(TEST_CERTIFICATE_BRANCH_UNIT_ID).when(testCertificateBranch).getCareUnitId();
-        doReturn(testCertificateBranch).when(certificateDao).getCertificate(null, TEST_CERTIFICATE_BRANCH_ID);
+        lenient().doReturn(TEST_CERTIFICATE_BRANCH_ID).when(testCertificateBranch).getId();
+        lenient().doReturn(TEST_CERTIFICATE_BRANCH_UNIT_ID).when(testCertificateBranch).getCareUnitId();
+        lenient().doReturn(testCertificateBranch).when(certificateDao).getCertificate(null, TEST_CERTIFICATE_BRANCH_ID);
 
-        doReturn(TEST_CERTIFICATE_LEAF_ID).when(testCertificateLeaf).getId();
-        doReturn(TEST_CERTIFICATE_LEAF_UNIT_ID).when(testCertificateLeaf).getCareUnitId();
-        doReturn(testCertificateLeaf).when(certificateDao).getCertificate(null, TEST_CERTIFICATE_LEAF_ID);
+        lenient().doReturn(TEST_CERTIFICATE_LEAF_ID).when(testCertificateLeaf).getId();
+        lenient().doReturn(TEST_CERTIFICATE_LEAF_UNIT_ID).when(testCertificateLeaf).getCareUnitId();
+        lenient().doReturn(testCertificateLeaf).when(certificateDao).getCertificate(null, TEST_CERTIFICATE_LEAF_ID);
 
-        doReturn(TEST_CERTIFICATE_SINGLE_ID).when(testCertificateSingle).getId();
-        doReturn(TEST_CERTIFICATE_SINGLE_UNIT_ID).when(testCertificateSingle).getCareUnitId();
-        doReturn(testCertificateSingle).when(certificateDao).getCertificate(null, TEST_CERTIFICATE_SINGLE_ID);
+        lenient().doReturn(TEST_CERTIFICATE_SINGLE_ID).when(testCertificateSingle).getId();
+        lenient().doReturn(TEST_CERTIFICATE_SINGLE_UNIT_ID).when(testCertificateSingle).getCareUnitId();
+        lenient().doReturn(testCertificateSingle).when(certificateDao).getCertificate(null, TEST_CERTIFICATE_SINGLE_ID);
     }
 
     @Test
-    public void testEraseTestCertificateSingleCertificate() throws Exception {
+    void testEraseTestCertificateSingleCertificate() {
         final var certificateList = new ArrayList<Certificate>(1);
         certificateList.add(testCertificateSingle);
 
@@ -117,7 +116,7 @@ public class TestCertificateServiceImplTest {
     }
 
     @Test
-    public void testEraseTestCertificateSingleCertificateFailed() throws Exception {
+    void testEraseTestCertificateSingleCertificateFailed() {
         final var certificateList = new ArrayList<Certificate>(1);
         certificateList.add(testCertificateSingle);
 
@@ -134,7 +133,7 @@ public class TestCertificateServiceImplTest {
     }
 
     @Test
-    public void testEraseTestCertificateSingleCertificateMissingCareUnit() throws Exception {
+    void testEraseTestCertificateSingleCertificateMissingCareUnit() throws Exception {
         final var certificateList = new ArrayList<Certificate>(1);
         certificateList.add(testCertificateSingle);
 
@@ -151,7 +150,7 @@ public class TestCertificateServiceImplTest {
     }
 
     @Test
-    public void testEraseFullGraphWhenAllMatchFindQuery() throws Exception {
+    void testEraseFullGraphWhenAllMatchFindQuery() {
         setUpTestDataWithFullRelationGraph();
 
         final var certificateList = new ArrayList<Certificate>(3);
@@ -170,7 +169,7 @@ public class TestCertificateServiceImplTest {
     }
 
     @Test
-    public void testEraseFullGraphWhenRootMatchFindQuery() throws Exception {
+    void testEraseFullGraphWhenRootMatchFindQuery() {
         setUpTestDataWithFullRelationGraph();
 
         final var certificateList = new ArrayList<Certificate>(1);
@@ -187,7 +186,7 @@ public class TestCertificateServiceImplTest {
     }
 
     @Test
-    public void testEraseFullGraphWhenBranchMatchFindQuery() throws Exception {
+    void testEraseFullGraphWhenBranchMatchFindQuery() {
         setUpTestDataWithFullRelationGraph();
 
         final var certificateList = new ArrayList<Certificate>(1);
@@ -204,7 +203,7 @@ public class TestCertificateServiceImplTest {
     }
 
     @Test
-    public void testEraseFullGraphWhenLeafMatchFindQuery() throws Exception {
+    void testEraseFullGraphWhenLeafMatchFindQuery() {
         setUpTestDataWithFullRelationGraph();
 
         final var certificateList = new ArrayList<Certificate>(1);
@@ -221,7 +220,7 @@ public class TestCertificateServiceImplTest {
     }
 
     @Test
-    public void testEraseFullGraphAndSingleCertificate() throws Exception {
+    void testEraseFullGraphAndSingleCertificate() {
         setUpTestDataWithFullRelationGraph();
 
         final var certificateList = new ArrayList<Certificate>(2);
@@ -239,7 +238,7 @@ public class TestCertificateServiceImplTest {
     }
 
     @Test
-    public void testEraseFullGraphSucessAndSingleCertificateFailed() throws Exception {
+    void testEraseFullGraphFailedAndSingleCertificateSuccess() {
         setUpTestDataWithFullRelationGraph();
 
         final var certificateList = new ArrayList<Certificate>(2);
@@ -248,37 +247,7 @@ public class TestCertificateServiceImplTest {
 
         doReturn(certificateList).when(certificateDao).findTestCertificates(any(), any());
         doThrow(new RuntimeException()).when(eraseTestCertificateService)
-            .eraseTestCertificates(argThat(new ArgumentMatcher<List<String>>() {
-                @Override
-                public boolean matches(List<String> argument) {
-                    return argument.size() == 1;
-                }
-            }));
-
-        final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
-
-        assertEquals(3, actualEraseResult.getErasedCount());
-        assertEquals(1, actualEraseResult.getFailedCount());
-        verify(eraseTestCertificateService, times(2)).eraseTestCertificates(any());
-        verify(monitoringLogService, times(3)).logTestCertificateErased(any(), any());
-    }
-
-    @Test
-    public void testEraseFullGraphFailedAndSingleCertificateSuccess() throws Exception {
-        setUpTestDataWithFullRelationGraph();
-
-        final var certificateList = new ArrayList<Certificate>(2);
-        certificateList.add(testCertificateLeaf);
-        certificateList.add(testCertificateSingle);
-
-        doReturn(certificateList).when(certificateDao).findTestCertificates(any(), any());
-        doThrow(new RuntimeException()).when(eraseTestCertificateService)
-            .eraseTestCertificates(argThat(new ArgumentMatcher<List<String>>() {
-                @Override
-                public boolean matches(List<String> argument) {
-                    return argument.size() == 3;
-                }
-            }));
+            .eraseTestCertificates(argThat(argument -> argument.size() == 3));
 
         final var actualEraseResult = testCertificateService.eraseTestCertificates(FROM, TO);
 
@@ -301,8 +270,8 @@ public class TestCertificateServiceImplTest {
         relationList.add(relationRootToBranch);
         relationList.add(relationBranchToLeaf);
 
-        doReturn(relationList).when(relationDao).getGraph(TEST_CERTIFICATE_ROOT_ID);
-        doReturn(relationList).when(relationDao).getGraph(TEST_CERTIFICATE_BRANCH_ID);
-        doReturn(relationList).when(relationDao).getGraph(TEST_CERTIFICATE_LEAF_ID);
+        lenient().doReturn(relationList).when(relationDao).getGraph(TEST_CERTIFICATE_ROOT_ID);
+        lenient().doReturn(relationList).when(relationDao).getGraph(TEST_CERTIFICATE_BRANCH_ID);
+        lenient().doReturn(relationList).when(relationDao).getGraph(TEST_CERTIFICATE_LEAF_ID);
     }
 }

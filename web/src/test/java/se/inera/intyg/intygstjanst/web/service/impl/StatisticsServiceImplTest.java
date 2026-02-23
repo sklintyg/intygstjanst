@@ -18,8 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -35,12 +36,12 @@ import jakarta.jms.JMSException;
 import jakarta.jms.Queue;
 import jakarta.jms.Session;
 import jakarta.jms.TextMessage;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -49,8 +50,8 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 
-@RunWith(MockitoJUnitRunner.class)
-public class StatisticsServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class StatisticsServiceImplTest {
 
     @Mock
     private JmsTemplate template;
@@ -65,19 +66,19 @@ public class StatisticsServiceImplTest {
     private StatisticsServiceImpl serviceImpl;
 
     @Test
-    public void disabledServiceDoesNothingOnCreated() {
+    void disabledServiceDoesNothingOnCreated() {
         serviceImpl.created(null, null, null, null);
         verify(template, never()).send(any(Queue.class), any(MessageCreator.class));
     }
 
     @Test
-    public void disabledServiceDoesNothingOnRevoked() {
+    void disabledServiceDoesNothingOnRevoked() {
         serviceImpl.revoked(null, null, null, null);
         verify(template, never()).send(any(Queue.class), any(MessageCreator.class));
     }
 
     @Test
-    public void serviceSendsDocumentAndIdForCreate() throws JMSException {
+    void serviceSendsDocumentAndIdForCreate() throws JMSException {
         final String xml = "The document";
         final String id = "The id";
         final String type = "the type of the certificate";
@@ -105,7 +106,7 @@ public class StatisticsServiceImplTest {
     }
 
     @Test
-    public void serviceSendsCertificateSent() throws Exception {
+    void serviceSendsCertificateSent() throws Exception {
 
         final String action = "sent";
         final String xml = null;
@@ -130,16 +131,16 @@ public class StatisticsServiceImplTest {
         verify(template, only()).send(queue.capture(), messageCreator.capture());
         messageCreator.getValue().createMessage(session);
 
-        verify(message).setStringProperty(eq("action"), eq(action));
-        verify(message).setStringProperty(eq("certificate-id"), eq(id));
-        verify(message).setStringProperty(eq("certificate-type"), eq(type));
-        verify(message).setStringProperty(eq("certificate-recipient"), eq(recipient));
+        verify(message).setStringProperty("action", action);
+        verify(message).setStringProperty("certificate-id", id);
+        verify(message).setStringProperty("certificate-type", type);
+        verify(message).setStringProperty("certificate-recipient", recipient);
         verify(monitoringLogService, only()).logStatisticsSent(id, type, unit, recipient);
 
     }
 
     @Test
-    public void serviceSendsDocumentAndIdForRevoke() throws Exception {
+    void serviceSendsDocumentAndIdForRevoke() throws Exception {
         final String type = "lisjp";
         final String xmlBody = "xml body";
         final String id = "The id";
@@ -175,7 +176,7 @@ public class StatisticsServiceImplTest {
     }
 
     @Test
-    public void serviceSendsDocumentAndIdForMessageSent() throws Exception {
+    void serviceSendsDocumentAndIdForMessageSent() throws Exception {
         final String messageBody = "Message body";
         final String messageId = "This is the id of the message";
 
@@ -200,16 +201,16 @@ public class StatisticsServiceImplTest {
         verify(monitoringLogService, only()).logStatisticsMessageSent(messageId, "topic");
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testNoJmsTemplateConfigured() throws JMSException {
+    @Test
+    void testNoJmsTemplateConfigured() {
         ReflectionTestUtils.setField(serviceImpl, "jmsTemplate", null);
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
 
-        serviceImpl.created("The document", "The id", "luse", "unit");
+        assertThrows(NullPointerException.class, () -> serviceImpl.created("The document", "The id", "luse", "unit"));
     }
 
     @Test
-    public void testJmsTemplateThrowsJmsException() throws JMSException {
+    void testJmsTemplateThrowsJmsException() {
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
         doThrow(mock(JmsException.class)).when(template).send(any(Queue.class), any(MessageCreator.class));
 

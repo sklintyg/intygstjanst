@@ -25,19 +25,19 @@ import static org.mockito.Mockito.verify;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ArendeServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class ArendeServiceImplTest {
 
     private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML = "SendMessageToCareTest/sendmessagetocare.xml";
 
@@ -48,7 +48,7 @@ public class ArendeServiceImplTest {
     private ArendeRepository repository;
 
     @Test
-    public void testProcessIncomingSendMessageToCare() throws Exception {
+    void testProcessIncomingSendMessageToCare() throws Exception {
         Arende message = loadFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         service.processIncomingMessage(message);
         verify(repository, times(1)).save(any(Arende.class));
