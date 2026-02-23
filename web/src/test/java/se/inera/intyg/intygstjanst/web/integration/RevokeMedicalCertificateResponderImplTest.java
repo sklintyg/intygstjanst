@@ -18,7 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,14 +29,14 @@ import jakarta.xml.bind.Unmarshaller;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import javax.xml.transform.stream.StreamSource;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.w3.wsaddressing10.AttributedURIType;
@@ -60,8 +60,8 @@ import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RevokeMedicalCertificateResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class RevokeMedicalCertificateResponderImplTest {
 
     private static final String CERTIFICATE_ID = "intygs-id-1234567890";
     private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").orElseThrow();
@@ -94,8 +94,8 @@ public class RevokeMedicalCertificateResponderImplTest {
     @InjectMocks
     private RevokeMedicalCertificateResponderInterface responder = new RevokeMedicalCertificateResponderImpl();
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         ReflectionTestUtils.setField(hashUtility, "salt", "salt");
     }
 
@@ -120,7 +120,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeCertificateWhichWasAlreadySentToTransportstyrelsen() throws Exception {
+    void testRevokeCertificateWhichWasAlreadySentToTransportstyrelsen() throws Exception {
 
         Certificate certificate = new Certificate(CERTIFICATE_ID);
         CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(TRANSP, CertificateState.SENT, LocalDateTime.now());
@@ -139,7 +139,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeCertificateWhichWasNotSentToTransportstyrelsen() throws Exception {
+    void testRevokeCertificateWhichWasNotSentToTransportstyrelsen() throws Exception {
 
         Certificate certificate = new Certificate(CERTIFICATE_ID);
 
@@ -155,7 +155,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeCertificateIsNotSentToForsakringskassan() throws Exception {
+    void testRevokeCertificateIsNotSentToForsakringskassan() throws Exception {
 
         Certificate certificate = new Certificate(CERTIFICATE_ID);
         CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(FKASSA, CertificateState.SENT, LocalDateTime.now());
@@ -174,7 +174,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeUnknownCertificate() throws Exception {
+    void testRevokeUnknownCertificate() throws Exception {
         final var pnr = hashUtility.hash(PERSONNUMMER.getPersonnummer());
         when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID))
             .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, pnr));
@@ -190,7 +190,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeAlreadyRevokedCertificate() throws Exception {
+    void testRevokeAlreadyRevokedCertificate() throws Exception {
         when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenThrow(new CertificateRevokedException(CERTIFICATE_ID));
 
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, revokeRequest());
@@ -202,7 +202,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateSaknadPatient() throws Exception {
+    void testRevokeMedicalCertificateSaknadPatient() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getLakarutlatande().setPatient(null);
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -216,7 +216,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateSaknatIntygId() throws Exception {
+    void testRevokeMedicalCertificateSaknatIntygId() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getLakarutlatande().setLakarutlatandeId(null);
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -230,7 +230,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateTomtIntygId() throws Exception {
+    void testRevokeMedicalCertificateTomtIntygId() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getLakarutlatande().setLakarutlatandeId("");
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -244,7 +244,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateFelaktigPatientIdKod() throws Exception {
+    void testRevokeMedicalCertificateFelaktigPatientIdKod() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getLakarutlatande().getPatient().getPersonId().setRoot("invalid");
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -259,7 +259,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateFelaktigPatientId() throws Exception {
+    void testRevokeMedicalCertificateFelaktigPatientId() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getLakarutlatande().getPatient().getPersonId().setExtension("invalid");
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -274,7 +274,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificatePatientIdUtanSekelsiffror() throws Exception {
+    void testRevokeMedicalCertificatePatientIdUtanSekelsiffror() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getLakarutlatande().getPatient().getPersonId().setExtension("121212-1212");
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -289,7 +289,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificatePatientIdUtanBindestreckKorrigeras() throws Exception {
+    void testRevokeMedicalCertificatePatientIdUtanBindestreckKorrigeras() throws Exception {
         RevokeMedicalCertificateRequestType request = revokeRequest();
         request.getRevoke().getLakarutlatande().getPatient().getPersonId().setExtension("191212121212");
         when(certificateService.revokeCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new Certificate(CERTIFICATE_ID));
@@ -300,7 +300,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateSaknatSigneringsdatum() throws Exception {
+    void testRevokeMedicalCertificateSaknatSigneringsdatum() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getLakarutlatande().setSigneringsTidpunkt(null);
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -314,7 +314,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateSaknadVardreferens() throws Exception {
+    void testRevokeMedicalCertificateSaknadVardreferens() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().setVardReferensId(null);
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -328,7 +328,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateSaknatAvsantTidpunkt() throws Exception {
+    void testRevokeMedicalCertificateSaknatAvsantTidpunkt() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().setAvsantTidpunkt(null);
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -342,7 +342,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateSaknatAdressVard() throws Exception {
+    void testRevokeMedicalCertificateSaknatAdressVard() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().setAdressVard(null);
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -356,7 +356,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateSaknadHosPersonal() throws Exception {
+    void testRevokeMedicalCertificateSaknadHosPersonal() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getAdressVard().setHosPersonal(null);
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -370,7 +370,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateFelaktigPersonalIdKod() throws Exception {
+    void testRevokeMedicalCertificateFelaktigPersonalIdKod() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getAdressVard().getHosPersonal().getPersonalId().setRoot("invalid");
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -385,7 +385,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateTomtPersonalId() throws Exception {
+    void testRevokeMedicalCertificateTomtPersonalId() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getAdressVard().getHosPersonal().getPersonalId().setExtension("");
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -399,7 +399,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateSaknadEnhet() throws Exception {
+    void testRevokeMedicalCertificateSaknadEnhet() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getAdressVard().getHosPersonal().setEnhet(null);
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -413,7 +413,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateSaknadEnhetId() throws Exception {
+    void testRevokeMedicalCertificateSaknadEnhetId() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getAdressVard().getHosPersonal().getEnhet().setEnhetsId(null);
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -428,7 +428,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateFelaktigEnhetIdKod() throws Exception {
+    void testRevokeMedicalCertificateFelaktigEnhetIdKod() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getAdressVard().getHosPersonal().getEnhet().getEnhetsId().setRoot("invalid");
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -443,7 +443,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateTomtEnhetId() throws Exception {
+    void testRevokeMedicalCertificateTomtEnhetId() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getAdressVard().getHosPersonal().getEnhet().getEnhetsId().setExtension("");
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -457,7 +457,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateSaknatEnhetnamn() throws Exception {
+    void testRevokeMedicalCertificateSaknatEnhetnamn() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getAdressVard().getHosPersonal().getEnhet().setEnhetsnamn(null);
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -471,7 +471,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateSaknadVardgivare() throws Exception {
+    void testRevokeMedicalCertificateSaknadVardgivare() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getAdressVard().getHosPersonal().getEnhet().setVardgivare(null);
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -485,7 +485,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateSaknatVardgivareId() throws Exception {
+    void testRevokeMedicalCertificateSaknadVardgivareId() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getAdressVard().getHosPersonal().getEnhet().getVardgivare().setVardgivareId(null);
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -500,7 +500,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateFelaktigVardgivareIdKod() throws Exception {
+    void testRevokeMedicalCertificateFelaktigVardgivareIdKod() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getAdressVard().getHosPersonal().getEnhet().getVardgivare().getVardgivareId().setRoot("invalid");
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -515,7 +515,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateTomtVardgivareId() throws Exception {
+    void testRevokeMedicalCertificateTomtVardgivareId() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getAdressVard().getHosPersonal().getEnhet().getVardgivare().getVardgivareId().setExtension("");
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);
@@ -529,7 +529,7 @@ public class RevokeMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeMedicalCertificateSaknatVardgivarenamn() throws Exception {
+    void testRevokeMedicalCertificateSaknatVardgivarenamn() throws Exception {
         RevokeMedicalCertificateRequestType invalidRequest = revokeRequest();
         invalidRequest.getRevoke().getAdressVard().getHosPersonal().getEnhet().getVardgivare().setVardgivarnamn(null);
         RevokeMedicalCertificateResponseType response = responder.revokeMedicalCertificate(ADDRESS, invalidRequest);

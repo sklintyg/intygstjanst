@@ -162,16 +162,16 @@ Run `./gradlew test` after every batch.
 
 > The `vardensintyg`, `v2`, `v3`, `v4`, and main integration responder tests.
 
-- [ ] `web/.../integration/vardensintyg/ListApprovedReceiversResponderImplTest.java` — Pattern B
-- [ ] `web/.../integration/v2/SetCertificateStatusResponderImplTest.java` — Pattern B + `@Before`
-- [ ] `web/.../integration/v2/GetCertificateResponderImplTest.java` — Pattern B
-- [ ] `web/.../integration/v3/ListCertificatesForCitizenResponderImplTest.java` — Pattern B + `@Before`
-- [ ] `web/.../integration/v3/ListCertificatesForCareResponderImplTest.java` — Pattern B + `@Before`
-- [ ] `web/.../integration/v4/ListCertificatesForCitizenResponderImplTest.java` — Pattern B + `@Before`
-- [ ] `web/.../integration/ListSickLeavesForCareResponderImplTest.java` — Pattern B + `@Before`
-- [ ] `web/.../integration/RevokeCertificateResponderImplTest.java` — Pattern B + `@Before`
-- [ ] `web/.../integration/RevokeMedicalCertificateResponderImplTest.java` — Pattern B + `@Before`
-- [ ] `web/.../integration/SendMessageToRecipientResponderImplTest.java` — Pattern B + `@Before`
+- [x] `web/.../integration/vardensintyg/ListApprovedReceiversResponderImplTest.java` — Pattern B
+- [x] `web/.../integration/v2/SetCertificateStatusResponderImplTest.java` — Pattern B + `@Before`
+- [x] `web/.../integration/v2/GetCertificateResponderImplTest.java` — Pattern B
+- [x] `web/.../integration/v3/ListCertificatesForCitizenResponderImplTest.java` — Pattern B + `@Before`
+- [x] `web/.../integration/v3/ListCertificatesForCareResponderImplTest.java` — Pattern B + `@Before`
+- [x] `web/.../integration/v4/ListCertificatesForCitizenResponderImplTest.java` — Pattern B + `@Before`
+- [x] `web/.../integration/ListSickLeavesForCareResponderImplTest.java` — Pattern B + `@Before`
+- [x] `web/.../integration/RevokeCertificateResponderImplTest.java` — Pattern B + `@Before`
+- [x] `web/.../integration/RevokeMedicalCertificateResponderImplTest.java` — Pattern B + `@Before`
+- [x] `web/.../integration/SendMessageToRecipientResponderImplTest.java` — Pattern B + `@Before`
 
 **Verify:** `./gradlew test`
 
@@ -403,7 +403,7 @@ public abstract class TestSupport { ...
 | 1         | Plain JUnit 4 tests (no runner)              | 7                             | ✅ Done        |
 | 2         | Plain JUnit 4 + @Before (no runner)          | 3                             | ✅ Done        |
 | 3         | Mockito runner — validators & stubs          | 8                             | ✅ Done        |
-| 4         | Mockito runner — integration responders pt 1 | 10                            | ⬜ Not started |
+| 4         | Mockito runner — integration responders pt 1 | 10                            | ✅ Done        |
 | 5         | Mockito runner — integration responders pt 2 | 14                            | ⬜ Not started |
 | 6         | Mockito runner — service impl tests          | 12                            | ⬜ Not started |
 | 7         | Spring integration tests — persistence       | 6+1                           | ⬜ Not started |

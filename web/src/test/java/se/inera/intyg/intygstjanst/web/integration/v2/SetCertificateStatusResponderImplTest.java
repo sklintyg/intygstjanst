@@ -18,21 +18,21 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v2;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
@@ -48,8 +48,8 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.Part;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Statuskod;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SetCertificateStatusResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class SetCertificateStatusResponderImplTest {
 
     private static final Recipient FKASSA =
         new RecipientBuilder()
@@ -73,14 +73,14 @@ public class SetCertificateStatusResponderImplTest {
     @InjectMocks
     private SetCertificateStatusResponderInterface responder = new SetCertificateStatusResponderImpl();
 
-    @Before
-    public void setupRecipientService() throws RecipientUnknownException {
-        when(recipientService.getRecipient(eq("FKASSA"))).thenReturn(FKASSA);
-        when(recipientService.getRecipient(eq("part"))).thenThrow(new RecipientUnknownException("Unknown"));
+    @BeforeEach
+    void setupRecipientService() throws RecipientUnknownException {
+        lenient().when(recipientService.getRecipient(eq("FKASSA"))).thenReturn(FKASSA);
+        lenient().when(recipientService.getRecipient(eq("part"))).thenThrow(new RecipientUnknownException("Unknown"));
     }
 
     @Test
-    public void setCertificateStatusTest() throws Exception {
+    void setCertificateStatusTest() throws Exception {
         final String intygId = "intygId";
         final LocalDateTime timestamp = LocalDateTime.now();
         SetCertificateStatusType request = createRequest(intygId, "FKASSA", "SENTTO", timestamp);
@@ -92,7 +92,7 @@ public class SetCertificateStatusResponderImplTest {
     }
 
     @Test
-    public void setCertificateStatusIllegalRecipientTest() throws Exception {
+    void setCertificateStatusIllegalRecipientTest() throws Exception {
         final String intygId = "intygId";
         final LocalDateTime timestamp = LocalDateTime.now();
         SetCertificateStatusType request = createRequest(intygId, "part", "SENTTO", timestamp);
@@ -105,7 +105,7 @@ public class SetCertificateStatusResponderImplTest {
     }
 
     @Test
-    public void setCertificateStatusIllegalStatusTest() throws Exception {
+    void setCertificateStatusIllegalStatusTest() throws Exception {
         final String intygId = "intygId";
         final LocalDateTime timestamp = LocalDateTime.now();
         SetCertificateStatusType request = createRequest(intygId, "FKASSA", "SENT", timestamp);
