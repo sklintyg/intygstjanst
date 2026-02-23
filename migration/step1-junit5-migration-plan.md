@@ -228,17 +228,17 @@ Run `./gradlew test` after every batch.
 
 **Step 7a — Migrate TestSupport base class:**
 
-- [ ] `persistence/.../dao/impl/TestSupport.java` — **Pattern D**: Replace `@RunWith(SpringJUnit4ClassRunner.class)` →
+- [x] `persistence/.../dao/impl/TestSupport.java` — **Pattern D**: Replace `@RunWith(SpringJUnit4ClassRunner.class)` →
   `@ExtendWith(SpringExtension.class)`
 
 **Step 7b — Migrate all subclasses (they inherit the extension from TestSupport):**
 
-- [ ] `persistence/.../dao/impl/CertificateDaoImplTest.java` — Change `@Test` + `Assert` imports
-- [ ] `persistence/.../dao/impl/RelationDaoImplTest.java` — Change `@Test` + `Assert` imports
-- [ ] `persistence/.../dao/impl/SjukfallCertificateDaoImplTest.java` — Change `@Test` + `Assert` imports
-- [ ] `persistence/.../dao/impl/ArendeRepositoryTest.java` — Change `@Test` + `Assert` imports
-- [ ] `persistence/.../dao/impl/ApprovedReceiverDaoImplTest.java` — Change `@Test` + `Assert` imports
-- [ ] `persistence/.../dao/impl/RekoRepositoryTest.java` — Change `@Test` + `Assert` imports
+- [x] `persistence/.../dao/impl/CertificateDaoImplTest.java` — Change `@Test` + `Assert` imports
+- [x] `persistence/.../dao/impl/RelationDaoImplTest.java` — Change `@Test` + `Assert` imports
+- [x] `persistence/.../dao/impl/SjukfallCertificateDaoImplTest.java` — Change `@Test` + `Assert` imports
+- [x] `persistence/.../dao/impl/ArendeRepositoryTest.java` — Change `@Test` + `Assert` imports
+- [x] `persistence/.../dao/impl/ApprovedReceiverDaoImplTest.java` — Change `@Test` + `Assert` imports
+- [x] `persistence/.../dao/impl/RekoRepositoryTest.java` — Change `@Test` + `Assert` imports
 
 **Verify:** `./gradlew test` (especially `:intygstjanst-persistence:test`)
 
@@ -406,7 +406,7 @@ public abstract class TestSupport { ...
 | 4         | Mockito runner — integration responders pt 1 | 10                            | ✅ Done        |
 | 5         | Mockito runner — integration responders pt 2 | 14                            | ✅ Done        |
 | 6         | Mockito runner — service impl tests          | 12                            | ✅ Done        |
-| 7         | Spring integration tests — persistence       | 6+1                           | ⬜ Not started |
+| 7         | Spring integration tests — persistence       | 6+1                           | ✅ Done        |
 | 8         | Remove JUnit 4 deps from build.gradle        | 4                             | ⬜ Not started |
 | **Total** |                                              | **~60 files + 3 build files** |               |
 

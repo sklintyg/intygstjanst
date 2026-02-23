@@ -19,18 +19,16 @@
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
 import java.time.LocalDateTime;
-
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-
 import se.inera.intyg.intygstjanst.persistence.TestConfig;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
 @ActiveProfiles({"dev"})
 @Transactional
@@ -38,11 +36,10 @@ public abstract class TestSupport {
 
     public static final LocalDateTime SIGNED_DATE = LocalDateTime.of(1999, 12, 31, 10, 32);
 
-    public static final Personnummer CIVIC_REGISTRATION_NUMBER = Personnummer.createPersonnummer("19001122-3344").get();
-    public static final Personnummer CIVIC_REGISTRATION_NUMBER_NO_DASH = Personnummer.createPersonnummer("190011223344").get();
+    public static final Personnummer CIVIC_REGISTRATION_NUMBER = Personnummer.createPersonnummer("19001122-3344").orElseThrow();
+    public static final Personnummer CIVIC_REGISTRATION_NUMBER_NO_DASH = Personnummer.createPersonnummer("190011223344").orElseThrow();
 
     public static final String CERTIFICATE_ID = "123456";
-    public static final String CERTIFICATE_DOCUMENT = "{\"name\":\"Some JSON\"}";
     public static final String FK7263 = "fk7263";
     public static final String SIGNING_DOCTOR = "Dr. Oetker";
     public static final String CARE_UNIT_ID = "1.2.3.4.5.6";

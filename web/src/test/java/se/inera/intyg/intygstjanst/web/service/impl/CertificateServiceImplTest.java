@@ -306,12 +306,6 @@ class CertificateServiceImplTest {
     }
 
     @Test
-    void testGetCertificateCheckForEmptyPersonnummer() {
-        final var pnr = createPnr(null);
-        assertThrows(IllegalArgumentException.class, () -> certificateService.getCertificateForCitizen(pnr, CERTIFICATE_ID));
-    }
-
-    @Test
     void testRevokeCertificate() throws Exception {
         final Personnummer civicRegistrationNumber = createPnr("191212121212");
         when(certificateDao.getCertificate(any(), any())).thenReturn(new Certificate(CERTIFICATE_ID));

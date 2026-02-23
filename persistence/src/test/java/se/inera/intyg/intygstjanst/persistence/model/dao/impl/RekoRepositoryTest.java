@@ -25,13 +25,13 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RekoRepository;
 
-public class RekoRepositoryTest extends TestSupport {
+class RekoRepositoryTest extends TestSupport {
 
     private static final String PATIENT_ID_1 = "patientId1";
     private static final String PATIENT_ID_2 = "patientId2";
@@ -48,7 +48,7 @@ public class RekoRepositoryTest extends TestSupport {
     private RekoRepository rekoRepository;
 
     @Test
-    public void shouldFindByPatientId() {
+    void shouldFindByPatientId() {
         final var expectedResult = getReko(PATIENT_ID_1, CARE_UNIT_ID_1, LocalDateTime.now());
         final var rekoWithWrongPatientId = getReko(PATIENT_ID_2, CARE_UNIT_ID_1, LocalDateTime.now());
         rekoRepository.save(expectedResult);
@@ -57,11 +57,11 @@ public class RekoRepositoryTest extends TestSupport {
         final var result = rekoRepository.findByPatientId(expectedResult.getPatientId());
 
         assertEquals(1, result.size());
-        assertEquals(expectedResult, result.get(0));
+        assertEquals(expectedResult, result.getFirst());
     }
 
     @Test
-    public void shouldFindByPatientIds() {
+    void shouldFindByPatientIds() {
         final var expectedResult = List.of(
             getReko(PATIENT_ID_1, CARE_UNIT_ID_1, LocalDateTime.now()),
             getReko(PATIENT_ID_1, CARE_UNIT_ID_1, LocalDateTime.now()),
@@ -79,7 +79,7 @@ public class RekoRepositoryTest extends TestSupport {
     }
 
     @Test
-    public void shouldFindByPatientIdsAndCareUnitId() {
+    void shouldFindByPatientIdsAndCareUnitId() {
         final var expectedResult =
             List.of(
                 getReko(PATIENT_ID_1, CARE_UNIT_ID_1, LocalDateTime.now()),
@@ -97,12 +97,12 @@ public class RekoRepositoryTest extends TestSupport {
             ),
             CARE_UNIT_ID_1
         );
-        assertEquals(expectedResult.get(0), actualResult.get(0));
+        assertEquals(expectedResult.get(0), actualResult.getFirst());
         assertEquals(1, actualResult.size());
     }
 
     @Test
-    public void shouldFindByPatientIdAndCareUnitId() {
+    void shouldFindByPatientIdAndCareUnitId() {
         final var rekoStatuses =
             List.of(
                 getReko(PATIENT_ID_1, CARE_UNIT_ID_1, LocalDateTime.now()),
@@ -115,7 +115,7 @@ public class RekoRepositoryTest extends TestSupport {
         rekoRepository.save(rekoStatuses.get(1));
         rekoRepository.save(rekoStatuses.get(2));
         final var response = rekoRepository.findByPatientIdAndCareUnitId(PATIENT_ID_1, CARE_UNIT_ID_1);
-        assertEquals(rekoStatuses.get(0), response.get(0));
+        assertEquals(rekoStatuses.get(0), response.getFirst());
         assertEquals(1, response.size());
     }
 
