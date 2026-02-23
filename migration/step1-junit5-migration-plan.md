@@ -133,9 +133,9 @@ Run `./gradlew test` after every batch.
 
 > Tests that instantiate objects manually in `@Before`, no Mockito runner.
 
-- [ ] `web/.../integration/validator/LakarutlatandeEnkelTypeValidatorTest.java` — Pattern A + `@Before`
-- [ ] `web/.../service/converter/CertificateToDiagnosedCertificateConverterTest.java` — Pattern A
-- [ ] `web/.../integration/validator/SendCertificateRequestValidatorTest.java` — Pattern A / B (check runner)
+- [x] `web/.../integration/validator/LakarutlatandeEnkelTypeValidatorTest.java` — Pattern A + `@Before`
+- [x] `web/.../service/converter/CertificateToDiagnosedCertificateConverterTest.java` — Pattern A
+- [x] `web/.../integration/validator/SendCertificateRequestValidatorTest.java` — Pattern A / B (check runner)
 
 **Verify:** `./gradlew test`
 
@@ -401,7 +401,7 @@ public abstract class TestSupport { ...
 |-----------|----------------------------------------------|-------------------------------|---------------|
 | 0         | Logging module                               | 2                             | ✅ Done        |
 | 1         | Plain JUnit 4 tests (no runner)              | 7                             | ✅ Done        |
-| 2         | Plain JUnit 4 + @Before (no runner)          | 3                             | ⬜ Not started |
+| 2         | Plain JUnit 4 + @Before (no runner)          | 3                             | ✅ Done        |
 | 3         | Mockito runner — validators & stubs          | 8                             | ⬜ Not started |
 | 4         | Mockito runner — integration responders pt 1 | 10                            | ⬜ Not started |
 | 5         | Mockito runner — integration responders pt 2 | 14                            | ⬜ Not started |

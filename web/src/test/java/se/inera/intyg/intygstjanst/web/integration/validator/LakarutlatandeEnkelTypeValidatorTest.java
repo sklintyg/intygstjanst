@@ -18,20 +18,19 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import iso.v21090.dt.v1.II;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
 
-
-public class LakarutlatandeEnkelTypeValidatorTest {
+class LakarutlatandeEnkelTypeValidatorTest {
 
     private LakarutlatandeEnkelType lakarutlatande;
     private PatientType patient;
@@ -39,8 +38,8 @@ public class LakarutlatandeEnkelTypeValidatorTest {
     private List<String> errors;
     private LakarutlatandeEnkelTypeValidator validator;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         lakarutlatande = new LakarutlatandeEnkelType();
         lakarutlatande.setLakarutlatandeId("id");
         lakarutlatande.setSigneringsTidpunkt(LocalDateTime.now());
@@ -56,7 +55,7 @@ public class LakarutlatandeEnkelTypeValidatorTest {
     }
 
     @Test
-    public void testErrorsOnEmtpyCertificate() {
+    void testErrorsOnEmtpyCertificate() {
         lakarutlatande.setLakarutlatandeId(null);
         lakarutlatande.setSigneringsTidpunkt(null);
         lakarutlatande.setPatient(null);
@@ -67,26 +66,17 @@ public class LakarutlatandeEnkelTypeValidatorTest {
     }
 
     @Test
-    public void testInvalidPatientIdExtension() {
+    void testInvalidPatientIdExtension() {
         patientId.setExtension("19121212-121X");
         validator.validateAndCorrect();
         assertTrue(errors.contains("Wrong format for person-id! Valid format is YYYYMMDD-XXXX or YYYYMMDD+XXXX."));
     }
 
     @Test
-    public void testDashInPatientIdExtensionIsCorrected() {
+    void testDashInPatientIdExtensionIsCorrected() {
         patientId.setExtension("191212121212");
         validator.validateAndCorrect();
         assertTrue(errors.isEmpty());
         assertEquals("19121212-1212", patientId.getExtension());
     }
-
-    // INTYG-4086, namn skall ej längre skickas med.
-//    @Test
-//    public void testMissingFullstandigtNamn() {
-//        patient.setFullstandigtNamn(null);
-//        validator.validateAndCorrect();
-//        assertTrue(errors.contains("No Patient fullstandigtNamn elements found or set!"));
-//    }
-
 }
