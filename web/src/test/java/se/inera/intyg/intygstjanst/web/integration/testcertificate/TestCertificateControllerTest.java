@@ -18,25 +18,25 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.testcertificate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import jakarta.ws.rs.core.Response;
 import java.time.LocalDateTime;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.testcertificate.dto.TestCertificateEraseRequest;
 import se.inera.intyg.infra.testcertificate.dto.TestCertificateEraseResult;
 import se.inera.intyg.intygstjanst.web.service.TestCertificateService;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TestCertificateControllerTest {
+@ExtendWith(MockitoExtension.class)
+class TestCertificateControllerTest {
 
     @Mock
     private TestCertificateService testCertificateService;
@@ -45,7 +45,7 @@ public class TestCertificateControllerTest {
     private TestCertificateController testCertificateController;
 
     @Test
-    public void testEraseTestCertificateSuccessful() throws Exception {
+    void testEraseTestCertificateSuccessful() {
         final var testCertificateEraseRequest = new TestCertificateEraseRequest();
         testCertificateEraseRequest.setFrom(null);
         testCertificateEraseRequest.setTo(LocalDateTime.now());
@@ -62,7 +62,7 @@ public class TestCertificateControllerTest {
     }
 
     @Test
-    public void testEraseTestCertificateMissingToDate() throws Exception {
+    void testEraseTestCertificateMissingToDate() {
         final var testCertificateEraseRequest = new TestCertificateEraseRequest();
         testCertificateEraseRequest.setFrom(null);
         testCertificateEraseRequest.setTo(null);
@@ -74,7 +74,7 @@ public class TestCertificateControllerTest {
     }
 
     @Test
-    public void testEraseTestCertificateIncorrectDateRange() throws Exception {
+    void testEraseTestCertificateIncorrectDateRange() {
         final var testCertificateEraseRequest = new TestCertificateEraseRequest();
         testCertificateEraseRequest.setFrom(LocalDateTime.now());
         testCertificateEraseRequest.setTo(testCertificateEraseRequest.getFrom().minusDays(1));

@@ -18,8 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -28,13 +28,15 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.test.util.ReflectionTestUtils;
 import se.inera.ifv.insuranceprocess.certificate.v1.StatusType;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtabp20.v1.SetCertificateStatusResponderInterface;
@@ -55,8 +57,9 @@ import se.inera.intyg.schemas.contract.Personnummer;
 /**
  * @author andreaskaltenbach
  */
-@RunWith(MockitoJUnitRunner.class)
-public class SetCertificateStatusResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+class SetCertificateStatusResponderImplTest {
 
     private static final String CERTIFICATE_ID = "no5";
     private static final String RECIPIENT_FKASSA = "FKASSA";
@@ -77,8 +80,8 @@ public class SetCertificateStatusResponderImplTest {
     @InjectMocks
     private SetCertificateStatusResponderInterface responder = new SetCertificateStatusResponderImpl();
 
-    @Before
-    public void init() throws RecipientUnknownException {
+    @BeforeEach
+    void init() throws RecipientUnknownException {
         ReflectionTestUtils.setField(hashUtility, "salt", "salt");
         Recipient recipient = new Recipient("logicalAddress", "name", RECIPIENT_FKASSA, CertificateRecipientType.HUVUDMOTTAGARE.name(),
             "fk7263", true, true);
@@ -88,7 +91,7 @@ public class SetCertificateStatusResponderImplTest {
     }
 
     @Test
-    public void testSetCertificateStatus() throws Exception {
+    void testSetCertificateStatus() throws Exception {
 
         LocalDateTime timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
 
@@ -109,7 +112,7 @@ public class SetCertificateStatusResponderImplTest {
     }
 
     @Test
-    public void testSetCertificateStatusLegacyTarget() throws Exception {
+    void testSetCertificateStatusLegacyTarget() throws Exception {
 
         LocalDateTime timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
 
@@ -131,7 +134,7 @@ public class SetCertificateStatusResponderImplTest {
     }
 
     @Test
-    public void testSetCertificateStatusUnexpectedTarget() {
+    void testSetCertificateStatusUnexpectedTarget() {
         LocalDateTime timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
 
         SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
@@ -151,7 +154,7 @@ public class SetCertificateStatusResponderImplTest {
     }
 
     @Test
-    public void testSetCertificateStatusInvalidCertificate() throws Exception {
+    void testSetCertificateStatusInvalidCertificate() throws Exception {
         final var timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
         final var pnr = "19001122-3344";
         doThrow(new InvalidCertificateException(CERTIFICATE_ID, hashUtility.hash(createPnr(pnr).getPersonnummer())))

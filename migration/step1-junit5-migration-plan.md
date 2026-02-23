@@ -177,24 +177,24 @@ Run `./gradlew test` after every batch.
 
 ---
 
-### Batch 5: Mockito runner — integration responder tests part 2 *(Pattern B/E — 11 files)*
+### Batch 5: Mockito runner — integration responder tests part 2 *(Pattern B/E — 14 files)*
 
 > Remaining integration layer tests, including the `junit.framework` edge case.
 
-- [ ] `web/.../integration/SendMedicalCertificateResponderImplTest.java` — Pattern B
-- [ ] `web/.../integration/SendMessageToCareResponderImplTest.java` — Pattern B
-- [ ] `web/.../integration/GetRecipientsForCertificateResponderImplTest.java` — Pattern B
-- [ ] `web/.../integration/GetCertificateTypeInfoResponderImplTest.java` — Pattern B
-- [ ] `web/.../integration/ListCertificatesResponderImplTest.java` — Pattern B
-- [ ] `web/.../integration/ListKnownRecipientsResponderImplTest.java` — Pattern B
-- [ ] `web/.../integration/SetCertificateStatusResponderImplTest.java` — Pattern B + `@Before`
-- [ ] `web/.../integration/RegisterCertificateResponderImplTest.java` — Pattern B + `@Before`
-- [ ] `web/.../integration/CitizenControllerTest.java` — Pattern B + **Pattern E** (`junit.framework` imports)
-- [ ] `web/.../integration/test/CertificateResourceTest.java` — Pattern B + `@Before` + `import org.junit.Assert` (non-static)
-- [ ] `web/.../integration/testcertificate/TestCertificateControllerTest.java` — Pattern B
-- [ ] `web/.../integration/rehabstod/ListSickLeavesForPersonResponderImplTest.java` — Pattern B
-- [ ] `web/.../integration/rehabstod/ListActiveSickLeavesForCareUnitResponderImplTest.java` — Pattern B + `@Before`
-- [ ] `web/.../integration/message/MessageControllerTest.java` — Pattern B
+- [x] `web/.../integration/SendMedicalCertificateResponderImplTest.java` — Pattern B + `@Before` + `@MockitoSettings(LENIENT)`
+- [x] `web/.../integration/SendMessageToCareResponderImplTest.java` — Pattern B
+- [x] `web/.../integration/GetRecipientsForCertificateResponderImplTest.java` — Pattern B
+- [x] `web/.../integration/GetCertificateTypeInfoResponderImplTest.java` — Pattern B + `assertThrows`
+- [x] `web/.../integration/ListCertificatesResponderImplTest.java` — Pattern B
+- [x] `web/.../integration/ListKnownRecipientsResponderImplTest.java` — Pattern B
+- [x] `web/.../integration/SetCertificateStatusResponderImplTest.java` — Pattern B + `@Before` + `@MockitoSettings(LENIENT)`
+- [x] `web/.../integration/RegisterCertificateResponderImplTest.java` — Pattern B + `@Before` + `assertThrows` (3 try/catch/fail)
+- [x] `web/.../integration/CitizenControllerTest.java` — Pattern B + **Pattern E** (`junit.framework` imports)
+- [x] `web/.../integration/test/CertificateResourceTest.java` — Pattern B + `@Before` + `import org.junit.Assert` (non-static)
+- [x] `web/.../integration/testcertificate/TestCertificateControllerTest.java` — Pattern B
+- [x] `web/.../integration/rehabstod/ListSickLeavesForPersonResponderImplTest.java` — Pattern B
+- [x] `web/.../integration/rehabstod/ListActiveSickLeavesForCareUnitResponderImplTest.java` — Pattern B + `@Before`
+- [x] `web/.../integration/message/MessageControllerTest.java` — Pattern B
 
 **Verify:** `./gradlew test`
 
@@ -404,7 +404,7 @@ public abstract class TestSupport { ...
 | 2         | Plain JUnit 4 + @Before (no runner)          | 3                             | ✅ Done        |
 | 3         | Mockito runner — validators & stubs          | 8                             | ✅ Done        |
 | 4         | Mockito runner — integration responders pt 1 | 10                            | ✅ Done        |
-| 5         | Mockito runner — integration responders pt 2 | 14                            | ⬜ Not started |
+| 5         | Mockito runner — integration responders pt 2 | 14                            | ✅ Done        |
 | 6         | Mockito runner — service impl tests          | 12                            | ⬜ Not started |
 | 7         | Spring integration tests — persistence       | 6+1                           | ⬜ Not started |
 | 8         | Remove JUnit 4 deps from build.gradle        | 4                             | ⬜ Not started |

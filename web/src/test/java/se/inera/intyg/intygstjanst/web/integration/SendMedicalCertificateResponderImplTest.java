@@ -18,7 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -31,13 +31,15 @@ import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK
 
 import iso.v21090.dt.v1.II;
 import java.time.LocalDateTime;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
@@ -59,20 +61,20 @@ import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
-import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SendMedicalCertificateResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+class SendMedicalCertificateResponderImplTest {
 
     private static final String LOGICAL_ADDRESS = "HSA-1234567890";
 
     private static final String CERTIFICATE_ID = "Intygs-id-1234567890";
     private static final String CERTIFICATE_TYPE = "fk7263";
 
-    private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").get();
+    private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").orElseThrow();
 
     private static final String FK_RECIPIENT_ID = "FK";
     private static final String FK_RECIPIENT_NAME = "Försäkringskassan";
@@ -99,14 +101,14 @@ public class SendMedicalCertificateResponderImplTest {
     @InjectMocks
     private SendMedicalCertificateResponderImpl responder;
 
-    @Before
-    public void setupPrimaryRecipient() {
+    @BeforeEach
+    void setupPrimaryRecipient() {
         ReflectionTestUtils.setField(hashUtility, "salt", "salt");
         when(recipientService.getPrimaryRecipientFkassa()).thenReturn(createFkRecipient());
     }
 
     @Test
-    public void testSendOk() throws Exception {
+    void testSendOk() throws Exception {
         Certificate certificate = createCertificate();
         when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(certificate);
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), createRequest());
@@ -120,7 +122,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testAlreadySent() throws Exception {
+    void testAlreadySent() throws Exception {
         when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
         when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID)).thenReturn(SendStatus.ALREADY_SENT);
 
@@ -135,7 +137,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateInvalidCertificate() throws Exception {
+    void testSendMedicalCertificateInvalidCertificate() throws Exception {
         final var pnr = hashUtility.hash(PERSONNUMMER.getPersonnummer());
         when(certificateService.getCertificateForCare(CERTIFICATE_ID))
             .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, pnr));
@@ -154,7 +156,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateCertificateRevoked() throws Exception {
+    void testSendMedicalCertificateCertificateRevoked() throws Exception {
         when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
         when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID))
             .thenThrow(new CertificateRevokedException(CERTIFICATE_ID));
@@ -170,7 +172,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateServerException() throws Exception {
+    void testSendMedicalCertificateServerException() throws Exception {
         when(certificateService.getCertificateForCare(CERTIFICATE_ID)).thenReturn(createCertificate());
 
         when(certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, FK_RECIPIENT_ID)).thenThrow(new ServerException());
@@ -187,7 +189,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateSaknadPatient() throws Exception {
+    void testSendMedicalCertificateSaknadPatient() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getLakarutlatande().setPatient(null);
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -202,7 +204,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateSaknatIntygId() throws Exception {
+    void testSendMedicalCertificateSaknatIntygId() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getLakarutlatande().setLakarutlatandeId(null);
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -217,7 +219,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateTomtIntygId() throws Exception {
+    void testSendMedicalCertificateTomtIntygId() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getLakarutlatande().setLakarutlatandeId("");
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -232,7 +234,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateFelaktigPatientIdKod() throws Exception {
+    void testSendMedicalCertificateFelaktigPatientIdKod() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getLakarutlatande().getPatient().getPersonId().setRoot("invalid");
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -248,7 +250,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateFelaktigtPatientId() throws Exception {
+    void testSendMedicalCertificateFelaktigtPatientId() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getLakarutlatande().getPatient().getPersonId().setExtension("invalid");
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -264,7 +266,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificatePatientIdUtanSekelsiffror() throws Exception {
+    void testSendMedicalCertificatePatientIdUtanSekelsiffror() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getLakarutlatande().getPatient().getPersonId().setExtension("121212-1212");
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -280,7 +282,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificatePatientIdUtanBindestreckKorrigeras() throws Exception {
+    void testSendMedicalCertificatePatientIdUtanBindestreckKorrigeras() throws Exception {
         SendMedicalCertificateRequestType request = createRequest();
         request.getSend().getLakarutlatande().getPatient().getPersonId().setExtension("191212121212");
 
@@ -301,7 +303,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateSaknadSigneringstidpunkt() throws Exception {
+    void testSendMedicalCertificateSaknadSigneringstidpunkt() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getLakarutlatande().setSigneringsTidpunkt(null);
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -315,7 +317,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateSaknadVardreferens() throws Exception {
+    void testSendMedicalCertificateSaknadVardreferens() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().setVardReferensId(null);
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -329,7 +331,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateSaknadAvsantTidpunkt() throws Exception {
+    void testSendMedicalCertificateSaknadAvsantTidpunkt() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().setAvsantTidpunkt(null);
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -343,7 +345,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateSaknadAdressVard() throws Exception {
+    void testSendMedicalCertificateSaknadAdressVard() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().setAdressVard(null);
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -357,7 +359,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateSaknadHosPersonal() throws Exception {
+    void testSendMedicalCertificateSaknadHosPersonal() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getAdressVard().setHosPersonal(null);
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -371,7 +373,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateFelaktigPersonalIdKod() throws Exception {
+    void testSendMedicalCertificateFelaktigPersonalIdKod() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getAdressVard().getHosPersonal().getPersonalId().setRoot("invalid");
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -386,7 +388,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateTomtPersonalId() throws Exception {
+    void testSendMedicalCertificateTomtPersonalId() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getAdressVard().getHosPersonal().getPersonalId().setExtension("");
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -400,7 +402,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateSaknadEnhet() throws Exception {
+    void testSendMedicalCertificateSaknadEnhet() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getAdressVard().getHosPersonal().setEnhet(null);
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -414,7 +416,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateSaknadEnhetId() throws Exception {
+    void testSendMedicalCertificateSaknadEnhetId() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().setEnhetsId(null);
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -429,7 +431,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateFelaktigEnhetIdKod() throws Exception {
+    void testSendMedicalCertificateFelaktigEnhetIdKod() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getEnhetsId().setRoot("invalid");
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -444,7 +446,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateTomtEnhetId() throws Exception {
+    void testSendMedicalCertificateTomtEnhetId() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getEnhetsId().setExtension("");
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -458,7 +460,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateSaknatEnhetnamn() throws Exception {
+    void testSendMedicalCertificateSaknatEnhetnamn() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().setEnhetsnamn(null);
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -472,7 +474,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateSaknadVardgivare() throws Exception {
+    void testSendMedicalCertificateSaknadVardgivare() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().setVardgivare(null);
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -486,7 +488,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateSaknatVardgivareId() throws Exception {
+    void testSendMedicalCertificateSaknatVardgivareId() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getVardgivare().setVardgivareId(null);
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -501,7 +503,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateFelaktigVardgivareIdKod() throws Exception {
+    void testSendMedicalCertificateFelaktigVardgivareIdKod() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getVardgivare().getVardgivareId().setRoot("invalid");
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -516,7 +518,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateTomtVardgivareId() throws Exception {
+    void testSendMedicalCertificateTomtVardgivareId() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getVardgivare().getVardgivareId().setExtension("");
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -530,7 +532,7 @@ public class SendMedicalCertificateResponderImplTest {
     }
 
     @Test
-    public void testSendMedicalCertificateSaknatVardgivarenamn() throws Exception {
+    void testSendMedicalCertificateSaknatVardgivarenamn() throws Exception {
         SendMedicalCertificateRequestType invalidRequest = createRequest();
         invalidRequest.getSend().getAdressVard().getHosPersonal().getEnhet().getVardgivare().setVardgivarnamn(null);
         SendMedicalCertificateResponseType response = responder.sendMedicalCertificate(createAttributedURIType(), invalidRequest);
@@ -551,10 +553,6 @@ public class SendMedicalCertificateResponderImplTest {
         certificate.setCareUnitName("unitName");
 
         return certificate;
-    }
-
-    private CertificateType createCertificateType() {
-        return new CertificateType(CERTIFICATE_TYPE);
     }
 
     private AttributedURIType createAttributedURIType() {

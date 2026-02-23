@@ -18,24 +18,24 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.message;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 import jakarta.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.message.dto.MessageFromIT;
 import se.inera.intyg.intygstjanst.web.service.MessageService;
 
-@RunWith(MockitoJUnitRunner.class)
-public class MessageControllerTest {
+@ExtendWith(MockitoExtension.class)
+class MessageControllerTest {
 
     @Mock
     private MessageService messageService;
@@ -44,7 +44,7 @@ public class MessageControllerTest {
     private MessageController messageController;
 
     @Test
-    public void testFindMessagesByCertificateIdSuccessful() throws Exception {
+    void testFindMessagesByCertificateIdSuccessful() {
         final var certificateId = "certificateId";
 
         final var messagesFromITs = new ArrayList<MessageFromIT>();
@@ -63,7 +63,7 @@ public class MessageControllerTest {
     }
 
     @Test
-    public void testFindMessagesByCertificateIdFailedEmptyId() throws Exception {
+    void testFindMessagesByCertificateIdFailedEmptyId() {
         final var certificateId = "";
 
         final Response actualResponse = messageController.findMessagesByCertificateId(certificateId);
@@ -73,7 +73,7 @@ public class MessageControllerTest {
     }
 
     @Test
-    public void testFindMessagesByCertificateIdFailedNullId() throws Exception {
+    void testFindMessagesByCertificateIdFailedNullId() {
         final String certificateId = null;
 
         final Response actualResponse = messageController.findMessagesByCertificateId(certificateId);

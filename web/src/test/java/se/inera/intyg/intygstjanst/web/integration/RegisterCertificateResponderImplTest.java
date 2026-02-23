@@ -18,13 +18,14 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -35,15 +36,15 @@ import jakarta.xml.bind.JAXBException;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.services.texts.IntygTextsService;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -72,8 +73,8 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.Patient;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Vardgivare;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RegisterCertificateResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class RegisterCertificateResponderImplTest {
 
     private static final String LOGICAL_ADDRESS = "logicalAddress";
     private static final String INTYGSTYP = "intygTyp";
@@ -100,20 +101,20 @@ public class RegisterCertificateResponderImplTest {
     @InjectMocks
     private RegisterCertificateResponderImpl responder = new RegisterCertificateResponderImpl();
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         final Person person = new Person(null, false, false, "", "", "", "", "", "", false);
         final PersonSvar personSvar = PersonSvar.found(person);
-        when(puService.getPerson(any())).thenReturn(personSvar);
-        when(moduleRegistry.getModuleApi(INTYGSTYP.toLowerCase(), INTYGSVERSION)).thenReturn(moduleApi);
-        when(textsService.isVersionSupported(INTYGSTYP.toLowerCase(), INTYGSVERSION)).thenReturn(true);
-        when(moduleRegistry.getModuleIdFromExternalId(INTYGSTYP)).thenReturn(INTYGSTYP.toLowerCase());
-        when(moduleApi.validateXml(anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.VALID, new ArrayList<>()));
+        lenient().when(puService.getPerson(any())).thenReturn(personSvar);
+        lenient().when(moduleRegistry.getModuleApi(INTYGSTYP.toLowerCase(), INTYGSVERSION)).thenReturn(moduleApi);
+        lenient().when(textsService.isVersionSupported(INTYGSTYP.toLowerCase(), INTYGSVERSION)).thenReturn(true);
+        lenient().when(moduleRegistry.getModuleIdFromExternalId(INTYGSTYP)).thenReturn(INTYGSTYP.toLowerCase());
+        lenient().when(moduleApi.validateXml(anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.VALID, new ArrayList<>()));
         responder.initializeJaxbContext();
     }
 
     @Test
-    public void registerCertificateTest() throws Exception {
+    void registerCertificateTest() throws Exception {
         final String intygId = "intygId";
         final String enhetId = "enhetId";
         final String enhetNamn = "enhetNamn";
@@ -142,8 +143,8 @@ public class RegisterCertificateResponderImplTest {
     }
 
     @Test
-    public void registerCertificateValidationErrorsTest() throws Exception {
-        when(moduleApi.validateXml(anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.INVALID, Arrays.asList("fel")));
+    void registerCertificateValidationErrorsTest() throws Exception {
+        when(moduleApi.validateXml(anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.INVALID, List.of("fel")));
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
             createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
         assertNotNull(res);
@@ -156,7 +157,7 @@ public class RegisterCertificateResponderImplTest {
     }
 
     @Test
-    public void registerCertificateCertificateAlreadyExistsTest() throws Exception {
+    void registerCertificateCertificateAlreadyExistsTest() throws Exception {
         doThrow(new CertificateAlreadyExistsException("intygId")).when(moduleContainer).certificateReceived(any(CertificateHolder.class));
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
             createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
@@ -169,7 +170,7 @@ public class RegisterCertificateResponderImplTest {
     }
 
     @Test
-    public void registerCertificateInvalidCertificateExceptionTest() throws Exception {
+    void registerCertificateInvalidCertificateExceptionTest() throws Exception {
         doThrow(new InvalidCertificateException("intygId", null)).when(moduleContainer).certificateReceived(any(CertificateHolder.class));
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
             createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
@@ -183,7 +184,7 @@ public class RegisterCertificateResponderImplTest {
     }
 
     @Test
-    public void registerCertificateInvalidPersonnummer() throws Exception {
+    void registerCertificateInvalidPersonnummer() {
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
             createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "felaktigt personnummer",
                 LocalDateTime.now()));
@@ -194,9 +195,9 @@ public class RegisterCertificateResponderImplTest {
     }
 
     @Test
-    public void registerCertificatePatientNotExists() throws Exception {
+    void registerCertificatePatientNotExists() {
         final String personId = "19300807-7723";
-        when(puService.getPerson(Personnummer.createPersonnummer(personId).get())).thenReturn(PersonSvar.notFound());
+        when(puService.getPerson(Personnummer.createPersonnummer(personId).orElseThrow())).thenReturn(PersonSvar.notFound());
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
             createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19300807-7723", LocalDateTime.now()));
         assertNotNull(res);
@@ -206,9 +207,9 @@ public class RegisterCertificateResponderImplTest {
     }
 
     @Test
-    public void registerCertificatePUServiceError() throws Exception {
+    void registerCertificatePUServiceError() {
         final String personId = "20121212-1212";
-        when(puService.getPerson(Personnummer.createPersonnummer(personId).get())).thenReturn(PersonSvar.error());
+        when(puService.getPerson(Personnummer.createPersonnummer(personId).orElseThrow())).thenReturn(PersonSvar.error());
         RegisterCertificateResponseType res = responder.registerCertificate(LOGICAL_ADDRESS,
             createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "20121212-1212", LocalDateTime.now()));
         assertNotNull(res);
@@ -218,50 +219,42 @@ public class RegisterCertificateResponderImplTest {
     }
 
     @Test
-    public void registerCertificateJaxbExceptionTest() throws Exception {
+    void registerCertificateJaxbExceptionTest() throws Exception {
         JAXBContext jaxbContextMock = mock(JAXBContext.class);
         Field field = RegisterCertificateResponderImpl.class.getDeclaredField("jaxbContext");
         field.setAccessible(true);
         field.set(responder, jaxbContextMock);
         when(jaxbContextMock.createMarshaller()).thenThrow(new JAXBException(""));
 
-        try {
-            responder.registerCertificate(LOGICAL_ADDRESS,
-                createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
-            fail("should throw");
-        } catch (RuntimeException e) {
-            assertTrue(e.getCause() instanceof JAXBException);
-            verify(moduleApi, never()).validateXml(anyString());
-            verify(moduleContainer, never()).certificateReceived(any(CertificateHolder.class));
-        }
+        final var request = createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234",
+            LocalDateTime.now());
+        RuntimeException e = assertThrows(RuntimeException.class, () -> responder.registerCertificate(LOGICAL_ADDRESS, request));
+        assertInstanceOf(JAXBException.class, e.getCause());
+        verify(moduleApi, never()).validateXml(anyString());
+        verify(moduleContainer, never()).certificateReceived(any(CertificateHolder.class));
     }
 
     @Test
-    public void registerCertificateWrongCertificateTypeTest() throws Exception {
+    void registerCertificateWrongCertificateTypeTest() throws Exception {
         when(moduleApi.validateXml(anyString())).thenThrow(new UnsupportedOperationException());
 
-        try {
+        assertThrows(UnsupportedOperationException.class, () ->
             responder.registerCertificate(LOGICAL_ADDRESS,
-                createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
-            fail("should throw");
-        } catch (UnsupportedOperationException e) {
-            verify(moduleApi).validateXml(anyString());
-            verify(moduleContainer, never()).certificateReceived(any(CertificateHolder.class));
-        }
+                createRequest("intygId", "enhetId", "enhetNamn", "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now())));
+        verify(moduleApi).validateXml(anyString());
+        verify(moduleContainer, never()).certificateReceived(any(CertificateHolder.class));
     }
 
     @Test
-    public void registerCertificateOtherExceptionTest() throws Exception {
+    void registerCertificateOtherExceptionTest() throws Exception {
         doThrow(new RuntimeException("intygId")).when(moduleContainer).certificateReceived(any(CertificateHolder.class));
-        try {
+
+        assertThrows(RuntimeException.class, () ->
             responder.registerCertificate(LOGICAL_ADDRESS,
                 createRequest("intygId", "enhetId", "enhetNamn",
-                    "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now()));
-            fail("should throw");
-        } catch (RuntimeException e) {
-            verify(moduleApi).validateXml(anyString());
-            verify(moduleContainer).certificateReceived(any(CertificateHolder.class));
-        }
+                    "vardgivareId", "skapadAvNamn", "19350108-1234", LocalDateTime.now())));
+        verify(moduleApi).validateXml(anyString());
+        verify(moduleContainer).certificateReceived(any(CertificateHolder.class));
     }
 
     private RegisterCertificateType createRequest(String intygId, String enhetId, String enhetNamn,
