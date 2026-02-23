@@ -18,8 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.vardensintyg;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
@@ -29,12 +29,12 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.clinicalprocess.healthcond.certificate.receiver.types.v1.ApprovalStatusType;
 import se.inera.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.inera.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
@@ -51,8 +51,8 @@ import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class RegisterApprovedReceiversResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class RegisterApprovedReceiversResponderImplTest {
 
     private static final String LOGICAL_ADDRESS = "logical-address";
     private static final String INTYG_ID = "intyg-123";
@@ -70,7 +70,7 @@ public class RegisterApprovedReceiversResponderImplTest {
     private RegisterApprovedReceiversResponderImpl testee;
 
     @Test
-    public void testRegister() throws RecipientUnknownException {
+    void testRegister() throws RecipientUnknownException {
         Recipient recipientFk = new Recipient(LOGICAL_ADDRESS, "name", "FKASSA", "HUVUDMOTTAGARE", "lisjp", true, true);
         Recipient recipientAf = new Recipient(LOGICAL_ADDRESS, "name", "AF", "MOTTAGARE", "lisjp", true, true);
 
@@ -92,7 +92,7 @@ public class RegisterApprovedReceiversResponderImplTest {
     }
 
     @Test
-    public void testHuvudmottagareIsAddedIfOmittedRegister() throws RecipientUnknownException {
+    void testHuvudmottagareIsAddedIfOmittedRegister() throws RecipientUnknownException {
         Recipient recipientFk = new Recipient(LOGICAL_ADDRESS, "name", "FKASSA", "HUVUDMOTTAGARE", "lisjp", true, true);
         Recipient recipientAf = new Recipient(LOGICAL_ADDRESS, "name", "AF", "MOTTAGARE", "lisjp", true, true);
 
@@ -116,7 +116,7 @@ public class RegisterApprovedReceiversResponderImplTest {
     }
 
     @Test
-    public void testReturnsErrorWhenNullIntygId() {
+    void testReturnsErrorWhenNullIntygId() {
         RegisterApprovedReceiversType req = buildReq("FKASSA");
         req.getIntygId().setExtension(null);
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, req);
@@ -127,7 +127,7 @@ public class RegisterApprovedReceiversResponderImplTest {
     }
 
     @Test
-    public void testReturnsErrorWhenBlankIntygId() {
+    void testReturnsErrorWhenBlankIntygId() {
         RegisterApprovedReceiversType req = buildReq("FKASSA");
         req.getIntygId().setExtension("");
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, req);
@@ -139,7 +139,7 @@ public class RegisterApprovedReceiversResponderImplTest {
     }
 
     @Test
-    public void testReturnsErrorWhenBlankIntygsTyp() {
+    void testReturnsErrorWhenBlankIntygsTyp() {
         RegisterApprovedReceiversType req = buildReq("FKASSA");
         req.getTypAvIntyg().setCode("");
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, req);
@@ -150,7 +150,7 @@ public class RegisterApprovedReceiversResponderImplTest {
     }
 
     @Test
-    public void testReturnsErrorWhenBlankReceiverId() {
+    void testReturnsErrorWhenBlankReceiverId() {
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq(""));
 
         assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
@@ -159,7 +159,7 @@ public class RegisterApprovedReceiversResponderImplTest {
     }
 
     @Test
-    public void testReturnsErrorWhenUnknownReceiverId() throws RecipientUnknownException {
+    void testReturnsErrorWhenUnknownReceiverId() throws RecipientUnknownException {
         when(recipientService.getRecipient(anyString())).thenThrow(new RecipientUnknownException(""));
         RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq("OKAND"));
 
@@ -182,7 +182,7 @@ public class RegisterApprovedReceiversResponderImplTest {
             ReceiverApprovalStatus receiverApprovalStatus = new ReceiverApprovalStatus();
             receiverApprovalStatus.setReceiverId(rec);
             receiverApprovalStatus.setApprovalStatus(ApprovalStatusType.YES);
-            req.getApprovedReceivers().addAll(Arrays.asList(receiverApprovalStatus));
+            req.getApprovedReceivers().add(receiverApprovalStatus);
         });
 
         return req;

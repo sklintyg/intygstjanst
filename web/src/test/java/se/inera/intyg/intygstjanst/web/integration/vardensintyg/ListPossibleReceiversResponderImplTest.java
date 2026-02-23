@@ -18,16 +18,16 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.vardensintyg;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverTypeType;
 import se.inera.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listpossiblereceivers.v1.ListPossibleReceiversResponseType;
@@ -37,8 +37,8 @@ import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ListPossibleReceiversResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class ListPossibleReceiversResponderImplTest {
 
     private static final String LOGICAL_ADDRESS = "logical-address";
     private static final String INTYG_TYP = "af00213";
@@ -50,7 +50,7 @@ public class ListPossibleReceiversResponderImplTest {
     private ListPossibleReceiversResponderImpl testee;
 
     @Test
-    public void testListOk() {
+    void testListOk() {
         CertificateType certificateType = new CertificateType(INTYG_TYP);
 
         when(recipientService.listRecipients(certificateType)).thenReturn(buildRecipients("AF", INTYG_TYP));
@@ -58,19 +58,22 @@ public class ListPossibleReceiversResponderImplTest {
         ListPossibleReceiversResponseType resp = testee.listPossibleReceivers(LOGICAL_ADDRESS, buildReq(INTYG_TYP));
 
         assertEquals(1, resp.getReceiverList().size());
-        assertEquals("AF", resp.getReceiverList().get(0).getReceiverId());
-        assertEquals("AF-name", resp.getReceiverList().get(0).getReceiverName());
-        assertEquals("HUVUDMOTTAGARE", resp.getReceiverList().get(0).getReceiverType().name());
-        assertEquals(CertificateReceiverTypeType.HUVUDMOTTAGARE, resp.getReceiverList().get(0).getReceiverType());
+        assertEquals("AF", resp.getReceiverList().getFirst().getReceiverId());
+        assertEquals("AF-name", resp.getReceiverList().getFirst().getReceiverName());
+        assertEquals("HUVUDMOTTAGARE", resp.getReceiverList().getFirst().getReceiverType().name());
+        assertEquals(CertificateReceiverTypeType.HUVUDMOTTAGARE, resp.getReceiverList().getFirst().getReceiverType());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testMissingIntygsTypThrowsException() {
-        testee.listPossibleReceivers(LOGICAL_ADDRESS, buildReq(null));
+    @Test
+    void testMissingIntygsTypThrowsException() {
+        final var listPossibleReceiversType = buildReq(null);
+        assertThrows(IllegalArgumentException.class,
+            () -> testee.listPossibleReceivers(LOGICAL_ADDRESS, listPossibleReceiversType)
+        );
     }
 
     private List<Recipient> buildRecipients(String recipientId, String certTypes) {
-        return Arrays.asList(new Recipient(LOGICAL_ADDRESS, recipientId + "-name", recipientId,
+        return List.of(new Recipient(LOGICAL_ADDRESS, recipientId + "-name", recipientId,
             CertificateRecipientType.HUVUDMOTTAGARE.name(), certTypes, true, true));
     }
 

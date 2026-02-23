@@ -145,14 +145,14 @@ Run `./gradlew test` after every batch.
 
 > Straightforward `@RunWith(MockitoJUnitRunner.class)` → `@ExtendWith(MockitoExtension.class)`.
 
-- [ ] `web/.../integration/validator/SendMessageToRecipientValidatorTest.java` — Pattern B
-- [ ] `web/.../integration/validator/RevokeRequestValidatorTest.java` — Pattern B
-- [ ] `web/.../integration/stub/SendMedicalCertificateQuestionResponderStubTest.java` — Pattern B
-- [ ] `web/.../integration/stub/RevokeMedicalCertificateResponderStubTest.java` — Pattern B
-- [ ] `web/.../integration/stub/FkStubResourceTest.java` — Pattern B
-- [ ] `web/.../integration/stub/SendMessageToCareResponderStubTest.java` — Pattern B
-- [ ] `web/.../integration/vardensintyg/RegisterApprovedReceiversResponderImplTest.java` — Pattern B
-- [ ] `web/.../integration/vardensintyg/ListPossibleReceiversResponderImplTest.java` — Pattern B
+- [x] `web/.../integration/validator/SendMessageToRecipientValidatorTest.java` — Pattern B
+- [x] `web/.../integration/validator/RevokeRequestValidatorTest.java` — Pattern B
+- [x] `web/.../integration/stub/SendMedicalCertificateQuestionResponderStubTest.java` — Pattern B
+- [x] `web/.../integration/stub/RevokeMedicalCertificateResponderStubTest.java` — Pattern B
+- [x] `web/.../integration/stub/FkStubResourceTest.java` — Pattern B
+- [x] `web/.../integration/stub/SendMessageToCareResponderStubTest.java` — Pattern B
+- [x] `web/.../integration/vardensintyg/RegisterApprovedReceiversResponderImplTest.java` — Pattern B
+- [x] `web/.../integration/vardensintyg/ListPossibleReceiversResponderImplTest.java` — Pattern B
 
 **Verify:** `./gradlew test`
 
@@ -402,7 +402,7 @@ public abstract class TestSupport { ...
 | 0         | Logging module                               | 2                             | ✅ Done        |
 | 1         | Plain JUnit 4 tests (no runner)              | 7                             | ✅ Done        |
 | 2         | Plain JUnit 4 + @Before (no runner)          | 3                             | ✅ Done        |
-| 3         | Mockito runner — validators & stubs          | 8                             | ⬜ Not started |
+| 3         | Mockito runner — validators & stubs          | 8                             | ✅ Done        |
 | 4         | Mockito runner — integration responders pt 1 | 10                            | ⬜ Not started |
 | 5         | Mockito runner — integration responders pt 2 | 14                            | ⬜ Not started |
 | 6         | Mockito runner — service impl tests          | 12                            | ⬜ Not started |

@@ -23,17 +23,17 @@ import static org.mockito.Mockito.verify;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RevokeMedicalCertificateResponderStubTest {
+@ExtendWith(MockitoExtension.class)
+class RevokeMedicalCertificateResponderStubTest {
 
     private static final String UTLATANDE_ID = "intygs-id-1234567890";
 
@@ -46,8 +46,7 @@ public class RevokeMedicalCertificateResponderStubTest {
     RevokeMedicalCertificateResponderStub stub = new RevokeMedicalCertificateResponderStub();
 
     @Test
-    public void testName() throws Exception {
-        // read request from file
+    void testName() throws Exception {
         JAXBContext jaxbContext = JAXBContext.newInstance(RevokeMedicalCertificateRequestType.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         RevokeMedicalCertificateRequestType request = unmarshaller.unmarshal(

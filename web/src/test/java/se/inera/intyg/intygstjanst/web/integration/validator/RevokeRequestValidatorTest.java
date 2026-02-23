@@ -18,56 +18,57 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RevokeRequestValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class RevokeRequestValidatorTest {
 
     @Test
-    public void testValidateAndCorrect() throws Exception {
+    void testValidateAndCorrect() throws Exception {
         new RevokeRequestValidator(createRequest()).validateAndCorrect();
     }
 
-    @Test(expected = CertificateValidationException.class)
-    public void testValidateAndCorrectVardReferensIdMissing() throws Exception {
+    @Test
+    void testValidateAndCorrectVardReferensIdMissing() throws Exception {
         RevokeType revokeRequest = createRequest();
         revokeRequest.setVardReferensId(null);
-        new RevokeRequestValidator(revokeRequest).validateAndCorrect();
+        assertThrows(CertificateValidationException.class, () -> new RevokeRequestValidator(revokeRequest).validateAndCorrect());
     }
 
-    @Test(expected = CertificateValidationException.class)
-    public void testValidateAndCorrectAvsantTidpunktMissing() throws Exception {
+    @Test
+    void testValidateAndCorrectAvsantTidpunktMissing() throws Exception {
         RevokeType revokeRequest = createRequest();
         revokeRequest.setAvsantTidpunkt(null);
-        new RevokeRequestValidator(revokeRequest).validateAndCorrect();
+        assertThrows(CertificateValidationException.class, () -> new RevokeRequestValidator(revokeRequest).validateAndCorrect());
     }
 
-    @Test(expected = CertificateValidationException.class)
-    public void testValidateAndCorrectLakarutlatandeError() throws Exception {
+    @Test
+    void testValidateAndCorrectLakarutlatandeError() throws Exception {
         RevokeType revokeRequest = createRequest();
         revokeRequest.getLakarutlatande().setPatient(null);
-        new RevokeRequestValidator(revokeRequest).validateAndCorrect();
+        assertThrows(CertificateValidationException.class, () -> new RevokeRequestValidator(revokeRequest).validateAndCorrect());
     }
 
-    @Test(expected = CertificateValidationException.class)
-    public void testValidateAndCorrectAdressVardError() throws Exception {
+    @Test
+    void testValidateAndCorrectAdressVardError() throws Exception {
         RevokeType revokeRequest = createRequest();
         revokeRequest.getAdressVard().setHosPersonal(null);
-        new RevokeRequestValidator(revokeRequest).validateAndCorrect();
+        assertThrows(CertificateValidationException.class, () -> new RevokeRequestValidator(revokeRequest).validateAndCorrect());
     }
 
     protected RevokeType createRequest() throws Exception {
-        // read request from file
         JAXBContext jaxbContext = JAXBContext.newInstance(RevokeMedicalCertificateRequestType.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         JAXBElement<RevokeMedicalCertificateRequestType> request = unmarshaller.unmarshal(
