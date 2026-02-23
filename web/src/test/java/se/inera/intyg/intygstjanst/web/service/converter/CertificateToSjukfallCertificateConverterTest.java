@@ -18,15 +18,16 @@
  */
 package se.inera.intyg.intygstjanst.web.service.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
 
 import com.google.common.collect.ImmutableList;
 import java.time.LocalDateTime;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
 import se.inera.intyg.common.fkparent.model.internal.Diagnos;
 import se.inera.intyg.common.lisjp.v1.model.internal.LisjpUtlatandeV1;
@@ -37,7 +38,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
  * Created by eriklupander on 2016-02-04.
  */
 
-public class CertificateToSjukfallCertificateConverterTest {
+class CertificateToSjukfallCertificateConverterTest {
 
     private static final String CERT_ID = "cert-123";
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
@@ -63,13 +64,14 @@ public class CertificateToSjukfallCertificateConverterTest {
 
     private CertificateToSjukfallCertificateConverter testee = new CertificateToSjukfallCertificateConverter();
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testThrowsExceptionWhenNonFk7263Type() {
-        testee.convertFk7263(getFactoryInstance().buildCert("fk"), TsBasUtlatandeV6.builder().build());
+    @Test
+    void testThrowsExceptionWhenNonFk7263Type() {
+        assertThrows(IllegalArgumentException.class, () ->
+            testee.convertFk7263(getFactoryInstance().buildCert("fk"), TsBasUtlatandeV6.builder().build()));
     }
 
     @Test
-    public void testStandardConvert() {
+    void testStandardConvert() {
         SjukfallCertificate sjukfallCertificate = testee
             .convertFk7263(getFactoryInstance().buildCert(CERT_TYPE_FK7263), getFactoryInstance().buildFk7263Utlatande());
         assertEquals(CERT_ID, sjukfallCertificate.getId());
@@ -103,7 +105,7 @@ public class CertificateToSjukfallCertificateConverterTest {
     }
 
     @Test
-    public void testConvertLisjp() {
+    void testConvertLisjp() {
         LisjpUtlatandeV1 lisjpUtlatandeV1 = getFactoryInstance().buildLisjpUtlatande();
 
         SjukfallCertificate sjukfallCertificate = testee.convertLisjp(getFactoryInstance().buildCert(CERT_TYPE_LISJP), lisjpUtlatandeV1);
@@ -139,7 +141,7 @@ public class CertificateToSjukfallCertificateConverterTest {
     }
 
     @Test
-    public void testConvertOnlyOneSjukfallCertificateWorkCapacity() {
+    void testConvertOnlyOneSjukfallCertificateWorkCapacity() {
         Fk7263Utlatande utlatande = getFactoryInstance().buildFk7263Utlatande();
         when(utlatande.getNedsattMed75()).thenReturn(null);
         when(utlatande.getNedsattMed50()).thenReturn(null);
@@ -166,40 +168,40 @@ public class CertificateToSjukfallCertificateConverterTest {
     }
 
     @Test
-    public void testIsConvertableFk7263() {
+    void testIsConvertableFk7263() {
         Fk7263Utlatande utlatande = getFactoryInstance().buildFk7263Utlatande();
         when(utlatande.getDiagnosKod()).thenReturn("J91");
         assertTrue(testee.isConvertableFk7263(utlatande));
     }
 
     @Test
-    public void testIsConvertableFk7263ReturnsFalseWhenNonFk7263Type() {
+    void testIsConvertableFk7263ReturnsFalseWhenNonFk7263Type() {
         assertFalse(testee.isConvertableFk7263(TsBasUtlatandeV6.builder().build()));
     }
 
     @Test
-    public void testIsConvertableFk7263WhenIsSmittskydd() {
+    void testIsConvertableFk7263WhenIsSmittskydd() {
         Fk7263Utlatande utlatande = getFactoryInstance().buildFk7263Utlatande();
         when(utlatande.isAvstangningSmittskydd()).thenReturn(true);
         assertFalse(testee.isConvertableFk7263(utlatande));
     }
 
     @Test
-    public void testIsConvertableFk7263DiagnosisNull() {
+    void testIsConvertableFk7263DiagnosisNull() {
         Fk7263Utlatande utlatande = getFactoryInstance().buildFk7263Utlatande();
         when(utlatande.getDiagnosKod()).thenReturn(null);
         assertFalse(testee.isConvertableFk7263(utlatande));
     }
 
     @Test
-    public void testIsConvertableFk7263DiagnosisEmpty() {
+    void testIsConvertableFk7263DiagnosisEmpty() {
         Fk7263Utlatande utlatande = getFactoryInstance().buildFk7263Utlatande();
         when(utlatande.getDiagnosKod()).thenReturn("  ");
         assertFalse(testee.isConvertableFk7263(utlatande));
     }
 
     @Test
-    public void testTrimsIds() {
+    void testTrimsIds() {
         Fk7263Utlatande utlatande = getFactoryInstance().buildFk7263Utlatande();
 
         SjukfallCertificate sjukfallCertificate = testee.convertFk7263(getFactoryInstance().buildCert(CERT_TYPE_FK7263), utlatande);
@@ -215,33 +217,33 @@ public class CertificateToSjukfallCertificateConverterTest {
     }
 
     @Test
-    public void testIsConvertableLisjp() {
+    void testIsConvertableLisjp() {
         LisjpUtlatandeV1 utlatande = getFactoryInstance().buildLisjpUtlatande();
         when(utlatande.getDiagnoser()).thenReturn(ImmutableList.of(Diagnos.create("J91", "", "", "")));
         assertTrue(testee.isConvertableLisjp(utlatande));
     }
 
     @Test
-    public void testIsConvertableLisjpReturnsFalseWhenNonLisjpType() {
+    void testIsConvertableLisjpReturnsFalseWhenNonLisjpType() {
         assertFalse(testee.isConvertableLisjp(TsBasUtlatandeV6.builder().build()));
     }
 
     @Test
-    public void testIsConvertableLisjpWhenIsSmittskydd() {
+    void testIsConvertableLisjpWhenIsSmittskydd() {
         LisjpUtlatandeV1 utlatande = getFactoryInstance().buildLisjpUtlatande();
         when(utlatande.getAvstangningSmittskydd()).thenReturn(true);
         assertFalse(testee.isConvertableLisjp(utlatande));
     }
 
     @Test
-    public void testIsConvertableLisjpDiagnosisNull() {
+    void testIsConvertableLisjpDiagnosisNull() {
         LisjpUtlatandeV1 utlatande = getFactoryInstance().buildLisjpUtlatande();
         when(utlatande.getDiagnoser()).thenReturn(ImmutableList.of(Diagnos.create(null, "", "", "")));
         assertFalse(testee.isConvertableLisjp(utlatande));
     }
 
     @Test
-    public void testIsConvertableLisjpDiagnosisEmpty() {
+    void testIsConvertableLisjpDiagnosisEmpty() {
         LisjpUtlatandeV1 utlatande = getFactoryInstance().buildLisjpUtlatande();
         when(utlatande.getDiagnoser()).thenReturn(ImmutableList.of(Diagnos.create(" ", "", "", "")));
         assertFalse(testee.isConvertableLisjp(utlatande));

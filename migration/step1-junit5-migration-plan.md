@@ -114,16 +114,16 @@ Run `./gradlew test` after every batch.
 
 **Persistence module (3 files):**
 
-- [ ] `persistence/.../dao/CertificateStateHistoryEntryTest.java` — Pattern A
-- [ ] `persistence/.../dao/CertificateTest.java` — Pattern A
-- [ ] `persistence/.../dao/util/DaoUtilTest.java` — Pattern A
+- [x] `persistence/.../dao/CertificateStateHistoryEntryTest.java` — Pattern A
+- [x] `persistence/.../dao/CertificateTest.java` — Pattern A
+- [x] `persistence/.../dao/util/DaoUtilTest.java` — Pattern A
 
 **Web module (4 files):**
 
-- [ ] `web/.../integration/converter/ArendeConverterTest.java` — Pattern A + `@Before`
-- [ ] `web/.../integration/rehabstod/converter/SjukfallCertificateRegisterIntygsDataConverterTest.java` — Pattern A
-- [ ] `web/.../service/converter/CertificateToSjukfallCertificateConverterTest.java` — Pattern A
-- [ ] `web/.../service/converter/CertificateToSickLeaveCertificateConverterTest.java` — Pattern A
+- [x] `web/.../integration/converter/ArendeConverterTest.java` — Pattern A + `@Before`
+- [x] `web/.../integration/rehabstod/converter/SjukfallCertificateRegisterIntygsDataConverterTest.java` — Pattern A
+- [x] `web/.../service/converter/CertificateToSjukfallCertificateConverterTest.java` — Pattern A
+- [x] `web/.../service/converter/CertificateToSickLeaveCertificateConverterTest.java` — Pattern A
 
 **Verify:** `./gradlew test`
 
@@ -400,7 +400,7 @@ public abstract class TestSupport { ...
 | Batch     | Description                                  | Files                         | Status        |
 |-----------|----------------------------------------------|-------------------------------|---------------|
 | 0         | Logging module                               | 2                             | ✅ Done        |
-| 1         | Plain JUnit 4 tests (no runner)              | 7                             | ⬜ Not started |
+| 1         | Plain JUnit 4 tests (no runner)              | 7                             | ✅ Done        |
 | 2         | Plain JUnit 4 + @Before (no runner)          | 3                             | ⬜ Not started |
 | 3         | Mockito runner — validators & stubs          | 8                             | ⬜ Not started |
 | 4         | Mockito runner — integration responders pt 1 | 10                            | ⬜ Not started |

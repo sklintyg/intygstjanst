@@ -18,14 +18,14 @@
  */
 package se.inera.intyg.intygstjanst.web.service.converter;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableList;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import se.inera.intyg.common.ag114.v1.model.internal.Ag114UtlatandeV1;
 import se.inera.intyg.common.ag114.v1.model.internal.Sysselsattning;
 import se.inera.intyg.common.ag114.v1.model.internal.Sysselsattning.SysselsattningsTyp;
@@ -41,7 +41,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-public class CertificateToSickLeaveCertificateConverterTest {
+class CertificateToSickLeaveCertificateConverterTest {
 
     private static final String CERT_ID = "cert-123";
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
@@ -74,7 +74,7 @@ public class CertificateToSickLeaveCertificateConverterTest {
 
 
     @Test
-    public void convertAg7804() {
+    void convertAg7804() {
         Certificate certificate = buildCertificate(CERT_TYPE_AG7804);
         Ag7804UtlatandeV1 statement = buildAg7804Statement();
 
@@ -122,7 +122,7 @@ public class CertificateToSickLeaveCertificateConverterTest {
     }
 
     @Test
-    public void convertAg114() {
+    void convertAg114() {
         Certificate certificate = buildCertificate(CERT_TYPE_AG114);
         Ag114UtlatandeV1 statement = buildAg114Statement();
 
@@ -147,7 +147,7 @@ public class CertificateToSickLeaveCertificateConverterTest {
 
         assertEquals(OCCUPATION, sickLeaveCertificate.getOccupation());
 
-        assertEquals(sickLeaveCertificate.getWorkCapacityList().size(), 1);
+        assertEquals(1, sickLeaveCertificate.getWorkCapacityList().size());
         var workCapacity = sickLeaveCertificate.getWorkCapacityList().get(0);
         assertEquals(Integer.parseInt(HUNDRED_PERCENT), workCapacity.getReduction());
         assertEquals(LocalDate.parse(START_DATE_100), workCapacity.getStartDate());

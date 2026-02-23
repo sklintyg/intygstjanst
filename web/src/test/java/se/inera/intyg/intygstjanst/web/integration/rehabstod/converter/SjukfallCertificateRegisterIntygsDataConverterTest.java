@@ -18,23 +18,23 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.rehabstod.converter;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import se.inera.intyg.intygstjanst.web.integration.util.SjukfallCertTestHelper;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsData;
 
 /**
  * Created by eriklupander on 2016-02-04.
  */
-public class SjukfallCertificateRegisterIntygsDataConverterTest {
+class SjukfallCertificateRegisterIntygsDataConverterTest {
 
     private SjukfallCertTestHelper testHelper = new SjukfallCertTestHelper();
     private SjukfallCertificateIntygsDataConverter testee = new SjukfallCertificateIntygsDataConverter();
 
     @Test
-    public void testConvert() {
+    void testConvert() {
         List<IntygsData> intygsDataList = testee.buildIntygsData(testHelper.intygsList());
         assertEquals(1, intygsDataList.size());
         assertEquals(2, intygsDataList.get(0).getArbetsformaga().getFormaga().size());

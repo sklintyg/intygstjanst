@@ -18,10 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.io.Resources;
 import jakarta.xml.bind.JAXBContext;
@@ -38,8 +38,8 @@ import java.time.ZoneId;
 import javax.xml.transform.stream.StreamSource;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
@@ -47,7 +47,7 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.S
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Amneskod;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 
-public class ArendeConverterTest {
+class ArendeConverterTest {
 
     private static final long FIXED_TIME_NANO = 1456329300599000L;
     private static final Instant FIXED_TIME_INSTANT = Instant.ofEpochSecond(FIXED_TIME_NANO / 1_000_000, FIXED_TIME_NANO % 1_000_000);
@@ -59,23 +59,23 @@ public class ArendeConverterTest {
         return Thread.currentThread().getContextClassLoader().getResource(href);
     }
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         ArendeConverter.setMockSystemClock(FIXED_CLOCK);
         XMLUnit.setIgnoreWhitespace(true);
     }
 
     @Test
-    public void testConvertToXmlString() throws Exception {
+    void testConvertToXmlString() throws Exception {
         String xmlResult = ArendeConverter
             .convertToXmlString(getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML));
         String fileXml = loadXmlMessageFromFile();
         Diff diff = XMLUnit.compareXML(fileXml, xmlResult);
-        assertTrue(diff.toString(), diff.similar());
+        assertTrue(diff.similar(), diff.toString());
     }
 
     @Test
-    public void testConvertToSendMessageToCare() throws Exception {
+    void testConvertToSendMessageToCare() throws Exception {
         SendMessageToCareType sendMessageToCareType = getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
         Arende sendMessageToCare = ArendeConverter.convertSendMessageToCare(sendMessageToCareType);
         assertEquals(sendMessageToCareType.getIntygsId().getExtension(), sendMessageToCare.getIntygsId());
@@ -85,11 +85,11 @@ public class ArendeConverterTest {
         assertEquals(FIXED_TIME_INSTANT,
             sendMessageToCare.getTimestamp().toInstant(ZoneId.systemDefault().getRules().getOffset(FIXED_TIME_INSTANT)));
         Diff diff = XMLUnit.compareXML(loadXmlMessageFromFile(), sendMessageToCare.getMeddelande());
-        assertTrue(diff.toString(), diff.similar());
+        assertTrue(diff.similar(), diff.toString());
     }
 
     @Test
-    public void convertSendMessageToRecipientTest() throws JAXBException {
+    void convertSendMessageToRecipientTest() throws JAXBException {
         final String intygsId = "intygsid";
         final String amne = "KOMPLT";
         final String logiskAdressMottagare = "mottagare";
