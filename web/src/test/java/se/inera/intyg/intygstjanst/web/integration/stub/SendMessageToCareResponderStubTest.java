@@ -18,26 +18,27 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.web.integration.util.SendMessageToCareUtil;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SendMessageToCareResponderStubTest {
+@ExtendWith(MockitoExtension.class)
+class SendMessageToCareResponderStubTest {
 
     private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML = "SendMessageToCareTest/sendmessagetocare.xml";
 
-    private String intygsIdNo1 = "intygsIdNo1";
-    private String intygsIdNo2 = "intygsIdNo2";
-    private String meddelandeIdNo1 = "meddelandeIdNo1";
-    private String meddelandeIdNo2 = "meddelandeIdNo2";
-    private String meddelandeIdNo3 = "meddelandeIdNo3";
+    private final String intygsIdNo1 = "intygsIdNo1";
+    private final String intygsIdNo2 = "intygsIdNo2";
+    private final String meddelandeIdNo1 = "meddelandeIdNo1";
+    private final String meddelandeIdNo2 = "meddelandeIdNo2";
+    private final String meddelandeIdNo3 = "meddelandeIdNo3";
 
     @InjectMocks
     private SendMessageToCareResponderStub stub;
@@ -46,14 +47,15 @@ public class SendMessageToCareResponderStubTest {
     private SendMessageToCareStorage storage;
 
     @Test
-    public void testSendMessageToCareResponderStub() throws Exception {
+    void testSendMessageToCareResponderStub() throws Exception {
         String logicalAddress = "";
         SendMessageToCareType sendMessageToCareType1 = buildSendMessageToCare(intygsIdNo1, meddelandeIdNo1);
-        stub.sendMessageToCare(logicalAddress, sendMessageToCareType1);
+        final var response = stub.sendMessageToCare(logicalAddress, sendMessageToCareType1);
+        assertNotNull(response);
     }
 
     @Test
-    public void testSendMultipleMessagesToCareResponderStubAndThenClear() throws Exception {
+    void testSendMultipleMessagesToCareResponderStubAndThenClear() throws Exception {
         String logicalAddress = "FK";
         SendMessageToCareType sendMessageToCareType1 = buildSendMessageToCare(intygsIdNo1, meddelandeIdNo1);
         SendMessageToCareType sendMessageToCareType2 = buildSendMessageToCare(intygsIdNo1, meddelandeIdNo2);

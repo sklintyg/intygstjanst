@@ -18,23 +18,22 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
  */
-public class CertificateStateHistoryEntryTest {
+class CertificateStateHistoryEntryTest {
 
     @Test
-    public void testOrdering() {
+    void testOrdering() {
         CertificateStateHistoryEntry e1 = new CertificateStateHistoryEntry(null, null, LocalDateTime.parse("2013-08-20T12:00:01"));
         CertificateStateHistoryEntry e2 = new CertificateStateHistoryEntry(null, null, LocalDateTime.parse("2013-08-21T12:00:01"));
         CertificateStateHistoryEntry e3 = new CertificateStateHistoryEntry(null, null, LocalDateTime.parse("2013-08-20T14:00:01"));

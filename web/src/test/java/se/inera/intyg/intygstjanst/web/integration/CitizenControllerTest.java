@@ -18,18 +18,18 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.integration.CitizenController.RequestObject;
 import se.inera.intyg.intygstjanst.web.integration.CitizenController.ResponseObject;
@@ -37,8 +37,8 @@ import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RelationService;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CitizenControllerTest {
+@ExtendWith(MockitoExtension.class)
+class CitizenControllerTest {
 
     @Mock
     private CertificateService certificateService;
@@ -53,7 +53,7 @@ public class CitizenControllerTest {
     private CitizenController citizenController;
 
     @Test
-    public void testFilteringOfTestCertificates() throws Exception {
+    void testFilteringOfTestCertificates() {
         final RequestObject parameters = RequestObject.of("191212121212", false);
 
         final Certificate realCertificate = new Certificate("realCertificateId");
@@ -67,7 +67,7 @@ public class CitizenControllerTest {
 
         assertNotNull(actualResponse);
         assertEquals(1, actualResponse.size());
-        assertNotNull(actualResponse.get(0));
-        assertEquals("realCertificateId", actualResponse.get(0).getCertificate().getId());
+        assertNotNull(actualResponse.getFirst());
+        assertEquals("realCertificateId", actualResponse.getFirst().getCertificate().getId());
     }
 }

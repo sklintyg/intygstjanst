@@ -18,8 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v2;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -31,13 +32,11 @@ import static se.inera.intyg.intygstjanst.web.support.CertificateFactory.CARE_UN
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
@@ -58,8 +57,8 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Part;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 
-@RunWith(MockitoJUnitRunner.class)
-public class GetCertificateResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class GetCertificateResponderImplTest {
 
     protected static final String INTYG_TYPE = "test-type";
     private static final String LOGICAL_ADDRESS = "logicalAddress";
@@ -81,30 +80,31 @@ public class GetCertificateResponderImplTest {
     @InjectMocks
     private GetCertificateResponderInterface responder = new GetCertificateResponderImpl();
 
-    @Test(expected = ServerException.class)
-    public void getTestCertificateAsCertificateReceiver() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
+    @Test
+    void getTestCertificateAsCertificateReceiver() throws InvalidCertificateException {
         final String intygId = "intyg-1";
         when(certificateService.isTestCertificate(any())).thenReturn(true);
-        responder.getCertificate(LOGICAL_ADDRESS, createRequest(intygId));
+        final var request = createRequest(intygId);
+        assertThrows(ServerException.class, () -> responder.getCertificate(LOGICAL_ADDRESS, request));
     }
 
     @Test
-    public void getCertificateTest() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
+    void getCertificateTest() throws InvalidCertificateException {
         final String intygId = "intyg-1";
         when(certificateService.isTestCertificate(any())).thenReturn(false);
         when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(createResponse(intygId, false));
         GetCertificateResponseType res = responder.getCertificate(LOGICAL_ADDRESS, createRequest(intygId));
         assertNotNull(res.getIntyg());
         assertEquals(1, res.getIntyg().getStatus().size());
-        assertEquals(StatusKod.SENTTO.name(), res.getIntyg().getStatus().get(0).getStatus().getCode());
-        assertEquals(FKASSA_PART_ID, res.getIntyg().getStatus().get(0).getPart().getCode());
-        assertEquals(TIMESTAMP, res.getIntyg().getStatus().get(0).getTidpunkt());
+        assertEquals(StatusKod.SENTTO.name(), res.getIntyg().getStatus().getFirst().getStatus().getCode());
+        assertEquals(FKASSA_PART_ID, res.getIntyg().getStatus().getFirst().getPart().getCode());
+        assertEquals(TIMESTAMP, res.getIntyg().getStatus().getFirst().getTidpunkt());
         verify(moduleContainer).getCertificate(intygId, null, false);
         verify(moduleContainer).logCertificateRetrieved(intygId, INTYG_TYPE, CARE_UNIT_ID, FKASSA_PART_ID);
     }
 
     @Test
-    public void getCertificateOldFormat() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
+    void getCertificateOldFormat() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
         final String intygId = "intyg-1";
         final CertificateHolder response = createResponse(intygId, false);
         response.setOriginalCertificate("<old></old>");
@@ -116,30 +116,32 @@ public class GetCertificateResponderImplTest {
         GetCertificateResponseType res = responder.getCertificate(LOGICAL_ADDRESS, createRequest(intygId));
         assertNotNull(res.getIntyg());
         assertEquals(1, res.getIntyg().getStatus().size());
-        assertEquals(StatusKod.SENTTO.name(), res.getIntyg().getStatus().get(0).getStatus().getCode());
-        assertEquals(FKASSA_PART_ID, res.getIntyg().getStatus().get(0).getPart().getCode());
-        assertEquals(TIMESTAMP, res.getIntyg().getStatus().get(0).getTidpunkt());
+        assertEquals(StatusKod.SENTTO.name(), res.getIntyg().getStatus().getFirst().getStatus().getCode());
+        assertEquals(FKASSA_PART_ID, res.getIntyg().getStatus().getFirst().getPart().getCode());
+        assertEquals(TIMESTAMP, res.getIntyg().getStatus().getFirst().getTidpunkt());
         verify(moduleContainer).getCertificate(intygId, null, false);
     }
 
-    @Test(expected = ServerException.class)
-    public void getCertificateNotFound() throws InvalidCertificateException {
+    @Test
+    void getCertificateNotFound() throws InvalidCertificateException {
         final String intygId = "intyg-1";
         when(certificateService.isTestCertificate(any())).thenReturn(false);
         when(moduleContainer.getCertificate(intygId, null, false)).thenThrow(new InvalidCertificateException(intygId, null));
-        responder.getCertificate(LOGICAL_ADDRESS, createRequest(intygId));
-    }
-
-    @Test(expected = ServerException.class)
-    public void getCertificateDeletedByCaregiver() throws InvalidCertificateException {
-        final String intygId = "intyg-1";
-        when(certificateService.isTestCertificate(any())).thenReturn(false);
-        when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(createResponse(intygId, true));
-        responder.getCertificate(LOGICAL_ADDRESS, createRequest(intygId));
+        final var request = createRequest(intygId);
+        assertThrows(ServerException.class, () -> responder.getCertificate(LOGICAL_ADDRESS, request));
     }
 
     @Test
-    public void statusesAreFilteredDifferentlyForFkAndMinaIntyg() throws Exception {
+    void getCertificateDeletedByCaregiver() throws InvalidCertificateException {
+        final String intygId = "intyg-1";
+        when(certificateService.isTestCertificate(any())).thenReturn(false);
+        when(moduleContainer.getCertificate(intygId, null, false)).thenReturn(createResponse(intygId, true));
+        final var request = createRequest(intygId);
+        assertThrows(ServerException.class, () -> responder.getCertificate(LOGICAL_ADDRESS, request));
+    }
+
+    @Test
+    void statusesAreFilteredDifferentlyForFkAndMinaIntyg() throws Exception {
         // See INTYG-3629
         // Given
         final String intygId = "intyg-1";
@@ -161,9 +163,9 @@ public class GetCertificateResponderImplTest {
 
         assertNotNull(fromMinaIntyg.getIntyg());
         assertEquals(1, fromMinaIntyg.getIntyg().getStatus().size());
-        assertEquals(StatusKod.DELETE.name(), fromMinaIntyg.getIntyg().getStatus().get(0).getStatus().getCode());
-        assertEquals(CITIZEN_PART_ID, fromMinaIntyg.getIntyg().getStatus().get(0).getPart().getCode());
-        assertEquals(TIMESTAMP, fromMinaIntyg.getIntyg().getStatus().get(0).getTidpunkt());
+        assertEquals(StatusKod.DELETE.name(), fromMinaIntyg.getIntyg().getStatus().getFirst().getStatus().getCode());
+        assertEquals(CITIZEN_PART_ID, fromMinaIntyg.getIntyg().getStatus().getFirst().getPart().getCode());
+        assertEquals(TIMESTAMP, fromMinaIntyg.getIntyg().getStatus().getFirst().getTidpunkt());
     }
 
     private GetCertificateType createRequest(String id) {

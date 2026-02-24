@@ -20,11 +20,11 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -34,12 +34,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.lisjp.support.LisjpEntryPoint;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -67,8 +67,8 @@ import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.RelationService;
 
-@RunWith(MockitoJUnitRunner.class)
-public class IntygInfoServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class IntygInfoServiceImplTest {
 
     @Mock
     private CertificateService certificateService;
@@ -91,17 +91,15 @@ public class IntygInfoServiceImplTest {
     private static final String HSA_ID = "HSA_ID";
     private static final Long CERTIFICATE_COUNT = 333L;
 
-    @Before
-    public void setup() throws ModuleNotFoundException {
-        when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
-
-        when(moduleEntryPoint.getDefaultRecipient()).thenReturn(LisjpEntryPoint.DEFAULT_RECIPIENT_ID);
-
-        when(moduleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
+    @BeforeEach
+    void setup() throws ModuleNotFoundException {
+        lenient().when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
+        lenient().when(moduleEntryPoint.getDefaultRecipient()).thenReturn(LisjpEntryPoint.DEFAULT_RECIPIENT_ID);
+        lenient().when(moduleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
     }
 
     @Test
-    public void notFound() throws InvalidCertificateException {
+    void notFound() throws InvalidCertificateException {
         when(certificateService.getCertificateForCare(anyString())).thenThrow(InvalidCertificateException.class);
 
         Optional<ItIntygInfo> intygInfo = testee.getIntygInfo("not_found");
@@ -113,7 +111,7 @@ public class IntygInfoServiceImplTest {
     }
 
     @Test
-    public void foundMinInfo() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
+    void foundMinInfo() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
         String intygId = "found2";
         LocalDateTime receivedTime = LocalDateTime.now();
         Certificate certificate = getCertificate(intygId, receivedTime);
@@ -157,7 +155,7 @@ public class IntygInfoServiceImplTest {
     }
 
     @Test
-    public void foundWithAllInfo() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
+    void foundWithAllInfo() throws InvalidCertificateException, ModuleNotFoundException, ModuleException {
         String intygId = "found";
         LocalDateTime receivedTime = LocalDateTime.now();
         LocalDateTime sentTime = LocalDateTime.now();
@@ -175,7 +173,7 @@ public class IntygInfoServiceImplTest {
         relations.add(new Relation("parent", intygId, RelationKod.KOMPLT.value(), sentTime));
         relations.add(new Relation("parent", intygId, RelationKod.KOPIA.value(), sentTime));
 
-        when(relationService.getChildRelations(eq(intygId))).thenReturn(relations);
+        when(relationService.getChildRelations(intygId)).thenReturn(relations);
 
         Optional<ItIntygInfo> optionalItIntygInfo = testee.getIntygInfo(intygId);
 
@@ -241,7 +239,7 @@ public class IntygInfoServiceImplTest {
     }
 
     @Test
-    public void shouldReturnResultFromDatabaseQuery() {
+    void shouldReturnResultFromDatabaseQuery() {
         when(certificateRepository.getCertificateCountForCareProvider(HSA_ID)).thenReturn(CERTIFICATE_COUNT);
 
         final var response = testee.getCertificateCount(HSA_ID);
@@ -266,9 +264,7 @@ public class IntygInfoServiceImplTest {
 
         certificate.setStates(certificateStates);
 
-        String fakeDocument = intygId;
-
-        OriginalCertificate originalCertificate = new OriginalCertificate(received, fakeDocument, certificate);
+        OriginalCertificate originalCertificate = new OriginalCertificate(received, intygId, certificate);
         certificate.setOriginalCertificate(originalCertificate);
 
         Vardgivare vardgivare = new Vardgivare();
@@ -282,8 +278,8 @@ public class IntygInfoServiceImplTest {
         Utlatande utlatande = mock(Utlatande.class);
         when(utlatande.getGrundData()).thenReturn(grundData);
 
-        when(certificateService.getCertificateForCare(eq(intygId))).thenReturn(certificate);
-        when(moduleApi.getUtlatandeFromXml(eq(fakeDocument))).thenReturn(utlatande);
+        when(certificateService.getCertificateForCare(intygId)).thenReturn(certificate);
+        when(moduleApi.getUtlatandeFromXml(intygId)).thenReturn(utlatande);
 
         return certificate;
     }

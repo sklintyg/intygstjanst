@@ -18,7 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -29,13 +30,13 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
@@ -53,8 +54,8 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 /**
  * @author eriklupander
  */
-@RunWith(MockitoJUnitRunner.class)
-public class ListSickLeavesForCareResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class ListSickLeavesForCareResponderImplTest {
 
     @Mock
     private ValidSickLeaveAggregator validSickLeaveAggregator;
@@ -82,8 +83,8 @@ public class ListSickLeavesForCareResponderImplTest {
 
     private SjukfallCertTestHelper testHelper = new SjukfallCertTestHelper();
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         enhetsId = new HsaId();
         enhetsId.setExtension(SjukfallCertTestHelper.CARE_UNIT_1_ID);
 
@@ -92,7 +93,7 @@ public class ListSickLeavesForCareResponderImplTest {
     }
 
     @Test
-    public void testListSickLeavesForCare() {
+    void testListSickLeavesForCare() {
         final var sjukfallCertificates = buildSjukfallCertificates();
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
             .thenReturn(sjukfallCertificates);
@@ -100,7 +101,7 @@ public class ListSickLeavesForCareResponderImplTest {
 
         ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
         assertEquals(1, response.getSjukfallLista().getSjukfall().size());
-        Sjukfall sjukfall = response.getSjukfallLista().getSjukfall().get(0);
+        Sjukfall sjukfall = response.getSjukfallLista().getSjukfall().getFirst();
 
         assertEquals(SjukfallCertTestHelper.CARE_UNIT_1_ID, sjukfall.getEnhetsId().getExtension());
         assertEquals(SjukfallCertTestHelper.DOCTOR_HSA_ID, sjukfall.getPersonalId().getExtension());
@@ -123,7 +124,7 @@ public class ListSickLeavesForCareResponderImplTest {
     }
 
     @Test
-    public void testListSickLeavesForCareForCorrectDoctor() {
+    void testListSickLeavesForCareForCorrectDoctor() {
         final var sjukfallCertificates = buildSjukfallCertificates();
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
             .thenReturn(sjukfallCertificates);
@@ -134,7 +135,7 @@ public class ListSickLeavesForCareResponderImplTest {
     }
 
     @Test
-    public void testListSickLeavesForCareForInCorrectDoctorReturnsZeroRows() {
+    void testListSickLeavesForCareForInCorrectDoctorReturnsZeroRows() {
         lakareId.setExtension("other-doctor");
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
             .thenReturn(buildSjukfallCertificates());
@@ -144,7 +145,7 @@ public class ListSickLeavesForCareResponderImplTest {
     }
 
     @Test
-    public void testListSickLeavesForCareReturns0WhenTooLargeMinSjukskrivningslangd() {
+    void testListSickLeavesForCareReturns0WhenTooLargeMinSjukskrivningslangd() {
 
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
             .thenReturn(buildSjukfallCertificates());
@@ -154,7 +155,7 @@ public class ListSickLeavesForCareResponderImplTest {
     }
 
     @Test
-    public void testListSickLeavesForCareReturns0WhenTooShortMaxSjukskrivningslangd() {
+    void testListSickLeavesForCareReturns0WhenTooShortMaxSjukskrivningslangd() {
 
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
             .thenReturn(buildSjukfallCertificates());
@@ -164,7 +165,7 @@ public class ListSickLeavesForCareResponderImplTest {
     }
 
     @Test
-    public void testListSickLeavesForCareWhenZeroSjukfallCertsAreReturnedFromDao() {
+    void testListSickLeavesForCareWhenZeroSjukfallCertsAreReturnedFromDao() {
 
         when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
             .thenReturn(new ArrayList<>());
@@ -173,20 +174,26 @@ public class ListSickLeavesForCareResponderImplTest {
         assertEquals(0, response.getSjukfallLista().getSjukfall().size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testListSickLeavesForCareWithNullEnhetsIdReturnsError() {
-        ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, null, null));
+    @Test
+    void testListSickLeavesForCareWithNullEnhetsIdReturnsError() {
+        final var params = buildParams(100, null, null);
+        assertThrows(IllegalArgumentException.class, () ->
+            testee.listSickLeavesForCare("", params));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testListSickLeavesForCareWithEmptyEnhetsIdReturnsError() {
+    @Test
+    void testListSickLeavesForCareWithEmptyEnhetsIdReturnsError() {
         enhetsId.setExtension("");
-        ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
+        final var params = buildParams(100, enhetsId, null);
+        assertThrows(IllegalArgumentException.class, () ->
+            testee.listSickLeavesForCare("", params));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testListSickLeavesForCareWithNegativeGlappReturnsError() {
-        ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(-1, enhetsId, null));
+    @Test
+    void testListSickLeavesForCareWithNegativeGlappReturnsError() {
+        final var params = buildParams(-1, enhetsId, null);
+        assertThrows(IllegalArgumentException.class, () ->
+            testee.listSickLeavesForCare("", params));
     }
 
     private List<SjukfallCertificate> buildSjukfallCertificates() {

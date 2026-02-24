@@ -18,7 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
@@ -29,13 +29,13 @@ import static org.mockito.Mockito.when;
 import jakarta.persistence.PersistenceException;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
-import java.util.Arrays;
+import java.util.List;
 import javax.xml.transform.stream.StreamSource;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
@@ -44,15 +44,14 @@ import se.inera.intyg.intygstjanst.web.service.ArendeService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.SoapIntegrationService;
 import se.inera.intyg.intygstjanst.web.service.StatisticsService;
-import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SendMessageToCareResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class SendMessageToCareResponderImplTest {
 
     private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML = "SendMessageToCareTest/sendmessagetocare.xml";
     private static String ENHET_1_ID = "ENHET_1_ID";
@@ -75,7 +74,7 @@ public class SendMessageToCareResponderImplTest {
     private SendMessageToCareResponderImpl responder;
 
     @Test
-    public void testSendMessage() throws Exception {
+    void testSendMessage() throws Exception {
         when(soapIntegrationService.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
             .thenReturn(createClientResponse(ResultTypeUtil.okResult()));
 
@@ -88,7 +87,7 @@ public class SendMessageToCareResponderImplTest {
     }
 
     @Test
-    public void testSendMessageClientInfo() throws Exception {
+    void testSendMessageClientInfo() throws Exception {
         final String clientInfoText = "info here";
         when(soapIntegrationService.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
             .thenReturn(createClientResponse(ResultTypeUtil.infoResult(clientInfoText)));
@@ -103,8 +102,8 @@ public class SendMessageToCareResponderImplTest {
     }
 
     @Test
-    public void testSendMessageValidationError() throws Exception {
-        when(validator.validateSendMessageToCare(any(SendMessageToCareType.class))).thenReturn(Arrays.asList("fel"));
+    void testSendMessageValidationError() throws Exception {
+        when(validator.validateSendMessageToCare(any(SendMessageToCareType.class))).thenReturn(List.of("fel"));
 
         SendMessageToCareResponseType responseType = responder.sendMessageToCare(ENHET_1_ID, buildSendMessageToCareType());
         assertEquals(ResultCodeType.ERROR, responseType.getResult().getResultCode());
@@ -118,7 +117,7 @@ public class SendMessageToCareResponderImplTest {
     }
 
     @Test
-    public void testSendMessageClientError() throws Exception {
+    void testSendMessageClientError() throws Exception {
         final ErrorIdType clientErrorId = ErrorIdType.TECHNICAL_ERROR;
         final String clientErrorText = "fel";
 
@@ -136,7 +135,7 @@ public class SendMessageToCareResponderImplTest {
     }
 
     @Test
-    public void testSendMessageProcessThrowsException() throws Exception {
+    void testSendMessageProcessThrowsException() throws Exception {
         when(soapIntegrationService.sendMessageToCare(any(String.class), any(SendMessageToCareType.class)))
             .thenReturn(createClientResponse(ResultTypeUtil.okResult()));
         when(sendMessageToCareService.processIncomingMessage(any(Arende.class))).thenThrow(new PersistenceException("Exception message"));
@@ -150,8 +149,7 @@ public class SendMessageToCareResponderImplTest {
     }
 
     private SendMessageToCareType buildSendMessageToCareType() throws Exception {
-        SendMessageToCareType sendMessageToCareType = getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
-        return sendMessageToCareType;
+        return getSendMessageToCareTypeFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
     }
 
     private SendMessageToCareResponseType createClientResponse(ResultType resultType) {

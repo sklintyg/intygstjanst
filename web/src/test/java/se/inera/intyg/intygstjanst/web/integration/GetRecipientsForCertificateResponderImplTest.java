@@ -18,10 +18,10 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,21 +31,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.inera.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
-import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateType;
 import se.inera.intyg.common.lisjp.support.LisjpEntryPoint;
-import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
@@ -53,8 +51,8 @@ import se.inera.intyg.intygstjanst.web.service.bean.CertificateTypeInfo;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 
-@RunWith(MockitoJUnitRunner.class)
-public class GetRecipientsForCertificateResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class GetRecipientsForCertificateResponderImplTest {
 
     private static final String LOGICAL_ADDRESS = "logicalAddress";
     private static final String DEFAULT_TYPE_VERSION = "1.0";
@@ -69,7 +67,7 @@ public class GetRecipientsForCertificateResponderImplTest {
     private GetRecipientsForCertificateResponderInterface responder = new GetRecipientsForCertificateResponderImpl();
 
     @Test
-    public void getRecipientsForCertificateTest() {
+    void getRecipientsForCertificateTest() {
         final String intygsId = "intygsId";
         when(recipientService.listRecipients(any(String.class))).thenReturn(getRecipientList(true, true));
 
@@ -79,9 +77,9 @@ public class GetRecipientsForCertificateResponderImplTest {
         assertNotNull(res);
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
         assertEquals(1, res.getRecipient().size());
-        assertEquals("recipientId", res.getRecipient().get(0).getId());
-        assertEquals("recipientName", res.getRecipient().get(0).getName());
-        assertTrue(res.getRecipient().get(0).isTrusted());
+        assertEquals("recipientId", res.getRecipient().getFirst().getId());
+        assertEquals("recipientName", res.getRecipient().getFirst().getName());
+        assertTrue(res.getRecipient().getFirst().isTrusted());
 
         ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
         verify(recipientService).listRecipients(stringCaptor.capture());
@@ -89,7 +87,7 @@ public class GetRecipientsForCertificateResponderImplTest {
     }
 
     @Test
-    public void getRecipientsForCertificateWhenNoRecipientsWereFoundTest() throws InvalidCertificateException {
+    void getRecipientsForCertificateWhenNoRecipientsWereFoundTest() {
         final String intygsId = "intygsId";
 
         when(recipientService.listRecipients(any(String.class))).thenReturn(new ArrayList<>());
@@ -106,12 +104,11 @@ public class GetRecipientsForCertificateResponderImplTest {
         verify(recipientService).listRecipients(stringCaptor.capture());
         assertEquals(intygsId, stringCaptor.getValue());
 
-        ArgumentCaptor<GetCertificateTypeInfoType> typeCaptor = ArgumentCaptor.forClass(GetCertificateTypeInfoType.class);
         verify(certificateService).getCertificateTypeInfo(stringCaptor.capture());
     }
 
     @Test
-    public void getRecipientForCertificateWhenNoApprovedRecieversWereFoundTest() throws InvalidCertificateException {
+    void getRecipientForCertificateWhenNoApprovedRecieversWereFoundTest() {
         final String intygsId = "intygsId";
 
         when(recipientService.listRecipients(any(String.class))).thenReturn(new ArrayList<>());
@@ -125,9 +122,9 @@ public class GetRecipientsForCertificateResponderImplTest {
         assertNotNull(res);
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
         assertEquals(1, res.getRecipient().size());
-        assertEquals("recipientId", res.getRecipient().get(0).getId());
-        assertEquals("recipientName", res.getRecipient().get(0).getName());
-        assertTrue(res.getRecipient().get(0).isTrusted());
+        assertEquals("recipientId", res.getRecipient().getFirst().getId());
+        assertEquals("recipientName", res.getRecipient().getFirst().getName());
+        assertTrue(res.getRecipient().getFirst().isTrusted());
 
         ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
         verify(recipientService).listRecipients(stringCaptor.capture());
@@ -135,12 +132,11 @@ public class GetRecipientsForCertificateResponderImplTest {
         ArgumentCaptor<CertificateType> ctypeCaptor = ArgumentCaptor.forClass(CertificateType.class);
         verify(recipientService).listRecipients(ctypeCaptor.capture());
 
-        ArgumentCaptor<GetCertificateTypeInfoType> gctypeCaptor = ArgumentCaptor.forClass(GetCertificateTypeInfoType.class);
         verify(certificateService).getCertificateTypeInfo(stringCaptor.capture());
     }
 
     @Test
-    public void getRecipientsForCertificateInactiveTest() {
+    void getRecipientsForCertificateInactiveTest() {
         final String intygsId = "intygsId";
 
         when(recipientService.listRecipients(any(String.class))).thenReturn(getRecipientList(false, true));
@@ -157,7 +153,7 @@ public class GetRecipientsForCertificateResponderImplTest {
     }
 
     @Test
-    public void getRecipientsForCertificateUntrustedTest() {
+    void getRecipientsForCertificateUntrustedTest() {
         final String intygsId = "intygsId";
 
         when(recipientService.listRecipients(any(String.class))).thenReturn(getRecipientList(true, false));
@@ -168,9 +164,9 @@ public class GetRecipientsForCertificateResponderImplTest {
         assertNotNull(res);
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
         assertEquals(1, res.getRecipient().size());
-        assertEquals("recipientId", res.getRecipient().get(0).getId());
-        assertEquals("recipientName", res.getRecipient().get(0).getName());
-        assertFalse(res.getRecipient().get(0).isTrusted());
+        assertEquals("recipientId", res.getRecipient().getFirst().getId());
+        assertEquals("recipientName", res.getRecipient().getFirst().getName());
+        assertFalse(res.getRecipient().getFirst().isTrusted());
 
         ArgumentCaptor<String> typeCaptor = ArgumentCaptor.forClass(String.class);
         verify(recipientService).listRecipients(typeCaptor.capture());

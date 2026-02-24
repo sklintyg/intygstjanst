@@ -18,12 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.isNull;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,14 +34,12 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.db.support.DbModuleEntryPoint;
 import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
 import se.inera.intyg.common.fk7263.support.Fk7263EntryPoint;
@@ -68,8 +67,8 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.IntygsStatus;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ListCertificatesForCitizenResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class ListCertificatesForCitizenResponderImplTest {
 
     private static final String FKASSA_RECIPIENT_ID = "FKASSA";
     private static final String OTHER_RECIPIENT_ID = "someotherID";
@@ -94,15 +93,15 @@ public class ListCertificatesForCitizenResponderImplTest {
     @InjectMocks
     private ListCertificatesForCitizenResponderInterface responder = new ListCertificatesForCitizenResponderImpl();
 
-    @Before
-    public void setup() throws ModuleNotFoundException, ModuleException {
-        when(moduleRegistry.getModuleApi(or(isNull(), anyString()), or(isNull(), anyString()))).thenReturn(moduleApi);
-        when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()))).thenReturn(mock(Utlatande.class));
-        when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class)))).thenReturn(new Intyg());
+    @BeforeEach
+    void setup() throws ModuleNotFoundException, ModuleException {
+        lenient().when(moduleRegistry.getModuleApi(or(isNull(), anyString()), or(isNull(), anyString()))).thenReturn(moduleApi);
+        lenient().when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()))).thenReturn(mock(Utlatande.class));
+        lenient().when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class)))).thenReturn(new Intyg());
     }
 
     @Test
-    public void listCertificatesWithNoCertificates() throws Exception {
+    void listCertificatesWithNoCertificates() {
         Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
@@ -124,7 +123,7 @@ public class ListCertificatesForCitizenResponderImplTest {
     }
 
     @Test
-    public void listCertificatesArkiveradFalse() throws Exception {
+    void listCertificatesArkiveradFalse() throws Exception {
         Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
@@ -153,7 +152,7 @@ public class ListCertificatesForCitizenResponderImplTest {
     }
 
     @Test
-    public void listCertificatesArkiveradTrue() throws Exception {
+    void listCertificatesArkiveradTrue() throws Exception {
         Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
@@ -182,7 +181,7 @@ public class ListCertificatesForCitizenResponderImplTest {
     }
 
     @Test
-    public void listCertificatesSetsStatuses() throws Exception {
+    void listCertificatesSetsStatuses() {
         final LocalDateTime statusTimestamp = LocalDateTime.now();
         Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
@@ -191,8 +190,8 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         Certificate certificate = new Certificate();
         certificate.setTypeVersion(INTYG_TYPE_VERSION);
-        certificate.setStates(Arrays.asList(new CertificateStateHistoryEntry("FKASSA", CertificateState.SENT, statusTimestamp)));
-        List<Certificate> result = Arrays.asList(certificate);
+        certificate.setStates(List.of(new CertificateStateHistoryEntry("FKASSA", CertificateState.SENT, statusTimestamp)));
+        List<Certificate> result = List.of(certificate);
 
         when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
 
@@ -203,16 +202,16 @@ public class ListCertificatesForCitizenResponderImplTest {
 
         assertEquals(1, response.getIntygsLista().getIntyg().size());
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
-        assertEquals(1, response.getIntygsLista().getIntyg().get(0).getStatus().size());
-        assertEquals("FKASSA", response.getIntygsLista().getIntyg().get(0).getStatus().get(0).getPart().getCode());
-        assertNotNull(response.getIntygsLista().getIntyg().get(0).getStatus().get(0).getPart().getCodeSystem());
-        assertEquals(statusTimestamp, response.getIntygsLista().getIntyg().get(0).getStatus().get(0).getTidpunkt());
-        assertEquals(StatusKod.SENTTO.name(), response.getIntygsLista().getIntyg().get(0).getStatus().get(0).getStatus().getCode());
-        assertNotNull(response.getIntygsLista().getIntyg().get(0).getStatus().get(0).getStatus().getCodeSystem());
+        assertEquals(1, response.getIntygsLista().getIntyg().getFirst().getStatus().size());
+        assertEquals("FKASSA", response.getIntygsLista().getIntyg().getFirst().getStatus().getFirst().getPart().getCode());
+        assertNotNull(response.getIntygsLista().getIntyg().getFirst().getStatus().getFirst().getPart().getCodeSystem());
+        assertEquals(statusTimestamp, response.getIntygsLista().getIntyg().getFirst().getStatus().getFirst().getTidpunkt());
+        assertEquals(StatusKod.SENTTO.name(), response.getIntygsLista().getIntyg().getFirst().getStatus().getFirst().getStatus().getCode());
+        assertNotNull(response.getIntygsLista().getIntyg().getFirst().getStatus().getFirst().getStatus().getCodeSystem());
     }
 
     @Test
-    public void statusesAreFilteredForFk() {
+    void statusesAreFilteredForFk() {
         // Given
         LocalDateTime firstStatusSaved = LocalDateTime.of(2017, 4, 7, 15, 15);
         LocalDateTime[] timestamps = {
@@ -235,7 +234,7 @@ public class ListCertificatesForCitizenResponderImplTest {
             new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.DELETED, timestamps[2]),
             new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.RESTORED, timestamps[3]),
             new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.CANCELLED, timestamps[4])));
-        List<Certificate> result = Arrays.asList(certificate);
+        List<Certificate> result = List.of(certificate);
 
         when(certificateService.listCertificatesForCitizen(pnr, certificateTypes, fromDate, toDate)).thenReturn(result);
 
@@ -248,16 +247,16 @@ public class ListCertificatesForCitizenResponderImplTest {
         // Then
         assertEquals(1, response.getIntygsLista().getIntyg().size());
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
-        assertEquals(2, response.getIntygsLista().getIntyg().get(0).getStatus().size());
+        assertEquals(2, response.getIntygsLista().getIntyg().getFirst().getStatus().size());
 
-        IntygsStatus status = response.getIntygsLista().getIntyg().get(0).getStatus().get(0);
+        IntygsStatus status = response.getIntygsLista().getIntyg().getFirst().getStatus().getFirst();
         assertEquals(OTHER_RECIPIENT_ID, status.getPart().getCode());
         assertNotNull(status.getPart().getCodeSystem());
         assertEquals(timestamps[4], status.getTidpunkt());
         assertEquals(StatusKod.CANCEL.name(), status.getStatus().getCode());
         assertNotNull(status.getStatus().getCodeSystem());
 
-        status = response.getIntygsLista().getIntyg().get(0).getStatus().get(1);
+        status = response.getIntygsLista().getIntyg().getFirst().getStatus().get(1);
         assertEquals(FKASSA_RECIPIENT_ID, status.getPart().getCode());
         assertNotNull(status.getPart().getCodeSystem());
         assertEquals(timestamps[0], status.getTidpunkt());
@@ -266,7 +265,7 @@ public class ListCertificatesForCitizenResponderImplTest {
     }
 
     @Test
-    public void statusesAreNotFilteredForMinaIntyg() {
+    void statusesAreNotFilteredForMinaIntyg() {
         // Given
         LocalDateTime firstStatusSaved = LocalDateTime.of(2017, 4, 7, 15, 15);
         LocalDateTime[] timestamps = {
@@ -289,7 +288,7 @@ public class ListCertificatesForCitizenResponderImplTest {
             new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.DELETED, timestamps[2]),
             new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.RESTORED, timestamps[3]),
             new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.CANCELLED, timestamps[4])));
-        List<Certificate> result = Arrays.asList(certificate);
+        List<Certificate> result = List.of(certificate);
 
         when(certificateService.listCertificatesForCitizen(pnr, certificateTypes, fromDate, toDate)).thenReturn(result);
 
@@ -302,37 +301,37 @@ public class ListCertificatesForCitizenResponderImplTest {
         // Then
         assertEquals(1, response.getIntygsLista().getIntyg().size());
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
-        assertEquals(5, response.getIntygsLista().getIntyg().get(0).getStatus().size());
+        assertEquals(5, response.getIntygsLista().getIntyg().getFirst().getStatus().size());
 
-        IntygsStatus status = response.getIntygsLista().getIntyg().get(0).getStatus().get(0);
+        IntygsStatus status = response.getIntygsLista().getIntyg().getFirst().getStatus().getFirst();
         assertEquals(OTHER_RECIPIENT_ID, status.getPart().getCode());
         assertNotNull(status.getPart().getCodeSystem());
         assertEquals(timestamps[4], status.getTidpunkt());
         assertEquals(StatusKod.CANCEL.name(), status.getStatus().getCode());
         assertNotNull(status.getStatus().getCodeSystem());
 
-        status = response.getIntygsLista().getIntyg().get(0).getStatus().get(1);
+        status = response.getIntygsLista().getIntyg().getFirst().getStatus().get(1);
         assertEquals(OTHER_RECIPIENT_ID, status.getPart().getCode());
         assertNotNull(status.getPart().getCodeSystem());
         assertEquals(timestamps[3], status.getTidpunkt());
         assertEquals(StatusKod.RESTOR.name(), status.getStatus().getCode());
         assertNotNull(status.getStatus().getCodeSystem());
 
-        status = response.getIntygsLista().getIntyg().get(0).getStatus().get(2);
+        status = response.getIntygsLista().getIntyg().getFirst().getStatus().get(2);
         assertEquals(OTHER_RECIPIENT_ID, status.getPart().getCode());
         assertNotNull(status.getPart().getCodeSystem());
         assertEquals(timestamps[2], status.getTidpunkt());
         assertEquals(StatusKod.DELETE.name(), status.getStatus().getCode());
         assertNotNull(status.getStatus().getCodeSystem());
 
-        status = response.getIntygsLista().getIntyg().get(0).getStatus().get(3);
+        status = response.getIntygsLista().getIntyg().getFirst().getStatus().get(3);
         assertEquals(OTHER_RECIPIENT_ID, status.getPart().getCode());
         assertNotNull(status.getPart().getCodeSystem());
         assertEquals(timestamps[1], status.getTidpunkt());
         assertEquals(StatusKod.SENTTO.name(), status.getStatus().getCode());
         assertNotNull(status.getStatus().getCodeSystem());
 
-        status = response.getIntygsLista().getIntyg().get(0).getStatus().get(4);
+        status = response.getIntygsLista().getIntyg().getFirst().getStatus().get(4);
         assertEquals(FKASSA_RECIPIENT_ID, status.getPart().getCode());
         assertNotNull(status.getPart().getCodeSystem());
         assertEquals(timestamps[0], status.getTidpunkt());
@@ -341,7 +340,7 @@ public class ListCertificatesForCitizenResponderImplTest {
     }
 
     @Test
-    public void testDbDoiAreExcluded() throws Exception {
+    void testDbDoiAreExcluded() {
         Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.emptyList();
         LocalDate fromDate = LocalDate.of(2000, 1, 1);
@@ -375,7 +374,7 @@ public class ListCertificatesForCitizenResponderImplTest {
     }
 
     @Test
-    public void listTestCertificateFK() throws Exception {
+    void listTestCertificateFK() {
         Personnummer civicRegistrationNumber = createPnr("19350108-1234");
         List<String> certificateTypes = Collections.singletonList("fk7263");
         LocalDate fromDate = LocalDate.of(2000, 1, 1);

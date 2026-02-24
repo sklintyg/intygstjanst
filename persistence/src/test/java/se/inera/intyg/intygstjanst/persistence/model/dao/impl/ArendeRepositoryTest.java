@@ -18,20 +18,20 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 
-public class ArendeRepositoryTest extends TestSupport {
+class ArendeRepositoryTest extends TestSupport {
 
     private static String ENHET_1_ID = "ENHET_1_ID";
     private static String ENHET_2_ID = "ENHET_2_ID";
@@ -45,7 +45,7 @@ public class ArendeRepositoryTest extends TestSupport {
     private ArendeRepository sendMessageToCareRepository;
 
     @Test
-    public void testFindOne() {
+    void testFindOne() {
         Arende saved = buildFragaSvarFraga(ENHET_1_ID);
         sendMessageToCareRepository.save(saved);
         Arende read = sendMessageToCareRepository.findById(saved.getInternReferens()).orElse(null);
@@ -53,7 +53,7 @@ public class ArendeRepositoryTest extends TestSupport {
     }
 
     @Test
-    public void testFindByMeddelandeId() {
+    void testFindByMeddelandeId() {
         Arende saved = buildFragaSvarFraga(ENHET_1_ID);
         sendMessageToCareRepository.save(saved);
         Arende read = sendMessageToCareRepository.findByMeddelandeId(saved.getMeddelandeId());
@@ -61,14 +61,14 @@ public class ArendeRepositoryTest extends TestSupport {
     }
 
     @Test
-    public void testFindAll() {
+    void testFindAll() {
         sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_1_ID));
         sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_2_ID));
         sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_3_ID));
         sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_3_ID));
         sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_4_ID));
         List<Arende> read = sendMessageToCareRepository.findAll();
-        assertEquals(read.size(), 5);
+        assertEquals(5, read.size());
     }
 
     private Arende buildFragaSvarFraga(String logiskMottagare) {

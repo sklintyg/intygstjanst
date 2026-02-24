@@ -18,18 +18,19 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static se.inera.intyg.common.support.Constants.KV_INTYGSTYP_CODE_SYSTEM;
 
 import java.util.UUID;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoResponseType;
@@ -39,8 +40,8 @@ import se.inera.intyg.intygstjanst.web.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateTypeInfo;
 
-@RunWith(MockitoJUnitRunner.class)
-public class GetCertificateTypeInfoResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class GetCertificateTypeInfoResponderImplTest {
 
     private static final String LOGICAL_ADDRESS = "logical-address";
     private static final String DEFAULT_VERSION = "1.0";
@@ -51,7 +52,7 @@ public class GetCertificateTypeInfoResponderImplTest {
     private GetCertificateTypeInfoResponderInterface testee = new GetCertificateTypeInfoResponderImpl();
 
     @Test
-    public void testGetCertificateTypeSuccess() {
+    void testGetCertificateTypeSuccess() {
         String intygsId = UUID.randomUUID().toString();
         String intygsTyp = LisjpEntryPoint.MODULE_ID;
 
@@ -64,16 +65,17 @@ public class GetCertificateTypeInfoResponderImplTest {
         assertEquals(KV_INTYGSTYP_CODE_SYSTEM, response.getTyp().getCodeSystem());
     }
 
-    @Test(expected = ServerException.class)
-    public void testGetCertificateTypeNotFound() {
+    @Test
+    void testGetCertificateTypeNotFound() {
         String intygsId = UUID.randomUUID().toString();
         when(certificateService.getCertificateTypeInfo(anyString())).thenReturn(null);
-        testee.getCertificateTypeInfo(LOGICAL_ADDRESS, buildReq(intygsId));
+        final var getCertificateTypeInfoType = buildReq(intygsId);
+        assertThrows(ServerException.class, () -> testee.getCertificateTypeInfo(LOGICAL_ADDRESS, getCertificateTypeInfoType));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetCertificateTypeEmptyIntygsId() {
-        testee.getCertificateTypeInfo(LOGICAL_ADDRESS, buildReq(" "));
+    @Test
+    void testGetCertificateTypeEmptyIntygsId() {
+        assertThrows(IllegalArgumentException.class, () -> testee.getCertificateTypeInfo(LOGICAL_ADDRESS, buildReq(" ")));
     }
 
     private GetCertificateTypeInfoType buildReq(String intygsId) {

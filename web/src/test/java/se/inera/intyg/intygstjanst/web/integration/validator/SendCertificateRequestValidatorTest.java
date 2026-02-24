@@ -18,11 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.validator;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import iso.v21090.dt.v1.II;
 import java.time.LocalDateTime;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificateresponder.v1.SendType;
@@ -32,40 +34,44 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SendCertificateRequestValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class SendCertificateRequestValidatorTest {
 
     @Test
-    public void testValidateAndCorrect() throws Exception {
+    void testValidateAndCorrect() throws Exception {
         new SendCertificateRequestValidator(createRequest()).validateAndCorrect();
     }
 
-    @Test(expected = CertificateValidationException.class)
-    public void testValidateAndCorrectVardReferensIdMissing() throws Exception {
+    @Test
+    void testValidateAndCorrectVardReferensIdMissing() {
         SendType sendRequest = createRequest();
         sendRequest.setVardReferensId(null);
-        new SendCertificateRequestValidator(sendRequest).validateAndCorrect();
+        assertThrows(CertificateValidationException.class,
+            () -> new SendCertificateRequestValidator(sendRequest).validateAndCorrect());
     }
 
-    @Test(expected = CertificateValidationException.class)
-    public void testValidateAndCorrectAvsantTidpunktMissing() throws Exception {
+    @Test
+    void testValidateAndCorrectAvsantTidpunktMissing() {
         SendType sendRequest = createRequest();
         sendRequest.setAvsantTidpunkt(null);
-        new SendCertificateRequestValidator(sendRequest).validateAndCorrect();
+        assertThrows(CertificateValidationException.class,
+            () -> new SendCertificateRequestValidator(sendRequest).validateAndCorrect());
     }
 
-    @Test(expected = CertificateValidationException.class)
-    public void testValidateAndCorrectLakarutlatandeError() throws Exception {
+    @Test
+    void testValidateAndCorrectLakarutlatandeError() {
         SendType sendRequest = createRequest();
         sendRequest.getLakarutlatande().setPatient(null);
-        new SendCertificateRequestValidator(sendRequest).validateAndCorrect();
+        assertThrows(CertificateValidationException.class,
+            () -> new SendCertificateRequestValidator(sendRequest).validateAndCorrect());
     }
 
-    @Test(expected = CertificateValidationException.class)
-    public void testValidateAndCorrectAdressVardError() throws Exception {
+    @Test
+    void testValidateAndCorrectAdressVardError() {
         SendType sendRequest = createRequest();
         sendRequest.getAdressVard().setHosPersonal(null);
-        new SendCertificateRequestValidator(sendRequest).validateAndCorrect();
+        assertThrows(CertificateValidationException.class,
+            () -> new SendCertificateRequestValidator(sendRequest).validateAndCorrect());
     }
 
     private SendType createRequest() {

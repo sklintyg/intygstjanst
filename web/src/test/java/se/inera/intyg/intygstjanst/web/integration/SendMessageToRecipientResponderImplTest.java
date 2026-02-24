@@ -18,25 +18,25 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import jakarta.xml.bind.JAXBException;
-import java.util.Arrays;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.verification.VerificationMode;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -54,8 +54,8 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SendMessageToRecipientResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class SendMessageToRecipientResponderImplTest {
 
     private static final String LOGICAL_ADDRESS = "123";
     private static final String LOGICAL_ADDRESS_RECIPIENT = "456";
@@ -78,13 +78,13 @@ public class SendMessageToRecipientResponderImplTest {
     @InjectMocks
     private SendMessageToRecipientResponderImpl responder;
 
-    @Before
-    public void setup() throws InvalidCertificateException {
-        when(certificateService.isTestCertificate(any())).thenReturn(false);
+    @BeforeEach
+    void setup() throws InvalidCertificateException {
+        lenient().when(certificateService.isTestCertificate(any())).thenReturn(false);
     }
 
     @Test
-    public void sendMessageToRecipientTest() throws Exception {
+    void sendMessageToRecipientTest() throws Exception {
         setupClientResponse(ResultTypeUtil.okResult());
         SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
         assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
@@ -92,7 +92,7 @@ public class SendMessageToRecipientResponderImplTest {
     }
 
     @Test
-    public void sendMessageToRecipientOnTestCertificate() throws Exception {
+    void sendMessageToRecipientOnTestCertificate() throws Exception {
         when(certificateService.isTestCertificate(any())).thenReturn(true);
         setupClientResponse(ResultTypeUtil.okResult());
         SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
@@ -101,7 +101,7 @@ public class SendMessageToRecipientResponderImplTest {
     }
 
     @Test
-    public void sendMessageToRecipientClientInfoTest() throws Exception {
+    void sendMessageToRecipientClientInfoTest() throws Exception {
         final String clientInfoText = "info here";
         setupClientResponse(ResultTypeUtil.infoResult(clientInfoText));
         SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
@@ -111,7 +111,7 @@ public class SendMessageToRecipientResponderImplTest {
     }
 
     @Test
-    public void sendMessageToRecipientValidationErrorTest() throws Exception {
+    void sendMessageToRecipientValidationErrorTest() throws Exception {
         setupValidatorError();
         SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
         assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
@@ -120,7 +120,7 @@ public class SendMessageToRecipientResponderImplTest {
     }
 
     @Test
-    public void sendMessageToRecipientCertificateDoesNotExistTest() throws Exception {
+    void sendMessageToRecipientCertificateDoesNotExistTest() throws Exception {
         when(validator.validate(any(SendMessageToRecipientType.class))).thenThrow(new InvalidCertificateException("intygId", null));
         SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
         assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
@@ -129,7 +129,7 @@ public class SendMessageToRecipientResponderImplTest {
     }
 
     @Test
-    public void sendMessageToRecipientResponderClientErrorTest() throws Exception {
+    void sendMessageToRecipientResponderClientErrorTest() throws Exception {
         final String clientErrorText = "something wrong";
         setupClientResponse(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, clientErrorText));
         SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
@@ -140,7 +140,7 @@ public class SendMessageToRecipientResponderImplTest {
     }
 
     @Test
-    public void sendMessageToRecipientArendeServiceThrowsExceptionTest() throws Exception {
+    void sendMessageToRecipientArendeServiceThrowsExceptionTest() throws Exception {
         setupClientResponse(ResultTypeUtil.okResult());
 
         when(arendeService.processIncomingMessage(or(isNull(), any(Arende.class)))).thenThrow(new RuntimeException("error"));
@@ -159,20 +159,20 @@ public class SendMessageToRecipientResponderImplTest {
     }
 
     private void setupValidatorError() throws InvalidCertificateException {
-        when(validator.validate(any(SendMessageToRecipientType.class))).thenReturn(Arrays.asList(""));
+        when(validator.validate(any(SendMessageToRecipientType.class))).thenReturn(List.of(""));
     }
 
     private void setupClientResponse(ResultType result) {
         SendMessageToRecipientResponseType response = new SendMessageToRecipientResponseType();
         response.setResult(result);
-        when(soapIntegrationService.sendMessageToRecipient(anyString(), any(SendMessageToRecipientType.class)))
+        lenient().when(soapIntegrationService.sendMessageToRecipient(anyString(), any(SendMessageToRecipientType.class)))
             .thenReturn(response);
     }
 
     private void assertInvocations(
         VerificationMode monitoringLogInvocation,
         VerificationMode arendeServiceInvocation,
-        VerificationMode sendMessageToRecipient) throws JAXBException, InvalidCertificateException {
+        VerificationMode sendMessageToRecipient) throws InvalidCertificateException {
 
         verify(validator).validate(any(SendMessageToRecipientType.class)); // always call validator
         verify(arendeService, arendeServiceInvocation).processIncomingMessage(any(Arende.class));

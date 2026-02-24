@@ -20,11 +20,11 @@ package se.inera.intyg.intygstjanst.web.integration.stub;
 
 import static org.mockito.Mockito.verify;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.Amnetyp;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.InnehallType;
@@ -33,8 +33,8 @@ import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequest
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestionresponder.v1.SendMedicalCertificateQuestionType;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SendMedicalCertificateQuestionResponderStubTest {
+@ExtendWith(MockitoExtension.class)
+class SendMedicalCertificateQuestionResponderStubTest {
 
     @Mock
     MedicalCertificatesStore store;
@@ -43,7 +43,7 @@ public class SendMedicalCertificateQuestionResponderStubTest {
     SendMedicalCertificateQuestionResponderStub stub = new SendMedicalCertificateQuestionResponderStub();
 
     @Test
-    public void test() throws Exception {
+    void test() {
         AttributedURIType logicalAddress = new AttributedURIType();
         SendMedicalCertificateQuestionType request = new SendMedicalCertificateQuestionType();
         QuestionToFkType question = new QuestionToFkType();

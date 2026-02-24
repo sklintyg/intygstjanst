@@ -18,26 +18,24 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
-
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 import se.inera.intyg.common.support.model.CertificateState;
 
-public class CertificateTest {
+class CertificateTest {
 
     @Test
-    public void isDeletedTest() {
+    void isDeletedTest() {
         Certificate certificate = new Certificate();
         certificate.addState(new CertificateStateHistoryEntry("INVANA", CertificateState.DELETED, LocalDateTime.now()));
         assertTrue(certificate.isDeleted());
     }
 
     @Test
-    public void isDeletedThenRestoredTest() {
+    void isDeletedThenRestoredTest() {
         Certificate certificate = new Certificate();
         certificate.addState(new CertificateStateHistoryEntry("INVANA", CertificateState.DELETED, LocalDateTime.now().minusSeconds(10)));
         certificate.addState(new CertificateStateHistoryEntry("INVANA", CertificateState.RESTORED, LocalDateTime.now()));
@@ -45,7 +43,7 @@ public class CertificateTest {
     }
 
     @Test
-    public void isDeletedThenRestoredAndArchivedAgainTest() {
+    void isDeletedThenRestoredAndArchivedAgainTest() {
         Certificate certificate = new Certificate();
         certificate.addState(new CertificateStateHistoryEntry("INVANA", CertificateState.DELETED, LocalDateTime.now().minusSeconds(10)));
         certificate.addState(new CertificateStateHistoryEntry("INVANA", CertificateState.DELETED, LocalDateTime.now()));
@@ -54,7 +52,7 @@ public class CertificateTest {
     }
 
     @Test
-    public void isDeletedMultipleStatusesTest() {
+    void isDeletedMultipleStatusesTest() {
         Certificate certificate = new Certificate();
         certificate.addState(new CertificateStateHistoryEntry("FKASSA", CertificateState.SENT, LocalDateTime.now().minusSeconds(10)));
         certificate.addState(new CertificateStateHistoryEntry("INVANA", CertificateState.DELETED, LocalDateTime.now().minusSeconds(5)));
@@ -63,7 +61,7 @@ public class CertificateTest {
     }
 
     @Test
-    public void isDeletedNoArchivedStatusesTest() {
+    void isDeletedNoArchivedStatusesTest() {
         Certificate certificate = new Certificate();
         certificate.addState(new CertificateStateHistoryEntry("FKASSA", CertificateState.SENT, LocalDateTime.now()));
         certificate.addState(new CertificateStateHistoryEntry("FKASSA", CertificateState.RECEIVED, LocalDateTime.now()));
@@ -72,12 +70,12 @@ public class CertificateTest {
     }
 
     @Test
-    public void isDeletedNoStatusesTest() {
+    void isDeletedNoStatusesTest() {
         assertFalse(new Certificate().isDeleted());
     }
 
     @Test
-    public void isRevokedTest() {
+    void isRevokedTest() {
         Certificate certificate = new Certificate();
         certificate.addState(new CertificateStateHistoryEntry("HSVARD", CertificateState.RECEIVED, LocalDateTime.now()));
         certificate.addState(new CertificateStateHistoryEntry("HSVARD", CertificateState.CANCELLED, LocalDateTime.now()));
@@ -86,7 +84,7 @@ public class CertificateTest {
     }
 
     @Test
-    public void isRevokedFalseTest() {
+    void isRevokedFalseTest() {
         Certificate certificate = new Certificate();
         certificate.addState(new CertificateStateHistoryEntry("HSVARD", CertificateState.RECEIVED, LocalDateTime.now()));
         certificate.addState(new CertificateStateHistoryEntry("FKASSA", CertificateState.SENT, LocalDateTime.now()));
@@ -94,12 +92,12 @@ public class CertificateTest {
     }
 
     @Test
-    public void isRevokedNoStatusesTest() {
+    void isRevokedNoStatusesTest() {
         assertFalse(new Certificate().isRevoked());
     }
 
     @Test
-    public void isAlreadySentTest() {
+    void isAlreadySentTest() {
         Certificate certificate = new Certificate();
         certificate.addState(new CertificateStateHistoryEntry("HSVARD", CertificateState.RECEIVED, LocalDateTime.now()));
         certificate.addState(new CertificateStateHistoryEntry("HSVARD", CertificateState.CANCELLED, LocalDateTime.now()));
@@ -109,7 +107,7 @@ public class CertificateTest {
     }
 
     @Test
-    public void isAlreadySentFalseTest() {
+    void isAlreadySentFalseTest() {
         Certificate certificate = new Certificate();
         certificate.addState(new CertificateStateHistoryEntry("HSVARD", CertificateState.RECEIVED, LocalDateTime.now()));
         assertFalse(certificate.isAlreadySent("FKASSA"));
@@ -117,7 +115,7 @@ public class CertificateTest {
     }
 
     @Test
-    public void isAlreadySentNoStatusesTest() {
+    void isAlreadySentNoStatusesTest() {
         assertFalse(new Certificate().isAlreadySent("FKASSA"));
     }
 }

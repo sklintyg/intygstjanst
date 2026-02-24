@@ -18,31 +18,30 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-public class DaoUtilTest {
+class DaoUtilTest {
 
     @Test
-    public void testWithDash() {
+    void testWithDash() {
         Personnummer pnr = createPnr("19121212-1212");
         String expected = "19121212-1212";
         assertEquals(expected, DaoUtil.formatPnrForPersistence(pnr));
     }
 
     @Test
-    public void testWithoutDash() {
+    void testWithoutDash() {
         Personnummer pnr = createPnr("191212121212");
         String expected = "19121212-1212";
         assertEquals(expected, DaoUtil.formatPnrForPersistence(pnr));
     }
 
     @Test
-    public void testWith6Digits() {
+    void testWith6Digits() {
         Personnummer pnr = createPnr("1212121212");
         String expected = "20121212-1212";
         assertEquals(expected, DaoUtil.formatPnrForPersistence(pnr));

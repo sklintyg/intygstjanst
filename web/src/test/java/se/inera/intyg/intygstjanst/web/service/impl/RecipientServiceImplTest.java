@@ -18,25 +18,25 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.intyg.intygstjanst.web.service.repo.RecipientRepoImpl;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RecipientServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class RecipientServiceImplTest {
 
     private static final String FK_CERTIFICATE_TYPE = "fk7263";
     private static final String TS_CERTIFICATE_TYPE_BAS = "ts-bas";
@@ -111,30 +111,30 @@ public class RecipientServiceImplTest {
             .build();
     }
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         when(repo.getRecipientHsvard()).thenReturn(createHsvardRecipient());
         when(repo.getRecipientInvana()).thenReturn(createInvanaRecipient());
     }
 
     @Test
-    public void testListRecipientsForCerttypeFK7263() throws RecipientUnknownException {
+    void testListRecipientsForCerttypeFK7263() {
         when(repo.listRecipients()).thenReturn(Arrays.asList(createFkRecipient(), createTsRecipient()));
-        List<Recipient> expected = Arrays.asList(createFkRecipient());
+        List<Recipient> expected = Collections.singletonList(createFkRecipient());
         assertEquals(expected, service.listRecipients(new CertificateType(FK_CERTIFICATE_TYPE)));
     }
 
     @Test
-    public void testListRecipientsForCerttypeTS() throws RecipientUnknownException {
+    void testListRecipientsForCerttypeTS() {
         when(repo.listRecipients()).thenReturn(Arrays.asList(createFkRecipient(), createTsRecipient()));
-        List<Recipient> expected = Arrays.asList(createTsRecipient());
+        List<Recipient> expected = Collections.singletonList(createTsRecipient());
 
         assertEquals(expected, service.listRecipients(new CertificateType(TS_CERTIFICATE_TYPE_BAS)));
         assertEquals(expected, service.listRecipients(new CertificateType(TS_CERTIFICATE_TYPE_DIABETES)));
     }
 
     @Test
-    public void testListRecipientsWithUntrusted() throws RecipientUnknownException {
+    void testListRecipientsWithUntrusted() {
         // Note: Order matters in the list.
         when(repo.listRecipients()).thenReturn(Arrays.asList(createUntrustedRecipient(), createFkRecipient(), createTsRecipient()));
         List<Recipient> expectedTS = Arrays.asList(createUntrustedRecipient(), createTsRecipient());

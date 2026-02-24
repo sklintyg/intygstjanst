@@ -118,6 +118,5 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok'
 
     testRuntimeOnly "jakarta.servlet:jakarta.servlet-api"
-    testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
     testRuntimeOnly "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
 }

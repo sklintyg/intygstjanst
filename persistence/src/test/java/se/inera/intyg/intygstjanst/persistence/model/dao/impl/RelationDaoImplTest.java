@@ -18,14 +18,14 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
@@ -36,11 +36,8 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
  *
  * @author eriklupander
  */
-public class RelationDaoImplTest extends TestSupport {
+class RelationDaoImplTest extends TestSupport {
 
-    // Försöker ha intygens ID-nummer i kronologisk ordning, dvs. intyg-2 skall i testet peka på intyg-1
-    private static final String START_INTYG = "intyg-2";
-    private static final String PARENT_INTYG_1 = "intyg-1";
     public static final String INTYG_0 = "intyg-0";
     public static final String INTYG_1 = "intyg-1";
     public static final String INTYG_2 = "intyg-2";
@@ -59,7 +56,7 @@ public class RelationDaoImplTest extends TestSupport {
      * Due to the overhead of creating/rollbacking each test, all tests goes into the same method.
      */
     @Test
-    public void testBuildGraph() {
+    void testBuildGraph() {
         buildRelationTree();
 
         List<Relation> graph = relationDao.getGraph(INTYG_2);
@@ -87,7 +84,7 @@ public class RelationDaoImplTest extends TestSupport {
     }
 
     @Test
-    public void shouldEraseRelationsWhereToOrFromFieldHasCertificateForRemoval() {
+    void shouldEraseRelationsWhereToOrFromFieldHasCertificateForRemoval() {
         buildRelationTree();
 
         relationDao.eraseCertificateRelations(List.of(INTYG_1), "5678");
@@ -97,7 +94,7 @@ public class RelationDaoImplTest extends TestSupport {
     }
 
     @Test
-    public void shouldReturnActiveRelations() {
+    void shouldReturnActiveRelations() {
         buildRelationTreeIncludingRevoked();
 
         final var response = relationDao.getRelations(CERTIFICATE_IDS, REVOKED_CERTIFICATE_IDS);
@@ -106,12 +103,12 @@ public class RelationDaoImplTest extends TestSupport {
     }
 
     @Test
-    public void shouldFilterRelationsIfRevoked() {
+    void shouldFilterRelationsIfRevoked() {
         buildRelationTreeIncludingRevoked();
 
         final var response = relationDao.getRelations(CERTIFICATE_IDS, REVOKED_CERTIFICATE_IDS);
 
-        assertFalse(response.containsKey(REVOKED_CERTIFICATE_IDS.get(0)));
+        assertFalse(response.containsKey(REVOKED_CERTIFICATE_IDS.getFirst()));
     }
 
     private void buildRelationTree() {

@@ -18,15 +18,15 @@
  */
 package se.inera.intyg.intygstjanst.web.service.converter;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableList;
 import java.time.LocalDateTime;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.fkparent.model.internal.Diagnos;
 import se.inera.intyg.common.luae_fs.v1.model.internal.LuaefsUtlatandeV1;
 import se.inera.intyg.common.luae_na.v1.model.internal.LuaenaUtlatandeV1;
@@ -38,8 +38,8 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CertificateToDiagnosedCertificateConverterTest {
+@ExtendWith(MockitoExtension.class)
+class CertificateToDiagnosedCertificateConverterTest {
 
     private static final String CERT_ID = "cert-123";
     private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
@@ -49,15 +49,6 @@ public class CertificateToDiagnosedCertificateConverterTest {
     private static final String CERT_TYPE_LUAEFS = "luaefs";
     private static final String CERT_TYPE_LUSE = "luse";
     private static final String CERT_TYPE_LUAENA = "luaena";
-
-    private static final String START_DATE_100 = "2016-02-01";
-    private static final String END_DATE_100 = "2216-02-01";
-    private static final String START_DATE_75 = "2016-03-01";
-    private static final String END_DATE_75 = "2216-03-01";
-    private static final String START_DATE_50 = "2016-04-01";
-    private static final String END_DATE_50 = "2216-04-01";
-    private static final String START_DATE_25 = "2016-05-01";
-    private static final String END_DATE_25 = "2216-05-01";
 
     private static final String DOC_ID = "doc-1";
     private static final String CARE_UNIT_ID = "enhet-1";
@@ -69,7 +60,7 @@ public class CertificateToDiagnosedCertificateConverterTest {
     private final Personnummer pNr = Personnummer.createPersonnummer(PERSONNUMMER).get();
 
     @Test
-    public void convertLuaefs() {
+    void convertLuaefs() {
         Certificate certificate = buildCertificate(CERT_TYPE_LUAEFS);
         LuaefsUtlatandeV1 statement = buildLuaefsStatement();
 
@@ -93,7 +84,7 @@ public class CertificateToDiagnosedCertificateConverterTest {
     }
 
     @Test
-    public void convertLuaena() {
+    void convertLuaena() {
         Certificate certificate = buildCertificate(CERT_TYPE_LUAENA);
         LuaenaUtlatandeV1 statement = buildLuaenaStatement();
 
@@ -117,7 +108,7 @@ public class CertificateToDiagnosedCertificateConverterTest {
     }
 
     @Test
-    public void convertLuse() {
+    void convertLuse() {
         Certificate certificate = buildCertificate(CERT_TYPE_LUSE);
         LuseUtlatandeV1 statement = buildLuseStatement();
 

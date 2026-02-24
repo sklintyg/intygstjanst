@@ -19,8 +19,8 @@
 package se.inera.intyg.intygstjanst.web.integration.stub;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static se.inera.intyg.common.support.stub.MedicalCertificatesStore.MAKULERAD;
@@ -33,15 +33,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 
-@RunWith(MockitoJUnitRunner.class)
-public class FkStubResourceTest {
+@ExtendWith(MockitoExtension.class)
+class FkStubResourceTest {
 
     @Mock
     MedicalCertificatesStore store;
@@ -62,14 +62,14 @@ public class FkStubResourceTest {
     private Entry<String, Map<String, String>> value;
 
     @Test
-    public void testGetCount() throws Exception {
+    void testGetCount() {
         when(store.getCount()).thenReturn(15);
         assertEquals(15, stub.count());
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testCertificates() throws Exception {
+    void testCertificates() {
         when(store.getAll()).thenReturn(map);
         when(map.entrySet()).thenReturn(entrySet);
         when(entrySet.iterator()).thenReturn(iterator);
@@ -103,7 +103,7 @@ public class FkStubResourceTest {
     }
 
     @Test
-    public void testCertificatesJson() throws Exception {
+    void testCertificatesJson() {
 
         Map<String, String> v1 = newHashMap();
         v1.put(PERSONNUMMER, "19121212-1111");
@@ -126,13 +126,13 @@ public class FkStubResourceTest {
     }
 
     @Test
-    public void testClear() throws Exception {
+    void testClear() {
         stub.clear();
         verify(store).clear();
     }
 
     @Test
-    public void testClearJson() throws Exception {
+    void testClearJson() {
         stub.clearJson();
         verify(store).clear();
     }

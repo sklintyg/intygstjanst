@@ -18,11 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,16 +32,16 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import javax.xml.transform.stream.StreamSource;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
@@ -69,8 +71,8 @@ import se.inera.intyg.intygstjanst.web.support.CertificateFactory;
 /**
  * @author andreaskaltenbach
  */
-@RunWith(MockitoJUnitRunner.class)
-public class CertificateSenderServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class CertificateSenderServiceImplTest {
 
     private static final String CERTIFICATE_ID = "123456";
     private static final String CERTIFICATE_TYPE = "fk7263";
@@ -116,57 +118,58 @@ public class CertificateSenderServiceImplTest {
             .getValue();
     }
 
-    @Before
-    public void setupModuleRestApiFactory() throws ModuleNotFoundException {
-        when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
-        when(moduleEntryPoint.getDefaultRecipient()).thenReturn(RECIPIENT_DEFAULT_LOGICALADDRESS);
+    @BeforeEach
+    void setupModuleRestApiFactory() throws ModuleNotFoundException {
+        lenient().when(moduleRegistry.getModuleEntryPoint(anyString())).thenReturn(moduleEntryPoint);
+        lenient().when(moduleEntryPoint.getDefaultRecipient()).thenReturn(RECIPIENT_DEFAULT_LOGICALADDRESS);
     }
 
-    @Before
-    public void setupRecipientService() throws RecipientUnknownException {
-        when(recipientService.getRecipient(RECIPIENT_ID_FKASSA)).thenReturn(createRecipient());
-        when(recipientService.listRecipients(any(CertificateType.class))).thenReturn(Arrays.asList(createRecipient()));
+    @BeforeEach
+    void setupRecipientService() throws RecipientUnknownException {
+        lenient().when(recipientService.getRecipient(RECIPIENT_ID_FKASSA)).thenReturn(createRecipient());
+        lenient().when(recipientService.listRecipients(any(CertificateType.class)))
+            .thenReturn(Collections.singletonList(createRecipient()));
     }
 
     @Test
-    public void testSend() throws Exception {
+    void testSend() throws Exception {
         senderService.sendCertificate(certificate, RECIPIENT_ID_FKASSA);
         verify(soapIntegrationService).sendCertificateToRecipient(certificate, RECIPIENT_LOGICALADDRESS, RECIPIENT_ID_FKASSA);
     }
 
     @Test
-    public void testSendWithDefaultRecipient() throws ModuleException, ModuleNotFoundException {
+    void testSendWithDefaultRecipient() throws ModuleException, ModuleNotFoundException {
         senderService.sendCertificate(certificate, null);
         verify(soapIntegrationService).sendCertificateToRecipient(eq(certificate), eq(RECIPIENT_DEFAULT_LOGICALADDRESS), Mockito.isNull());
     }
 
-    @Test(expected = ServerException.class)
-    public void testSendWithFailingModule() throws Exception {
+    @Test
+    void testSendWithFailingModule() throws Exception {
         // web service call fails
         doThrow(new ModuleException("")).when(soapIntegrationService).sendCertificateToRecipient(certificate, RECIPIENT_LOGICALADDRESS,
             RECIPIENT_ID_FKASSA);
-        senderService.sendCertificate(certificate, RECIPIENT_ID_FKASSA);
-    }
-
-    @Test(expected = MissingModuleException.class)
-    public void testSendWithModuleNotFound() throws Exception {
-        doThrow(new ModuleNotFoundException("")).when(moduleRegistry).getModuleEntryPoint(CERTIFICATE_TYPE);
-        senderService.sendCertificate(certificate, RECIPIENT_ID_FKASSA);
-    }
-
-    @Test(expected = ServerException.class)
-    public void testSendWithUnknownRecipient() throws RecipientUnknownException {
-        when(recipientService.getRecipient(RECIPIENT_ID_FKASSA)).thenThrow(new RecipientUnknownException(""));
-        senderService.sendCertificate(certificate, RECIPIENT_ID_FKASSA);
-    }
-
-    @Test(expected = ServerException.class)
-    public void testSendWithNoMatchingRecipient() {
-        senderService.sendCertificate(certificate, RECIPIENT_ID_TRANSP);
+        assertThrows(ServerException.class, () -> senderService.sendCertificate(certificate, RECIPIENT_ID_FKASSA));
     }
 
     @Test
-    public void sendCertificateRevocationTest() throws Exception {
+    void testSendWithModuleNotFound() throws Exception {
+        doThrow(new ModuleNotFoundException("")).when(moduleRegistry).getModuleEntryPoint(CERTIFICATE_TYPE);
+        assertThrows(MissingModuleException.class, () -> senderService.sendCertificate(certificate, RECIPIENT_ID_FKASSA));
+    }
+
+    @Test
+    void testSendWithUnknownRecipient() throws RecipientUnknownException {
+        when(recipientService.getRecipient(RECIPIENT_ID_FKASSA)).thenThrow(new RecipientUnknownException(""));
+        assertThrows(ServerException.class, () -> senderService.sendCertificate(certificate, RECIPIENT_ID_FKASSA));
+    }
+
+    @Test
+    void testSendWithNoMatchingRecipient() {
+        assertThrows(ServerException.class, () -> senderService.sendCertificate(certificate, RECIPIENT_ID_TRANSP));
+    }
+
+    @Test
+    void sendCertificateRevocationTest() throws Exception {
         final String nonFkRecipient = RECIPIENT_ID_TRANSP;
         RevokeMedicalCertificateResponseType revokeMedicalCertificateResponse = new RevokeMedicalCertificateResponseType();
         revokeMedicalCertificateResponse.setResult(ResultOfCallUtil.okResult());
@@ -188,8 +191,8 @@ public class CertificateSenderServiceImplTest {
         assertEquals(CERTIFICATE_ID, requestCaptor.getValue().getRevoke().getLakarutlatande().getLakarutlatandeId());
     }
 
-    @Test(expected = SubsystemCallException.class)
-    public void sendCertificateRevocationRecipientErrorTest() throws Exception {
+    @Test
+    void sendCertificateRevocationRecipientErrorTest() throws Exception {
         final String nonFkRecipient = RECIPIENT_ID_TRANSP;
         RevokeMedicalCertificateResponseType revokeMedicalCertificateResponse = new RevokeMedicalCertificateResponseType();
         revokeMedicalCertificateResponse.setResult(ResultOfCallUtil.failResult("error"));
@@ -199,16 +202,16 @@ public class CertificateSenderServiceImplTest {
         RevokeType revokeData = new RevokeType();
         revokeData.setLakarutlatande(new LakarutlatandeEnkelType());
         revokeData.getLakarutlatande().setLakarutlatandeId(CERTIFICATE_ID);
-        senderService.sendCertificateRevocation(certificate, nonFkRecipient, revokeData);
+        assertThrows(SubsystemCallException.class, () -> senderService.sendCertificateRevocation(certificate, nonFkRecipient, revokeData));
     }
 
-    @Test(expected = RuntimeException.class)
-    public void sendCertificateRevocationUnknownRecipientTest() throws Exception {
+    @Test
+    void sendCertificateRevocationUnknownRecipientTest() throws Exception {
         final String nonFkRecipient = RECIPIENT_ID_TRANSP;
         when(recipientService.getRecipient(nonFkRecipient)).thenThrow(new RecipientUnknownException(""));
         RevokeType revokeData = new RevokeType();
         revokeData.setLakarutlatande(new LakarutlatandeEnkelType());
         revokeData.getLakarutlatande().setLakarutlatandeId(CERTIFICATE_ID);
-        senderService.sendCertificateRevocation(certificate, nonFkRecipient, revokeData);
+        assertThrows(RuntimeException.class, () -> senderService.sendCertificateRevocation(certificate, nonFkRecipient, revokeData));
     }
 }

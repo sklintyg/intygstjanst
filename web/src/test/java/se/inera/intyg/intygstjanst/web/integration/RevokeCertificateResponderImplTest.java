@@ -18,9 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -31,13 +31,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -60,8 +60,8 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RevokeCertificateResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class RevokeCertificateResponderImplTest {
 
     @Mock
     private MonitoringLogService monitoringService;
@@ -84,13 +84,13 @@ public class RevokeCertificateResponderImplTest {
     @InjectMocks
     private RevokeCertificateResponderImpl revokeCertificateResponder;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         ReflectionTestUtils.setField(hashUtility, "salt", "salt");
     }
 
     @Test
-    public void testRevokeCertificate() throws Exception {
+    void testRevokeCertificate() throws Exception {
         final String certificateId = "certificateId";
         final String patientId = "19121212-1212";
         final String logicalAddress = "logicalAddress";
@@ -130,7 +130,7 @@ public class RevokeCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeCertificateNotSent() throws Exception {
+    void testRevokeCertificateNotSent() throws Exception {
         final String certificateId = "certificateId";
         final String patientId = "19121212-1212";
         final String logicalAddress = "logicalAddress";
@@ -154,7 +154,7 @@ public class RevokeCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeCertificateNotExisting() throws Exception {
+    void testRevokeCertificateNotExisting() throws Exception {
         final var certificateId = "certificateId";
         final var patientId = "191212121212";
         final var logicalAddress = "logicalAddress";
@@ -181,7 +181,7 @@ public class RevokeCertificateResponderImplTest {
     }
 
     @Test
-    public void testRevokeCertificateAlreadyRevoked() throws Exception {
+    void testRevokeCertificateAlreadyRevoked() throws Exception {
         final String certificateId = "certificateId";
         final String patientId = "19121212-1212";
         final String logicalAddress = "logicalAddress";

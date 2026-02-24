@@ -18,18 +18,18 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients.v1.ListKnownRecipientsResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients.v1.ListKnownRecipientsType;
@@ -37,8 +37,8 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ListKnownRecipientsResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class ListKnownRecipientsResponderImplTest {
 
     @Mock
     private RecipientService recipientService;
@@ -46,7 +46,7 @@ public class ListKnownRecipientsResponderImplTest {
     private ListKnownRecipientsResponderImpl responder;
 
     @Test
-    public void testListKnownRecipients() {
+    void testListKnownRecipients() {
         final String recipientId = "recipientId";
         final String recipientName = "recipientName";
         when(recipientService.listRecipients()).thenReturn(Arrays.asList(new RecipientBuilder()
@@ -69,9 +69,9 @@ public class ListKnownRecipientsResponderImplTest {
         assertNotNull(response);
         assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
         assertEquals(2, response.getRecipient().size());
-        assertEquals(recipientId, response.getRecipient().get(0).getId());
-        assertEquals(recipientName, response.getRecipient().get(0).getName());
-        assertTrue(response.getRecipient().get(0).isTrusted());
+        assertEquals(recipientId, response.getRecipient().getFirst().getId());
+        assertEquals(recipientName, response.getRecipient().getFirst().getName());
+        assertTrue(response.getRecipient().getFirst().isTrusted());
         assertFalse(response.getRecipient().stream().allMatch(RecipientType::isTrusted));
     }
 }

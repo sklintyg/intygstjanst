@@ -18,19 +18,19 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.rehabstod;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ResultCodeEnum;
@@ -42,8 +42,8 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v2.PersonId;
 /**
  * Created by Magnus Ekstrand on 2018-10-23.
  */
-@RunWith(MockitoJUnitRunner.class)
-public class ListSickLeavesForPersonResponderImplTest {
+@ExtendWith(MockitoExtension.class)
+class ListSickLeavesForPersonResponderImplTest {
 
     @Mock
     private ValidSickLeaveAggregator validSickLeaveAggregator;
@@ -55,7 +55,7 @@ public class ListSickLeavesForPersonResponderImplTest {
     private ListSickLeavesForPersonResponderImpl testee;
 
     @Test
-    public void testWithNoPersonId() {
+    void testWithNoPersonId() {
         ListSickLeavesForPersonType params = new ListSickLeavesForPersonType();
         ListSickLeavesForPersonResponseType responseType = testee.listSickLeavesForPerson("", params);
         assertNotNull(responseType);
@@ -64,7 +64,7 @@ public class ListSickLeavesForPersonResponderImplTest {
     }
 
     @Test
-    public void testNormalHappyPath() {
+    void testNormalHappyPath() {
         PersonId patientId = new PersonId();
         patientId.setExtension("191212121212");
 
@@ -77,7 +77,7 @@ public class ListSickLeavesForPersonResponderImplTest {
     }
 
     @Test
-    public void testFilteringOfTestCertificates() {
+    void testFilteringOfTestCertificates() {
         PersonId patientId = new PersonId();
         patientId.setExtension("191212121212");
 
@@ -97,7 +97,7 @@ public class ListSickLeavesForPersonResponderImplTest {
         assertNotNull(responseType);
         assertEquals(ResultCodeEnum.OK, responseType.getResult().getResultCode());
         assertEquals(1, responseType.getIntygsLista().getIntygsData().size());
-        assertEquals("realSjukfallCertificateId", responseType.getIntygsLista().getIntygsData().get(0).getIntygsId());
+        assertEquals("realSjukfallCertificateId", responseType.getIntygsLista().getIntygsData().getFirst().getIntygsId());
     }
 
 }

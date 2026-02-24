@@ -27,23 +27,23 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-@RunWith(MockitoJUnitRunner.class)
-public class MonitoringLogServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class MonitoringLogServiceImplTest {
 
     private static final String CERTIFICATE_ID = "CERTIFICATE_ID";
     private static final String CERTIFICATE_TYPE = "CERTIFICATE_TYPE";
@@ -67,28 +67,28 @@ public class MonitoringLogServiceImplTest {
     @InjectMocks
     private MonitoringLogServiceImpl logService;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         ReflectionTestUtils.setField(hashUtility, "salt", "salt");
         final Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         logger.addAppender(mockAppender);
     }
 
-    @After
-    public void teardown() {
+    @AfterEach
+    void teardown() {
         final Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         logger.detachAppender(mockAppender);
     }
 
     @Test
-    public void shouldLogCertificateRegistered() {
+    void shouldLogCertificateRegistered() {
         logService.logCertificateRegistered(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
         verifyLog(Level.INFO,
             "CERTIFICATE_REGISTERED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - registered");
     }
 
     @Test
-    public void shouldLogCertificateRetrieved() {
+    void shouldLogCertificateRetrieved() {
         logService.logCertificateRetrieved(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, PART);
         verifyLog(Level.INFO,
             "CERTIFICATE_RETRIEVED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - "
@@ -96,32 +96,30 @@ public class MonitoringLogServiceImplTest {
     }
 
     private void verifyLog(Level logLevel, String logMessage) {
-        // Verify and capture logging interaction
         verify(mockAppender).doAppend(captorLoggingEvent.capture());
         final LoggingEvent loggingEvent = captorLoggingEvent.getValue();
 
-        // Verify log
         assertThat(loggingEvent.getLevel(), equalTo(logLevel));
         assertThat(loggingEvent.getFormattedMessage(),
             equalTo(logMessage));
     }
 
     @Test
-    public void shouldLogCertificateSent() {
+    void shouldLogCertificateSent() {
         logService.logCertificateSent(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, RECIPIENT);
         verifyLog(Level.INFO,
             "CERTIFICATE_SENT Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - sent to 'RECIPIENT'");
     }
 
     @Test
-    public void shouldLogCertificateRevoked() {
+    void shouldLogCertificateRevoked() {
         logService.logCertificateRevoked(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
         verifyLog(Level.INFO,
             "CERTIFICATE_REVOKED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - revoked");
     }
 
     @Test
-    public void shouldLogCertificateRevokeSent() {
+    void shouldLogCertificateRevokeSent() {
         logService.logCertificateRevokeSent(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, RECIPIENT);
         verifyLog(Level.INFO,
             "CERTIFICATE_REVOKE_SENT Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - revoke sent to "
@@ -129,7 +127,7 @@ public class MonitoringLogServiceImplTest {
     }
 
     @Test
-    public void shouldLogCertificateListedByCitizen() {
+    void shouldLogCertificateListedByCitizen() {
         final Personnummer citizenId = createPnr(CITIZEN);
         logService.logCertificateListedByCitizen(citizenId);
         verifyLog(Level.INFO,
@@ -138,7 +136,7 @@ public class MonitoringLogServiceImplTest {
     }
 
     @Test
-    public void shouldLogCertificateListedByCare() {
+    void shouldLogCertificateListedByCare() {
         final Personnummer citizenId = createPnr(CITIZEN);
         logService.logCertificateListedByCare(citizenId);
         verifyLog(Level.INFO,
@@ -147,20 +145,20 @@ public class MonitoringLogServiceImplTest {
     }
 
     @Test
-    public void shouldLogCertificateStatusChanged() {
+    void shouldLogCertificateStatusChanged() {
         logService.logCertificateStatusChanged(CERTIFICATE_ID, STATUS);
         verifyLog(Level.INFO, "CERTIFICATE_STATUS_CHANGED Certificate 'CERTIFICATE_ID' - changed to status 'STATUS'");
     }
 
     @Test
-    public void shouldLogStatisticsCreated() {
+    void shouldLogStatisticsCreated() {
         logService.logStatisticsCreated(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
         verifyLog(Level.INFO,
             "STATISTICS_CREATED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - sent to statistics");
     }
 
     @Test
-    public void shouldLogStatisticsSent() {
+    void shouldLogStatisticsSent() {
         this.logService.logStatisticsSent(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, RECIPIENT);
         verifyLog(Level.INFO,
             "STATISTICS_SENT Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT', sent to 'RECIPIENT' - "
@@ -168,7 +166,7 @@ public class MonitoringLogServiceImplTest {
     }
 
     @Test
-    public void shouldLogStatisticsRevoked() {
+    void shouldLogStatisticsRevoked() {
         logService.logStatisticsRevoked(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
         verifyLog(Level.INFO,
             "STATISTICS_REVOKED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - revoke sent to "
@@ -176,13 +174,13 @@ public class MonitoringLogServiceImplTest {
     }
 
     @Test
-    public void shouldLogStatisticsMessageSent() {
+    void shouldLogStatisticsMessageSent() {
         logService.logStatisticsMessageSent(CERTIFICATE_ID, TOPIC);
         verifyLog(Level.INFO, "STATISTICS_MESSAGE_SENT Message with topic 'TOPIC' for certificate 'CERTIFICATE_ID' - sent to statistics");
     }
 
     @Test
-    public void shouldLogSendMessageToCareReceived() {
+    void shouldLogSendMessageToCareReceived() {
         logService.logSendMessageToCareReceived(MESSAGE_ID, CARE_UNIT);
         verifyLog(Level.INFO,
             "SEND_MESSAGE_TO_CARE_RECEIVED Message with id 'MESSAGE_ID', care unit recipient 'CARE_UNIT' - was received and "

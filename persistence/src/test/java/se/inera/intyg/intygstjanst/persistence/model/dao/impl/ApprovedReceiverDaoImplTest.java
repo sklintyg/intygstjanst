@@ -18,17 +18,14 @@
  */
 package se.inera.intyg.intygstjanst.persistence.model.dao.impl;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.List;
-import java.util.UUID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-
-import org.junit.Test;
+import java.util.List;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
 
@@ -37,7 +34,7 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
  *
  * @author eriklupander
  */
-public class ApprovedReceiverDaoImplTest extends TestSupport {
+class ApprovedReceiverDaoImplTest extends TestSupport {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -49,7 +46,7 @@ public class ApprovedReceiverDaoImplTest extends TestSupport {
      * Due to the overhead of creating/rollbacking each test, all tests goes into the same method.
      */
     @Test
-    public void testPersistAndRead() {
+    void testPersistAndRead() {
         String intygsId = UUID.randomUUID().toString();
         String intygsId2 = UUID.randomUUID().toString();
 

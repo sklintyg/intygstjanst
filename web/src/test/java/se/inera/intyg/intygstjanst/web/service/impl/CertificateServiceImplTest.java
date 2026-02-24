@@ -18,16 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -38,14 +39,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.module.exception.CertificateAlreadyExistsException;
@@ -77,8 +78,8 @@ import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CertificateServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class CertificateServiceImplTest {
 
     private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("191212121212").orElseThrow();
     private static final String CERTIFICATE_ID = "<certificate-id>";
@@ -125,14 +126,14 @@ public class CertificateServiceImplTest {
     @InjectMocks
     private CertificateServiceImpl certificateService;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         ReflectionTestUtils.setField(hashUtility, "salt", "salt");
         final Person person = new Person(null, false, false, "", "", "", "", "", "", false);
         final PersonSvar personSvar = PersonSvar.found(person);
-        when(puService.getPerson(any())).thenReturn(personSvar);
+        lenient().when(puService.getPerson(any())).thenReturn(personSvar);
 
-        when(recipientService.getPrimaryRecipientHsvard()).thenReturn(
+        lenient().when(recipientService.getPrimaryRecipientHsvard()).thenReturn(
             new RecipientBuilder().setLogicalAddress("TEST")
                 .setName("Hälso- och sjukvården")
                 .setId(HSVARD_ID)
@@ -141,25 +142,25 @@ public class CertificateServiceImplTest {
                 .setTrusted(true)
                 .build());
 
-        doNothing().when(relationService).storeRelation(any(Relation.class));
+        lenient().doNothing().when(relationService).storeRelation(any(Relation.class));
     }
 
     @Test
-    public void testLogCertificateRetrieved() {
+    void testLogCertificateRetrieved() {
         certificateService.logCertificateRetrieved("id", "type", "enhethsaid", "part");
         verify(monitoringLogService)
             .logCertificateRetrieved("id", "type", "enhethsaid", "part");
     }
 
     @Test
-    public void testLogCertificateRetrievedNoPart() {
+    void testLogCertificateRetrievedNoPart() {
         certificateService.logCertificateRetrieved("id", "type", "enhethsaid", null);
         verify(monitoringLogService)
             .logCertificateRetrieved("id", "type", "enhethsaid", "N/A");
     }
 
     @Test
-    public void testStoreCertificateHappyCase() throws Exception {
+    void testStoreCertificateHappyCase() throws Exception {
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId("id");
         certificateHolder.setOriginalCertificate("original");
@@ -191,8 +192,8 @@ public class CertificateServiceImplTest {
         assertTrue(originalCertificate.getReceived().isBefore(inAMinute));
     }
 
-    @Test(expected = InvalidCertificateException.class)
-    public void testStoreCertificateInvalid() throws Exception {
+    @Test
+    void testStoreCertificateInvalid() throws Exception {
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId("id");
         certificateHolder.setOriginalCertificate("original");
@@ -201,11 +202,11 @@ public class CertificateServiceImplTest {
             or(isNull(), any(Personnummer.class)),
             or(isNull(), anyString()))).thenThrow((new PersistenceException(CERTIFICATE_ID, null)));
 
-        certificateService.storeCertificate(certificateHolder);
+        assertThrows(InvalidCertificateException.class, () -> certificateService.storeCertificate(certificateHolder));
     }
 
-    @Test(expected = CertificateAlreadyExistsException.class)
-    public void testStoreCertificateAlreadyExists() throws Exception {
+    @Test
+    void testStoreCertificateAlreadyExists() throws Exception {
         CertificateHolder certificateHolder = new CertificateHolder();
         certificateHolder.setId("id");
         certificateHolder.setOriginalCertificate("original");
@@ -213,11 +214,11 @@ public class CertificateServiceImplTest {
             or(isNull(), any(Personnummer.class)),
             or(isNull(), anyString()))).thenReturn(new Certificate());
 
-        certificateService.storeCertificate(certificateHolder);
+        assertThrows(CertificateAlreadyExistsException.class, () -> certificateService.storeCertificate(certificateHolder));
     }
 
     @Test
-    public void sendCertificateCallsSenderAndSetsStatus() throws Exception {
+    void sendCertificateCallsSenderAndSetsStatus() throws Exception {
 
         Certificate certificate = new Certificate(CERTIFICATE_ID);
         certificate.setCivicRegistrationNumber(PERSONNUMMER);
@@ -233,7 +234,7 @@ public class CertificateServiceImplTest {
     }
 
     @Test
-    public void sendCertificateAlreadySentCertificate() throws Exception {
+    void sendCertificateAlreadySentCertificate() throws Exception {
 
         Certificate certificate = new Certificate(CERTIFICATE_ID);
         certificate.setCivicRegistrationNumber(PERSONNUMMER);
@@ -251,66 +252,61 @@ public class CertificateServiceImplTest {
         verify(certificateSender, times(0)).sendCertificate(certificate, RECIPIENT_ID);
     }
 
-    @Test(expected = InvalidCertificateException.class)
-    public void testSendCertificateInvalidCertificate() throws Exception {
+    @Test
+    void testSendCertificateInvalidCertificate() throws Exception {
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenThrow(new PersistenceException(CERTIFICATE_ID,
             PERSONNUMMER_HASH));
-        certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fkassa");
+        assertThrows(InvalidCertificateException.class, () -> certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fkassa"));
     }
 
-    @Test(expected = InvalidCertificateException.class)
-    public void testSendCertificateWithUnknownCertificate() throws Exception {
+    @Test
+    void testSendCertificateWithUnknownCertificate() throws Exception {
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(null);
-        certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fkassa");
+        assertThrows(InvalidCertificateException.class, () -> certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fkassa"));
     }
 
-    @Test(expected = CertificateRevokedException.class)
-    public void testSendRevokedCertificate() throws Exception {
+    @Test
+    void testSendRevokedCertificate() throws Exception {
         Certificate revokedCertificate = new Certificate(CERTIFICATE_ID);
         revokedCertificate
             .setStates(List.of(new CertificateStateHistoryEntry("target", CertificateState.CANCELLED, LocalDateTime.now())));
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(revokedCertificate);
-        certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fkassa");
+        assertThrows(CertificateRevokedException.class, () -> certificateService.sendCertificate(PERSONNUMMER, CERTIFICATE_ID, "fkassa"));
     }
 
     @Test
-    public void testGetCertificateForCare() throws Exception {
+    void testGetCertificateForCare() throws Exception {
         when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(new Certificate());
         assertNotNull(certificateService.getCertificateForCare(CERTIFICATE_ID));
     }
 
-    @Test(expected = InvalidCertificateException.class)
-    public void testGetCertificateForCareInvalidCertificate() throws Exception {
+    @Test
+    void testGetCertificateForCareInvalidCertificate() throws Exception {
         when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenThrow(new PersistenceException(CERTIFICATE_ID, null));
-        certificateService.getCertificateForCare(CERTIFICATE_ID);
-    }
-
-    @Test(expected = InvalidCertificateException.class)
-    public void testGetCertificateForCareNotFound() throws Exception {
-        when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(null);
-        certificateService.getCertificateForCare(CERTIFICATE_ID);
+        assertThrows(InvalidCertificateException.class, () -> certificateService.getCertificateForCare(CERTIFICATE_ID));
     }
 
     @Test
-    public void testGetCertificateForCareRevoked() throws Exception {
+    void testGetCertificateForCareNotFound() throws Exception {
+        when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(null);
+        assertThrows(InvalidCertificateException.class, () -> certificateService.getCertificateForCare(CERTIFICATE_ID));
+    }
+
+    @Test
+    void testGetCertificateForCareRevoked() throws Exception {
         Certificate revokedCertificate = new Certificate(CERTIFICATE_ID);
         revokedCertificate.addState(new CertificateStateHistoryEntry("target", CertificateState.CANCELLED, LocalDateTime.now()));
         when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(revokedCertificate);
         assertNotNull(certificateService.getCertificateForCare(CERTIFICATE_ID));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetCertificateCheckForNullPersonnummer() throws Exception {
-        certificateService.getCertificateForCitizen(null, CERTIFICATE_ID);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetCertificateCheckForEmptyPersonnummer() throws Exception {
-        certificateService.getCertificateForCitizen(createPnr(null), CERTIFICATE_ID);
+    @Test
+    void testGetCertificateCheckForNullPersonnummer() {
+        assertThrows(IllegalArgumentException.class, () -> certificateService.getCertificateForCitizen(null, CERTIFICATE_ID));
     }
 
     @Test
-    public void testRevokeCertificate() throws Exception {
+    void testRevokeCertificate() throws Exception {
         final Personnummer civicRegistrationNumber = createPnr("191212121212");
         when(certificateDao.getCertificate(any(), any())).thenReturn(new Certificate(CERTIFICATE_ID));
         Certificate revokeCertificate = certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
@@ -321,41 +317,45 @@ public class CertificateServiceImplTest {
             null);
     }
 
-    @Test(expected = InvalidCertificateException.class)
-    public void testRevokeCertificateGetThrowsPersistenceException() throws Exception {
+    @Test
+    void testRevokeCertificateGetThrowsPersistenceException() throws Exception {
         final Personnummer civicRegistrationNumber = createPnr("191212121212");
         when(certificateDao.getCertificate(civicRegistrationNumber, CERTIFICATE_ID))
             .thenThrow(new PersistenceException(CERTIFICATE_ID, PERSONNUMMER_HASH));
-        certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
+        assertThrows(InvalidCertificateException.class,
+            () -> certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID));
     }
 
-    @Test(expected = InvalidCertificateException.class)
-    public void testRevokeCertificateUpdateStatusThrowsPersistenceException() throws Exception {
+    @Test
+    void testRevokeCertificateUpdateStatusThrowsPersistenceException() throws Exception {
         final Personnummer civicRegistrationNumber = createPnr("191212121212");
         when(certificateDao.getCertificate(any(), any())).thenReturn(new Certificate(CERTIFICATE_ID));
         doThrow(new PersistenceException(CERTIFICATE_ID, PERSONNUMMER_HASH)).when(certificateDao).updateStatus(CERTIFICATE_ID,
             civicRegistrationNumber, CertificateState.CANCELLED, "HSVARD", null);
-        certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
+        assertThrows(InvalidCertificateException.class,
+            () -> certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID));
     }
 
-    @Test(expected = InvalidCertificateException.class)
-    public void testRevokeCertificateNullAnswer() throws Exception {
+    @Test
+    void testRevokeCertificateNullAnswer() throws Exception {
         final Personnummer civicRegistrationNumber = createPnr("191212121212");
         when(certificateDao.getCertificate(civicRegistrationNumber, CERTIFICATE_ID)).thenReturn(null);
-        certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
+        assertThrows(InvalidCertificateException.class,
+            () -> certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID));
     }
 
-    @Test(expected = CertificateRevokedException.class)
-    public void testRevokeCertificateAlreadyRevoked() throws Exception {
+    @Test
+    void testRevokeCertificateAlreadyRevoked() throws Exception {
         final Personnummer civicRegistrationNumber = createPnr("191212121212");
         Certificate certificate = new Certificate(CERTIFICATE_ID);
         certificate.addState(new CertificateStateHistoryEntry("HSVARD", CertificateState.CANCELLED, LocalDateTime.now()));
         when(certificateDao.getCertificate(civicRegistrationNumber, CERTIFICATE_ID)).thenReturn(certificate);
-        certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID);
+        assertThrows(CertificateRevokedException.class,
+            () -> certificateService.revokeCertificate(civicRegistrationNumber, CERTIFICATE_ID));
     }
 
     @Test
-    public void testListCertificatesForCitizen() {
+    void testListCertificatesForCitizen() {
         final List<String> certificateTypes = List.of("fk7263");
         final LocalDate fromDate = LocalDate.now();
         final LocalDate toDate = fromDate.plusDays(2);
@@ -364,42 +364,42 @@ public class CertificateServiceImplTest {
     }
 
     @Test
-    public void testListCertificatesForCare() {
+    void testListCertificatesForCare() {
         final List<String> careUnits = List.of("enhet-1");
         certificateService.listCertificatesForCare(PERSONNUMMER, careUnits);
         verify(certificateDao).findCertificate(PERSONNUMMER, null, null, null, careUnits);
     }
 
     @Test
-    public void testGetCertificateForCitizen() throws Exception {
+    void testGetCertificateForCitizen() throws Exception {
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new Certificate());
         assertNotNull(certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID));
         verify(certificateDao).getCertificate(PERSONNUMMER, CERTIFICATE_ID);
     }
 
-    @Test(expected = InvalidCertificateException.class)
-    public void testGetCertificateForCitizenInvalidCertificate() throws Exception {
+    @Test
+    void testGetCertificateForCitizenInvalidCertificate() throws Exception {
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenThrow(new PersistenceException(CERTIFICATE_ID,
             PERSONNUMMER_HASH));
-        certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
-    }
-
-    @Test(expected = InvalidCertificateException.class)
-    public void testGetCertificateForCitizenCertificateNull() throws Exception {
-        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(null);
-        certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
-    }
-
-    @Test(expected = CertificateRevokedException.class)
-    public void testGetCertificateForCitizenCertificateRevoked() throws Exception {
-        Certificate revokedCertificate = new Certificate();
-        revokedCertificate.addState(new CertificateStateHistoryEntry("HSVARD", CertificateState.CANCELLED, LocalDateTime.now()));
-        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(revokedCertificate);
-        certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID);
+        assertThrows(InvalidCertificateException.class, () -> certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID));
     }
 
     @Test
-    public void testSetCertificateStateWithCivicRegistrationNumber() throws Exception {
+    void testGetCertificateForCitizenCertificateNull() throws Exception {
+        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(null);
+        assertThrows(InvalidCertificateException.class, () -> certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID));
+    }
+
+    @Test
+    void testGetCertificateForCitizenCertificateRevoked() throws Exception {
+        Certificate revokedCertificate = new Certificate();
+        revokedCertificate.addState(new CertificateStateHistoryEntry("HSVARD", CertificateState.CANCELLED, LocalDateTime.now()));
+        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(revokedCertificate);
+        assertThrows(CertificateRevokedException.class, () -> certificateService.getCertificateForCitizen(PERSONNUMMER, CERTIFICATE_ID));
+    }
+
+    @Test
+    void testSetCertificateStateWithCivicRegistrationNumber() throws Exception {
         final String target = "FKASSA";
         final CertificateState state = CertificateState.SENT;
         final LocalDateTime timestamp = LocalDateTime.now();
@@ -409,8 +409,8 @@ public class CertificateServiceImplTest {
         verify(certificateDao).updateStatus(CERTIFICATE_ID, PERSONNUMMER, state, target, timestamp);
     }
 
-    @Test(expected = InvalidCertificateException.class)
-    public void testSetCertificateStateWithCivicRegistrationNumberInvalidCertificate() throws Exception {
+    @Test
+    void testSetCertificateStateWithCivicRegistrationNumberInvalidCertificate() throws Exception {
         final String target = "FKASSA";
         final CertificateState state = CertificateState.SENT;
         final LocalDateTime timestamp = LocalDateTime.now();
@@ -419,11 +419,12 @@ public class CertificateServiceImplTest {
         doThrow(new PersistenceException(CERTIFICATE_ID, PERSONNUMMER_HASH)).when(certificateDao).updateStatus(CERTIFICATE_ID, PERSONNUMMER,
             state, target,
             timestamp);
-        certificateService.setCertificateState(PERSONNUMMER, CERTIFICATE_ID, target, state, timestamp);
+        assertThrows(InvalidCertificateException.class,
+            () -> certificateService.setCertificateState(PERSONNUMMER, CERTIFICATE_ID, target, state, timestamp));
     }
 
     @Test
-    public void testSetCertificateState() throws Exception {
+    void testSetCertificateState() throws Exception {
         final String target = "FKASSA";
         final CertificateState state = CertificateState.SENT;
         final LocalDateTime timestamp = LocalDateTime.now();
@@ -433,19 +434,20 @@ public class CertificateServiceImplTest {
         verify(certificateDao).updateStatus(CERTIFICATE_ID, state, target, timestamp);
     }
 
-    @Test(expected = InvalidCertificateException.class)
-    public void testSetCertificateStateInvalidCertificate() throws Exception {
+    @Test
+    void testSetCertificateStateInvalidCertificate() throws Exception {
         final String target = "FKASSA";
         final CertificateState state = CertificateState.SENT;
         final LocalDateTime timestamp = LocalDateTime.now();
         final Certificate certificate = new Certificate();
         when(certificateDao.getCertificate(any(), any())).thenReturn(certificate);
         doThrow(new PersistenceException(CERTIFICATE_ID, null)).when(certificateDao).updateStatus(CERTIFICATE_ID, state, target, timestamp);
-        certificateService.setCertificateState(CERTIFICATE_ID, target, state, timestamp);
+        assertThrows(InvalidCertificateException.class,
+            () -> certificateService.setCertificateState(CERTIFICATE_ID, target, state, timestamp));
     }
 
     @Test
-    public void testCertificateReceived() throws Exception {
+    void testCertificateReceived() throws Exception {
         final String certificateType = "luse";
         final String certificateTypeVersion = "1.0";
         final String careUnitId = "enhet-1";
@@ -468,7 +470,7 @@ public class CertificateServiceImplTest {
     }
 
     @Test
-    public void testCertificateReceivedModuleNotFound() throws Exception {
+    void testCertificateReceivedModuleNotFound() throws Exception {
         final String certificateType = "luse";
         final String certificateTypeVersion = "1.0";
         CertificateHolder certificateHolder = new CertificateHolder();
@@ -479,21 +481,17 @@ public class CertificateServiceImplTest {
         certificateHolder.setOriginalCertificate("original");
         when(moduleRegistry.getModuleApi(certificateType, certificateTypeVersion)).thenThrow(new ModuleNotFoundException());
 
-        try {
-            certificateService.certificateReceived(certificateHolder);
-            fail("should throw");
-        } catch (Exception e) {
-            assertTrue(e.getCause() instanceof ModuleNotFoundException);
-            verify(certificateDao).store(any(Certificate.class));
-            verify(monitoringLogService).logCertificateRegistered(CERTIFICATE_ID, certificateType, "enhet-1");
-            verifyNoInteractions(moduleApi);
-            verifyNoInteractions(statisticsService);
-            verifyNoInteractions(sjukfallCertificateService);
-        }
+        Exception e = assertThrows(Exception.class, () -> certificateService.certificateReceived(certificateHolder));
+        assertInstanceOf(ModuleNotFoundException.class, e.getCause());
+        verify(certificateDao).store(any(Certificate.class));
+        verify(monitoringLogService).logCertificateRegistered(CERTIFICATE_ID, certificateType, "enhet-1");
+        verifyNoInteractions(moduleApi);
+        verifyNoInteractions(statisticsService);
+        verifyNoInteractions(sjukfallCertificateService);
     }
 
     @Test
-    public void testCertificateReceivedModuleException() throws Exception {
+    void testCertificateReceivedModuleException() throws Exception {
         final String certificateType = "luse";
         final String certificateTypeVersion = "1.0";
         final String originalXml = "original";
@@ -506,44 +504,40 @@ public class CertificateServiceImplTest {
         when(moduleRegistry.getModuleApi(certificateType, certificateTypeVersion)).thenReturn(moduleApi);
         when(moduleApi.transformToStatisticsService(originalXml)).thenThrow(new ModuleException());
 
-        try {
-            certificateService.certificateReceived(certificateHolder);
-            fail("should throw");
-        } catch (Exception e) {
-            assertTrue(e.getCause() instanceof ModuleException);
-            verify(certificateDao).store(any(Certificate.class));
-            verify(monitoringLogService).logCertificateRegistered(CERTIFICATE_ID, certificateType, "enhet-1");
-            verifyNoInteractions(statisticsService);
-            verifyNoInteractions(sjukfallCertificateService);
-        }
+        Exception e = assertThrows(Exception.class, () -> certificateService.certificateReceived(certificateHolder));
+        assertInstanceOf(ModuleException.class, e.getCause());
+        verify(certificateDao).store(any(Certificate.class));
+        verify(monitoringLogService).logCertificateRegistered(CERTIFICATE_ID, certificateType, "enhet-1");
+        verifyNoInteractions(statisticsService);
+        verifyNoInteractions(sjukfallCertificateService);
     }
 
     @Test
-    public void testGetCertificate() throws Exception {
+    void testGetCertificate() throws Exception {
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new Certificate());
         assertNotNull(certificateService.getCertificate(CERTIFICATE_ID, PERSONNUMMER, false));
     }
 
     @Test
-    public void testGetCertificateCheckConsent() throws Exception {
+    void testGetCertificateCheckConsent() throws Exception {
         when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(new Certificate());
         assertNotNull(certificateService.getCertificate(CERTIFICATE_ID, PERSONNUMMER, true));
     }
 
-    @Test(expected = InvalidCertificateException.class)
-    public void testGetCertificateInvalidCertificate() throws Exception {
+    @Test
+    void testGetCertificateInvalidCertificate() throws Exception {
         when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenThrow(new PersistenceException(CERTIFICATE_ID, null));
-        certificateService.getCertificate(CERTIFICATE_ID, null, true);
-    }
-
-    @Test(expected = InvalidCertificateException.class)
-    public void testGetCertificateNotFound() throws Exception {
-        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(null);
-        certificateService.getCertificate(CERTIFICATE_ID, PERSONNUMMER, false);
+        assertThrows(InvalidCertificateException.class, () -> certificateService.getCertificate(CERTIFICATE_ID, null, true));
     }
 
     @Test
-    public void testGetCertificateRevoked() throws Exception {
+    void testGetCertificateNotFound() throws Exception {
+        when(certificateDao.getCertificate(PERSONNUMMER, CERTIFICATE_ID)).thenReturn(null);
+        assertThrows(InvalidCertificateException.class, () -> certificateService.getCertificate(CERTIFICATE_ID, PERSONNUMMER, false));
+    }
+
+    @Test
+    void testGetCertificateRevoked() throws Exception {
         Certificate revokedCertificate = new Certificate(CERTIFICATE_ID);
         revokedCertificate.addState(new CertificateStateHistoryEntry("target", CertificateState.CANCELLED, LocalDateTime.now()));
         when(certificateDao.getCertificate(null, CERTIFICATE_ID)).thenReturn(revokedCertificate);
