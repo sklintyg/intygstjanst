@@ -35,6 +35,7 @@ gretty {
 }
 
 dependencies {
+    implementation project(':intygstjanst-infra')
     implementation project(':intygstjanst-logging')
     implementation project(':intygstjanst-persistence')
 
@@ -44,15 +45,11 @@ dependencies {
     implementation "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     implementation "se.riv.insuranceprocess.healthreporting:insuranceprocess-healthreporting-schemas:${rivtaInsuranceprocessSchemasVersion}"
 
-    implementation "se.inera.intyg.infra:certificate:${infraVersion}"
     implementation "se.inera.intyg.infra:hsa-integration-api:${infraVersion}"
     implementation "se.inera.intyg.infra:pu-integration-api:${infraVersion}"
-    implementation "se.inera.intyg.infra:intyginfo:${infraVersion}"
-    implementation "se.inera.intyg.infra:message:${infraVersion}"
     implementation "se.inera.intyg.infra:monitoring:${infraVersion}"
     implementation "se.inera.intyg.infra:security-filter:${infraVersion}"
     implementation "se.inera.intyg.infra:sjukfall-engine:${infraVersion}"
-    implementation "se.inera.intyg.infra:testcertificate:${infraVersion}"
 
     implementation "se.inera.intyg.common:af00213:${commonVersion}"
     implementation "se.inera.intyg.common:af00251:${commonVersion}"

@@ -13,10 +13,12 @@ dependencyResolutionManagement {
 
 rootProject.name = 'intygstjanst'
 
+include 'intygstjanst-infra'
 include 'intygstjanst-logging'
 include ':intygstjanst-persistence'
 include ':intygstjanst-web'
 
+project(':intygstjanst-infra').projectDir = "$rootDir/infra" as File
 project(':intygstjanst-logging').projectDir = "$rootDir/logging" as File
 project(':intygstjanst-persistence').projectDir = "$rootDir/persistence" as File
 project(':intygstjanst-web').projectDir = "$rootDir/web" as File
