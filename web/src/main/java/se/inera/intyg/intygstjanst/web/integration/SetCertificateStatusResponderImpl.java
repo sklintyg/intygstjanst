@@ -23,14 +23,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3.wsaddressing10.AttributedURIType;
-
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtabp20.v1.SetCertificateStatusResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusResponseType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
@@ -58,7 +56,7 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
     private RecipientService recipientService;
 
     @Override
-    @PrometheusTimeMethod
+
     @PerformanceLogging(eventAction = "set-certificate-status", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SetCertificateStatusResponseType setCertificateStatus(AttributedURIType logicalAddress,
         SetCertificateStatusRequestType request) {

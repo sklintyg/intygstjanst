@@ -22,19 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -67,7 +64,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
     private IntygModuleRegistryImpl moduleRegistry;
 
     @Override
-    @PrometheusTimeMethod
+
     @PerformanceLogging(eventAction = "list-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public ListCertificatesForCitizenResponseType listCertificatesForCitizen(String logicalAddress,
         ListCertificatesForCitizenType parameters) {

@@ -18,6 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import static se.inera.intyg.intygstjanst.logging.LogMarkers.VALIDATION;
+
 import jakarta.annotation.PostConstruct;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -41,8 +43,6 @@ import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.AdditionalMetaData;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
-import se.inera.intyg.infra.monitoring.logging.LogMarkers;
 import se.inera.intyg.infra.pu.integration.api.model.PersonSvar;
 import se.inera.intyg.infra.pu.integration.api.model.PersonSvar.Status;
 import se.inera.intyg.infra.pu.integration.api.services.PUService;
@@ -90,7 +90,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     }
 
     @Override
-    @PrometheusTimeMethod
+
     @PerformanceLogging(eventAction = "register-certificate", eventType = MdcLogConstants.EVENT_TYPE_CREATION)
     public RegisterCertificateResponseType registerCertificate(String logicalAddress, RegisterCertificateType registerCertificate) {
         try {
@@ -157,7 +157,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     private RegisterCertificateResponseType makeValidationErrorResult(String errorString) {
         RegisterCertificateResponseType response = new RegisterCertificateResponseType();
         response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, errorString));
-        LOGGER.error(LogMarkers.VALIDATION, errorString);
+        LOGGER.error(VALIDATION, errorString);
         return response;
     }
 
@@ -167,7 +167,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         response.setResult(ResultTypeUtil.infoResult("Certificate already exists"));
         String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
         String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
-        LOGGER.warn(LogMarkers.VALIDATION, "Validation warning for intyg " + certificateId + " issued by " + issuedBy
+        LOGGER.warn(VALIDATION, "Validation warning for intyg " + certificateId + " issued by " + issuedBy
             + ": Certificate already exists - ignored.");
         return response;
     }
@@ -177,7 +177,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, "Certificate already exists"));
         String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
         String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
-        LOGGER.error(LogMarkers.VALIDATION, "Failed to create Certificate with id " + certificateId + " issued by " + issuedBy
+        LOGGER.error(VALIDATION, "Failed to create Certificate with id " + certificateId + " issued by " + issuedBy
             + ": Certificate ID already exists for another person.");
         return response;
     }
@@ -195,7 +195,7 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         final String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
         final String logMessage = MessageFormat.format("Failed to create Certificate with id {0} issued by {1} : "
             + "Certificate type {2} does not support version: {3}", certificateId, issuedBy, typ, version);
-        LOGGER.error(LogMarkers.VALIDATION, logMessage);
+        LOGGER.error(VALIDATION, logMessage);
         return response;
     }
 

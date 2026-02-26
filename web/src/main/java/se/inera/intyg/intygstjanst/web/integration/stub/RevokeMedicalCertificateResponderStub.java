@@ -30,7 +30,6 @@ import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateres
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.integration.validator.RevokeRequestValidator;
 
 @Transactional
@@ -47,7 +46,7 @@ public class RevokeMedicalCertificateResponderStub implements RevokeMedicalCerti
     private MedicalCertificatesStore store;
 
     @Override
-    @PrometheusTimeMethod
+
     public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress,
         RevokeMedicalCertificateRequestType request) {
 

@@ -37,7 +37,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -46,15 +46,14 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
-import se.inera.intyg.infra.monitoring.MonitoringConfiguration;
 
 @Configuration
 @EnableTransactionManagement
+@EnableAspectJAutoProxy
 @DependsOn("transactionManager")
 @PropertySource("classpath:application.properties")
 @PropertySource(ignoreResourceNotFound = true, value = "file:${dev.config.file}")
 @ImportResource({"classpath:META-INF/cxf/cxf.xml"})
-@Import(MonitoringConfiguration.class)
 public class ApplicationConfig implements TransactionManagementConfigurer {
 
     @Autowired

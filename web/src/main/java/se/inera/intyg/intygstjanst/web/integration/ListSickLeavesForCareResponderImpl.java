@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.beans.factory.annotation.Autowired;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
@@ -71,7 +70,7 @@ public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCare
     private SjukfallCertificateConverter sjukfallCertificateConverter;
 
     @Override
-    @PrometheusTimeMethod
+
     @PerformanceLogging(eventAction = "list-sick-leaves", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public ListSickLeavesForCareResponseType listSickLeavesForCare(String logicalAddress, ListSickLeavesForCareType params) {
 

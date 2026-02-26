@@ -26,7 +26,6 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients.v1.ListKnownRecipientsType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients.v1.RecipientType;
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.v1.utils.ResultTypeUtil;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
@@ -37,7 +36,7 @@ public class ListKnownRecipientsResponderImpl implements ListKnownRecipientsResp
     private RecipientService recipientService;
 
     @Override
-    @PrometheusTimeMethod
+
     @PerformanceLogging(eventAction = "list-recipients", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public ListKnownRecipientsResponseType listKnownRecipients(String logicalAddress, ListKnownRecipientsType request) {
         ListKnownRecipientsResponseType response = new ListKnownRecipientsResponseType();

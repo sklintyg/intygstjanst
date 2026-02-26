@@ -28,7 +28,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.certificate.dto.CertificateListRequest;
 import se.inera.intyg.infra.certificate.dto.CertificateListResponse;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.CertificateListService;
@@ -53,7 +52,7 @@ public class CertificateListController {
      * @param parameters Parameters of filter query including filters that user has chosen or default filters.
      * @return Response including a list of all signed certificates and the total amount of certificates.
      */
-    @PrometheusTimeMethod
+
     @POST
     @Path("/certificates/doctor")
     @Produces(MediaType.APPLICATION_JSON)

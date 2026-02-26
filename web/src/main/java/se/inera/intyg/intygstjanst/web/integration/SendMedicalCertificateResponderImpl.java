@@ -18,6 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import static se.inera.intyg.intygstjanst.logging.LogMarkers.VALIDATION;
+
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,8 +36,6 @@ import se.inera.intyg.common.support.integration.module.exception.CertificateRev
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.exception.ExternalServiceCallException;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
-import se.inera.intyg.infra.monitoring.logging.LogMarkers;
 import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
@@ -68,7 +68,7 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
     private HashUtility hashUtility;
 
     @Override
-    @PrometheusTimeMethod
+
     @PerformanceLogging(eventAction = "send-certificate", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SendMedicalCertificateResponseType sendMedicalCertificate(
         final AttributedURIType logicalAddress, final SendMedicalCertificateRequestType request) {
@@ -133,9 +133,8 @@ public class SendMedicalCertificateResponderImpl implements SendMedicalCertifica
             // return with ERROR response if certificate had validation errors
             final String issuedBy = safeGetIssuedBy(request);
 
-            LOGGER.error(LogMarkers.VALIDATION,
-                String.format("Validation error found for send certificate '%s' issued by '%s' for patient '%s': %s",
-                    certId, issuedBy, personnummerHash, e.getMessage()));
+            LOGGER.error(VALIDATION, String.format("Validation error found for send certificate '%s' issued by '%s' for patient '%s': %s",
+                certId, issuedBy, personnummerHash, e.getMessage()));
 
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             return response;

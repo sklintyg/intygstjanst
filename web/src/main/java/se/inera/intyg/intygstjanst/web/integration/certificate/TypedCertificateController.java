@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import se.inera.intyg.infra.certificate.dto.DiagnosedCertificate;
 import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate;
 import se.inera.intyg.infra.certificate.dto.TypedCertificateRequest;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.TypedCertificateService;
@@ -51,7 +50,7 @@ public class TypedCertificateController {
         this.typedCertificateService = typedCertificateService;
     }
 
-    @PrometheusTimeMethod
+
     @POST
     @Path("/diagnosed/unit")
     @Produces(MediaType.APPLICATION_JSON)
@@ -71,7 +70,7 @@ public class TypedCertificateController {
             parameters.getDoctorIds());
     }
 
-    @PrometheusTimeMethod
+
     @POST
     @Path("/doctors")
     @Produces(MediaType.APPLICATION_JSON)
@@ -90,7 +89,7 @@ public class TypedCertificateController {
             parameters.getToDate());
     }
 
-    @PrometheusTimeMethod
+
     @POST
     @Path("/diagnosed/person")
     @Produces(MediaType.APPLICATION_JSON)
@@ -110,7 +109,7 @@ public class TypedCertificateController {
             parameters.getUnitIds());
     }
 
-    @PrometheusTimeMethod
+
     @POST
     @Path("/sickleave/person")
     @Produces(MediaType.APPLICATION_JSON)

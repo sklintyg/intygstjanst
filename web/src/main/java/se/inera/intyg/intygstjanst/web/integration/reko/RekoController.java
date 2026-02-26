@@ -25,7 +25,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
@@ -45,7 +44,7 @@ public class RekoController {
         this.getRekoStatusService = getRekoStatusService;
     }
 
-    @PrometheusTimeMethod
+
     @POST
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
@@ -64,7 +63,7 @@ public class RekoController {
         );
     }
 
-    @PrometheusTimeMethod
+
     @POST
     @Path("/patient")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)

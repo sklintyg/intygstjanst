@@ -26,7 +26,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.MessageService;
@@ -40,7 +39,7 @@ public class MessageController {
     @Autowired
     private MessageService messageService;
 
-    @PrometheusTimeMethod
+
     @GET
     @Path("/{certificateId}")
     @Produces(MediaType.APPLICATION_JSON)

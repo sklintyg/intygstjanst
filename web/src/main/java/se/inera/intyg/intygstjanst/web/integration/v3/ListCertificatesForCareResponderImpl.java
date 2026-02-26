@@ -31,7 +31,6 @@ import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -64,7 +63,7 @@ public class ListCertificatesForCareResponderImpl implements ListCertificatesFor
     private IntygModuleRegistryImpl moduleRegistry;
 
     @Override
-    @PrometheusTimeMethod
+
     @PerformanceLogging(eventAction = "list-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public ListCertificatesForCareResponseType listCertificatesForCare(String logicalAddress, ListCertificatesForCareType parameters) {
         ListCertificatesForCareResponseType response = new ListCertificatesForCareResponseType();

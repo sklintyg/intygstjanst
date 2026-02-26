@@ -18,6 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
+import static se.inera.intyg.intygstjanst.logging.LogMarkers.VALIDATION;
+
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,8 +37,6 @@ import se.inera.intyg.common.support.integration.module.exception.CertificateRev
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
-import se.inera.intyg.infra.monitoring.logging.LogMarkers;
 import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
@@ -80,7 +80,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
 
     @Transactional
     @Override
-    @PrometheusTimeMethod
+
     @PerformanceLogging(eventAction = "revoke-certificate", eventType = MdcLogConstants.EVENT_TYPE_DELETION)
     public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress,
         RevokeMedicalCertificateRequestType request) {
@@ -126,8 +126,7 @@ public class RevokeMedicalCertificateResponderImpl implements RevokeMedicalCerti
             return response;
 
         } catch (CertificateValidationException e) {
-            // return with ERROR response if certificate had validation errors
-            LOGGER.info(LogMarkers.VALIDATION, "Validation error found for revoke certificate '" + certId
+            LOGGER.info(VALIDATION, "Validation error found for revoke certificate '" + certId
                 + "' issued by '" + safeGetIssuedBy(request) + "' for patient '" + pnrHash + ": " + e.getMessage());
             response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
             return response;

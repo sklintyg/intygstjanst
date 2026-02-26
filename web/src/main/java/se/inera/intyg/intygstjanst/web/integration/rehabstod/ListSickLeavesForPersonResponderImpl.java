@@ -27,7 +27,6 @@ import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesfo
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ResultCodeEnum;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ResultType;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ValidSickLeaveAggregator;
@@ -49,7 +48,7 @@ public class ListSickLeavesForPersonResponderImpl implements ListSickLeavesForPe
     private SjukfallCertificateDao sjukfallCertificateDao;
 
     @Override
-    @PrometheusTimeMethod
+
     public ListSickLeavesForPersonResponseType listSickLeavesForPerson(
         String logicalAddress, ListSickLeavesForPersonType parameters) {
 

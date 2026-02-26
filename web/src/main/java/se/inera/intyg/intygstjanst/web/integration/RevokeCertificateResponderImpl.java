@@ -28,7 +28,6 @@ import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
@@ -72,7 +71,7 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
     private HashUtility hashUtility;
 
     @Override
-    @PrometheusTimeMethod
+
     @PerformanceLogging(eventAction = "revoke-certificate", eventType = MdcLogConstants.EVENT_TYPE_DELETION)
     public RevokeCertificateResponseType revokeCertificate(String logicalAddress, RevokeCertificateType request) {
         RevokeCertificateResponseType response = new RevokeCertificateResponseType();
