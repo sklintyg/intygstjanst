@@ -1,0 +1,22 @@
+dependencies {
+    implementation project(':integration-api')
+
+    implementation "ch.qos.logback:logback-classic"
+    implementation "com.fasterxml.jackson.core:jackson-databind"
+    implementation "com.google.guava:guava"
+    implementation "jakarta.annotation:jakarta.annotation-api"
+    implementation 'jakarta.xml.ws:jakarta.xml.ws-api'
+    implementation "org.springframework.data:spring-data-redis"
+    implementation "org.springframework:spring-web"
+    implementation "org.springframework:spring-context"
+    implementation "redis.clients:jedis"
+    implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
+
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation "org.mockito:mockito-junit-jupiter"
+    testImplementation "org.springframework:spring-test"
+
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+}

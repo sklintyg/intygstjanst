@@ -40,6 +40,8 @@ dependencies {
     implementation project(':intygstjanst-persistence')
     implementation project(':integration-api')
 
+    runtimeOnly project(':integration-intyg-proxy-service')
+
     implementation "se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:${intygClinicalprocessSchemasVersion}"
     implementation "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"
     implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
@@ -94,8 +96,6 @@ dependencies {
 
     compileOnly "jakarta.persistence:jakarta.persistence-api"
 
-    runtimeOnly "se.inera.intyg.infra:hsa-integration-intyg-proxy-service:${infraVersion}"
-    runtimeOnly "se.inera.intyg.infra:pu-integration-intyg-proxy-service:${infraVersion}"
     runtimeOnly "com.mysql:mysql-connector-j"
     runtimeOnly "com.sun.xml.messaging.saaj:saaj-impl"
 
