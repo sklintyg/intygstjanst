@@ -46,6 +46,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
+import se.inera.intyg.infra.security.filter.InternalApiFilter;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
 
@@ -124,7 +125,13 @@ public class ApplicationConfig implements TransactionManagementConfigurer {
         return transactionManager;
     }
 
+    @Bean
     public SjukfallEngineService sjukfallEngineService() {
         return new SjukfallEngineServiceImpl();
+    }
+
+    @Bean
+    public InternalApiFilter internalApiFilter() {
+        return new InternalApiFilter();
     }
 }

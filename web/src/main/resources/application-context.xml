@@ -34,8 +34,6 @@
 
     <import resource="jaxrs-context.xml"/>
 
-    <bean id="internalApiFilter" class="se.inera.intyg.infra.security.filter.InternalApiFilter" />
-
     <!-- Import spring context of all module dependencies -->
 		<import resource="classpath:common-config.xml"/>
     <import resource="classpath*:module-config.xml"/>

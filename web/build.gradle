@@ -47,7 +47,6 @@ dependencies {
 
     implementation "se.inera.intyg.infra:hsa-integration-api:${infraVersion}"
     implementation "se.inera.intyg.infra:pu-integration-api:${infraVersion}"
-    implementation "se.inera.intyg.infra:security-filter:${infraVersion}"
 
     implementation "se.inera.intyg.common:af00213:${commonVersion}"
     implementation "se.inera.intyg.common:af00251:${commonVersion}"
