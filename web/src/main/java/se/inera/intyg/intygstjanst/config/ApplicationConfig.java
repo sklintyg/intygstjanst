@@ -46,6 +46,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
+import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
+import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
 
 @Configuration
 @EnableTransactionManagement
@@ -120,5 +122,9 @@ public class ApplicationConfig implements TransactionManagementConfigurer {
     @Override
     public PlatformTransactionManager annotationDrivenTransactionManager() {
         return transactionManager;
+    }
+
+    public SjukfallEngineService sjukfallEngineService() {
+        return new SjukfallEngineServiceImpl();
     }
 }

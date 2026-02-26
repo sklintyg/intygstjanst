@@ -1,3 +1,9 @@
 dependencies {
+    implementation "ch.qos.logback:logback-classic"
+    implementation "org.apache.commons:commons-lang3"
+    implementation "org.springframework:spring-context"
+
     annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation "org.mockito:mockito-junit-jupiter"
 }
