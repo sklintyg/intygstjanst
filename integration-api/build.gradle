@@ -1,0 +1,8 @@
+dependencies {
+    implementation "com.fasterxml.jackson.core:jackson-databind"
+    implementation "com.google.guava:guava"
+    implementation 'jakarta.xml.ws:jakarta.xml.ws-api'
+    implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
+
+    annotationProcessor 'org.projectlombok:lombok'
+}

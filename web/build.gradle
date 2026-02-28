@@ -35,24 +35,18 @@ gretty {
 }
 
 dependencies {
+    implementation project(':intygstjanst-infra')
     implementation project(':intygstjanst-logging')
     implementation project(':intygstjanst-persistence')
+    implementation project(':integration-api')
+
+    runtimeOnly project(':integration-intyg-proxy-service')
 
     implementation "se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:${intygClinicalprocessSchemasVersion}"
     implementation "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"
     implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
     implementation "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     implementation "se.riv.insuranceprocess.healthreporting:insuranceprocess-healthreporting-schemas:${rivtaInsuranceprocessSchemasVersion}"
-
-    implementation "se.inera.intyg.infra:certificate:${infraVersion}"
-    implementation "se.inera.intyg.infra:hsa-integration-api:${infraVersion}"
-    implementation "se.inera.intyg.infra:pu-integration-api:${infraVersion}"
-    implementation "se.inera.intyg.infra:intyginfo:${infraVersion}"
-    implementation "se.inera.intyg.infra:message:${infraVersion}"
-    implementation "se.inera.intyg.infra:monitoring:${infraVersion}"
-    implementation "se.inera.intyg.infra:security-filter:${infraVersion}"
-    implementation "se.inera.intyg.infra:sjukfall-engine:${infraVersion}"
-    implementation "se.inera.intyg.infra:testcertificate:${infraVersion}"
 
     implementation "se.inera.intyg.common:af00213:${commonVersion}"
     implementation "se.inera.intyg.common:af00251:${commonVersion}"
@@ -102,8 +96,6 @@ dependencies {
 
     compileOnly "jakarta.persistence:jakarta.persistence-api"
 
-    runtimeOnly "se.inera.intyg.infra:hsa-integration-intyg-proxy-service:${infraVersion}"
-    runtimeOnly "se.inera.intyg.infra:pu-integration-intyg-proxy-service:${infraVersion}"
     runtimeOnly "com.mysql:mysql-connector-j"
     runtimeOnly "com.sun.xml.messaging.saaj:saaj-impl"
 

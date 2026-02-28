@@ -40,7 +40,6 @@ import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
@@ -116,7 +115,7 @@ public class CitizenController {
         }
     }
 
-    @PrometheusTimeMethod
+
     @POST
     @Path("/certificates")
     @Produces(MediaType.APPLICATION_JSON)

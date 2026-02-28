@@ -22,12 +22,10 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.model.StatusKod;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
@@ -55,7 +53,7 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
     private RecipientService recipientService;
 
     @Override
-    @PrometheusTimeMethod
+
     @PerformanceLogging(eventAction = "set-certificate-status", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SetCertificateStatusResponseType setCertificateStatus(String logicalAddress, SetCertificateStatusType parameters) {
         SetCertificateStatusResponseType response = new SetCertificateStatusResponseType();

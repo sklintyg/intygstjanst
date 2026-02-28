@@ -29,7 +29,6 @@ import jakarta.ws.rs.core.Response.Status;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.infra.intyginfo.dto.ItIntygInfo;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.IntygInfoService;
@@ -43,7 +42,7 @@ public class IntygInfoController {
     @Autowired
     private IntygInfoService intygInfoService;
 
-    @PrometheusTimeMethod
+
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -60,7 +59,7 @@ public class IntygInfoController {
         return Response.ok(intygInfo.get()).build();
     }
 
-    @PrometheusTimeMethod
+
     @GET
     @Path("/{hsaId}/count")
     @Produces(MediaType.APPLICATION_JSON)

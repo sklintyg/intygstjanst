@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
@@ -61,7 +60,7 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
     private SoapIntegrationService soapIntegrationService;
 
     @Override
-    @PrometheusTimeMethod
+
     @PerformanceLogging(eventAction = "send-message-to-care", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SendMessageToCareResponseType sendMessageToCare(String logicalAddress, SendMessageToCareType parameters) {
         List<String> validationErrors = validator.validateSendMessageToCare(parameters);

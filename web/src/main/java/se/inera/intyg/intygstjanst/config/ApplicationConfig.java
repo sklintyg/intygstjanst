@@ -37,7 +37,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -46,15 +46,17 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
-import se.inera.intyg.infra.monitoring.MonitoringConfiguration;
+import se.inera.intyg.infra.security.filter.InternalApiFilter;
+import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
+import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
 
 @Configuration
 @EnableTransactionManagement
+@EnableAspectJAutoProxy
 @DependsOn("transactionManager")
 @PropertySource("classpath:application.properties")
 @PropertySource(ignoreResourceNotFound = true, value = "file:${dev.config.file}")
 @ImportResource({"classpath:META-INF/cxf/cxf.xml"})
-@Import(MonitoringConfiguration.class)
 public class ApplicationConfig implements TransactionManagementConfigurer {
 
     @Autowired
@@ -121,5 +123,15 @@ public class ApplicationConfig implements TransactionManagementConfigurer {
     @Override
     public PlatformTransactionManager annotationDrivenTransactionManager() {
         return transactionManager;
+    }
+
+    @Bean
+    public SjukfallEngineService sjukfallEngineService() {
+        return new SjukfallEngineServiceImpl();
+    }
+
+    @Bean
+    public InternalApiFilter internalApiFilter() {
+        return new InternalApiFilter();
     }
 }

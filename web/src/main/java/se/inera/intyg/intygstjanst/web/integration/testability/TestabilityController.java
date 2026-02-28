@@ -29,7 +29,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.springframework.web.bind.annotation.RequestBody;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.web.integration.testability.dto.CreateSickLeaveRequestDTO;
 import se.inera.intyg.intygstjanst.web.integration.testability.dto.CreateSickLeaveResponseDTO;
 import se.inera.intyg.intygstjanst.web.service.TestabilityService;
@@ -46,7 +45,7 @@ public class TestabilityController {
         this.testabilityService = testabilityService;
     }
 
-    @PrometheusTimeMethod
+
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/createDefault")
@@ -55,7 +54,7 @@ public class TestabilityController {
         return Response.ok(VERIFICATION_MESSAGE).build();
     }
 
-    @PrometheusTimeMethod
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -69,7 +68,7 @@ public class TestabilityController {
         ).build();
     }
 
-    @PrometheusTimeMethod
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/testDataOptions")

@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoType;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.exception.ServerException;
@@ -40,7 +39,7 @@ public class GetCertificateTypeInfoResponderImpl implements GetCertificateTypeIn
     private CertificateService certificateService;
 
     @Override
-    @PrometheusTimeMethod
+
     @PerformanceLogging(eventAction = "retrieve-certificate-type-info", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
     public GetCertificateTypeInfoResponseType getCertificateTypeInfo(String logicalAddress, GetCertificateTypeInfoType request) {
 

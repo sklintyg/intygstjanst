@@ -27,7 +27,6 @@ import jakarta.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.ListCitizenCertificatesService;
@@ -51,7 +50,7 @@ public class CitizenCertificateController {
         this.citizenSendCertificateAggregator = citizenSendCertificateAggregator;
     }
 
-    @PrometheusTimeMethod
+
     @POST
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
@@ -78,7 +77,7 @@ public class CitizenCertificateController {
             .build();
     }
 
-    @PrometheusTimeMethod
+
     @POST
     @Path("/send")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)

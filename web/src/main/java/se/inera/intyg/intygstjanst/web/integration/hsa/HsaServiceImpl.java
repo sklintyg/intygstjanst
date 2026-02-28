@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.integration.hsatk.model.PersonInformation;
 import se.inera.intyg.infra.integration.hsatk.services.HsatkEmployeeService;
 import se.inera.intyg.infra.integration.hsatk.services.legacy.HsaOrganizationsService;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 
 /**
  * Interfaces with {@link HsaOrganizationsService} from hsa-integration.
@@ -52,13 +51,13 @@ public class HsaServiceImpl implements HsaService {
     private static final Logger LOG = LoggerFactory.getLogger(HsaServiceImpl.class);
 
     @Override
-    @PrometheusTimeMethod
+
     public List<String> getHsaIdForUnderenheter(String careUnitHsaId) {
         return hsaOrganizationsService.getHsaIdForAktivaUnderenheter(careUnitHsaId);
     }
 
     @Override
-    @PrometheusTimeMethod
+
     public String getHsaIdForVardgivare(String careUnitHsaId) {
         return hsaOrganizationsService.getVardgivareOfVardenhet(careUnitHsaId);
     }

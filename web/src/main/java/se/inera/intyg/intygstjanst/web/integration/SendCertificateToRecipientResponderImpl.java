@@ -27,7 +27,6 @@ import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.exception.ExternalServiceCallException;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.HashUtility;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
@@ -53,7 +52,7 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
     private final HashUtility hashUtility;
 
     @Override
-    @PrometheusTimeMethod
+
     @PerformanceLogging(eventAction = "send-certificate", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SendCertificateToRecipientResponseType sendCertificateToRecipient(
         final String logicalAddress, final SendCertificateToRecipientType request) {

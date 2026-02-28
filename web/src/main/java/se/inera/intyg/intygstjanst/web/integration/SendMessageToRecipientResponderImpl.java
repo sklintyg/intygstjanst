@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
@@ -64,7 +63,7 @@ public class SendMessageToRecipientResponderImpl implements SendMessageToRecipie
     private SoapIntegrationService soapIntegrationService;
 
     @Override
-    @PrometheusTimeMethod
+
     @PerformanceLogging(eventAction = "send-message-to-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress, SendMessageToRecipientType parameters) {
         checkNotNull(parameters);

@@ -31,7 +31,6 @@ import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
-import se.inera.intyg.infra.monitoring.annotation.PrometheusTimeMethod;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeaveFilterService;
@@ -56,7 +55,7 @@ public class SickLeaveController {
         this.getSickLeaveFilterService = getSickLeaveFilterService;
     }
 
-    @PrometheusTimeMethod
+
     @POST
     @Path("/active")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
@@ -88,7 +87,7 @@ public class SickLeaveController {
         return Response.ok(new SickLeaveResponseDTO(sjukfallEnhetList)).build();
     }
 
-    @PrometheusTimeMethod
+
     @POST
     @Path("/filters")
     @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)

@@ -24,6 +24,7 @@ import org.slf4j.MarkerFactory;
 public final class LogMarkers {
 
     public static final Marker MONITORING = MarkerFactory.getMarker("Monitoring");
+    public static final Marker VALIDATION = MarkerFactory.getMarker("Validation");
     public static final Marker PERFORMANCE = MarkerFactory.getMarker("Performance");
 
     private LogMarkers() {
