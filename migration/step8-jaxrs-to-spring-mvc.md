@@ -8,7 +8,7 @@
 | Step     | Description                                       | Status | Commit/PR | Verified | Notes |
 |----------|---------------------------------------------------|--------|-----------|----------|-------|
 | **8.0**  | Create `WebMvcConfig`                             | ✅ DONE |           | ✅        |       |
-| **8.1**  | Convert `IntygInfoController`                     | ⬜ TODO |           |          |       |
+| **8.1**  | Convert `IntygInfoController`                     | ✅ DONE |           | ✅        |       |
 | **8.2**  | Convert `MessageController` + test                | ⬜ TODO |           |          |       |
 | **8.3**  | Convert `TestCertificateController`               | ⬜ TODO |           |          |       |
 | **8.4**  | Convert `CertificateListController`               | ⬜ TODO |           |          |       |

@@ -18,16 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.intyginfo;
 
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.infra.intyginfo.dto.ItIntygInfo;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
@@ -36,36 +32,23 @@ import se.inera.intyg.intygstjanst.web.service.IntygInfoService;
 /**
  * Internal REST endpoint for intyg oriented data.
  */
-@Path("/intygInfo")
+@RestController
+@RequestMapping("/intygInfo")
+@RequiredArgsConstructor
 public class IntygInfoController {
 
-    @Autowired
-    private IntygInfoService intygInfoService;
+    private final IntygInfoService intygInfoService;
 
-
-    @GET
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @GetMapping("/{id}")
     @PerformanceLogging(eventAction = "retrieve-certificate-info", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
-    public Response getIntygInfo(@PathParam("id") String id) {
-
-        Optional<ItIntygInfo> intygInfo = intygInfoService.getIntygInfo(id);
-
-        if (intygInfo.isEmpty()) {
-            return Response.status(Status.NOT_FOUND).build();
-        }
-
-        return Response.ok(intygInfo.get()).build();
+    public ResponseEntity<ItIntygInfo> getIntygInfo(@PathVariable String id) {
+        final var intygInfo = intygInfoService.getIntygInfo(id);
+        return intygInfo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-
-    @GET
-    @Path("/{hsaId}/count")
-    @Produces(MediaType.APPLICATION_JSON)
+    @GetMapping("/{hsaId}/count")
     @PerformanceLogging(eventAction = "retrieve-certificate-count", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public Long getCertificateCountForCareProvider(@PathParam("hsaId") String hsaId) {
+    public Long getCertificateCountForCareProvider(@PathVariable String hsaId) {
         return intygInfoService.getCertificateCount(hsaId);
     }
-
 }
