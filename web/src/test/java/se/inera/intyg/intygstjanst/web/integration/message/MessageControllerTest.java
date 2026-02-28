@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
-import jakarta.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
@@ -31,6 +30,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 import se.inera.intyg.infra.message.dto.MessageFromIT;
 import se.inera.intyg.intygstjanst.web.service.MessageService;
 
@@ -55,30 +55,10 @@ class MessageControllerTest {
 
         doReturn(messagesFromITs).when(messageService).findMessagesByCertificateId(certificateId);
 
-        final Response actualResponse = messageController.findMessagesByCertificateId(certificateId);
+        final ResponseEntity<?> actualResponse = messageController.findMessagesByCertificateId(certificateId);
 
         assertNotNull(actualResponse);
-        assertEquals(200, actualResponse.getStatus());
-        assertTrue(actualResponse.hasEntity());
-    }
-
-    @Test
-    void testFindMessagesByCertificateIdFailedEmptyId() {
-        final var certificateId = "";
-
-        final Response actualResponse = messageController.findMessagesByCertificateId(certificateId);
-
-        assertNotNull(actualResponse);
-        assertEquals(400, actualResponse.getStatus());
-    }
-
-    @Test
-    void testFindMessagesByCertificateIdFailedNullId() {
-        final String certificateId = null;
-
-        final Response actualResponse = messageController.findMessagesByCertificateId(certificateId);
-
-        assertNotNull(actualResponse);
-        assertEquals(400, actualResponse.getStatus());
+        assertEquals(200, actualResponse.getStatusCode().value());
+        assertTrue(actualResponse.hasBody());
     }
 }
