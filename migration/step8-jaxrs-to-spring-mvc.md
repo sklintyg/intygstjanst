@@ -13,7 +13,7 @@
 | **8.3**  | Convert `TestCertificateController`               | ✅ DONE |           | ✅        |       |
 | **8.4**  | Convert `CertificateListController`               | ✅ DONE |           | ✅        |       |
 | **8.5**  | Convert `CertificateExportController`             | ✅ DONE |           | ✅        |       |
-| **8.6**  | Convert `RekoController` + test                   | ⬜ TODO |           |          |       |
+| **8.6**  | Convert `RekoController` + test                   | ✅ DONE |           | ✅        |       |
 | **8.7**  | Convert `CitizenCertificateController` + test     | ⬜ TODO |           |          |       |
 | **8.8**  | Convert `CitizenController` + test                | ⬜ TODO |           |          |       |
 | **8.9**  | Convert `TypedCertificateController`              | ⬜ TODO |           |          |       |
