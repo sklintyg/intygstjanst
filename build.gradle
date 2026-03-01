@@ -6,7 +6,7 @@ plugins {
 }
 
 ext {
-    commonVersion = System.properties['commonVersion'] ?: '4.1.0-SNAPSHOT'
+    commonVersion = System.properties['commonVersion'] ?: '4.2.0-SNAPSHOT'
     refDataVersion = '2.0.22'
 
     intygHealthcondRehabilitationSchemasVersion = "1.2.0.1"

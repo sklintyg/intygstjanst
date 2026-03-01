@@ -18,41 +18,33 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import jakarta.ws.rs.InternalServerErrorException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
 import se.inera.intyg.intygstjanst.web.csintegration.aggregator.EraseCertificatesAggregator;
 import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ExportCertificateAggregator;
 import se.inera.intyg.intygstjanst.web.service.CertificateExportService;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.CertificateXmlDTO;
 
 @Service
+@RequiredArgsConstructor
 public class CertificateExportServiceImpl implements CertificateExportService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CertificateExportServiceImpl.class);
 
     private static final String TEXTS_LOCATION = "classpath:texts/*";
     private static final String XML_FILE_EXTENSION = ".xml";
@@ -60,31 +52,18 @@ public class CertificateExportServiceImpl implements CertificateExportService {
     private static final String VERSION_ATTRIBUTE = "version";
     private static final String ACTIVATION_DATE_ATTRIBUTE = "giltigFrom";
 
-    private final CertificateRepository certificateRepository;
-    private final ArendeRepository arendeRepository;
     private final PathMatchingResourcePatternResolver resourceResolver;
     private final EraseCertificatesAggregator eraseCertificatesAggregator;
     private final ExportCertificateAggregator exportCertificateAggregator;
-
-    public CertificateExportServiceImpl(CertificateRepository certificateRepository, ArendeRepository arendeRepository,
-        PathMatchingResourcePatternResolver resourceResolver, EraseCertificatesAggregator eraseCertificatesAggregator,
-        ExportCertificateAggregator exportCertificateAggregator) {
-        this.certificateRepository = certificateRepository;
-        this.arendeRepository = arendeRepository;
-        this.resourceResolver = resourceResolver;
-        this.eraseCertificatesAggregator = eraseCertificatesAggregator;
-        this.exportCertificateAggregator = exportCertificateAggregator;
-    }
 
     @Override
     public List<CertificateTextDTO> getCertificateTexts() {
         try {
             final var resources = resourceResolver.getResources(TEXTS_LOCATION);
-            final var textFiles = Arrays.stream(resources).filter(this::isTextFile).collect(Collectors.toList());
+            final var textFiles = Arrays.stream(resources).filter(this::isTextFile).toList();
             return getCertificateTexts(textFiles);
         } catch (IOException | ParserConfigurationException | TransformerException | SAXException e) {
-            LOG.error("Failure fetching certificate texts.", e);
-            throw new InternalServerErrorException(e);
+            throw new IllegalStateException("Failed to read certificate texts", e);
         }
     }
 
@@ -137,14 +116,5 @@ public class CertificateExportServiceImpl implements CertificateExportService {
         final var transformer = TransformerFactory.newInstance().newTransformer();
         transformer.transform(new DOMSource(textDocument), new StreamResult(stringWriter));
         return stringWriter.toString();
-    }
-
-    private List<CertificateXmlDTO> getCertificateXmls(List<Certificate> certificates) {
-        return certificates.stream()
-            .map(certificate -> new CertificateXmlDTO(
-                certificate.getId(),
-                certificate.getCertificateMetaData().isRevoked(),
-                certificate.getOriginalCertificate().getDocument()))
-            .collect(Collectors.toList());
     }
 }

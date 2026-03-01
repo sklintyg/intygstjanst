@@ -32,7 +32,6 @@
 
     <import resource="application-context-ws.xml"/>
 
-    <import resource="jaxrs-context.xml"/>
 
     <!-- Import spring context of all module dependencies -->
 		<import resource="classpath:common-config.xml"/>

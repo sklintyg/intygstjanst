@@ -21,8 +21,6 @@ package se.inera.intyg.intygstjanst.config;
 
 import static java.util.logging.LogManager.getLogManager;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -107,11 +105,6 @@ public class ApplicationConfig implements TransactionManagementConfigurer {
         final var slf4jVerboseEventSender = new Slf4jVerboseEventSender();
         slf4jVerboseEventSender.setLoggingLevel(Level.INFO);
         return slf4jVerboseEventSender;
-    }
-
-    @Bean
-    public JacksonJsonProvider jacksonJsonProvider(ObjectMapper objectMapper) {
-        return new JacksonJsonProvider(objectMapper);
     }
 
     @Bean
