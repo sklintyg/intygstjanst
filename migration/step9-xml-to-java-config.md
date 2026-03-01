@@ -5,21 +5,21 @@
 > Update the Status column as each step is completed.
 > Statuses: `⬜ TODO` | `🔄 IN PROGRESS` | `✅ DONE` | `⏭️ SKIPPED`
 
-| Step     | Description                                                               | Status | Commit/PR | Verified | Notes |
-|----------|---------------------------------------------------------------------------|--------|-----------|----------|-------|
-| **9.1**  | Remove empty `jaxrs-context.xml` import from `application-context.xml`    | ⬜ TODO |           |          |       |
-| **9.2**  | Convert `basic-cache-config.xml` → `CacheConfig.java`                     | ⬜ TODO |           |          |       |
-| **9.3**  | Convert integration proxy service XML configs → Java config               | ⬜ TODO |           |          |       |
-| **9.4**  | Convert `moduleRegistry` bean → Java config                               | ⬜ TODO |           |          |       |
-| **9.5**  | Convert `IntygBootstrapBean` (profile bean) → `@Component`                | ⬜ TODO |           |          |       |
-| **9.6**  | Convert classpath XML imports to `@ImportResource`                        | ⬜ TODO |           |          |       |
-| **9.7**  | Convert CXF WS clients → `CxfClientConfig.java`                           | ⬜ TODO |           |          |       |
-| **9.8**  | Convert CXF WS endpoints → `CxfEndpointConfig.java`                       | ⬜ TODO |           |          |       |
-| **9.9**  | Convert CXF conduit (TLS) → Java config                                   | ⬜ TODO |           |          |       |
-| **9.10** | Convert stub WS endpoints → `CxfStubConfig.java`                          | ⬜ TODO |           |          |       |
-| **9.11** | Remove `application-context-ws.xml` and `application-context-ws-stub.xml` | ⬜ TODO |           |          |       |
-| **9.12** | Remove `application-context.xml` + update `web.xml`                       | ⬜ TODO |           |          |       |
-| **9.13** | Convert `test-application-context.xml` → Java `@Configuration`            | ⬜ TODO |           |          |       |
+| Step     | Description                                                               | Status | Commit/PR | Verified | Notes                                                      |
+|----------|---------------------------------------------------------------------------|--------|-----------|----------|------------------------------------------------------------|
+| **9.1**  | Remove empty `jaxrs-context.xml` import from `application-context.xml`    | ✅ DONE |           | ✅        | File deleted; no import existed in application-context.xml |
+| **9.2**  | Convert `basic-cache-config.xml` → `CacheConfig.java`                     | ⬜ TODO |           |          |                                                            |
+| **9.3**  | Convert integration proxy service XML configs → Java config               | ⬜ TODO |           |          |                                                            |
+| **9.4**  | Convert `moduleRegistry` bean → Java config                               | ⬜ TODO |           |          |                                                            |
+| **9.5**  | Convert `IntygBootstrapBean` (profile bean) → `@Component`                | ⬜ TODO |           |          |                                                            |
+| **9.6**  | Convert classpath XML imports to `@ImportResource`                        | ⬜ TODO |           |          |                                                            |
+| **9.7**  | Convert CXF WS clients → `CxfClientConfig.java`                           | ⬜ TODO |           |          |                                                            |
+| **9.8**  | Convert CXF WS endpoints → `CxfEndpointConfig.java`                       | ⬜ TODO |           |          |                                                            |
+| **9.9**  | Convert CXF conduit (TLS) → Java config                                   | ⬜ TODO |           |          |                                                            |
+| **9.10** | Convert stub WS endpoints → `CxfStubConfig.java`                          | ⬜ TODO |           |          |                                                            |
+| **9.11** | Remove `application-context-ws.xml` and `application-context-ws-stub.xml` | ⬜ TODO |           |          |                                                            |
+| **9.12** | Remove `application-context.xml` + update `web.xml`                       | ⬜ TODO |           |          |                                                            |
+| **9.13** | Convert `test-application-context.xml` → Java `@Configuration`            | ⬜ TODO |           |          |                                                            |
 
 **Deployment batches:**
 
