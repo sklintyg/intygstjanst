@@ -20,7 +20,6 @@ package se.inera.intyg.intygstjanst.web.integration.message;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,8 +41,7 @@ public class MessageController {
 
     @GetMapping("/{certificateId}")
     @PerformanceLogging(eventAction = "retrieve-messages", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public ResponseEntity<List<MessageFromIT>> findMessagesByCertificateId(@PathVariable String certificateId) {
-        final var messageList = messageService.findMessagesByCertificateId(certificateId);
-        return ResponseEntity.ok(messageList);
+    public List<MessageFromIT> findMessagesByCertificateId(@PathVariable String certificateId) {
+        return messageService.findMessagesByCertificateId(certificateId);
     }
 }

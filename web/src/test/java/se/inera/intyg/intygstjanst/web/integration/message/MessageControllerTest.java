@@ -19,18 +19,15 @@
 package se.inera.intyg.intygstjanst.web.integration.message;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
 import se.inera.intyg.infra.message.dto.MessageFromIT;
 import se.inera.intyg.intygstjanst.web.service.MessageService;
 
@@ -47,18 +44,17 @@ class MessageControllerTest {
     void testFindMessagesByCertificateIdSuccessful() {
         final var certificateId = "certificateId";
 
-        final var messagesFromITs = new ArrayList<MessageFromIT>();
-        messagesFromITs.add(MessageFromIT.create(certificateId, "messageId1", "messageContent1", "subject1",
-            "logicalAddress1", LocalDateTime.now()));
-        messagesFromITs.add(MessageFromIT.create(certificateId, "messageId2", "messageContent2", "subject2",
-            "logicalAddress2", LocalDateTime.now()));
+        final var messagesFromITs = List.of(
+            MessageFromIT.create(certificateId, "messageId1", "messageContent1", "subject1",
+                "logicalAddress1", LocalDateTime.now()),
+            MessageFromIT.create(certificateId, "messageId2", "messageContent2", "subject2",
+                "logicalAddress2", LocalDateTime.now())
+        );
 
         doReturn(messagesFromITs).when(messageService).findMessagesByCertificateId(certificateId);
 
-        final ResponseEntity<?> actualResponse = messageController.findMessagesByCertificateId(certificateId);
+        final var actualResponse = messageController.findMessagesByCertificateId(certificateId);
 
-        assertNotNull(actualResponse);
-        assertEquals(200, actualResponse.getStatusCode().value());
-        assertTrue(actualResponse.hasBody());
+        assertEquals(messagesFromITs, actualResponse);
     }
 }
