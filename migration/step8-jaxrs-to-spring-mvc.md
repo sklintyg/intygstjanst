@@ -16,7 +16,7 @@
 | **8.6**  | Convert `RekoController` + test                   | ✅ DONE |           | ✅        |       |
 | **8.7**  | Convert `CitizenCertificateController` + test     | ✅ DONE |           | ✅        |       |
 | **8.8**  | Convert `CitizenController` + test                | ✅ DONE |           | ✅        |       |
-| **8.9**  | Convert `TypedCertificateController`              | ⬜ TODO |           |          |       |
+| **8.9**  | Convert `TypedCertificateController`              | ✅ DONE |           | ✅        |       |
 | **8.10** | Convert `SickLeaveController` + test              | ⬜ TODO |           |          |       |
 | **8.11** | **SWITCH `/internalapi`** — deploy 8.0–8.11       | ⬜ TODO |           |          |       |
 | **8.12** | Convert + switch `/api/send-message-to-care`      | ⬜ TODO |           |          |       |
