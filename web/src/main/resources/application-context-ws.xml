@@ -280,37 +280,6 @@
       implementor="se.inera.intyg.intygstjanst.web.integration.vardensintyg.RegisterApprovedReceiversResponderImpl">
   </jaxws:endpoint>
 
-  <!-- ws clients -->
-
-  <jaxws:client id="revokeMedicalCertificateClient"
-      serviceClass="se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface"
-      address="${revokemedicalcertificatev1.endpoint.url}">
-  </jaxws:client>
-
-  <jaxws:client id="sendMedicalCertificateQuestionClient"
-      serviceClass="se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificatequestion.rivtabp20.v1.SendMedicalCertificateQuestionResponderInterface"
-      address="${sendmedicalcertificatequestionv1.endpoint.url}">
-  </jaxws:client>
-
-  <jaxws:client id="sendMessageToCareClient"
-      serviceClass="se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponderInterface"
-      address="${sendmessagetocarev2.endpoint.url}">
-  </jaxws:client>
-
-  <jaxws:client id="sendMessageToRecipientClient"
-      serviceClass="se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponderInterface"
-      address="${sendmessagetorecipientv2.endpoint.url}">
-  </jaxws:client>
-
-  <jaxws:client id="revokeCertificateClient"
-      serviceClass="se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface"
-      address="${revokecertificatev2.endpoint.url}">
-  </jaxws:client>
-
-  <jaxws:client id="registerCertificateClient"
-      serviceClass="se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponderInterface"
-      address="${registercertificatev3.endpoint.url}">
-  </jaxws:client>
 
   <import resource="application-context-ws-stub.xml"/>
 

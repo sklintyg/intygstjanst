@@ -13,7 +13,7 @@
 | **9.4**  | Convert `moduleRegistry` bean → Java config                               | ✅ DONE |           | ✅        | Uses `ApplicationOrigin` enum instead of String — correct                      |
 | **9.5**  | Convert `IntygBootstrapBean` (profile bean) → `@Component`                | ✅ DONE |           | ✅        | Added `@Qualifier("transactionManager")` to resolve bean ambiguity             |
 | **9.6**  | Convert classpath XML imports to `@ImportResource`                        | ✅ DONE |           | ✅        |                                                                                |
-| **9.7**  | Convert CXF WS clients → `CxfClientConfig.java`                           | ⬜ TODO |           |          |                                                                                |
+| **9.7**  | Convert CXF WS clients → `CxfClientConfig.java`                           | ✅ DONE |           | ✅        | Created `CxfClientConfig.java`; removed 6 `<jaxws:client>` from XML            |
 | **9.8**  | Convert CXF WS endpoints → `CxfEndpointConfig.java`                       | ⬜ TODO |           |          |                                                                                |
 | **9.9**  | Convert CXF conduit (TLS) → Java config                                   | ⬜ TODO |           |          |                                                                                |
 | **9.10** | Convert stub WS endpoints → `CxfStubConfig.java`                          | ⬜ TODO |           |          |                                                                                |
