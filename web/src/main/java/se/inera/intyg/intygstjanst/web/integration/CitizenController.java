@@ -18,11 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,10 +25,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.common.db.support.DbModuleEntryPoint;
 import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
@@ -52,23 +50,19 @@ import se.inera.intyg.schemas.contract.Personnummer;
 /**
  * Internal REST endpoint for citizen oriented data. POST is used to not expose personal identities in URLs (and log files).
  */
-@Path("/citizens")
+@RestController
+@RequestMapping("/citizens")
+@RequiredArgsConstructor
 public class CitizenController {
 
     public static final Set<String> EXCLUDED_CITIZEN_CERTIFICATES =
         new HashSet<>(Arrays.asList(DbModuleEntryPoint.MODULE_ID, DoiModuleEntryPoint.MODULE_ID));
     static final Logger LOG = LoggerFactory.getLogger(CitizenController.class);
 
-    @Autowired
-    private CertificateService certificateService;
+    private final CertificateService certificateService;
+    private final RelationService relationService;
+    private final MonitoringLogService monitoringLogService;
 
-    @Autowired
-    private RelationService relationService;
-
-    @Autowired
-    private MonitoringLogService monitoringLogService;
-
-    //
     public static class RequestObject {
 
         private String id;
@@ -90,7 +84,6 @@ public class CitizenController {
         }
     }
 
-    //
     public static class ResponseObject {
 
         private CertificateHolder certificate;
@@ -115,11 +108,7 @@ public class CitizenController {
         }
     }
 
-
-    @POST
-    @Path("/certificates")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @PostMapping("/certificates")
     public List<ResponseObject> getCertificates(@RequestBody RequestObject parameters) {
 
         final long t0 = System.currentTimeMillis();
@@ -128,7 +117,7 @@ public class CitizenController {
 
         LOG.debug("List certificates for citizen, archived: {}", parameters.isArchived());
 
-        if (!pnr.isPresent()) {
+        if (pnr.isEmpty()) {
             return Collections.emptyList();
         }
 
@@ -157,7 +146,7 @@ public class CitizenController {
             .stream()
             .filter(this::accessibleForUser)
             .map(this::toCertificateRelation)
-            .collect(Collectors.toList());
+            .toList();
         response.setRelations(relations);
     }
 
