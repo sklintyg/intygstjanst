@@ -27,17 +27,6 @@
 
     <import resource="application-context-ws.xml"/>
 
-    <!-- Import spring context of all module dependencies -->
-		<import resource="classpath:common-config.xml"/>
-    <import resource="classpath*:module-config.xml"/>
-    <import resource="classpath*:it-module-cxf-servlet.xml"/>
-    <!-- Load version helper -->
-    <context:component-scan base-package=
-        "se.inera.intyg.common.support.modules.support.api,
-         se.inera.intyg.common.services,
-	       se.inera.intyg.common.support.services,
-         se.inera.intyg.common.util.integration.json"/>
-
 
     <context:annotation-config/>
     <context:component-scan base-package=

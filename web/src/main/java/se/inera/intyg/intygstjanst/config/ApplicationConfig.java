@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -58,7 +59,18 @@ import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
 @DependsOn("transactionManager")
 @PropertySource("classpath:application.properties")
 @PropertySource(ignoreResourceNotFound = true, value = "file:${dev.config.file}")
-@ImportResource({"classpath:META-INF/cxf/cxf.xml"})
+@ImportResource({
+    "classpath:META-INF/cxf/cxf.xml",
+    "classpath:common-config.xml",
+    "classpath*:module-config.xml",
+    "classpath*:it-module-cxf-servlet.xml"
+})
+@ComponentScan(basePackages = {
+    "se.inera.intyg.common.support.modules.support.api",
+    "se.inera.intyg.common.services",
+    "se.inera.intyg.common.support.services",
+    "se.inera.intyg.common.util.integration.json"
+})
 public class ApplicationConfig implements TransactionManagementConfigurer {
 
     @Autowired
