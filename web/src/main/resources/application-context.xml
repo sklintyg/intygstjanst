@@ -48,11 +48,5 @@
          se.inera.intyg.infra.integration.intygproxyservice,
          se.inera.intyg.infra.pu.integration.intygproxyservice"/>
 
-    <!-- If bootstrap is specified let's bootstrap data -->
-    <beans profile="bootstrap">
-        <bean id="IntygBootstrapBean" class="se.inera.intyg.intygstjanst.web.service.bean.IntygBootstrapBean">
-            <property name="txManager" ref="transactionManager"/>
-        </bean>
-    </beans>
 
 </beans>

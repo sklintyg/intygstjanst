@@ -32,8 +32,11 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -54,6 +57,8 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
 
+@Component
+@Profile("bootstrap")
 public class IntygBootstrapBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(IntygBootstrapBean.class);
@@ -71,7 +76,7 @@ public class IntygBootstrapBean {
     private CertificateToSjukfallCertificateConverter certificateToSjukfallCertificateConverter;
 
     @Autowired
-    public void setTxManager(PlatformTransactionManager txManager) {
+    public void setTxManager(@Qualifier("transactionManager") PlatformTransactionManager txManager) {
         this.transactionTemplate = new TransactionTemplate(txManager);
     }
 
