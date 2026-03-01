@@ -40,7 +40,7 @@ public class StatisticsServiceResource {
     @Autowired
     private Receiver receiver;
 
-    @GetMapping("/")
+    @GetMapping()
     public List<String> getAllMessages() {
         LOG.debug("Fetching all messages");
         return Lists.newArrayList(receiver.getMessages().values());

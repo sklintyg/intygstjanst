@@ -83,7 +83,7 @@ public class SjukfallCertResource {
         });
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping()
     public ResponseEntity<?> deleteAllSjukfallCertificates() {
         return transactionTemplate.execute(new TransactionCallback<ResponseEntity<?>>() {
             @Override

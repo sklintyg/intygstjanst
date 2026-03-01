@@ -155,7 +155,7 @@ public class CertificateResource {
         });
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping()
     public ResponseEntity<?> deleteAllCertificates() {
         return transactionTemplate.execute(status -> {
             try {
@@ -184,7 +184,7 @@ public class CertificateResource {
         });
     }
 
-    @PostMapping("/")
+    @PostMapping()
     public ResponseEntity<?> insertCertificate(@RequestBody final CertificateHolder certificateHolder) {
         return transactionTemplate.execute(status -> {
             Certificate certificate = ConverterUtil.toCertificate(certificateHolder);

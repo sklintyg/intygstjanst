@@ -44,7 +44,7 @@ public class CitizenCertificateController {
     private final ListCitizenCertificatesService listCitizenCertificatesService;
     private final SendCertificateService citizenSendCertificateAggregator;
 
-    @PostMapping("/")
+    @PostMapping()
     @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
     public ListCitizenCertificatesResponseDTO getCitizenCertificates(
         @RequestBody CitizenCertificatesRequestDTO request) {
