@@ -18,49 +18,43 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.certificateexport;
 
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.MediaType;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.CertificateExportService;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateTextDTO;
 
-@Path("v1")
+@RestController
+@RequestMapping("v1")
+@RequiredArgsConstructor
 public class CertificateExportController {
 
-    @Autowired
-    CertificateExportService certificateExportService;
+    private final CertificateExportService certificateExportService;
 
-    @GET
-    @Path("certificatetexts")
-    @Produces(MediaType.APPLICATION_JSON)
+    @GetMapping("/certificatetexts")
     @PerformanceLogging(eventAction = "retrieve-certificate-texts", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public List<CertificateTextDTO> getCertificateTexts() {
         return certificateExportService.getCertificateTexts();
     }
 
-    @GET
-    @Path("/certificates/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @GetMapping("/certificates/{id}")
     @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public CertificateExportPageDTO getCertificates(@PathParam("id") String careProviderId, @QueryParam("batchSize") int batchSize,
-        @QueryParam("collected") int collected) {
+    public CertificateExportPageDTO getCertificates(@PathVariable("id") String careProviderId, @RequestParam("batchSize") int batchSize,
+        @RequestParam("collected") int collected) {
         return certificateExportService.getCertificateExportPage(careProviderId, collected, batchSize);
     }
 
-    @DELETE
-    @Path("/certificates/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @DeleteMapping("/certificates/{id}")
     @PerformanceLogging(eventAction = "erase-certificates", eventType = MdcLogConstants.EVENT_TYPE_DELETION)
-    public void eraseDataForCareProvider(@PathParam("id") String careProviderId) {
+    public void eraseDataForCareProvider(@PathVariable("id") String careProviderId) {
         certificateExportService.eraseCertificates(careProviderId);
     }
 }
