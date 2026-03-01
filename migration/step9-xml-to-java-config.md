@@ -10,7 +10,7 @@
 | **9.1**  | Remove empty `jaxrs-context.xml` import from `application-context.xml`    | ✅ DONE |           | ✅        | File deleted; no import existed in application-context.xml                     |
 | **9.2**  | Convert `basic-cache-config.xml` → `CacheConfig.java`                     | ✅ DONE |           | ✅        |                                                                                |
 | **9.3**  | Convert integration proxy service XML configs → Java config               | ✅ DONE |           | ✅        | Packages added to component-scan in application-context.xml; XML files deleted |
-| **9.4**  | Convert `moduleRegistry` bean → Java config                               | ⬜ TODO |           |          |                                                                                |
+| **9.4**  | Convert `moduleRegistry` bean → Java config                               | ✅ DONE |           | ✅        | Uses `ApplicationOrigin` enum instead of String — correct                      |
 | **9.5**  | Convert `IntygBootstrapBean` (profile bean) → `@Component`                | ⬜ TODO |           |          |                                                                                |
 | **9.6**  | Convert classpath XML imports to `@ImportResource`                        | ⬜ TODO |           |          |                                                                                |
 | **9.7**  | Convert CXF WS clients → `CxfClientConfig.java`                           | ⬜ TODO |           |          |                                                                                |
