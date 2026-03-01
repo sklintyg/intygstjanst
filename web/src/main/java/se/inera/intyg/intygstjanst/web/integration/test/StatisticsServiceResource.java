@@ -19,17 +19,19 @@
 package se.inera.intyg.intygstjanst.web.integration.test;
 
 import com.google.common.collect.Lists;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Path("/statisticsresource")
+@RestController
+@RequestMapping("/statisticsresource")
+@Profile({"dev", "testability-api"})
 public class StatisticsServiceResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(StatisticsServiceResource.class);
@@ -37,31 +39,24 @@ public class StatisticsServiceResource {
     @Autowired
     private Receiver receiver;
 
-    @GET
-    @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
+    @GetMapping("/")
     public List<String> getAllMessages() {
         LOG.debug("Fetching all messages");
         return Lists.newArrayList(receiver.getMessages().values());
     }
 
-    @GET
-    @Path("/{id}/{action}")
-    @Produces(MediaType.APPLICATION_XML)
-    public String getMessage(@PathParam("id") String id, @PathParam("action") String action) {
+    @GetMapping("/{id}/{action}")
+    public String getMessage(@PathVariable("id") String id, @PathVariable("action") String action) {
         LOG.debug("Fetching {}-message for id {}", action, id);
         final String msg = receiver.getMessages().get(Receiver.generateKey(id, action));
         LOG.debug("Message: {}", msg);
         return msg;
     }
 
-    @GET
-    @Path("/purge")
-    @Produces(MediaType.APPLICATION_JSON)
+    @GetMapping("/purge")
     public String purge() {
         final int n = receiver.consume(msg -> {
         });
         return String.format("{ \"numPurged\": %d }", n);
     }
-
 }

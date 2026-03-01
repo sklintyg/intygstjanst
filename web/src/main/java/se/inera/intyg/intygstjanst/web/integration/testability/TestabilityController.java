@@ -21,19 +21,22 @@ package se.inera.intyg.intygstjanst.web.integration.testability;
 import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALFA_MEDICINCENTRUM;
 import static se.inera.intyg.intygstjanst.web.integration.testability.TestabilityConstants.ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN;
 
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygstjanst.web.integration.testability.dto.CreateSickLeaveRequestDTO;
 import se.inera.intyg.intygstjanst.web.integration.testability.dto.CreateSickLeaveResponseDTO;
+import se.inera.intyg.intygstjanst.web.integration.testability.dto.TestDataOptionsDTO;
 import se.inera.intyg.intygstjanst.web.service.TestabilityService;
 
-@Path("/testability")
+@RestController
+@RequestMapping("/testability")
+@Profile({"dev", "testability-api"})
+@RequiredArgsConstructor
 public class TestabilityController {
 
     private final TestabilityService testabilityService;
@@ -41,39 +44,20 @@ public class TestabilityController {
     private static final String VERIFICATION_MESSAGE = String.format("Test data successfully created for units: %s & %s",
         ALFA_MEDICINCENTRUM, ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN);
 
-    public TestabilityController(TestabilityService testabilityService) {
-        this.testabilityService = testabilityService;
-    }
-
-
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/createDefault")
-    public Response createDefaultTestData() {
+    @PostMapping("/createDefault")
+    public String createDefaultTestData() {
         testabilityService.createDefaultTestData();
-        return Response.ok(VERIFICATION_MESSAGE).build();
+        return VERIFICATION_MESSAGE;
     }
 
-
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/createSickLeave")
-    public Response createSickLeave(@RequestBody CreateSickLeaveRequestDTO createSickLeaveRequestDTO) {
+    @PostMapping("/createSickLeave")
+    public CreateSickLeaveResponseDTO createSickLeave(@RequestBody CreateSickLeaveRequestDTO createSickLeaveRequestDTO) {
         final var certificateId = testabilityService.create(createSickLeaveRequestDTO);
-        return Response.ok(
-            new CreateSickLeaveResponseDTO(
-                certificateId
-            )
-        ).build();
+        return new CreateSickLeaveResponseDTO(certificateId);
     }
 
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/testDataOptions")
-    public Response getAvailableTestDataOptions() {
-        final var availableTestDataOptions = testabilityService.getTestDataOptions();
-        return Response.ok(availableTestDataOptions).build();
+    @GetMapping("/testDataOptions")
+    public TestDataOptionsDTO getAvailableTestDataOptions() {
+        return testabilityService.getTestDataOptions();
     }
 }

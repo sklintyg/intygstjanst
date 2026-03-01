@@ -20,27 +20,30 @@ package se.inera.intyg.intygstjanst.web.integration.test;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Profile;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 
 /**
  * @author andreaskaltenbach
  */
-@Path("/sjukfallcert")
+@RestController
+@RequestMapping("/sjukfallcert")
+@Profile({"dev", "testability-api"})
 public class SjukfallCertResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SjukfallCertResource.class);
@@ -51,46 +54,40 @@ public class SjukfallCertResource {
     private TransactionTemplate transactionTemplate;
 
     @Autowired
-    public void setTxManager(PlatformTransactionManager txManager) {
+    public void setTxManager(@Qualifier("transactionManager") PlatformTransactionManager txManager) {
         this.transactionTemplate = new TransactionTemplate(txManager);
     }
 
-    @GET
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public SjukfallCertificate getSjukfallCertificate(@PathParam("id") String id) {
+    @GetMapping("/{id}")
+    public SjukfallCertificate getSjukfallCertificate(@PathVariable("id") String id) {
         return entityManager.find(SjukfallCertificate.class, id);
     }
 
-    @DELETE
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteSjukfallCertificate(@PathParam("id") final String id) {
-        return transactionTemplate.execute(new TransactionCallback<Response>() {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteSjukfallCertificate(@PathVariable("id") final String id) {
+        return transactionTemplate.execute(new TransactionCallback<ResponseEntity<?>>() {
             @Override
-            public Response doInTransaction(TransactionStatus status) {
+            public ResponseEntity<?> doInTransaction(TransactionStatus status) {
                 try {
                     SjukfallCertificate cert = entityManager.find(SjukfallCertificate.class, id);
                     if (cert != null) {
                         entityManager.remove(cert);
                     }
-                    return Response.ok().build();
+                    return ResponseEntity.ok().build();
                 } catch (Exception e) {
                     status.setRollbackOnly();
                     LOGGER.warn("deleted sjukfall certificate with id {} failed: {}", id, e);
-                    return Response.serverError().build();
+                    return ResponseEntity.internalServerError().build();
                 }
             }
         });
     }
 
-    @DELETE
-    @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteAllSjukfallCertificates() {
-        return transactionTemplate.execute(new TransactionCallback<Response>() {
+    @DeleteMapping("/")
+    public ResponseEntity<?> deleteAllSjukfallCertificates() {
+        return transactionTemplate.execute(new TransactionCallback<ResponseEntity<?>>() {
             @Override
-            public Response doInTransaction(TransactionStatus status) {
+            public ResponseEntity<?> doInTransaction(TransactionStatus status) {
                 try {
                     @SuppressWarnings("unchecked")
                     List<SjukfallCertificate> certificates = entityManager.createQuery("SELECT sc FROM SjukfallCertificate sc")
@@ -98,11 +95,11 @@ public class SjukfallCertResource {
                     for (SjukfallCertificate sjukfallCert : certificates) {
                         entityManager.remove(sjukfallCert);
                     }
-                    return Response.ok().build();
+                    return ResponseEntity.ok().build();
                 } catch (Exception e) {
                     status.setRollbackOnly();
                     LOGGER.warn("delete all sjukfall certificates failed: {}", e);
-                    return Response.serverError().build();
+                    return ResponseEntity.internalServerError().build();
                 }
             }
         });

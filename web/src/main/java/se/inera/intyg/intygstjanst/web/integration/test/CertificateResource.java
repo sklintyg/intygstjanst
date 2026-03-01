@@ -23,15 +23,6 @@ import com.google.common.io.Resources;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -40,10 +31,19 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import se.inera.clinicalprocess.healthcond.certificate.receiver.types.v1.ApprovalStatusType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.ReceiverApprovalStatus;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversType;
@@ -64,7 +64,9 @@ import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 /**
  * @author andreaskaltenbach
  */
-@Path("/certificate")
+@RestController
+@RequestMapping("/certificate")
+@Profile({"dev", "testability-api"})
 public class CertificateResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateResource.class);
@@ -78,21 +80,17 @@ public class CertificateResource {
     private IntygModuleRegistry moduleRegistry;
 
     @Autowired
-    public void setTxManager(PlatformTransactionManager txManager) {
+    public void setTxManager(@Qualifier("transactionManager") PlatformTransactionManager txManager) {
         this.transactionTemplate = new TransactionTemplate(txManager);
     }
 
-    @GET
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Certificate getCertificate(@PathParam("id") String id) {
+    @GetMapping("/{id}")
+    public Certificate getCertificate(@PathVariable("id") String id) {
         return entityManager.find(Certificate.class, id);
     }
 
-    @DELETE
-    @Path("/citizen/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteCertificatesForCitizen(@PathParam("id") String id) {
+    @DeleteMapping("/citizen/{id}")
+    public ResponseEntity<?> deleteCertificatesForCitizen(@PathVariable("id") String id) {
         return transactionTemplate.execute(status -> {
             try {
                 LOGGER.info("Deleting certificates for citizen {}", id);
@@ -103,19 +101,17 @@ public class CertificateResource {
                 for (String certificate : certificates) {
                     deleteCertificate(certificate);
                 }
-                return Response.ok().build();
+                return ResponseEntity.ok().build();
             } catch (Exception e) {
                 status.setRollbackOnly();
                 LOGGER.warn("delete certificates for citizen {} failed", id, e);
-                return Response.serverError().build();
+                return ResponseEntity.internalServerError().build();
             }
         });
     }
 
-    @DELETE
-    @Path("/unit/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteCertificatesForUnit(@PathParam("id") String id) {
+    @DeleteMapping("/unit/{id}")
+    public ResponseEntity<?> deleteCertificatesForUnit(@PathVariable("id") String id) {
         return transactionTemplate.execute(status -> {
             try {
                 LOGGER.info("Deleting certificates for unit {}", id);
@@ -125,19 +121,17 @@ public class CertificateResource {
                 for (String certificate : certificates) {
                     deleteCertificate(certificate);
                 }
-                return Response.ok().build();
+                return ResponseEntity.ok().build();
             } catch (Exception e) {
                 status.setRollbackOnly();
                 LOGGER.warn("delete certificates for unit {} failed", id, e);
-                return Response.serverError().build();
+                return ResponseEntity.internalServerError().build();
             }
         });
     }
 
-    @DELETE
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteCertificate(@PathParam("id") final String id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCertificate(@PathVariable("id") final String id) {
         return transactionTemplate.execute(status -> {
             try {
                 LOGGER.info("Deleting certificate {}", id);
@@ -152,19 +146,17 @@ public class CertificateResource {
                 if (sjukfallCertificate != null) {
                     entityManager.remove(sjukfallCertificate);
                 }
-                return Response.ok().build();
+                return ResponseEntity.ok().build();
             } catch (Exception e) {
                 status.setRollbackOnly();
                 LOGGER.warn("delete certificate with id {} failed", id, e);
-                return Response.serverError().build();
+                return ResponseEntity.internalServerError().build();
             }
         });
     }
 
-    @DELETE
-    @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteAllCertificates() {
+    @DeleteMapping("/")
+    public ResponseEntity<?> deleteAllCertificates() {
         return transactionTemplate.execute(status -> {
             try {
                 @SuppressWarnings("unchecked")
@@ -183,19 +175,17 @@ public class CertificateResource {
                     entityManager.remove(sjukfallCert);
                 }
 
-                return Response.ok().build();
+                return ResponseEntity.ok().build();
             } catch (Exception e) {
                 status.setRollbackOnly();
                 LOGGER.warn("delete all certificates failed", e);
-                return Response.serverError().build();
+                return ResponseEntity.internalServerError().build();
             }
         });
     }
 
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/")
-    public Response insertCertificate(final CertificateHolder certificateHolder) {
+    @PostMapping("/")
+    public ResponseEntity<?> insertCertificate(@RequestBody final CertificateHolder certificateHolder) {
         return transactionTemplate.execute(status -> {
             Certificate certificate = ConverterUtil.toCertificate(certificateHolder);
             try {
@@ -212,20 +202,17 @@ public class CertificateResource {
                 entityManager.persist(certificate);
                 entityManager.persist(metaData);
                 entityManager.persist(originalCertificate);
-                return Response.ok().build();
+                return ResponseEntity.ok().build();
             } catch (Exception e) {
                 status.setRollbackOnly();
                 LOGGER.warn("insert certificate {} ({}) failed", certificate.getId(), certificate.getType(), e);
-                return Response.serverError().build();
+                return ResponseEntity.internalServerError().build();
             }
         });
     }
 
-    @DELETE
-    @Path("/{id}/approvedreceivers")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteApprovedReceivers(@PathParam("id") final String id) {
-
+    @DeleteMapping("/{id}/approvedreceivers")
+    public ResponseEntity<?> deleteApprovedReceivers(@PathVariable("id") final String id) {
         return transactionTemplate.execute(status -> {
             try {
                 LOGGER.info("removing approved receivers for certificates {}", id);
@@ -241,31 +228,27 @@ public class CertificateResource {
                     entityManager.remove(ar);
                 }
 
-                return Response.ok().build();
+                return ResponseEntity.ok().build();
 
             } catch (Exception e) {
                 status.setRollbackOnly();
                 LOGGER.warn("removal of approved receivers for certificate {} failed", id, e);
-                return Response.serverError().build();
+                return ResponseEntity.internalServerError().build();
             }
         });
     }
 
-    @POST
-    @Path("/{id}/approvedreceivers")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response registerApprovedReceivers(@PathParam("id") final String id,
+    @PostMapping("/{id}/approvedreceivers")
+    public ResponseEntity<?> registerApprovedReceivers(@PathVariable("id") final String id,
         @RequestBody final RegisterApprovedReceiversType registerApprovedReceiversType) {
 
         return transactionTemplate.execute(status -> {
             String receiverId = null;
-            boolean approvalStatus = false;
 
             try {
                 for (ReceiverApprovalStatus ras : registerApprovedReceiversType.getApprovedReceivers()) {
                     receiverId = ras.getReceiverId();
-                    approvalStatus = parseApprovalStatus(ras.getApprovalStatus().value());
+                    boolean approvalStatus = parseApprovalStatus(ras.getApprovalStatus().value());
 
                     ApprovedReceiver approvedReceiver = new ApprovedReceiver();
                     approvedReceiver.setCertificateId(id);
@@ -275,20 +258,17 @@ public class CertificateResource {
                     LOGGER.info("register approved receiver {} for certificate {}", id, receiverId);
                     entityManager.persist(approvedReceiver);
                 }
-                return Response.ok().build();
+                return ResponseEntity.ok().build();
             } catch (Exception e) {
                 LOGGER.warn("register approved receiver {} failed for certificate {}", id, receiverId, e);
-                return Response.serverError().build();
+                return ResponseEntity.internalServerError().build();
             }
         });
     }
 
-    @DELETE
-    @Path("/deleteCertificates")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @DeleteMapping("/deleteCertificates")
     @Transactional
-    public Response deleteCertificates(@RequestBody List<String> certificateIds) {
+    public ResponseEntity<?> deleteCertificates(@RequestBody List<String> certificateIds) {
 
         LOGGER.info("Removing data for certificates {}", certificateIds);
 
@@ -298,54 +278,40 @@ public class CertificateResource {
         delete(getSjukfallCertificates(certificateIds));
         delete(getCertificates(certificateIds));
 
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
-    @GET
-    @Path("/{careProviderId}/certificateCount")
-    @Produces(MediaType.APPLICATION_JSON)
-    public int getCertificateCountForCareProvider(@PathParam("careProviderId") final String careProviderId) {
+    @GetMapping("/{careProviderId}/certificateCount")
+    public int getCertificateCountForCareProvider(@PathVariable("careProviderId") final String careProviderId) {
         return getCertificateIdsForCareProvider(careProviderId).size();
     }
 
-    @GET
-    @Path("/{careProviderId}/sjukfallCertificateCount")
-    @Produces(MediaType.APPLICATION_JSON)
-    public int getSjukfallCertificateCountForCareProvider(@PathParam("careProviderId") final String careProviderId) {
+    @GetMapping("/{careProviderId}/sjukfallCertificateCount")
+    public int getSjukfallCertificateCountForCareProvider(@PathVariable("careProviderId") final String careProviderId) {
         final var certificateIds = getCertificateIdsForCareProvider(careProviderId);
         return getSjukfallCertificates(certificateIds).size();
     }
 
-    @GET
-    @Path("/{careProviderId}/approvedReceiverCount")
-    @Produces(MediaType.APPLICATION_JSON)
-    public int getApprovedReceiversCountForCareProvider(@PathParam("careProviderId") final String careProviderId) {
+    @GetMapping("/{careProviderId}/approvedReceiverCount")
+    public int getApprovedReceiversCountForCareProvider(@PathVariable("careProviderId") final String careProviderId) {
         final var certificateIds = getCertificateIdsForCareProvider(careProviderId);
         return getApprovedReceivers(certificateIds).size();
     }
 
-    @GET
-    @Path("/{careProviderId}/messageCount")
-    @Produces(MediaType.APPLICATION_JSON)
-    public int getMessagesCountForCareProvider(@PathParam("careProviderId") final String careProviderId) {
+    @GetMapping("/{careProviderId}/messageCount")
+    public int getMessagesCountForCareProvider(@PathVariable("careProviderId") final String careProviderId) {
         final var certificateIds = getCertificateIdsForCareProvider(careProviderId);
         return getMessages(certificateIds).size();
     }
 
-    @GET
-    @Path("/{careProviderId}/relationCount")
-    @Produces(MediaType.APPLICATION_JSON)
-    public int getRelationCountForCareProvider(@PathParam("careProviderId") final String careProviderId) {
+    @GetMapping("/{careProviderId}/relationCount")
+    public int getRelationCountForCareProvider(@PathVariable("careProviderId") final String careProviderId) {
         final var certificateIds = getCertificateIdsForCareProvider(careProviderId);
         return getRelations(certificateIds).size();
     }
 
-
     private boolean parseApprovalStatus(String approvalStatus) {
-        if (approvalStatus != null && approvalStatus.equals(ApprovalStatusType.YES.value())) {
-            return true;
-        }
-        return false;
+        return approvalStatus != null && approvalStatus.equals(ApprovalStatusType.YES.value());
     }
 
     private String getXmlBody(CertificateHolder certificateHolder) throws IOException {
