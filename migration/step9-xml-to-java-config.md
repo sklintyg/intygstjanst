@@ -8,7 +8,7 @@
 | Step     | Description                                                               | Status | Commit/PR | Verified | Notes                                                      |
 |----------|---------------------------------------------------------------------------|--------|-----------|----------|------------------------------------------------------------|
 | **9.1**  | Remove empty `jaxrs-context.xml` import from `application-context.xml`    | ✅ DONE |           | ✅        | File deleted; no import existed in application-context.xml |
-| **9.2**  | Convert `basic-cache-config.xml` → `CacheConfig.java`                     | ⬜ TODO |           |          |                                                            |
+| **9.2**  | Convert `basic-cache-config.xml` → `CacheConfig.java`                     | ✅ DONE |           | ✅        |                                                            |
 | **9.3**  | Convert integration proxy service XML configs → Java config               | ⬜ TODO |           |          |                                                            |
 | **9.4**  | Convert `moduleRegistry` bean → Java config                               | ⬜ TODO |           |          |                                                            |
 | **9.5**  | Convert `IntygBootstrapBean` (profile bean) → `@Component`                | ⬜ TODO |           |          |                                                            |

@@ -44,9 +44,6 @@
 	       se.inera.intyg.common.support.services,
          se.inera.intyg.common.util.integration.json"/>
 
-    <!-- Cache -->
-    <!-- Initializes caching, required by hsa-services-config.xml -->
-    <import resource="classpath:basic-cache-config.xml" />
 
 		<!-- Intyg Proxy Service  -->
     <import resource="classpath:/hsa-integration-intyg-proxy-service-config.xml"/>
