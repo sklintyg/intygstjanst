@@ -36,11 +36,11 @@ import se.inera.intyg.common.support.modules.support.api.exception.ModuleExcepti
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.web.integration.CitizenController;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
 import se.inera.intyg.intygstjanst.web.integration.util.CertificateStateFilterUtil;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
+import se.inera.intyg.intygstjanst.web.service.impl.IntygInfoServiceImpl;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.v3.ListCertificatesForCitizenResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.v3.ListCertificatesForCitizenResponseType;
@@ -95,10 +95,10 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         }
 
         response.getIntygsLista().getIntyg().addAll(certificates.stream()
-            .filter(c -> !CitizenController.EXCLUDED_CITIZEN_CERTIFICATES.contains(c.getType()))
+            .filter(c -> !IntygInfoServiceImpl.EXCLUDED_CITIZEN_CERTIFICATES.contains(c.getType()))
             .filter(c -> c.isDeleted() == parameters.isArkiverade())
             .map(c -> convert(c, parameters.getPart().getCode()))
-            .collect(Collectors.toList()));
+            .toList());
 
         response.setResult(ResultTypeUtil.okResult());
         monitoringLogService.logCertificateListedByCitizen(personnummer.orElse(null));
