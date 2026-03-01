@@ -18,7 +18,7 @@
 | **8.8**  | Convert `CitizenController` + test                | ✅ DONE |           | ✅        |       |
 | **8.9**  | Convert `TypedCertificateController`              | ✅ DONE |           | ✅        |       |
 | **8.10** | Convert `SickLeaveController` + test              | ✅ DONE |           | ✅        |       |
-| **8.11** | **SWITCH `/internalapi`** — deploy 8.0–8.11       | ⬜ TODO |           |          |       |
+| **8.11** | **SWITCH `/internalapi`** — deploy 8.0–8.11       | ✅ DONE |           | ✅        |       |
 | **8.12** | Convert + switch `/api/send-message-to-care`      | ⬜ TODO |           |          |       |
 | **8.13** | Convert `/resources` controllers                  | ⬜ TODO |           |          |       |
 | **8.14** | Switch `/resources` — deploy 8.13–8.14            | ⬜ TODO |           |          |       |

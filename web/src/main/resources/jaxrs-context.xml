@@ -32,24 +32,6 @@
         <bean class="se.inera.intyg.intygstjanst.web.integration.stub.SendMessageToCareResponderStubRestApi"/>
       </jaxrs:serviceBeans>
     </jaxrs:server>
-
-    <!-- Internal API -->
-    <jaxrs:server id="internalApi" address="/internalapi">
-      <jaxrs:serviceBeans>
-        <bean class="se.inera.intyg.intygstjanst.web.integration.intyginfo.IntygInfoController"/>
-        <bean class="se.inera.intyg.intygstjanst.web.integration.testcertificate.TestCertificateController"/>
-        <bean class="se.inera.intyg.intygstjanst.web.integration.message.MessageController"/>
-        <bean class="se.inera.intyg.intygstjanst.web.integration.certificate.TypedCertificateController"/>
-        <bean class="se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveController"/>
-        <bean class="se.inera.intyg.intygstjanst.web.integration.reko.RekoController"/>
-        <bean class="se.inera.intyg.intygstjanst.web.integration.citizen.CitizenCertificateController"/>
-        <bean class="se.inera.intyg.intygstjanst.web.integration.certificate.CertificateListController"/>
-        <bean class="se.inera.intyg.intygstjanst.web.integration.certificateexport.CertificateExportController"/>
-      </jaxrs:serviceBeans>
-      <jaxrs:providers>
-        <ref bean="jacksonJsonProvider"/>
-      </jaxrs:providers>
-    </jaxrs:server>
   </beans>
 
   <beans profile="dev,testability-api,it-fk-stub">
