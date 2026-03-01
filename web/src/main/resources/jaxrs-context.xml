@@ -27,11 +27,6 @@
 
   <beans>
 
-    <jaxrs:server id="sendMessageToCareStub" address="/api/send-message-to-care">
-      <jaxrs:serviceBeans>
-        <bean class="se.inera.intyg.intygstjanst.web.integration.stub.SendMessageToCareResponderStubRestApi"/>
-      </jaxrs:serviceBeans>
-    </jaxrs:server>
   </beans>
 
   <beans profile="dev,testability-api,it-fk-stub">
