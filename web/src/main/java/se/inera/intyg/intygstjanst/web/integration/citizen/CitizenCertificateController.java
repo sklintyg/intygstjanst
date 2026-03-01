@@ -19,14 +19,13 @@
 
 package se.inera.intyg.intygstjanst.web.integration.citizen;
 
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.ListCitizenCertificatesService;
@@ -35,26 +34,17 @@ import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequest;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-@Path("/citizen")
+@RestController
+@RequestMapping("/citizen")
+@RequiredArgsConstructor
 public class CitizenCertificateController {
 
     private static final Logger LOG = LoggerFactory.getLogger(CitizenCertificateController.class);
-    private static final String UTF_8_CHARSET = ";charset=utf-8";
 
     private final ListCitizenCertificatesService listCitizenCertificatesService;
     private final SendCertificateService citizenSendCertificateAggregator;
 
-    public CitizenCertificateController(ListCitizenCertificatesService listCitizenCertificatesService,
-        SendCertificateService citizenSendCertificateAggregator) {
-        this.listCitizenCertificatesService = listCitizenCertificatesService;
-        this.citizenSendCertificateAggregator = citizenSendCertificateAggregator;
-    }
-
-
-    @POST
-    @Path("/")
-    @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @PostMapping("/")
     @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
     public ListCitizenCertificatesResponseDTO getCitizenCertificates(
         @RequestBody CitizenCertificatesRequestDTO request) {
@@ -78,10 +68,7 @@ public class CitizenCertificateController {
     }
 
 
-    @POST
-    @Path("/send")
-    @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @PostMapping("/send")
     @PerformanceLogging(eventAction = "send-certificate", eventType = MdcLogConstants.EVENT_TYPE_CHANGE, isActive = false)
     public void sendCitizenCertificate(
         @RequestBody CitizenCertificateSendRequestDTO request) {
