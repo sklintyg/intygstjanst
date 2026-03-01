@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,7 +46,7 @@ public class StatisticsServiceResource {
         return Lists.newArrayList(receiver.getMessages().values());
     }
 
-    @GetMapping("/{id}/{action}")
+    @GetMapping(path = "/{id}/{action}", produces = MediaType.APPLICATION_XML_VALUE)
     public String getMessage(@PathVariable("id") String id, @PathVariable("action") String action) {
         LOG.debug("Fetching {}-message for id {}", action, id);
         final String msg = receiver.getMessages().get(Receiver.generateKey(id, action));

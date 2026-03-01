@@ -38,7 +38,7 @@ public class RekoController {
     private final CreateRekoStatusService createRekoStatusService;
     private final GetRekoStatusService getRekoStatusService;
 
-    @PostMapping("/")
+    @PostMapping()
     @PerformanceLogging(eventAction = "create-reko-status", eventType = MdcLogConstants.EVENT_TYPE_CREATION)
     public RekoStatusDTO createRekoStatus(@RequestBody CreateRekoStatusRequestDTO request) {
         return createRekoStatusService.create(
