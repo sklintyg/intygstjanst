@@ -45,16 +45,14 @@
          se.inera.intyg.common.util.integration.json"/>
 
 
-		<!-- Intyg Proxy Service  -->
-    <import resource="classpath:/hsa-integration-intyg-proxy-service-config.xml"/>
-		<import resource="classpath:/pu-integration-intyg-proxy-service-config.xml"/>
-
     <context:annotation-config/>
     <context:component-scan base-package=
         "se.inera.intyg.intygstjanst.config,
          se.inera.intyg.intygstjanst.logging,
          se.inera.intyg.intygstjanst.persistence,
-         se.inera.intyg.intygstjanst.web"/>
+         se.inera.intyg.intygstjanst.web,
+         se.inera.intyg.infra.integration.intygproxyservice,
+         se.inera.intyg.infra.pu.integration.intygproxyservice"/>
 
     <!-- If bootstrap is specified let's bootstrap data -->
     <beans profile="bootstrap">
