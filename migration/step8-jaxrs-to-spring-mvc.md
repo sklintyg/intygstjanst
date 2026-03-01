@@ -11,7 +11,7 @@
 | **8.1**  | Convert `IntygInfoController`                     | ✅ DONE |           | ✅        |       |
 | **8.2**  | Convert `MessageController` + test                | ✅ DONE |           | ✅        |       |
 | **8.3**  | Convert `TestCertificateController`               | ✅ DONE |           | ✅        |       |
-| **8.4**  | Convert `CertificateListController`               | ⬜ TODO |           |          |       |
+| **8.4**  | Convert `CertificateListController`               | ✅ DONE |           | ✅        |       |
 | **8.5**  | Convert `CertificateExportController`             | ⬜ TODO |           |          |       |
 | **8.6**  | Convert `RekoController` + test                   | ⬜ TODO |           |          |       |
 | **8.7**  | Convert `CitizenCertificateController` + test     | ⬜ TODO |           |          |       |
